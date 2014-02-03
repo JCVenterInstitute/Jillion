@@ -28,6 +28,7 @@ import java.util.Map;
 import org.jcvi.jillion.assembly.tigr.tasm.TasmVisitor.TasmVisitorCallback.TasmVisitorMemento;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
@@ -136,6 +137,38 @@ final class IndexedTasmFileDataStore implements TasmContigDataStore{
 	@Override
 	public StreamingIterator<TasmContig> iterator() throws DataStoreException {
 		return new DataStoreIterator<TasmContig>(this);
+	}
+
+
+
+	@Override
+	public StreamingIterator<DataStoreEntry<TasmContig>> entryIterator()
+			throws DataStoreException {
+		 StreamingIterator<DataStoreEntry<TasmContig>> iter = new StreamingIterator<DataStoreEntry<TasmContig>>(){
+    		 StreamingIterator<TasmContig> delegate = iterator();
+			@Override
+			public boolean hasNext() {
+				return delegate.hasNext();
+			}
+
+			@Override
+			public void close() {
+				delegate.close();
+			}
+
+			@Override
+			public DataStoreEntry<TasmContig> next() {
+				TasmContig trace = delegate.next();
+				return new DataStoreEntry<TasmContig>(trace.getId(), trace);
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
+    		 
+    	 };
+		return DataStoreStreamingIterator.create(this, iter);
 	}
 
 

@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
@@ -41,6 +42,7 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
 /**
  * 454 includes an optional index at the 
@@ -136,7 +138,7 @@ final class ManifestIndexed454SffFileDataStore implements SffFileDataStore{
 		try {
 			//use large sffFileDataStore 
 			//to parse ids in order in file
-			return LargeSffFileDataStore.create(sffFile,filter).idIterator();
+			return DataStoreStreamingIterator.create(this, LargeSffFileDataStore.create(sffFile,filter).idIterator());
 		} catch (IOException e) {
 			throw new IllegalStateException("sff file has been deleted",e);
 		}
@@ -216,12 +218,24 @@ final class ManifestIndexed454SffFileDataStore implements SffFileDataStore{
 	public StreamingIterator<SffFlowgram> iterator() throws DataStoreException {
 		throwErrorIfClosed();
 		try {
-			return LargeSffFileDataStore.create(sffFile,filter).iterator();
+			return DataStoreStreamingIterator.create(this,LargeSffFileDataStore.create(sffFile,filter).iterator());
 		} catch (IOException e) {
-			throw new DataStoreException("sff file has been deleted",e);
+			throw new DataStoreException("sff file has been deleted?",e);
 		}
 	}
+	
+	
 
+	@Override
+	public StreamingIterator<DataStoreEntry<SffFlowgram>> entryIterator()
+			throws DataStoreException {
+		throwErrorIfClosed();
+		try {
+			return DataStoreStreamingIterator.create(this,LargeSffFileDataStore.create(sffFile,filter).entryIterator());
+		} catch (IOException e) {
+			throw new DataStoreException("sff file has been deleted?",e);
+		}
+	}
 	@Override
 	public synchronized  void close() throws IOException {
 		isClosed =true;

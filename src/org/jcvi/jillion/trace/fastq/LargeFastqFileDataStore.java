@@ -30,6 +30,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
@@ -218,7 +219,40 @@ final class LargeFastqFileDataStore implements FastqDataStore {
     }
     
     
-    private final class FastqIdIterator extends AbstractBlockingStreamingIterator<String> implements StreamingIterator<String>{
+    @Override
+	public synchronized StreamingIterator<DataStoreEntry<FastqRecord>> entryIterator()
+			throws DataStoreException {
+    	throwExceptionIfClosed();
+    	StreamingIterator<DataStoreEntry<FastqRecord>> iter = new StreamingIterator<DataStoreEntry<FastqRecord>>(){
+
+    		StreamingIterator<FastqRecord> fastqs = iterator();
+			@Override
+			public boolean hasNext() {
+				return fastqs.hasNext();
+			}
+
+			@Override
+			public void close() {
+				fastqs.close();
+			}
+
+			@Override
+			public DataStoreEntry<FastqRecord> next() {
+				FastqRecord record = fastqs.next();
+				return new DataStoreEntry<FastqRecord>(record.getId(), record);
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
+    		
+    	};
+		return DataStoreStreamingIterator.create(this,iter);
+	}
+
+
+	private final class FastqIdIterator extends AbstractBlockingStreamingIterator<String> implements StreamingIterator<String>{
 
     	private final DataStoreFilter filter;
     	

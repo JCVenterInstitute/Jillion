@@ -334,6 +334,10 @@ public final class IteratorUtil {
     	return new AdaptedStreamingIterator<From,To>(iter, adapter);
     }
     
+    public static <From, To> StreamingIterator<To> createStreamingIterator(Iterator<From> iter, TypeAdapter<From,To> adapter){
+    	return new AdaptedStreamingIterator<From,To>(createStreamingIterator(iter), adapter);
+    }
+    
     private static final class AdaptedStreamingIterator<From, To> implements StreamingIterator<To>{
 
     	private final StreamingIterator<From> delegate;

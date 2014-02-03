@@ -35,6 +35,7 @@ import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.qual.QualitySequence;
@@ -140,7 +141,36 @@ final class IndexedAsmFileContigDataStore  implements AsmContigDataStore{
 	public StreamingIterator<AsmContig> iterator() throws DataStoreException {
 		return new DataStoreIterator<AsmContig>(this);
 	}
+	@Override
+	public StreamingIterator<DataStoreEntry<AsmContig>> entryIterator()
+			throws DataStoreException {
+		 StreamingIterator<DataStoreEntry<AsmContig>> iter = new StreamingIterator<DataStoreEntry<AsmContig>>(){
+			 
+    		 StreamingIterator<AsmContig> delegate =iterator();
+			@Override
+			public boolean hasNext() {
+				return delegate.hasNext();
+			}
 
+			@Override
+			public void close() {
+				delegate.close();
+			}
+
+			@Override
+			public DataStoreEntry<AsmContig> next() {
+				AsmContig trace = delegate.next();
+				return new DataStoreEntry<AsmContig>(trace.getId(), trace);
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
+    		 
+    	 };
+		return DataStoreStreamingIterator.create(this, iter);
+	}
 
 	@Override
 	public void close() throws IOException {

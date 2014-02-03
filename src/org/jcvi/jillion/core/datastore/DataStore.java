@@ -141,4 +141,27 @@ public interface DataStore<T> extends Closeable{
      */
     StreamingIterator<T> iterator() throws DataStoreException;
     
+    /**
+     * Create a new {@link StreamingIterator}
+     * which will iterate over all the {@link DataStoreEntry}s
+     * in this {@link DataStore}.  The iteration
+     * order is guaranteed to match the iteration
+     * order by {@link #idIterator()}.
+     * The {@link StreamingIterator}
+     * is only valid while this {@link DataStore} is open.
+     * If the {@link StreamingIterator} is still
+     * not finished iterating 
+     * when this {@link DataStore} is closed via {@link #close()},
+     * then any calls to {@link StreamingIterator#hasNext()}
+     * or {@link StreamingIterator#next()} will throw 
+     * {@link DataStoreClosedException}.
+     * @return a new {@link StreamingIterator}
+     * instance; never null and will never contain any null elements;
+     * however the returned instance may be empty if {@link #getNumberOfRecords()} ==0.
+     * @throws DataStoreException if there is a 
+     * problem creating this iterator.
+     * @throws DataStoreClosedException if this {@link DataStore} is closed.
+     */
+    StreamingIterator<DataStoreEntry<T>> entryIterator() throws DataStoreException;
+    
 }

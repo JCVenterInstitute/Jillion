@@ -130,6 +130,10 @@ public class ConsedAssemblyTransformerBuilder {
 			}
 			
 			this.defaultQualityValue = builder.defaultQualityValue;
+			
+			//add default
+			uriDates.put(null, new Date());
+			
 		}
 
 		@Override
@@ -203,6 +207,7 @@ public class ConsedAssemblyTransformerBuilder {
 				Direction direction,
 				NucleotideSequence gappedSequence,
 				ReadInfo readInfo) {
+			
 			//TODO handle symlink to uri?
 			if(!builderMap.containsKey(referenceId)){
 				throw new IllegalStateException("unknown reference id " + referenceId);

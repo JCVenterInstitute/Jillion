@@ -2,20 +2,23 @@ package org.jcvi.jillion.sam.transform;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jcvi.jillion.assembly.AssemblyTransformer;
 import org.jcvi.jillion.assembly.ReadInfo;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
+import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
+import org.jcvi.jillion.internal.core.util.GrowableIntArray;
+import org.jcvi.jillion.sam.SamFileParser;
 import org.jcvi.jillion.sam.SamRecord;
-import org.jcvi.jillion.sam.SamRecordFlags;
 import org.jcvi.jillion.sam.SamVisitor;
-import org.jcvi.jillion.sam.attribute.ReservedSamAttributeKeys;
 import org.jcvi.jillion.sam.cigar.Cigar;
 import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
@@ -23,16 +26,24 @@ import org.jcvi.jillion.sam.header.SamHeader;
 public class SamTransformationService {
 
 	private final File samFile;
-	private final NucleotideFastaDataStore referenceDataStore;
+	private final NucleotideSequenceDataStore referenceDataStore;
 
 	public SamTransformationService(File samFile, File referenceFasta) throws IOException {
 		this.samFile = samFile;
-		referenceDataStore = new NucleotideFastaFileDataStoreBuilder(referenceFasta)
-									.build();
+		NucleotideFastaDataStore ungappedReferenceDataStore = new NucleotideFastaFileDataStoreBuilder(referenceFasta)
+																	.build();
+		
+		referenceDataStore = SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(samFile, ungappedReferenceDataStore);
 	}
 	
 	public void transform(final AssemblyTransformer transformer){
 		
+		try {
+			SamTransformerVisitor visitor = new SamTransformerVisitor(referenceDataStore, transformer);
+			new SamFileParser(samFile).accept(visitor);
+		} catch (Exception e) {
+			throw new IllegalStateException("error parsing sam file", e);
+		}
 	}
 	
 	
@@ -40,11 +51,14 @@ public class SamTransformationService {
 
 		private final AssemblyTransformer transformer;
 		private SamHeader header;
-		private final NucleotideFastaDataStore referenceDataStore;
+		private final NucleotideSequenceDataStore referenceDataStore;
+		private Map<String,GrowableIntArray> gapOffsetMap;
 		
-		public SamTransformerVisitor(NucleotideFastaDataStore referenceDataStore, AssemblyTransformer transformer) {
+		public SamTransformerVisitor(NucleotideSequenceDataStore referenceDataStore, AssemblyTransformer transformer) throws DataStoreException {
 			this.referenceDataStore = referenceDataStore;
 			this.transformer = transformer;
+			gapOffsetMap = new HashMap<String, GrowableIntArray>(MapUtil.computeMinHashMapSizeWithoutRehashing(referenceDataStore.getNumberOfRecords()));
+			
 		}
 
 		@Override
@@ -54,12 +68,12 @@ public class SamTransformationService {
 			for(ReferenceSequence refSeq : header.getReferenceSequences()){
 				String id = refSeq.getName();
 				try {
-					NucleotideFastaRecord fasta = referenceDataStore.get(id);
-					if(fasta ==null){
+					NucleotideSequence ref = referenceDataStore.get(id);
+					if(ref ==null){
 						throw new IllegalStateException("error could not find reference sequence in fasta file with id " + id);
 					}
-					//TODO need to gap reference similar to cas2consed
-					transformer.referenceOrConsensus(id, fasta.getSequence());
+					System.out.println(id + " num gaps = " + ref.getNumberOfGaps());
+					transformer.referenceOrConsensus(id, ref);
 				} catch (DataStoreException e) {
 					throw new IllegalStateException("error getting reference sequence from fasta file", e);
 				}
@@ -73,21 +87,35 @@ public class SamTransformationService {
 		public void visitRecord(SamRecord record) {
 			if(record.isPrimary()){
 				
-				if(record.getFlags().contains(SamRecordFlags.READ_UNMAPPED)){
-					transformer.notAligned(record.getQueryName(), record.getSequence(), record.getQualities(), null, null);
-				}else{
+				if(record.mapped()){
 					String refName = record.getReferenceName();
-					Direction dir = record.getFlags().contains(SamRecordFlags.REVERSE_COMPLEMENTED) ? Direction.REVERSE : Direction.FORWARD;
+					try {
+						NucleotideSequence referenceSeq = referenceDataStore.get(refName);
+					
+					Direction dir = record.getDirection();
 					Cigar cigar = record.getCigar();
 					int rawLength = cigar.getRawUnPaddedReadLength();
 					Range validRange = cigar.getValidRange();
+					int gappedStartOffset = referenceSeq.getGappedOffsetFor(record.getStartPosition()-1);
+					/*if(record.getQueryName().equals("1IONJCVI_0163_3X7JL:1:1:03038:01555#CCTGGTTGTCGAT/1")){
+						System.out.println("here");
+					}
+					*/
+					//extra insertions have been added to the reference
+					//from other reads that we don't know about
+					//modify the cigar accordingly
 					transformer.aligned(record.getQueryName(), record.getSequence(), record.getQualities(), null, null, 
 							refName, 
-							record.getStartOffset()-1, 
+							gappedStartOffset, 
 							dir, 
 							cigar.toGappedTrimmedSequence(record.getSequence()), 
 							
 							new ReadInfo(validRange, rawLength));
+					} catch (DataStoreException e) {
+						throw new IllegalStateException("unknown reference " + refName, e);
+					}
+				}else{
+					transformer.notAligned(record.getQueryName(), record.getSequence(), record.getQualities(), null, null);
 					
 				}
 			}

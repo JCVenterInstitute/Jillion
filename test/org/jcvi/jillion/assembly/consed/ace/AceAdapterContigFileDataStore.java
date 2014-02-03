@@ -31,16 +31,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jcvi.jillion.assembly.consed.ace.AceContig;
-import org.jcvi.jillion.assembly.consed.ace.AceContigBuilder;
-import org.jcvi.jillion.assembly.consed.ace.AceFileDataStore;
-import org.jcvi.jillion.assembly.consed.ace.ConsensusAceTag;
-import org.jcvi.jillion.assembly.consed.ace.ReadAceTag;
-import org.jcvi.jillion.assembly.consed.ace.WholeAssemblyAceTag;
 import org.jcvi.jillion.assembly.tigr.contig.TigrContigFileParser;
 import org.jcvi.jillion.assembly.tigr.contig.TigrContigFileVisitor;
 import org.jcvi.jillion.assembly.tigr.contig.TigrContigVisitor;
 import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
@@ -142,7 +137,14 @@ public class AceAdapterContigFileDataStore implements AceFileDataStore{
     public StreamingIterator<AceContig> iterator() throws DataStoreException {
         return dataStore.iterator();
     }
-    /**
+    
+    
+    @Override
+	public StreamingIterator<DataStoreEntry<AceContig>> entryIterator()
+			throws DataStoreException {
+		return dataStore.entryIterator();
+	}
+	/**
     * {@inheritDoc}
     */
     @Override

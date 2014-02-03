@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.sam.attribute.InvalidAttributeException;
@@ -82,7 +83,7 @@ public class SamRecord {
 		return flags;
 	}
 
-	public int getStartOffset() {
+	public int getStartPosition() {
 		return startOffset;
 	}
 
@@ -550,6 +551,16 @@ public class SamRecord {
 			
 		}
 		
+	}
+
+
+	public boolean mapped() {
+		return !flags.contains(SamRecordFlags.READ_UNMAPPED);
+	}
+	
+	public Direction getDirection(){
+		return flags.contains(SamRecordFlags.REVERSE_COMPLEMENTED) ? Direction.REVERSE : Direction.FORWARD;
+				
 	}
 
 

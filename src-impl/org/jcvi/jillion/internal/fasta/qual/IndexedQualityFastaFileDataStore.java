@@ -27,17 +27,18 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.fasta.FastaVisitorCallback.FastaVisitorMemento;
-import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.qual.AbstractQualityFastaRecordVisitor;
 import org.jcvi.jillion.fasta.qual.QualityFastaDataStore;
 import org.jcvi.jillion.fasta.qual.QualityFastaRecord;
@@ -217,6 +218,42 @@ public final class IndexedQualityFastaFileDataStore{
 	        
 			return DataStoreStreamingIterator.create(this, iter);
 		}
+		
+		
+		@Override
+		public StreamingIterator<DataStoreEntry<QualityFastaRecord>> entryIterator()
+				throws DataStoreException {
+			throwExceptionIfClosed();
+			StreamingIterator<DataStoreEntry<QualityFastaRecord>> entryIter = new StreamingIterator<DataStoreEntry<QualityFastaRecord>>(){
+				StreamingIterator<QualityFastaRecord> iter = QualitySequenceFastaDataStoreIteratorImpl.createIteratorFor(fastaFile, filter);
+
+				@Override
+				public boolean hasNext() {
+					return iter.hasNext();
+				}
+
+				@Override
+				public void close() {
+					iter.close();
+				}
+
+				@Override
+				public DataStoreEntry<QualityFastaRecord> next() {
+					QualityFastaRecord next = iter.next();
+					return new DataStoreEntry<QualityFastaRecord>(next.getId(), next);
+				}
+
+				@Override
+				public void remove() {
+					throw new UnsupportedOperationException();
+				}
+		        
+			};
+			
+			return DataStoreStreamingIterator.create(this, entryIter);
+		
+		}
+
 		private void throwExceptionIfClosed() throws DataStoreException{
 			if(closed){
 				throw new DataStoreClosedException("datastore is closed");

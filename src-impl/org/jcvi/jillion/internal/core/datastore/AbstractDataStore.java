@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 /**
@@ -90,7 +91,15 @@ public abstract class  AbstractDataStore<T> implements DataStore<T>{
     	throwExceptionIfClosed();
         return iteratorImpl();
     }
-    /**
+    
+    
+    @Override
+	public final StreamingIterator<DataStoreEntry<T>> entryIterator()
+			throws DataStoreException {
+    	throwExceptionIfClosed();
+		return entryIteratorImpl();
+	}
+	/**
      * Does this DataStore contain the given id.
      * This method is delegated to by {@link #contains(String)}
      * after determining that the DataStore is still open.
@@ -159,6 +168,27 @@ public abstract class  AbstractDataStore<T> implements DataStore<T>{
      * @see DataStore#iterator()
      */
     protected abstract StreamingIterator<T> iteratorImpl() throws DataStoreException;
+    
+    
+    
+    /**
+     * Create a new {@link StreamingIterator}
+     * which will iterate over the {@link DataStoreEntry}s 
+     * of all the records
+     * in this {@link DataStore} which 
+     * preserves the contract of the Id iterator in
+     * {@link DataStore#entryIterator()}. 
+     * This method is delegated to by {@link #idIterator()}.
+     * 
+     * @return a new {@link StreamingIterator}
+     * instance; never null and never contain any null elements,
+     * but could be empty if {@link #getNumberOfRecords()} == 0.
+     * @throws DataStoreException if there is a 
+     * problem creating this iterator.
+     * @throws IllegalStateException if this {@link DataStore} is closed.
+     * @see DataStore#idIterator()
+     */
+    protected abstract StreamingIterator<DataStoreEntry<T>> entryIteratorImpl() throws DataStoreException;
     /**
      * 
      * {@inheritDoc}

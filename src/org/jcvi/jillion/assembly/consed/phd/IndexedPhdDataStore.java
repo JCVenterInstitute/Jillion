@@ -29,6 +29,7 @@ import java.util.Map;
 
 import org.jcvi.jillion.assembly.consed.phd.PhdBallVisitorCallback.PhdBallVisitorMemento;
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.pos.PositionSequence;
@@ -121,6 +122,35 @@ final class IndexedPhdDataStore implements PhdDataStore{
 		//for each record
 		return DataStoreStreamingIterator.create(this,
 				PhdBallIterator.createNewIterator(phdFile, filter));
+	}
+	
+	@Override
+	public StreamingIterator<DataStoreEntry<Phd>> entryIterator()
+			throws DataStoreException {
+		return new StreamingIterator<DataStoreEntry<Phd>>(){
+			StreamingIterator<Phd> iter = iterator();
+			@Override
+			public boolean hasNext() {
+				return iter.hasNext();
+			}
+
+			@Override
+			public void close() {
+				iter.close();
+			}
+
+			@Override
+			public DataStoreEntry<Phd> next() {
+				Phd next = iter.next();
+				return new DataStoreEntry<Phd>(next.getId(), next);
+			}
+
+			@Override
+			public void remove() {
+				iter.remove();
+			}
+			
+		};
 	}
 
 	@Override

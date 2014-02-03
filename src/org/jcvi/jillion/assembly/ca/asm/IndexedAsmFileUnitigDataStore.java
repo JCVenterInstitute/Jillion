@@ -34,6 +34,7 @@ import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.qual.QualitySequence;
@@ -140,6 +141,37 @@ private final  DataStore<NucleotideSequence> fullLengthSequences;
 		return new DataStoreIterator<AsmUnitig>(this);
 	}
 
+
+	@Override
+	public StreamingIterator<DataStoreEntry<AsmUnitig>> entryIterator()
+			throws DataStoreException {
+		 StreamingIterator<DataStoreEntry<AsmUnitig>> iter = new StreamingIterator<DataStoreEntry<AsmUnitig>>(){
+			 
+    		 StreamingIterator<AsmUnitig> delegate =iterator();
+			@Override
+			public boolean hasNext() {
+				return delegate.hasNext();
+			}
+
+			@Override
+			public void close() {
+				delegate.close();
+			}
+
+			@Override
+			public DataStoreEntry<AsmUnitig> next() {
+				AsmUnitig trace = delegate.next();
+				return new DataStoreEntry<AsmUnitig>(trace.getId(), trace);
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
+    		 
+    	 };
+		return DataStoreStreamingIterator.create(this, iter);
+	}
 
 	@Override
 	public void close() throws IOException {

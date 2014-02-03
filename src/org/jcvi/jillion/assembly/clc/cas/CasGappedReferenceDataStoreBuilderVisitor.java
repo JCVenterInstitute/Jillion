@@ -30,6 +30,7 @@ import java.util.Map;
 
 import org.jcvi.jillion.assembly.GappedReferenceBuilder;
 import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
@@ -339,6 +340,14 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
 		public StreamingIterator<NucleotideSequence> iterator()
 				throws DataStoreException {
 			return delegate.iterator();
+		}
+
+		
+		
+		@Override
+		public StreamingIterator<DataStoreEntry<NucleotideSequence>> entryIterator()
+				throws DataStoreException {
+			return delegate.entryIterator();
 		}
 
 		@Override

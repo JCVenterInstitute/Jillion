@@ -32,6 +32,7 @@ import org.jcvi.jillion.assembly.consed.phd.Phd;
 import org.jcvi.jillion.assembly.consed.phd.PhdBuilder;
 import org.jcvi.jillion.assembly.consed.phd.PhdDataStore;
 import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
@@ -178,7 +179,15 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
     
    
     
-    /**
+    @Override
+	public StreamingIterator<DataStoreEntry<Phd>> entryIterator()
+			throws DataStoreException {
+		return delegate.entryIterator();
+	}
+
+
+
+	/**
      * {@code FullLengthPhdParser} will parse full length
      * basecalls from an ace file and infer if the basecalls
      * are high or low quality based on upper vs lower case basecalls.

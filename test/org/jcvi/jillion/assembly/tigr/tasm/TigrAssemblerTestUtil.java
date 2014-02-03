@@ -25,8 +25,8 @@ import java.io.IOException;
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.AssemblyTestUtil;
 import org.jcvi.jillion.assembly.Contig;
-import org.jcvi.jillion.assembly.tigr.tasm.TasmContig;
 import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
@@ -50,12 +50,24 @@ public final class TigrAssemblerTestUtil {
 	
 	public static enum FakeFullLengthDataStore implements DataStore<Long>{
 
+		
     	INSTANCE;
+    	/**
+    	 * Always return the same long length should be long enough for sanger reads
+    	 */
+    	private static final Long LENGTH = Long.valueOf(1200L);
     	
 		@Override
 		public void close() throws IOException {
 			//no-op
 			
+		}
+
+		@Override
+		public StreamingIterator<DataStoreEntry<Long>> entryIterator()
+				throws DataStoreException {
+			//isn't used so we can throw exception
+			throw new UnsupportedOperationException();
 		}
 
 		@Override
@@ -65,9 +77,8 @@ public final class TigrAssemblerTestUtil {
 		}
 
 		@Override
-		public Long get(String id) throws DataStoreException {
-			//always return the same long length should be long enough for sanger reads
-			return Long.valueOf(1200);
+		public Long get(String id) throws DataStoreException {			
+			return LENGTH;
 		}
 
 		@Override

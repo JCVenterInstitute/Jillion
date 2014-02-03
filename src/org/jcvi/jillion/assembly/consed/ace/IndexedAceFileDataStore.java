@@ -21,6 +21,7 @@
 package org.jcvi.jillion.assembly.consed.ace;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,11 +32,11 @@ import java.util.Map;
 import org.jcvi.jillion.assembly.consed.ace.AceFileVisitorCallback.AceFileVisitorMemento;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.internal.core.datastore.DataStoreIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 /**
  * {@code IndexedAceFileDataStore} is an implementation of 
@@ -62,6 +63,8 @@ final class IndexedAceFileDataStore implements AceFileDataStore{
     private final long totalNumberOfReads;
     
     private volatile boolean closed=false;
+    private final DataStoreFilter filter;
+    private final File aceFile;
     
     public static AceFileDataStore create(File aceFile, DataStoreFilter filter) throws IOException{
     	if(filter==null){
@@ -70,16 +73,18 @@ final class IndexedAceFileDataStore implements AceFileDataStore{
     	AceParser parser = AceFileParser.create(aceFile);
     	VisitorBuilder visitorBuilder = new VisitorBuilder(filter);
     	parser.parse(visitorBuilder);
-    	return new IndexedAceFileDataStore(visitorBuilder, parser);
+    	return new IndexedAceFileDataStore(visitorBuilder, parser, aceFile);
     }
     
-    private IndexedAceFileDataStore(VisitorBuilder builder, AceParser parser){    	
+    private IndexedAceFileDataStore(VisitorBuilder builder, AceParser parser, File aceFile){    	
     	this.parser = parser;
     	this.mementos = builder.mementos;
     	this.wholeAssemblyTags = builder.wholeAssemblyTags;
     	this.consensusTags = builder.consensusTags;
     	this.readTags = builder.readTags;
     	this.totalNumberOfReads = builder.totalNumberOfReads;
+    	this.filter = builder.filter;
+    	this.aceFile = aceFile;
     }
 	
     
@@ -136,8 +141,28 @@ final class IndexedAceFileDataStore implements AceFileDataStore{
 	@Override
 	public StreamingIterator<AceContig> iterator() throws DataStoreException {
 		checkNotYetClosed();
-		//TODO should we just use a large datastore iterator?
-		return new DataStoreIterator<AceContig>(this);
+		try {
+			return DataStoreStreamingIterator.create(this, LargeAceFileDataStore.create(aceFile, filter).iterator());
+		} catch (FileNotFoundException e) {
+			//shouldn't happen unless the file
+			//has been deleted since we last parsed it
+			throw new DataStoreException("error re-parsing ace file for iterator",e);
+		}
+	}
+	
+	
+
+	@Override
+	public StreamingIterator<DataStoreEntry<AceContig>> entryIterator()
+			throws DataStoreException {
+		checkNotYetClosed();
+		try {
+			return DataStoreStreamingIterator.create(this, LargeAceFileDataStore.create(aceFile, filter).entryIterator());
+		} catch (FileNotFoundException e) {
+			//shouldn't happen unless the file
+			//has been deleted since we last parsed it
+			throw new DataStoreException("error re-parsing ace file for iterator",e);
+		}
 	}
 
 	@Override

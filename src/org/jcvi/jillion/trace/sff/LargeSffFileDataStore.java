@@ -32,10 +32,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
@@ -111,10 +111,13 @@ final class LargeSffFileDataStore extends AbstractDataStore<SffFlowgram> impleme
 	 * @throws FileNotFoundException 
      */
     private LargeSffFileDataStore(File sffFile, DataStoreFilter filter) throws FileNotFoundException, IOException {
-        this.sffFile = sffFile;
+    	SffParser parser = SffFileParser.create(sffFile);
+    	this.sffFile = sffFile;
         this.filter = filter;
+        
+        
         HeaderVisitor visitor = new HeaderVisitor();
-        SffFileParser.create(sffFile).parse(visitor);
+		parser.parse(visitor);
         SffCommonHeader header = visitor.getHeader();
         if(header ==null){
         	throw new IOException("could not parse sff header");
@@ -190,11 +193,43 @@ final class LargeSffFileDataStore extends AbstractDataStore<SffFlowgram> impleme
 				SffFileIterator.createNewIteratorFor(sffFile,filter));
 	}
 	
+	
    
 
    
 
     @Override
+	protected StreamingIterator<DataStoreEntry<SffFlowgram>> entryIteratorImpl()
+			throws DataStoreException {
+    	StreamingIterator<DataStoreEntry<SffFlowgram>> iter = new StreamingIterator<DataStoreEntry<SffFlowgram>>(){
+    		StreamingIterator<SffFlowgram> flowgramIter = SffFileIterator.createNewIteratorFor(sffFile,filter);
+
+			@Override
+			public boolean hasNext() {
+				return flowgramIter.hasNext();
+			}
+
+			@Override
+			public void close() {
+				flowgramIter.close();
+			}
+
+			@Override
+			public DataStoreEntry<SffFlowgram> next() {
+				SffFlowgram flowgram = flowgramIter.next();
+				return new DataStoreEntry<SffFlowgram>(flowgram.getId(), flowgram);
+			}
+
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException();
+			}
+    		
+    	};
+		return DataStoreStreamingIterator.create(this,iter);
+	}
+
+	@Override
 	protected void handleClose() throws IOException {
 		//no-op
 		
