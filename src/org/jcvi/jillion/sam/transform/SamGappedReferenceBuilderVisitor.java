@@ -101,10 +101,10 @@ public class SamGappedReferenceBuilderVisitor implements SamVisitor{
 				CigarElement element = iter.next();
 				
 				CigarOperation op = element.getOp();
-				if(op == CigarOperation.HARD_CLIP || op == CigarOperation.SOFT_CLIP || op ==CigarOperation.PADDING
-						|| op == CigarOperation.DELETION){
+				
+				if(op == CigarOperation.HARD_CLIP || op == CigarOperation.SOFT_CLIP){
 					//ignore gaps and clipping
-				}else if(op == CigarOperation.INSERTION){				
+				}else if(op == CigarOperation.INSERTION || op ==CigarOperation.PADDING){				
 						refBuilder.addReadInsertion(currentOffset, element.getLength());
 				}else{
 					currentOffset+=element.getLength();
