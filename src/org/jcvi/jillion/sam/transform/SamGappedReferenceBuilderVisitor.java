@@ -27,7 +27,7 @@ import org.jcvi.jillion.sam.cigar.CigarOperation;
 import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
 
-public class SamGappedReferenceBuilderVisitor implements SamVisitor{
+final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 
 	Map<String, GappedReferenceBuilder> builders = new LinkedHashMap<String, GappedReferenceBuilder>();
 	
@@ -76,20 +76,7 @@ public class SamGappedReferenceBuilderVisitor implements SamVisitor{
 	@Override
 	public void visitRecord(SamRecord record) {
 		if(record.isPrimary() && record.mapped()){
-			/*
-			NucleotideSequence sequence;
-			if(record.getDirection() == Direction.REVERSE){
-				//reverse complement before alignment?
-				sequence = new NucleotideSequenceBuilder(record.getSequence())
-									.reverseComplement()
-									.build();
-			}else{
-				sequence = record.getSequence();
-			}
 			
-			
-			
-			*/
 			String refName = record.getReferenceName();
 			GappedReferenceBuilder refBuilder = builders.get(refName);
 			
