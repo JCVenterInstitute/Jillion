@@ -55,8 +55,10 @@ public final class SamTransformationService {
 	 * and must exist.
 	 * @param referenceFasta the reference fasta file; can not be null and must exist.
 	 * @throws IOException if there is a problem parsing the input files.
+	 * @throws NullPointerException if either parameter is null.
 	 */
 	public SamTransformationService(File samFile, File referenceFasta) throws IOException {
+		
 		this.samFile = samFile;
 		NucleotideFastaDataStore ungappedReferenceDataStore = new NucleotideFastaFileDataStoreBuilder(referenceFasta)
 																	.build();
