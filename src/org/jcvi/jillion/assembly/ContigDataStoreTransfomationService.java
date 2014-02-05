@@ -2,17 +2,23 @@ package org.jcvi.jillion.assembly;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
-public class ContigDataStoreTransfomationService {
+public final class ContigDataStoreTransfomationService {
 
 	private final ContigDataStore<?,?> datastore;
-
-	public ContigDataStoreTransfomationService(ContigDataStore<?, ?> datastore) {
-		if(datastore ==null){
-			throw new NullPointerException("datastore can not be null");
-		}
-		this.datastore = datastore;
+	private final NucleotideSequenceDataStore rawSequences;
+	private final QualitySequenceDataStore rawQualities;
+	
+	private ContigDataStoreTransfomationService(Builder builder) {
+	
+		this.datastore = builder.datastore;
+		this.rawQualities = builder.rawQualities;
+		this.rawSequences = builder.rawSequences;
 	}
 	
 	
@@ -32,16 +38,11 @@ public class ContigDataStoreTransfomationService {
 				try{
 					while(readIter.hasNext()){
 						AssembledRead read = readIter.next();
-						//we could fake the raw sequence by ungapped and rev complement
-						//but wouldn't be full length if there was upstream trimming.
-						/*
-						NucleotideSequenceBuilder rawSequenceBuilder = new NucleotideSequenceBuilder(read.getNucleotideSequence())
-																			.ungap();
-						if(read.getDirection() == Direction.REVERSE){
-							rawSequenceBuilder.reverseComplement();
-						}
-						*/
-						transformer.aligned(read.getId(), null, null, null, null, contigId,
+						
+						NucleotideSequence rawSeq = rawSequences ==null ? null : rawSequences.get(read.getId());
+						QualitySequence rawQual = rawQualities ==null ? null : rawQualities.get(read.getId());
+						
+						transformer.aligned(read.getId(), rawSeq, rawQual, null, null, contigId,
 								(int) read.getGappedStartOffset(), 
 								read.getDirection(), read.getNucleotideSequence(), read.getReadInfo());
 					}
@@ -55,6 +56,38 @@ public class ContigDataStoreTransfomationService {
 		}finally{
 			IOUtil.closeAndIgnoreErrors(contigIter);
 		}
+	}
+	
+	public static final class Builder{
+		private final ContigDataStore<?,?> datastore;
+
+		private NucleotideSequenceDataStore rawSequences;
+		private QualitySequenceDataStore rawQualities;
+		//private Position
+		
+		public Builder(ContigDataStore<?, ?> datastore) {
+			if(datastore ==null){
+				throw new NullPointerException("datastore can not be null");
+			}
+			this.datastore = datastore;
+		}
+		
+		public Builder setRawSequenceDataStore(NucleotideSequenceDataStore datastore){
+			this.rawSequences = datastore;
+			return this;
+		}
+		
+		public Builder setRawQualitiyDataStore(QualitySequenceDataStore datastore){
+			this.rawQualities = datastore;
+			return this;
+		}
+		
+		
+		
+		public ContigDataStoreTransfomationService build(){
+			return new ContigDataStoreTransfomationService(this);
+		}
+		
 	}
 	
 	
