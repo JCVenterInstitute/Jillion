@@ -34,6 +34,8 @@ import org.junit.runners.Suite.SuiteClasses;
     { 
     TestDefaultPlacedRead.class,
    
+    TestContigDataStoreTransformationService.class,
+    
     AllTigrContigUnitTests.class,
     AllConsedUnitTests.class,
     
