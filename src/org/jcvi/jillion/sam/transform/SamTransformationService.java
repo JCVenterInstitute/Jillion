@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.jcvi.jillion.assembly.AssemblyTransformationService;
 import org.jcvi.jillion.assembly.AssemblyTransformer;
 import org.jcvi.jillion.assembly.AssemblyUtil;
 import org.jcvi.jillion.assembly.ReadInfo;
@@ -42,7 +43,7 @@ import org.jcvi.jillion.sam.header.SamHeader;
  * @author dkatzel
  *
  */
-public final class SamTransformationService {
+public final class SamTransformationService implements AssemblyTransformationService{
 
 	private final File samFile;
 	private final NucleotideSequenceDataStore referenceDataStore;
@@ -72,6 +73,7 @@ public final class SamTransformationService {
 	 * the methods on; can not be null.
 	 * @throws NullPointerException if transformer is null.
 	 */
+	@Override
 	public void transform(final AssemblyTransformer transformer){
 		if(transformer ==null){
 			throw new NullPointerException("transformer can not be null");

@@ -66,7 +66,7 @@ public interface AssemblyTransformer {
 	 * to align to the reference/consensus
 	 * @param readInfo the {@link ReadInfo} for this read.
 	 */
-	void aligned(String id, NucleotideSequence nucleotideSequence,
+	void aligned(String readId, NucleotideSequence nucleotideSequence,
 			QualitySequence qualitySequence, PositionSequence positions,
 			URI sourceFileUri, String referenceId, long gappedStartOffset,
 			Direction direction,
