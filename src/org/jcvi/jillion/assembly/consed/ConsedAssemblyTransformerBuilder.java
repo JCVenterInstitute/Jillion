@@ -267,7 +267,7 @@ public class ConsedAssemblyTransformerBuilder {
 		}
 
 		@Override
-		public void aligned(String id, NucleotideSequence nucleotideSequence,
+		public void aligned(String readId, NucleotideSequence nucleotideSequence,
 				QualitySequence qualitySequence, PositionSequence positions,
 				URI sourceFileUri, String referenceId, long gappedStartOffset,
 				Direction direction,
@@ -280,7 +280,7 @@ public class ConsedAssemblyTransformerBuilder {
 			}
 			if(gappedStartOffset > Integer.MAX_VALUE){
 				//TODO Violation of LSP ?
-				throw new IllegalArgumentException("gapped start offset is > int max"+ id);
+				throw new IllegalArgumentException("gapped start offset is > int max"+ readId);
 			}
 			final QualitySequence qualities;
 			if(qualitySequence ==null){
@@ -319,7 +319,7 @@ public class ConsedAssemblyTransformerBuilder {
 				requiredComments = computeRequiredCommentsFor(uri2File.get(sourceFileUri), phdDate);
 				comments.put(sourceFileUri, requiredComments);
 			}
-			PhdBuilder phdBuilder = new PhdBuilder(id, nucleotideSequence, qualities)
+			PhdBuilder phdBuilder = new PhdBuilder(readId, nucleotideSequence, qualities)
 										.comments(requiredComments);
 			
 			if(positions !=null){
@@ -331,11 +331,11 @@ public class ConsedAssemblyTransformerBuilder {
 			try {
 				phdInfo = phdHelper.writePhd(phdBuilder.build(), phdDate);
 			} catch (IOException e) {
-				throw new IllegalStateException("error writing phd record for "+ id, e);
+				throw new IllegalStateException("error writing phd record for "+ readId, e);
 			}
 			
 			builderMap.get(referenceId)
-							.addRead(id, gappedSequence, (int)gappedStartOffset, direction, readInfo.getValidRange(), 
+							.addRead(readId, gappedSequence, (int)gappedStartOffset, direction, readInfo.getValidRange(), 
 									phdInfo, readInfo.getUngappedFullLength());
 			
 		}

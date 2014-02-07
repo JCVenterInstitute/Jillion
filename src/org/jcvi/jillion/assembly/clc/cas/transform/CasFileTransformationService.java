@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.jcvi.jillion.assembly.AssemblyTransformationService;
 import org.jcvi.jillion.assembly.AssemblyTransformer;
 import org.jcvi.jillion.assembly.clc.cas.AbstractAlignedReadCasVisitor;
 import org.jcvi.jillion.assembly.clc.cas.CasFileInfo;
@@ -26,7 +27,7 @@ import org.jcvi.jillion.trace.fastq.FastqDataStore;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.jillion.trace.sff.SffFileIterator;
 
-public class CasFileTransformationService{
+public class CasFileTransformationService implements AssemblyTransformationService{
 
 	private final File casFile;
 	private final File casDir;
@@ -66,6 +67,8 @@ public class CasFileTransformationService{
 	protected File getChromatDir() {
 		return chromatDir;
 	}
+	
+	@Override
 	public final void transform(AssemblyTransformer transformer) throws IOException{
 		if(transformer == null){
 			throw new NullPointerException("transformer can not be null");

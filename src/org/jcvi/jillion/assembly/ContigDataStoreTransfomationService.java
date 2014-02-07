@@ -8,7 +8,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
-public final class ContigDataStoreTransfomationService {
+public final class ContigDataStoreTransfomationService implements AssemblyTransformationService{
 
 	private final ContigDataStore<?,?> datastore;
 	private final NucleotideSequenceDataStore rawSequences;
@@ -21,7 +21,7 @@ public final class ContigDataStoreTransfomationService {
 		this.rawSequences = builder.rawSequences;
 	}
 	
-	
+	@Override
 	public void transform(AssemblyTransformer transformer){
 		if(transformer ==null){
 			throw new NullPointerException("transformer can not be null");
