@@ -73,7 +73,7 @@ public enum CigarOperation {
 	 */
 	SEQUENCE_MISMATCH('X')
 	;
-	
+	private static final CigarOperation[] VALUES = values();
 	private final char opCode;
 	
 	CigarOperation(char opCode){
@@ -86,7 +86,9 @@ public enum CigarOperation {
 		return opCode;
 	}
 
-
+	public static CigarOperation parseBinary(int bit){
+		return VALUES[bit];
+	}
 
 	/**
 	 * Parse the first character of the given String into a
