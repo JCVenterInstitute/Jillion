@@ -67,7 +67,7 @@ public class SamFileParser extends AbstractSamFileParser{
 		try{
 			parser= new TextLineParser(samFile);
 			
-			SamHeader header = parseHeader(parser);
+			SamHeader header = parseHeader(parser).build();
 			visitor.visitHeader(header);
 			while(parser.hasNextLine()){
 				String line = parser.nextLine().trim();
