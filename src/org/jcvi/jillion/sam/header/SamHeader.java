@@ -310,5 +310,9 @@ public class SamHeader {
 			}
 			return new SamHeader(this);
 		}
+
+		public boolean hasReferenceSequence(String name) {
+			return referenceSequences.containsKey(name);
+		}
 	}
 }

@@ -21,10 +21,10 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
 import org.jcvi.jillion.sam.attribute.ReservedAttributeValidator;
-import org.jcvi.jillion.sam.attribute.SamAttributeType;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 import org.jcvi.jillion.sam.cigar.Cigar;
 import org.jcvi.jillion.sam.cigar.CigarOperation;
+import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
 
 public class BamFileParser extends AbstractSamFileParser {
@@ -39,7 +39,9 @@ public class BamFileParser extends AbstractSamFileParser {
 	static{
 		//`=ACMGRSVTWYHKDBN'
 		ENCODED_BASES = new Nucleotide[16];
-		//TODO: note [0] not set (to =)
+		//TODO: note [0]set to null to force NPE
+		ENCODED_BASES[0] = null;
+		
 		ENCODED_BASES[1] = Nucleotide.Adenine;
 		ENCODED_BASES[2] = Nucleotide.Cytosine;
 		ENCODED_BASES[3] = Nucleotide.Amino;
@@ -88,16 +90,22 @@ public class BamFileParser extends AbstractSamFileParser {
 			in= new OpenAwareInputStream(new GZIPInputStream(new BufferedInputStream(new FileInputStream(bamFile))));
 			verifyMagicNumber(in);
 			
-			SamHeader header = parseHeader(new TextLineParser(IOUtil.toInputStream(readPascalString(in))));
+			SamHeader.Builder headerBuilder = parseHeader(new TextLineParser(IOUtil.toInputStream(readPascalString(in))));
 			int referenceCount = getSignedInt(in);
 			String[] refNames = new String[referenceCount];
 			for(int i=0; i<referenceCount; i++){
 				String name = readPascalString(in);
 				refNames[i] = name;
 				int length = getSignedInt(in);
+				//add ref to header if not yet present
+				if(!headerBuilder.hasReferenceSequence(name)){
+					headerBuilder.addReferenceSequence(new ReferenceSequence.Builder(name,length)
+														.build());
+				}
 				//TODO do we need to add the refs
-				//to the header? isn't this already in the header?
+				
 			}
+			SamHeader header = headerBuilder.build();
 			visitor.visitHeader(header);
 			
 			while(in.isOpen()){	
@@ -113,17 +121,17 @@ public class BamFileParser extends AbstractSamFileParser {
 				//SAM is 1-based
 				builder.setStartPosition(getSignedInt(in)+1);
 				long binMqReadLength = getUnsignedInt(in);
-				int bin = (int)((binMqReadLength & 0xFF00 ) >>16);
-				byte mapQuality = (byte)((binMqReadLength & 0xF0 ) >>8);
+				int bin = (int)((binMqReadLength>>16) & 0xFFFF);
+				byte mapQuality = (byte)((binMqReadLength>>8) & 0xFF);
 				builder.setMappingQuality(mapQuality);
-				int readNameLength = (int)(binMqReadLength & 0xF);
+				int readNameLength = (int)(binMqReadLength & 0xFF);
 				
 				long flagsNumCigarOps = getUnsignedInt(in);
-				int bitFlags = (int)((flagsNumCigarOps & 0xFF00 ) >>16);
+				int bitFlags = (int)((flagsNumCigarOps>>16) & 0xFFFF);
 				
 				Set<SamRecordFlags> flags = SamRecordFlags.parseFlags(bitFlags);
 				builder.setFlags(flags);
-				int numCigarOps = (int)(flagsNumCigarOps & 0xFF);
+				int numCigarOps = (int)(flagsNumCigarOps & 0xFFFF);
 				int seqLength = getSignedInt(in);
 				
 				
@@ -159,6 +167,10 @@ public class BamFileParser extends AbstractSamFileParser {
 				//bytes read so far
 				//8*int32s + char[readNameLength) + int32[numCigarOps] +uint8[(l_seq+1)/2] +char[l_seq])
 				int bytesReadSoFar = 32+ 4*numCigarOps + readNameLength+ (seqLength+1)/2+ seqLength;
+				//TODO actually parse attributes
+				long attributeBytes = blockSize - bytesReadSoFar;
+				IOUtil.blockingSkip(in, attributeBytes);
+				/*
 				while(bytesReadSoFar < blockSize){
 					//read optional attribute
 					char key1 = (char) in.read();
@@ -175,6 +187,7 @@ public class BamFileParser extends AbstractSamFileParser {
 					
 				//	SamAttributeType type = SamAttributeType.parseType((char) in.read(), value)
 				}
+				*/
 				
 				visitor.visitRecord(builder.build());
 			}
@@ -187,6 +200,19 @@ public class BamFileParser extends AbstractSamFileParser {
 		byte[] seqBytes = new byte[(seqLength+1)/2];
 		IOUtil.blockingRead(in, seqBytes);
 		NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(seqLength);
+		//first fully populate all but last byte
+		for(int i=0; i<seqBytes.length-1; i++){
+			byte value = seqBytes[i];
+			builder.append(ENCODED_BASES[(value>>4) & 0x0F]);
+			builder.append(ENCODED_BASES[value & 0x0F]);
+		}
+		byte lastByte = seqBytes[seqBytes.length-1];
+		//for last byte we should always include high nibble
+		builder.append(ENCODED_BASES[(lastByte>>4) & 0x0F]);
+		//only include lower nibble if we are even
+		if(seqLength %2 ==0){
+			builder.append(ENCODED_BASES[lastByte & 0x0F]);
+		}
 		//TODO '=' char not support
 		//which is used to mean "same as reference"
 		//we would need to link to the reference seq

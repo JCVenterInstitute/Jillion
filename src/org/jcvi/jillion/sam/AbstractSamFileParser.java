@@ -12,13 +12,13 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
 import org.jcvi.jillion.sam.header.ReadGroup;
+import org.jcvi.jillion.sam.header.ReadGroup.PlatformTechnology;
 import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.sam.header.SamHeader.Builder;
 import org.jcvi.jillion.sam.header.SamProgram;
 import org.jcvi.jillion.sam.header.SamVersion;
 import org.jcvi.jillion.sam.header.SortOrder;
-import org.jcvi.jillion.sam.header.ReadGroup.PlatformTechnology;
-import org.jcvi.jillion.sam.header.SamHeader.Builder;
 
 abstract class AbstractSamFileParser implements SamParser{
 
@@ -46,7 +46,7 @@ abstract class AbstractSamFileParser implements SamParser{
 		super();
 	}
 
-	protected SamHeader parseHeader(TextLineParser parser) throws IOException {
+	protected SamHeader.Builder parseHeader(TextLineParser parser) throws IOException {
 		
 		SamHeader.Builder headerBuilder = new SamHeader.Builder();
 		String currentLine = parser.nextLine();
@@ -78,7 +78,7 @@ abstract class AbstractSamFileParser implements SamParser{
 				currentLine = parser.nextLine();
 			}
 		}
-		return headerBuilder.build();
+		return headerBuilder;
 	}
 
 	private void handleHeaderLine(String firstLine,
