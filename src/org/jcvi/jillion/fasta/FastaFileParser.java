@@ -283,7 +283,8 @@ public abstract class FastaFileParser implements FastaParser{
 	}
 	private static class InputStreamFastaParser extends FastaFileParser{
 		private final OpenAwareInputStream inputStream;
-
+		private boolean hasParsedBefore= false;
+		
 		public InputStreamFastaParser(InputStream inputStream) {
 			this.inputStream = new OpenAwareInputStream(inputStream);
 		}
@@ -307,6 +308,14 @@ public abstract class FastaFileParser implements FastaParser{
 
 		@Override
 		protected InputStream getInputStream() throws IOException {
+			//this is a work around to fix a regression
+			//where we give an empty stream
+			//first time should not throw an error
+			//even if there is nothing to parse.
+			if(!hasParsedBefore){
+				return inputStream;
+			}
+			hasParsedBefore = true;
 			if(canParse()){
 				return inputStream;
 			}

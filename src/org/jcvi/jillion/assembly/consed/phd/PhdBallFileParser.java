@@ -522,6 +522,7 @@ public abstract class PhdBallFileParser implements PhdBallParser{
 	private static final class InputStreamBasedPhdBallParser extends PhdBallFileParser{
 
 		private final OpenAwareInputStream in;
+    	private boolean hasParsedBefore=false;
     	
 		public InputStreamBasedPhdBallParser(InputStream in) {
 			if(in ==null){
@@ -533,12 +534,17 @@ public abstract class PhdBallFileParser implements PhdBallParser{
 		@Override
 		public void accept(PhdBallVisitor visitor) throws IOException {
 			
-			if(!canParse()){
-				throw new IllegalStateException("can not accept - inputstream has been closed");
-			}
 			if(visitor==null){
 				throw new NullPointerException("visitor can not be null");
 			}
+			//this is a work around to fix a regression
+			//where we give an empty stream
+			//first time should not throw an error
+			//even if there is nothing to parse.
+			if(hasParsedBefore && !canParse()){
+				throw new IllegalStateException("can not accept - inputstream has been closed");
+			}
+			hasParsedBefore=true;
 			TextLineParser parser =null;
 			try{
 				parser = new TextLineParser(in);
