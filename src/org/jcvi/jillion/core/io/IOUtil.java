@@ -453,16 +453,30 @@ public final class IOUtil {
     public static short[] readShortArray(InputStream in, int numberOfShortsToRead) throws IOException {
         short[] array = new short[numberOfShortsToRead];
         for(int i=0; i<numberOfShortsToRead; i++){
-        	//borrowed from DataInputStream#readShort()
-        	int ch1 = in.read();
-            int ch2 = in.read();
-            if ((ch1 | ch2) < 0){
-                throw new EOFException();
-            }
-            array[i]= (short)((ch1 << 8) + (ch2 << 0));
+            array[i]= readSignedShort(in);
         }
         return array;
     }
+    public static byte[] readByteArray(InputStream in, int length) throws IOException {
+        byte[] array = new byte[length];
+        IOUtil.blockingRead(in, array);
+        return array;
+    }
+    
+    public static int[] readIntArray(InputStream in, int numberOfIntsToRead) throws IOException {
+    		int[] array = new int[numberOfIntsToRead];
+         for(int i=0; i<numberOfIntsToRead; i++){
+             array[i]= readSignedInt(in);
+         }
+         return array;
+	}
+    public static float[] readFloatArray(InputStream in, int numberOfFloatsToRead) throws IOException {
+		float[] array = new float[numberOfFloatsToRead];
+	     for(int i=0; i<numberOfFloatsToRead; i++){
+	         array[i]= readFloat(in);
+	     }
+	     return array;
+}
 
     public static void putShortArray(ByteBuffer buf, short[] array){
         for(int i=0; i< array.length; i++){
@@ -577,6 +591,29 @@ public final class IOUtil {
         return new BigInteger(1,
                  IOUtil.toByteArray(in, 1, endian)).shortValue();
      }
+    
+    
+    public static short readSignedShort(InputStream in ) throws IOException {
+        int ch1 = in.read();
+        int ch2 = in.read();
+        if ((ch1 | ch2) < 0)
+            throw new EOFException();
+        return (short)((ch1 << 8) + (ch2 << 0));
+    }
+    
+    public static int readSignedInt(InputStream in) throws IOException {
+        int ch1 = in.read();
+        int ch2 = in.read();
+        int ch3 = in.read();
+        int ch4 = in.read();
+        if ((ch1 | ch2 | ch3 | ch4) < 0)
+            throw new EOFException();
+        return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
+    }
+    
+    public static float readFloat(InputStream in) throws IOException {
+        return Float.intBitsToFloat(readSignedInt(in));
+    }
     
     public static BigInteger getUnsignedLong(ByteBuffer buf) throws IOException{
         byte[] tmp = new byte[8];
@@ -1026,4 +1063,5 @@ public final class IOUtil {
 		return new ByteArrayInputStream(input.getBytes(charset));
 		
 	}
+	
 }

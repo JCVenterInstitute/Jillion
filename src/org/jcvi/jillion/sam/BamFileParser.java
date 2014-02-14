@@ -20,7 +20,12 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
+import org.jcvi.jillion.sam.attribute.InvalidAttributeException;
 import org.jcvi.jillion.sam.attribute.ReservedAttributeValidator;
+import org.jcvi.jillion.sam.attribute.SamAttribute;
+import org.jcvi.jillion.sam.attribute.SamAttributeKey;
+import org.jcvi.jillion.sam.attribute.SamAttributeKeyFactory;
+import org.jcvi.jillion.sam.attribute.SamAttributeType;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 import org.jcvi.jillion.sam.cigar.Cigar;
 import org.jcvi.jillion.sam.cigar.CigarOperation;
@@ -190,27 +195,24 @@ public class BamFileParser extends AbstractSamFileParser {
 				//bytes read so far
 				//8*int32s + char[readNameLength) + int32[numCigarOps] +uint8[(l_seq+1)/2] +char[l_seq])
 				int bytesReadSoFar = 32+ 4*numCigarOps + readNameLength+ (seqLength+1)/2+ seqLength;
-				//TODO actually parse attributes
-				long attributeBytes = blockSize - bytesReadSoFar;
-				IOUtil.blockingSkip(tmp, attributeBytes);
-				/*
-				while(bytesReadSoFar < blockSize){
-					//read optional attribute
-					char key1 = (char) in.read();
-					char key2 = (char) in.read();
-					//TODO we need to parse the
-					//value based on the stream
-					//AND set the value.
-					//currently we can only create a type
-					//after we have parsed the value.
-					//also need to know how many bytes have been parsed
-					//in the value to updateBytesReadSoFar
-					//
-					//char type = ;
-					
-				//	SamAttributeType type = SamAttributeType.parseType((char) in.read(), value)
+
+				int attributeByteLength = (int)( blockSize - bytesReadSoFar);
+				if(attributeByteLength >0){
+					byte[] attributeBytes = new byte[attributeByteLength];
+					IOUtil.blockingRead(in, attributeBytes);
+					//IOUtil.blockingSkip(tmp, attributeBytes);
+					OpenAwareInputStream attributeStream = new OpenAwareInputStream(new ByteArrayInputStream(attributeBytes));
+					while(attributeStream.isOpen()){
+						
+						SamAttribute attribute = parseAttribute(attributeStream);
+						try {
+							builder.addAttribute(attribute);
+						} catch (InvalidAttributeException e) {
+							throw new IOException("invalid attribute " + attribute, e);
+						}
+					}
 				}
-				*/
+				
 				
 				visitor.visitRecord(builder.build());
 			}
@@ -218,6 +220,85 @@ public class BamFileParser extends AbstractSamFileParser {
 		}finally{
 			IOUtil.closeAndIgnoreErrors(in);
 		}
+	}
+	private SamAttribute parseAttribute(OpenAwareInputStream in) throws IOException {
+		SamAttributeKey key = SamAttributeKeyFactory.getKey((char) in.read(), (char) in.read());
+		
+		char type = (char) in.read();
+		switch(type){
+		//all single integer types are actually just SIGNED_INT in SAM
+			case 'i' :  return new SamAttribute(key, SamAttributeType.SIGNED_INT,  IOUtil.readSignedInt(in));
+			case 'I' : return new SamAttribute(key, SamAttributeType.SIGNED_INT, IOUtil.readUnsignedInt(in));
+
+			case 'Z' : return new SamAttribute(key, SamAttributeType.STRING, readNullTerminatedStringAttribute(in));
+			case 'B' : return handleArray(key,in);
+			case 'A':
+				return new SamAttribute(key, SamAttributeType.PRINTABLE_CHARACTER,  Character.valueOf((char)in.read()));
+			case 'c':
+				return new SamAttribute(key, SamAttributeType.SIGNED_INT,  in.read());
+			case 'C' : return new SamAttribute(key, SamAttributeType.SIGNED_INT,  IOUtil.readUnsignedByte(in));
+			case 's' : return new SamAttribute(key, SamAttributeType.SIGNED_INT,  IOUtil.readSignedShort(in));
+			case 'S' : return new SamAttribute(key, SamAttributeType.SIGNED_INT,  IOUtil.readUnsignedShort(in));
+			
+			case 'f' : return new SamAttribute(key, SamAttributeType.FLOAT,  IOUtil.readFloat(in));
+			
+			
+			case 'H' : return new SamAttribute(key, SamAttributeType.BYTE_ARRAY_IN_HEX,  toByteArray(readNullTerminatedStringAttribute(in))); 
+			default : throw new IOException("unknown type : " + type);
+		}
+		
+	}
+	
+	
+	private SamAttribute handleArray(SamAttributeKey key, OpenAwareInputStream in) throws IOException {
+		char arrayType = (char) in.read();
+		int length = IOUtil.readSignedInt(in);
+		//for memory packing, we read everything as
+		//signed primitives. The SamAttributeType
+		//class will handle converting the signed to unsigned
+		//values for us without having to take up 2x the memory.
+		switch(arrayType){
+			case 'i' : return new SamAttribute(key, SamAttributeType.SIGNED_INT_ARRAY, IOUtil.readIntArray(in, length));
+			case 'I' : return new SamAttribute(key, SamAttributeType.UNSIGNED_INT_ARRAY, IOUtil.readIntArray(in, length));
+			
+			case 'c':
+				return new SamAttribute(key, SamAttributeType.SIGNED_BYTE_ARRAY, IOUtil.readByteArray(in, length));
+			case 'C' : return new SamAttribute(key, SamAttributeType.UNSIGNED_BYTE_ARRAY, IOUtil.readByteArray(in, length));
+			case 's' : return new SamAttribute(key, SamAttributeType.SIGNED_SHORT_ARRAY, IOUtil.readShortArray(in, length));
+			case 'S' : return new SamAttribute(key, SamAttributeType.UNSIGNED_SHORT_ARRAY, IOUtil.readShortArray(in, length));
+			
+			case 'f' : return new SamAttribute(key, SamAttributeType.FLOAT_ARRAY, IOUtil.readFloatArray(in, length));
+			
+			default : throw new IOException("unknown array type : " + arrayType);
+		}
+
+	}
+
+	private byte[] toByteArray(String hex) {
+		//2 chars per byte
+		byte[] array = new byte[hex.length()/2];
+		char[] chars = hex.toCharArray();
+		for(int i=0; i<chars.length; i+=2){
+			array[i] = Byte.parseByte(new String(chars, i, 2),16);
+		}
+		return array;
+	}
+	
+	private String readNullTerminatedStringAttribute(OpenAwareInputStream in) throws IOException {
+		//it looks like Strings are just null terminated
+		//the length is not encoded
+		//so just keep reading till we get to '\0'
+		boolean done = false;
+		StringBuilder builder = new StringBuilder();
+		do{
+			int value = in.read();
+			if(value == -1 || value ==0){
+				done =true;
+			}else{
+				builder.append((char)value);
+			}
+		}while(!done && in.isOpen());
+		return builder.toString();
 	}
 	private NucleotideSequence readSequence(InputStream in, int seqLength) throws IOException {
 		byte[] seqBytes = new byte[(seqLength+1)/2];
