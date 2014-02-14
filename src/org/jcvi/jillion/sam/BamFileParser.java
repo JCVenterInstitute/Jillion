@@ -104,122 +104,140 @@ public class BamFileParser extends AbstractSamFileParser {
 			verifyMagicNumber(in);
 			
 			SamHeader.Builder headerBuilder = parseHeader(new TextLineParser(IOUtil.toInputStream(readPascalString(in))));
-			int referenceCount = getSignedInt(in);
-			//The reference names
-			//are only given by 
-			//index in the SAM records
-			//below, so we will need to
-			//keep an array of the names
-			//in the correct order so we know
-			//what everything is named.
-			String[] refNames = new String[referenceCount];
-			
-			
-			for(int i=0; i<referenceCount; i++){
-				String name = readPascalString(in);
-				refNames[i] = name;
-				int length = getSignedInt(in);
-				//add ref to header if not yet present
-				if(!headerBuilder.hasReferenceSequence(name)){
-					headerBuilder.addReferenceSequence(new ReferenceSequence.Builder(name,length)
-														.build());
-				}
-			
-				
-			}
+			String[] refNames = parseReferenceNamesAndAddToHeader(in, headerBuilder);
 			SamHeader header = headerBuilder.build();
 			visitor.visitHeader(header);
 			
 			while(in.isOpen()){	
-				//next alignment
-				int blockSize = getSignedInt(in);
-				byte[] buf = new byte[blockSize];
-				IOUtil.blockingRead(in, buf);
-				InputStream tmp = new ByteArrayInputStream(buf);
-				SamRecord.Builder builder = new SamRecord.Builder(header, validator);
-				
-				int refId = getSignedInt(tmp);
-				if(refId >=0){
-					builder.setReferenceName(refNames[refId]);
-				}
-				//NOTE bam is 0-based while
-				//SAM is 1-based
-				builder.setStartPosition(getSignedInt(tmp)+1);
-				long binMqReadLength = getUnsignedInt(tmp);
-				int bin = (int)((binMqReadLength>>16) & 0xFFFF);
-				byte mapQuality = (byte)((binMqReadLength>>8) & 0xFF);
-				builder.setMappingQuality(mapQuality);
-				int readNameLength = (int)(binMqReadLength & 0xFF);
-				
-				long flagsNumCigarOps = getUnsignedInt(tmp);
-				int bitFlags = (int)((flagsNumCigarOps>>16) & 0xFFFF);
-				
-				Set<SamRecordFlags> flags = SamRecordFlags.parseFlags(bitFlags);
-				builder.setFlags(flags);
-				int numCigarOps = (int)(flagsNumCigarOps & 0xFFFF);
-				int seqLength = getSignedInt(tmp);
-				
-				
-				int nextRefId = getSignedInt(tmp);
-				if(nextRefId >=0){
-					builder.setNextReferenceName(refNames[nextRefId]);
-				}
-				//NOTE bam is 0-based while
-				//SAM is 1-based
-				builder.setNextPosition(getSignedInt(tmp)+1);
-				builder.setObservedTemplateLength(getSignedInt(tmp));
-				
-				String readId = readNullTerminatedString(tmp, readNameLength);
-				builder.setQueryName(readId);
-				
-				Cigar.Builder cigarBuilder = new Cigar.Builder(numCigarOps);
-				if(numCigarOps >0){
-					for(int i=0; i<numCigarOps; i++){
-						long bits = getUnsignedInt(tmp);
-						int opCode = (int)(bits &0xF);
-						int length = (int)(bits>>4);
-						if(length==0){
-							System.out.println("here");
-						}
-						cigarBuilder.addElement(CigarOperation.parseBinary(opCode), length);
-					}
-					builder.setCigar(cigarBuilder.build());
-				}
-				if(seqLength >0){
-					
-					NucleotideSequence seq = readSequence(tmp,seqLength);
-					builder.setSequence(seq);
-					builder.setQualities(readQualities(tmp, seqLength));
-					
-				}
-				//bytes read so far
-				//8*int32s + char[readNameLength) + int32[numCigarOps] +uint8[(l_seq+1)/2] +char[l_seq])
-				int bytesReadSoFar = 32+ 4*numCigarOps + readNameLength+ (seqLength+1)/2+ seqLength;
-
-				int attributeByteLength = (int)( blockSize - bytesReadSoFar);
-				if(attributeByteLength >0){
-					byte[] attributeBytes = new byte[attributeByteLength];
-					IOUtil.blockingRead(in, attributeBytes);
-					//IOUtil.blockingSkip(tmp, attributeBytes);
-					OpenAwareInputStream attributeStream = new OpenAwareInputStream(new ByteArrayInputStream(attributeBytes));
-					while(attributeStream.isOpen()){
-						
-						SamAttribute attribute = parseAttribute(attributeStream);
-						try {
-							builder.addAttribute(attribute);
-						} catch (InvalidAttributeException e) {
-							throw new IOException("invalid attribute " + attribute, e);
-						}
-					}
-				}
-				
-				
-				visitor.visitRecord(builder.build());
+				SamRecord record = parseNextSamRecord(in, refNames, header);
+				visitor.visitRecord(record);
 			}
 			visitor.visitEnd();
 		}finally{
 			IOUtil.closeAndIgnoreErrors(in);
 		}
+	}
+	
+	private SamRecord parseNextSamRecord(OpenAwareInputStream in, String[] refNames, SamHeader header) throws IOException {
+		//next alignment
+		int blockSize = getSignedInt(in);
+		SamRecord.Builder builder = new SamRecord.Builder(header, validator);
+		
+		int refId = getSignedInt(in);
+		if(refId >=0){
+			builder.setReferenceName(refNames[refId]);
+		}
+		//NOTE bam is 0-based while
+		//SAM is 1-based
+		builder.setStartPosition(getSignedInt(in)+1);
+		
+		long binMqReadLength = getUnsignedInt(in);
+		int bin = (int)((binMqReadLength>>16) & 0xFFFF);
+		byte mapQuality = (byte)((binMqReadLength>>8) & 0xFF);
+		builder.setMappingQuality(mapQuality);
+		int readNameLength = (int)(binMqReadLength & 0xFF);
+		
+		long flagsNumCigarOps = getUnsignedInt(in);
+		int bitFlags = (int)((flagsNumCigarOps>>16) & 0xFFFF);
+		
+		Set<SamRecordFlags> flags = SamRecordFlags.parseFlags(bitFlags);
+		builder.setFlags(flags);
+		int numCigarOps = (int)(flagsNumCigarOps & 0xFFFF);
+		int seqLength = getSignedInt(in);
+		
+		
+		int nextRefId = getSignedInt(in);
+		if(nextRefId >=0){
+			builder.setNextReferenceName(refNames[nextRefId]);
+		}
+		//NOTE bam is 0-based while
+		//SAM is 1-based
+		builder.setNextPosition(getSignedInt(in)+1);
+		builder.setObservedTemplateLength(getSignedInt(in));
+		
+		String readId = readNullTerminatedString(in, readNameLength);
+		builder.setQueryName(readId);
+		
+		
+		if(numCigarOps >0){
+			Cigar cigar = parseCigar(in, numCigarOps);
+			builder.setCigar(cigar);
+		}
+		if(seqLength >0){			
+			NucleotideSequence seq = readSequence(in,seqLength);
+			builder.setSequence(seq);
+			builder.setQualities(readQualities(in, seqLength));			
+		}
+		//bytes read so far
+		//8*int32s + char[readNameLength) + int32[numCigarOps] +uint8[(l_seq+1)/2] +char[l_seq])
+		int bytesReadSoFar = 32+ 4*numCigarOps + readNameLength+ (seqLength+1)/2+ seqLength;
+
+		parseAttributesIfAnyAndAddToBuilder(in, builder, blockSize,	bytesReadSoFar);
+		
+		
+		SamRecord record = builder.build();
+		return record;
+	}
+	private Cigar parseCigar(OpenAwareInputStream in, int numCigarOps)
+			throws IOException {
+		Cigar.Builder cigarBuilder = new Cigar.Builder(numCigarOps);
+		for(int i=0; i<numCigarOps; i++){
+			long bits = getUnsignedInt(in);
+			int opCode = (int)(bits &0xF);
+			int length = (int)(bits>>4);
+			cigarBuilder.addElement(CigarOperation.parseBinary(opCode), length);
+		}
+		Cigar cigar = cigarBuilder.build();
+		return cigar;
+	}
+	private void parseAttributesIfAnyAndAddToBuilder(OpenAwareInputStream in,
+			SamRecord.Builder builder, int blockSize, int bytesReadSoFar)
+			throws IOException {
+		int attributeByteLength = (int)( blockSize - bytesReadSoFar);
+		if(attributeByteLength >0){
+			//to simplify parsing
+			//to slurp up the all the bytes for the attributes
+			//and read through them as a new InputStream
+			byte[] attributeBytes = new byte[attributeByteLength];
+			IOUtil.blockingRead(in, attributeBytes);
+			OpenAwareInputStream attributeStream = new OpenAwareInputStream(new ByteArrayInputStream(attributeBytes));
+			while(attributeStream.isOpen()){
+				
+				SamAttribute attribute = parseAttribute(attributeStream);
+				try {
+					builder.addAttribute(attribute);
+				} catch (InvalidAttributeException e) {
+					throw new IOException("invalid attribute " + attribute, e);
+				}
+			}
+		}
+	}
+	private String[] parseReferenceNamesAndAddToHeader(OpenAwareInputStream in,
+			SamHeader.Builder headerBuilder) throws IOException {
+		int referenceCount = getSignedInt(in);
+		//The reference names
+		//are only given by 
+		//index in the SAM records
+		//below, so we will need to
+		//keep an array of the names
+		//in the correct order so we know
+		//what everything is named.
+		String[] refNames = new String[referenceCount];
+		
+		
+		for(int i=0; i<referenceCount; i++){
+			String name = readPascalString(in);
+			refNames[i] = name;
+			int length = getSignedInt(in);
+			//add ref to header if not yet present
+			if(!headerBuilder.hasReferenceSequence(name)){
+				headerBuilder.addReferenceSequence(new ReferenceSequence.Builder(name,length)
+													.build());
+			}
+		
+			
+		}
+		return refNames;
 	}
 	private SamAttribute parseAttribute(OpenAwareInputStream in) throws IOException {
 		SamAttributeKey key = SamAttributeKeyFactory.getKey((char) in.read(), (char) in.read());
