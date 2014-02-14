@@ -31,7 +31,12 @@ import org.jcvi.jillion.sam.cigar.Cigar;
 import org.jcvi.jillion.sam.cigar.CigarOperation;
 import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
-
+/**
+ * {@code BamFileParser} is a {@link SamParser}
+ * that can parse BAM encoded files.
+ * @author dkatzel
+ *
+ */
 public class BamFileParser extends AbstractSamFileParser {
 
 	
@@ -63,6 +68,8 @@ public class BamFileParser extends AbstractSamFileParser {
 		ENCODED_BASES[14] = Nucleotide.NotAdenine;
 		ENCODED_BASES[15] = Nucleotide.Unknown;
 	}
+	
+	
 	public BamFileParser(File bamFile) throws IOException {
 		if(bamFile ==null){
 			throw new NullPointerException("bam file can not be null");
@@ -92,13 +99,6 @@ public class BamFileParser extends AbstractSamFileParser {
 		OpenAwareInputStream in=null;
 		
 		try{
-			//in= new OpenAwareInputStream(new BgzfInputStream(bamFile));
-			//TODO write BgzfInputStream implementation for 
-			//java 6 support?
-			//GZIPInputStream bug that prevented reading
-			//concatenated GZIP blocks was fixed in an early
-			//Java 7 release.
-			//in = new OpenAwareInputStream(new GZIPInputStream(new FileInputStream(bamFile)));
 			in = new OpenAwareInputStream(new ConcatenatedGZipInputStream(new BufferedInputStream(new FileInputStream(bamFile))));
 			
 			verifyMagicNumber(in);
@@ -375,14 +375,6 @@ public class BamFileParser extends AbstractSamFileParser {
 		
 	}
 	
-	private String readString(InputStream in, int length) throws IOException {
-		//TODO spec says char[] does
-		//that mean 2 bytes per element?
-		byte[] data = new byte[length];
-		IOUtil.blockingRead(in, data);
-		return new String(data, IOUtil.UTF_8);
-		
-	}
 	
 	
 }
