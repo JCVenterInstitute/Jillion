@@ -1,6 +1,6 @@
 package org.jcvi.jillion.sam;
 
-import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -87,12 +87,30 @@ public class BamFileParser extends AbstractSamFileParser {
 		OpenAwareInputStream in=null;
 		
 		try{
-			in= new OpenAwareInputStream(new GZIPInputStream(new BufferedInputStream(new FileInputStream(bamFile))));
+			//in= new OpenAwareInputStream(new BgzfInputStream(bamFile));
+			//TODO write BgzfInputStream implementation for 
+			//java 6 support?
+			//GZIPInputStream bug that prevented reading
+			//concatenated GZIP blocks was fixed in an early
+			//Java 7 release.
+			//in = new OpenAwareInputStream(new GZIPInputStream(new FileInputStream(bamFile)));
+			in = new OpenAwareInputStream(new ConcatenatedGZipInputStream(new FileInputStream(bamFile)));
+			
 			verifyMagicNumber(in);
 			
 			SamHeader.Builder headerBuilder = parseHeader(new TextLineParser(IOUtil.toInputStream(readPascalString(in))));
 			int referenceCount = getSignedInt(in);
+			//The reference names
+			//are only given by 
+			//index in the SAM records
+			//below, so we will need to
+			//keep an array of the names
+			//in the correct order so we know
+			//what everything is named.
 			String[] refNames = new String[referenceCount];
+			
+			int numReadsSoFar = 0;
+			
 			for(int i=0; i<referenceCount; i++){
 				String name = readPascalString(in);
 				refNames[i] = name;
@@ -102,7 +120,7 @@ public class BamFileParser extends AbstractSamFileParser {
 					headerBuilder.addReferenceSequence(new ReferenceSequence.Builder(name,length)
 														.build());
 				}
-				//TODO do we need to add the refs
+			
 				
 			}
 			SamHeader header = headerBuilder.build();
@@ -110,58 +128,66 @@ public class BamFileParser extends AbstractSamFileParser {
 			
 			while(in.isOpen()){	
 				//next alignment
-				long blockSize = getSignedInt(in);
+				int blockSize = getSignedInt(in);
+				byte[] buf = new byte[blockSize];
+				IOUtil.blockingRead(in, buf);
+				InputStream tmp = new ByteArrayInputStream(buf);
 				SamRecord.Builder builder = new SamRecord.Builder(header, validator);
+				numReadsSoFar++;
+				System.out.println(numReadsSoFar);
 				
-				int refId = getSignedInt(in);
+				int refId = getSignedInt(tmp);
 				if(refId >=0){
 					builder.setReferenceName(refNames[refId]);
 				}
 				//NOTE bam is 0-based while
 				//SAM is 1-based
-				builder.setStartPosition(getSignedInt(in)+1);
-				long binMqReadLength = getUnsignedInt(in);
+				builder.setStartPosition(getSignedInt(tmp)+1);
+				long binMqReadLength = getUnsignedInt(tmp);
 				int bin = (int)((binMqReadLength>>16) & 0xFFFF);
 				byte mapQuality = (byte)((binMqReadLength>>8) & 0xFF);
 				builder.setMappingQuality(mapQuality);
 				int readNameLength = (int)(binMqReadLength & 0xFF);
 				
-				long flagsNumCigarOps = getUnsignedInt(in);
+				long flagsNumCigarOps = getUnsignedInt(tmp);
 				int bitFlags = (int)((flagsNumCigarOps>>16) & 0xFFFF);
 				
 				Set<SamRecordFlags> flags = SamRecordFlags.parseFlags(bitFlags);
 				builder.setFlags(flags);
 				int numCigarOps = (int)(flagsNumCigarOps & 0xFFFF);
-				int seqLength = getSignedInt(in);
+				int seqLength = getSignedInt(tmp);
 				
 				
-				int nextRefId = getSignedInt(in);
+				int nextRefId = getSignedInt(tmp);
 				if(nextRefId >=0){
 					builder.setNextReferenceName(refNames[nextRefId]);
 				}
 				//NOTE bam is 0-based while
 				//SAM is 1-based
-				builder.setNextPosition(getSignedInt(in)+1);
-				builder.setObservedTemplateLength(getSignedInt(in));
+				builder.setNextPosition(getSignedInt(tmp)+1);
+				builder.setObservedTemplateLength(getSignedInt(tmp));
 				
-				String readId = readString(in, readNameLength);
+				String readId = readNullTerminatedString(tmp, readNameLength);
 				builder.setQueryName(readId);
 				
 				Cigar.Builder cigarBuilder = new Cigar.Builder(numCigarOps);
 				if(numCigarOps >0){
 					for(int i=0; i<numCigarOps; i++){
-						long bits = getUnsignedInt(in);
+						long bits = getUnsignedInt(tmp);
 						int opCode = (int)(bits &0xF);
 						int length = (int)(bits>>4);
+						if(length==0){
+							System.out.println("here");
+						}
 						cigarBuilder.addElement(CigarOperation.parseBinary(opCode), length);
 					}
 					builder.setCigar(cigarBuilder.build());
 				}
 				if(seqLength >0){
 					
-					NucleotideSequence seq = readSequence(in,seqLength);
+					NucleotideSequence seq = readSequence(tmp,seqLength);
 					builder.setSequence(seq);
-					builder.setQualities(readQualities(in, seqLength));
+					builder.setQualities(readQualities(tmp, seqLength));
 					
 				}
 				//bytes read so far
@@ -169,7 +195,7 @@ public class BamFileParser extends AbstractSamFileParser {
 				int bytesReadSoFar = 32+ 4*numCigarOps + readNameLength+ (seqLength+1)/2+ seqLength;
 				//TODO actually parse attributes
 				long attributeBytes = blockSize - bytesReadSoFar;
-				IOUtil.blockingSkip(in, attributeBytes);
+				IOUtil.blockingSkip(tmp, attributeBytes);
 				/*
 				while(bytesReadSoFar < blockSize){
 					//read optional attribute
@@ -203,8 +229,13 @@ public class BamFileParser extends AbstractSamFileParser {
 		//first fully populate all but last byte
 		for(int i=0; i<seqBytes.length-1; i++){
 			byte value = seqBytes[i];
+			try{
 			builder.append(ENCODED_BASES[(value>>4) & 0x0F]);
 			builder.append(ENCODED_BASES[value & 0x0F]);
+			}catch(RuntimeException t){
+				System.out.println( " i = " + i + " value = " + value);
+				throw t;
+			}
 		}
 		byte lastByte = seqBytes[seqBytes.length-1];
 		//for last byte we should always include high nibble
@@ -254,14 +285,25 @@ public class BamFileParser extends AbstractSamFileParser {
 
 	private String readPascalString(InputStream in ) throws IOException{
 		int length =getSignedInt(in);
-		return readString(in, length);
+		return readNullTerminatedString(in, length);
 	}
+	private String readNullTerminatedString(InputStream in, int lengthIncludingNull) throws IOException {
+		//TODO spec says char[] does
+		//that mean 2 bytes per element?
+		byte[] data = new byte[lengthIncludingNull];
+		IOUtil.blockingRead(in, data);
+		//don't include \0 at end of string
+		return new String(data, 0, lengthIncludingNull-1,IOUtil.UTF_8);
+		
+	}
+	
 	private String readString(InputStream in, int length) throws IOException {
 		//TODO spec says char[] does
 		//that mean 2 bytes per element?
 		byte[] data = new byte[length];
 		IOUtil.blockingRead(in, data);
 		return new String(data, IOUtil.UTF_8);
+		
 	}
 	
 	
