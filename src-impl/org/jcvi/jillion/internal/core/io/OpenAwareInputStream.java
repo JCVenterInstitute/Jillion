@@ -119,9 +119,9 @@ public class OpenAwareInputStream extends InputStream{
 			if(value != EOF){
 				//put it back so we can read it again later
 				in.unread(value);
-			}
-			
-			return true;
+				return true;
+			}			
+			return false;
 		}catch(IOException e){
 			//assume exception means closed?
 			return false;

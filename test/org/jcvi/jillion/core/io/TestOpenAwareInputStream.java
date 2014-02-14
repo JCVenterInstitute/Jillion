@@ -41,21 +41,41 @@ public class TestOpenAwareInputStream {
 	}
 	
 	@Test
+	public void readingUntilEOFShouldMakeNotOpen() throws IOException{
+		OpenAwareInputStream sut = new OpenAwareInputStream(new ByteArrayInputStream(bytes));
+		assertTrue(sut.isOpen());
+		try{
+			while(true){
+				if(sut.read() == -1){
+					break;
+				}
+			}
+			assertFalse(sut.isOpen());
+		}finally{
+			IOUtil.closeAndIgnoreErrors(sut);
+		}
+	}
+	
+	@Test
 	public void readEntireStreamWithoutCheckingIsOpen() throws IOException{
 		ByteArrayInputStream in = new ByteArrayInputStream(bytes);
 		ByteArrayOutputStream out = new ByteArrayOutputStream(bytes.length);
 		OpenAwareInputStream sut = new OpenAwareInputStream(in);
-		
-		while(true){
-			int b = sut.read();
-			if(b ==-1){
-				break;
+
+		try{
+			while(true){
+				int b = sut.read();
+				if(b ==-1){
+					break;
+				}
+				out.write(b);
 			}
-			out.write(b);
+			assertArrayEquals(bytes, out.toByteArray());
+			//we've seen eof so is not open
+			assertFalse(sut.isOpen());
+		}finally{
+			IOUtil.closeAndIgnoreErrors(sut);
 		}
-		assertArrayEquals(bytes, out.toByteArray());
-		//still open even though we see EOF
-		assertTrue(sut.isOpen());
 	}
 	@Test
 	public void readAndCheckIsOpenEachTime() throws IOException{
@@ -63,55 +83,65 @@ public class TestOpenAwareInputStream {
 		ByteArrayOutputStream out = new ByteArrayOutputStream(bytes.length);
 		OpenAwareInputStream sut = new OpenAwareInputStream(in);
 		
-		while(sut.isOpen()){
-			int b = sut.read();
-			if(b ==-1){
-				break;
+		try{
+			while(sut.isOpen()){
+				int b = sut.read();
+				if(b ==-1){
+					break;
+				}
+				out.write(b);
+				
 			}
-			out.write(b);
-			
+			assertArrayEquals(bytes, out.toByteArray());
+			//we've seen eof so is not open
+			assertFalse(sut.isOpen());
+		}finally{
+			IOUtil.closeAndIgnoreErrors(sut);
 		}
-		assertArrayEquals(bytes, out.toByteArray());
-		//still open even though we see EOF
-		assertTrue(sut.isOpen());
 	}
 	@Test
 	public void readArrayEntireStreamWithoutCheckingIsOpen() throws IOException{
 		ByteArrayInputStream in = new ByteArrayInputStream(bytes);
 		ByteArrayOutputStream out = new ByteArrayOutputStream(bytes.length);
 		OpenAwareInputStream sut = new OpenAwareInputStream(in);
-		
-		while(true){
-			byte[] temp = new byte[5];
-			
-			int bytesRead =sut.read(temp);
-			if(bytesRead == -1){
-				break;
+		try{
+			while(true){
+				byte[] temp = new byte[5];
+				
+				int bytesRead =sut.read(temp);
+				if(bytesRead == -1){
+					break;
+				}
+				out.write(temp, 0, bytesRead);
 			}
-			out.write(temp, 0, bytesRead);
+			assertArrayEquals(bytes, out.toByteArray());
+			//we've seen eof so is not open
+			assertFalse(sut.isOpen());
+		}finally{
+			IOUtil.closeAndIgnoreErrors(sut);
 		}
-		assertArrayEquals(bytes, out.toByteArray());
-		//still open even though we see EOF
-		assertTrue(sut.isOpen());
 	}
 	@Test
 	public void readArrayEntireStreamInChunksWhileCheckingIsOpen() throws IOException{
 		ByteArrayInputStream in = new ByteArrayInputStream(bytes);
 		ByteArrayOutputStream out = new ByteArrayOutputStream(bytes.length);
 		OpenAwareInputStream sut = new OpenAwareInputStream(in);
-		
-		while(sut.isOpen()){
-			byte[] temp = new byte[5];
-			
-			int bytesRead =sut.read(temp);
-			if(bytesRead == -1){
-				break;
+		try{
+			while(sut.isOpen()){
+				byte[] temp = new byte[5];
+				
+				int bytesRead =sut.read(temp);
+				if(bytesRead == -1){
+					break;
+				}
+				out.write(temp, 0, bytesRead);
 			}
-			out.write(temp, 0, bytesRead);
+			assertArrayEquals(bytes, out.toByteArray());
+			//we've seen eof so is not open
+			assertFalse(sut.isOpen());
+		}finally{
+			IOUtil.closeAndIgnoreErrors(sut);
 		}
-		assertArrayEquals(bytes, out.toByteArray());
-		//still open even though we see EOF
-		assertTrue(sut.isOpen());
 	}
 	
 	@Test
