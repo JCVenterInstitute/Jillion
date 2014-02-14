@@ -38,9 +38,6 @@ abstract class AbstractSamFileParser implements SamParser{
 	
 	private static final Pattern HEADER_TAG_VALUE_PATTERN = Pattern.compile("([A-Za-z][A-Za-z0-9]):([ -~]+)");
 	
-	private static final Pattern SPLIT_LINE_PATTERN = Pattern.compile("\t");
-	
-	private static final Pattern TYPED_TAG_VALUE_PATTERN = Pattern.compile("([A-Za-z][A-Za-z0-9]):(([AifZHB]):)?(.+)");
 	
 	public AbstractSamFileParser() {
 		super();

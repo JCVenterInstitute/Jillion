@@ -1,7 +1,9 @@
 package org.jcvi.jillion.sam;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 
 import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
@@ -51,11 +53,19 @@ public class SamVisitorPrototype implements SamVisitor{
 	}
 
 	public static void main(String[] args) throws IOException{
-		File sam = new File("/local/netapp_scratch/CORE/allow_to_del/sam_creation/temp.sam");
+		
+		/*File sam = new File("/local/netapp_scratch/dkatzel/samFluPrototype/giv2_SGB2_48129_hybrid_edited_refs_33.sam");
 	
 		SamFileParser parser = new SamFileParser(sam);
+		*/
+		File bam = new File("/local/netapp_scratch/dkatzel/samFluPrototype/giv2_SGB2_48129_hybrid_edited_refs_33.bam");
+		BamFileParser parser = new BamFileParser(bam);
+		
 		SamVisitorPrototype visitor = new SamVisitorPrototype();
+		PrintStream out = new PrintStream(new FileOutputStream("/usr/local/scratch/dkatzel/BAM.visit.out4"), true);
+		System.setOut(out);
 		parser.accept(visitor);
 		System.out.println("found " + visitor.getNumberOfRecords());
+		out.close();
 	}
 }
