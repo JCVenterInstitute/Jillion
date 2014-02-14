@@ -1,5 +1,6 @@
 package org.jcvi.jillion.sam;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,7 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Set;
-import java.util.zip.GZIPInputStream;
 
 import org.jcvi.jillion.core.io.FileUtil;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -94,7 +94,7 @@ public class BamFileParser extends AbstractSamFileParser {
 			//concatenated GZIP blocks was fixed in an early
 			//Java 7 release.
 			//in = new OpenAwareInputStream(new GZIPInputStream(new FileInputStream(bamFile)));
-			in = new OpenAwareInputStream(new ConcatenatedGZipInputStream(new FileInputStream(bamFile)));
+			in = new OpenAwareInputStream(new ConcatenatedGZipInputStream(new BufferedInputStream(new FileInputStream(bamFile))));
 			
 			verifyMagicNumber(in);
 			
@@ -109,7 +109,6 @@ public class BamFileParser extends AbstractSamFileParser {
 			//what everything is named.
 			String[] refNames = new String[referenceCount];
 			
-			int numReadsSoFar = 0;
 			
 			for(int i=0; i<referenceCount; i++){
 				String name = readPascalString(in);
@@ -133,8 +132,6 @@ public class BamFileParser extends AbstractSamFileParser {
 				IOUtil.blockingRead(in, buf);
 				InputStream tmp = new ByteArrayInputStream(buf);
 				SamRecord.Builder builder = new SamRecord.Builder(header, validator);
-				numReadsSoFar++;
-				System.out.println(numReadsSoFar);
 				
 				int refId = getSignedInt(tmp);
 				if(refId >=0){

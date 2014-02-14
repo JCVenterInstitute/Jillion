@@ -49,11 +49,13 @@ abstract class AbstractSamFileParser implements SamParser{
 	protected SamHeader.Builder parseHeader(TextLineParser parser) throws IOException {
 		
 		SamHeader.Builder headerBuilder = new SamHeader.Builder();
-		String currentLine = parser.nextLine();
+		String currentLine = parser.peekLine();
 		if(currentLine.startsWith(HEADER_KEY)){
 			handleHeaderLine(currentLine, headerBuilder);
-			//next line
-			currentLine = parser.nextLine();
+			//actually consume the line we just peeked.
+			parser.nextLine();
+			//next line			
+			currentLine = parser.peekLine();
 		}
 		boolean inHeader = true;
 		while(currentLine !=null && inHeader){
@@ -75,7 +77,9 @@ abstract class AbstractSamFileParser implements SamParser{
 				}
 			}
 			if(inHeader){
-				currentLine = parser.nextLine();
+				//actually consume the line we just peeked.
+				parser.nextLine();
+				currentLine = parser.peekLine();
 			}
 		}
 		return headerBuilder;
