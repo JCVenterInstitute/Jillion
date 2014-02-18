@@ -69,8 +69,10 @@ public class BamFileParser extends AbstractSamFileParser {
 		ENCODED_BASES[15] = Nucleotide.Unknown;
 	}
 	
-	
 	public BamFileParser(File bamFile) throws IOException {
+		this(bamFile, ReservedAttributeValidator.INSTANCE);
+	}
+	public BamFileParser(File bamFile, SamAttributeValidator validator) throws IOException {
 		if(bamFile ==null){
 			throw new NullPointerException("bam file can not be null");
 		}
@@ -83,8 +85,11 @@ public class BamFileParser extends AbstractSamFileParser {
 		if(!bamFile.canRead()){
 			throw new IllegalArgumentException("bam file not readable " + bamFile.getAbsolutePath());
 		}
+		if(validator ==null){
+			throw new NullPointerException("validator can not be null");
+		}
 		this.bamFile = bamFile;
-		validator = ReservedAttributeValidator.INSTANCE;
+		this.validator = validator;
 	}
 	@Override
 	public boolean canAccept() {
