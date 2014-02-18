@@ -34,7 +34,10 @@ public class SamFileParser extends AbstractSamFileParser{
 	private final File samFile;
 	private final SamAttributeValidator validator;
 	
-	public SamFileParser(File samFile) throws IOException {
+	public SamFileParser(File samFile) throws IOException{
+		this(samFile,ReservedAttributeValidator.INSTANCE );
+	}
+	public SamFileParser(File samFile, SamAttributeValidator validator) throws IOException {
 		if(samFile ==null){
 			throw new NullPointerException("sam file can not be null");
 		}
@@ -47,8 +50,11 @@ public class SamFileParser extends AbstractSamFileParser{
 		if(!samFile.canRead()){
 			throw new IllegalArgumentException("sam file not readable " + samFile.getAbsolutePath());
 		}
+		if(validator ==null){
+			throw new NullPointerException("validator can not be null");
+		}
 		this.samFile = samFile;
-		validator = ReservedAttributeValidator.INSTANCE;
+		this.validator = validator;
 	}
 
 	@Override
