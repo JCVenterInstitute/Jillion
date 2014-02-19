@@ -14,7 +14,8 @@ import org.junit.runners.Suite.SuiteClasses;
     	AllSamHeaderTests.class,
     	AllAttributeTests.class,
     	
-    	TestSamRecordFlags.class
+    	TestSamRecordFlags.class,
+    	TestBinComputation.class
     }
     )
 public class AllSamTests {
