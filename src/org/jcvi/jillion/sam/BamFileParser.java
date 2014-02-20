@@ -390,7 +390,7 @@ public class BamFileParser extends AbstractSamFileParser {
 	}
 	private String readNullTerminatedString(InputStream in, int lengthIncludingNull) throws IOException {
 		//TODO spec says char[] does
-		//that mean 2 bytes per element?
+		//but looks like ASCII bytes so 1 byte per char?
 		byte[] data = new byte[lengthIncludingNull];
 		IOUtil.blockingRead(in, data);
 		//don't include \0 at end of string
