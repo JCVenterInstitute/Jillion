@@ -29,7 +29,7 @@ public enum SortOrder{
 	QUERY_NAME{
 
 		@Override
-		public Comparator<SamRecord> getComparator(SamHeader header) {
+		public Comparator<SamRecord> createComparator(SamHeader header) {
 			return QUERY_NAME_COMPARATOR;
 		}
 		
@@ -48,14 +48,23 @@ public enum SortOrder{
 	COORDINATE{
 
 		@Override
-		public Comparator<SamRecord> getComparator(SamHeader header) {
+		public Comparator<SamRecord> createComparator(SamHeader header) {
 			return new CoordinateComparator(header);
 		}
 		
 	};
+	/**
+	 * The Mapping of String names to our
+	 * {@link SortOrder} objects used when parsing 
+	 * SAM files.  Have to use a map because
+	 * Jillion enum names don't match 100% to names used 
+	 * in SAM format.
+	 */
 	private static final Map<String, SortOrder> NAME_MAP;
 	
-	
+	/**
+	 * {@link Comparator} used by {@link SortOrder#QUERY_NAME}.
+	 */
 	private static final Comparator<SamRecord> QUERY_NAME_COMPARATOR = new Comparator<SamRecord>(){
 
 		@Override
@@ -95,13 +104,35 @@ public enum SortOrder{
 	 * Get the {@link Comparator} for this {@link SortOrder}
 	 * which may be null if SortOrder is {@link SortOrder#UNKNOWN}
 	 * or {@link SortOrder#UNSORTED}.
+	 * Depending on the type, the returned Comparator may be
+	 * a new object or a pointer to a pre-existing object.
 	 * @return a {@link Comparator} or {@code null}
 	 * if no comparator specified.
 	 */
-	public Comparator<SamRecord> getComparator(SamHeader header){
+	public Comparator<SamRecord> createComparator(SamHeader header){
+		//by default return null
+		//let types override to return actual
+		//comparator implementation.
 		return null;
 	}
-	
+	/**
+	 * {@code CoordinateComparator}
+	 * is a class that implements the sort rules
+	 * required for {@link SortOrder#COORDINATE}.
+	 * <p>
+	 * Algorithm: Sort by reference order specified in
+	 * {@link SamHeader#getReferenceSequences()}
+	 * then by start position.  Unmapped records
+	 * sort after mapped records.
+	 * 
+	 * The SAM file spec says that records that either have the same
+	 * reference and start position or records that are unmapped are
+	 * in an arbitrary order, but we will try to sort them by 
+	 * query name.
+	 * </p>
+	 * @author dkatzel
+	 *
+	 */
 	private static final class CoordinateComparator implements Comparator<SamRecord>{
 
 		private final List<String> referenceNames;

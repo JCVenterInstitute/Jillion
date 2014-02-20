@@ -21,12 +21,12 @@ public class TestSortOrder {
 	private static final boolean DONT_CHECK_SELVES = false;
 	@Test
 	public void unsortedShouldReturnNullComparator(){
-		assertNull(SortOrder.UNSORTED.getComparator(null));
+		assertNull(SortOrder.UNSORTED.createComparator(null));
 	}
 	
 	@Test
 	public void unknownShouldReturnNullComparator(){
-		assertNull(SortOrder.UNKNOWN.getComparator(null));
+		assertNull(SortOrder.UNKNOWN.createComparator(null));
 	}
 	
 	@Test
@@ -148,7 +148,7 @@ public class TestSortOrder {
 		assertCorrectlySorted(order, first, second, header, true);
 	}
 	private void assertCorrectlySorted(SortOrder order, SamRecord first, SamRecord second, SamHeader header,boolean checkSelves){
-		Comparator<SamRecord> comparator = order.getComparator(header);
+		Comparator<SamRecord> comparator = order.createComparator(header);
 		if(checkSelves){
 			assertEquals("same record should sort equal to itself", 0, comparator.compare(first, first));
 			assertEquals("same record should sort equal to itself", 0, comparator.compare(second, second));
