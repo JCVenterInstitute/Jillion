@@ -24,7 +24,7 @@ import org.jcvi.jillion.sam.cigar.Cigar;
 import org.jcvi.jillion.sam.header.SamHeader;
 import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
 
-public class SamFileParser extends AbstractSamFileParser{
+final class SamFileParser extends AbstractSamFileParser{
 	
 	private static final Pattern SPLIT_LINE_PATTERN = Pattern.compile("\t");
 	
