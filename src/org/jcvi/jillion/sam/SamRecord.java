@@ -70,7 +70,14 @@ public class SamRecord {
 	public String getQueryName() {
 		return queryName;
 	}
-
+	/**
+	 * Get the reference name that this
+	 * record aligns to.
+	 * @return The name of the reference
+	 * or {@link SamRecord#UNAVAILABLE}
+	 * if the record either didn't
+	 * align or the reference name wasn't provided.
+	 */
 	public String getReferenceName() {
 		return referenceName;
 	}
@@ -160,8 +167,7 @@ public class SamRecord {
 				+ ((qualities == null) ? 0 : qualities.hashCode());
 		result = prime * result
 				+ ((queryName == null) ? 0 : queryName.hashCode());
-		result = prime * result
-				+ ((referenceName == null) ? 0 : referenceName.hashCode());
+		result = prime * result	+ referenceName.hashCode();
 		result = prime * result
 				+ ((sequence == null) ? 0 : sequence.hashCode());
 		result = prime * result + startOffset;
@@ -231,11 +237,7 @@ public class SamRecord {
 		} else if (!queryName.equals(other.queryName)) {
 			return false;
 		}
-		if (referenceName == null) {
-			if (other.referenceName != null) {
-				return false;
-			}
-		} else if (!referenceName.equals(other.referenceName)) {
+		if (!referenceName.equals(other.referenceName)) {
 			return false;
 		}
 		if (sequence == null) {
