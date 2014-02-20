@@ -18,7 +18,6 @@ import org.jcvi.jillion.sam.header.SamHeader;
 import org.jcvi.jillion.sam.header.SamHeader.Builder;
 import org.jcvi.jillion.sam.header.SamProgram;
 import org.jcvi.jillion.sam.header.SamVersion;
-import org.jcvi.jillion.sam.header.SortOrder;
 
 abstract class AbstractSamFileParser implements SamParser{
 
