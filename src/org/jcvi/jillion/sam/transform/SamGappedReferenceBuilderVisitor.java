@@ -1,6 +1,5 @@
 package org.jcvi.jillion.sam.transform;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -18,7 +17,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
-import org.jcvi.jillion.sam.SamFileParser;
+import org.jcvi.jillion.sam.SamParser;
 import org.jcvi.jillion.sam.SamRecord;
 import org.jcvi.jillion.sam.SamVisitor;
 import org.jcvi.jillion.sam.cigar.Cigar;
@@ -32,7 +31,7 @@ final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 	Map<String, GappedReferenceBuilder> builders = new LinkedHashMap<String, GappedReferenceBuilder>();
 	
 	
-	public static NucleotideSequenceDataStore createGappedReferencesFrom(File samFile, NucleotideFastaDataStore ungappedReferenceDataStore) throws IOException{
+	public static NucleotideSequenceDataStore createGappedReferencesFrom(SamParser parser, NucleotideFastaDataStore ungappedReferenceDataStore) throws IOException{
 		SamGappedReferenceBuilderVisitor visitor;
 		try {
 			visitor = new SamGappedReferenceBuilderVisitor(ungappedReferenceDataStore);
@@ -40,7 +39,7 @@ final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 			throw new IOException("error parsing reference datastore", e);
 		}
 		
-		new SamFileParser(samFile).accept(visitor);
+		parser.accept(visitor);
 		return visitor.buildGappedReferences();
 	}
 	

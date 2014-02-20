@@ -23,7 +23,8 @@ import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
-import org.jcvi.jillion.sam.SamFileParser;
+import org.jcvi.jillion.sam.SamParser;
+import org.jcvi.jillion.sam.SamParserFactory;
 import org.jcvi.jillion.sam.SamRecord;
 import org.jcvi.jillion.sam.SamVisitor;
 import org.jcvi.jillion.sam.cigar.Cigar;
@@ -45,8 +46,10 @@ import org.jcvi.jillion.sam.header.SamHeader;
  */
 public final class SamTransformationService implements AssemblyTransformationService{
 
-	private final File samFile;
+	
 	private final NucleotideSequenceDataStore referenceDataStore;
+	private final SamParser parser;
+	
 	/**
 	 * Create a new {@link SamTransformationService} using
 	 * the given SAM encoded file and a fasta file of the ungapped
@@ -60,11 +63,11 @@ public final class SamTransformationService implements AssemblyTransformationSer
 	 */
 	public SamTransformationService(File samFile, File referenceFasta) throws IOException {
 		
-		this.samFile = samFile;
+		parser = SamParserFactory.create(samFile);
 		NucleotideFastaDataStore ungappedReferenceDataStore = new NucleotideFastaFileDataStoreBuilder(referenceFasta)
 																	.build();
 		
-		referenceDataStore = SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(samFile, ungappedReferenceDataStore);
+		referenceDataStore = SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(parser, ungappedReferenceDataStore);
 	}
 	/**
 	 * Parse the SAM file and call the appropriate methods on the given
@@ -80,7 +83,7 @@ public final class SamTransformationService implements AssemblyTransformationSer
 		}
 		try {
 			SamTransformerVisitor visitor = new SamTransformerVisitor(referenceDataStore, transformer);
-			new SamFileParser(samFile).accept(visitor);
+			parser.accept(visitor);
 		} catch (Exception e) {
 			throw new IllegalStateException("error parsing sam file", e);
 		}

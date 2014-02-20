@@ -37,7 +37,7 @@ import org.jcvi.jillion.sam.header.SamHeader;
  * @author dkatzel
  *
  */
-public class BamFileParser extends AbstractSamFileParser {
+final class BamFileParser extends AbstractSamFileParser {
 
 	
 	private static final Nucleotide[] ENCODED_BASES;
