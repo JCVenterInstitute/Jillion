@@ -141,8 +141,8 @@ public class ReferenceSequence {
 
 
 	public static final class Builder{
-		private final String name;
-		private final int length;
+		private String name;
+		private int length;
 		
 		private String genomeAssemblyId;
 		private String species;
@@ -161,6 +161,41 @@ public class ReferenceSequence {
 			this.length = length;
 		}
 
+		/**
+		 * Create a new Builder instance
+		 * which is initialized to have 
+		 * all the same values as the given 
+		 * ReferenceSequence.
+		 * @param copy the ReferenceSequence to copy 
+		 * the values of; can not be null.
+		 * @throws NullPointerException if copy is null.
+		 */
+		public Builder(ReferenceSequence copy) {
+			name = copy.getName();
+			length = copy.getLength();
+			
+			genomeAssemblyId = copy.getGenomeAssemblyId();
+			species = copy.getSpecies();
+			uri=copy.getUri();
+			md5= copy.getMd5();
+		}
+
+
+		public Builder setName(String name) {
+			if(name ==null){
+				throw new NullPointerException("name can not be null");
+			}
+			this.name = name;
+			return this;
+		}
+
+		public Builder setLength(int length) {
+			if(length<1){
+				throw new IllegalArgumentException("length must >=1");
+			}
+			this.length = length;
+			return this;
+		}
 
 		public String getGenomeAssemblyId() {
 			return genomeAssemblyId;

@@ -10,8 +10,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.jcvi.jillion.sam.SortOrder;
-
-public class SamHeader {
+/**
+ * {@code SamHeader}
+ * is an object representation of
+ * the header of a SAM or BAM file.
+ * @author dkatzel
+ *
+ */
+public final class SamHeader {
 
 	private final SortOrder sortOrder;
 	private final SamVersion version;
@@ -172,7 +178,13 @@ public class SamHeader {
 	}
 
 
-
+	/**
+	 * {@code Builder}
+	 * is the builder class used to construct
+	 * a {@link SamHeader}
+	 * @author dkatzel
+	 *
+	 */
 	public static final class Builder{
 		//default to unknown if not specified
 		private SortOrder sortOrder = SortOrder.UNKNOWN;
@@ -186,7 +198,15 @@ public class SamHeader {
 		
 		private final List<String> comments = new ArrayList<String>();
 		
-		
+		/**
+		 * Create a new Builder instance with 
+		 * the default values
+		 * of "unknown" sort order
+		 * and nothing or empty for everything else.
+		 * 
+		 * Use the methods on the builder
+		 * to add/set values for the header.
+		 */
 		public Builder(){
 			//use defaults
 		}

@@ -9,7 +9,8 @@ import org.junit.runners.Suite.SuiteClasses;
     {
     	TestSamProgram.class,
     	TestReadGroup.class,
-    	TestSamVersion.class
+    	TestSamVersion.class,
+    	TestReferenceSequence.class
     }
     )
 public class AllSamHeaderTests {

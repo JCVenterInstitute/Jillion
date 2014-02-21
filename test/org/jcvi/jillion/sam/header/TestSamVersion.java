@@ -31,6 +31,11 @@ public class TestSamVersion {
 	}
 	
 	@Test
+	public void testToString(){
+		assertEquals("1.2", sut.toString());
+	}
+	
+	@Test
 	public void isBefore(){
 		assertTrue("other major bigger", sut.isBefore(new SamVersion(major+1, 0)));
 		assertTrue("other minor bigger", sut.isBefore(new SamVersion(major, minor+1)));
@@ -80,7 +85,10 @@ public class TestSamVersion {
 		assertEquals(sut, SamVersion.parseVersion(String.format("%d.%d", major,minor)));
 		assertEquals(new SamVersion(11,15), SamVersion.parseVersion("11.15"));
 	}
-	
+	@Test(expected = NullPointerException.class)
+	public void parseNullVersionShouldThrowNPE(){
+		SamVersion.parseVersion(null);
+	}
 	@Test
 	public void parseInvalidVersionReturnsNull(){
 		assertNull(SamVersion.parseVersion("not A version"));

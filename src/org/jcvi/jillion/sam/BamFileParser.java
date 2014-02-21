@@ -180,8 +180,7 @@ final class BamFileParser extends AbstractSamFileParser {
 		parseAttributesIfAnyAndAddToBuilder(in, builder, blockSize,	bytesReadSoFar);
 		
 		
-		SamRecord record = builder.build();
-		return record;
+		return builder.build();
 	}
 	private Cigar parseCigar(OpenAwareInputStream in, int numCigarOps)
 			throws IOException {
@@ -192,13 +191,12 @@ final class BamFileParser extends AbstractSamFileParser {
 			int length = (int)(bits>>4);
 			cigarBuilder.addElement(CigarOperation.parseBinary(opCode), length);
 		}
-		Cigar cigar = cigarBuilder.build();
-		return cigar;
+		return cigarBuilder.build();
 	}
 	private void parseAttributesIfAnyAndAddToBuilder(OpenAwareInputStream in,
 			SamRecord.Builder builder, int blockSize, int bytesReadSoFar)
 			throws IOException {
-		int attributeByteLength = (int)( blockSize - bytesReadSoFar);
+		int attributeByteLength =  blockSize - bytesReadSoFar;
 		if(attributeByteLength >0){
 			//to simplify parsing
 			//to slurp up the all the bytes for the attributes
