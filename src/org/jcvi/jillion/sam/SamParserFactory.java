@@ -21,10 +21,10 @@ public final class SamParserFactory {
 		if(validator == null){
 			throw new NullPointerException("validator can not be null");
 		}
-		if(extension.equalsIgnoreCase("sam")){
+		if("sam".equalsIgnoreCase(extension)){
 			return new SamFileParser(f,validator);
 		}
-		if(extension.equalsIgnoreCase("bam")){
+		if("bam".equalsIgnoreCase(extension)){
 			return new BamFileParser(f, validator);
 		}
 		throw new IllegalArgumentException("unknown file format " + f.getName());

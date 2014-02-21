@@ -1,5 +1,6 @@
 package org.jcvi.jillion.sam;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -133,8 +134,10 @@ public enum SortOrder{
 	 * @author dkatzel
 	 *
 	 */
-	private static final class CoordinateComparator implements Comparator<SamRecord>{
+	private static final class CoordinateComparator implements Comparator<SamRecord>, Serializable{
 
+		private static final long serialVersionUID = -4315866144598924346L;
+		
 		private final List<String> referenceNames;
 		
 		public CoordinateComparator(SamHeader header){

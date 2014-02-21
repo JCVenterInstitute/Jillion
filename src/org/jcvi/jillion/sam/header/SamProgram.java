@@ -181,7 +181,13 @@ public class SamProgram {
 	}
 
 
-
+	/**
+	 * {@code Builder} is the Builder object
+	 * used to create {@link SamProgram}
+	 * instances.
+	 * @author dkatzel
+	 *
+	 */
 	public static class Builder{
 		private String id;
 
