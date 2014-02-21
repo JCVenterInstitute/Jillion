@@ -594,20 +594,24 @@ public final class IOUtil {
     
     
     public static short readSignedShort(InputStream in ) throws IOException {
+    	//taken from DataInputStream
         int ch1 = in.read();
         int ch2 = in.read();
-        if ((ch1 | ch2) < 0)
+        if ((ch1 | ch2) < 0){
             throw new EOFException();
+        }
         return (short)((ch1 << 8) + (ch2 << 0));
     }
     
     public static int readSignedInt(InputStream in) throws IOException {
+    	//taken from DataInputStream
         int ch1 = in.read();
         int ch2 = in.read();
         int ch3 = in.read();
         int ch4 = in.read();
-        if ((ch1 | ch2 | ch3 | ch4) < 0)
+        if ((ch1 | ch2 | ch3 | ch4) < 0){
             throw new EOFException();
+        }
         return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
     }
     
