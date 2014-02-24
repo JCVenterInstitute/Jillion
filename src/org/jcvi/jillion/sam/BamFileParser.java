@@ -15,9 +15,7 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.io.IOUtil.Endian;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
 import org.jcvi.jillion.sam.attribute.InvalidAttributeException;
@@ -40,34 +38,11 @@ import org.jcvi.jillion.sam.header.SamHeader;
 final class BamFileParser extends AbstractSamFileParser {
 
 	
-	private static final Nucleotide[] ENCODED_BASES;
 	
 	private final File bamFile;
 	private final SamAttributeValidator validator;
 	
 	
-	static{
-		//`=ACMGRSVTWYHKDBN'
-		ENCODED_BASES = new Nucleotide[16];
-		//TODO: note [0]set to null to force NPE
-		ENCODED_BASES[0] = null;
-		
-		ENCODED_BASES[1] = Nucleotide.Adenine;
-		ENCODED_BASES[2] = Nucleotide.Cytosine;
-		ENCODED_BASES[3] = Nucleotide.Amino;
-		ENCODED_BASES[4] = Nucleotide.Guanine;
-		ENCODED_BASES[5] = Nucleotide.Purine;
-		ENCODED_BASES[6] = Nucleotide.Strong;
-		ENCODED_BASES[7] = Nucleotide.NotThymine;
-		ENCODED_BASES[8] = Nucleotide.Thymine;
-		ENCODED_BASES[9] = Nucleotide.Weak;
-		ENCODED_BASES[10] = Nucleotide.Pyrimidine;
-		ENCODED_BASES[11] = Nucleotide.NotGuanine;
-		ENCODED_BASES[12] = Nucleotide.Keto;
-		ENCODED_BASES[13] = Nucleotide.NotCytosine;
-		ENCODED_BASES[14] = Nucleotide.NotAdenine;
-		ENCODED_BASES[15] = Nucleotide.Unknown;
-	}
 	
 	public BamFileParser(File bamFile) throws IOException {
 		this(bamFile, ReservedAttributeValidator.INSTANCE);
@@ -169,7 +144,7 @@ final class BamFileParser extends AbstractSamFileParser {
 			builder.setCigar(cigar);
 		}
 		if(seqLength >0){			
-			NucleotideSequence seq = readSequence(in,seqLength);
+			NucleotideSequence seq = SamUtil.readBamEncodedSequence(in,seqLength);
 			builder.setSequence(seq);
 			builder.setQualities(readQualities(in, seqLength));			
 		}
@@ -321,35 +296,7 @@ final class BamFileParser extends AbstractSamFileParser {
 		}while(!done && in.isOpen());
 		return builder.toString();
 	}
-	private NucleotideSequence readSequence(InputStream in, int seqLength) throws IOException {
-		byte[] seqBytes = new byte[(seqLength+1)/2];
-		IOUtil.blockingRead(in, seqBytes);
-		NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(seqLength);
-		//first fully populate all but last byte
-		for(int i=0; i<seqBytes.length-1; i++){
-			byte value = seqBytes[i];
-			try{
-			builder.append(ENCODED_BASES[(value>>4) & 0x0F]);
-			builder.append(ENCODED_BASES[value & 0x0F]);
-			}catch(RuntimeException t){
-				System.out.println( " i = " + i + " value = " + value);
-				throw t;
-			}
-		}
-		byte lastByte = seqBytes[seqBytes.length-1];
-		//for last byte we should always include high nibble
-		builder.append(ENCODED_BASES[(lastByte>>4) & 0x0F]);
-		//only include lower nibble if we are even
-		if(seqLength %2 ==0){
-			builder.append(ENCODED_BASES[lastByte & 0x0F]);
-		}
-		//TODO '=' char not support
-		//which is used to mean "same as reference"
-		//we would need to link to the reference seq
-		//to get those.
-		
-		return builder.build();
-	}
+	
 	
 	private QualitySequence readQualities(InputStream in, int seqLength) throws IOException{
 		byte[] bytes = new byte[seqLength];

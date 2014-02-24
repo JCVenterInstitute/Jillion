@@ -1,5 +1,9 @@
 package org.jcvi.jillion.sam.attribute;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,12 +42,17 @@ public enum SamAttributeType {
 			return ((Character) obj).charValue();
 		}
 		@Override
-		public String encode(Object o) {
+		public String textEncode(Object o) {
 			try{
 				return ((Character)o).toString();
 			}catch(ClassCastException e){
 				throw new IllegalArgumentException("not a character", e);
 			}
+		}
+		
+		@Override
+		public void binaryEncode(Object o, ByteBuffer out) throws IOException{
+			out.put((byte)o.toString().charAt(0));
 		}
 
 		@Override
@@ -84,12 +93,19 @@ public enum SamAttributeType {
 		}
 
 		@Override
-		public String encode(Object o) {
+		public String textEncode(Object o) {
 			try{
 				return ((Integer)o).toString();
 			}catch(ClassCastException e){
 				throw new IllegalArgumentException("not an int", e);
 			}
+		}
+
+		
+		@Override
+		public void binaryEncode(Object o, ByteBuffer out) throws IOException {
+			out.putInt( ((Integer)o).intValue());
+			
 		}
 
 		@Override
@@ -133,14 +149,22 @@ public enum SamAttributeType {
 		}
 
 		@Override
-		public String encode(Object o) {
+		public String textEncode(Object o) {
 			try{
 				return ((Float)o).toString();
 			}catch(ClassCastException e){
 				throw new IllegalArgumentException("not an float", e);
 			}
 		}
+		
+		
 
+		@Override
+		public void binaryEncode(Object o, ByteBuffer out)
+				throws IOException {
+			out.putFloat( ((Float)o).floatValue());
+			
+		}
 		@Override
 		public Object decode(String value) {
 			return Float.parseFloat(value);
@@ -167,10 +191,17 @@ public enum SamAttributeType {
 		}
 
 		@Override
-		public String encode(Object o) {
+		public String textEncode(Object o) {
 			return o.toString();
 		}
 
+		@Override
+		public void binaryEncode(Object o, ByteBuffer out)
+				throws IOException {
+			out.put(o.toString().getBytes(IOUtil.UTF_8));
+			//null terminate
+			out.put((byte)0);
+		}
 		@Override
 		public Object decode(String value) {
 			if(value ==null){
@@ -199,17 +230,24 @@ public enum SamAttributeType {
 		}
 
 		@Override
-		public String encode(Object o) {
+		public String textEncode(Object o) {
 			byte[] array = (byte[])o;
 			//2hex digits per element
 			StringBuilder builder = new StringBuilder(3+ 2*array.length);
-			builder.append("B:").append(optionalArrayType);
 			for(int i=0; i< array.length; i++){				
 				builder.append(HEX_ARRAY[IOUtil.toUnsignedByte(array[i])]);
 			}
 			return builder.toString();
 		}
 
+		@Override
+		public void binaryEncode(Object o, ByteBuffer out)
+				throws IOException {
+			//TODO write as a null terminated string?
+			out.put(textEncode(o).getBytes(IOUtil.UTF_8));
+			out.put((byte)0);
+			
+		}
 		@Override
 		public Object decode(String value) {
 			if(value.charAt(0) != optionalArrayType.charValue()){
@@ -243,16 +281,24 @@ public enum SamAttributeType {
 			return (byte[])obj;
 		}
 		@Override
-		public String encode(Object o) {
+		public String textEncode(Object o) {
 			byte[] array = (byte[])o;
 			//signed so max length per element is
 			//-128, = 4 chars			
 			StringBuilder builder = new StringBuilder(3+ 4*array.length);
-			builder.append("B:c");
 			for(int i=0; i< array.length; i++){
 				builder.append(Byte.toString(array[i])).append(',');
 			}
 			return builder.toString();
+		}
+		
+		@Override
+		public void binaryEncode(Object o, ByteBuffer out)
+				throws IOException {
+			byte[] array = (byte[])o;
+			out.put((byte)(optionalArrayType & 0xFF));
+			out.putInt(array.length);
+			out.put(array);
 		}
 
 		@Override
@@ -283,17 +329,28 @@ public enum SamAttributeType {
 			return (UnsignedByteArray)obj;
 		}
 		@Override
-		public String encode(Object o) {
+		public String textEncode(Object o) {
 			UnsignedByteArray array = (UnsignedByteArray)o;
 			int length = array.getLength();
 			//signed so max length per element is
 			//-128, = 4 chars			
 			StringBuilder builder = new StringBuilder(3+ 4*length);
-			builder.append("B:C");
 			for(int i=0; i< length; i++){
 				builder.append(Integer.toString(array.get(i))).append(',');
 			}
 			return builder.toString();
+		}
+		@Override
+		public void binaryEncode(Object o, ByteBuffer out)
+				throws IOException {
+			UnsignedByteArray array = (UnsignedByteArray)o;
+			out.put((byte)(optionalArrayType & 0xFF));
+			int length = array.getLength();
+			out.putInt(length);
+			for(int i=0; i< length; i++){
+				out.put((byte)array.get(i));
+			}
+			
 		}
 
 		@Override
@@ -325,18 +382,26 @@ public enum SamAttributeType {
 		}
 
 		@Override
-		public String encode(Object o) {
+		public String textEncode(Object o) {
 			short[] array = (short[])o;
 			//signed so max length per element is
 			//-32768, = 7 chars			
 			StringBuilder builder = new StringBuilder(3+ 7*array.length);
-			builder.append("B:").append(optionalArrayType);
 			for(int i=0; i< array.length; i++){
 				builder.append(Short.toString(array[i])).append(',');
 			}
 			return builder.toString();
 		}
 
+		@Override
+		public void binaryEncode(Object o, ByteBuffer out)
+				throws IOException {
+			short[] array = (short[])o;
+			out.put((byte)(optionalArrayType & 0xFF));
+			out.putInt(array.length);
+			out.asShortBuffer().put(array);
+		}
+		
 		@Override
 		public Object decode(String value) {
 			String[] split = parseArrayElementsFrom(value);
@@ -366,19 +431,30 @@ public enum SamAttributeType {
 		}
 
 		@Override
-		public String encode(Object o) {
+		public String textEncode(Object o) {
 			UnsignedShortArray array = (UnsignedShortArray)o;
 			int length = array.getLength();
 			//signed so max length per element is
 			//65535, = 6 chars			
 			StringBuilder builder = new StringBuilder(3+ 6*length);
-			builder.append("B:").append(optionalArrayType);
 			for(int i=0; i< length; i++){
 				builder.append(Integer.toString(array.get(i))).append(',');
 			}
 			return builder.toString();
 		}
-
+		@Override
+		public void binaryEncode(Object o, ByteBuffer out)
+				throws IOException {
+			UnsignedShortArray array = (UnsignedShortArray)o;
+			out.put((byte)(optionalArrayType & 0xFF));
+			int length = array.getLength();
+			out.putInt(length);
+			ShortBuffer sb = out.asShortBuffer();
+			for(int i=0; i< length; i++){
+				sb.put((short)array.get(i));
+			}
+			
+		}
 		@Override
 		public Object decode(String value) {
 			String[] split = parseArrayElementsFrom(value);
@@ -408,16 +484,24 @@ public enum SamAttributeType {
 		}
 
 		@Override
-		public String encode(Object o) {
+		public String textEncode(Object o) {
 			int[] array = (int[])o;
 			//signed so max length per element is
 			//-2147483648, = 12 chars			
 			StringBuilder builder = new StringBuilder(3+ 12*array.length);
-			builder.append("B:").append(optionalArrayType);
 			for(int i=0; i< array.length; i++){
 				builder.append(Integer.toString(array[i])).append(',');
 			}
 			return builder.toString();
+		}
+		
+		@Override
+		public void binaryEncode(Object o, ByteBuffer out)
+				throws IOException {
+			int[] array = (int[])o;
+			out.put((byte)(optionalArrayType & 0xFF));
+			out.putInt(array.length);
+			out.asIntBuffer().put(array);
 		}
 
 		@Override
@@ -449,19 +533,31 @@ public enum SamAttributeType {
 		}
 
 		@Override
-		public String encode(Object o) {
+		public String textEncode(Object o) {
 			UnsignedIntArray array = (UnsignedIntArray)o;
 			int length = array.getLength();
 			//signed so max length per element is
 			//2147483647, = 11 chars			
 			StringBuilder builder = new StringBuilder(3+ 11*length);
-			builder.append("B:").append(optionalArrayType);
 			for(int i=0; i< length; i++){
 				builder.append(Long.toString(array.get(i))).append(',');
 			}
 			return builder.toString();
 		}
 
+		@Override
+		public void binaryEncode(Object o, ByteBuffer out)
+				throws IOException {
+			UnsignedIntArray array = (UnsignedIntArray)o;
+			out.put((byte)(optionalArrayType & 0xFF));
+			int length = array.getLength();
+			out.putInt(length);
+			IntBuffer ib = out.asIntBuffer();
+			for(int i=0; i< length; i++){
+				ib.put((int)array.get(i));
+			}
+			
+		}
 		@Override
 		public Object decode(String value) {
 			String[] split = parseArrayElementsFrom(value);
@@ -491,19 +587,26 @@ public enum SamAttributeType {
 		}
 
 		@Override
-		public String encode(Object o) {
+		public String textEncode(Object o) {
 			float[] array = (float[])o;
 			//floats should store around 7 decimal digits
 			//plus the neg sign for a total of 8
 			//if we don't guess correctly, the builder will expand for us anyway
 			StringBuilder builder = new StringBuilder(3+ 8*array.length);
-			builder.append("B:f");
 			for(int i=0; i< array.length; i++){
 				builder.append(Float.toString(array[i])).append(',');
 			}
 			return builder.toString();
 		}
 
+		@Override
+		public void binaryEncode(Object o, ByteBuffer out)
+				throws IOException {
+			float[] array = (float[])o;
+			out.put((byte)(optionalArrayType & 0xFF));
+			out.putInt(array.length);
+			out.asFloatBuffer().put(array);
+		}
 		@Override
 		public Object decode(String value) {
 			String[] split = parseArrayElementsFrom(value);
@@ -537,7 +640,7 @@ public enum SamAttributeType {
 		this.value = c;
 		this.optionalArrayType = optionalArrayType;
 	}
-	public String getTypeCode(){
+	public String getTextTypeCode(){
 		StringBuilder builder = new StringBuilder();
 		builder.append(value).append(':');
 		if(optionalArrayType !=null){
@@ -545,7 +648,16 @@ public enum SamAttributeType {
 		}
 		return builder.toString();
 	}
-	public abstract String encode(Object o);
+	
+	public void putBinaryTypeCode(ByteBuffer buf){
+		buf.put((byte)(value & 0xFF));
+		if(optionalArrayType !=null){
+			buf.put((byte)(optionalArrayType & 0xFF));
+		}
+	}
+	public abstract String textEncode(Object o);
+	
+	public abstract void binaryEncode(Object o, ByteBuffer out) throws IOException;
 	
 	public abstract Object decode(String value);
 	

@@ -164,8 +164,8 @@ public class SamFileWriter implements SamWriter {
 			//the first char in the value.
 			builder.append("\t")
 					.append(key.toString()).append(':')		
-					.append(attr.getType().getTypeCode())
-					.append(attr.getType().encode(attr.getValue()));
+					.append(attr.getType().getTextTypeCode())
+					.append(attr.getType().textEncode(attr.getValue()));
 		}
 		
 		out.printf("%s%n", builder.toString());
