@@ -23,6 +23,7 @@ public final class SamHeader {
 	private final SamVersion version;
 	
 	private final Map<String, ReferenceSequence> referenceSequences;
+	private final Map<String, Integer> referenceIndexMap;
 	
 	private final Map<String, ReadGroup> readGroups;
 	
@@ -40,6 +41,12 @@ public final class SamHeader {
 		this.programs =  Collections.unmodifiableMap(new HashMap<String, SamProgram>(builder.programs));
 		
 		this.comments = Collections.unmodifiableList(new ArrayList<String>(builder.comments));
+		referenceIndexMap = new HashMap<String, Integer>();
+		int i=0;
+		for(ReferenceSequence refSeq : referenceSequences.values()){
+			referenceIndexMap.put(refSeq.getName(), Integer.valueOf(i));
+			i++;
+		}
 	}
 	
 	
@@ -211,6 +218,21 @@ public final class SamHeader {
 			//use defaults
 		}
 		
+		public Builder(SamHeader copy) {
+			this.sortOrder = copy.getSortOrder();
+			this.version = copy.getVersion();
+			for(ReferenceSequence ref :copy.getReferenceSequences()){
+				referenceSequences.put(ref.getName(), ref);
+			}
+			for(ReadGroup readGroup :copy.getReadGroups()){
+				readGroups.put(readGroup.getId(), readGroup);
+			}
+			for(SamProgram prog :copy.getPrograms()){
+				programs.put(prog.getId(), prog);
+			}
+			comments.addAll(copy.getComments());
+		}
+
 		public Builder setVersion(SamVersion version){
 			this.version = version;
 			return this;
@@ -336,5 +358,15 @@ public final class SamHeader {
 		public boolean hasReferenceSequence(String name) {
 			return referenceSequences.containsKey(name);
 		}
+	}
+
+
+	public int getReferenceIndexFor(String referenceName) {
+		Integer ret= referenceIndexMap.get(referenceName);
+		if(ret==null){
+			return -1;
+		}
+		return ret.intValue();
+		
 	}
 }

@@ -1,12 +1,28 @@
 package org.jcvi.jillion.sam;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.sam.attribute.SamAttribute;
+import org.jcvi.jillion.sam.attribute.SamAttributeKey;
+import org.jcvi.jillion.sam.attribute.SamAttributeType;
+import org.jcvi.jillion.sam.cigar.CigarElement;
+import org.jcvi.jillion.sam.header.SamHeader;
 /**
  * {@code SamUtil} is a utility class
  * for working with Sam or Bam encoded data.
@@ -91,9 +107,78 @@ public final class SamUtil {
 		  }
 
 		 };
+		 
+	 private static final Nucleotide[] BAM_ENCODED_BASES;
+	 private static final byte[] BAM_ENCODED_BASES_TO_ORDINAL;
+		
+		
+		static{
+			//`=ACMGRSVTWYHKDBN'
+			BAM_ENCODED_BASES = new Nucleotide[16];
+			//TODO: note [0]set to null to force NPE
+			BAM_ENCODED_BASES[0] = null;
+			
+			BAM_ENCODED_BASES[1] = Nucleotide.Adenine;
+			BAM_ENCODED_BASES[2] = Nucleotide.Cytosine;
+			BAM_ENCODED_BASES[3] = Nucleotide.Amino;
+			BAM_ENCODED_BASES[4] = Nucleotide.Guanine;
+			BAM_ENCODED_BASES[5] = Nucleotide.Purine;
+			BAM_ENCODED_BASES[6] = Nucleotide.Strong;
+			BAM_ENCODED_BASES[7] = Nucleotide.NotThymine;
+			BAM_ENCODED_BASES[8] = Nucleotide.Thymine;
+			BAM_ENCODED_BASES[9] = Nucleotide.Weak;
+			BAM_ENCODED_BASES[10] = Nucleotide.Pyrimidine;
+			BAM_ENCODED_BASES[11] = Nucleotide.NotGuanine;
+			BAM_ENCODED_BASES[12] = Nucleotide.Keto;
+			BAM_ENCODED_BASES[13] = Nucleotide.NotCytosine;
+			BAM_ENCODED_BASES[14] = Nucleotide.NotAdenine;
+			BAM_ENCODED_BASES[15] = Nucleotide.Unknown;
+			
+			BAM_ENCODED_BASES_TO_ORDINAL = new byte[16];
+			for(int i=0; i<16; i++){
+				Nucleotide n = BAM_ENCODED_BASES[i];
+				if(n !=null){
+					BAM_ENCODED_BASES_TO_ORDINAL[n.ordinal()] = (byte)i;
+				}
+			}
+		}
+			
+		 
+		 
 	private SamUtil(){
 		//can not instantiate
 	}
+	
+	public static NucleotideSequence readBamEncodedSequence(InputStream in, int seqLength) throws IOException {
+		byte[] seqBytes = new byte[(seqLength+1)/2];
+		IOUtil.blockingRead(in, seqBytes);
+		NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(seqLength);
+		//first fully populate all but last byte
+		for(int i=0; i<seqBytes.length-1; i++){
+			byte value = seqBytes[i];
+			try{
+			builder.append(BAM_ENCODED_BASES[(value>>4) & 0x0F]);
+			builder.append(BAM_ENCODED_BASES[value & 0x0F]);
+			}catch(RuntimeException t){
+				System.out.println( " i = " + i + " value = " + value);
+				throw t;
+			}
+		}
+		byte lastByte = seqBytes[seqBytes.length-1];
+		//for last byte we should always include high nibble
+		builder.append(BAM_ENCODED_BASES[(lastByte>>4) & 0x0F]);
+		//only include lower nibble if we are even
+		if(seqLength %2 ==0){
+			builder.append(BAM_ENCODED_BASES[lastByte & 0x0F]);
+		}
+		//TODO '=' char not support
+		//which is used to mean "same as reference"
+		//we would need to link to the reference seq
+		//to get those.
+		
+		return builder.build();
+	}
+	
 	/**
 	 * Assert that the first key character is a valid letter
 	 * [A-Za-z] and that the second key character is a valid letter or digit
@@ -264,5 +349,107 @@ public final class SamUtil {
 		//i is the length of elements
 		//we populated in the array
 		return Arrays.copyOf(list, i);
+	}
+	
+	
+	public static void writeAsBamRecord(OutputStream out, SamHeader header, SamRecord record) throws IOException{
+		String referenceName =record.getReferenceName();
+		//TODO compute buffer size first?
+		ByteBuffer buf = ByteBuffer.allocate(8096);
+		buf.order(ByteOrder.LITTLE_ENDIAN);
+		//skip first 4 bytes so we can write the length of record last
+		buf.position(4);
+		buf.putInt(header.getReferenceIndexFor(referenceName));
+		int startOffset = record.getStartPosition() -1;
+		buf.putInt(startOffset);
+		long binMapNameLength =computeBinFor(startOffset, startOffset + record.getCigar().getPaddedReadLength() -1);
+		binMapNameLength<<=16;
+		binMapNameLength |= (record.getMappingQuality() <<8);
+		binMapNameLength |= record.getQueryName().length();
+		
+		long flagsAndNumCigarOps = SamRecordFlags.asBits(record.getFlags()) <<16;
+		flagsAndNumCigarOps |= record.getCigar().getNumberOfElements();
+		//cast should be fine since our masks
+		//makes sure we only have lower 4 bytes of data
+		buf.putInt((int) (binMapNameLength & 0x00000000FFFFFFFFL ));
+		buf.putInt((int) (flagsAndNumCigarOps & 0x00000000FFFFFFFFL ));
+		NucleotideSequence seq =record.getSequence();
+		int seqLength = seq ==null ? 0 :(int)seq.getLength();			
+		
+		buf.putInt(seqLength);
+		buf.putInt(header.getReferenceIndexFor(record.getNextName()));
+		buf.putInt(record.getNextOffset() -1);
+		buf.putInt(record.getObservedTemplateLength());
+		buf.put(writeNullTerminatedStringAsBytes(record.getQueryName()));
+		for(CigarElement cigarElement : record.getCigar()){
+			int encodedCigar = cigarElement.getLength() <<4;
+			encodedCigar |= cigarElement.getOp().getBinaryOpCode();
+			buf.putInt(encodedCigar);
+		}
+		if(seqLength >0){
+			writeSequence(buf, seqLength, seq);
+			writeQualities(buf, seqLength, record.getQualities());
+		}
+		for(SamAttribute attribute : record.getAttributes()){
+			SamAttributeKey key =attribute.getKey();
+			
+			buf.put((byte)(key.getFirstChar() & 0xFF));
+			buf.put((byte)(key.getSecondChar() & 0xFF));
+			
+			SamAttributeType type = attribute.getType();
+			type.putBinaryTypeCode(buf);
+			type.binaryEncode(attribute.getValue(), buf);
+		}
+		
+		int bytesWritten =buf.position();
+		buf.flip();
+		buf.putInt(bytesWritten -4);
+		buf.position(0);
+		byte[] asBytes = new byte[buf.remaining()];
+		buf.get(asBytes);
+		out.write(asBytes);
+	}
+	
+	
+	private static void writeQualities(ByteBuffer in, int seqLength, QualitySequence qualities) throws IOException {
+		if(qualities ==null){
+			byte[] fake = new byte[seqLength];
+			Arrays.fill(fake, (byte)-1);
+			in.put(fake);
+		}else{
+			in.put(qualities.toArray());
+		}
+		
+	}
+
+	private static void writeSequence(ByteBuffer buf, int seqLength, NucleotideSequence seq) throws IOException {
+		byte[] data = new byte[seqLength+1/2];
+		Iterator<Nucleotide> iter = seq.iterator();
+		//write all but last byte which 
+		//will use all bits
+		for(int i=0; i<data.length -1; i++){
+			int value = BAM_ENCODED_BASES_TO_ORDINAL[iter.next().ordinal()] <<4;
+			value |= BAM_ENCODED_BASES_TO_ORDINAL[iter.next().ordinal()];
+			data[i] = (byte)value;
+		}
+		//last byte will def use higher order bits
+		int value = BAM_ENCODED_BASES_TO_ORDINAL[iter.next().ordinal()] <<4;
+		//only include lower bits if we are even
+		if(seqLength%2==0){
+			value |= BAM_ENCODED_BASES_TO_ORDINAL[iter.next().ordinal()];
+		}
+		data[data.length -1] = (byte)value;
+		buf.put(data);
+		
+	}
+	private static byte[] writeNullTerminatedStringAsBytes(String s){
+		char[] chars =s.toCharArray();
+		byte[] bytes = new byte[chars.length +1];
+		for(int i=0; i<chars.length; i++){
+			bytes[i] = (byte)chars[i];
+		}
+		//last byte should be null by default
+		//so we don't have to write it
+		return bytes;
 	}
 }

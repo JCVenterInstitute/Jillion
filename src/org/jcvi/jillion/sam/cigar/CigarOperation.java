@@ -85,6 +85,9 @@ public enum CigarOperation {
 	public char getOpCode() {
 		return opCode;
 	}
+	public int getBinaryOpCode() {
+		return ordinal();
+	}
 
 	public static CigarOperation parseBinary(int bit){
 		return VALUES[bit];
