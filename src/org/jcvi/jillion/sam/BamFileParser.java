@@ -79,7 +79,7 @@ final class BamFileParser extends AbstractSamFileParser {
 		OpenAwareInputStream in=null;
 		
 		try{
-			in = new OpenAwareInputStream(new ConcatenatedGZipInputStream(new BufferedInputStream(new FileInputStream(bamFile))));
+			in = new OpenAwareInputStream(new BgzfInputStream(new BufferedInputStream(new FileInputStream(bamFile))));
 			
 			verifyMagicNumber(in);
 			

@@ -12,6 +12,33 @@ import org.jcvi.jillion.core.util.iter.ArrayIterator;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 
 public final class Cigar implements Iterable<CigarElement>{
+	/**
+	 * The various types of clipping
+	 * operations performed on a sequence.
+	 * @author dkatzel
+	 *
+	 */
+	public static enum ClipType {
+		/**
+		 * The raw sequence including
+		 * all bases provided that are clipped.
+		 */
+		RAW,
+		/**
+		 * The sequence excluding all
+		 * clipped bases (no hard or soft
+		 * clipped bases are included).
+		 */
+		SOFT_CLIPPED,
+		/**
+		 * The sequence excluding
+		 * any hard clipped based
+		 * (no hard clipped bases are included,
+		 * but soft clipped bases are included).
+		 */
+		HARD_CLIPPED,
+	}
+
 
 	private static final String UN_AVAILABLE = "*";
 	private final CigarElement[] elements;
@@ -83,9 +110,50 @@ public final class Cigar implements Iterable<CigarElement>{
 		return new ArrayIterator<CigarElement>(copy);
 	}
 
+	/**
+	 * Get the length of this cigar
+	 * including padding (gaps)
+	 * with the provided clip type
+	 * @param type the {@link ClipType}
+	 * of clipping operations to include in the length
+	 * calculation; can not be null.
+	 * @return an int.
+	 * @throws NullPointerException if type is null.
+	 */
+	public int getPaddedReadLength(ClipType type){
+		switch(type){
+			case RAW : return getRawPaddedReadLength();
+			case SOFT_CLIPPED : return getPaddedReadLength();
+			case HARD_CLIPPED : return getSoftPaddedReadLength();
+			default : 
+				//shouldn't happen unless we add a new type 
+				//and forget to include it in the switch()
+				throw new IllegalArgumentException("unknown clip type : " + type);
+		}
+	}
+	/**
+	 * Get the length of this cigar
+	 * excluding padding (gaps)
+	 * with the provided clip type
+	 * @param type the {@link ClipType}
+	 * of clipping operations to include in the length
+	 * calculation; can not be null.
+	 * @return an int.
+	 * @throws NullPointerException if type is null.
+	 */
+	public int getUnpaddedReadLength(ClipType type){
+		switch(type){
+			case RAW : return getRawUnPaddedReadLength();
+			case SOFT_CLIPPED : return getUnPaddedReadLength();
+			case HARD_CLIPPED : return getSoftUnPaddedReadLength();
+			default : 
+				//shouldn't happen unless we add a new type 
+				//and forget to include it in the switch()
+				throw new IllegalArgumentException("unknown clip type : " + type);
+		}
+	}
 
-
-	public int getRawUnPaddedReadLength(){
+	private int getRawUnPaddedReadLength(){
 		int length=0;
 		for(CigarElement element : elements){
 			//This is an optimization to allow the 
@@ -130,7 +198,7 @@ public final class Cigar implements Iterable<CigarElement>{
 		return length;
 	}
 	
-	public int getRawPaddedReadLength(){
+	private int getRawPaddedReadLength(){
 		int length=0;
 		for(CigarElement element : elements){
 			//This is an optimization to allow the 
@@ -159,6 +227,52 @@ public final class Cigar implements Iterable<CigarElement>{
 					break;
 				case HARD_CLIP:
 					length += element.getLength();
+					break;
+				case PADDING:
+					length += element.getLength();
+					break;
+				case SEQUENCE_MATCH:
+					length += element.getLength();
+					break;
+				case SEQUENCE_MISMATCH:
+					length += element.getLength();
+					break;
+	
+				default:
+					// do not increase length
+			}		
+		}
+		return length;
+	}
+	
+	private int getSoftPaddedReadLength(){
+		int length=0;
+		for(CigarElement element : elements){
+			//This is an optimization to allow the 
+	    	//compiler to use a tableswitch opcode
+	    	//instead of the more general purpose
+	    	//lookupswitch opcode.
+	    	//tableswitch is an O(1) lookup
+	    	//while lookupswitch is O(n) where n
+	    	//is the number of case statements in the switch.
+	    	//tableswitch requires consecutive case values.
+	    	//DO NOT CHANGE THE ORDER OF THE CASE STATEMENTS
+			switch (element.getOp()) {
+				case ALIGNMENT_MATCH:
+					length += element.getLength();
+					break;
+				case INSERTION:
+					length += element.getLength();
+					break;
+				case DELETION:
+					length += element.getLength();
+					break;
+				case SKIPPED:
+					break;
+				case SOFT_CLIP:
+					length += element.getLength();
+					break;
+				case HARD_CLIP:					
 					break;
 				case PADDING:
 					length += element.getLength();
@@ -221,7 +335,52 @@ public final class Cigar implements Iterable<CigarElement>{
 		return length;
 	}
 	
-	public int getPaddedReadLength(){
+	private int getSoftUnPaddedReadLength(){
+		int length=0;
+		for(CigarElement element : elements){
+			//This is an optimization to allow the 
+	    	//compiler to use a tableswitch opcode
+	    	//instead of the more general purpose
+	    	//lookupswitch opcode.
+	    	//tableswitch is an O(1) lookup
+	    	//while lookupswitch is O(n) where n
+	    	//is the number of case statements in the switch.
+	    	//tableswitch requires consecutive case values.
+	    	//DO NOT CHANGE THE ORDER OF THE CASE STATEMENTS
+			switch (element.getOp()) {
+				case ALIGNMENT_MATCH:
+					length += element.getLength();
+					break;
+				case INSERTION:
+					length += element.getLength();
+					break;
+				case DELETION:
+					break;
+				case SKIPPED:
+					break;
+				case SOFT_CLIP:
+					length += element.getLength();
+					break;
+				case HARD_CLIP:
+					//don't count clip points
+					break;
+				case PADDING:
+					break;
+				case SEQUENCE_MATCH:
+					length += element.getLength();
+					break;
+				case SEQUENCE_MISMATCH:
+					length += element.getLength();
+					break;
+	
+				default:
+					// do not increase length
+			}		
+		}
+		return length;
+	}
+	
+	private int getPaddedReadLength(){
 		int length=0;
 		for(CigarElement element : elements){
 			//This is an optimization to allow the 
