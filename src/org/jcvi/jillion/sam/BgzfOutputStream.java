@@ -13,10 +13,18 @@ import java.util.zip.Deflater;
  * appropriate Extra fields set in the header
  * to conform to the BGZF format
  * specified in the BAM file format specification.
+ * <p>
+ * NOT THREAD SAFE
+ * </p>
  * @author dkatzel
  *
  */
 final class BgzfOutputStream extends OutputStream{
+	
+	public interface IndexerCallback{
+		void encodedIndex(long compressedStart, int uncompressedStart,
+						  long compressedEnd, int uncompressedEnd);
+	}
 	/**
 	 * Max compressed block size should never be > max uncompressed block size.
 	 * Since the maximum size that an uncompressed GZIP block
@@ -94,8 +102,15 @@ final class BgzfOutputStream extends OutputStream{
 	/**
 	 * The number of bytes written to our uncompressedBuffer
 	 * so far that have not yet been flushed.
+	 * This value is updated on calls to write().
 	 */
 	private int currentUsedBufferLength=0;
+	/**
+	 * The amount of bytes written out so far to the 
+	 * wrapped OutputStream in the form of BGZF blocks.
+	 * This value is updated on calls to {@link #flush()}.
+	 */
+	private long compressedBytesWrittenSoFar=0;
 	/**
 	 * Our buffer storing the bytes to be flushed to our
 	 * wrapped outputStream.
@@ -115,13 +130,20 @@ final class BgzfOutputStream extends OutputStream{
 	 */
 	private final OutputStream out;
 	/**
+	 * Reference to a {@link IndexerCallback}
+	 * if an observer is interested in where
+	 * each call to write() is written in the wrapped
+	 * outputStream.  May be {@code null}
+	 * if there is no callback.
+	 */
+	private final IndexerCallback callback;
+	/**
 	 * Used by {@link #write(int)}
 	 * to reduce extra variable creation
 	 * by always reusing the same array.
 	 * @see #write(int)
 	 */
 	private final byte[] singleByteArray = new byte[1];
-	
 	/**
 	 * Create a new {@link BgzfOutputStream}
 	 * that will write BGZF encoded data to the given
@@ -130,11 +152,27 @@ final class BgzfOutputStream extends OutputStream{
 	 * can not be null;
 	 * @throws NullPointerException if out is null.
 	 */
-	public BgzfOutputStream(OutputStream out) {
+	public BgzfOutputStream(OutputStream out){
+		this(out, null);
+	}
+	/**
+	 * Create a new {@link BgzfOutputStream}
+	 * that will write BGZF encoded data to the given
+	 * outputStream.
+	 * @param out the {@link OutputStream} to write to;
+	 * can not be null;
+	 * @param callback the {@link IndexerCallback} to call back to
+	 * on during when writing to this {@link BgzfOutputStream};
+	 * if {@code null} then no callbacks will be called.
+	 * 
+	 * @throws NullPointerException if out is null.
+	 */
+	public BgzfOutputStream(OutputStream out, IndexerCallback callback) {
 		if(out==null){
 			throw new NullPointerException("output can not be null");
 		}
 		this.out = out;
+		this.callback = callback;
 	}
 	/**
 	 * {@inheritDoc}.
@@ -158,7 +196,8 @@ final class BgzfOutputStream extends OutputStream{
 	 * If the in memory buffer fills up, 
 	 * then compress in memory buffer and write
 	 * the compressed data to the wrapped
-	 * OutputStream as one or more BGZF blocks.
+	 * OutputStream as one or more BGZF blocks
+	 * and call the callback if there is one.
 	 * 
 	 * @param      b     the data.
      * @param      off   the start offset in the data.
@@ -170,6 +209,43 @@ final class BgzfOutputStream extends OutputStream{
 			//follow OutputStream spec and throw Exception
 			throw new IndexOutOfBoundsException("length can not be negative : "+ bytesToWriteLength);
 		}
+		if(callback ==null){
+			handleWriteBody(b, off, bytesToWriteLength);
+		}else{
+			//get before and after values
+			//for our callback
+			long compressedStart = compressedBytesWrittenSoFar;
+			int uncompressedStart = currentUsedBufferLength;
+			
+			handleWriteBody(b, off, bytesToWriteLength);
+			
+			long compressedEnd= compressedBytesWrittenSoFar;
+			int uncompressedEnd = currentUsedBufferLength;
+			
+			callback.encodedIndex(compressedStart, uncompressedStart, 
+									compressedEnd, uncompressedEnd);
+		}
+		
+	}
+	/**
+	 * Take the given bytes to be written and
+	 * try to write them to our in memory buffer.
+	 * If the in memory buffer fills up, 
+	 * then compress in memory buffer and write
+	 * the compressed data to the wrapped
+	 * OutputStream as one or more BGZF blocks.
+	 * 
+	 * @param      b     the data.
+     * @param      off   the start offset in the data.
+     * @param      len   the number of bytes to write.
+	 * @throws IOException if there is a problem encoding or writing out the data.
+	 */
+	private void handleWriteBody(byte[] b, int off, int bytesToWriteLength) throws IOException{
+		//this method is only called by handleWrite()
+		//which has done all the range checks already
+		//so we don't have to.
+		
+		
 		//loop through the data in chunks that fit
 		//into the current uncompressedBuffer
 		//and write potentially multiple concatenated blocks.
@@ -191,7 +267,7 @@ final class BgzfOutputStream extends OutputStream{
 			
 			if(currentUsedBufferLength == MAX_UNCOMPRESSED_BLOCK_SIZE){
 				//we have filled our uncompressedBuffer
-				//write out block(s) to wrapped outputStream
+				//write one block to the wrapped outputStream
 				flush();
 			}
 		}
@@ -237,8 +313,13 @@ final class BgzfOutputStream extends OutputStream{
 			bgzfBlockBuffer.put(compressedBuffer,0,compressedLength);
 			bgzfBlockBuffer.putInt((int)currentCrc32.getValue());
 			bgzfBlockBuffer.putInt(currentUsedBufferLength);
-			out.write(bgzfBlockBuffer.array());
+			bgzfBlockBuffer.flip();
+			byte[] asBytes = new byte[bgzfBlockBuffer.remaining()];
+			bgzfBlockBuffer.get(asBytes);
+			out.write(asBytes);
 			out.flush();
+			//update counters
+			compressedBytesWrittenSoFar +=asBytes.length;
 			//reset buffer
 			currentUsedBufferLength = 0;
 		}

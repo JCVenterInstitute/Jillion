@@ -16,7 +16,9 @@ import org.junit.runners.Suite.SuiteClasses;
     	
     	TestSamRecordFlags.class,
     	TestBinComputation.class,
-    	TestSortOrder.class
+    	TestSortOrder.class,
+    	
+    	TestSamParserFactory.class
     }
     )
 public class AllSamTests {

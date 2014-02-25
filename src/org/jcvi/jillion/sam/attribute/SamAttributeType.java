@@ -88,15 +88,19 @@ public enum SamAttributeType {
 		}
 
 		@Override
-		public int getSignedInt(Object obj) {
-			return ((Integer)obj).intValue();
+		public int getSignedInt(Object obj) {			
+			return Integer.parseInt(obj.toString());
 		}
 
 		@Override
 		public String textEncode(Object o) {
+			//this ugliness to to type check
+			//that the object is a integer
+			//or a type that can be converted into an integer
+			//ex: "1" or Integer.valueOf(1) etc.
 			try{
-				return ((Integer)o).toString();
-			}catch(ClassCastException e){
+				return Integer.toString(Integer.parseInt(o.toString()));
+			}catch(Exception e){
 				throw new IllegalArgumentException("not an int", e);
 			}
 		}
@@ -114,10 +118,7 @@ public enum SamAttributeType {
 		}
 
 		@Override
-		public void validate(Object value) throws InvalidValueTypeException {
-			if(value instanceof String){
-				
-			}
+		public void validate(Object value) throws InvalidValueTypeException {			
 			if(!(value instanceof Integer)){
 				//check that it can be parsed into an int
 				try{
@@ -144,25 +145,34 @@ public enum SamAttributeType {
 		}
 
 		@Override
-		public float getFloat(Object obj) {
-			return ((Float)obj).floatValue();
+		public int getSignedInt(Object obj) {			
+			return Integer.parseInt(obj.toString());
 		}
 
 		@Override
 		public String textEncode(Object o) {
+			//this ugliness to to type check
+			//that the object is a float
+			//or a type that can be converted into an integer
+			//ex: "1.23" or Float.valueOf(1.23) etc.
 			try{
-				return ((Float)o).toString();
-			}catch(ClassCastException e){
+				return Float.toString(Float.parseFloat(o.toString()));
+			}catch(Exception e){
 				throw new IllegalArgumentException("not an float", e);
 			}
 		}
+		@Override
+		public float getFloat(Object obj) {
+			return Float.parseFloat(obj.toString());
+		}
+
 		
 		
 
 		@Override
 		public void binaryEncode(Object o, ByteBuffer out)
 				throws IOException {
-			out.putFloat( ((Float)o).floatValue());
+			out.putFloat( getFloat(o));
 			
 		}
 		@Override

@@ -16,6 +16,7 @@ import org.jcvi.jillion.sam.attribute.SamAttribute;
 import org.jcvi.jillion.sam.attribute.SamAttributeKey;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 import org.jcvi.jillion.sam.cigar.Cigar;
+import org.jcvi.jillion.sam.cigar.Cigar.ClipType;
 import org.jcvi.jillion.sam.header.SamHeader;
 
 public class SamRecord {
@@ -43,12 +44,20 @@ public class SamRecord {
 		this.startOffset = builder.startPosition;
 		this.mappingQuality = builder.mappingQuality;
 		this.cigar = builder.cigar;
-		this.nextReferenceName = builder.nextReferenceName;
+		
 		this.nextOffset = builder.nextPosition;
 		this.observedTemplateLength = builder.observedTemplateLength;
 		this.sequence = builder.sequence;
 		this.qualities = builder.qualities;
 		this.attributes = Collections.unmodifiableMap(builder.attributes);
+		
+		
+		//change = to actual ref name
+		if(IDENTICAL.equals(builder.nextReferenceName)){
+			this.nextReferenceName = referenceName;
+		}else{
+			this.nextReferenceName = builder.nextReferenceName;
+		}
 	}
 	
 	public boolean isPrimary(){
@@ -254,6 +263,19 @@ public class SamRecord {
 	}
 
 
+	@Override
+	public String toString() {
+		return "SamRecord [queryName=" + queryName + ", referenceName="
+				+ referenceName + ", nextReferenceName=" + nextReferenceName
+				+ ", flags=" + flags + ", startOffset=" + startOffset
+				+ ", nextOffset=" + nextOffset + ", mappingQuality="
+				+ mappingQuality + ", cigar=" + cigar + ", sequence="
+				+ sequence + ", qualities=" + qualities
+				+ ", observedTemplateLength=" + observedTemplateLength
+				+ ", attributes=" + attributes + "]";
+	}
+
+
 	public static class Builder{
 		
 		
@@ -265,7 +287,7 @@ public class SamRecord {
 		private String queryName= UNAVAILABLE, referenceName = UNAVAILABLE,
 				nextReferenceName = UNAVAILABLE;
 		private EnumSet<SamRecordFlags> flags;
-		private int startPosition =NOT_SET, nextPosition= NOT_SET;
+		private int startPosition =NOT_SET, nextPosition= 0;
 		private byte mappingQuality=-1;
 		private Cigar cigar;
 		private NucleotideSequence sequence;
@@ -460,6 +482,20 @@ public class SamRecord {
 			return this;
 		}
 		/**
+		 * Convenience method to set mapping
+		 * quality as an int instead of a byte.
+		 * Otherwise same as {@link #setMappingQuality(byte)}.
+		 * @throws IllegalArgumentException if mappingQuality is out of 
+		 * byte range.
+		 */
+		public Builder setMappingQuality(int mappingQuality) {
+			if(mappingQuality>Byte.MAX_VALUE){
+				throw new IllegalArgumentException("invalid mapping quality " + mappingQuality);
+			}
+			return setMappingQuality((byte)mappingQuality);
+			
+		}
+		/**
 		 * The mapping quality.  It equals
 		 * -10 log<sub>10</sub> Prob{mapping position is wrong}
 		 * rounded to the nearest integer.  If set to -1, then 
@@ -492,9 +528,11 @@ public class SamRecord {
 		 * If this sequence exists, then the sequence length
 		 * must equal the length of the {@link Cigar}.
 		 * @param sequence the sequence, may be null.
+		 * @return this.
 		 */
-		public void setSequence(NucleotideSequence sequence) {
+		public Builder setSequence(NucleotideSequence sequence) {
 			this.sequence = sequence;
+			return this;
 		}
 		/**
 		 * The {@link QualitySequence} of this segment.
@@ -504,9 +542,11 @@ public class SamRecord {
 		 * must also not be null and have an equal length.
 		 * @param qualities
 		 * @see #setSequence(NucleotideSequence)
+		 * @return this.
 		 */
-		public void setQualities(QualitySequence qualities) {
+		public Builder setQualities(QualitySequence qualities) {
 			this.qualities = qualities;
+			return this;
 		}
 
 		/**
@@ -519,10 +559,12 @@ public class SamRecord {
 		 * unavailable. If this method is not called, then the default value is
 		 * 0.
 		 * 
-		 * @param observedTemplateLength the observed template length
+		 * @param observedTemplateLength the observed template length.
+		 * @return this.
 		 */
-		public void setObservedTemplateLength(int observedTemplateLength) {
+		public Builder setObservedTemplateLength(int observedTemplateLength) {
 			this.observedTemplateLength = observedTemplateLength;
+			return this;
 		}
 		
 		
@@ -546,7 +588,7 @@ public class SamRecord {
 			}
 			if(sequence !=null && cigar !=null){
 					
-				if(sequence.getUngappedLength() != cigar.getRawUnPaddedReadLength()){
+				if(sequence.getUngappedLength() != cigar.getUnpaddedReadLength(ClipType.HARD_CLIPPED)){
 					throw new IllegalStateException("sequence and cigar must have same unpadded/ ungapped read length");
 				}
 			}

@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 /**
- * {@code ConcatenatedGZipInputStream}
+ * {@code BgzfInputStream}
  * is a work around for the bug in {@link GZIPInputStream}
  * documented with many bug reports including but not limited to:
  * <ul>
@@ -29,7 +29,7 @@ import java.util.zip.GZIPInputStream;
  * @author dkatzel
  *
  */
-final class ConcatenatedGZipInputStream extends InputStream{
+final class BgzfInputStream extends InputStream{
 
 	/**
 	 * The original {@link InputStream}
@@ -56,7 +56,7 @@ final class ConcatenatedGZipInputStream extends InputStream{
     boolean eof=false;
     
     /**
-     * Create a new {@link ConcatenatedGZipInputStream}.
+     * Create a new {@link BgzfInputStream}.
      * @param in the {@link InputStream} to unzip;
      * may not be null.
      * @param size the buffer size to use when unzipping;
@@ -66,7 +66,7 @@ final class ConcatenatedGZipInputStream extends InputStream{
      * @throws NullPointerException if in is null.
      * @throws IllegalArgumentException if size <= 0
      */
-	public ConcatenatedGZipInputStream(InputStream in, int size)
+	public BgzfInputStream(InputStream in, int size)
 			throws IOException {
 		
 		if(in == null){
@@ -77,7 +77,7 @@ final class ConcatenatedGZipInputStream extends InputStream{
 		currentGzipStream = new GZIPInputStream(in, size);
 	}
 	/**
-     * Creates a new {@link ConcatenatedGZipInputStream}
+     * Creates a new {@link BgzfInputStream}
      * with a default buffer size.
      * @param in the {@link InputStream} to unzip;
      * may not be null.
@@ -85,7 +85,7 @@ final class ConcatenatedGZipInputStream extends InputStream{
      * reading the first zip block.
      * @throws NullPointerException if in is null.
      */
-	public ConcatenatedGZipInputStream(InputStream in) throws IOException {
+	public BgzfInputStream(InputStream in) throws IOException {
 		//default buffer size copied from GZIPInputStream
 		this(in, 512);
 	}

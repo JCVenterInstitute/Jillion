@@ -28,6 +28,7 @@ import org.jcvi.jillion.sam.SamParserFactory;
 import org.jcvi.jillion.sam.SamRecord;
 import org.jcvi.jillion.sam.SamVisitor;
 import org.jcvi.jillion.sam.cigar.Cigar;
+import org.jcvi.jillion.sam.cigar.Cigar.ClipType;
 import org.jcvi.jillion.sam.cigar.CigarElement;
 import org.jcvi.jillion.sam.cigar.CigarOperation;
 import org.jcvi.jillion.sam.header.ReferenceSequence;
@@ -138,7 +139,7 @@ public final class SamTransformationService implements AssemblyTransformationSer
 					
 					Direction dir = record.getDirection();
 					Cigar cigar = record.getCigar();
-					int rawLength = cigar.getRawUnPaddedReadLength();
+					int rawLength = cigar.getUnpaddedReadLength(ClipType.RAW);
 					Range validRange;
 					int gappedStartOffset = referenceSeq.getGappedOffsetFor(record.getStartPosition()-1);
 					

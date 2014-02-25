@@ -118,9 +118,9 @@ public class SamAttribute {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((key == null) ? 0 : key.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
-		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		result = prime * result + key.hashCode();
+		result = prime * result +  type.hashCode();
+		result = prime * result + type.textEncode(value).hashCode();
 		return result;
 	}
 
@@ -142,10 +142,18 @@ public class SamAttribute {
 		if (type != other.type) {
 			return false;
 		}
-		if (!value.equals(other.value)) {
+		//need to do type conversion
+		//because SAM vs BAM might have different 
+		//Object for example "1" instead of 1.
+		if (!type.textEncode(value).equals(type.textEncode(other.value))) {
 			return false;
 		}
 		return true;
+	}
+	@Override
+	public String toString() {
+		return "SamAttribute [key=" + key + ", type=" + type + ", value="
+				+ value + "]";
 	}
 	
 	

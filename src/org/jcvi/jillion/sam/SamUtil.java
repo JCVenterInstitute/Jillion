@@ -21,6 +21,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.sam.attribute.SamAttribute;
 import org.jcvi.jillion.sam.attribute.SamAttributeKey;
 import org.jcvi.jillion.sam.attribute.SamAttributeType;
+import org.jcvi.jillion.sam.cigar.Cigar.ClipType;
 import org.jcvi.jillion.sam.cigar.CigarElement;
 import org.jcvi.jillion.sam.header.SamHeader;
 /**
@@ -362,7 +363,7 @@ public final class SamUtil {
 		buf.putInt(header.getReferenceIndexFor(referenceName));
 		int startOffset = record.getStartPosition() -1;
 		buf.putInt(startOffset);
-		long binMapNameLength =computeBinFor(startOffset, startOffset + record.getCigar().getPaddedReadLength() -1);
+		long binMapNameLength =computeBinFor(startOffset, startOffset + record.getCigar().getPaddedReadLength(ClipType.SOFT_CLIPPED) -1);
 		binMapNameLength<<=16;
 		binMapNameLength |= (record.getMappingQuality() <<8);
 		binMapNameLength |= record.getQueryName().length();
