@@ -130,8 +130,7 @@ public class PhdDirDataStore implements PhdDataStore{
         File phdFile = getPhdFileFor(id);
         if(phdFile ==null){
             if(phdBallDataStore==null){
-                throw new IllegalArgumentException("could not find any phd files for "+ id);
-                
+                return null;
             }
             return phdBallDataStore.get(id);
         }
