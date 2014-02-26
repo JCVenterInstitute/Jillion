@@ -1,31 +1,38 @@
 package org.jcvi.jillion.sam;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.EnumSet;
 
+import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.sam.attribute.SamAttribute;
 import org.jcvi.jillion.sam.attribute.SamAttributeKey;
+import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 import org.jcvi.jillion.sam.header.SamHeader;
 
-public class SamFileWriter implements SamWriter {
+public class PresortedSamFileWriter implements SamWriter {
 
 	private final PrintStream out;
 	private final SamHeader header;
+	private final SamAttributeValidator attributeValidator;
 	
-	
-	
-	public SamFileWriter(OutputStream out, SamHeader header) {
+	public PresortedSamFileWriter(File out, SamHeader header, SamAttributeValidator attributeValidator) throws IOException {
 		if(out ==null){
 			throw new NullPointerException("output stream can not be null");
 		}
 		if(header ==null){
 			throw new NullPointerException("header can not be null");
 		}
+		if(attributeValidator ==null){
+			throw new NullPointerException("header can not be null");
+		}
+		IOUtil.mkdirs(out.getParentFile());
 		this.out = new PrintStream(out);
 		this.header = header;
+		this.attributeValidator = attributeValidator;
 		this.out.print(SamUtil.encodeHeader(this.header).toString());
+		
 	}
 
 	
@@ -59,13 +66,11 @@ public class SamFileWriter implements SamWriter {
 
 	@Override
 	public void writeRecord(SamRecord record) throws IOException {
-		//TODO validate record against header?
-		//can't do equals this header vs record.getHeader()
-		//because we might change header by modifying sort order
-		//or adding program to chain
-		//we only care that it is similar enough
-		//that the record is still valid
-		//(reference and programs still known etc)
+		try{
+			header.validRecord(record, attributeValidator);
+		}catch(SamValidationException e){
+			throw new IOException("can not write record due to validation error(s)",e);
+		}
 		StringBuilder builder = new StringBuilder(4096);
 		appendMandatoryField(builder, record.getQueryName(),true);
 		EnumSet<SamRecordFlags> flags = record.getFlags();

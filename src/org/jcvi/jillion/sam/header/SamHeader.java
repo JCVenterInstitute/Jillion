@@ -3,6 +3,7 @@ package org.jcvi.jillion.sam.header;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -10,8 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.jcvi.jillion.sam.SamRecord;
+import org.jcvi.jillion.sam.SamValidationException;
 import org.jcvi.jillion.sam.SortOrder;
-import org.jcvi.jillion.sam.attribute.InvalidAttributeException;
 import org.jcvi.jillion.sam.attribute.SamAttribute;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 /**
@@ -373,6 +374,10 @@ public final class SamHeader {
 		public boolean hasReferenceSequence(String name) {
 			return referenceSequences.containsKey(name);
 		}
+
+		public SortOrder getSortOrder() {
+			return sortOrder;
+		}
 	}
 
 
@@ -385,24 +390,27 @@ public final class SamHeader {
 		
 	}
 	
-	public boolean validRecord(SamRecord record, SamAttributeValidator attributeValidator){
+	public void validRecord(SamRecord record, SamAttributeValidator attributeValidator) throws SamValidationException{
 		//reference names must be present in a SQ-SN tag
 		String refName =record.getReferenceName();
 		if(refName !=null && !this.hasReferenceSequence(refName)){
-			return false;
+			throw new SamValidationException("unknown reference "+ refName);
 		}
 		String nextRefName = record.getNextName();
 		if(nextRefName !=null &&  !"=".equals(nextRefName) && !this.hasReferenceSequence(nextRefName)){
-			return false;
+			throw new SamValidationException("unknown next reference "+ nextRefName);
 		}
-		for(SamAttribute attribute : record.getAttributes()){
-			try {
+		for(SamAttribute attribute : record.getAttributes()){			
 				attributeValidator.validate(this, attribute);
-			} catch (InvalidAttributeException e) {
-				return false;
-			}
+			
 		}
 		
-		return true;
+	}
+	
+	public Comparator<SamRecord> createRecordComparator(){
+		if(sortOrder ==null){
+			return null;
+		}
+		return sortOrder.createComparator(this);
 	}
 }

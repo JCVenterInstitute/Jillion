@@ -1,6 +1,8 @@
 package org.jcvi.jillion.sam.attribute;
 
-public class InvalidAttributeException extends Exception{
+import org.jcvi.jillion.sam.SamValidationException;
+
+public class InvalidAttributeException extends SamValidationException{
 
 	
 	/**

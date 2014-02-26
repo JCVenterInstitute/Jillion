@@ -85,9 +85,12 @@ public class PresortedBamFileWriter implements SamWriter{
 
 	@Override
 	public void writeRecord(SamRecord record) throws IOException {
-		if(!header.validRecord(record, attributeValidator)){
-			throw new IllegalArgumentException("header in record does not match header written to bam file");
+		try{
+			header.validRecord(record, attributeValidator);
+		}catch(SamValidationException e){
+			throw new IOException("can not write record due to validation error(s)",e);
 		}
+		
 		SamUtil.writeAsBamRecord(out, header, record);
 	}
 

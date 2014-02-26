@@ -70,6 +70,13 @@ public enum SortOrder{
 
 		@Override
 		public int compare(SamRecord o1, SamRecord o2) {
+			//nulls always go last
+			if (o1 == null) {
+                return 1;
+            }
+            if (o2 == null) {
+                return -1;
+            }
 			return o1.getQueryName().compareTo(o2.getQueryName());
 		}
 		
@@ -149,6 +156,13 @@ public enum SortOrder{
 		}
 		@Override
 		public int compare(SamRecord o1, SamRecord o2) {
+			//nulls always go last
+			if (o1 == null) {
+                return 1;
+            }
+            if (o2 == null) {
+                return -1;
+            }
 			//sort by reference then by start position
 			//if the read didn't map, then the alignments
 			//go last
