@@ -104,11 +104,40 @@ public enum SamAttributeType {
 				throw new IllegalArgumentException("not an int", e);
 			}
 		}
-
+		
 		
 		@Override
+		public void encodeInBam(Object o, ByteBuffer b) throws IOException {
+			int i = getSignedInt(o);
+			//according to BAM spec
+			//we can choose to represent this int
+			//in a smaller number of bytes if it fits
+			//but we have to change the type accordingly
+			if(i >=Byte.MIN_VALUE && i <= Byte.MAX_VALUE){
+				b.put((byte)'c');
+				b.put((byte)i);
+			}else if(i >=0 && i <= 255){
+				b.put((byte)'C');
+				b.put((byte)i);
+			}else if(i >=Short.MIN_VALUE && i <= Short.MAX_VALUE){
+				b.put((byte)'s');
+				b.putShort((short)i);
+			}else if(i >=0 && i <= 65535){
+				b.put((byte)'S');
+				b.putShort((short)i);
+			}else{
+				//the spec also mentions unsigned int
+				//but I don't think we can actually store
+				//that in this attribute type?
+				//since SAM only allows up to signed ints.
+				b.put((byte)'i');
+				b.putInt(i);
+			}
+		}
+
+		@Override
 		public void binaryEncode(Object o, ByteBuffer out) throws IOException {
-			out.putInt( getSignedInt(o));
+			//no-op since we override encoideInBam()
 			
 		}
 
@@ -659,7 +688,7 @@ public enum SamAttributeType {
 		return builder.toString();
 	}
 	
-	public void putBinaryTypeCode(ByteBuffer buf){
+	private void putBinaryTypeCode(ByteBuffer buf){
 		buf.put((byte)(value & 0xFF));
 		if(optionalArrayType !=null){
 			buf.put((byte)(optionalArrayType & 0xFF));
@@ -667,7 +696,18 @@ public enum SamAttributeType {
 	}
 	public abstract String textEncode(Object o);
 	
-	public abstract void binaryEncode(Object o, ByteBuffer out) throws IOException;
+	public void encodeInBam(Object o, ByteBuffer b) throws IOException{
+		putBinaryTypeCode(b);
+		binaryEncode(o, b);
+	}
+	/**
+	 * Encode the type AND the value in BAM format
+	 * and write those bytes to the given ByteBuffer.
+	 * @param o
+	 * @param out
+	 * @throws IOException
+	 */
+	abstract void binaryEncode(Object o, ByteBuffer out) throws IOException;
 	
 	public abstract Object decode(String value);
 	
@@ -832,7 +872,11 @@ public enum SamAttributeType {
 		if('Z' == typeCode){
 			return STRING;
 		}
-		if('i' == typeCode){
+		//BAM can use smaller number of bytes
+		//so need to check for all sizes of ints
+		if('i' == typeCode || 'I' == typeCode
+				|| 'c' == typeCode || 'C' == typeCode
+				|| 's' == typeCode || 'S' == typeCode){
 			return SIGNED_INT;
 		}
 		if('f' == typeCode){

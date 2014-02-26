@@ -403,8 +403,8 @@ public final class SamUtil {
 			buf.put((byte)(key.getSecondChar() & 0xFF));
 			
 			SamAttributeType type = attribute.getType();
-			type.putBinaryTypeCode(buf);
-			type.binaryEncode(attribute.getValue(), buf);
+			
+			type.encodeInBam(attribute.getValue(), buf);
 		}
 		
 		int bytesWritten =buf.position();
