@@ -370,7 +370,8 @@ public final class SamUtil {
 		long binMapNameLength =computeBinFor(startOffset, startOffset + record.getCigar().getPaddedReadLength(ClipType.SOFT_CLIPPED) -1);
 		binMapNameLength<<=16;
 		binMapNameLength |= (record.getMappingQuality() <<8);
-		binMapNameLength |= record.getQueryName().length();
+		//name length is null terminated
+		binMapNameLength |= record.getQueryName().length() +1;
 		
 		long flagsAndNumCigarOps = SamRecordFlags.asBits(record.getFlags()) <<16;
 		flagsAndNumCigarOps |= record.getCigar().getNumberOfElements();
@@ -432,7 +433,7 @@ public final class SamUtil {
 		Iterator<Nucleotide> iter = seq.iterator();
 		//write all but last byte which 
 		//will use all bits
-		for(int i=0; i<data.length -2; i++){
+		for(int i=0; i<data.length -1; i++){
 			try{
 			int value = BAM_ENCODED_BASES_TO_ORDINAL[iter.next().ordinal()] <<4;
 			value |= BAM_ENCODED_BASES_TO_ORDINAL[iter.next().ordinal()];
@@ -465,7 +466,7 @@ public final class SamUtil {
 	
 	public static  void writeHeader(SamHeader header, StringBuilder out) {
 		if(header.getVersion() != null){
-			out.append(String.format("@HN\tVN:%s\tSO:%s%n", 
+			out.append(String.format("@HD\tVN:%s\tSO:%s%n", 
 					header.getVersion(), 
 					header.getSortOrder().toString().toLowerCase(Locale.US)));
 		}
