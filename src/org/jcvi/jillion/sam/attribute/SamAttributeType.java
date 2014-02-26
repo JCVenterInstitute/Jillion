@@ -108,7 +108,7 @@ public enum SamAttributeType {
 		
 		@Override
 		public void binaryEncode(Object o, ByteBuffer out) throws IOException {
-			out.putInt( ((Integer)o).intValue());
+			out.putInt( getSignedInt(o));
 			
 		}
 
