@@ -17,7 +17,32 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 import org.jcvi.jillion.sam.header.SamHeader;
-
+/**
+ * {@code AbstractReSortSamFileWriter}
+ * is a {@link SamWriter} implementation
+ * that can take {@link SamRecord}s given to it via
+ * the {@link #writeRecord(SamRecord)}
+ * in ANY ORDER and write out the SAM or BAM file
+ * sorted by the specified manner.
+ * Subclasses handle the actual SAM/BAM encoding.
+ * <p>
+ * Algorithm: keep an array of records in memory
+ * (size of array specified by user).  When we
+ * have filled the array, sort the in memory records
+ * and write out a SAM/BAM file to a temp file and
+ * clear the in memory array to make room for more
+ * records.
+ * When {@link #close()} is called,
+ * write the combined sorted
+ * records to the specified output file.
+ * Since 
+ * we know each temp file and the in memory array are 
+ * each sorted, we can use a merge sort like algorithm
+ * to combine the records into one giant sorted list. 
+ * </p>
+ * @author dkatzel
+ *
+ */
 abstract class AbstractReSortSamFileWriter implements SamWriter {
 
 	
@@ -127,13 +152,11 @@ abstract class AbstractReSortSamFileWriter implements SamWriter {
 	
 	@Override
 	public void close() throws IOException {
-		List<PeekableStreamingIterator<SamRecord>> iterators =null;
+		List<PeekableStreamingIterator<SamRecord>> iterators =new ArrayList<PeekableStreamingIterator<SamRecord>>(1 + tempFiles.size());
 		SamWriter writer =null;
 		try{
 			sortInMemoryRecords();
-			
-			iterators = new ArrayList<PeekableStreamingIterator<SamRecord>>(1 + tempFiles.size());
-			
+
 			iterators.add(IteratorUtil.createPeekableStreamingIterator(new InMemoryStreamingIterator(currentInMemSize)));
 			
 			for(File tempFile : tempFiles){
