@@ -3,16 +3,11 @@ package org.jcvi.jillion.sam;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.Date;
 import java.util.EnumSet;
-import java.util.Locale;
 
 import org.jcvi.jillion.sam.attribute.SamAttribute;
 import org.jcvi.jillion.sam.attribute.SamAttributeKey;
-import org.jcvi.jillion.sam.header.ReadGroup;
-import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
-import org.jcvi.jillion.sam.header.SamProgram;
 
 public class SamFileWriter implements SamWriter {
 
@@ -30,76 +25,12 @@ public class SamFileWriter implements SamWriter {
 		}
 		this.out = new PrintStream(out);
 		this.header = header;
-		writeHeader();
+		StringBuilder sb = new StringBuilder();
+		SamUtil.writeHeader(this.header, sb);
+		this.out.print(sb.toString());
 	}
 
-	private void writeHeader() {
-		if(header.getVersion() != null){
-			out.printf("@HN\tVN:%s\tSO:%s%n", 
-					header.getVersion(), 
-					header.getSortOrder().toString().toLowerCase(Locale.US));
-		}
-		for(ReferenceSequence seq : header.getReferenceSequences()){
-			StringBuilder builder = new StringBuilder(300);
-			
-			builder.append("@SQ\tSN:").append(seq.getName())
-					.append("\tLN:").append(seq.getLength());
-			
-			appendIfNotNull(builder, "AS", seq.getGenomeAssemblyId());
-			appendIfNotNull(builder, "M5", seq.getMd5());
-			appendIfNotNull(builder, "SP", seq.getSpecies());
-			appendIfNotNull(builder, "UR", seq.getMd5());
-			out.printf("%s%n",builder.toString());
-		}
-		
-		for(ReadGroup readGroup : header.getReadGroups()){
-			StringBuilder builder = new StringBuilder(1024);
-			
-			builder.append("@RG\tID:").append(readGroup.getId());
-			
-			appendIfNotNull(builder, "CN", readGroup.getSequencingCenter());
-			appendIfNotNull(builder, "DS", readGroup.getDescription());
-			
-			appendIsoDateIfNotNull(builder, "DT",readGroup.getRunDate());
-			
-			appendIfNotNull(builder, "FO", readGroup.getFlowOrder());
-			appendIfNotNull(builder, "KS", readGroup.getKeySequence());
-			appendIfNotNull(builder, "LB", readGroup.getLibrary());
-			appendIfNotNull(builder, "PG", readGroup.getPrograms());
-			appendIfNotNull(builder, "PI", readGroup.getPredictedInsertSize());
-			appendIfNotNull(builder, "PL", readGroup.getPlatform());
-			appendIfNotNull(builder, "PU", readGroup.getPlatformUnit());
-			appendIfNotNull(builder, "SM", readGroup.getSampleOrPoolName());
-			out.printf("%s%n",builder.toString());
-		}
 	
-		for(SamProgram program : header.getPrograms()){
-			StringBuilder builder = new StringBuilder(1024);
-			builder.append(String.format("%@PG\tID:%s", program.getId()));
-			appendIfNotNull(builder, "PN", program.getName());
-			appendIfNotNull(builder, "CL",program.getCommandLine());
-			appendIfNotNull(builder, "PP", program.getPreviousProgramId());
-			appendIfNotNull(builder, "DS", program.getDescription());
-			appendIfNotNull(builder, "VN", program.getVersion());
-			
-			out.printf("%s%n", builder.toString());
-		}
-		
-		for(String comment : header.getComments()){
-			out.printf("@CO\t%s%n", comment);
-		}
-		
-	}
-	private void appendIsoDateIfNotNull(StringBuilder builder, String key, Date value){
-		if(value !=null){
-			builder.append("\t").append(key).append(":").append(SamUtil.formatIsoDate(value));
-		}
-	}
-	private void appendIfNotNull(StringBuilder builder, String key, Object value){
-		if(value !=null){
-			builder.append("\t").append(key).append(":").append(value);
-		}
-	}
 	private void appendMandatoryField(StringBuilder builder, Integer value){
 		builder.append("\t");
 		if(value ==null){

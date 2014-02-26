@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Locale;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -23,7 +24,10 @@ import org.jcvi.jillion.sam.attribute.SamAttributeKey;
 import org.jcvi.jillion.sam.attribute.SamAttributeType;
 import org.jcvi.jillion.sam.cigar.Cigar.ClipType;
 import org.jcvi.jillion.sam.cigar.CigarElement;
+import org.jcvi.jillion.sam.header.ReadGroup;
+import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.sam.header.SamProgram;
 /**
  * {@code SamUtil} is a utility class
  * for working with Sam or Bam encoded data.
@@ -424,14 +428,19 @@ public final class SamUtil {
 	}
 
 	private static void writeSequence(ByteBuffer buf, int seqLength, NucleotideSequence seq) throws IOException {
-		byte[] data = new byte[seqLength+1/2];
+		byte[] data = new byte[(seqLength+1)/2];
 		Iterator<Nucleotide> iter = seq.iterator();
 		//write all but last byte which 
 		//will use all bits
-		for(int i=0; i<data.length -1; i++){
+		for(int i=0; i<data.length -2; i++){
+			try{
 			int value = BAM_ENCODED_BASES_TO_ORDINAL[iter.next().ordinal()] <<4;
 			value |= BAM_ENCODED_BASES_TO_ORDINAL[iter.next().ordinal()];
 			data[i] = (byte)value;
+			}catch(Exception e){
+				System.out.println(i);
+				throw new RuntimeException(e);
+			}
 		}
 		//last byte will def use higher order bits
 		int value = BAM_ENCODED_BASES_TO_ORDINAL[iter.next().ordinal()] <<4;
@@ -453,4 +462,74 @@ public final class SamUtil {
 		//so we don't have to write it
 		return bytes;
 	}
+	
+	public static  void writeHeader(SamHeader header, StringBuilder out) {
+		if(header.getVersion() != null){
+			out.append(String.format("@HN\tVN:%s\tSO:%s%n", 
+					header.getVersion(), 
+					header.getSortOrder().toString().toLowerCase(Locale.US)));
+		}
+		for(ReferenceSequence seq : header.getReferenceSequences()){
+			StringBuilder builder = new StringBuilder(300);
+			
+			builder.append("@SQ\tSN:").append(seq.getName())
+					.append("\tLN:").append(seq.getLength());
+			
+			appendIfNotNull(builder, "AS", seq.getGenomeAssemblyId());
+			appendIfNotNull(builder, "M5", seq.getMd5());
+			appendIfNotNull(builder, "SP", seq.getSpecies());
+			appendIfNotNull(builder, "UR", seq.getMd5());
+			out.append(String.format("%s%n",builder.toString()));
+		}
+		
+		for(ReadGroup readGroup : header.getReadGroups()){
+			StringBuilder builder = new StringBuilder(1024);
+			
+			builder.append("@RG\tID:").append(readGroup.getId());
+			
+			appendIfNotNull(builder, "CN", readGroup.getSequencingCenter());
+			appendIfNotNull(builder, "DS", readGroup.getDescription());
+			
+			appendIsoDateIfNotNull(builder, "DT",readGroup.getRunDate());
+			
+			appendIfNotNull(builder, "FO", readGroup.getFlowOrder());
+			appendIfNotNull(builder, "KS", readGroup.getKeySequence());
+			appendIfNotNull(builder, "LB", readGroup.getLibrary());
+			appendIfNotNull(builder, "PG", readGroup.getPrograms());
+			appendIfNotNull(builder, "PI", readGroup.getPredictedInsertSize());
+			appendIfNotNull(builder, "PL", readGroup.getPlatform());
+			appendIfNotNull(builder, "PU", readGroup.getPlatformUnit());
+			appendIfNotNull(builder, "SM", readGroup.getSampleOrPoolName());
+			out.append(String.format("%s%n",builder.toString()));
+		}
+	
+		for(SamProgram program : header.getPrograms()){
+			StringBuilder builder = new StringBuilder(1024);
+			builder.append(String.format("%@PG\tID:%s", program.getId()));
+			appendIfNotNull(builder, "PN", program.getName());
+			appendIfNotNull(builder, "CL",program.getCommandLine());
+			appendIfNotNull(builder, "PP", program.getPreviousProgramId());
+			appendIfNotNull(builder, "DS", program.getDescription());
+			appendIfNotNull(builder, "VN", program.getVersion());
+			
+			out.append(String.format("%s%n", builder.toString()));
+		}
+		
+		for(String comment : header.getComments()){
+			out.append(String.format("@CO\t%s%n", comment));
+		}
+		
+	}
+	private static void appendIsoDateIfNotNull(StringBuilder builder, String key, Date value){
+		if(value !=null){
+			builder.append("\t").append(key).append(":").append(SamUtil.formatIsoDate(value));
+		}
+	}
+	private static void appendIfNotNull(StringBuilder builder, String key, Object value){
+		if(value !=null){
+			builder.append("\t").append(key).append(":").append(value);
+		}
+	}
+	
+	
 }
