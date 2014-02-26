@@ -176,7 +176,7 @@ public final class SamUtil {
 		if(seqLength %2 ==0){
 			builder.append(BAM_ENCODED_BASES[lastByte & 0x0F]);
 		}
-		//TODO '=' char not support
+		//TODO '=' char not supported yet
 		//which is used to mean "same as reference"
 		//we would need to link to the reference seq
 		//to get those.
@@ -360,6 +360,11 @@ public final class SamUtil {
 	public static void writeAsBamRecord(OutputStream out, SamHeader header, SamRecord record) throws IOException{
 		String referenceName =record.getReferenceName();
 		//TODO compute buffer size first?
+		//it would be hard because
+		//we would have to know how many bytes
+		//the attributes are encoded as...
+		//for now just pick a large buffer size
+		//and hope we don't overflow...
 		ByteBuffer buf = ByteBuffer.allocate(8096);
 		buf.order(ByteOrder.LITTLE_ENDIAN);
 		//skip first 4 bytes so we can write the length of record last
@@ -463,8 +468,17 @@ public final class SamUtil {
 		//so we don't have to write it
 		return bytes;
 	}
-	
-	public static  void writeHeader(SamHeader header, StringBuilder out) {
+	/**
+	 * Encode the given {@link SamHeader}
+	 * into SAM formatted String (returned as a StringBuilder).
+	 * @param header the header to encode;
+	 * can not be null.
+	 * @return the SAM formatted String
+	 * as a StringBuilder.
+	 * @throws NullPointerException if header is null.
+	 */
+	public static StringBuilder encodeHeader(SamHeader header){
+		StringBuilder out = new StringBuilder(1024);
 		if(header.getVersion() != null){
 			out.append(String.format("@HD\tVN:%s\tSO:%s%n", 
 					header.getVersion(), 
@@ -519,6 +533,8 @@ public final class SamUtil {
 		for(String comment : header.getComments()){
 			out.append(String.format("@CO\t%s%n", comment));
 		}
+		
+		return out;
 		
 	}
 	private static void appendIsoDateIfNotNull(StringBuilder builder, String key, Date value){
