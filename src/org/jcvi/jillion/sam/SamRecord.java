@@ -284,8 +284,8 @@ public class SamRecord {
 		
 		private final Map<SamAttributeKey, SamAttribute> attributes = new LinkedHashMap<SamAttributeKey, SamAttribute>();
 		
-		private String queryName= UNAVAILABLE, referenceName = UNAVAILABLE,
-				nextReferenceName = UNAVAILABLE;
+		private String queryName= UNAVAILABLE, referenceName = null,
+				nextReferenceName = null;
 		private EnumSet<SamRecordFlags> flags;
 		private int startPosition =NOT_SET, nextPosition= 0;
 		private byte mappingQuality=-1;
@@ -376,7 +376,7 @@ public class SamRecord {
 		 * {@link SamHeader#hasReferenceSequence(String) header.hasReferenceSequence(referenceName)}
 		 * must return {@code true}.
 		 * If this method is not called, then the value will default
-		 * to {@link SamRecord#UNAVAILABLE}.
+		 * to null.
 		 * @param referenceName the reference name this segment aligns;
 		 * can not be null and must either be {@link SamRecord#UNAVAILABLE}
 		 * or a reference sequence name that is in the provided {@link SamHeader}.
@@ -390,10 +390,13 @@ public class SamRecord {
 			if(referenceName ==null){
 				throw new NullPointerException("reference name can not be null");
 			}
-			if(!UNAVAILABLE.equals(referenceName)){
+			if(UNAVAILABLE.equals(referenceName)){
+				this.referenceName = null;
+			}else{
 				assertHeaderKnowsAboutReference(referenceName);
+				this.referenceName = referenceName;
 			}
-			this.referenceName = referenceName;
+			
 			return this;
 		}
 		private void assertHeaderKnowsAboutReference(String referenceName) {
@@ -424,10 +427,14 @@ public class SamRecord {
 			if(nextReferenceName ==null){
 				throw new NullPointerException("next reference name can not be null");
 			}
-			if(!nextReferenceName.equals(UNAVAILABLE) && !nextReferenceName.equals(IDENTICAL)){
-				assertHeaderKnowsAboutReference(nextReferenceName);
+			if(nextReferenceName.equals(UNAVAILABLE)){
+				this.nextReferenceName = null;
+			}else{
+				if(!nextReferenceName.equals(UNAVAILABLE) && !nextReferenceName.equals(IDENTICAL)){
+					assertHeaderKnowsAboutReference(nextReferenceName);
+				}
+				this.nextReferenceName = nextReferenceName;
 			}
-			this.nextReferenceName = nextReferenceName;
 			return this;
 		}
 		/**
@@ -573,6 +580,9 @@ public class SamRecord {
 			//flags must be set
 			if(flags ==null){
 				throw new IllegalStateException("flags must be set");
+			}
+			if(IDENTICAL.equals(nextReferenceName)){
+				nextReferenceName = referenceName;
 			}
 			
 			return new SamRecord(this);

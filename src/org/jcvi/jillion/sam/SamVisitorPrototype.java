@@ -3,9 +3,7 @@ package org.jcvi.jillion.sam;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
-import org.jcvi.jillion.sam.header.SamProgram;
 
 public class SamVisitorPrototype implements SamVisitor{
 
@@ -13,17 +11,8 @@ public class SamVisitorPrototype implements SamVisitor{
 	
 	@Override
 	public void visitHeader(SamHeader header) {
-		System.out.println("header");
-		System.out.println(" version = " + header.getVersion());
-		System.out.println(" sort order = " + header.getSortOrder());
-		System.out.println("references : ");
-		for(ReferenceSequence ref : header.getReferenceSequences()){
-			System.out.println("\t" + ref.getName() + " length = " + ref.getLength());
-		}
-		System.out.println("programs:");
-		for(SamProgram prog : header.getPrograms()){
-			System.out.println("\t" + prog.getId() + " cmdline " + prog.getCommandLine());
-		}
+		System.out.println(header);
+		
 		System.out.println("\n\n\n\n\n==================================\n");
 	}
 
@@ -55,10 +44,15 @@ public class SamVisitorPrototype implements SamVisitor{
 		/*File sam = new File("/local/netapp_scratch/dkatzel/samFluPrototype/giv2_SGB2_48129_hybrid_edited_refs_33.sam");
 	
 		SamFileParser parser = new SamFileParser(sam);
-		*/
+		
 		File bam = new File("/local/netapp_scratch/dkatzel/samFluPrototype/giv2_SGB2_48129_hybrid_edited_refs_33.bam");
 		BamFileParser parser = new BamFileParser(bam);
-		
+		*/
+		//File f = new File("/usr/local/scratch/dkatzel/output2.bam");
+		//File f = new File("/usr/local/scratch/dkatzel/output3.bam");
+		File f = new File("/usr/local/scratch/dkatzel/picard.bam");
+	//	File f = new File("/usr/local/scratch/dkatzel/expected2.bam");
+		SamParser parser = SamParserFactory.create(f);
 		SamVisitorPrototype visitor = new SamVisitorPrototype();
 	//	PrintStream out = new PrintStream(new FileOutputStream("/usr/local/scratch/dkatzel/BAM.visit.out5"), true);
 	//	System.setOut(out);

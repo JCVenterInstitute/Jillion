@@ -9,7 +9,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jcvi.jillion.sam.SamRecord;
 import org.jcvi.jillion.sam.SortOrder;
+import org.jcvi.jillion.sam.attribute.InvalidAttributeException;
+import org.jcvi.jillion.sam.attribute.SamAttribute;
+import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 /**
  * {@code SamHeader}
  * is an object representation of
@@ -379,5 +383,26 @@ public final class SamHeader {
 		}
 		return ret.intValue();
 		
+	}
+	
+	public boolean validRecord(SamRecord record, SamAttributeValidator attributeValidator){
+		//reference names must be present in a SQ-SN tag
+		String refName =record.getReferenceName();
+		if(refName !=null && !this.hasReferenceSequence(refName)){
+			return false;
+		}
+		String nextRefName = record.getNextName();
+		if(nextRefName !=null &&  !"=".equals(nextRefName) && !this.hasReferenceSequence(nextRefName)){
+			return false;
+		}
+		for(SamAttribute attribute : record.getAttributes()){
+			try {
+				attributeValidator.validate(this, attribute);
+			} catch (InvalidAttributeException e) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 }
