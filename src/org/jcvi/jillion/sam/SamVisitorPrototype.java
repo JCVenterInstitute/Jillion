@@ -50,7 +50,7 @@ public class SamVisitorPrototype implements SamVisitor{
 		*/
 		//File f = new File("/usr/local/scratch/dkatzel/output2.bam");
 		//File f = new File("/usr/local/scratch/dkatzel/output3.bam");
-		File f = new File("/usr/local/scratch/dkatzel/picard.bam");
+		File f = new File("/usr/local/scratch/dkatzel/output.qnameResort.1.bam");
 	//	File f = new File("/usr/local/scratch/dkatzel/expected2.bam");
 		SamParser parser = SamParserFactory.create(f);
 		SamVisitorPrototype visitor = new SamVisitorPrototype();
