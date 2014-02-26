@@ -25,9 +25,7 @@ public class SamFileWriter implements SamWriter {
 		}
 		this.out = new PrintStream(out);
 		this.header = header;
-		StringBuilder sb = new StringBuilder();
-		SamUtil.writeHeader(this.header, sb);
-		this.out.print(sb.toString());
+		this.out.print(SamUtil.encodeHeader(this.header).toString());
 	}
 
 	
