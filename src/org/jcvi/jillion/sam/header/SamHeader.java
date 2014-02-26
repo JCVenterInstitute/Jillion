@@ -51,6 +51,17 @@ public final class SamHeader {
 	
 	
 	
+	@Override
+	public String toString() {
+		return "SamHeader [sortOrder=" + sortOrder + ", version=" + version
+				+ ", referenceSequences=" + referenceSequences
+				+ ", referenceIndexMap=" + referenceIndexMap + ", readGroups="
+				+ readGroups + ", programs=" + programs + ", comments="
+				+ comments + "]";
+	}
+
+
+
 	public SortOrder getSortOrder() {
 		return sortOrder;
 	}

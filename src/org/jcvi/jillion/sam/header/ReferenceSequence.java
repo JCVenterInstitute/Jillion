@@ -24,6 +24,16 @@ public class ReferenceSequence {
 	
 	
 	
+	@Override
+	public String toString() {
+		return "ReferenceSequence [name=" + name + ", length=" + length
+				+ ", genomeAssemblyId=" + genomeAssemblyId + ", species="
+				+ species + ", uri=" + uri + ", md5=" + md5 + "]";
+	}
+
+
+
+
 	public String getName() {
 		return name;
 	}
