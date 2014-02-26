@@ -27,6 +27,7 @@ package org.jcvi.jillion.assembly.consed;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,12 +43,15 @@ import org.jcvi.jillion.assembly.consed.ace.AceContig;
 import org.jcvi.jillion.assembly.consed.ace.AceContigBuilder;
 import org.jcvi.jillion.assembly.consed.ace.ConsensusAceTag;
 import org.jcvi.jillion.assembly.consed.ace.PhdInfo;
+import org.jcvi.jillion.assembly.consed.phd.PhdDataStore;
+import org.jcvi.jillion.assembly.consed.phd.PhdDirDataStore;
 import org.jcvi.jillion.assembly.util.CoverageMap;
 import org.jcvi.jillion.assembly.util.CoverageMapBuilder;
 import org.jcvi.jillion.assembly.util.CoverageRegion;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.jcvi.jillion.core.Ranges;
+import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.FileUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
@@ -225,6 +229,41 @@ public final class ConsedUtil {
         throw new IllegalArgumentException("consensus tag does not contain rename info : "+contigRenameTag);
     }
     /**
+     * Get the ace file from the given editDir
+     * with the given ace file prefix and
+     * the given version.
+     * @param editDir
+     * @param filenamePrefix prefix to ace file name
+     * before the ".ace.$version"; can not be null.
+     * @param version the ace version number;
+     * must be >= 1
+     * @return the {@link File} to that ace file;
+     * or {@code null} if the specified ace does not exist.
+     * @throws IllegalArgumentException if version < 1.
+     */
+    public static File getAceFile(File editDir, String filenamePrefix, int version){
+    	if(filenamePrefix == null){
+    		throw new NullPointerException("file name prefix can not be null");
+    	}
+    	if(version <0){
+			throw new IllegalArgumentException("version must be >= 1");
+		}
+    	//don't need to check if edit_dir
+    	//doesn't exist
+    	//since we later check 
+    	//if the ace exists
+    	//which will also check if parent dir exists
+    	//need to also check that it does not exist
+    	if(editDir==null){
+    		return null;
+    	}
+    	File aceFile = new File(editDir, String.format("%s.ace.%d",filenamePrefix, version));
+    	if(aceFile.exists()){
+    		return aceFile;
+    	}
+    	return null;
+    }
+    /**
      * Gets the latest ace file with the given prefix in the given edit_dir.
      * 
      *<p/>Consed labels each version of the ace file with a incrementing
@@ -309,6 +348,23 @@ public final class ConsedUtil {
         return String.format("%sace.%d",
                 prefix==null?"": prefix+".", 
                         version+1);
+    }
+    
+    
+    public static PhdDataStore createPhdDataStoreFor(File consedDir) throws IOException{
+    	if(consedDir == null){
+			throw new NullPointerException("consed dir can not be null");
+		}
+		 File phdDir = ConsedUtil.getPhdDirFor(consedDir);
+         File phdballDir = ConsedUtil.getPhdBallDirFor(consedDir);
+         List<PhdDataStore> datastores = new ArrayList<PhdDataStore>();
+         if(phdDir.exists()){
+        	 datastores.add(new PhdDirDataStore(phdDir));
+         }
+         if(phdballDir.exists()){
+        	 datastores.add(new PhdDirDataStore(phdballDir));
+         }
+         return DataStoreUtil.chain(PhdDataStore.class, datastores);
     }
     
     public static enum ClipPointsType{
