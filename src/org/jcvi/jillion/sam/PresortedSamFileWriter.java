@@ -10,8 +10,18 @@ import org.jcvi.jillion.sam.attribute.SamAttribute;
 import org.jcvi.jillion.sam.attribute.SamAttributeKey;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 import org.jcvi.jillion.sam.header.SamHeader;
-
-public class PresortedSamFileWriter implements SamWriter {
+/**
+ * {@code PresortedSamFileWriter} is a {@link SamWriter}
+ * that writes out SAM files whose {@link SamRecord}s
+ * are written out in the order that they are given.
+ * Only use this class if the records are either not sorted
+ * or if the records are already sorted when they are given to
+ * this writer.  The {@link SamHeader#getSortOrder()}
+ * is also written out to the SAM so make sure it is correct.
+ * @author dkatzel
+ *
+ */
+class PresortedSamFileWriter implements SamWriter {
 
 	private final PrintStream out;
 	private final SamHeader header;
@@ -28,7 +38,7 @@ public class PresortedSamFileWriter implements SamWriter {
 			throw new NullPointerException("header can not be null");
 		}
 		IOUtil.mkdirs(out.getParentFile());
-		this.out = new PrintStream(out);
+		this.out = new PrintStream(out, IOUtil.UTF_8_NAME);
 		this.header = header;
 		this.attributeValidator = attributeValidator;
 		this.out.print(SamUtil.encodeHeader(this.header).toString());

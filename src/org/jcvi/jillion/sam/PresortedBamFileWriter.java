@@ -25,7 +25,7 @@ import org.jcvi.jillion.sam.header.SamHeader;
  * @author dkatzel
  *
  */
-public class PresortedBamFileWriter implements SamWriter{
+class PresortedBamFileWriter implements SamWriter{
 
 	private static final byte[] BAM_MAGIC_NUMBER = new byte[]{'B','A','M',1};
 	private final SamHeader header;
@@ -33,6 +33,7 @@ public class PresortedBamFileWriter implements SamWriter{
 	private final File bamFile;
 	private final OutputStream out;
 	private final SamAttributeValidator attributeValidator;
+	
 	public PresortedBamFileWriter(SamHeader header, File outputFile) throws IOException{
 		this(header, outputFile, ReservedAttributeValidator.INSTANCE);
 	}
