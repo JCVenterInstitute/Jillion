@@ -46,7 +46,7 @@ import org.jcvi.jillion.core.util.FIFOQueue;
 public final class TextLineParser implements Closeable{
 	/**
 	 * {@value} chars, is the initial
-	 * capcity since this is probably
+	 * capacity since this is probably
 	 * going to be mostly used by 
 	 * human readable text files and
 	 * genomic file formats which often
