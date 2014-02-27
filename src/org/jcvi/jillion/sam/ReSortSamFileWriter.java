@@ -115,7 +115,11 @@ class ReSortSamFileWriter implements SamWriter {
 
 	}
 
-
+	/**
+	 * Write all the records currently in memory
+	 * to a temp file encoded using the given encoding
+	 * @throws IOException
+	 */
 	private void persistInMemoryCacheIfNeeded() throws IOException {
 		if(currentInMemSize == maxRecordsToKeepInMemory){
 			
@@ -167,7 +171,7 @@ class ReSortSamFileWriter implements SamWriter {
 			iterators.add(IteratorUtil.createPeekableStreamingIterator(new InMemoryStreamingIterator(currentInMemSize)));
 			
 			for(File tempFile : tempFiles){
-				iterators.add(IteratorUtil.createPeekableStreamingIterator(new StreamingSamRecordIterator(tempFile)));
+				iterators.add(IteratorUtil.createPeekableStreamingIterator(new StreamingSamRecordIterator(tempFile, encoding)));
 			}
 			
 			Iterator<SamRecord> sortedIterator = new MergedSortedRecordIterator(iterators, recordComparator);
@@ -227,69 +231,83 @@ class ReSortSamFileWriter implements SamWriter {
 		}
 		
 	}
-	
+	/**
+	 * Combine a list of pre-sorted Iterators into a single sorted iterator.
+	 * Each call to {@link #next()} will peek at the next elements in the wrapped
+	 * iterators and return the value that has the lowest sort value as determined
+	 * by the comparator (and advance that iterator).
+	 * @author dkatzel
+	 *
+	 */
 	public static class MergedSortedRecordIterator implements Iterator<SamRecord> {
-				private final List<PeekableStreamingIterator<SamRecord>> iterators;
+			private final List<PeekableStreamingIterator<SamRecord>> iterators;
+			
+			private SamRecord next;
+			private final SortedSamRecordElementComparator comparator;
+			private final List<SortedSamRecordElement> elementList;
+			
+			
+			public MergedSortedRecordIterator(List<PeekableStreamingIterator<SamRecord>> iterators, Comparator<SamRecord> comparator) {
+				this.iterators = iterators;
+				this.comparator = new SortedSamRecordElementComparator(comparator);
+				elementList = new ArrayList<SortedSamRecordElement>(iterators.size());
 				
-				private SamRecord next;
-				private final SortedSamRecordElementComparator comparator;
-				private final List<SortedSamRecordElement> elementList;
-				public MergedSortedRecordIterator(List<PeekableStreamingIterator<SamRecord>> iterators, Comparator<SamRecord> comparator) {
-					this.iterators = iterators;
-					this.comparator = new SortedSamRecordElementComparator(comparator);
-					elementList = new ArrayList<SortedSamRecordElement>(iterators.size());
-					
-					next= getNext();
-				}
-				
-				private SamRecord getNext(){
-					elementList.clear();
-					for(PeekableStreamingIterator<SamRecord> iter : iterators){
-						if(iter.hasNext()){
-							//we peek instead of next()
-							//incase we don't pick this record yet
-							elementList.add(new SortedSamRecordElement(iter.peek(), iter));
-						}
+				next= getNext();
+			}
+			
+			private SamRecord getNext(){
+				elementList.clear();
+				for(PeekableStreamingIterator<SamRecord> iter : iterators){
+					if(iter.hasNext()){
+						//we peek instead of next()
+						//incase we don't pick this record yet
+						elementList.add(new SortedSamRecordElement(iter.peek(), iter));
 					}
-					if(elementList.isEmpty()){
-						return null;
-					}
-					Collections.sort(elementList, comparator);
-					SortedSamRecordElement element= elementList.get(0);
-					//advance iterator
-					element.source.next();
-					return element.record;
 				}
+				if(elementList.isEmpty()){
+					return null;
+				}
+				Collections.sort(elementList, comparator);
+				SortedSamRecordElement element= elementList.get(0);
+				//advance iterator
+				element.source.next();
+				return element.record;
+			}
 
-				@Override
-				public boolean hasNext() {
-					return next!=null;
-				}
-				
-				
-				@Override
-				public SamRecord next() {
-					//don't need to check has next
-					//since we can make sure we don't call it incorrectly
-					SamRecord ret= next;
-					next = getNext();
-					return ret;
-				}
-				
-				@Override
-				public void remove() {
-					// TODO Auto-generated method stub
-				
-				}
+			@Override
+			public boolean hasNext() {
+				return next!=null;
+			}
+			
+			
+			@Override
+			public SamRecord next() {
+				//don't need to check has next
+				//since we can make sure we don't call it incorrectly
+				SamRecord ret= next;
+				next = getNext();
+				return ret;
+			}
+			
+			@Override
+			public void remove() {
+				throw new UnsupportedOperationException();				
+			}
 
-}
-	
+	}
+	/**
+	 * Struct that has a {@link SamRecord} and which
+	 * iterator that record belong to so we can advance
+	 * the iterator if selected.
+	 * @author dkatzel
+	 *
+	 */
 	private static class SortedSamRecordElement{
 		SamRecord record;
-		PeekableStreamingIterator<SamRecord> source;
+		Iterator<SamRecord> source;
 		
 		public SortedSamRecordElement(SamRecord record,
-				PeekableStreamingIterator<SamRecord> source) {
+				Iterator<SamRecord> source) {
 			this.record = record;
 			this.source = source;
 		}
@@ -317,14 +335,19 @@ class ReSortSamFileWriter implements SamWriter {
 		}
 		
 	}
-	
+	/**
+	 * Iterates over a sam (or bam) encoded file as a {@link StreamingIterator}.
+	 * @author dkatzel
+	 *
+	 */
 	private static class StreamingSamRecordIterator extends AbstractBlockingStreamingIterator<SamRecord>{
 
 		private final File samFile;
+		private final Encoding encoding;
 		
-		
-		public StreamingSamRecordIterator(File samFile) {
+		public StreamingSamRecordIterator(File samFile, Encoding encoding) {
 			this.samFile = samFile;
+			this.encoding = encoding;
 			this.start();
 		}
 
@@ -332,7 +355,7 @@ class ReSortSamFileWriter implements SamWriter {
 		@Override
 		protected void backgroundThreadRunMethod() throws RuntimeException {
 			try {
-				SamParserFactory.create(samFile, NullSamAttributeValidator.INSTANCE).accept(new SamVisitor() {
+				encoding.createNewNoValidationSamParser(samFile).accept(new SamVisitor() {
 					
 					@Override
 					public void visitRecord(SamRecord record) {
@@ -342,13 +365,13 @@ class ReSortSamFileWriter implements SamWriter {
 					
 					@Override
 					public void visitHeader(SamHeader header) {
-						// TODO Auto-generated method stub
+						//no-op
 						
 					}
 					
 					@Override
 					public void visitEnd() {
-						// TODO Auto-generated method stub
+						//no-op
 						
 					}
 				});

@@ -20,22 +20,32 @@ enum Encoding{
 	 */
 	SAM(".sam"){
 		@Override
-		protected SamWriter createPreSortedOutputWriter(File out, SamHeader header, SamAttributeValidator validator)
+		SamWriter createPreSortedOutputWriter(File out, SamHeader header, SamAttributeValidator validator)
 				throws IOException {
 			
 			return new PresortedSamFileWriter(out, header, validator);
 		}
-		
+		@Override
+		SamParser createNewNoValidationSamParser(File f) throws IOException {
+			return new SamFileParser(f, NullSamAttributeValidator.INSTANCE);
+		}
 	},
 	/**
 	 * Encode data as BAM files.
 	 */
 	BAM(".bam"){
 		@Override
-		protected SamWriter createPreSortedOutputWriter(File out, SamHeader header, SamAttributeValidator validator)
+		SamWriter createPreSortedOutputWriter(File out, SamHeader header, SamAttributeValidator validator)
 				throws IOException {
 			return new PresortedBamFileWriter(header, out, validator);
 		}
+
+		@Override
+		SamParser createNewNoValidationSamParser(File f) throws IOException {
+			return new BamFileParser(f, NullSamAttributeValidator.INSTANCE);
+		}
+		
+		
 	};
 	
 	private final String suffix;
@@ -65,11 +75,14 @@ enum Encoding{
 	 * @return a new {@link SamWriter} will never be null.
 	 * @throws IOException if there is a problem creating the new output file.
 	 */
-	protected SamWriter createPreSortedNoValidationOutputWriter(File out, SamHeader header) throws IOException{
+	SamWriter createPreSortedNoValidationOutputWriter(File out, SamHeader header) throws IOException{
 		//no validation since we have already validated
 		//the reads when we added them to our in memcheck
 		return createPreSortedOutputWriter(out, header, NullSamAttributeValidator.INSTANCE);
 	}
+	
+	
+	abstract SamParser createNewNoValidationSamParser(File f) throws IOException;
 	/**
 	 * Create a new {@link SamWriter}
 	 * that will write out {@link SamRecord}s to the given file
@@ -86,7 +99,7 @@ enum Encoding{
 	 * @return a new {@link SamWriter} will never be null.
 	 * @throws IOException if there is a problem creating the new output file.
 	 */
-	protected abstract SamWriter createPreSortedOutputWriter(File out, SamHeader header, SamAttributeValidator validator)throws IOException;
+	abstract SamWriter createPreSortedOutputWriter(File out, SamHeader header, SamAttributeValidator validator)throws IOException;
 
 	/**
 	 * Create a new {@link SamWriter} implementation
@@ -106,11 +119,13 @@ enum Encoding{
 	 * @return a new {@link SamWriter} will never be null.
 	 * @throws IOException if there is a problem creating the new output file.
 	 */
-	protected SamWriter createReSortedOutputWriter(File out, File tmpDirRoot,
+	SamWriter createReSortedOutputWriter(File out, File tmpDirRoot,
 			SamHeader header, int maxRecordsToKeepInMemory, SamAttributeValidator validator)
 			throws IOException {
 		return new ReSortSamFileWriter(out, tmpDirRoot,header, maxRecordsToKeepInMemory, validator, this);
 	}
+	
+	
 	/**
 	 * Parse the given file extension (no {@literal "."})
 	 * and return the correct Encoding implementation.
