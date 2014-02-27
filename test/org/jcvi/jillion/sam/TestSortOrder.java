@@ -168,4 +168,13 @@ public class TestSortOrder {
 		assertThat(SortOrder.parseSortOrder("queryname"), is(SortOrder.QUERY_NAME));
 		assertThat(SortOrder.parseSortOrder("coordinate"), is(SortOrder.COORDINATE));
 	}
+	
+	@Test
+	public void getEncodedName(){		
+		assertThat("unknown", is(SortOrder.UNKNOWN.getEncodedName()));
+		assertThat("unsorted", is(SortOrder.UNSORTED.getEncodedName()));
+		assertThat("queryname", is(SortOrder.QUERY_NAME.getEncodedName()));
+		assertThat("coordinate", is(SortOrder.COORDINATE.getEncodedName()));
+		
+	}
 }

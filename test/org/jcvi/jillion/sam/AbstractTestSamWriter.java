@@ -1,5 +1,7 @@
 package org.jcvi.jillion.sam;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -76,6 +78,27 @@ public class AbstractTestSamWriter {
 		return HEADER;
 	}
 
-
+	protected void orderOfRecordsMatchesExactly(File f,
+			List<SamRecord> expectedRecords) throws IOException {
+		orderOfRecordsMatchesExactly(f, expectedRecords, null);
+	}
+	protected void orderOfRecordsMatchesExactly(File f,
+			List<SamRecord> expectedRecords,
+			SortOrder expectedSortOrderInHeader) throws IOException {
+		SamDataCollector collector = new SamDataCollector();
+		
+		parseFile(f, collector);
+		SamHeader actualHeader = collector.getHeader();
+		
+		assertEquals(expectedRecords, collector.getRecords());
+		if(expectedSortOrderInHeader !=null){
+			SamHeader alteredHeader = new SamHeader.Builder(getHeader())
+											.setSortOrder(expectedSortOrderInHeader)
+											.build();
+			assertEquals(alteredHeader, actualHeader);
+		}else{
+			assertEquals(getHeader(), actualHeader);
+		}
+	}
 
 }
