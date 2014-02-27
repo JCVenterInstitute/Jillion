@@ -2,16 +2,50 @@ package org.jcvi.jillion.sam.header;
 
 import org.jcvi.jillion.sam.SamUtil;
 
+/**
+ * {@code SamHeaderTagKey}
+ * is an object representation
+ * of the two letter key 
+ * of a Header Tag.
+ * @author dkatzel
+ *
+ */
+public final class SamHeaderTagKey {
 
-public class SamHeaderTagKey {
+	private static final SamHeaderTagKey[][] CACHE = new SamHeaderTagKey[122][122];
+	
+	public static SamHeaderTagKey getKey(String key){
+		if(key.length() !=2){
+			throw new IllegalArgumentException("key string must be 2 chars long " + key);
+		}
+		return getKey(key.charAt(0), key.charAt(1));
+	}
+	public static SamHeaderTagKey getKey(char first, char second){
+		assertValidRange(first);
+		assertValidRange(second);
+		SamHeaderTagKey key = CACHE[first][second];
+		if(key ==null){
+			key = new SamHeaderTagKey(first, second);
+			CACHE[first][second] = key;
+		}
+		return key;
+		
+	}
 
+	private static void assertValidRange(char c) {
+		//char is unsigned so no need to check if < 0
+		if(c >= CACHE.length){
+			throw new IllegalArgumentException("invalid char codepoint: " + (int) c);
+		}
+		
+	}
 	/**
 	 * The two letters of our key
 	 * stored as primitives to save memory.
 	 */
-	char key1,key2;
+	private final char key1,key2;
 
-	public SamHeaderTagKey(char key1, char key2) {
+	SamHeaderTagKey(char key1, char key2) {
 		 if(!SamUtil.isValidKey(key1, key2)){
 			 throw new IllegalArgumentException("invalid key " + key1 + key2);
 		 
