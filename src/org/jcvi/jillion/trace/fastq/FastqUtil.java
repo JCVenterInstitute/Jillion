@@ -137,8 +137,15 @@ public final class FastqUtil {
     	int maxQuality=Integer.MIN_VALUE;
     	int minQuality = Integer.MAX_VALUE;
     	
-    	for(int i=0; i<encodedQualities.length(); i++){
-    		int asciiValue = encodedQualities.charAt(i);
+    	//convert to char[] as optimization
+    	//so we don't have to do 2x the boundary checks
+    	//in String.charAt(i) 
+    	//which does extra boundary checking to make
+    	//sure i is in range before accessing
+    	//the internal array.
+    	char[] chars = encodedQualities.toCharArray();
+    	for(int i=0; i<chars.length; i++){
+    		int asciiValue = chars[i];
     		if(asciiValue <33){
     			throw new IllegalArgumentException(
     					String.format(
@@ -235,31 +242,19 @@ public final class FastqUtil {
 		@Override
 		public void visitEncodedQualities(String encodedQualities) {
 		
-			/*
-			FastqQualityCodec codec =FastqUtil.guessQualityCodecUsed(encodedQualities);
-			if(codec ==null){
-				//nothing to detect so skip it
-				return;
-			}
-            switch(codec){
-                case SANGER : numSanger++;
-                				break;
-                case ILLUMINA : numIllumina++;
-								break;
-                case SOLEXA : numPossiblySolexa++;
-								break;
-				default:
-					throw new IllegalArgumentException("unknown codec: "+ codec);
-            }
-			*/
 			
-
 	    	boolean hasSolexaOnlyValues=false;
 	    	int maxQuality=Integer.MIN_VALUE;
 	    	int minQuality = Integer.MAX_VALUE;
-	    	
-	    	for(int i=0; i<encodedQualities.length(); i++){
-	    		int asciiValue = encodedQualities.charAt(i);
+	    	//convert to char[] as optimization
+	    	//so we don't have to do 2x the boundary checks
+	    	//in String.charAt(i) 
+	    	//which does extra boundary checking to make
+	    	//sure i is in range before accessing
+	    	//the internal array.
+	    	char[] chars = encodedQualities.toCharArray();
+	    	for(int i=0; i<chars.length; i++){
+	    		int asciiValue = chars[i];
 	    		if(asciiValue <33){
 	    			throw new IllegalArgumentException(
 	    					String.format(
