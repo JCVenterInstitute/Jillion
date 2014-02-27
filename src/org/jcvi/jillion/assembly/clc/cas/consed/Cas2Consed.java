@@ -178,6 +178,9 @@ public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
 			File aceFile = new File(editDir, prefix + ".ace.1");
 			//Explicitly make a tmp dir under the editDir
 			//so we don't have to worry about space issues on grid nodes.
+			//first need to create edit_dir 
+			//to be able to make the temp area.
+			IOUtil.mkdirs(editDir);
 			File tmpDir = IOUtil.createTempDir("cas2consed", null, editDir);
 			try{
 				AceFileWriter aceWriter = new AceFileWriterBuilder(aceFile, phdDataStore)
