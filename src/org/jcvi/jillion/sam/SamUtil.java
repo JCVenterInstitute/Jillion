@@ -11,7 +11,6 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.Locale;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -480,9 +479,9 @@ public final class SamUtil {
 	public static StringBuilder encodeHeader(SamHeader header){
 		StringBuilder out = new StringBuilder(1024);
 		if(header.getVersion() != null){
-			out.append(String.format("@HD\tVN:%s\tSO:%s%n", 
+			out.append(String.format("@HD\tVN:%s\tSO:%s\n", 
 					header.getVersion(), 
-					header.getSortOrder().toString().toLowerCase(Locale.US)));
+					header.getSortOrder().getEncodedName()));
 		}
 		for(ReferenceSequence seq : header.getReferenceSequences()){
 			StringBuilder builder = new StringBuilder(300);
@@ -494,7 +493,7 @@ public final class SamUtil {
 			appendIfNotNull(builder, "M5", seq.getMd5());
 			appendIfNotNull(builder, "SP", seq.getSpecies());
 			appendIfNotNull(builder, "UR", seq.getMd5());
-			out.append(String.format("%s%n",builder.toString()));
+			out.append(String.format("%s\n",builder.toString()));
 		}
 		
 		for(ReadGroup readGroup : header.getReadGroups()){
@@ -515,7 +514,7 @@ public final class SamUtil {
 			appendIfNotNull(builder, "PL", readGroup.getPlatform());
 			appendIfNotNull(builder, "PU", readGroup.getPlatformUnit());
 			appendIfNotNull(builder, "SM", readGroup.getSampleOrPoolName());
-			out.append(String.format("%s%n",builder.toString()));
+			out.append(String.format("%s\n",builder.toString()));
 		}
 	
 		for(SamProgram program : header.getPrograms()){
@@ -527,11 +526,11 @@ public final class SamUtil {
 			appendIfNotNull(builder, "DS", program.getDescription());
 			appendIfNotNull(builder, "VN", program.getVersion());
 			
-			out.append(String.format("%s%n", builder.toString()));
+			out.append(String.format("%s\n", builder.toString()));
 		}
 		
 		for(String comment : header.getComments()){
-			out.append(String.format("@CO\t%s%n", comment));
+			out.append(String.format("@CO\t%s\n", comment));
 		}
 		
 		return out;
