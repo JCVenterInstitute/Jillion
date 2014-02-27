@@ -1067,5 +1067,47 @@ public final class IOUtil {
 		return new ByteArrayInputStream(input.getBytes(charset));
 		
 	}
+	/**
+	 * Similar to {@link File#createTempFile(String, String, File)}
+	 * but makes a directory instead.  The contract of {@link File#createTempFile(String, String, File)}
+	 * is respected:
+	 * <p>
+	 *  Creates a new empty file in the specified directory, 
+	 *  using the given prefix and suffix strings to generate its name.
+	 *   If this method returns successfully then it is guaranteed that:
+	 *   <ol>
+	 *   <li>The file denoted by the returned abstract pathname did 
+	 *   not exist before this method was invoked, and</li>
+	 *   
+	 *   <li>Neither this method nor any of its variants will 
+	 *   return the same abstract pathname again in the current 
+	 *   invocation of the virtual machine. </li>
+	 *   </ol>
+	 
+	 * </p>
+	 * @param prefix The prefix string to be used in generating the file's name;
+	 *			 must be at least three characters long
+	 * @param suffix The suffix string to be used in generating the file's name;
+	 *			 may be null, in which case the suffix ".tmp" will be used
+	 * @param directory The directory in which the file is to be created, 
+	 *			or null if the default temporary-file directory is to be used
+	 * @return a new File object that points to this new created directory.
+	 * @throws IOException
+	 */
+	public static File createTempDir(String prefix, String suffix, File directory) throws IOException{
+		File tmpDir = File.createTempFile(prefix, suffix, directory);
+		//now that we have a new empty file
+       //we need to delete it and then create it again, but this
+       //time as a directory
+		//I guess there is a slight race condition
+		//where we create the temp file and some other process
+		//creates an identical temp file?
+		//it probably doesn't matter as long as
+		//no processes have written files under this directory yet.
+       if(!tmpDir.delete() || !tmpDir.mkdir()){
+           throw new IOException("Could not create temp directory: " + tmpDir.getAbsolutePath());
+       }
+       return tmpDir;
+	}
 	
 }
