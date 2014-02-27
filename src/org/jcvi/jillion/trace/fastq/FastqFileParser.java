@@ -105,7 +105,14 @@ public abstract class FastqFileParser implements FastqParser{
 	
 	private ParserState parseRecordBody(TextLineParser parser,
 			FastqRecordVisitor recordVisitor, ParserState parserState) throws IOException {
-		
+		//if we aren't visiting this read
+		//we shouldn't spend any time parsing the
+		//bases or qualities	
+		if(recordVisitor ==null){
+			skipCurrentRecord(parser);
+			//set new end position for mementos to work
+			return parserState.setOffset(parser.getPosition());
+		}
 		boolean inBasecallBlock;
 		//default to 2000 bp since most sequences are only that much anyway
         //builder will grow if we get too big
@@ -122,13 +129,10 @@ public abstract class FastqFileParser implements FastqParser{
         }while(inBasecallBlock);
         
         NucleotideSequence sequence = sequenceBuilder.build();
-        if(recordVisitor!=null){
         	recordVisitor.visitNucleotides(sequence);
-        }
+        
         if(!parserState.keepParsing()){
-        	if(recordVisitor!=null){
-            	recordVisitor.halted();
-            }
+            recordVisitor.halted();
         	return parserState.setOffset(parser.getPosition());
         }
         //now parse the qualities
@@ -147,18 +151,48 @@ public abstract class FastqFileParser implements FastqParser{
     		throw new IOException(
     				String.format("too many quality values for current record: expected %d but was %d", expectedQualities, qualityBuilder.length()));
     	}
-    	if(recordVisitor!=null){
-    		recordVisitor.visitEncodedQualities(qualityBuilder.toString());
-    	}
-    	ParserState endParserState = parserState.setOffset(parser.getPosition());
-		 if(recordVisitor !=null){
-			 if(endParserState.keepParsing()){
-				 recordVisitor.visitEnd();
-			 }else{
-				 recordVisitor.halted();
-			 }
-		 }
+    	recordVisitor.visitEncodedQualities(qualityBuilder.toString());
+    	
+		ParserState endParserState = parserState.setOffset(parser.getPosition());
+		if (endParserState.keepParsing()){
+			recordVisitor.visitEnd();
+		}else{
+			recordVisitor.halted();
+		}
+
 		return endParserState;
+	}
+	private void skipCurrentRecord(TextLineParser parser) throws IOException {
+        
+		String line = parser.nextLine();
+		int numberOfBasesSeen=0;
+     	
+		while(line.charAt(0) !='+'){
+			//still in bases 
+			numberOfBasesSeen += line.trim().length();
+			line = parser.nextLine();
+		}
+		
+		//handle special case of empty read
+		if(numberOfBasesSeen==0){
+			//skip blank line
+			parser.nextLine();
+			return;
+		}
+		int numberOfQualitiesLeft= numberOfBasesSeen;
+		while(numberOfQualitiesLeft>0){
+			line = parser.nextLine();
+			numberOfQualitiesLeft -= line.trim().length();
+		}
+		//be consistent with errors if too many 
+		//qualities
+		if(numberOfQualitiesLeft< 0 ){
+    		throw new IOException(
+    				String.format("too many quality values for current record: expected %d but was %d", 
+    						numberOfBasesSeen, 
+    						numberOfBasesSeen - numberOfQualitiesLeft));
+    	}
+		
 	}
 
 	protected abstract AbstractFastqVisitorCallback createCallback(ParserState parserState);
