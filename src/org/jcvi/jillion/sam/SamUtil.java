@@ -27,12 +27,18 @@ import org.jcvi.jillion.sam.header.ReadGroup;
 import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
 import org.jcvi.jillion.sam.header.SamProgram;
+
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 /**
  * {@code SamUtil} is a utility class
  * for working with Sam or Bam encoded data.
  * @author dkatzel
  *
  */
+//SAM formatted data requires '\n' 
+//and not '%n' which will break SAM/BAMs written
+//in Windows
+@SuppressWarnings("VA_FORMAT_STRING_USES_NEWLINE")
 public final class SamUtil {
 	/**
 	 * The max bin number allowed in a BAM file.
@@ -519,7 +525,7 @@ public final class SamUtil {
 	
 		for(SamProgram program : header.getPrograms()){
 			StringBuilder builder = new StringBuilder(1024);
-			builder.append(String.format("%@PG\tID:%s", program.getId()));
+			builder.append(String.format("@PG\tID:%s", program.getId()));
 			appendIfNotNull(builder, "PN", program.getName());
 			appendIfNotNull(builder, "CL",program.getCommandLine());
 			appendIfNotNull(builder, "PP", program.getPreviousProgramId());
