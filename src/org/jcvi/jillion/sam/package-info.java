@@ -1,7 +1,10 @@
 /**
  * This package contains classes for
  * working with
- * Sequence Alignment/Map Formatted data.
+ * Sequence Alignment/Map (SAM)
+ * and
+ * Binary Alignment/Map (BAM)
+ * formatted data.
  * 
  * .
  * @author dkatzel

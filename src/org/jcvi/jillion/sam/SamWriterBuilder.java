@@ -168,28 +168,19 @@ public final class SamWriterBuilder {
 	 */
 	public SamWriter build() throws IOException{
 		SamHeader header = headerBuilder.build();
-		if(isBamFile(outputFile)){
-			if(writeUnSortedRecords()){
-				//no resorting needed
-				return new PresortedBamFileWriter(header, outputFile, attributeValidator);
-			}
-			return new ReSortBamFileWriter(outputFile, tmpDirRoot,header, maxRecordsToKeepInMemory, attributeValidator);
-		}else{
-			//assume SAM
-			if(writeUnSortedRecords()){
-				return new PresortedSamFileWriter(outputFile, header, attributeValidator);
-			}
-			return new ReSortSamFileWriter(outputFile, tmpDirRoot,header, maxRecordsToKeepInMemory, attributeValidator);
+		Encoding encoding = Encoding.parseEncoding(FileUtil.getExtension(outputFile));
+		if(writeUnSortedRecords()){
+			return encoding.createPreSortedNoValidationOutputWriter(outputFile, header);
 		}
+		return encoding.createReSortedOutputWriter(outputFile, tmpDirRoot, header, maxRecordsToKeepInMemory, attributeValidator);
+		
 	}
 
 	private boolean writeUnSortedRecords() {
 		return reSortOrder ==null || reSortOrder == SortOrder.UNKNOWN || reSortOrder == SortOrder.UNSORTED;
 	}
 
-	private boolean isBamFile(File f) {
-		return "bam".equalsIgnoreCase(FileUtil.getExtension(f));
-	}
+	
 	
 	
 }
