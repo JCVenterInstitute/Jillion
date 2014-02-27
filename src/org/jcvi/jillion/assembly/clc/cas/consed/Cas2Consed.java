@@ -176,41 +176,51 @@ public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
 										.build();
 			File editDir = new File(consedOutputDir, "edit_dir");
 			File aceFile = new File(editDir, prefix + ".ace.1");
-			//TODO customize ace writer?
-			AceFileWriter aceWriter = new AceFileWriterBuilder(aceFile, phdDataStore)
-										.build();
-			Iterator<Entry<String, AceContigBuilder>> referenceEntryIter = contigBuilders.entrySet().iterator();
-			
-			QualitySequenceDataStore qualityDataStore = DataStoreUtil.adapt(
-					QualitySequenceDataStore.class,
-					phdDataStore,
-					new AdapterCallback<Phd, QualitySequence>() {
-						@Override
-						public QualitySequence get(Phd from) {
-							return from.getQualitySequence();
-						}						
-					});
-			while(referenceEntryIter.hasNext()){
-				Entry<String, AceContigBuilder> refEntry = referenceEntryIter.next();
-				AceContigBuilder contigBuilder = refEntry.getValue();
+			//Explicitly make a tmp dir under the editDir
+			//so we don't have to worry about space issues on grid nodes.
+			File tmpDir = IOUtil.createTempDir("cas2consed", null, editDir);
+			try{
+				AceFileWriter aceWriter = new AceFileWriterBuilder(aceFile, phdDataStore)
+											//set tmp dir Explicitly
+											.tmpDir(tmpDir)
+											.build();
+				Iterator<Entry<String, AceContigBuilder>> referenceEntryIter = contigBuilders.entrySet().iterator();
 				
-				contigBuilder.recallConsensus(new NextGenReferenceConsensusRecaller(), qualityDataStore, GapQualityValueStrategy.LOWEST_FLANKING);
-				postProcess(contigBuilder);
-				visitBeginReference(refEntry.getKey());
-				for(Entry<Range,AceContig> entry : ConsedUtil.split0xContig(contigBuilder,true).entrySet()){
-                    AceContig splitContig = entry.getValue();
-                    
-                    visitAce(entry.getKey(), splitContig);
-                    
-					aceWriter.write(splitContig);
-                }
-				visitEndReference();
-				//allows seen builders to be garbage collected if needed
-				referenceEntryIter.remove();
+				QualitySequenceDataStore qualityDataStore = DataStoreUtil.adapt(
+						QualitySequenceDataStore.class,
+						phdDataStore,
+						new AdapterCallback<Phd, QualitySequence>() {
+							@Override
+							public QualitySequence get(Phd from) {
+								return from.getQualitySequence();
+							}						
+						});
+				while(referenceEntryIter.hasNext()){
+					Entry<String, AceContigBuilder> refEntry = referenceEntryIter.next();
+					AceContigBuilder contigBuilder = refEntry.getValue();
+					
+					contigBuilder.recallConsensus(new NextGenReferenceConsensusRecaller(), qualityDataStore, GapQualityValueStrategy.LOWEST_FLANKING);
+					postProcess(contigBuilder);
+					visitBeginReference(refEntry.getKey());
+					for(Entry<Range,AceContig> entry : ConsedUtil.split0xContig(contigBuilder,true).entrySet()){
+	                    AceContig splitContig = entry.getValue();
+	                    
+	                    visitAce(entry.getKey(), splitContig);
+	                    
+						aceWriter.write(splitContig);
+	                }
+					visitEndReference();
+					//allows seen builders to be garbage collected if needed
+					referenceEntryIter.remove();
+				}
+				aceWriter.write(new WholeAssemblyAceTag("phdBall", "consed",
+	                    DateUtil.getCurrentDate(), "../phdball_dir/"+phdFile.getName()));
+				aceWriter.close();
+			}finally{
+				//delete our tmpdir
+				//no matter what
+				IOUtil.recursiveDelete(tmpDir);
 			}
-			aceWriter.write(new WholeAssemblyAceTag("phdBall", "consed",
-                    DateUtil.getCurrentDate(), "../phdball_dir/"+phdFile.getName()));
-			aceWriter.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

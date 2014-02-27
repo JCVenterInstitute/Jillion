@@ -87,13 +87,7 @@ class ReSortSamFileWriter implements SamWriter {
 		}
 		
 		IOUtil.mkdirs(outputFile.getParentFile());
-		tmpDir = File.createTempFile("jillion", "samWriterTmp", tmpDirRoot);
-		 //now that we have a new empty file
-        //we need to delete it and then create it again, but this
-        //time as a directory
-        if(!tmpDir.delete() || !tmpDir.mkdir()){
-            throw new IOException("Could not create temp directory: " + tmpDir.getAbsolutePath());
-        }
+		tmpDir = IOUtil.createTempDir("jillion", "samWriterTmp", tmpDirRoot);		
         inMemoryArray = new SamRecord[maxRecordsToKeepInMemory];
         currentInMemSize=0;
         this.outputFile = outputFile;
