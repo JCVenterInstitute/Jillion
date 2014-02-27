@@ -45,7 +45,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestIOUtil_toByteArray.class,
         TestIOUtil_toString.class,
         TestIOUtil_numberOfBitsIn.class,
-        
+        TestIOUtil_createTempDir.class,
         
         TestFileUtil.class,
         TestMagicNumberInputStream.class,
