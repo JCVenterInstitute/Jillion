@@ -44,14 +44,6 @@ public final class FastqUtil {
      * or null if there isn't a comment.
      */
     public static final Pattern SEQ_DEFLINE_PATTERN = Pattern.compile("^@(\\S+)(\\s+)?(.+$)?");
-    /**
-     * This is the {@link Pattern} to parse
-     * the quality record defline of a FASTQ record.
-     * Group 1 will be the optional id of the read if there is one
-     * or null if there isn't an id.  If the id exists,
-     * then it should match the id of the seq defline.
-     */
-    public static final Pattern QUAL_DEFLINE_PATTERN = Pattern.compile("^\\+(.+$)?");
     
 
 	private FastqUtil(){
