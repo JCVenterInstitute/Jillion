@@ -121,8 +121,7 @@ public abstract class FastqFileParser implements FastqParser{
     	sequenceBuilder.append(line);
         do{
         	line = parser.nextLine();
-        	Matcher beginQualityMatcher =FastqUtil.QUAL_DEFLINE_PATTERN.matcher(line);
-        	inBasecallBlock = !beginQualityMatcher.find();
+        	inBasecallBlock = notQualityDefLine(line);
         	if(inBasecallBlock){
         		sequenceBuilder.append(line);
         	}
@@ -167,7 +166,7 @@ public abstract class FastqFileParser implements FastqParser{
 		String line = parser.nextLine();
 		int numberOfBasesSeen=0;
      	
-		while(line.charAt(0) !='+'){
+		while(notQualityDefLine(line)){
 			//still in bases 
 			numberOfBasesSeen += line.trim().length();
 			line = parser.nextLine();
@@ -193,6 +192,9 @@ public abstract class FastqFileParser implements FastqParser{
     						numberOfBasesSeen - numberOfQualitiesLeft));
     	}
 		
+	}
+	private boolean notQualityDefLine(String line) {
+		return line.charAt(0) !='+';
 	}
 
 	protected abstract AbstractFastqVisitorCallback createCallback(ParserState parserState);
