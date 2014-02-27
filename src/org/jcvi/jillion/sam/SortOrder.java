@@ -86,10 +86,26 @@ public enum SortOrder{
 		NAME_MAP = new HashMap<String, SortOrder>();
 		
 		for(SortOrder s : values()){
-			NAME_MAP.put(s.name().replaceAll("_", "").toLowerCase(Locale.US), s);
+			NAME_MAP.put(s.getEncodedName(), s);
 		}
 	}
+	private final String encodedName;
 	
+	private SortOrder(){
+		encodedName = name().replaceAll("_", "").toLowerCase(Locale.US);
+	}
+	
+	/**
+	 * Get the name of this SortOrder
+	 * that is encoded in SAM and BAM header text.
+	 * @return the name as a String,
+	 * and may be different than {@link #name()}.
+	 */
+	public String getEncodedName() {
+		return encodedName;
+	}
+
+
 	/**
 	 * Parse the {@link SortOrder} from the given sort order name. current
 	 * accepted values are:
