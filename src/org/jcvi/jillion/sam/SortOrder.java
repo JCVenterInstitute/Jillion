@@ -206,7 +206,7 @@ public enum SortOrder{
 				return 1;
 			}
 			//same reference order by start position
-			int startComp = Integer.compare(o1.getStartPosition(), o2.getStartPosition());
+			int startComp = compare(o1.getStartPosition(), o2.getStartPosition());
 			if(startComp != 0){
 				return startComp;
 			}
@@ -218,6 +218,10 @@ public enum SortOrder{
 			return o1.getQueryName().compareTo(o2.getQueryName());
 		}
 			
-		
+		private static int  compare(int x, int y) {
+			//taken from Java 7's compare since
+			//it's not in Java 6
+			return (x < y) ? -1 : ((x == y) ? 0 : 1);
+		}
 	}
 }
