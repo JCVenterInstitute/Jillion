@@ -1,14 +1,12 @@
 package org.jcvi.jillion.sam;
 
-import java.util.List;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
-import org.jcvi.jillion.sam.header.SamHeader;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import static org.junit.Assert.*;
 public abstract class AbstractTestPresortedSamFileWriter extends AbstractTestSamWriter{
 
 	
@@ -77,26 +75,5 @@ public abstract class AbstractTestPresortedSamFileWriter extends AbstractTestSam
 	private File createOutputSamOrBamFile() throws IOException {
 		return tempDir.newFile("out"+extension);
 	}
-	private void orderOfRecordsMatchesExactly(File f,
-			List<SamRecord> expectedRecords) throws IOException {
-		orderOfRecordsMatchesExactly(f, expectedRecords, null);
-	}
-	private void orderOfRecordsMatchesExactly(File f,
-			List<SamRecord> expectedRecords,
-			SortOrder expectedSortOrderInHeader) throws IOException {
-		SamDataCollector collector = new SamDataCollector();
-		
-		parseFile(f, collector);
-		SamHeader actualHeader = collector.getHeader();
-		
-		assertEquals(expectedRecords, collector.getRecords());
-		if(expectedSortOrderInHeader !=null){
-			SamHeader alteredHeader = new SamHeader.Builder(getHeader())
-											.setSortOrder(expectedSortOrderInHeader)
-											.build();
-			assertEquals(alteredHeader, actualHeader);
-		}else{
-			assertEquals(getHeader(), actualHeader);
-		}
-	}
+	
 }
