@@ -18,7 +18,9 @@ import org.junit.runners.Suite.SuiteClasses;
     	TestBinComputation.class,
     	TestSortOrder.class,
     	
-    	TestSamParserFactory.class
+    	TestSamParserFactory.class,
+    	TestPresortedSamFileWriter.class,
+    	TestPresortedBamFileWriter.class
     }
     )
 public class AllSamTests {
