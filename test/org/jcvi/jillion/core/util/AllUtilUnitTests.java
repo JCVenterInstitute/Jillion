@@ -23,6 +23,7 @@ package org.jcvi.jillion.core.util;
 import org.jcvi.jillion.core.util.iter.TestAbstractBlockingClosableIteratorExceptions;
 import org.jcvi.jillion.core.util.iter.TestByteArrayIterator;
 import org.jcvi.jillion.core.util.iter.TestChainedIterator;
+import org.jcvi.jillion.core.util.iter.TestCharArrayIterator;
 import org.jcvi.jillion.core.util.iter.TestEmptyIterator;
 import org.jcvi.jillion.core.util.iter.TestIntArrayIterator;
 import org.jcvi.jillion.core.util.iter.TestLongArrayIterator;
@@ -62,11 +63,15 @@ import org.junit.runners.Suite.SuiteClasses;
         TestDateUtilElapsedTime.class,
         TestGrowableByteArray.class,
         TestGrowableShortArray.class,
+        TestGrowableCharArray.class,
+        
         TestGrowableIntArray.class,
         TestGrowableLongArray.class,
         
         TestByteArrayIterator.class,
         TestShortArrayIterator.class,
+        TestCharArrayIterator.class,
+        
         TestIntArrayIterator.class,
         TestLongArrayIterator.class,
         
