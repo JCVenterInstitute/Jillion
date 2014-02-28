@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
+import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 /**
@@ -335,6 +336,12 @@ public final class FastqUtil {
 				return FastqQualityCodec.SOLEXA;
 			}
 			return FastqQualityCodec.ILLUMINA;
+		}
+
+		@Override
+		public void visitQualities(QualitySequence qualities) {
+			//no-op since we there is no encoding.
+			
 		}
     }
     

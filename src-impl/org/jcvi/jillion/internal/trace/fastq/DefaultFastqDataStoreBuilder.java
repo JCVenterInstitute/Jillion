@@ -23,7 +23,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.trace.fastq;
+package org.jcvi.jillion.internal.trace.fastq;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -31,6 +31,8 @@ import java.util.Map;
 
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.util.Builder;
+import org.jcvi.jillion.trace.fastq.FastqDataStore;
+import org.jcvi.jillion.trace.fastq.FastqRecord;
 /**
  * {@code DefaultFastqDataStoreBuilder} is a {@link Builder}
  * implementation that creates a new
@@ -40,7 +42,7 @@ import org.jcvi.jillion.core.util.Builder;
  * @author dkatzel
  *
  */
-final class DefaultFastqDataStoreBuilder implements Builder<FastqDataStore>{
+public final class DefaultFastqDataStoreBuilder implements Builder<FastqDataStore>{
         private final Map<String, FastqRecord> map;
         
         public DefaultFastqDataStoreBuilder(){

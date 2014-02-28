@@ -28,6 +28,7 @@ package org.jcvi;
 import org.jcvi.jillion.assembly.AllAssemblyUnitTests;
 import org.jcvi.jillion.core.AllCoreUnitTests;
 import org.jcvi.jillion.fasta.AllFastaUnitTests;
+import org.jcvi.jillion.maq.AllMaqTests;
 import org.jcvi.jillion.sam.AllSamTests;
 import org.jcvi.jillion.trace.AllTraceUnitTests;
 import org.jcvi.jillion_experimental.AllExperimentalTests;
@@ -45,6 +46,7 @@ import org.junit.runners.Suite.SuiteClasses;
         AllTraceUnitTests.class,
         AllAssemblyUnitTests.class,
         AllSamTests.class,
+        AllMaqTests.class,
         AllExperimentalTests.class
     }
 )

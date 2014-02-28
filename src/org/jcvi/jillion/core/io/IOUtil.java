@@ -41,6 +41,7 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -86,12 +87,26 @@ public final class IOUtil {
     	 * Big Endian format has the most significant
     	 * byte as the first byte.
     	 */
-        BIG,
+        BIG{
+        	@Override
+			public ByteOrder toByteOrder() {
+				return ByteOrder.BIG_ENDIAN;
+			}
+        },
         /**
          * Little Endian format has the most significant
          * byte as the last byte.
          */
-        LITTLE
+        LITTLE{
+
+			@Override
+			public ByteOrder toByteOrder() {
+				return ByteOrder.LITTLE_ENDIAN;
+			}
+        	
+        };
+        
+        public abstract ByteOrder toByteOrder();
     }
     private IOUtil(){}
     /**
@@ -615,6 +630,24 @@ public final class IOUtil {
         return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
     }
     
+    public static int readSignedInt(InputStream in, Endian endian) throws IOException {
+    	//taken from DataInputStream
+        int ch1 = in.read();
+        int ch2 = in.read();
+        int ch3 = in.read();
+        int ch4 = in.read();
+        if ((ch1 | ch2 | ch3 | ch4) < 0){
+            throw new EOFException();
+        }
+        if(endian == Endian.LITTLE	){
+        	return ((ch4 << 24) + (ch3 << 16) + (ch2 << 8) + (ch1 << 0));
+        }
+    	//default to BIG which is what DataInputStream uses
+    	return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
+        
+        
+	}
+    
     public static float readFloat(InputStream in) throws IOException {
         return Float.intBitsToFloat(readSignedInt(in));
     }
@@ -1109,5 +1142,6 @@ public final class IOUtil {
        }
        return tmpDir;
 	}
+	
 	
 }

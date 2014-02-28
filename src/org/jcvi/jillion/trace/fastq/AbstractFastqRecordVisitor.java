@@ -51,6 +51,14 @@ public abstract class AbstractFastqRecordVisitor implements FastqRecordVisitor{
 		currentQualities = qualityCodec.decode(encodedQualities);
 		
 	}
+	
+	
+
+	@Override
+	public void visitQualities(QualitySequence qualities) {
+		currentQualities = qualities;
+		
+	}
 
 	@Override
 	public final void visitEnd() {

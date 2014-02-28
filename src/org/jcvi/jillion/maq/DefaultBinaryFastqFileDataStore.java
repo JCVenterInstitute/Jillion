@@ -23,72 +23,49 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.trace.fastq;
+package org.jcvi.jillion.maq;
 
 import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
-import org.jcvi.jillion.core.datastore.DataStoreFilters;
+import org.jcvi.jillion.core.io.IOUtil.Endian;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.internal.trace.fastq.DefaultFastqDataStoreBuilder;
+import org.jcvi.jillion.trace.fastq.AbstractFastqRecordVisitor;
+import org.jcvi.jillion.trace.fastq.FastqDataStore;
+import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
+import org.jcvi.jillion.trace.fastq.FastqRecord;
+import org.jcvi.jillion.trace.fastq.FastqRecordVisitor;
+import org.jcvi.jillion.trace.fastq.FastqVisitor;
 /**
- * {@code DefaultFastqFileDataStore} is the default implementation
+ * {@code DefaultBinaryFastqFileDataStore} is the default implementation
  * of {@link FastqDataStore} which stores
  * all {@link FastqRecord}s from a file in memory.  This is only recommended for small fastq
  * files that won't take up too much memory.
  * @author dkatzel
- * @see LargeFastqFileDataStore
+ * @see LargeBinaryFastqFileDataStore
  *
  */
-final class DefaultFastqFileDataStore{
+final class DefaultBinaryFastqFileDataStore{
 	
-	private DefaultFastqFileDataStore(){
+	private DefaultBinaryFastqFileDataStore(){
 		//can not instantiate
 	}
 
 
-	/**
-	 * Create a new {@link FastqDataStore} instance for all the
-	 * {@link FastqRecord}s that are contained in the given fastq file. All
-	 * records in the file must have their qualities encoded in a manner that
-	 * can be parsed by the given {@link FastqQualityCodec} (if provided).
-	 * 
-	 * @param fastqFile
-	 *            the fastq file to parse, must exist and can not be null.
-	 * @param qualityCodec
-	 *            an optional {@link FastqQualityCodec} that should be used to
-	 *            decode the fastq file. If this value is null, then the
-	 *            datastore implementation will try to guess the codec used
-	 *            which might have a performance penalty associated with it.
-	 * @return a new {@link FastqDataStore} instance.
-	 * @throws IOException
-	 *             if there is a problem parsing the fastq file.
-	 * @throws NullPointerException
-	 *             if fastqFile is null.
-	 */
-   public static FastqDataStore create(File fastqFile, FastqQualityCodec qualityCodec) throws IOException{
-	  return create(fastqFile, DataStoreFilters.alwaysAccept(), qualityCodec);
-   }
 
 	/**
 	 * Create a new {@link FastqDataStore} instance for the {@link FastqRecord}s
 	 * that are accepted by the given {@link DataStoreFilter} that are contained in
-	 * the given fastq file. Any records that are not accepted by the filter
-	 * will not be included in the returned {@link FastqDataStore}. All of those
-	 * records must have their qualities encoded a manner that can be parsed by
-	 * the given {@link FastqQualityCodec} (if provided).
+	 * the given binary fastq file. Any records that are not accepted by the filter
+	 * will not be included in the returned {@link FastqDataStore}.
 	 * 
-	 * @param fastqFile
-	 *            the fastq file to parse, must exist and can not be null.
+	 * @param bfq
+	 *            the binary fastq file to parse, must exist and can not be null.
 	 * @param filter
 	 *            an instance of {@link DataStoreFilter} that can be used to filter
 	 *            out some {@link FastqRecord}s from the datastore.
-	 * @param qualityCodec
-	 *            the {@link FastqQualityCodec} needed to parse the encoded
-	 *            quality values in each record. If this value is null, then the
-	 *            datastore implementation will try to guess the codec used
-	 *            which might have a performance penalty associated with it.
 	 * @return a new {@link FastqDataStore} instance containing only those
 	 *         records that pass the filter.
 	 * @throws IOException
@@ -96,27 +73,22 @@ final class DefaultFastqFileDataStore{
 	 * @throws NullPointerException
 	 *             if either fastqFile or filter is null.
 	 */
-   public static FastqDataStore create(File fastqFile, DataStoreFilter filter,FastqQualityCodec qualityCodec) throws IOException{
-	   DefaultFastqFileDataStoreBuilderVisitor2 visitor = new DefaultFastqFileDataStoreBuilderVisitor2(qualityCodec,filter);
-	   FastqFileParser.create(fastqFile).parse(visitor);
+   public static FastqDataStore create(File bfq, DataStoreFilter filter, Endian endian) throws IOException{
+	   DefaultFastqFileDataStoreBuilderVisitor2 visitor = new DefaultFastqFileDataStoreBuilderVisitor2(filter);
+	   BinaryFastqFileParser.create(bfq, endian).parse(visitor);
 
 	   return visitor.build();
    }
     
 	private static final class DefaultFastqFileDataStoreBuilderVisitor2 implements FastqVisitor, Builder<FastqDataStore> {
 		private final DataStoreFilter filter;
-		private final FastqQualityCodec qualityCodec;
 		private final DefaultFastqDataStoreBuilder builder =new DefaultFastqDataStoreBuilder();
 
-		public DefaultFastqFileDataStoreBuilderVisitor2(
-				FastqQualityCodec qualityCodec, DataStoreFilter filter) {
-			if(qualityCodec==null){
-				throw new NullPointerException("quality codec can not be null");
-			}
+		public DefaultFastqFileDataStoreBuilderVisitor2( DataStoreFilter filter) {
+			
 			if(filter==null){
 				throw new NullPointerException("filter can not be null");
 			}
-			this.qualityCodec = qualityCodec;
 			this.filter = filter;
 		}
 
@@ -126,7 +98,8 @@ final class DefaultFastqFileDataStore{
 			if(!filter.accept(id)){
 				return null;
 			}
-			return new AbstractFastqRecordVisitor(id,optionalComment, qualityCodec) {
+			//we don't use the quality codec but we need to give it something...
+			return new AbstractFastqRecordVisitor(id,optionalComment, FastqQualityCodec.ILLUMINA) {
 				
 				@Override
 				protected void visitRecord(FastqRecord record) {
