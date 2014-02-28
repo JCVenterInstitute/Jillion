@@ -29,6 +29,7 @@ import java.io.InputStream;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.FIFOQueue;
+import org.jcvi.jillion.internal.core.util.GrowableCharArray;
 /**
  * {@code TextLineParser} can read lines from on {@link InputStream}.  The main
  * difference between TextLineParser and other similar JDK classes is TextLineParser
@@ -123,7 +124,7 @@ public final class TextLineParser implements Closeable{
 		if(doneFile){
 			return;
 		}
-		StringBuilder builder = new StringBuilder(INITIAL_LINE_CAPACITY);
+		GrowableCharArray builder = new GrowableCharArray(INITIAL_LINE_CAPACITY);
 		int value;
 		if(pushedBackValue ==NOT_SET){
 			value = in.read();
@@ -140,14 +141,14 @@ public final class TextLineParser implements Closeable{
 				close();
 				break;
 			}
-			numberOfBytesInNextLine++;
+			++numberOfBytesInNextLine;
 			builder.append((char)value);
 			if(value == CR){
 				//check if next value is LF
 				//since CR+LF is how Windows represents an end of line
 				int nextChar = in.read();
 				if(nextChar == LF){
-					numberOfBytesInNextLine++;
+					++numberOfBytesInNextLine;
 					builder.append(LF);
 				}else if(nextChar !=EOF){
 					//not windows formatted line
@@ -163,8 +164,8 @@ public final class TextLineParser implements Closeable{
 			}
 			value = in.read();
 		}
-		if(builder.length()>0){
-			nextQueue.add(builder.toString());
+		if(builder.getCurrentLength()>0){
+			nextQueue.add(builder.createNewString());
 		}
 		if(doneFile){
 			nextQueue.add(endOfFile);

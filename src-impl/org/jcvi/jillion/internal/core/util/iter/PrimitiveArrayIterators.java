@@ -236,6 +236,64 @@ public final class PrimitiveArrayIterators {
 		return new ShortIterator(array,start, end);
 	}
 	
+	
+	/**
+	 * Create a new Iterator that will
+	 * iterate over all the elements
+	 * of the given array.
+	 * @param array the array of primitives
+	 * to iterate over; can not be null.
+	 * @return a new Iterator will never be null.
+	 * @throws NullPointerException if array is null.
+	 */
+	public static Iterator<Character> create(char[] array){
+		return new CharIterator(array,0, array.length-1);
+	}
+	/**
+	 * Create a new Iterator that will
+	 * iterate over {@code length} elements
+	 * of the given array starting at the offset 0.
+	 * @param array the array of primitives
+	 * to iterate over; can not be null.
+	 * @param length the number of elements to iterate
+	 * over; must be <= array.length and >=0.
+	 * @return a new Iterator will never be null.
+	 * @throws NullPointerException if array is null.
+	 * @throws IllegalArgumentException if length < 0. or if the length
+	 * is longer than the given array.
+	 */
+	public static Iterator<Character> create(char[] array, int length){
+		int arrayLength = array.length;
+		validateParameters(length,arrayLength);
+		if(length==0){
+			return IteratorUtil.createEmptyIterator();
+		}
+		return new CharIterator(array,0, length-1);
+	}
+	/**
+	 * Create a new Iterator that will start
+	 * at the specified start offset (inclusive)
+	 * and end at the specified end offset (also inclusive).
+	 * @param array the array of primitives
+	 * to iterate over; can not be null.
+	 * @param start the start offset (inclusive)
+	 * to begin iterating, must be a valid offset into 
+	 * the array.
+	 * @param end the end offset (inclusive)
+	 * to stop iterating, must be a valid offset into 
+	 * the array.
+	 * @return a new Iterator will never be null.
+	 * @throws NullPointerException if array is null.
+	 * @throws IllegalArgumentException if start is greater 
+	 * than the end.
+	 * @throws ArrayIndexOutOfBoundsException if either start
+	 * or end are out of bounds of the array.
+	 */
+	public static Iterator<Character> create(char[] array, int start, int end){
+		validateParameters(start, end, array.length);
+		return new CharIterator(array,start, end);
+	}
+	
 	/**
 	 * Create a new Iterator that will
 	 * iterate over all the elements
@@ -384,6 +442,40 @@ public final class PrimitiveArrayIterators {
 				throw new NoSuchElementException();
 			}
 			Short next =array[currentOffset];
+			currentOffset++;
+			return next;
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();			
+		}
+		
+	}
+	
+	private static class CharIterator implements Iterator<Character>{
+
+		private final char[] array;
+		private int currentOffset;
+		private final int endOffset;
+		
+		public CharIterator(char[] array, int start, int end){
+			this.array = array;
+			this.endOffset = end;
+			this.currentOffset = start;
+		}
+		
+		@Override
+		public boolean hasNext() {
+			return currentOffset<=endOffset;
+		}
+
+		@Override
+		public Character next() {
+			if(!hasNext()){
+				throw new NoSuchElementException();
+			}
+			Character next =array[currentOffset];
 			currentOffset++;
 			return next;
 		}
