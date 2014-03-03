@@ -20,8 +20,9 @@
  ******************************************************************************/
 package org.jcvi.jillion.align;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import org.jcvi.jillion.internal.ResourceHelper;
 
 
 
@@ -39,6 +40,7 @@ public final class BlosumMatrices {
 	//matrices are lazy loaded from files.
 	private static AminoAcidSubstitutionMatrix BLOSUM_50, BLOSUM_62, BLOSUM_90;
 	
+	private static ResourceHelper RESOURCE_HELPER = new ResourceHelper(BlosumMatrices.class);
 	private BlosumMatrices(){
 		//can not instantiate
 	}
@@ -82,8 +84,8 @@ public final class BlosumMatrices {
 		String file = String.format("blosum%d.matrix",value);
 		try {
 			return AminoAcidSubstitutionMatrixFileParser.parse(
-					new File(BlosumMatrices.class.getResource(file).getFile()));
-		} catch (FileNotFoundException e) {
+					RESOURCE_HELPER.getFile(file));
+		} catch (IOException e) {
 			throw new IllegalStateException("could not parse substitution matrix file", e);
 		}
 	}
