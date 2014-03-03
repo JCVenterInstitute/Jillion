@@ -20,13 +20,17 @@
  ******************************************************************************/
 package org.jcvi.jillion_experimental.align.blast;
 
-import java.io.File;
 import java.io.IOException;
+
+import org.jcvi.jillion.internal.ResourceHelper;
 
 public class TestTabularRotaBlastResults extends AbstractTestRotaBlastResults{
 
 	public TestTabularRotaBlastResults() throws IOException {
-		super(TabularBlastParser.create(new File(TestTabularRotaBlastResults.class.getResource("files/rota.tab.out").getFile())));
+		
+		super(TabularBlastParser.create(
+				new ResourceHelper(TestTabularRotaBlastResults.class)
+					.getFile("files/rota.tab.out")));
 	}
 
 }
