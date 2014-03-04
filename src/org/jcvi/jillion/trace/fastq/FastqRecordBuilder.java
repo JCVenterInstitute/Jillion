@@ -91,7 +91,7 @@ public final class FastqRecordBuilder implements Builder<FastqRecord>{
 	@Override
 	public FastqRecord build() {
 		if(comments ==null){
-			new UncommentedFastqRecord(id, basecalls, qualities);
+			return new UncommentedFastqRecord(id, basecalls, qualities);
 		}
 		return new CommentedFastqRecord(id, basecalls, qualities,comments);
 	}

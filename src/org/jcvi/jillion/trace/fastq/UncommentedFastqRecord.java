@@ -129,4 +129,11 @@ class UncommentedFastqRecord implements FastqRecord{
 	        }
 	        return true;
 	    }
+		@Override
+		public String toString() {
+			return "UncommentedFastqRecord [id=" + id + ", nucleotides="
+					+ nucleotides + ", qualities=" + qualities + "]";
+		}
+	    
+	    
 }

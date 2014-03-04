@@ -20,15 +20,16 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace.fastq;
 
+import static org.easymock.EasyMock.createMock;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.trace.fastq.FastqRecord;
-import org.jcvi.jillion.trace.fastq.FastqRecordBuilder;
 import org.junit.Test;
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
 public class TestFastqRecordBuilder {
 	
 	@Test(expected = NullPointerException.class)
@@ -59,6 +60,7 @@ public class TestFastqRecordBuilder {
 		assertEquals(seq, sut.getNucleotideSequence());
 		assertEquals(qual, sut.getQualitySequence());
 		assertNull(sut.getComment());
+		assertTrue(sut instanceof UncommentedFastqRecord);
 	}
 	@Test
 	public void withComment(){

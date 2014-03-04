@@ -47,6 +47,15 @@ class CommentedFastqRecord extends UncommentedFastqRecord{
 		//so we can just delegate to super
 		return super.equals(obj);
 	}
+	@Override
+	public String toString() {
+		return "CommentedFastqRecord [getId()=" + getId()
+				+ ", getNucleotideSequence()=" + getNucleotideSequence()
+				+ ", getQualitySequence()=" + getQualitySequence()
+				+ ", comment=" + comment + "]";
+	}
+	
+	
 	
 	
 
