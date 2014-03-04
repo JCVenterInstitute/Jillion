@@ -23,6 +23,7 @@ package org.jcvi.jillion.maq;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.ByteOrder;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -30,7 +31,6 @@ import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
-import org.jcvi.jillion.core.io.IOUtil.Endian;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.trace.fastq.AbstractFastqRecordVisitor;
@@ -75,7 +75,7 @@ final class IndexedBinaryFastqFileDataStore{
    	 * if there is a problem parsing the file.
    	 * @throws NullPointerException if the input fastq file or the {@link FastqQualityCodec} is null.
    	 */
-    public static FastqDataStore create(File file, DataStoreFilter filter, Endian endian) throws IOException{
+    public static FastqDataStore create(File file, DataStoreFilter filter, ByteOrder endian) throws IOException{
     	IndexedFastqFileDataStoreBuilderVisitor2 visitor = new IndexedFastqFileDataStoreBuilderVisitor2(file, filter, endian);
     	FastqParser parser = BinaryFastqFileParser.create(file, endian);
     	parser.parse(visitor);
@@ -90,9 +90,9 @@ final class IndexedBinaryFastqFileDataStore{
     	private final Map<String, FastqVisitorMemento> mementos = new LinkedHashMap<String,FastqVisitorMemento>();
     	 private final File file;
     	 private final DataStoreFilter filter;
-    	 private final Endian endian;
+    	 private final ByteOrder endian;
     	 
-		public IndexedFastqFileDataStoreBuilderVisitor2(File file, DataStoreFilter filter, Endian endian) {
+		public IndexedFastqFileDataStoreBuilderVisitor2(File file, DataStoreFilter filter, ByteOrder endian) {
 			this.file = file;
 			this.endian = endian;
 			this.filter = filter;
@@ -129,12 +129,12 @@ final class IndexedBinaryFastqFileDataStore{
     	 private final FastqParser parser;
     	 private final DataStoreFilter filter;
     	 private volatile boolean closed;
-    	 private final Endian endian;
+    	 private final ByteOrder endian;
     	 
     	public IndexedFastqFileDataStoreImpl(File file,
 				FastqParser parser,
 				DataStoreFilter filter,
-				Endian endian,
+				ByteOrder endian,
 				Map<String, FastqVisitorMemento> mementos) {
 			this.file = file;
 			this.parser = parser;

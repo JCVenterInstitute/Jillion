@@ -28,13 +28,13 @@ package org.jcvi.jillion.maq;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.ByteOrder;
 
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.core.io.IOUtil.Endian;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
@@ -63,7 +63,7 @@ final class LargeBinaryFastqFileDataStore implements FastqDataStore {
     private Long size=null;
     private volatile boolean closed;
     private final DataStoreFilter filter;
-    private final Endian endian;
+    private final ByteOrder endian;
  
     /**
      * Create a new {@link FastqDataStore} instance for the given
@@ -82,14 +82,14 @@ final class LargeBinaryFastqFileDataStore implements FastqDataStore {
      * @throws FileNotFoundException if the given Fastq file does not exist.
      * @throws NullPointerException if fastqFile is null.
      */
-    public static FastqDataStore create(File fastqFile, DataStoreFilter filter, Endian endian) throws FileNotFoundException{
+    public static FastqDataStore create(File fastqFile, DataStoreFilter filter, ByteOrder endian) throws FileNotFoundException{
     	return new LargeBinaryFastqFileDataStore(fastqFile, filter, endian);
     }
     /**
      * @param qualityCodec
      * @throws FileNotFoundException 
      */
-    private LargeBinaryFastqFileDataStore(File fastQFile,DataStoreFilter filter, Endian endian) throws FileNotFoundException {
+    private LargeBinaryFastqFileDataStore(File fastQFile,DataStoreFilter filter, ByteOrder endian) throws FileNotFoundException {
     	if(fastQFile==null){
     		throw new NullPointerException("fastq file can not be null");
     	}

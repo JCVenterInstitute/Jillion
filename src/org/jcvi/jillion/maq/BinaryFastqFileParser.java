@@ -10,7 +10,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.GZIPInputStream;
 
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.core.io.IOUtil.Endian;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
@@ -31,20 +30,16 @@ import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback.FastqVisit
 public final class BinaryFastqFileParser implements FastqParser{
 
 	private final File bfqFile;
-	private final Endian endian;
+	private final ByteOrder endian;
 	
 	public static FastqParser create(File bfqFile) throws IOException{
-		if(ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN){
-			return create(bfqFile, Endian.LITTLE);
-		}else{
-			return create(bfqFile, Endian.BIG);
-		}
+		return create(bfqFile, ByteOrder.nativeOrder());
 	}
 	
-	public static FastqParser create(File bfqFile, Endian endian) throws IOException{
+	public static FastqParser create(File bfqFile, ByteOrder endian) throws IOException{
 		return new BinaryFastqFileParser(bfqFile, endian);
 	}
-	private BinaryFastqFileParser(File bfqFile, Endian endian) throws IOException {
+	private BinaryFastqFileParser(File bfqFile, ByteOrder endian) throws IOException {
 		if(!bfqFile.exists()){
 			throw new FileNotFoundException(bfqFile.getAbsolutePath());
 		}		

@@ -27,7 +27,7 @@ import org.jcvi.jillion.sam.header.SamHeader;
  */
 class PresortedBamFileWriter implements SamWriter{
 
-	private static final byte[] BAM_MAGIC_NUMBER = new byte[]{'B','A','M',1};
+	
 	private final SamHeader header;
 	
 	private final File bamFile;
@@ -58,7 +58,7 @@ class PresortedBamFileWriter implements SamWriter{
 		ByteBuffer buf = ByteBuffer.allocate(8 + headerAsStringBuilder.length() + bytesOfReferences );
 		buf.order(ByteOrder.LITTLE_ENDIAN);
 		
-		buf.put(BAM_MAGIC_NUMBER);
+		buf.put(SamUtil.getBamMagicNumber());
 		buf.putInt(headerAsStringBuilder.length());
 		char[] chars = new char[headerAsStringBuilder.length()];
 		headerAsStringBuilder.getChars(0, chars.length, chars, 0);

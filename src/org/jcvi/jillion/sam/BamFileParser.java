@@ -7,12 +7,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.Set;
 
 import org.jcvi.jillion.core.io.FileUtil;
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.core.io.IOUtil.Endian;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -314,17 +314,16 @@ final class BamFileParser extends AbstractSamFileParser {
 		return new QualitySequenceBuilder(bytes).build();
 	}
 	private long getUnsignedInt(InputStream in) throws IOException {
-		return IOUtil.readUnsignedInt(in, Endian.LITTLE);
+		return IOUtil.readUnsignedInt(in, ByteOrder.LITTLE_ENDIAN);
 	}
 	private int getSignedInt(InputStream in) throws IOException {
-		return (int) IOUtil.readUnsignedInt(in, Endian.LITTLE);
+		return (int) IOUtil.readUnsignedInt(in, ByteOrder.LITTLE_ENDIAN);
 	}
 	private void verifyMagicNumber(InputStream in) throws IOException {
 		byte[] header = new byte[4];
 		IOUtil.blockingRead(in, header);
-		byte[] BAM_HEADER = new byte[]{'B','A','M',1};
 		
-		if(!Arrays.equals(BAM_HEADER, header)){
+		if(!SamUtil.matchesBamMagicNumber(header)){
 			throw new IOException("invalid bam magic number header : " + Arrays.toString(header));
 		}
 	}

@@ -4,12 +4,12 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.io.IOUtil.Endian;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.trace.fastq.FastqDataStore;
@@ -84,7 +84,7 @@ public class TestBinaryFastqFileWriter {
 		writer.write(capped);
 		writer.close();
 		
-		assertContains(Arrays.asList(record1,capped), out, Endian.getNativeEndian());
+		assertContains(Arrays.asList(record1,capped), out, ByteOrder.nativeOrder());
 	}
 	
 	@Test
@@ -92,14 +92,14 @@ public class TestBinaryFastqFileWriter {
 		File out =tmpDir.newFile();
 		
 		FastqRecordWriter writer = new BinaryFastqFileWriterBuilder(out)
-											.endian(Endian.BIG)
+											.endian(ByteOrder.BIG_ENDIAN)
 											.build();
 		
 		
 		writer.write(record1);
 		writer.close();
 		
-		assertContains(record1, out, Endian.BIG);
+		assertContains(record1, out, ByteOrder.BIG_ENDIAN);
 		
 	}
 	
@@ -108,26 +108,26 @@ public class TestBinaryFastqFileWriter {
 		File out =tmpDir.newFile();
 		
 		FastqRecordWriter writer = new BinaryFastqFileWriterBuilder(out)
-											.endian(Endian.LITTLE)
+											.endian(ByteOrder.LITTLE_ENDIAN)
 											.build();
 		
 		
 		writer.write(record1);
 		writer.close();
 		
-		assertContains(record1, out, Endian.LITTLE);
+		assertContains(record1, out, ByteOrder.LITTLE_ENDIAN);
 		
 	}
 
 	private void assertContains(FastqRecord expected, File out) throws IOException, DataStoreException {
-		assertContains(Collections.singleton(expected),out, Endian.getNativeEndian());
+		assertContains(Collections.singleton(expected),out, ByteOrder.nativeOrder());
 		
 	}
-	private void assertContains(FastqRecord expected, File out, Endian endian) throws IOException, DataStoreException {
+	private void assertContains(FastqRecord expected, File out, ByteOrder endian) throws IOException, DataStoreException {
 		assertContains(Collections.singleton(expected),out, endian);
 		
 	}
-	private void assertContains(Collection<FastqRecord> expected, File out, Endian endian) throws IOException, DataStoreException {
+	private void assertContains(Collection<FastqRecord> expected, File out, ByteOrder endian) throws IOException, DataStoreException {
 		FastqDataStore datastore = new BinaryFastqFileDataStoreBuilder(out)
 										.endian(endian)
 										.build();

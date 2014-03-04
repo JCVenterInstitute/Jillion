@@ -30,10 +30,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.nio.ByteOrder;
 import java.nio.charset.Charset;
 
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.core.io.IOUtil.Endian;
 /**
  * {@code CasUtil} is a utility class for dealing with the binary
  * encodings inside a .cas file.
@@ -112,7 +112,7 @@ public final class CasUtil {
      */
     static short readCasUnsignedByte(InputStream in) throws IOException{
         return new BigInteger(1,
-                 IOUtil.toByteArray(in, 1, Endian.LITTLE)).shortValue();
+                 IOUtil.toByteArray(in, 1, ByteOrder.LITTLE_ENDIAN)).shortValue();
      }
     /**
      * Read the next unsigned short in the given inputStream.
@@ -123,7 +123,7 @@ public final class CasUtil {
      */
     static int readCasUnsignedShort(InputStream in) throws IOException{
         return new BigInteger(1,
-                 IOUtil.toByteArray(in, 2, Endian.LITTLE)).intValue();
+                 IOUtil.toByteArray(in, 2, ByteOrder.LITTLE_ENDIAN)).intValue();
      }
     /**
      * Read the next unsigned int in the given inputStream.
@@ -149,7 +149,7 @@ public final class CasUtil {
      */
     static long readCasUnsignedInt(InputStream in, int numberOfBytesInNumber) throws IOException{
         return new BigInteger(1,
-                 IOUtil.toByteArray(in, numberOfBytesInNumber, Endian.LITTLE)).longValue();
+                 IOUtil.toByteArray(in, numberOfBytesInNumber, ByteOrder.LITTLE_ENDIAN)).longValue();
      }
     /**
      * Read the next unsigned long in the given inputStream.
@@ -160,7 +160,7 @@ public final class CasUtil {
      */
     static BigInteger readCasUnsignedLong(InputStream in) throws IOException{
         return new BigInteger(1,
-                 IOUtil.toByteArray(in, 8, Endian.LITTLE));
+                 IOUtil.toByteArray(in, 8, ByteOrder.LITTLE_ENDIAN));
      }
     
     

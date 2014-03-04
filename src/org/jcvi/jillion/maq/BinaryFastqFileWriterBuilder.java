@@ -11,7 +11,6 @@ import java.util.Iterator;
 import java.util.zip.GZIPOutputStream;
 
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.core.io.IOUtil.Endian;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -23,7 +22,7 @@ public class BinaryFastqFileWriterBuilder {
 	
 
 	private final File outputBfqFile;
-	private Endian endian = ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN? Endian.BIG : Endian.LITTLE;
+	private ByteOrder endian = ByteOrder.nativeOrder();
 	
 	public BinaryFastqFileWriterBuilder(File outputBfqFile) {
 		if(outputBfqFile == null){
@@ -33,7 +32,7 @@ public class BinaryFastqFileWriterBuilder {
 		this.outputBfqFile = outputBfqFile;
 	}
 	
-	public BinaryFastqFileWriterBuilder endian(Endian endian){
+	public BinaryFastqFileWriterBuilder endian(ByteOrder endian){
 		if(endian ==null){
 			throw new NullPointerException("endian can not be null");
 		}
@@ -52,8 +51,8 @@ public class BinaryFastqFileWriterBuilder {
 		private final OutputStream out;
 		private ByteOrder byteOrder;
 		
-		public BinaryFastqFileWriter(File bqf, Endian endian) throws IOException{
-			this.byteOrder = endian.toByteOrder();
+		public BinaryFastqFileWriter(File bqf, ByteOrder endian) throws IOException{
+			this.byteOrder = endian;
 			this.out = new GZIPOutputStream(new BufferedOutputStream(new FileOutputStream(bqf)));
 		}
 		

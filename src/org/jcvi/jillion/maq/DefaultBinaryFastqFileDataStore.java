@@ -27,9 +27,9 @@ package org.jcvi.jillion.maq;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteOrder;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
-import org.jcvi.jillion.core.io.IOUtil.Endian;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.internal.trace.fastq.DefaultFastqDataStoreBuilder;
 import org.jcvi.jillion.trace.fastq.AbstractFastqRecordVisitor;
@@ -73,7 +73,7 @@ final class DefaultBinaryFastqFileDataStore{
 	 * @throws NullPointerException
 	 *             if either fastqFile or filter is null.
 	 */
-   public static FastqDataStore create(File bfq, DataStoreFilter filter, Endian endian) throws IOException{
+   public static FastqDataStore create(File bfq, DataStoreFilter filter, ByteOrder endian) throws IOException{
 	   DefaultFastqFileDataStoreBuilderVisitor2 visitor = new DefaultFastqFileDataStoreBuilderVisitor2(filter);
 	   BinaryFastqFileParser.create(bfq, endian).parse(visitor);
 
