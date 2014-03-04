@@ -19,12 +19,8 @@
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
 package org.jcvi.jillion.fasta;
-
-
-
-
 /**
- * {@code FastqVisitorCallback}
+ * {@code FastaVisitorCallback}
  * is a callback mechanism for the {@link FastaVisitor}
  * instance to communicate with the parser
  * that is parsing the fasta data.
@@ -44,7 +40,7 @@ public interface FastaVisitorCallback {
 	 * @author dkatzel
 	 *
 	 */
-	interface FastaVisitorMemento{
+	public interface FastaVisitorMemento{
 		
 	}
 	/**
