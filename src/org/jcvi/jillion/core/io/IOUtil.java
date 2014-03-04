@@ -76,45 +76,7 @@ public final class IOUtil {
      */
     public static final Charset UTF_8 = Charset.forName(UTF_8_NAME);
     
-    /**
-     * {@code Endian} is a way to specify how the ordering of bytes
-     * is read from a byte array.
-     * @author dkatzel
-     *
-     */
-    public enum Endian{
-    	/**
-    	 * Big Endian format has the most significant
-    	 * byte as the first byte.
-    	 */
-        BIG{
-        	@Override
-			public ByteOrder toByteOrder() {
-				return ByteOrder.BIG_ENDIAN;
-			}
-        },
-        /**
-         * Little Endian format has the most significant
-         * byte as the last byte.
-         */
-        LITTLE{
-
-			@Override
-			public ByteOrder toByteOrder() {
-				return ByteOrder.LITTLE_ENDIAN;
-			}
-        	
-        };
-        
-        public abstract ByteOrder toByteOrder();
-        
-        public static Endian getNativeEndian(){
-        	if(ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN){
-        		return BIG;
-        	}
-        	return LITTLE;
-        }
-    }
+   
     private IOUtil(){}
     /**
      * Recursively delete the given directory.
@@ -402,6 +364,8 @@ public final class IOUtil {
         }
     }
     
+
+    
     
     /**
      * Reads up to length number of bytes of the given {@link RandomAccessFile} 
@@ -449,6 +413,7 @@ public final class IOUtil {
         	throw new IllegalArgumentException("length must be >= 0");
         }
 	}
+	
 	private static void checkBlockingReadInputsAreOK(RandomAccessFile in,
 			byte[] buf, int offset, int length) {
 		if(buf ==null){
@@ -585,11 +550,11 @@ public final class IOUtil {
 
     }
     
-    public static BigInteger readUnsignedLong(InputStream in, Endian endian) throws IOException{
+    public static BigInteger readUnsignedLong(InputStream in, ByteOrder endian) throws IOException{
         return new BigInteger(1,
                  IOUtil.toByteArray(in, 8, endian));
      }
-    public static long readUnsignedInt(InputStream in, Endian endian) throws IOException{
+    public static long readUnsignedInt(InputStream in, ByteOrder endian) throws IOException{
         return new BigInteger(1,
                  IOUtil.toByteArray(in, 4, endian)).longValue();
      }
@@ -605,11 +570,11 @@ public final class IOUtil {
         return new BigInteger(1,
                  array).shortValue();
      }
-    public static int readUnsignedShort(InputStream in, Endian endian) throws IOException{
+    public static int readUnsignedShort(InputStream in, ByteOrder endian) throws IOException{
         return new BigInteger(1,
                  IOUtil.toByteArray(in, 2, endian)).intValue();
      }
-    public static short readUnsignedByte(InputStream in, Endian endian) throws IOException{
+    public static short readUnsignedByte(InputStream in, ByteOrder endian) throws IOException{
         return new BigInteger(1,
                  IOUtil.toByteArray(in, 1, endian)).shortValue();
      }
@@ -637,7 +602,7 @@ public final class IOUtil {
         return ((ch1 << 24) + (ch2 << 16) + (ch3 << 8) + (ch4 << 0));
     }
     
-    public static int readSignedInt(InputStream in, Endian endian) throws IOException {
+    public static int readSignedInt(InputStream in, ByteOrder endian) throws IOException {
     	//taken from DataInputStream
         int ch1 = in.read();
         int ch2 = in.read();
@@ -646,7 +611,7 @@ public final class IOUtil {
         if ((ch1 | ch2 | ch3 | ch4) < 0){
             throw new EOFException();
         }
-        if(endian == Endian.LITTLE	){
+        if(endian == ByteOrder.LITTLE_ENDIAN	){
         	return ((ch4 << 24) + (ch3 << 16) + (ch2 << 8) + (ch1 << 0));
         }
     	//default to BIG which is what DataInputStream uses
@@ -684,16 +649,16 @@ public final class IOUtil {
     
     
     public static BigInteger readUnsignedLong(InputStream in) throws IOException{
-       return readUnsignedLong(in, Endian.BIG);
+       return readUnsignedLong(in, ByteOrder.BIG_ENDIAN);
      }
     public static long readUnsignedInt(InputStream in) throws IOException{
-        return readUnsignedInt(in, Endian.BIG);
+        return readUnsignedInt(in, ByteOrder.BIG_ENDIAN);
       }
     public static int readUnsignedShort(InputStream in) throws IOException{
-        return readUnsignedShort(in, Endian.BIG);
+        return readUnsignedShort(in, ByteOrder.BIG_ENDIAN);
       }
     public static short readUnsignedByte(InputStream in) throws IOException{
-        return readUnsignedByte(in, Endian.BIG);
+        return readUnsignedByte(in, ByteOrder.BIG_ENDIAN);
       }
     
     public static byte[] convertUnsignedIntToByteArray(long unsignedInt){
@@ -991,7 +956,7 @@ public final class IOUtil {
 		InputStream in = null;
 		try{
 			in = new BufferedInputStream(new FileInputStream(f));
-			return toByteArray(in, Endian.BIG);
+			return toByteArray(in, ByteOrder.BIG_ENDIAN);
 		}finally{
 			IOUtil.closeAndIgnoreErrors(in);
 		}
@@ -1007,7 +972,7 @@ public final class IOUtil {
      * @throws IOException if there is a problem reading the Stream.
      */
 	public static byte[] toByteArray(InputStream input) throws IOException {
-		return toByteArray(input, Endian.BIG);
+		return toByteArray(input, ByteOrder.BIG_ENDIAN);
 	}
 	/**
      * Copy the contents of the given {@link InputStream}
@@ -1015,16 +980,16 @@ public final class IOUtil {
      * order.
      * @param input the inputStream to convert into a byte[].  
      * This stream is not closed when the method finishes.
-     * @param endian the {@link Endian} to use; null is considered
-     * {@link Endian#BIG} (the default).
+     * @param endian the {@link ByteOrder} to use; null is considered
+     * {@link ByteOrder#BIG_ENDIAN} (the default).
      * @return a new byte array instance containing all the bytes
      * from the given inputStream.
      * @throws IOException if there is a problem reading the Stream.
      */
-	public static byte[] toByteArray(InputStream input,Endian endian) throws IOException {
+	public static byte[] toByteArray(InputStream input, ByteOrder byteOrder) throws IOException {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
         copy(input, output);
-        if(endian ==Endian.LITTLE){
+        if(byteOrder ==ByteOrder.LITTLE_ENDIAN){
         	return switchEndian(output.toByteArray());
         }
         return output.toByteArray();
@@ -1036,7 +1001,7 @@ public final class IOUtil {
      * toByteArray(in,numberOfBytesToRead,Endian.BIG)}
      */
 	 public static byte[] toByteArray(InputStream in, int numberOfBytesToRead) throws IOException {
-	       return toByteArray(in, numberOfBytesToRead, Endian.BIG);
+	       return toByteArray(in, numberOfBytesToRead, ByteOrder.BIG_ENDIAN);
 	 }
 	 /**
      * Copy the numberOfBytesToRead of the given {@link InputStream}
@@ -1048,18 +1013,19 @@ public final class IOUtil {
      * if there aren't enough bytes, then this method will block until
      * more bytes are available or until the stream reaches end of file
      * (which will cause an IOException to be thrown).
-     * @param endian the {@link Endian} to use; null is considered
-     * {@link Endian#BIG} (the default).
+     * @param endian the {@link ByteOrder} to use; null is considered
+     * {@link ByteOrder#BIG_ENDIAN} (the default).
      * @return a new byte array instance containing all the bytes
      * from the given inputStream.
      * @throws EOFException if the end of the file is reached before
      * the given number of bytes.
      * @throws IOException if there is a problem reading the inputStream.
      */
-    public static byte[] toByteArray(InputStream in, int numberOfBytesToRead, Endian endian) throws IOException {
+    public static byte[] toByteArray(InputStream in, int numberOfBytesToRead, ByteOrder endian) throws IOException {
         byte[] array = new byte[numberOfBytesToRead];
-        blockingRead(in,array,0,numberOfBytesToRead);        
-        if(endian == Endian.LITTLE){
+        blockingRead(in,array,0,numberOfBytesToRead);  
+       
+        if(endian == ByteOrder.LITTLE_ENDIAN){
             return IOUtil.switchEndian(array);
         }
         return array;

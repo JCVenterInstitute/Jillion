@@ -28,7 +28,6 @@ import java.nio.ByteOrder;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
-import org.jcvi.jillion.core.io.IOUtil.Endian;
 import org.jcvi.jillion.trace.fastq.FastqDataStore;
 /**
  * {@code BinaryFastqFileDataStoreBuilder}
@@ -44,7 +43,7 @@ public final class BinaryFastqFileDataStoreBuilder{
 	 * Assume native Endain unless
 	 * told otherwise.
 	 */
-	private Endian endian = ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN? Endian.BIG : Endian.LITTLE;
+	private ByteOrder endian = ByteOrder.nativeOrder();
 	private DataStoreFilter filter = DataStoreFilters.alwaysAccept();
 	//by default store everything in memory
 	private DataStoreProviderHint hint = DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_SPEED;
@@ -107,7 +106,7 @@ public final class BinaryFastqFileDataStoreBuilder{
 	 * @return this
 	 * @throws NullPointerException if endian is null.
 	 */
-	public BinaryFastqFileDataStoreBuilder endian(Endian endian){
+	public BinaryFastqFileDataStoreBuilder endian(ByteOrder endian){
 		if(endian ==null){
 			throw new NullPointerException("endian can not be null");
 		}

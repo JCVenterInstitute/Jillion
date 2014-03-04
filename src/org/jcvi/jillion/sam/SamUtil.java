@@ -94,6 +94,14 @@ public final class SamUtil {
 	
 	private static final int[] BIN_TREE_LEVEL_SHIFTS = new int[]{26,23, 20,  17, 14};
 	
+	private static final byte[] BAM_MAGIC_NUMBER = new byte[]{'B','A','M',1};
+	
+	public static final byte[] getBamMagicNumber(){
+		return Arrays.copyOf(BAM_MAGIC_NUMBER, 4);
+	}
+	public static boolean matchesBamMagicNumber(byte[] b){
+		return Arrays.equals(BAM_MAGIC_NUMBER, b);
+	}
 	private static ThreadLocal<DateFormat> dateFormat = new ThreadLocal<DateFormat> () {
 
 		  @Override

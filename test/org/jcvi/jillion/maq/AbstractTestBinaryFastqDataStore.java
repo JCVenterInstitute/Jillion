@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteOrder;
 import java.util.Collections;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
@@ -13,7 +14,6 @@ import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.core.io.IOUtil.Endian;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.fastq.FastqDataStore;
@@ -114,7 +114,7 @@ public abstract class AbstractTestBinaryFastqDataStore {
 		File bfq = resourceHelper.getFile("sanger.capped.bfq");
 		
 		return new BinaryFastqFileDataStoreBuilder(bfq)
-						.endian(Endian.LITTLE)
+						.endian(ByteOrder.LITTLE_ENDIAN)
 						.hint(getProviderHint())
 						.filter(filter)
 						.build();
