@@ -9,7 +9,9 @@ import org.junit.runners.Suite.SuiteClasses;
     {
     	TestDefaultBinaryFastqDataStore.class,
     	TestLargeBinaryFastqDataStore.class,
-    	TestIndexedBinaryFastqDataStore.class
+    	TestIndexedBinaryFastqDataStore.class,
+    	
+    	TestBinaryFastqFileWriter.class
     }
     )
 public class AllMaqTests {

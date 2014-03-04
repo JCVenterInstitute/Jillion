@@ -107,6 +107,13 @@ public final class IOUtil {
         };
         
         public abstract ByteOrder toByteOrder();
+        
+        public static Endian getNativeEndian(){
+        	if(ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN){
+        		return BIG;
+        	}
+        	return LITTLE;
+        }
     }
     private IOUtil(){}
     /**

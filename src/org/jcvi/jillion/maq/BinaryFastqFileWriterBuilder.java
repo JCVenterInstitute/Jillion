@@ -109,7 +109,7 @@ public class BinaryFastqFileWriterBuilder {
 				Nucleotide n = basesIter.next();
 				int v = encode(n);
 				//we can just or the values as is
-				buffer[i] &= 0x3F;
+				buffer[i] = (byte)Math.min(buffer[i], 63);
 				buffer[i] |= v<<6;
 			}
 			return buffer;
