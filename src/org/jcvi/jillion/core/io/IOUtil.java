@@ -457,7 +457,43 @@ public final class IOUtil {
          }
          return array;
 	}
-    public static float[] readFloatArray(InputStream in, int numberOfFloatsToRead) throws IOException {
+    public static long[] readLongArray(InputStream in, int numberOfLongsToRead, ByteOrder endian) throws IOException {
+		long[] array = new long[numberOfLongsToRead];
+	     for(int i=0; i<numberOfLongsToRead; i++){
+	         array[i]= readSignedLong(in, endian);
+	     }
+	     return array;
+    }
+    
+    public static long readSignedLong(InputStream in) throws IOException{
+    	return readSignedLong(in, ByteOrder.BIG_ENDIAN);
+    }
+    
+    public static long readSignedLong(InputStream in, ByteOrder endian) throws IOException {
+		//copied from DataInputStream
+    	//but I added support for both endians
+    	byte[] b = IOUtil.readByteArray(in, 8);
+    	if(endian == ByteOrder.LITTLE_ENDIAN){
+    		return (((long)b[7] << 56) +
+                    ((long)(b[6] & 255) << 48) +
+                    ((long)(b[5] & 255) << 40) +
+                    ((long)(b[4] & 255) << 32) +
+                    ((long)(b[3] & 255) << 24) +
+                    ((b[2] & 255) << 16) +
+                    ((b[1] & 255) <<  8) +
+                    ((b[0] & 255) <<  0));
+    	}else{
+    		return (((long)b[0] << 56) +
+                ((long)(b[1] & 255) << 48) +
+                ((long)(b[2] & 255) << 40) +
+                ((long)(b[3] & 255) << 32) +
+                ((long)(b[4] & 255) << 24) +
+                ((b[5] & 255) << 16) +
+                ((b[6] & 255) <<  8) +
+                ((b[7] & 255) <<  0));
+    	}
+	}
+	public static float[] readFloatArray(InputStream in, int numberOfFloatsToRead) throws IOException {
 		float[] array = new float[numberOfFloatsToRead];
 	     for(int i=0; i<numberOfFloatsToRead; i++){
 	         array[i]= readFloat(in);

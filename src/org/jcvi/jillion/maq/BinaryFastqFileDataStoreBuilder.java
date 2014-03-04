@@ -56,17 +56,17 @@ public final class BinaryFastqFileDataStoreBuilder{
 	 * @throws IOException if the fastq file does not exist, or can not be read.
 	 * @throws NullPointerException if fastqFile is null.
 	 */
-	public BinaryFastqFileDataStoreBuilder(File fastqFile) throws IOException{
-		if(fastqFile ==null){
+	public BinaryFastqFileDataStoreBuilder(File bfqFile) throws IOException{
+		if(bfqFile ==null){
 			throw new NullPointerException("fastq file can not be null");
 		}
-		if(!fastqFile.exists()){
+		if(!bfqFile.exists()){
 			throw new FileNotFoundException("fastq file must exist");
 		}
-		if(!fastqFile.canRead()){
+		if(!bfqFile.canRead()){
 			throw new IOException("fastq file is not readable");
 		}
-		this.fastqFile = fastqFile;
+		this.fastqFile = bfqFile;
 	}
 	/**
 	 * Only include the {@link FastqRecord}s which pass
