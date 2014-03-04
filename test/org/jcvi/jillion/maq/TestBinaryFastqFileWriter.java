@@ -69,6 +69,76 @@ public class TestBinaryFastqFileWriter {
 	}
 	
 	@Test
+	public void nsGetZeroQuality() throws IOException, DataStoreException{
+		File out =tmpDir.newFile();
+		
+		FastqRecordWriter writer = new BinaryFastqFileWriterBuilder(out)
+											.build();
+		
+		FastqRecord input = new FastqRecordBuilder("id",
+									new NucleotideSequenceBuilder("ACNT").build(), 
+									new QualitySequenceBuilder(new byte[]{20,20,20,20}).build())
+								.build();
+		
+		FastqRecord expected = new FastqRecordBuilder("id",
+				new NucleotideSequenceBuilder("ACNT").build(), 
+				new QualitySequenceBuilder(new byte[]{20,20,0,20}).build())
+			.build();
+		
+		writer.write(input);
+		writer.close();
+		
+		assertContains(expected, out);
+		
+	}
+	@Test
+	public void gapGetsConvertedIntoNWithZeroQuality() throws IOException, DataStoreException{
+		File out =tmpDir.newFile();
+		
+		FastqRecordWriter writer = new BinaryFastqFileWriterBuilder(out)
+											.build();
+		
+		FastqRecord input = new FastqRecordBuilder("id",
+									new NucleotideSequenceBuilder("AC-T").build(), 
+									new QualitySequenceBuilder(new byte[]{20,20,20,20}).build())
+								.build();
+		
+		FastqRecord expected = new FastqRecordBuilder("id",
+				new NucleotideSequenceBuilder("ACNT").build(), 
+				new QualitySequenceBuilder(new byte[]{20,20,0,20}).build())
+			.build();
+		
+		writer.write(input);
+		writer.close();
+		
+		assertContains(expected, out);
+		
+	}
+	@Test
+	public void ambiguityGetsConvertedIntoNWithZeroQuality() throws IOException, DataStoreException{
+		File out =tmpDir.newFile();
+		
+		FastqRecordWriter writer = new BinaryFastqFileWriterBuilder(out)
+											.build();
+		
+		FastqRecord input = new FastqRecordBuilder("id",
+									new NucleotideSequenceBuilder("ACRT").build(), 
+									new QualitySequenceBuilder(new byte[]{20,20,20,20}).build())
+								.build();
+		
+		FastqRecord expected = new FastqRecordBuilder("id",
+				new NucleotideSequenceBuilder("ACNT").build(), 
+				new QualitySequenceBuilder(new byte[]{20,20,0,20}).build())
+			.build();
+		
+		writer.write(input);
+		writer.close();
+		
+		assertContains(expected, out);
+		
+	}
+	
+	@Test
 	public void writeMultipleRecords() throws IOException, DataStoreException{
 		File out =tmpDir.newFile();
 		

@@ -31,14 +31,41 @@ public final class BinaryFastqFileParser implements FastqParser{
 
 	private final File bfqFile;
 	private final ByteOrder endian;
-	
+	/**
+	 * Create a new {@link FastqParser} instance
+	 * to parse the given binary fastq file (bfq) using
+	 * the system endian.
+	 * This is the same as calling: 
+	 * {@link #create(File, ByteOrder) create(bfqFile, ByteOrder.nativeOrder())}
+	 * @param bfqFile the binary fastq file to parse.
+	 * @return a new {@link FastqParser} instance;
+	 * will never be null.
+	 * @throws IOException if the file does not exist.
+	 * @throws NullPointerException if bfqFile is null.
+	 */
 	public static FastqParser create(File bfqFile) throws IOException{
 		return create(bfqFile, ByteOrder.nativeOrder());
 	}
-	
+	/**
+	 * Create a new {@link FastqParser} instance
+	 * to parse the given binary fastq file (bfq) using
+	 * the given {@link ByteOrder}.
+	 * @param bfqFile the binary fastq file to parse.
+	 * @param endian the {@link ByteOrder} to use to parse the file.
+	 * Make sure the endian matches the endian of the machine that 
+	 * Maq was run on (or matches the {@link ByteOrder}
+	 * used by the {@link BinaryFastqFileWriterBuilder} )
+	 * that produced the file.
+	 * @return a new {@link FastqParser} instance;
+	 * will never be null.
+	 * @throws IOException if there is a problem file does not exist.
+	 * @throws NullPointerException if either parameter is null.
+	 */
 	public static FastqParser create(File bfqFile, ByteOrder endian) throws IOException{
 		return new BinaryFastqFileParser(bfqFile, endian);
 	}
+	
+	
 	private BinaryFastqFileParser(File bfqFile, ByteOrder endian) throws IOException {
 		if(!bfqFile.exists()){
 			throw new FileNotFoundException(bfqFile.getAbsolutePath());
@@ -92,10 +119,19 @@ public final class BinaryFastqFileParser implements FastqParser{
 				QualitySequenceBuilder qualitiesBuilder = new QualitySequenceBuilder(numBases);
 				for(int i=0; i<basesAndQualities.length; i++){
 					int value = basesAndQualities[i];
-					int qv = value & 0x3F;
-					int base = value>>6 & 0x3;
-					basesBuilder.append(getBaseFromInt(base));
-					qualitiesBuilder.append(qv);
+					if(value ==0){
+						//this is how MAQ encodes
+						//not an ACGT 
+						//should be converted into an N
+						//with quality 0
+						basesBuilder.append(Nucleotide.Unknown);
+						qualitiesBuilder.append(0);
+					}else{
+						int qv = value & 0x3F;
+						int base = value>>6 & 0x3;
+						basesBuilder.append(getBaseFromInt(base));
+						qualitiesBuilder.append(qv);
+					}
 				}
 				
 				recordVisitor.visitNucleotides(basesBuilder.build());
