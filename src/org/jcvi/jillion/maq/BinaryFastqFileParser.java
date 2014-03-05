@@ -99,9 +99,10 @@ public final class BinaryFastqFileParser implements FastqParser{
 
 	private void parseBqfData(FastqVisitor visitor, OpenAwareInputStream in, long offset) throws IOException {
 		FastqRecordVisitor recordVisitor =null;
-		Callback callback = new Callback(offset);
+		long currentOffset = offset;
+		Callback callback = new Callback(currentOffset);
 		while(in.isOpen() && callback.keepParsing()){
-			callback.updateCurrentOffset(offset);
+			callback.updateCurrentOffset(currentOffset);
 			int nameLength =IOUtil.readSignedInt(in, endian);
 			String name = readNullTerminatedString(in, nameLength);
 			int numBases =IOUtil.readSignedInt(in, endian);
@@ -109,7 +110,7 @@ public final class BinaryFastqFileParser implements FastqParser{
 			//each record is 8 bytes for the length fields
 			//plus the number of bases 
 			//plus the name length (which includes null terminal)
-			offset += 8 + numBases + nameLength;
+			currentOffset += 8 + numBases + nameLength;
 			if(recordVisitor ==null){
 				//skip
 				IOUtil.blockingSkip(in, numBases);
