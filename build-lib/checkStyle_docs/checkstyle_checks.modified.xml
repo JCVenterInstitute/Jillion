@@ -72,7 +72,7 @@
       <property name="allowLineBreaks" value="true"/>
     </module>
 
-    <module name="OperatorWrap"/>
+   <!--   <module name="OperatorWrap"/> -->
     <module name="PackageName"/>
     <module name="ParameterName"/>
     <module name="ParameterNumber">
