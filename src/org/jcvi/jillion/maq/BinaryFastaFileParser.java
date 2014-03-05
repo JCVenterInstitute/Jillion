@@ -106,13 +106,13 @@ public final class BinaryFastaFileParser implements FastaParser{
 			int numCompactedLongs = IOUtil.readSignedInt(in, endian);
 			recordVisitor =visitor.visitDefline(callback, name, null);
 			//record length is 3 ints for lengths
-			currentOffset += 12 + numCompactedLongs*8 + nameLength;
+			currentOffset += 12 + numCompactedLongs*16 + nameLength;
 			if(recordVisitor ==null){
 				//skip
 				//each record is 2 * number of Compacted longs
 				//once array for the bases, one array for the mask
 				//and each long is 4 bytes.
-				IOUtil.blockingSkip(in, numCompactedLongs *8);
+				IOUtil.blockingSkip(in, numCompactedLongs *16);
 			}else{				
 				long[] bases =IOUtil.readLongArray(in, numCompactedLongs, endian);
 				long[] masks =IOUtil.readLongArray(in, numCompactedLongs, endian);
