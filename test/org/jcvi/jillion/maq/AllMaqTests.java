@@ -13,7 +13,8 @@ import org.junit.runners.Suite.SuiteClasses;
     	
     	TestBinaryFastqFileWriter.class,
     	
-    	TestBinaryFastaFileParser.class
+    	TestBinaryFastaFileParser.class,
+    	TestBinaryFastaFileWriter.class
     }
     )
 public class AllMaqTests {
