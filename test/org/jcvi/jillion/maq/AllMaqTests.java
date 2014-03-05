@@ -11,7 +11,9 @@ import org.junit.runners.Suite.SuiteClasses;
     	TestLargeBinaryFastqDataStore.class,
     	TestIndexedBinaryFastqDataStore.class,
     	
-    	TestBinaryFastqFileWriter.class
+    	TestBinaryFastqFileWriter.class,
+    	
+    	TestBinaryFastaFileParser.class
     }
     )
 public class AllMaqTests {

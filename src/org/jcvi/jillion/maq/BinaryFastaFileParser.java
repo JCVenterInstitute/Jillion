@@ -96,16 +96,17 @@ public final class BinaryFastaFileParser implements FastaParser{
 
 	private void parseBfaData(FastaVisitor visitor, OpenAwareInputStream in, long offset) throws IOException {
 		FastaRecordVisitor recordVisitor =null;
-		Callback callback = new Callback(offset);
+		long currentOffset = offset;
+		Callback callback = new Callback(currentOffset);
 		while(in.isOpen() && callback.keepParsing()){
-			callback.updateCurrentOffset(offset);
+			callback.updateCurrentOffset(currentOffset);
 			int nameLength =IOUtil.readSignedInt(in, endian);
 			String name = readNullTerminatedString(in, nameLength);
 			int numBases =IOUtil.readSignedInt(in, endian);
 			int numCompactedLongs = IOUtil.readSignedInt(in, endian);
 			recordVisitor =visitor.visitDefline(callback, name, null);
 			//record length is 3 ints for lengths
-			offset += 12 + numCompactedLongs*8 + nameLength;
+			currentOffset += 12 + numCompactedLongs*8 + nameLength;
 			if(recordVisitor ==null){
 				//skip
 				//each record is 2 * number of Compacted longs
