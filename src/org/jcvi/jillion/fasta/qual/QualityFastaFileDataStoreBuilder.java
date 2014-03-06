@@ -28,6 +28,7 @@ import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.internal.fasta.AbstractFastaFileDataStoreBuilder;
 import org.jcvi.jillion.internal.fasta.qual.IndexedQualityFastaFileDataStore;
 import org.jcvi.jillion.internal.fasta.qual.LargeQualityFastaFileDataStore;
@@ -70,16 +71,16 @@ public final class QualityFastaFileDataStoreBuilder extends AbstractFastaFileDat
 
 	
 	@Override
-	protected QualityFastaDataStore createNewInstance(File fastaFile, InputStream in,
+	protected QualityFastaDataStore createNewInstance(FastaParser parser,
 			DataStoreProviderHint hint, DataStoreFilter filter)
 			throws IOException {
-		if(fastaFile ==null){
-			return DefaultQualityFastaFileDataStore.create(in,filter); 
+		if(!parser.canCreateMemento()){
+			return DefaultQualityFastaFileDataStore.create(parser,filter); 
 		}
 		switch(hint){
-			case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultQualityFastaFileDataStore.create(fastaFile,filter);
-			case RANDOM_ACCESS_OPTIMIZE_MEMORY: return IndexedQualityFastaFileDataStore.create(fastaFile,filter);
-			case ITERATION_ONLY: return LargeQualityFastaFileDataStore.create(fastaFile,filter);
+			case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultQualityFastaFileDataStore.create(parser,filter);
+			case RANDOM_ACCESS_OPTIMIZE_MEMORY: return IndexedQualityFastaFileDataStore.create(parser,filter);
+			case ITERATION_ONLY: return LargeQualityFastaFileDataStore.create(parser,filter);
 			default:
 				throw new IllegalArgumentException("unknown hint : "+ hint);
 		}

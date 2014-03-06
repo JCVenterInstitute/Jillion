@@ -23,7 +23,6 @@ package org.jcvi.jillion.fasta;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -55,8 +54,9 @@ public abstract class FastaFileParser implements FastaParser{
 	 * that will parse the given fasta encoded
 	 * file.
 	 * @param fastaFile the file to parse.
-	 * @throws IOException if there is a problem opening the file.
-	 * @throws NullPointerException if fastaFile is null.
+	 * @throws NullPointerException if the file is null.
+	 * @throws FileNotFoundException if the file does not exist.
+	 * @throws IOException if the file is not readable.
 	 */
 	public static FastaParser create(File fastaFile) throws IOException{
 		return new FileFastaParser(fastaFile);
@@ -243,13 +243,18 @@ public abstract class FastaFileParser implements FastaParser{
 	private static class FileFastaParser extends FastaFileParser{
 		private final File fastaFile;
 		
-		public FileFastaParser(File fastaFile) throws FileNotFoundException{
-			if(!fastaFile.exists()){
-				throw new FileNotFoundException(
-						String.format("fasta file %s does not exist", fastaFile.getAbsolutePath()));
-			}
+		public FileFastaParser(File fastaFile) throws IOException{
+			IOUtil.verifyIsReadable(fastaFile);
 			this.fastaFile = fastaFile;
 		}
+		
+		
+		@Override
+		public boolean canCreateMemento() {
+			return true;
+		}
+
+
 		protected AbstractFastaVisitorCallback createNewCallback(long currentOffset, AtomicBoolean keepParsing) {
 			return new MementoCallback(currentOffset, keepParsing);
 		}
@@ -291,6 +296,8 @@ public abstract class FastaFileParser implements FastaParser{
 		protected AbstractFastaVisitorCallback createNewCallback(long currentOffset, AtomicBoolean keepParsing) {
 			return new NoMementoCallback(keepParsing);
 		}
+		
+		
 		@Override
 		public synchronized void parse(FastaVisitor visitor) throws IOException {
 			//wrap in synchronized block so we only
@@ -324,6 +331,10 @@ public abstract class FastaFileParser implements FastaParser{
 		@Override
 		public boolean canParse() {
 			return inputStream.isOpen();
+		}
+		@Override
+		public boolean canCreateMemento() {
+			return false;
 		}
 		
 		

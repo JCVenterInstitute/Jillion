@@ -26,6 +26,7 @@ import java.io.IOException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
@@ -38,18 +39,25 @@ import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterato
  */
 final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreamingIterator<NucleotideFastaRecord>{
 
-	private final File fastaFile;
+	private final FastaParser parser;
 	private final DataStoreFilter filter;
 	
-	 public static LargeNucleotideSequenceFastaIterator createNewIteratorFor(File fastaFile, DataStoreFilter filter){
-		 LargeNucleotideSequenceFastaIterator iter = new LargeNucleotideSequenceFastaIterator(fastaFile, filter);
+	 public static LargeNucleotideSequenceFastaIterator createNewIteratorFor(File fastaFile, DataStoreFilter filter) throws IOException{
+		 return createNewIteratorFor(FastaFileParser.create(fastaFile), filter);				                               
+	    }
+	 
+	 public static LargeNucleotideSequenceFastaIterator createNewIteratorFor(FastaParser parser, DataStoreFilter filter) throws IOException{
+		 LargeNucleotideSequenceFastaIterator iter = new LargeNucleotideSequenceFastaIterator(parser, filter);
 				                                iter.start();			
 	    	
 	    	return iter;
 	    }
 	 
-	 private LargeNucleotideSequenceFastaIterator(File fastaFile, DataStoreFilter filter){
-		 this.fastaFile = fastaFile;
+	 private LargeNucleotideSequenceFastaIterator(FastaParser parser, DataStoreFilter filter){
+		 if(!parser.canParse()){
+			 throw new IllegalStateException("parser must still be able to parse fasta");
+		 }
+		 this.parser = parser;
 		 this.filter = filter;
 	 }
 	 /**
@@ -82,7 +90,7 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 	    	};
 	    	
 	    	try {
-				FastaFileParser.create(fastaFile).parse(visitor);
+	    		parser.parse(visitor);
 			} catch (IOException e) {
 				throw new RuntimeException("can not parse fasta file",e);
 			}

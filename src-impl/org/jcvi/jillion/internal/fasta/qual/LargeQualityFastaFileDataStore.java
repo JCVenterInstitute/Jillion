@@ -26,13 +26,15 @@
 package org.jcvi.jillion.internal.fasta.qual;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.qual.QualityFastaDataStore;
 import org.jcvi.jillion.fasta.qual.QualityFastaRecord;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
@@ -53,20 +55,28 @@ import org.jcvi.jillion.internal.fasta.AbstractLargeFastaFileDataStore;
 public final class LargeQualityFastaFileDataStore extends AbstractLargeFastaFileDataStore<PhredQuality, QualitySequence, QualityFastaRecord> implements QualityFastaDataStore{
 
     
-    public static QualityFastaDataStore create(File fastaFile){
+    public static QualityFastaDataStore create(File fastaFile) throws IOException{
     	return create(fastaFile, DataStoreFilters.alwaysAccept());
     }
-    public static QualityFastaDataStore create(File fastaFile, DataStoreFilter filter){
-    	return new LargeQualityFastaFileDataStore(fastaFile,filter);
+    public static QualityFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
+    	FastaParser parser = FastaFileParser.create(fastaFile);
+    	return new LargeQualityFastaFileDataStore(parser,filter);
     }
-	protected LargeQualityFastaFileDataStore(File fastaFile, DataStoreFilter filter) {
-		super(fastaFile, filter);
+    
+    public static QualityFastaDataStore create(FastaParser parser){
+    	return create(parser, DataStoreFilters.alwaysAccept());
+    }
+    public static QualityFastaDataStore create(FastaParser parser, DataStoreFilter filter){
+    	return new LargeQualityFastaFileDataStore(parser,filter);
+    }
+	protected LargeQualityFastaFileDataStore(FastaParser parser, DataStoreFilter filter) {
+		super(parser, filter);
 	}
 
 	@Override
 	protected StreamingIterator<QualityFastaRecord> createNewIterator(
-			File fastaFile, DataStoreFilter filter) {
-		StreamingIterator<QualityFastaRecord> iter = QualitySequenceFastaDataStoreIteratorImpl.createIteratorFor(fastaFile, filter);
+			FastaParser parser, DataStoreFilter filter) {
+		StreamingIterator<QualityFastaRecord> iter = QualitySequenceFastaDataStoreIteratorImpl.createIteratorFor(parser, filter);
         
         return DataStoreStreamingIterator.create(this,iter);
 	}

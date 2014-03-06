@@ -74,6 +74,11 @@ public final class BinaryFastaFileParser implements FastaParser{
 		this.endian = endian;
 	}
 
+	
+	@Override
+	public boolean canCreateMemento() {
+		return true;
+	}
 	@Override
 	public boolean canParse() {
 		return true;

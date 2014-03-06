@@ -20,12 +20,11 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.fasta.aa;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
-import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
@@ -35,20 +34,21 @@ import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterato
 
 final class LargeProteinFastaIterator extends AbstractBlockingStreamingIterator<ProteinFastaRecord>{
 
-	private final File fastaFile;
+	private final FastaParser parser;
 	private final DataStoreFilter filter;
-	public static LargeProteinFastaIterator createNewIteratorFor(File fastaFile){
-		return createNewIteratorFor(fastaFile, DataStoreFilters.alwaysAccept());
+	
+	public static LargeProteinFastaIterator createNewIteratorFor(FastaParser parser){
+		return createNewIteratorFor(parser, DataStoreFilters.alwaysAccept());
 	}
-	 public static LargeProteinFastaIterator createNewIteratorFor(File fastaFile, DataStoreFilter filter){
-		 LargeProteinFastaIterator iter = new LargeProteinFastaIterator(fastaFile, filter);
+	 public static LargeProteinFastaIterator createNewIteratorFor(FastaParser parser, DataStoreFilter filter){
+		 LargeProteinFastaIterator iter = new LargeProteinFastaIterator(parser, filter);
 				                                iter.start();			
 	    	
 	    	return iter;
 	    }
 	 
-	 private LargeProteinFastaIterator(File fastaFile,DataStoreFilter filter){
-		 this.fastaFile = fastaFile;
+	 private LargeProteinFastaIterator(FastaParser parser,DataStoreFilter filter){
+		 this.parser = parser;
 		 this.filter = filter;
 	 }
 	 /**
@@ -90,7 +90,7 @@ final class LargeProteinFastaIterator extends AbstractBlockingStreamingIterator<
 	    	};
 	    	
 	    	try {
-				FastaFileParser.create(fastaFile).parse(visitor);
+	    		parser.parse(visitor);
 			} catch (IOException e) {
 				throw new RuntimeException("can not parse fasta file",e);
 			}

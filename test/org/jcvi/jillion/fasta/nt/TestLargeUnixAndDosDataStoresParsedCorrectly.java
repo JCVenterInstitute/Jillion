@@ -23,6 +23,8 @@ package org.jcvi.jillion.fasta.nt;
 import java.io.File;
 import java.io.IOException;
 
+import org.jcvi.jillion.fasta.FastaFileParser;
+
 public class TestLargeUnixAndDosDataStoresParsedCorrectly extends AbstractTestUnixAndDosFormatsParsedCorrectly{
 
 	public TestLargeUnixAndDosDataStoresParsedCorrectly() throws IOException {
@@ -32,7 +34,7 @@ public class TestLargeUnixAndDosDataStoresParsedCorrectly extends AbstractTestUn
 	@Override
 	protected NucleotideFastaDataStore createDataStoreFor(File fastaFile)
 			throws IOException {
-		return LargeNucleotideSequenceFastaFileDataStore.create(fastaFile);
+		return LargeNucleotideSequenceFastaFileDataStore.create(FastaFileParser.create(fastaFile));
 	}
 
 }

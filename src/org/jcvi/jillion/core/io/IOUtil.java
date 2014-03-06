@@ -32,6 +32,7 @@ import java.io.Closeable;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -1151,6 +1152,23 @@ public final class IOUtil {
        }
        return tmpDir;
 	}
-	
-	
+	/**
+	 * Checks to make sure the given file is readable 
+	 * and throws an descriptive IOException if it's not.
+	 * @param f the File to verify; can not be null
+	 * @throws NullPointerException if f is null.
+	 * @throws FileNotFoundException if the file does not exist.
+	 * @throws IOException if the file is not readable.
+	 */
+	public static void verifyIsReadable(File f) throws IOException {
+		if (f == null) {
+			throw new NullPointerException("file can not be null");
+		}
+		if (!f.exists()) {
+			throw new FileNotFoundException("file must exist : " + f.getAbsolutePath());
+		}
+		if (!f.canRead()) {
+			throw new IOException("file is not readable: " + f.getAbsolutePath());
+		}
+	}
 }

@@ -120,7 +120,7 @@ public class BinaryFastaFileWriterBuilder {
 	
 	private static class BinaryFastaFileWriter implements NucleotideFastaRecordWriter {
 		private final OutputStream out;
-		private ByteOrder byteOrder;
+		private final ByteOrder byteOrder;
 		
 		public BinaryFastaFileWriter(OutputStream out, ByteOrder endian) throws IOException{
 			this.byteOrder = endian;

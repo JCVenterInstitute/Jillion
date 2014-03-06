@@ -31,10 +31,10 @@ import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
-import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.aa.AbstractProteinFastaRecordVisitor;
 import org.jcvi.jillion.fasta.aa.ProteinFastaDataStore;
 import org.jcvi.jillion.fasta.aa.ProteinFastaRecord;
@@ -57,19 +57,30 @@ public final class DefaultProteinFastaDataStore{
 		DefaultProteinFastaDataStoreBuilder builder = createBuilder(filter);
 		return parseFile(fastaFile, builder);
 	}
+	public static ProteinFastaDataStore create(FastaParser parser, DataStoreFilter filter) throws IOException{
+		DefaultProteinFastaDataStoreBuilder builder = createBuilder(filter);
+		return create(parser, builder);
+	}
+	public static ProteinFastaDataStore create(FastaParser parser) throws IOException{
+		DefaultProteinFastaDataStoreBuilder builder = createBuilder();
+		return create(parser, builder);
+	}
 	public static ProteinFastaDataStore create(InputStream in, DataStoreFilter filter) throws IOException{
 		DefaultProteinFastaDataStoreBuilder builder = createBuilder(filter);
 		return parseFile(in, builder);
 	}
 	private static ProteinFastaDataStore parseFile(InputStream in, DefaultProteinFastaDataStoreBuilder visitor) throws IOException{
 		FastaParser parser = FastaFileParser.create(in);
-		parser.parse(visitor);
-		return visitor.build();
+		return create(parser, visitor);
+	}
+	private static ProteinFastaDataStore create(FastaParser parser,
+			DefaultProteinFastaDataStoreBuilder builder) throws IOException {
+		parser.parse(builder);
+		return builder.build();
 	}
 	private static ProteinFastaDataStore parseFile(File fastaFile, DefaultProteinFastaDataStoreBuilder visitor) throws IOException{
 		FastaParser parser = FastaFileParser.create(fastaFile);
-		parser.parse(visitor);
-		return visitor.build();
+		return create(parser, visitor);
 	}
 	private static DefaultProteinFastaDataStoreBuilder createBuilder(){
 		return createBuilder(DataStoreFilters.alwaysAccept());

@@ -22,12 +22,15 @@ package org.jcvi.jillion.internal.fasta.aa;
 
 
 import java.io.File;
+import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.aa.ProteinFastaDataStore;
 import org.jcvi.jillion.fasta.aa.ProteinFastaRecord;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
@@ -54,7 +57,7 @@ public final class LargeProteinFastaFileDataStore extends AbstractLargeFastaFile
      * @param fastaFile the Fasta File to use, can not be null.
      * @throws NullPointerException if fastaFile is null.
      */
-	public static ProteinFastaDataStore create(File fastaFile){
+	public static ProteinFastaDataStore create(File fastaFile) throws IOException{
 		return create(fastaFile, DataStoreFilters.alwaysAccept());
 	}
 	/**
@@ -63,20 +66,39 @@ public final class LargeProteinFastaFileDataStore extends AbstractLargeFastaFile
      * @param fastaFile the Fasta File to use, can not be null.
      * @throws NullPointerException if fastaFile is null.
      */
-	public static ProteinFastaDataStore create(File fastaFile, DataStoreFilter filter){
-		return new LargeProteinFastaFileDataStore(fastaFile,filter);
+	public static ProteinFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
+		FastaParser parser = FastaFileParser.create(fastaFile);
+		return new LargeProteinFastaFileDataStore(parser,filter);
+	}
+	/**
+     * Construct a {@link LargeProteinFastaFileDataStore}
+     * for the given Fasta file.
+     * @param fastaFile the Fasta File to use, can not be null.
+     * @throws NullPointerException if fastaFile is null.
+     */
+	public static ProteinFastaDataStore create(FastaParser parser){
+		return create(parser, DataStoreFilters.alwaysAccept());
+	}
+	/**
+     * Construct a {@link LargeProteinFastaFileDataStore}
+     * for the given Fasta file.
+     * @param fastaFile the Fasta File to use, can not be null.
+     * @throws NullPointerException if fastaFile is null.
+     */
+	public static ProteinFastaDataStore create(FastaParser parser, DataStoreFilter filter){
+		return new LargeProteinFastaFileDataStore(parser,filter);
 	}
    
-    protected LargeProteinFastaFileDataStore(File fastaFile,
+    protected LargeProteinFastaFileDataStore(FastaParser parser,
 			DataStoreFilter filter) {
-		super(fastaFile, filter);
+		super(parser, filter);
 	}
 
 
 	@Override
 	protected StreamingIterator<ProteinFastaRecord> createNewIterator(
-			File fastaFile, DataStoreFilter filter) {
-		return DataStoreStreamingIterator.create(this,LargeProteinFastaIterator.createNewIteratorFor(fastaFile, filter));
+			FastaParser parser, DataStoreFilter filter) {
+		return DataStoreStreamingIterator.create(this,LargeProteinFastaIterator.createNewIteratorFor(parser, filter));
 	       
 	}
    
