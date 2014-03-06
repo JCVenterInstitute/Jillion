@@ -1,4 +1,4 @@
-package org.jcvi.jillion.maq;
+package org.jcvi.jillion.maq.bfa;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -18,6 +18,7 @@ import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.fasta.nt.AbstractNucleotideFastaRecordVisitor;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
+import org.jcvi.jillion.maq.bfa.BinaryFastaFileParser;
 import org.junit.Test;
 
 public class TestBinaryFastaFileParser extends AbstractTestBinaryFastaFile {

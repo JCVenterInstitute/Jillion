@@ -32,6 +32,7 @@ import java.nio.ByteOrder;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.internal.trace.fastq.DefaultFastqDataStoreBuilder;
+import org.jcvi.jillion.maq.bfq.BinaryFastqFileParser;
 import org.jcvi.jillion.trace.fastq.AbstractFastqRecordVisitor;
 import org.jcvi.jillion.trace.fastq.FastqDataStore;
 import org.jcvi.jillion.trace.fastq.FastqQualityCodec;

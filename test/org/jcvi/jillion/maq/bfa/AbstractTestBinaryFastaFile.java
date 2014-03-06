@@ -1,4 +1,4 @@
-package org.jcvi.jillion.maq;
+package org.jcvi.jillion.maq.bfa;
 
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
