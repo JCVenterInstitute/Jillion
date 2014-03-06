@@ -38,6 +38,7 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
+import org.jcvi.jillion.maq.bfq.BinaryFastqFileParser;
 import org.jcvi.jillion.trace.fastq.AbstractFastqRecordVisitor;
 import org.jcvi.jillion.trace.fastq.FastqDataStore;
 import org.jcvi.jillion.trace.fastq.FastqQualityCodec;

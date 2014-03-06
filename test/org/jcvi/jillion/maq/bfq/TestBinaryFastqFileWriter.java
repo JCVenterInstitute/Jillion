@@ -1,4 +1,4 @@
-package org.jcvi.jillion.maq;
+package org.jcvi.jillion.maq.bfq;
 
 import static org.junit.Assert.assertEquals;
 
@@ -12,6 +12,8 @@ import java.util.Collections;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.maq.BinaryFastqFileDataStoreBuilder;
+import org.jcvi.jillion.maq.bfq.BinaryFastqFileWriterBuilder;
 import org.jcvi.jillion.trace.fastq.FastqDataStore;
 import org.jcvi.jillion.trace.fastq.FastqRecord;
 import org.jcvi.jillion.trace.fastq.FastqRecordBuilder;

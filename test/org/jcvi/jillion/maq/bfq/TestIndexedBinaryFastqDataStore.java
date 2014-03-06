@@ -1,4 +1,4 @@
-package org.jcvi.jillion.maq;
+package org.jcvi.jillion.maq.bfq;
 
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 

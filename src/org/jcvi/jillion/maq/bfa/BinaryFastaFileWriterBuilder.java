@@ -1,4 +1,4 @@
-package org.jcvi.jillion.maq;
+package org.jcvi.jillion.maq.bfa;
 
 import java.io.BufferedOutputStream;
 import java.io.File;

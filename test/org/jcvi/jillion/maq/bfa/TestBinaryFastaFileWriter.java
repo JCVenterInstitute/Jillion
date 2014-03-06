@@ -1,4 +1,4 @@
-package org.jcvi.jillion.maq;
+package org.jcvi.jillion.maq.bfa;
 
 import static org.junit.Assert.assertArrayEquals;
 
@@ -8,6 +8,7 @@ import java.nio.ByteOrder;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriter;
+import org.jcvi.jillion.maq.bfa.BinaryFastaFileWriterBuilder;
 import org.junit.Test;
 
 public class TestBinaryFastaFileWriter extends AbstractTestBinaryFastaFile{
