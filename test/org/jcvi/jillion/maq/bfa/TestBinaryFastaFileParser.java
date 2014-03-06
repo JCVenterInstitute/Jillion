@@ -18,7 +18,7 @@ import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.fasta.nt.AbstractNucleotideFastaRecordVisitor;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
-import org.jcvi.jillion.maq.bfa.BinaryFastaFileParser;
+import org.jcvi.jillion.maq.bfa.BfaParser;
 import org.junit.Test;
 
 public class TestBinaryFastaFileParser extends AbstractTestBinaryFastaFile {
@@ -30,7 +30,7 @@ public class TestBinaryFastaFileParser extends AbstractTestBinaryFastaFile {
 		File bfa =getHelper().getFile("seqs.bfa");
 		FastaVisitorSpy spy = new FastaVisitorSpy();
 		
-		BinaryFastaFileParser.create(bfa, ByteOrder.LITTLE_ENDIAN)
+		BfaParser.create(bfa, ByteOrder.LITTLE_ENDIAN)
 								.parse(spy);
 		
 		assertTrue(spy.visitedEnd());

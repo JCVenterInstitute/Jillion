@@ -80,12 +80,15 @@ public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDat
 	@Override
 	protected ProteinFastaDataStore createNewInstance(FastaParser parser, DataStoreProviderHint hint, DataStoreFilter filter)
 			throws IOException {
-		if(!parser.canCreateMemento()){
+		if(parser.isReadOnceOnly()){
 			return DefaultProteinFastaDataStore.create(parser,filter);
 		}
 		switch(hint){
 			case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultProteinFastaDataStore.create(parser,filter);
-			case RANDOM_ACCESS_OPTIMIZE_MEMORY: return IndexedProteinFastaFileDataStore.create(parser,filter);
+			case RANDOM_ACCESS_OPTIMIZE_MEMORY:
+				return parser.canCreateMemento() ?						
+						IndexedProteinFastaFileDataStore.create(parser,filter)
+					:	DefaultProteinFastaDataStore.create(parser,filter);
 			case ITERATION_ONLY: return LargeProteinFastaFileDataStore.create(parser,filter);
 			default:
 				throw new IllegalArgumentException("unknown provider hint :"+ hint);

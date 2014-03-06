@@ -46,7 +46,7 @@ public class TestLargeMultilineFastqFileDataStoreGuessCodec extends TestAbstract
 			throws IOException {
 		FastqQualityCodec codec = FastqUtil.guessQualityCodecUsed(fastq);
 		assertSame(codec,qualityCodec);
-		return LargeFastqFileDataStore.create(fastq, filter,codec);
+		return LargeFastqFileDataStore.create(fastq, codec,filter);
 	}
 
 }

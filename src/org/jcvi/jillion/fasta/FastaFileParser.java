@@ -250,6 +250,12 @@ public abstract class FastaFileParser implements FastaParser{
 		
 		
 		@Override
+		public boolean isReadOnceOnly() {
+			return false;
+		}
+
+
+		@Override
 		public boolean canCreateMemento() {
 			return true;
 		}
@@ -298,6 +304,11 @@ public abstract class FastaFileParser implements FastaParser{
 		}
 		
 		
+		@Override
+		public boolean isReadOnceOnly() {
+			//can only parse Stream once
+			return true;
+		}
 		@Override
 		public synchronized void parse(FastaVisitor visitor) throws IOException {
 			//wrap in synchronized block so we only

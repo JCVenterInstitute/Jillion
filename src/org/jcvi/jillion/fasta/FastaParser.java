@@ -51,6 +51,18 @@ public interface FastaParser {
 	 * can create mementos; {@code false} otherwise.
 	 */
 	boolean canCreateMemento();
+	/**
+	 * Can the {@link #parse(FastaVisitor)}
+	 * or {@link #parse(FastaVisitor, FastaVisitorMemento)}
+	 * methods be called multiple times.
+	 * Some implementations are working off of an
+	 * InputStream that can't be rewound
+	 * or reset we can only read Once.
+	 * @return {@code true} if the data
+	 * can only be parsed once;
+	 * {@code false} otherwise.
+	 */
+	boolean isReadOnceOnly();
 	
 	/**
 	 * Parse the fasta structure starting from the beginning 

@@ -3,8 +3,8 @@ package org.jcvi.jillion.maq.bfq;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteOrder;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.GZIPInputStream;
@@ -21,15 +21,15 @@ import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback;
 import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback.FastqVisitorMemento;
 
 /**
- * {@code BinaryFastqFileParser} is a {@link FastqParser}
+ * {@code BfqFileParser} is a {@link FastqParser}
  * implementation that can read 
  * MAQ's binary fastq file format ({@literal .bfq} files).
  * @author dkatzel
  *
  */
-public final class BinaryFastqFileParser implements FastqParser{
+public abstract class BfqFileParser implements FastqParser{
 
-	private final File bfqFile;
+	
 	private final ByteOrder endian;
 	/**
 	 * Create a new {@link FastqParser} instance
@@ -54,7 +54,7 @@ public final class BinaryFastqFileParser implements FastqParser{
 	 * @param endian the {@link ByteOrder} to use to parse the file.
 	 * Make sure the endian matches the endian of the machine that 
 	 * Maq was run on (or matches the {@link ByteOrder}
-	 * used by the {@link BinaryFastqFileWriterBuilder} )
+	 * used by the {@link BfqFileWriterBuilder} )
 	 * that produced the file.
 	 * @return a new {@link FastqParser} instance;
 	 * will never be null.
@@ -62,21 +62,61 @@ public final class BinaryFastqFileParser implements FastqParser{
 	 * @throws NullPointerException if either parameter is null.
 	 */
 	public static FastqParser create(File bfqFile, ByteOrder endian) throws IOException{
-		return new BinaryFastqFileParser(bfqFile, endian);
+		return new BfqFileBasedParser(bfqFile, endian);
+	}
+	
+	/**
+	 * Create a new {@link FastqParser} instance
+	 * to parse the given binary fastq (bfq) enoded inputStream using
+	 * the system endian.
+	 * This is the same as calling: 
+	 * {@link #create(InputStream, ByteOrder) create(bfqFileStream, ByteOrder.nativeOrder())}
+	 * @param bfqFileStream the binary fastq encoded {@link InputStream}to parse.
+	 * @return a new {@link FastqParser} instance;
+	 * will never be null.
+	 * @throws IOException if the file does not exist.
+	 * @throws NullPointerException if bfqFile is null.
+	 */
+	public static FastqParser create(InputStream bfqFileStream) throws IOException{
+		return create(bfqFileStream, ByteOrder.nativeOrder());
+	}
+	/**
+	 * Create a new {@link FastqParser} instance
+	 * to parse the given binary fastq (bfq) enoded inputStream using
+	 * the given {@link ByteOrder}.
+	 * @param bfqFileStream the binary fastq encoded {@link InputStream}to parse.
+	 * @param endian the {@link ByteOrder} to use to parse the file.
+	 * Make sure the endian matches the endian of the machine that 
+	 * Maq was run on (or matches the {@link ByteOrder}
+	 * used by the {@link BfqFileWriterBuilder} )
+	 * that produced the file.
+	 * @return a new {@link FastqParser} instance;
+	 * will never be null.
+	 * @throws IOException if there is a problem file does not exist.
+	 * @throws NullPointerException if either parameter is null.
+	 */
+	public static FastqParser create(InputStream bfqFileStream, ByteOrder endian) throws IOException{
+		return new BfqInputStreamParser(bfqFileStream, endian);
 	}
 	
 	
-	private BinaryFastqFileParser(File bfqFile, ByteOrder endian) throws IOException {
-		if(!bfqFile.exists()){
-			throw new FileNotFoundException(bfqFile.getAbsolutePath());
-		}		
+	private BfqFileParser(ByteOrder endian) throws IOException {	
 		if(endian ==null){
 			throw new NullPointerException("endian can not be null");
 		}
-		this.bfqFile = bfqFile;
 		this.endian = endian;
 	}
 
+	
+	@Override
+	public boolean canCreateMemento() {
+		return true;
+	}
+	
+	@Override
+	public boolean isReadOnceOnly() {
+		return false;
+	}
 	@Override
 	public boolean canAccept() {
 		return true;
@@ -89,7 +129,7 @@ public final class BinaryFastqFileParser implements FastqParser{
 		}
 		OpenAwareInputStream in =null;
 		try{
-			in = new OpenAwareInputStream(new GZIPInputStream(new BufferedInputStream(new FileInputStream(bfqFile))));		
+			in = createInputStream();		
 			parseBqfData(visitor, in, 0);
 		}finally{
 			IOUtil.closeAndIgnoreErrors(in);
@@ -100,7 +140,7 @@ public final class BinaryFastqFileParser implements FastqParser{
 	private void parseBqfData(FastqVisitor visitor, OpenAwareInputStream in, long offset) throws IOException {
 		FastqRecordVisitor recordVisitor =null;
 		long currentOffset = offset;
-		Callback callback = new Callback(currentOffset);
+		Callback callback = createCallback(currentOffset);
 		while(in.isOpen() && callback.keepParsing()){
 			callback.updateCurrentOffset(currentOffset);
 			int nameLength =IOUtil.readSignedInt(in, endian);
@@ -189,7 +229,7 @@ public final class BinaryFastqFileParser implements FastqParser{
 		}
 		OpenAwareInputStream in =null;
 		try{
-			in = new OpenAwareInputStream(new GZIPInputStream(new BufferedInputStream(new FileInputStream(bfqFile))));
+			in = createInputStream();
 			long startOffset = bfqMemento.startOffset;
 			IOUtil.blockingSkip(in, startOffset);
 			
@@ -201,13 +241,15 @@ public final class BinaryFastqFileParser implements FastqParser{
 		
 	}
 	
-	private final class Callback implements FastqVisitorCallback{
+	protected abstract OpenAwareInputStream createInputStream() throws IOException;
+	
+	protected abstract Callback createCallback(long startOffset);
+	
+	
+	private class Callback implements FastqVisitorCallback{
 		private final AtomicBoolean keepParsing;
 		private long currentOffset;
 		
-		private Callback(){
-			this(0);
-		}
 		private Callback(long startOffset){
 			this.currentOffset = startOffset;
 			keepParsing = new AtomicBoolean(true);
@@ -219,7 +261,7 @@ public final class BinaryFastqFileParser implements FastqParser{
 
 		@Override
 		public FastqVisitorMemento createMemento() {
-			return new BfqMemento(BinaryFastqFileParser.this, currentOffset);
+			return new BfqMemento(BfqFileParser.this, currentOffset);
 		}
 
 		@Override
@@ -237,15 +279,98 @@ public final class BinaryFastqFileParser implements FastqParser{
 	}
 	
 	private static final class BfqMemento implements FastqVisitorMemento{
-		private final BinaryFastqFileParser parserInstance;
+		private final BfqFileParser parserInstance;
 		private final long startOffset;
 		
-		public BfqMemento(BinaryFastqFileParser parserInstance, long startOffset) {
+		public BfqMemento(BfqFileParser parserInstance, long startOffset) {
 			this.parserInstance = parserInstance;
 			this.startOffset = startOffset;
 		}
 		
 		
+	}
+	
+	
+	
+	private static class BfqFileBasedParser extends BfqFileParser{
+		private final File bfqFile;
+		
+		private BfqFileBasedParser(File bfqFile, ByteOrder endian) throws IOException {
+			super(endian);
+			this.bfqFile = bfqFile;
+		}
+
+		@Override
+		protected OpenAwareInputStream createInputStream() throws IOException {
+			return new OpenAwareInputStream(new GZIPInputStream(new BufferedInputStream(new FileInputStream(bfqFile))));
+		}
+
+		@Override
+		protected Callback createCallback(long startOffset) {
+			return new Callback(startOffset);
+		}
+
+		
+	}
+	
+	private static class BfqInputStreamParser extends BfqFileParser{
+		
+
+		private final OpenAwareInputStream in;
+		private boolean hasBeenReadBefore=false;
+		private BfqInputStreamParser(InputStream in, ByteOrder endian) throws IOException {
+			super(endian);
+			this.in = new OpenAwareInputStream(in);
+		}
+
+		@Override
+		protected synchronized OpenAwareInputStream createInputStream() throws IOException {
+			if(!hasBeenReadBefore){
+				hasBeenReadBefore = true;
+				return in;
+			}
+			throw new IOException("already read");
+			
+		}
+
+		@Override
+		public boolean canCreateMemento() {
+			return false;
+		}
+
+		@Override
+		public boolean isReadOnceOnly() {
+			return true;
+		}
+
+		@Override
+		public void parse(FastqVisitor visitor, FastqVisitorMemento memento)
+				throws IOException {
+			throw new UnsupportedOperationException("mementos not supported");
+		}
+
+		@Override
+		protected Callback createCallback(long startOffset) {
+			return new NoMementoCallback(startOffset);
+		}
+
+		
+	}
+	
+	private final class NoMementoCallback extends Callback {
+		private NoMementoCallback(long startOffset) {
+			super(startOffset);
+		}
+
+		@Override
+		public boolean canCreateMemento() {
+			return false;
+		}
+
+		@Override
+		public FastqVisitorMemento createMemento() {
+			throw new UnsupportedOperationException("can not create mementos");
+		}
 	}
 
 }

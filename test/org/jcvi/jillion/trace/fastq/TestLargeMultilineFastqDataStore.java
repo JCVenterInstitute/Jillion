@@ -41,7 +41,7 @@ public class TestLargeMultilineFastqDataStore extends TestAbstractMultiLineFastq
 	protected FastqDataStore createFastqDataStoreFor(File fastq,
 			FastqQualityCodec qualityCodec, DataStoreFilter filter)
 			throws IOException {
-		return LargeFastqFileDataStore.create(fastq, filter, qualityCodec);
+		return LargeFastqFileDataStore.create(fastq, qualityCodec, filter);
 	}
 
 }

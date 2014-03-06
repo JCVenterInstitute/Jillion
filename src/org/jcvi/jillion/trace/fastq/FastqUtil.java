@@ -114,6 +114,67 @@ public final class FastqUtil {
     }
     /**
      * Attempts to guess the {@link FastqQualityCodec} used to encode
+     * the qualities in the given fastq file. 
+     * This method works by analyzing the encoded quality value ranges for each
+     * read getting inspected.  Since all the different quality encodings have
+     * overlapping values the {@link FastqQualityCodec} used for the entire file
+     * can not always be determined from just analyzing a few reads.
+     * Therefore, this method might have to parse
+     * ALL records in the fastq file to guarantee that the
+     * correct {@link FastqQualityCodec} is returned.
+     * @param parser a {@link FastqParser} instance to parse; must exist and can not be null.
+     * @return an instance of {@link FastqQualityCodec} which is the one
+     * that is most likely able to decode the quality values for all the reads
+     * in the file (will never be null).
+     * @throws IOException if there is a problem reading the file.
+     * @throws NullPointerException if fastqFile is null.
+     * @throws IllegalArgumentException if the given quality string is empty
+     * or if it contains any characters out of range of any known
+     * quality encoding formats.
+     * @throws IllegalStateException if the fastq file does not contain 
+     * any records.
+     */
+    public static FastqQualityCodec guessQualityCodecUsed(FastqParser parser) throws IOException{
+    	return guessQualityCodecUsed(parser, Integer.MAX_VALUE);
+    }
+    
+    /**
+     * Attempts to guess the {@link FastqQualityCodec} used to encode
+     * the qualities in the given fastq file. 
+     * This method works by analyzing the encoded quality value ranges for each
+     * read getting inspected.  Since all the different quality encodings have
+     * overlapping values the {@link FastqQualityCodec} used for the entire file
+     * can not always be determined from just analyzing a few reads.
+     * Therefore, this method must
+     * parse many (probably hundreds) of reads in the fastq file in order to get
+     * a large enough sampling size to confidently return a {@link FastqQualityCodec}.
+     * This method will keep looking at reads in the fastq file until
+     * either the file ends, or it has looked at {@code numberOfReadsToInspect}.
+     * @param parser a {@link FastqParser} instance to parse; must exist and can not be null.
+     * @param numberOfReadsToInspect the number of reads in the file to analyze.
+     * 
+     * @return an instance of {@link FastqQualityCodec} which is the one
+     * that is most likely able to decode the quality values for all the reads
+     * in the file (will never be null).
+     * @throws IOException if there is a problem reading the file.
+     * @throws NullPointerException if fastqFile is null.
+     * @throws IllegalArgumentException if the given quality string is empty
+     * or if it contains any characters out of range of any known
+     * quality encoding formats.
+     * @throws IllegalArgumentException if numberOfReadsToInspect is < 1.
+     * @throws IllegalStateException if the fastq file does not contain 
+     * any records.
+     */
+    public static FastqQualityCodec guessQualityCodecUsed(FastqParser parser, int numberOfReadsToInspect) throws IOException{
+    	if(numberOfReadsToInspect <1){
+    		throw new IllegalArgumentException("number of reads to inspect must be >=1");
+    	}
+    	FastqQualityCodecDetectorVisitor detectorVisitor =new FastqQualityCodecDetectorVisitor(numberOfReadsToInspect);
+    	parser.parse(detectorVisitor);
+    	return detectorVisitor.getDetectedCodec();
+    }
+    /**
+     * Attempts to guess the {@link FastqQualityCodec} used to encode
      * the given qualities.
      * @param encodedQualities a String of fastq encoded qualities
      * @return an instance of {@link FastqQualityCodec} which could have been 

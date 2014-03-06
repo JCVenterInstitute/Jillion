@@ -73,12 +73,16 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	protected NucleotideFastaDataStore createNewInstance(
 			FastaParser parser, DataStoreProviderHint providerHint, DataStoreFilter filter)
 			throws IOException {
-		if(!parser.canCreateMemento()){
+		if(parser.isReadOnceOnly()){
 			return DefaultNucleotideFastaFileDataStore.create(parser,filter);	
 		}else{
 			switch(providerHint){
 				case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultNucleotideFastaFileDataStore.create(parser,filter);
-				case RANDOM_ACCESS_OPTIMIZE_MEMORY: return IndexedNucleotideSequenceFastaFileDataStore.create(parser,filter);
+				case RANDOM_ACCESS_OPTIMIZE_MEMORY: 
+							return parser.canCreateMemento()?
+										IndexedNucleotideSequenceFastaFileDataStore.create(parser,filter)
+										:
+										DefaultNucleotideFastaFileDataStore.create(parser,filter);
 				case ITERATION_ONLY: return LargeNucleotideSequenceFastaFileDataStore.create(parser,filter);
 				default:
 					throw new IllegalArgumentException("unknown provider hint : "+ providerHint);
