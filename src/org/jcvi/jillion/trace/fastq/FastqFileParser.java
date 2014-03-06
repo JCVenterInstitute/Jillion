@@ -23,7 +23,6 @@ package org.jcvi.jillion.trace.fastq;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -56,10 +55,10 @@ public abstract class FastqFileParser implements FastqParser{
 	 * that will parse the given fastq encoded
 	 * file.
 	 * @param fastqFile the file to parse.
-	 * @throws FileNotFoundException  if the file does not exist.
+	 * @throws IOException  if the file does not exist or can not be read.
 	 * @throws NullPointerException if fastqFile is null.
 	 */
-	public static FastqParser create(File fastqFile) throws FileNotFoundException{
+	public static FastqParser create(File fastqFile) throws IOException{
 		return new FileBasedFastqFileParser(fastqFile);
 	}
 	/**
@@ -326,11 +325,22 @@ public abstract class FastqFileParser implements FastqParser{
 		private final File fastqFile;
 		
 		
-		public FileBasedFastqFileParser(File fastqFile) throws FileNotFoundException {
-			if(!fastqFile.exists()){
-				throw new FileNotFoundException(fastqFile.getAbsolutePath() + " does not exist");
-			}
+		public FileBasedFastqFileParser(File fastqFile) throws IOException {
+			IOUtil.verifyIsReadable(fastqFile);
+			
 			this.fastqFile = fastqFile;
+		}
+
+
+		@Override
+		public boolean canCreateMemento() {
+			return true;
+		}
+
+
+		@Override
+		public boolean isReadOnceOnly() {
+			return false;
 		}
 
 
@@ -392,6 +402,19 @@ public abstract class FastqFileParser implements FastqParser{
 			}
 			this.in = new OpenAwareInputStream(in);
 		}
+
+		
+		@Override
+		public boolean canCreateMemento() {
+			return false;
+		}
+
+
+		@Override
+		public boolean isReadOnceOnly() {
+			return true;
+		}
+
 
 		@Override
 		public synchronized void parse(FastqVisitor visitor) throws IOException {

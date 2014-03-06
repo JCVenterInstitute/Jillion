@@ -18,7 +18,7 @@ import org.jcvi.jillion.trace.fastq.FastqRecord;
 import org.jcvi.jillion.trace.fastq.FastqRecordWriter;
 
 /**
- * {@code BinaryFastqFileWriterBuilder}
+ * {@code BfqFileWriterBuilder}
  * is a builder class that will create
  * a new {@link FastqRecordWriter} instance
  * that will write MAQ binary encoded fastq
@@ -37,7 +37,7 @@ import org.jcvi.jillion.trace.fastq.FastqRecordWriter;
  * @author dkatzel
  *
  */
-public class BinaryFastqFileWriterBuilder {
+public class BfqFileWriterBuilder {
 	/**
 	 * Output file to write.
 	 */
@@ -49,7 +49,7 @@ public class BinaryFastqFileWriterBuilder {
 	private ByteOrder endian = ByteOrder.nativeOrder();
 	
 	/**
-	 * Create a new {@link BinaryFastqFileWriterBuilder} instance
+	 * Create a new {@link BfqFileWriterBuilder} instance
 	 * which will create a {@link FastqRecordWriter}
 	 * that will write to the given output {@link File}.
 	 * @param outputBfqFile the output bfq file to write to; can not be null.
@@ -59,7 +59,7 @@ public class BinaryFastqFileWriterBuilder {
 	 * is called.
 	 * @throws NullPointerException if outputBfqFile is null.
 	 */
-	public BinaryFastqFileWriterBuilder(File outputBfqFile) {
+	public BfqFileWriterBuilder(File outputBfqFile) {
 		if(outputBfqFile == null){
 			throw new NullPointerException("output bfq file can not be null");
 		}
@@ -78,7 +78,7 @@ public class BinaryFastqFileWriterBuilder {
 	 * @return this
 	 * @throws NullPointerException if endian is null.
 	 */
-	public BinaryFastqFileWriterBuilder endian(ByteOrder endian){
+	public BfqFileWriterBuilder endian(ByteOrder endian){
 		if(endian ==null){
 			throw new NullPointerException("endian can not be null");
 		}

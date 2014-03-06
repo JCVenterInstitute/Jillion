@@ -7,6 +7,8 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteOrder;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
@@ -16,19 +18,33 @@ import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.ResourceHelper;
-import org.jcvi.jillion.maq.BinaryFastqFileDataStoreBuilder;
 import org.jcvi.jillion.trace.fastq.FastqDataStore;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.jillion.trace.fastq.FastqRecord;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
-public abstract class AbstractTestBinaryFastqDataStore {
+@RunWith(Parameterized.class)
+public class TestBinaryFastqDataStore {
 
+	//name parameter says if test fails show
+	//this string uses message format to include
+	//toString() of parameters in object array so
+	//"{0}" means the first parameter which is the hint type.
+	@Parameters(name="provider hint = {0}")
+	public static Collection<Object[]> data(){
+		return Arrays.asList(new Object[]{DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_MEMORY},
+				new Object[]{DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_SPEED},
+				new Object[]{DataStoreProviderHint.ITERATION_ONLY});
+	}
+		
 	//native order is little endian
 	private static FastqDataStore expected;
-	private static ResourceHelper resourceHelper = new ResourceHelper(AbstractTestBinaryFastqDataStore.class) ;
+	private static ResourceHelper resourceHelper = new ResourceHelper(TestBinaryFastqDataStore.class) ;
 	
 	@BeforeClass
 	public static void parseFastqFile() throws IOException{
@@ -41,7 +57,11 @@ public abstract class AbstractTestBinaryFastqDataStore {
 		expected = null;
 	}
 	
-	protected abstract DataStoreProviderHint getProviderHint();
+	private final DataStoreProviderHint providerHint;
+	
+	public TestBinaryFastqDataStore(DataStoreProviderHint hint){
+		this.providerHint = hint;
+	}
 	
 	@Test
 	public void allRecordsPresent() throws IOException, DataStoreException{
@@ -114,9 +134,8 @@ public abstract class AbstractTestBinaryFastqDataStore {
 	private FastqDataStore createDataStore(DataStoreFilter filter) throws IOException{
 		File bfq = resourceHelper.getFile("sanger.capped.bfq");
 		
-		return new BinaryFastqFileDataStoreBuilder(bfq)
-						.endian(ByteOrder.LITTLE_ENDIAN)
-						.hint(getProviderHint())
+		return new BfqFileDataStoreBuilder(bfq, ByteOrder.LITTLE_ENDIAN)
+						.hint(providerHint)
 						.filter(filter)
 						.build();
 	}

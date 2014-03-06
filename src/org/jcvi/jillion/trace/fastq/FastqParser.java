@@ -46,6 +46,25 @@ public interface FastqParser {
 	boolean canAccept();
 	
 	/**
+	 * Is this {@link FastqParser}'s callbacks capable of
+	 * creating {@link FastqVisitorMemento}s.
+	 * @return {@code true} if this callback
+	 * can create mementos; {@code false} otherwise.
+	 */
+	boolean canCreateMemento();
+	/**
+	 * Can the {@link #parse(FastqVisitor)}
+	 * or {@link #parse(FastqVisitor, FastqVisitorMemento)}
+	 * methods be called multiple times.
+	 * Some implementations are working off of an
+	 * InputStream that can't be rewound
+	 * or reset we can only read Once.
+	 * @return {@code true} if the data
+	 * can only be parsed once;
+	 * {@code false} otherwise.
+	 */
+	boolean isReadOnceOnly();
+	/**
 	 * Parse the fastq structure starting from the beginning 
 	 * and call the appropriate
 	 * visit methods on the given {@link FastqVisitor}.

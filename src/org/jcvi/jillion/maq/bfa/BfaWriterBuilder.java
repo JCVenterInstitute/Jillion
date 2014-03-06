@@ -17,7 +17,7 @@ import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriter;
 
 /**
- * {@code BinaryFastaFileWriterBuilder}
+ * {@code BfaWriterBuilder}
  * is a builder class that will create
  * a new {@link NucleotideFastaRecordWriter} instance
  * that will write MAQ binary encoded fasta
@@ -34,7 +34,7 @@ import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriter;
  * @author dkatzel
  *
  */
-public class BinaryFastaFileWriterBuilder {
+public class BfaWriterBuilder {
 	/**
 	 * Output file to write.
 	 */
@@ -48,7 +48,7 @@ public class BinaryFastaFileWriterBuilder {
 	private ByteOrder endian = ByteOrder.nativeOrder();
 	
 	/**
-	 * Create a new {@link BinaryFastaFileWriterBuilder} instance
+	 * Create a new {@link BfaWriterBuilder} instance
 	 * which will create a {@link NucleotideFastaRecordWriter}
 	 * that will write to the given output {@link File}.
 	 * @param outputBfaFile the output bfa file to write to; can not be null.
@@ -58,7 +58,7 @@ public class BinaryFastaFileWriterBuilder {
 	 * is called.
 	 * @throws NullPointerException if outputBfaFile is null.
 	 */
-	public BinaryFastaFileWriterBuilder(File outputBfaFile) {
+	public BfaWriterBuilder(File outputBfaFile) {
 		if(outputBfaFile == null){
 			throw new NullPointerException("output bfa file can not be null");
 		}
@@ -66,13 +66,13 @@ public class BinaryFastaFileWriterBuilder {
 		this.outputBfaFile = outputBfaFile;
 	}
 	/**
-	 * Create a new {@link BinaryFastaFileWriterBuilder} instance
+	 * Create a new {@link BfaWriterBuilder} instance
 	 * which will create a {@link NucleotideFastaRecordWriter}
 	 * that will write to the given {@link OutputStream}.
 	 * @param out the {@link OutputStream} to encode bfq data to; can not be null.
 	 * @throws NullPointerException if out is null.
 	 */
-	public BinaryFastaFileWriterBuilder(OutputStream out) {
+	public BfaWriterBuilder(OutputStream out) {
 		if(out == null){
 			throw new NullPointerException("output bfq stream can not be null");
 		}
@@ -91,7 +91,7 @@ public class BinaryFastaFileWriterBuilder {
 	 * @return this
 	 * @throws NullPointerException if endian is null.
 	 */
-	public BinaryFastaFileWriterBuilder endian(ByteOrder endian){
+	public BfaWriterBuilder endian(ByteOrder endian){
 		if(endian ==null){
 			throw new NullPointerException("endian can not be null");
 		}

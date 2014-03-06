@@ -21,13 +21,11 @@
 package org.jcvi.jillion.trace.fastq;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
-import org.jcvi.jillion.core.util.Builder;
 /**
  * {@code FastqFileDataStoreBuilder}
  * is a {@link Builder} that can create new instances
@@ -37,7 +35,7 @@ import org.jcvi.jillion.core.util.Builder;
  *
  */
 public final class FastqFileDataStoreBuilder{
-	private final File fastqFile;
+	private final FastqParser parser;
 	
 	private DataStoreFilter filter = DataStoreFilters.alwaysAccept();
 	//by default store everything in memory
@@ -54,16 +52,22 @@ public final class FastqFileDataStoreBuilder{
 	 * @throws NullPointerException if fastqFile is null.
 	 */
 	public FastqFileDataStoreBuilder(File fastqFile) throws IOException{
-		if(fastqFile ==null){
-			throw new NullPointerException("fastq file can not be null");
+		
+		this.parser = FastqFileParser.create(fastqFile);
+	}
+	
+	/**
+	 * Create a new instance of {@code FastqFileDataStoreBuilder}
+	 * which will build a {@link FastqDataStore} for contents of the given
+	 * {@link FastqParser}.
+	 * @param parser the {@link FastqParser} instance to make a {@link FastqDataStore} with. 
+	 * @throws NullPointerException if parser is null.
+	 */
+	public FastqFileDataStoreBuilder(FastqParser parser) throws IOException{
+		if(parser ==null){
+			throw new NullPointerException("parser can not be null");
 		}
-		if(!fastqFile.exists()){
-			throw new FileNotFoundException("fastq file must exist");
-		}
-		if(!fastqFile.canRead()){
-			throw new IOException("fastq file is not readable");
-		}
-		this.fastqFile = fastqFile;
+		this.parser = parser;
 	}
 	/**
 	 * Explicitly specify the {@link FastqQualityCodec} that 
@@ -75,13 +79,19 @@ public final class FastqFileDataStoreBuilder{
 	 * cause an {@link IllegalArgumentException}
 	 * to be thrown during the {@link #build()} if the incorrectly decoded quality values are not
 	 * valid phred scores.
-	 * <p/>
+	 * <p>
 	 * If a quality codec is not given to this builder,
 	 * then during the actual datastore construction in {@link #build()},
 	 * the codec will be automatically determined by parsing a portion of the 
 	 * file an additional time.  This causes extra I/O and increases CPU and execution time
 	 * to create a new {@link FastqDataStore} so it is recommended that the {@link FastqQualityCodec} 
 	 * is given if it is known to avoid this performance penalty.
+	 * </p>
+	 * The quality codec MUST be set if the input fastq data source
+	 * is an inputStream, since the {@link java.io.InputStream} may be be able to be fully
+	 * read twice.  Not setting this method with an {@link java.io.InputStream}
+	 * source may cause an {@link IllegalStateException} to be thrown in {@link #build()}.
+	 * <p>
 	 * @param codec the {@link FastqQualityCodec} to use to parse the file; can not be null.
 	 * @return this.
 	 * @throws NullPointerException if codec is null.
@@ -167,23 +177,34 @@ public final class FastqFileDataStoreBuilder{
 	 * never null.
 	 * @throws IOException if there is a problem parsing the 
 	 * fastq file.
+	 * @throws IllegalStateException if quality codec is not set
+	 * and input fastq data source is an inputStream which might
+	 * prevent us from parsing the data twice (once to determine codec, 
+	 * the other to actual decode the data).
 	 * @throws IllegalArgumentException if the quality values
 	 * are not valid for the specified {@link FastqQualityCodec}
 	 * (can be thrown even if the quality codec is auto-detected).
 	 * @see #qualityCodec(FastqQualityCodec)
 	 * @see #hint(DataStoreProviderHint)
+	 * @see #filter(DataStoreFilter)
 	 */
 	public FastqDataStore build() throws IOException {
 		if(codec ==null){
-			codec = FastqUtil.guessQualityCodecUsed(fastqFile);
+			if(parser.isReadOnceOnly()){
+				//can't parse this twice
+				//to guess codec
+				//THEN re-parse to decode
+				throw new IllegalStateException("must set quality codec if parsing inputStream");
+			}
+			codec = FastqUtil.guessQualityCodecUsed(parser);
 		}
 		switch(hint){
 			case RANDOM_ACCESS_OPTIMIZE_SPEED:
-				return DefaultFastqFileDataStore.create(fastqFile,filter, codec);
+				return DefaultFastqFileDataStore.create(parser, codec, filter);
 			case RANDOM_ACCESS_OPTIMIZE_MEMORY:
-				return IndexedFastqFileDataStore.create(fastqFile, codec, filter);
+				return IndexedFastqFileDataStore.create(parser,  codec, filter);
 			case ITERATION_ONLY:
-				return LargeFastqFileDataStore.create(fastqFile, filter, codec);
+				return LargeFastqFileDataStore.create(parser, codec, filter);
 			default:
 				//can not happen
 				throw new IllegalArgumentException("unknown provider hint : "+ hint);

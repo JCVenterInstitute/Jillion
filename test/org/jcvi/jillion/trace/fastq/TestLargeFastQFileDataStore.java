@@ -26,17 +26,13 @@
 package org.jcvi.jillion.trace.fastq;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-
-import org.jcvi.jillion.trace.fastq.FastqDataStore;
-import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
-import org.jcvi.jillion.trace.fastq.LargeFastqFileDataStore;
+import java.io.IOException;
 
 public class TestLargeFastQFileDataStore extends AbstractTestFastQFileDataStore{
 
     @Override
     protected FastqDataStore createFastQFileDataStore(File file,
-            FastqQualityCodec qualityCodec) throws FileNotFoundException {
+            FastqQualityCodec qualityCodec) throws IOException {
         return LargeFastqFileDataStore.create(file, qualityCodec);
     }
 
