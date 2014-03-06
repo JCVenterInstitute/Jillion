@@ -34,7 +34,7 @@ import java.net.URLDecoder;
 
 import org.jcvi.jillion.core.io.FileUtil;
 /**
- * {@code ResourceFileServer}  wraps a Class's classLoader's getResource methods.
+ * {@code ResourceHelper}  wraps a Class's classLoader's getResource methods.
  * @author dkatzel
  *
  */
@@ -43,15 +43,20 @@ public class ResourceHelper{
     
     private final Class<?> clazz;
     private final String relativeStartPath;
-    
+    /**
+     * Construct a new {@link ResourceHelper} using
+     * the given class's ClassLoader to as the file server.
+     * @param clazz the class all paths will be relative from.
+     * @throws IOException 
+     */
     public ResourceHelper(Class<?> clazz){
     	this.clazz = clazz;
     	relativeStartPath=null;
     }
     /**
-     * Construct a new ResourceFileServer using
+     * Construct a new {@link ResourceHelper} using
      * the given class's ClassLoader to as the file server.
-     * @param clazz
+     * @param clazz the class all paths will be relative from.
      * @param rootDir the path from this resource to use as the root,
      * may be null
      * @throws IOException 
