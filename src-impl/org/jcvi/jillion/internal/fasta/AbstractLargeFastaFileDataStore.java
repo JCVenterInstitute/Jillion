@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.fasta;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.jillion.core.Sequence;
@@ -31,7 +30,7 @@ import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaDataStore;
-import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.FastaRecord;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
@@ -40,7 +39,7 @@ import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 
 public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F extends FastaRecord<T, S>> implements FastaDataStore<T,S,F>{
 
-    private final File fastaFile;
+    private final FastaParser parser;
     private final DataStoreFilter filter;
     private Long size;
     private volatile boolean closed=false;
@@ -51,15 +50,15 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
      * @param fastaFile the Fasta File to use, can not be null.
      * @throws NullPointerException if fastaFile is null.
      */
-    protected AbstractLargeFastaFileDataStore(File fastaFile, DataStoreFilter filter) {
-        if(fastaFile ==null){
-            throw new NullPointerException("fasta file can not be null");
+    protected AbstractLargeFastaFileDataStore(FastaParser parser, DataStoreFilter filter) {
+        if(parser ==null){
+            throw new NullPointerException("fasta parser can not be null");
         }
         if(filter ==null){
             throw new NullPointerException("filter file can not be null");
         }
         this.filter =filter;
-        this.fastaFile = fastaFile;
+        this.parser = parser;
     }
     
     private void checkNotYetClosed(){
@@ -107,7 +106,7 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
     @Override
     public StreamingIterator<String> idIterator() throws DataStoreException {
         checkNotYetClosed();
-        return DataStoreStreamingIterator.create(this,LargeFastaIdIterator.createNewIteratorFor(fastaFile,filter));
+        return DataStoreStreamingIterator.create(this,LargeFastaIdIterator.createNewIteratorFor(parser,filter));
         
     }
 
@@ -144,7 +143,7 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
         				throw new IllegalStateException("parser was halted when trying to compute size");		
         			}
         		};      
-        		FastaFileParser.create(fastaFile).parse(visitor);
+        		parser.parse(visitor);
             } catch (IOException e) {
                 throw new IllegalStateException("could not get record count",e);
             }
@@ -155,13 +154,13 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
 	
 
     @Override
-    public final StreamingIterator<F> iterator() {
+    public final StreamingIterator<F> iterator() throws DataStoreException {
         checkNotYetClosed();
-        return createNewIterator(fastaFile,filter);
+        return createNewIterator(parser,filter);
        
     }
 
-	protected abstract StreamingIterator<F> createNewIterator(File fastaFile,DataStoreFilter filter);
+	protected abstract StreamingIterator<F> createNewIterator(FastaParser parser ,DataStoreFilter filter) throws DataStoreException;
    
 
 	@Override

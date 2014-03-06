@@ -21,7 +21,6 @@
 package org.jcvi.jillion.internal.fasta;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -30,12 +29,13 @@ import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.fasta.FastaDataStore;
+import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.FastaRecord;
 
 public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>, F extends FastaRecord<T,S>, D extends FastaDataStore<T,S, F>> {
 
-	private final File fastaFile;
-	private final InputStream in;
+	private final FastaParser parser;
 	private DataStoreFilter filter = DataStoreFilters.alwaysAccept();
 	private DataStoreProviderHint hint = DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_SPEED;
 	/**
@@ -47,18 +47,11 @@ public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>
 	 * @throws NullPointerException if fastaFile is null.
 	 */
 	protected AbstractFastaFileDataStoreBuilder(File fastaFile) throws IOException{
-		if(fastaFile ==null){
-			throw new NullPointerException("fasta file can not be null");
-		}
-		if(!fastaFile.exists()){
-			throw new FileNotFoundException("fasta file must exist");
-		}
-		if(!fastaFile.canRead()){
-			throw new IOException("fasta file is not readable");
-		}
-		this.fastaFile = fastaFile;
-		this.in = null;
+
+		this.parser = FastaFileParser.create(fastaFile);
 	}
+
+	
 	
 	/**
 	 * Create a new Builder instance of 
@@ -70,14 +63,18 @@ public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>
 	 * @throws NullPointerException if fastaFile is null.
 	 */
 	protected AbstractFastaFileDataStoreBuilder(InputStream fastaFileAsStream) throws IOException{
-		if(fastaFileAsStream ==null){
-			throw new NullPointerException("fasta file stream can not be null");
-		}
 		
-		this.fastaFile = null;
-		this.in = fastaFileAsStream;
+		this.parser = FastaFileParser.create(fastaFileAsStream);
 		
 	}
+	protected AbstractFastaFileDataStoreBuilder(FastaParser parser){
+		if(parser==null){
+			throw new NullPointerException("fasta parser can not be null");
+		}
+		this.parser = parser;;
+		
+	}
+	
 	
 	/**
 	 * Only include the {@link FastaRecord}s which pass
@@ -150,19 +147,19 @@ public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>
 	 * @see #hint(DataStoreProviderHint)
 	 */
 	protected D build() throws IOException {
-		return createNewInstance(fastaFile,in, hint, filter);
+		return createNewInstance(parser, hint, filter);
 	}
 
 	/**
 	 * Create a new {@link FastaDataStore} instance.
-	 * @param fastaFile the fasta file to make the datastore for;
-	 * can not be null and should exist.
+	 * @param parser the {@link FastaParser} to use to make the datastore for;
+	 * can not be null.
 	 * @param hint a {@link DataStoreProviderHint}; will never be null.
 	 * @param filter a {@link DataStoreFilter}; will never be null.
 	 * @return a new {@link FastaDataStore} instance; should never be null.
 	 * @throws IOException if there is a problem creating the datastore from the file.
 	 */
-	protected abstract D createNewInstance(File fastaFile, InputStream in, DataStoreProviderHint hint, DataStoreFilter filter) throws IOException;
+	protected abstract D createNewInstance(FastaParser parser, DataStoreProviderHint hint, DataStoreFilter filter) throws IOException;
 			
 
 

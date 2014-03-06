@@ -44,6 +44,13 @@ public interface FastaParser {
 	 * new parse requests; {@code false} otherwise.
 	 */
 	boolean canParse();
+	/**
+	 * Is this {@link FastaParser}'s callbacks capable of
+	 * creating {@link FastaVisitorMemento}s.
+	 * @return {@code true} if this callback
+	 * can create mementos; {@code false} otherwise.
+	 */
+	boolean canCreateMemento();
 	
 	/**
 	 * Parse the fasta structure starting from the beginning 

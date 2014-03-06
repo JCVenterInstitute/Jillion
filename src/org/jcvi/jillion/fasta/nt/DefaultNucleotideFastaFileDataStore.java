@@ -38,6 +38,7 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
@@ -64,8 +65,16 @@ final class DefaultNucleotideFastaFileDataStore{
 		return create(fastaFile,DataStoreFilters.alwaysAccept());
 	}
 	public static NucleotideFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
+		
+		FastaParser parser = FastaFileParser.create(fastaFile);
+		
+		return create(parser, filter);
+	}
+
+	public static NucleotideFastaDataStore create(FastaParser parser,
+			DataStoreFilter filter) throws IOException {
 		NucleotideFastaDataStoreBuilderVisitorImpl2 builder = createBuilder(filter);
-		FastaFileParser.create(fastaFile).parse(builder);
+		parser.parse(builder);
 		return builder.build();
 	}
 	

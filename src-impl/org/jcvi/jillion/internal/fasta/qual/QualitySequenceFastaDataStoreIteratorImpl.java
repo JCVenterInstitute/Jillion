@@ -20,12 +20,11 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.fasta.qual;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
@@ -36,21 +35,25 @@ import org.jcvi.jillion.internal.fasta.AbstractResuseableFastaRecordVisitor;
 
 public class QualitySequenceFastaDataStoreIteratorImpl extends AbstractBlockingStreamingIterator<QualityFastaRecord>{
 	
-	private final File fastaFile;
+	private final FastaParser parser;
 	private final DataStoreFilter filter;
 	
 	
-	public static StreamingIterator<QualityFastaRecord> createIteratorFor(File fastaFile, DataStoreFilter filter){
-		QualitySequenceFastaDataStoreIteratorImpl iter = new QualitySequenceFastaDataStoreIteratorImpl(fastaFile, filter);
+	public static StreamingIterator<QualityFastaRecord> createIteratorFor(FastaParser parser, DataStoreFilter filter){
+		
+		QualitySequenceFastaDataStoreIteratorImpl iter = new QualitySequenceFastaDataStoreIteratorImpl(parser, filter);
 		iter.start();
 		return iter;
 	}
 	
-	public QualitySequenceFastaDataStoreIteratorImpl(File fastaFile, DataStoreFilter filter) {
-		if(!fastaFile.exists()){
-			throw new IllegalArgumentException("fasta file must exist");
+	public QualitySequenceFastaDataStoreIteratorImpl( FastaParser parser, DataStoreFilter filter) {
+		if(parser ==null){
+			throw new NullPointerException("parser can not be null");
 		}
-		this.fastaFile = fastaFile;
+		if(filter ==null){
+			throw new NullPointerException("filter can not be null");
+		}
+		this.parser = parser;
 		this.filter =filter;
 	}
 	/**
@@ -95,7 +98,7 @@ public class QualitySequenceFastaDataStoreIteratorImpl extends AbstractBlockingS
 			}
 		};
         try {
-            FastaFileParser.create(fastaFile).parse(visitor);
+            parser.parse(visitor);
         } catch (IOException e) {
             throw new RuntimeException("fasta file does not exist",e);
         }

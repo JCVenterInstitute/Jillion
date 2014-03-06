@@ -21,7 +21,6 @@
 package org.jcvi.jillion.internal.fasta.qual;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -46,7 +45,7 @@ import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 
 /**
  * {@code IndexedProteinFastaFileDataStore} is an implementation of 
- * {@link AminoAcidSequenceFastaDataStore} that only stores an index containing
+ * {@link QualityFastaDataStore} that only stores an index containing
  * file offsets to the various {@link FastaRecord}s contained
  * inside the fasta file.  This implementation provides random access
  * to large files taking up much memory.  The downside is each fasta record
@@ -60,11 +59,11 @@ public final class IndexedQualityFastaFileDataStore{
 		//can not instanitate
 	}
 	/**
-	 * Creates a new {@link IndexedProteinFastaFileDataStore}
+	 * Creates a new {@link QualityFastaDataStore}
 	 * instance using the given fastaFile.
-	 * @param fastaFile the fasta to create an {@link IndexedProteinFastaFileDataStore}
+	 * @param fastaFile the fasta to create an {@link QualityFastaDataStore}
 	 * for.
-	 * @return a new instance of {@link IndexedProteinFastaFileDataStore};
+	 * @return a new instance of {@link QualityFastaDataStore};
 	 * never null.
 	 * @throws FileNotFoundException if the input fasta file does not exist.
 	 * @throws NullPointerException if the input fasta file is null.
@@ -74,51 +73,44 @@ public final class IndexedQualityFastaFileDataStore{
 	}
 	
 	/**
-	 * Creates a new {@link IndexedProteinFastaFileDataStore}
+	 * Creates a new {@link QualityFastaDataStore}
 	 * instance using the given fastaFile.
-	 * @param fastaFile the fasta to create an {@link IndexedProteinFastaFileDataStore}
+	 * @param fastaFile the fasta to create an {@link QualityFastaDataStore}
 	 * for.
 	 * @param filter the {@link DataStoreFilter} instance used to filter out the fasta records;
 	 * can not be null.
-	 * @return a new instance of {@link IndexedProteinFastaFileDataStore};
+	 * @return a new instance of {@link QualityFastaDataStore};
 	 * never null.
 	 * @throws FileNotFoundException if the input fasta file does not exist.
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
 	public static QualityFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
-		IndexedQualitySequenceFastaDataStoreBuilderVisitor2 builder = createBuilder(fastaFile,filter);
+		FastaParser parser =FastaFileParser.create(fastaFile);
+		return create(parser, filter);
+	}
+	
+	/**
+	 * Creates a new {@link QualityFastaDataStore}
+	 * instance using the given fastaFile.
+	 * @param fastaFile the fasta to create an {@link QualityFastaDataStore}
+	 * for.
+	 * @param filter the {@link DataStoreFilter} instance used to filter out the fasta records;
+	 * can not be null.
+	 * @return a new instance of {@link QualityFastaDataStore};
+	 * never null.
+	 * @throws FileNotFoundException if the input fasta file does not exist.
+	 * @throws NullPointerException if the input fasta file is null.
+	 */
+	public static QualityFastaDataStore create(FastaParser parser, DataStoreFilter filter) throws IOException{
+		if(parser ==null){
+			throw new NullPointerException("parser can not be null");
+		}
+		IndexedQualitySequenceFastaDataStoreBuilderVisitor2 builder = new IndexedQualitySequenceFastaDataStoreBuilderVisitor2(parser, filter);
 		builder.initialize();
 		return builder.build();
 	}
 	
 	
-	/**
-	 * Creates a new {@link AminoAcidSequenceFastaDataStoreBuilderVisitor}
-	 * instance that will build an {@link IndexedProteinFastaFileDataStore}
-	 * using the given fastaFile.  This implementation of {@link AminoAcidSequenceFastaDataStoreBuilderVisitor}
-	 * can only be used to parse a single fasta file (the one given) and does not support
-	 * {@link AminoAcidSequenceFastaDataStoreBuilderVisitor#addFastaRecord(AminoAcidSequenceFastaRecord)}.
-	 * This builder visitor can only build the datastore via the visitXXX methods in the {@link FastaVisitor}
-	 * interface.
-	 * @param fastaFile the fasta to create an {@link IndexedProteinFastaFileDataStore}
-	 * for.
-	 * @return a new instance of {@link AminoAcidSequenceFastaDataStoreBuilderVisitor};
-	 * never null.
-	 * @throws IOException 
-	 * @throws NullPointerException if the input fasta file is null.
-	 */
-	private static IndexedQualitySequenceFastaDataStoreBuilderVisitor2 createBuilder(File fastaFile, DataStoreFilter filter) throws IOException{
-		if(fastaFile ==null){
-			throw new NullPointerException("fasta file can not be null");
-		}
-		if(!fastaFile.exists()){
-			throw new FileNotFoundException(fastaFile.getAbsolutePath());
-		}
-		if(filter==null){
-			throw new NullPointerException("filter can not be null");
-		}
-		return new IndexedQualitySequenceFastaDataStoreBuilderVisitor2(fastaFile, filter);
-	}
 	
 	
 	
@@ -127,13 +119,12 @@ public final class IndexedQualityFastaFileDataStore{
 	
 		private final DataStoreFilter filter;
 		private final FastaParser parser;
-		private final File fastaFile;
 		
 		private final Map<String, FastaVisitorCallback.FastaVisitorMemento> mementos = new LinkedHashMap<String, FastaVisitorCallback.FastaVisitorMemento>();
-		private IndexedQualitySequenceFastaDataStoreBuilderVisitor2(File fastaFile, DataStoreFilter filter) throws IOException {
-			this.fastaFile = fastaFile;
+		
+		private IndexedQualitySequenceFastaDataStoreBuilderVisitor2(FastaParser parser, DataStoreFilter filter) throws IOException {
 			this.filter = filter;
-			this.parser = FastaFileParser.create(fastaFile);
+			this.parser = parser;
 
 		}
 
@@ -168,22 +159,19 @@ public final class IndexedQualityFastaFileDataStore{
 
 		@Override
 		public QualityFastaDataStore build() {
-			return new Impl(fastaFile,parser,filter, mementos);
+			return new Impl(parser,filter, mementos);
 		}
 	
 	}
 	
 	public static final class Impl implements QualityFastaDataStore {
 		private volatile boolean closed =false;
-		private final File fastaFile;
 		private final FastaParser parser;
 		private final DataStoreFilter filter;
 		private final Map<String, FastaVisitorCallback.FastaVisitorMemento> mementos;
 		
 		
-		public Impl(File fastaFile,
-				FastaParser parser, DataStoreFilter filter, Map<String, FastaVisitorMemento> mementos) {
-			this.fastaFile = fastaFile;
+		public Impl(FastaParser parser, DataStoreFilter filter, Map<String, FastaVisitorMemento> mementos) {
 			this.parser = parser;
 			this.mementos = mementos;
 			this.filter = filter;
@@ -214,7 +202,7 @@ public final class IndexedQualityFastaFileDataStore{
 		@Override
 		public StreamingIterator<QualityFastaRecord> iterator() throws DataStoreException {
 			throwExceptionIfClosed();
-			StreamingIterator<QualityFastaRecord> iter = QualitySequenceFastaDataStoreIteratorImpl.createIteratorFor(fastaFile, filter);
+			StreamingIterator<QualityFastaRecord> iter = QualitySequenceFastaDataStoreIteratorImpl.createIteratorFor(parser, filter);
 	        
 			return DataStoreStreamingIterator.create(this, iter);
 		}
@@ -225,7 +213,7 @@ public final class IndexedQualityFastaFileDataStore{
 				throws DataStoreException {
 			throwExceptionIfClosed();
 			StreamingIterator<DataStoreEntry<QualityFastaRecord>> entryIter = new StreamingIterator<DataStoreEntry<QualityFastaRecord>>(){
-				StreamingIterator<QualityFastaRecord> iter = QualitySequenceFastaDataStoreIteratorImpl.createIteratorFor(fastaFile, filter);
+				StreamingIterator<QualityFastaRecord> iter = QualitySequenceFastaDataStoreIteratorImpl.createIteratorFor(parser, filter);
 
 				@Override
 				public boolean hasNext() {

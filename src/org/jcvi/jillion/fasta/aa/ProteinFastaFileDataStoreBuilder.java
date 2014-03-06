@@ -28,6 +28,7 @@ import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
+import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.internal.fasta.AbstractFastaFileDataStoreBuilder;
 import org.jcvi.jillion.internal.fasta.aa.DefaultProteinFastaDataStore;
 import org.jcvi.jillion.internal.fasta.aa.IndexedProteinFastaFileDataStore;
@@ -77,15 +78,15 @@ public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDat
 	 * @throws IOException if there is a problem creating the datastore from the file.
 	 */
 	@Override
-	protected ProteinFastaDataStore createNewInstance(File fastaFile, InputStream in, DataStoreProviderHint hint, DataStoreFilter filter)
+	protected ProteinFastaDataStore createNewInstance(FastaParser parser, DataStoreProviderHint hint, DataStoreFilter filter)
 			throws IOException {
-		if(fastaFile ==null){
-			return DefaultProteinFastaDataStore.create(in,filter);
+		if(!parser.canCreateMemento()){
+			return DefaultProteinFastaDataStore.create(parser,filter);
 		}
 		switch(hint){
-			case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultProteinFastaDataStore.create(fastaFile,filter);
-			case RANDOM_ACCESS_OPTIMIZE_MEMORY: return IndexedProteinFastaFileDataStore.create(fastaFile,filter);
-			case ITERATION_ONLY: return LargeProteinFastaFileDataStore.create(fastaFile,filter);
+			case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultProteinFastaDataStore.create(parser,filter);
+			case RANDOM_ACCESS_OPTIMIZE_MEMORY: return IndexedProteinFastaFileDataStore.create(parser,filter);
+			case ITERATION_ONLY: return LargeProteinFastaFileDataStore.create(parser,filter);
 			default:
 				throw new IllegalArgumentException("unknown provider hint :"+ hint);
 		}

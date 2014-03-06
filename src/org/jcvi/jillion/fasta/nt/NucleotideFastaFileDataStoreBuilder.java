@@ -28,6 +28,7 @@ import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.internal.fasta.AbstractFastaFileDataStoreBuilder;
 /**
  * {@code NucleotideFastaFileDataStoreBuilder}
@@ -52,6 +53,10 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 		super(fastaFile);
 	}
 	
+	public NucleotideFastaFileDataStoreBuilder(FastaParser parser) {
+		super(parser);
+	}
+
 	/**
 	 * Create a new Builder instance of 
 	 * which will build a {@link FastaDataStore} for the given
@@ -66,15 +71,15 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	}
 	@Override
 	protected NucleotideFastaDataStore createNewInstance(
-			File fastaFile,InputStream in, DataStoreProviderHint providerHint, DataStoreFilter filter)
+			FastaParser parser, DataStoreProviderHint providerHint, DataStoreFilter filter)
 			throws IOException {
-		if(fastaFile ==null){
-			return DefaultNucleotideFastaFileDataStore.create(in,filter);	
+		if(!parser.canCreateMemento()){
+			return DefaultNucleotideFastaFileDataStore.create(parser,filter);	
 		}else{
 			switch(providerHint){
-				case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultNucleotideFastaFileDataStore.create(fastaFile,filter);
-				case RANDOM_ACCESS_OPTIMIZE_MEMORY: return IndexedNucleotideSequenceFastaFileDataStore.create(fastaFile,filter);
-				case ITERATION_ONLY: return LargeNucleotideSequenceFastaFileDataStore.create(fastaFile,filter);
+				case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultNucleotideFastaFileDataStore.create(parser,filter);
+				case RANDOM_ACCESS_OPTIMIZE_MEMORY: return IndexedNucleotideSequenceFastaFileDataStore.create(parser,filter);
+				case ITERATION_ONLY: return LargeNucleotideSequenceFastaFileDataStore.create(parser,filter);
 				default:
 					throw new IllegalArgumentException("unknown provider hint : "+ providerHint);
 			}

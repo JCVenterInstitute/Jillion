@@ -20,12 +20,11 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.fasta;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
-import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
@@ -38,30 +37,30 @@ import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterato
  */
 public final class LargeFastaIdIterator extends AbstractBlockingStreamingIterator<String>{
 
-    private final File fastaFile;
+    private final FastaParser parser;
     private final DataStoreFilter filter;
-    public static LargeFastaIdIterator createNewIteratorFor(File fastaFile, DataStoreFilter filter){
-    	if(fastaFile ==null){
+    public static LargeFastaIdIterator createNewIteratorFor(FastaParser parser, DataStoreFilter filter){
+    	if(parser ==null){
     		throw new NullPointerException("fasta file can not be null");
     	}
     	if(filter ==null){
     		throw new NullPointerException("filter can not be null");
     	}
-    	LargeFastaIdIterator iter= new LargeFastaIdIterator(fastaFile,filter);
+    	LargeFastaIdIterator iter= new LargeFastaIdIterator(parser,filter);
 		iter.start();
     	
     	return iter;
     }
-    public static LargeFastaIdIterator createNewIteratorFor(File fastaFile){
-    	return createNewIteratorFor(fastaFile, DataStoreFilters.alwaysAccept());
+    public static LargeFastaIdIterator createNewIteratorFor(FastaParser parser){
+    	return createNewIteratorFor(parser, DataStoreFilters.alwaysAccept());
     }
 	
     /**
      * @param fastaFile
      */
-    private LargeFastaIdIterator(File fastaFile, DataStoreFilter filter) {
+    private LargeFastaIdIterator(FastaParser parser, DataStoreFilter filter) {
     	
-        this.fastaFile = fastaFile;
+        this.parser = parser;
         this.filter = filter;
     }
 
@@ -93,7 +92,7 @@ public final class LargeFastaIdIterator extends AbstractBlockingStreamingIterato
 			}
         };
         try {
-        	FastaFileParser.create(fastaFile).parse(visitor);
+        	parser.parse(visitor);
         } catch (IOException e) {
             throw new RuntimeException("fasta file does not exist",e);
         }
