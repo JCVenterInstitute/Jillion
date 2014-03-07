@@ -12,7 +12,6 @@
 			<attribute name="javadoc_location" value="http://joda-time.sourceforge.net/api-release/index.html"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="test-lib/cglib-nodep-2.2.2.jar"/>
 	<classpathentry kind="lib" path="test-lib/easymock-3.2.jar"/>
 	<classpathentry kind="lib" path="test-lib/javassist-3.18.0-GA.jar"/>
@@ -27,15 +26,16 @@
 	<classpathentry kind="lib" path="build-lib/findbugs/lib/asm-util-3.3.jar"/>
 	<classpathentry kind="lib" path="build-lib/findbugs/lib/asm-xml-3.3.jar"/>
 	<classpathentry kind="lib" path="build-lib/findbugs/lib/bcel.jar"/>
-	<classpathentry kind="lib" path="build-lib/findbugs/lib/commons-lang-2.4.jar"/>
 	<classpathentry kind="lib" path="build-lib/findbugs/lib/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="build-lib/findbugs/lib/findbugs-ant.jar"/>
 	<classpathentry kind="lib" path="build-lib/findbugs/lib/findbugs.jar"/>
-	<classpathentry kind="lib" path="build-lib/findbugs/lib/jaxen-1.1.1.jar"/>
 	<classpathentry kind="lib" path="build-lib/findbugs/lib/jcip-annotations.jar"/>
 	<classpathentry kind="lib" path="build-lib/findbugs/lib/jdepend-2.9.jar"/>
 	<classpathentry kind="lib" path="build-lib/findbugs/lib/jFormatString.jar"/>
 	<classpathentry kind="lib" path="build-lib/findbugs/lib/jsr305.jar"/>
 	<classpathentry kind="lib" path="build-lib/findbugs/lib/yjp-controller-api-redist.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="build-lib/findbugs/lib/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="build-lib/findbugs/lib/jaxen-1.1.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
