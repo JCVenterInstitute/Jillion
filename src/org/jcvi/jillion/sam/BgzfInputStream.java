@@ -29,7 +29,7 @@ import java.util.zip.GZIPInputStream;
  * @author dkatzel
  *
  */
-final class BgzfInputStream extends InputStream{
+public final class BgzfInputStream extends InputStream{
 
 	/**
 	 * The original {@link InputStream}

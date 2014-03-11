@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.sam.index.BamIndexer;
 
 /**
  * {@code Encoding}
@@ -20,9 +21,10 @@ enum Encoding{
 	 */
 	SAM(".sam"){
 		@Override
-		SamWriter createPreSortedOutputWriter(File out, SamHeader header, SamAttributeValidator validator)
+		SamWriter createPreSortedOutputWriter(File out, SamHeader header, SamAttributeValidator validator, BamIndexer indexer)
 				throws IOException {
-			
+			//indexer parameter ignored
+			//since it is only used in BAM files.
 			return new PresortedSamFileWriter(out, header, validator);
 		}
 		@Override
@@ -35,9 +37,9 @@ enum Encoding{
 	 */
 	BAM(".bam"){
 		@Override
-		SamWriter createPreSortedOutputWriter(File out, SamHeader header, SamAttributeValidator validator)
+		SamWriter createPreSortedOutputWriter(File out, SamHeader header, SamAttributeValidator validator, BamIndexer indexer)
 				throws IOException {
-			return new PresortedBamFileWriter(header, out, validator);
+			return new PresortedBamFileWriter(header, out, indexer, validator);
 		}
 
 		@Override
@@ -75,10 +77,10 @@ enum Encoding{
 	 * @return a new {@link SamWriter} will never be null.
 	 * @throws IOException if there is a problem creating the new output file.
 	 */
-	SamWriter createPreSortedNoValidationOutputWriter(File out, SamHeader header) throws IOException{
+	SamWriter createPreSortedNoValidationOutputWriter(File out, SamHeader header, BamIndexer indexer) throws IOException{
 		//no validation since we have already validated
 		//the reads when we added them to our in memcheck
-		return createPreSortedOutputWriter(out, header, NullSamAttributeValidator.INSTANCE);
+		return createPreSortedOutputWriter(out, header, NullSamAttributeValidator.INSTANCE, indexer);
 	}
 	
 	
@@ -99,7 +101,7 @@ enum Encoding{
 	 * @return a new {@link SamWriter} will never be null.
 	 * @throws IOException if there is a problem creating the new output file.
 	 */
-	abstract SamWriter createPreSortedOutputWriter(File out, SamHeader header, SamAttributeValidator validator)throws IOException;
+	abstract SamWriter createPreSortedOutputWriter(File out, SamHeader header, SamAttributeValidator validator, BamIndexer indexer)throws IOException;
 
 	/**
 	 * Create a new {@link SamWriter} implementation
@@ -120,9 +122,9 @@ enum Encoding{
 	 * @throws IOException if there is a problem creating the new output file.
 	 */
 	SamWriter createReSortedOutputWriter(File out, File tmpDirRoot,
-			SamHeader header, int maxRecordsToKeepInMemory, SamAttributeValidator validator)
+			SamHeader header, int maxRecordsToKeepInMemory, SamAttributeValidator validator, BamIndexer indexer)
 			throws IOException {
-		return new ReSortSamFileWriter(out, tmpDirRoot,header, maxRecordsToKeepInMemory, validator, this);
+		return new ReSortSamFileWriter(out, tmpDirRoot,header, maxRecordsToKeepInMemory, validator, this, indexer);
 	}
 	
 	

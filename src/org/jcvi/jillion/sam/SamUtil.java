@@ -6,7 +6,9 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.DateFormat;
+import java.text.FieldPosition;
 import java.text.ParseException;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -21,6 +23,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.sam.attribute.SamAttribute;
 import org.jcvi.jillion.sam.attribute.SamAttributeKey;
 import org.jcvi.jillion.sam.attribute.SamAttributeType;
+import org.jcvi.jillion.sam.cigar.Cigar;
 import org.jcvi.jillion.sam.cigar.Cigar.ClipType;
 import org.jcvi.jillion.sam.cigar.CigarElement;
 import org.jcvi.jillion.sam.header.ReadGroup;
@@ -40,6 +43,8 @@ import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 //in Windows
 @SuppressWarnings("VA_FORMAT_STRING_USES_NEWLINE")
 public final class SamUtil {
+	
+
 	/**
 	 * The max bin number allowed in a BAM file.
 	 * Should be 37449.
@@ -111,7 +116,34 @@ public final class SamUtil {
 
 		  @Override
 		  protected DateFormat initialValue() {
-		   return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+			  //facade DateFormat with multiple versions
+			  //since the standard JDK SimpleDateFormat
+			  //can't handle optional parts
+		   return new DateFormat(){
+			   private static final String DATE_FULL_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
+			   private static final String DAY_ONLY_FORMAT = "yyyy-MM-dd";
+			   
+			   final DateFormat full =new SimpleDateFormat(DATE_FULL_FORMAT);
+			   final DateFormat dayOnly =new SimpleDateFormat(DAY_ONLY_FORMAT);
+
+			@Override
+			public StringBuffer format(Date date, StringBuffer toAppendTo,
+					FieldPosition fieldPosition) {
+				//always format to full length
+				//to support spec
+				return full.format(date, toAppendTo, fieldPosition);
+			}
+
+			@Override
+			public Date parse(String source, ParsePosition pos) {
+				if(source.length() - pos.getIndex() == DAY_ONLY_FORMAT.length()){
+					return dayOnly.parse(source, pos);
+				}
+				return full.parse(source, pos);
+				
+				
+			}
+		   };
 		  }
 
 		  @Override
@@ -276,7 +308,7 @@ public final class SamUtil {
 	 */
 	public static int computeBinFor(int begin, int endExclusive){
 		if(endExclusive <= begin){
-			throw new IllegalArgumentException("end must be > begin");
+			throw new IllegalArgumentException("end must be > begin : " +  begin + "  " + endExclusive );
 		}
 		int end = endExclusive-1;
 		int beg = begin;
@@ -385,14 +417,21 @@ public final class SamUtil {
 		buf.putInt(header.getReferenceIndexFor(referenceName));
 		int startOffset = record.getStartPosition() -1;
 		buf.putInt(startOffset);
-		long binMapNameLength =computeBinFor(startOffset, startOffset + record.getCigar().getPaddedReadLength(ClipType.SOFT_CLIPPED) -1);
+		long binMapNameLength;
+		Cigar cigar = record.getCigar();
+		if(record.mapped()){
+			binMapNameLength =computeBinFor(startOffset, startOffset + cigar.getPaddedReadLength(ClipType.SOFT_CLIPPED) -1);
+		}else{
+			binMapNameLength =0;
+			cigar = new Cigar.Builder(0).build();
+		}
 		binMapNameLength<<=16;
 		binMapNameLength |= (record.getMappingQuality() <<8);
 		//name length is null terminated
 		binMapNameLength |= record.getQueryName().length() +1;
 		
 		long flagsAndNumCigarOps = SamRecordFlags.asBits(record.getFlags()) <<16;
-		flagsAndNumCigarOps |= record.getCigar().getNumberOfElements();
+		flagsAndNumCigarOps |= cigar.getNumberOfElements();
 		//cast should be fine since our masks
 		//makes sure we only have lower 4 bytes of data
 		buf.putInt((int) (binMapNameLength & 0x00000000FFFFFFFFL ));
@@ -405,7 +444,7 @@ public final class SamUtil {
 		buf.putInt(record.getNextOffset() -1);
 		buf.putInt(record.getObservedTemplateLength());
 		buf.put(writeNullTerminatedStringAsBytes(record.getQueryName()));
-		for(CigarElement cigarElement : record.getCigar()){
+		for(CigarElement cigarElement : cigar){
 			int encodedCigar = cigarElement.getLength() <<4;
 			encodedCigar |= cigarElement.getOp().getBinaryOpCode();
 			buf.putInt(encodedCigar);

@@ -19,9 +19,9 @@ import java.util.zip.Deflater;
  * @author dkatzel
  *
  */
-final class BgzfOutputStream extends OutputStream{
+public final class BgzfOutputStream extends OutputStream{
 	
-	public interface IndexerCallback{
+	public static interface IndexerCallback{
 		void encodedIndex(long compressedStart, int uncompressedStart,
 						  long compressedEnd, int uncompressedEnd);
 	}

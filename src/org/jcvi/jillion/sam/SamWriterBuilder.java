@@ -7,6 +7,7 @@ import org.jcvi.jillion.core.io.FileUtil;
 import org.jcvi.jillion.sam.attribute.ReservedAttributeValidator;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.sam.index.BamIndexer;
 /**
  * {@code SamWriterBuilder}
  * is a Builder object that will create
@@ -33,6 +34,8 @@ public final class SamWriterBuilder {
 	private SortOrder reSortOrder = null;
 	
 	private int maxRecordsToKeepInMemory = DEFAULT_RECORDS_IN_MEMORY;
+	
+	private boolean makeBamIndex=false;
 	
 	/**
 	 * Get the max number of {@link SamRecord}s
@@ -98,6 +101,11 @@ public final class SamWriterBuilder {
 			throw new NullPointerException("validator can not be null");
 		}
 		this.attributeValidator = validator;
+		return this;
+	}
+	
+	public SamWriterBuilder createBamIndex(boolean createBamIndex){
+		this.makeBamIndex = createBamIndex;
 		return this;
 	}
 	/**
@@ -169,10 +177,25 @@ public final class SamWriterBuilder {
 	public SamWriter build() throws IOException{
 		SamHeader header = headerBuilder.build();
 		Encoding encoding = Encoding.parseEncoding(FileUtil.getExtension(outputFile));
-		if(writeUnSortedRecords()){
-			return encoding.createPreSortedNoValidationOutputWriter(outputFile, header);
+		BamIndexer indexer;
+		if(makeBamIndex && encoding== Encoding.BAM){
+			//check sort order in new header
+			//which will be the sort order we use
+			//regardless if we are re-sorting or not.
+			//
+			//BAM indexes must be applied to 
+			//coordinate sorted bam files
+			if(header.getSortOrder() != SortOrder.COORDINATE){
+				throw new IllegalStateException("can not make bam index when bam file to be written is not coordinate sorted");
+			}
+			indexer = new BamIndexer(header);
+		}else{
+			indexer =null;
 		}
-		return encoding.createReSortedOutputWriter(outputFile, tmpDirRoot, header, maxRecordsToKeepInMemory, attributeValidator);
+		if(writeUnSortedRecords()){
+			return encoding.createPreSortedNoValidationOutputWriter(outputFile, header, indexer);
+		}
+		return encoding.createReSortedOutputWriter(outputFile, tmpDirRoot, header, maxRecordsToKeepInMemory, attributeValidator, indexer);
 		
 	}
 

@@ -148,7 +148,7 @@ abstract class AbstractSamFileParser implements SamParser{
 				Date date = SamUtil.toDate(tags.get("DT"));
 				builder.setRunDate(date);
 			} catch (ParseException e) {
-				throw new IllegalStateException("invalid date format" + tags.get("DT"));
+				throw new IllegalStateException("invalid date format : " + tags.get("DT"), e);
 			}
 		}
 		if(tags.containsKey("FO")){
@@ -171,7 +171,7 @@ abstract class AbstractSamFileParser implements SamParser{
 		}
 		if(tags.containsKey("PL")){
 			String value = tags.get("PL");
-			PlatformTechnology platform = PlatformTechnology.valueOf(value);
+			PlatformTechnology platform = PlatformTechnology.parse(value);
 			builder.setPlatform(platform);
 		}
 		if(tags.containsKey("PU")){

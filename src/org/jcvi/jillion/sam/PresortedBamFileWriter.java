@@ -8,12 +8,17 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Collection;
+import java.util.List;
 
+import org.jcvi.jillion.core.io.FileUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.sam.attribute.ReservedAttributeValidator;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.sam.index.BamIndexer;
+import org.jcvi.jillion.sam.index.IndexUtil;
+import org.jcvi.jillion.sam.index.ReferenceIndex;
 /**
  * {@code PresortedBamFileWriter} is a {@link SamWriter}
  * that writes out BAM files whose {@link SamRecord}s
@@ -34,18 +39,22 @@ class PresortedBamFileWriter implements SamWriter{
 	private final OutputStream out;
 	private final SamAttributeValidator attributeValidator;
 	
-	public PresortedBamFileWriter(SamHeader header, File outputFile) throws IOException{
-		this(header, outputFile, ReservedAttributeValidator.INSTANCE);
+	private final BamIndexer optionalIndexer;
+	private boolean closed =false;
+	
+	public PresortedBamFileWriter(SamHeader header, File outputFile, BamIndexer optionalIndexer) throws IOException{
+		this(header, outputFile, optionalIndexer, ReservedAttributeValidator.INSTANCE);
 	}
 	
-	public PresortedBamFileWriter(SamHeader header, File outputFile, SamAttributeValidator attributeValidator) throws IOException {
+	public PresortedBamFileWriter(SamHeader header, File outputFile, BamIndexer optionalIndexer, SamAttributeValidator attributeValidator) throws IOException {
 		this.header = header;
 		this.bamFile = outputFile;
 		this.attributeValidator = attributeValidator;
+		this.optionalIndexer = optionalIndexer;
 		//create parent dirs if needed
 		IOUtil.mkdirs(bamFile.getParentFile());
+		out = new BgzfOutputStream(new BufferedOutputStream(new FileOutputStream(bamFile)),optionalIndexer);
 		
-		out = new BgzfOutputStream(new BufferedOutputStream(new FileOutputStream(bamFile)));
 		writeHeader();
 	}
 
@@ -81,7 +90,24 @@ class PresortedBamFileWriter implements SamWriter{
 
 	@Override
 	public void close() throws IOException {
+		if(closed){
+			//no-op so we don't write BAM and index twice
+			return;
+		}
+		closed= true;
 		out.close();
+		if(optionalIndexer !=null){
+			List<ReferenceIndex> indexes =optionalIndexer.createReferenceIndexes();
+			String baseName =FileUtil.getBaseName(bamFile);
+			File indexFileOutFile = new File(bamFile.getParentFile(), baseName + ".bai");
+			OutputStream indexOutStream =null;
+			try{
+				indexOutStream = new BufferedOutputStream(new FileOutputStream(indexFileOutFile));
+				IndexUtil.writeIndex(indexOutStream, indexes);
+			}finally{
+				IOUtil.closeAndIgnoreErrors(indexOutStream);
+			}
+		}
 	}
 
 	@Override
@@ -91,8 +117,12 @@ class PresortedBamFileWriter implements SamWriter{
 		}catch(SamValidationException e){
 			throw new IOException("can not write record due to validation error(s)",e);
 		}
+		if(optionalIndexer !=null){
+			optionalIndexer.setCurrentRecord(record);
+		}
 		
 		SamUtil.writeAsBamRecord(out, header, record);
+		
 	}
 
 }

@@ -657,6 +657,52 @@ public final class IOUtil {
         
 	}
     
+    public static void putInt(OutputStream out, int value, ByteOrder endian) throws IOException {
+		// from data output stream
+		// with modifications for endian-ness
+		if (endian == ByteOrder.LITTLE_ENDIAN) {
+			out.write((value >>> 0) & 0xFF);
+			out.write((value >>> 8) & 0xFF);
+			out.write((value >>> 16) & 0xFF);
+			out.write((value >>> 24) & 0xFF);
+		} else { 
+			//assume anything else is BIG endian (the default)
+			out.write((value >>> 24) & 0xFF);
+			out.write((value >>> 16) & 0xFF);
+			out.write((value >>> 8) & 0xFF);
+			out.write((value >>> 0) & 0xFF);
+		}
+		
+	}
+    
+    public static void putLong(OutputStream out, long value, ByteOrder endian) throws IOException{
+    	byte[] writeBuffer = new byte[8];
+    	// from data output stream
+		// with modifications for endian-ness
+		if (endian == ByteOrder.LITTLE_ENDIAN) {
+			writeBuffer[0] = (byte) (value >>> 0);
+			writeBuffer[1] = (byte) (value >>> 8);
+			writeBuffer[2] = (byte) (value >>> 16);
+			writeBuffer[3] = (byte) (value >>> 24);
+			writeBuffer[4] = (byte) (value >>> 32);
+			writeBuffer[5] = (byte) (value >>> 40);
+			writeBuffer[6] = (byte) (value >>> 48);
+			writeBuffer[7] = (byte) (value >>> 56);
+		} else {
+			// assume anything else is BIG endian (the default)
+			writeBuffer[0] = (byte) (value >>> 56);
+			writeBuffer[1] = (byte) (value >>> 48);
+			writeBuffer[2] = (byte) (value >>> 40);
+			writeBuffer[3] = (byte) (value >>> 32);
+			writeBuffer[4] = (byte) (value >>> 24);
+			writeBuffer[5] = (byte) (value >>> 16);
+			writeBuffer[6] = (byte) (value >>> 8);
+			writeBuffer[7] = (byte) (value >>> 0);
+		}
+		out.write(writeBuffer,0,8);
+    }
+    
+    
     public static float readFloat(InputStream in) throws IOException {
         return Float.intBitsToFloat(readSignedInt(in));
     }
@@ -1171,4 +1217,5 @@ public final class IOUtil {
 			throw new IOException("file is not readable: " + f.getAbsolutePath());
 		}
 	}
+	
 }
