@@ -1,6 +1,7 @@
 package org.jcvi.jillion.sam.header;
 
 import java.util.Date;
+import java.util.Locale;
 
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
@@ -658,5 +659,10 @@ public class ReadGroup {
 		HELICOS,
 		IONTORRENT,
 		PACBIO
+		;
+		
+		public static PlatformTechnology parse(String value){
+			return valueOf(value.toUpperCase(Locale.US));
+		}
 	}
 }

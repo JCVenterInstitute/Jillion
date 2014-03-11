@@ -17,6 +17,7 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.sam.index.BamIndexer;
 /**
  * {@code ReSortSamFileWriter}
  * is a {@link SamWriter} implementation
@@ -57,6 +58,8 @@ class ReSortSamFileWriter implements SamWriter {
 	private final SamAttributeValidator attributeValidator;
 	
 	private final Encoding encoding;
+	private final BamIndexer indexer;
+	
 	/**
 	 * 
 	 * @param outputFile
@@ -67,7 +70,7 @@ class ReSortSamFileWriter implements SamWriter {
 	 * @param tmpFileSuffix
 	 * @throws IOException
 	 */
-	public ReSortSamFileWriter(File outputFile, File tmpDirRoot, SamHeader header, int maxRecordsToKeepInMemory, SamAttributeValidator attributeValidator, Encoding encodingToUse) throws IOException {
+	public ReSortSamFileWriter(File outputFile, File tmpDirRoot, SamHeader header, int maxRecordsToKeepInMemory, SamAttributeValidator attributeValidator, Encoding encodingToUse, BamIndexer indexer) throws IOException {
 		
 		if(maxRecordsToKeepInMemory <0){
 			throw new IllegalArgumentException("max records to keep in memory must be >=1");
@@ -93,6 +96,7 @@ class ReSortSamFileWriter implements SamWriter {
         this.outputFile = outputFile;
         this.attributeValidator = attributeValidator;
         this.encoding = encodingToUse;
+        this.indexer = indexer;
 	}
 
 
@@ -121,7 +125,9 @@ class ReSortSamFileWriter implements SamWriter {
 			
 			File tempFile= File.createTempFile(outputFile.getName(), encoding.getSuffix(), tmpDir);
 			tempFiles.add(tempFile);
-			SamWriter writer = encoding.createPreSortedNoValidationOutputWriter(tempFile, header);
+			//never pass indexer to temp files
+			//only use in final if at all.
+			SamWriter writer = encoding.createPreSortedNoValidationOutputWriter(tempFile, header,null);
 			try{
 				for(int i=0; i<currentInMemSize; i++){
 					writer.writeRecord(inMemoryArray[i]);
@@ -169,7 +175,7 @@ class ReSortSamFileWriter implements SamWriter {
 			}
 			
 			Iterator<SamRecord> sortedIterator = new MergedSortedRecordIterator(iterators, recordComparator);
-			writer = encoding.createPreSortedNoValidationOutputWriter(outputFile, header);
+			writer = encoding.createPreSortedNoValidationOutputWriter(outputFile, header, indexer);
 			while(sortedIterator.hasNext()){
 				writer.writeRecord(sortedIterator.next());
 			}
