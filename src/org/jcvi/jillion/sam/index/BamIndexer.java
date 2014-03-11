@@ -16,7 +16,8 @@ public class BamIndexer implements BgzfOutputStream.IndexerCallback{
 	
 	private final SamHeader header;
 	private List<ReferenceIndex.Builder> indexBuilders;
-	
+	private ReferenceIndex.Builder currentBuilder;
+	private String currentRefName;
 	
 	public BamIndexer(SamHeader header) {
 		
@@ -38,21 +39,32 @@ public class BamIndexer implements BgzfOutputStream.IndexerCallback{
 			long compressedEnd, int uncompressedEnd) {
 		if(currentRecord !=null && currentRecord.mapped()){
 			String ref = currentRecord.getReferenceName();
+			if(!ref.equals(currentRefName)){
+				int refIndex = header.getReferenceIndexFor(ref);
+				currentBuilder = indexBuilders.get(refIndex);
+				currentRefName = ref;				
+			}
+							
 			int readStartOffset = currentRecord.getStartPosition() -1;
 			int readLength = currentRecord.getCigar().getPaddedReadLength(ClipType.SOFT_CLIPPED);
-			int refIndex = header.getReferenceIndexFor(ref);
-			if(refIndex >=0 ){
-				indexBuilders.get(refIndex).addAlignment(readStartOffset, readStartOffset + readLength -1, 
-						VirtualFileOffset.create(compressedStart, uncompressedStart), 
-						VirtualFileOffset.create(compressedEnd, uncompressedEnd));
-			}
+			
+			currentBuilder.addAlignment(readStartOffset, readStartOffset + readLength, 
+					VirtualFileOffset.create(compressedStart, uncompressedStart), 
+					VirtualFileOffset.create(compressedEnd, uncompressedEnd));
+		
 		}
 	}
 
 	public List<ReferenceIndex> createReferenceIndexes(){
 		List<ReferenceIndex> list = new ArrayList<ReferenceIndex>(indexBuilders.size());
 		for(ReferenceIndex.Builder builder : indexBuilders){
-			list.add(builder.build());
+			ReferenceIndex refIndex = builder.build();
+			
+			System.out.println(refIndex.getBins().size());
+			for(Bin bin : refIndex.getBins()){
+				System.out.println(bin);
+			}
+			list.add(refIndex);
 		}
 		
 		return list;

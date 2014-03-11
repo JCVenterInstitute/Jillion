@@ -39,6 +39,13 @@ public class Bin {
 
 
 	@Override
+	public String toString() {
+		return "Bin [binNumber=" + binNumber + ", chunks=" + chunks + "]";
+	}
+
+
+
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
