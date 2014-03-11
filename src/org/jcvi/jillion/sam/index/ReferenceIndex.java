@@ -42,10 +42,10 @@ public class ReferenceIndex {
 			
 		}
 		
-		public void addAlignment(int readStartOffset, int readEndOffset, VirtualFileOffset start, VirtualFileOffset end){
+		public void addAlignment(int readStartOffset, int readEndOffsetExclusive, VirtualFileOffset start, VirtualFileOffset end){
 			
 			updateIntervals(readStartOffset, start);		
-			updateBins(readStartOffset, readEndOffset, start, end);
+			updateBins(readStartOffset, readEndOffsetExclusive, start, end);
 		}
 		
 		public ReferenceIndex build(){
@@ -58,9 +58,9 @@ public class ReferenceIndex {
 			return new ReferenceIndex(this);
 		}
 
-		private void updateBins(int readStartOffset, int readEndOffset,
+		private void updateBins(int readStartOffset, int readEndOffsetExclusive,
 				VirtualFileOffset start, VirtualFileOffset end) {
-			int bin = SamUtil.computeBinFor(readStartOffset, readEndOffset+1);
+			int bin = SamUtil.computeBinFor(readStartOffset, readEndOffsetExclusive);
 			if(bin > currentBinNumber){
 				if(currentBinBuilder !=null){
 					//builder old bin and add it to
@@ -82,9 +82,6 @@ public class ReferenceIndex {
 
 		public void updateIntervals(int readStartOffset, VirtualFileOffset start) {
 			int interval = IndexUtil.getIntervalOffsetFor(readStartOffset) -1;
-			if(interval >= intervals.length){
-				System.out.println("here");
-			}
 			if(interval > currentIntervalArrayOffset){
 				intervals[interval] = start;
 				currentIntervalArrayOffset = interval;

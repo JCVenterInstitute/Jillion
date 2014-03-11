@@ -35,7 +35,7 @@ public class BamIndexWriterPrototype {
 					public void visitHeader(SamHeader header) {
 						try {
 							writer = new SamWriterBuilder(
-									new File("/usr/local/scratch/dkatzel/testBamWriterWithIndex/actual.bam")
+									new File("/usr/local/scratch/dkatzel/testBamWriterWithIndex/jillion.index_test.bam")
 									, header)
 								.createBamIndex(true)
 								.build();
@@ -55,7 +55,7 @@ public class BamIndexWriterPrototype {
 					}
 				});
 		
-		File actualIndex = new File("/usr/local/scratch/dkatzel/testBamWriterWithIndex/actual.bai");
+		File actualIndex = new File("/usr/local/scratch/dkatzel/testBamWriterWithIndex/jillion.index_test.bai");
 		System.out.println(Arrays.equals(IOUtil.toByteArray(expectedIndex),
 				IOUtil.toByteArray(actualIndex)));
 		
