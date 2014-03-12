@@ -21,10 +21,6 @@ import java.util.zip.Deflater;
  */
 public final class BgzfOutputStream extends OutputStream{
 	
-	public static interface IndexerCallback{
-		void encodedIndex(long compressedStart, int uncompressedStart,
-						  long compressedEnd, int uncompressedEnd);
-	}
 	/**
 	 * Max compressed block size should never be > max uncompressed block size.
 	 * Since the maximum size that an uncompressed GZIP block
@@ -182,6 +178,14 @@ public final class BgzfOutputStream extends OutputStream{
 		singleByteArray[0] = (byte)b;
 		handleWrite(singleByteArray, 0, 1);
 		
+	}
+	
+	/**
+	 * {@inheritDoc}.
+	 */
+	@Override
+	public void write(byte[] b) throws IOException {
+		handleWrite(b, 0, b.length);
 	}
 	/**
 	 * {@inheritDoc}.

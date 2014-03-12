@@ -6,6 +6,7 @@ import java.nio.ByteOrder;
 import java.util.List;
 
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.sam.VirtualFileOffset;
 
 public final class IndexUtil {
 

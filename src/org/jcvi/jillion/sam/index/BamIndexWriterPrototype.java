@@ -1,15 +1,17 @@
 package org.jcvi.jillion.sam.index;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Arrays;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.sam.SamParserFactory;
 import org.jcvi.jillion.sam.SamRecord;
 import org.jcvi.jillion.sam.SamVisitor;
-import org.jcvi.jillion.sam.SamWriter;
-import org.jcvi.jillion.sam.SamWriterBuilder;
+import org.jcvi.jillion.sam.VirtualFileOffset;
 import org.jcvi.jillion.sam.header.SamHeader;
 
 public class BamIndexWriterPrototype {
@@ -20,36 +22,43 @@ public class BamIndexWriterPrototype {
 		
 		SamParserFactory.create(bam)
 				.accept(new SamVisitor() {
-					SamWriter writer=null;
+					BamIndexer indexer;
 					@Override
 					public void visitRecord(SamRecord record) {
-						try {
-							writer.writeRecord(record);
-						} catch (IOException e) {
-							throw new IllegalStateException(e);	
-						}
+						//no-op
+						
+					}
+					
+					
+					
+					@Override
+					public void visitRecord(SamRecord record,
+							VirtualFileOffset start, VirtualFileOffset end) {
+						indexer.addRecord(record, start, end);
+						
+					}
+
+
+
+					@Override
+					public void visitHeader(SamHeader header) {
+							
+							indexer = new BamIndexer(header);
 						
 					}
 					
 					@Override
-					public void visitHeader(SamHeader header) {
-						try {
-							writer = new SamWriterBuilder(
-									new File("/usr/local/scratch/dkatzel/testBamWriterWithIndex/jillion.index_test.bam")
-									, header)
-								.createBamIndex(true)
-								.build();
-						} catch (IOException e) {
-							throw new IllegalStateException(e);						
-						}
-					}
-					
-					@Override
 					public void visitEnd() {
-						try {
-							writer.close();
+						File output = new File("/usr/local/scratch/dkatzel/testBamWriterWithIndex/jillion.index_test_fixed.bai");
+						OutputStream out = null;
+						try{
+							out = new BufferedOutputStream(new FileOutputStream(output));
+							IndexUtil.writeIndex(out, indexer.createReferenceIndexes());
 						} catch (IOException e) {
-							throw new IllegalStateException(e);	
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}finally{
+							IOUtil.closeAndIgnoreErrors(out);
 						}
 						
 					}

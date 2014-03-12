@@ -1,5 +1,7 @@
 package org.jcvi.jillion.sam.index;
 
+import org.jcvi.jillion.sam.VirtualFileOffset;
+
 public class Chunk {
 
 	private final VirtualFileOffset begin,end;

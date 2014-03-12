@@ -1,4 +1,4 @@
-package org.jcvi.jillion.sam.index;
+package org.jcvi.jillion.sam;
 
 
 public class VirtualFileOffset implements Comparable<VirtualFileOffset>{
@@ -26,7 +26,7 @@ public class VirtualFileOffset implements Comparable<VirtualFileOffset>{
 		return new VirtualFileOffset(encodedValue);
 	}
 	
-	private VirtualFileOffset(long encodedValue) {
+	public VirtualFileOffset(long encodedValue) {
 		this.encodedValue = encodedValue;
 	}
 	
