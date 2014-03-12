@@ -3,7 +3,9 @@ package org.jcvi.jillion.sam.index;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Bin {
+import org.jcvi.jillion.internal.core.util.JillionUtil;
+
+public class Bin implements Comparable<Bin>{
 
 	private final int binNumber;
 	private final List<Chunk> chunks;
@@ -34,6 +36,13 @@ public class Bin {
 		result = prime * result + binNumber;
 		result = prime * result + chunks.hashCode();
 		return result;
+	}
+
+
+
+	@Override
+	public int compareTo(Bin o) {
+		return JillionUtil.compare(binNumber, o.getBinNumber());
 	}
 
 

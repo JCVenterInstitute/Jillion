@@ -20,6 +20,7 @@ import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
 import org.jcvi.jillion.sam.SamParser;
 import org.jcvi.jillion.sam.SamRecord;
 import org.jcvi.jillion.sam.SamVisitor;
+import org.jcvi.jillion.sam.VirtualFileOffset;
 import org.jcvi.jillion.sam.cigar.Cigar;
 import org.jcvi.jillion.sam.cigar.CigarElement;
 import org.jcvi.jillion.sam.cigar.CigarOperation;
@@ -70,6 +71,13 @@ final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 				entryIter.remove();
 			}
 		}
+	}
+
+	@Override
+	public void visitRecord(SamRecord record, VirtualFileOffset start,
+			VirtualFileOffset end) {
+		visitRecord(record);
+		
 	}
 
 	@Override

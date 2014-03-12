@@ -55,6 +55,9 @@ public final class BgzfInputStream extends InputStream{
      */
     boolean eof=false;
     
+    private long uncompressedBytesRead=0;
+    
+    private long compressedBytesRead=0;
     /**
      * Create a new {@link BgzfInputStream}.
      * @param in the {@link InputStream} to unzip;
@@ -126,9 +129,11 @@ public final class BgzfInputStream extends InputStream{
 			return -1;
 		}
 		int bytesRead = currentGzipStream.read(buf, off, len);
+		
 		if(bytesRead == -1 && hasConcatenatedBlock()) {
 			return read(buf,off, len);			
 		}
+		uncompressedBytesRead +=bytesRead;
 		return bytesRead;
 	}
 	

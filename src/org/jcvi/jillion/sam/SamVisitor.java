@@ -7,6 +7,8 @@ public interface SamVisitor {
 	void visitHeader(SamHeader header);
 	
 	void visitRecord(SamRecord record);
+	
+	void visitRecord(SamRecord record, VirtualFileOffset start, VirtualFileOffset end);
 
 	void visitEnd();
 }

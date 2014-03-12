@@ -2,6 +2,7 @@ package org.jcvi.jillion.sam;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -76,10 +77,10 @@ final class BamFileParser extends AbstractSamFileParser {
 		if(visitor ==null){
 			throw new NullPointerException("visitor can not be null");
 		}
-		OpenAwareInputStream in=null;
+		BgzfInputStream2 in=null;
 		
 		try{
-			in = new OpenAwareInputStream(new BgzfInputStream(new BufferedInputStream(new FileInputStream(bamFile))));
+			in = new BgzfInputStream2(new BufferedInputStream(new FileInputStream(bamFile)));
 			
 			verifyMagicNumber(in);
 			
@@ -87,10 +88,24 @@ final class BamFileParser extends AbstractSamFileParser {
 			String[] refNames = parseReferenceNamesAndAddToHeader(in, headerBuilder);
 			SamHeader header = headerBuilder.build();
 			visitor.visitHeader(header);
-			
-			while(in.isOpen()){	
+			try{
+				while(in.isOpen()){	
+				long startBlockOffset = in.getCompressedBlockBytesReadSoFar();
+				int startUnCompressedOffset = in.getUncompressedBytesInCurrentBlock();
+				
 				SamRecord record = parseNextSamRecord(in, refNames, header);
-				visitor.visitRecord(record);
+				
+				long endBlockOffset = in.getCompressedBlockBytesReadSoFar();
+				int endUnCompressedOffset = in.getUncompressedBytesInCurrentBlock();
+				
+				visitor.visitRecord(record, 
+						VirtualFileOffset.create(startBlockOffset, startUnCompressedOffset),
+						VirtualFileOffset.create(endBlockOffset, endUnCompressedOffset));
+				}
+			}catch(EOFException e){
+				//ignore, we can't tell if we've hit
+				//EOF until after we hit it otherwise
+				//we will mess up the offset computations
 			}
 			visitor.visitEnd();
 		}finally{
@@ -98,7 +113,7 @@ final class BamFileParser extends AbstractSamFileParser {
 		}
 	}
 	
-	private SamRecord parseNextSamRecord(OpenAwareInputStream in, String[] refNames, SamHeader header) throws IOException {
+	private SamRecord parseNextSamRecord(InputStream in, String[] refNames, SamHeader header) throws IOException {
 		//next alignment
 		int blockSize = getSignedInt(in);
 		SamRecord.Builder builder = new SamRecord.Builder(header, validator);
@@ -157,7 +172,7 @@ final class BamFileParser extends AbstractSamFileParser {
 		
 		return builder.build();
 	}
-	private Cigar parseCigar(OpenAwareInputStream in, int numCigarOps)
+	private Cigar parseCigar(InputStream in, int numCigarOps)
 			throws IOException {
 		Cigar.Builder cigarBuilder = new Cigar.Builder(numCigarOps);
 		for(int i=0; i<numCigarOps; i++){
@@ -168,7 +183,7 @@ final class BamFileParser extends AbstractSamFileParser {
 		}
 		return cigarBuilder.build();
 	}
-	private void parseAttributesIfAnyAndAddToBuilder(OpenAwareInputStream in,
+	private void parseAttributesIfAnyAndAddToBuilder(InputStream in,
 			SamRecord.Builder builder, int blockSize, int bytesReadSoFar)
 			throws IOException {
 		int attributeByteLength =  blockSize - bytesReadSoFar;
@@ -190,7 +205,7 @@ final class BamFileParser extends AbstractSamFileParser {
 			}
 		}
 	}
-	private String[] parseReferenceNamesAndAddToHeader(OpenAwareInputStream in,
+	private String[] parseReferenceNamesAndAddToHeader(InputStream in,
 			SamHeader.Builder headerBuilder) throws IOException {
 		int referenceCount = getSignedInt(in);
 		//The reference names

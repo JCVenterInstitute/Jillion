@@ -27,6 +27,7 @@ import org.jcvi.jillion.sam.SamParser;
 import org.jcvi.jillion.sam.SamParserFactory;
 import org.jcvi.jillion.sam.SamRecord;
 import org.jcvi.jillion.sam.SamVisitor;
+import org.jcvi.jillion.sam.VirtualFileOffset;
 import org.jcvi.jillion.sam.cigar.Cigar;
 import org.jcvi.jillion.sam.cigar.Cigar.ClipType;
 import org.jcvi.jillion.sam.cigar.CigarElement;
@@ -127,6 +128,12 @@ public final class SamTransformationService implements AssemblyTransformationSer
 		}
 			
 		
+
+		@Override
+		public void visitRecord(SamRecord record, VirtualFileOffset start,
+				VirtualFileOffset end) {
+			visitRecord(record);
+		}
 
 		@Override
 		public void visitRecord(SamRecord record) {

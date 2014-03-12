@@ -362,6 +362,13 @@ class ReSortSamFileWriter implements SamWriter {
 						StreamingSamRecordIterator.this.blockingPut(record);
 						
 					}
+					@Override
+					public void visitRecord(SamRecord record,
+							VirtualFileOffset start, VirtualFileOffset end) {
+						StreamingSamRecordIterator.this.blockingPut(record);
+						
+					}
+					
 					
 					@Override
 					public void visitHeader(SamHeader header) {
@@ -374,6 +381,10 @@ class ReSortSamFileWriter implements SamWriter {
 						//no-op
 						
 					}
+
+
+
+					
 				});
 			} catch (IOException e) {
 				throw new RuntimeException("error parsing temp sam file " + samFile.getAbsolutePath(), e);

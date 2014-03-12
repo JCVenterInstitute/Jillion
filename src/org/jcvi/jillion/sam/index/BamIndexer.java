@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.jcvi.jillion.sam.BgzfOutputStream;
+import org.jcvi.jillion.sam.IndexerCallback;
 import org.jcvi.jillion.sam.SamRecord;
+import org.jcvi.jillion.sam.VirtualFileOffset;
 import org.jcvi.jillion.sam.cigar.Cigar.ClipType;
 import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
 
-public class BamIndexer implements BgzfOutputStream.IndexerCallback{
+public class BamIndexer implements IndexerCallback{
 
 	private SamRecord currentRecord;
 	
@@ -34,25 +35,31 @@ public class BamIndexer implements BgzfOutputStream.IndexerCallback{
 		this.currentRecord = record;
 	}
 	
-	@Override
-	public void encodedIndex(long compressedStart, int uncompressedStart,
-			long compressedEnd, int uncompressedEnd) {
-		if(currentRecord !=null && currentRecord.mapped()){
-			String ref = currentRecord.getReferenceName();
+	public void addRecord(SamRecord record, VirtualFileOffset start, VirtualFileOffset end){
+		if(record !=null && record.mapped()){
+			String ref = record.getReferenceName();
 			if(!ref.equals(currentRefName)){
 				int refIndex = header.getReferenceIndexFor(ref);
 				currentBuilder = indexBuilders.get(refIndex);
 				currentRefName = ref;				
 			}
-							
-			int readStartOffset = currentRecord.getStartPosition() -1;
-			int readLength = currentRecord.getCigar().getPaddedReadLength(ClipType.SOFT_CLIPPED);
+			int readStartOffset = record.getStartPosition() -1;
+			int readLength = record.getCigar().getPaddedReadLength(ClipType.SOFT_CLIPPED);
 			
 			currentBuilder.addAlignment(readStartOffset, readStartOffset + readLength, 
-					VirtualFileOffset.create(compressedStart, uncompressedStart), 
-					VirtualFileOffset.create(compressedEnd, uncompressedEnd));
-		
+					start, 
+					end);
 		}
+	}
+	
+	@Override
+	public void encodedIndex(long compressedStart, int uncompressedStart,
+			long compressedEnd, int uncompressedEnd) {
+		
+		addRecord(currentRecord, 
+				VirtualFileOffset.create(compressedStart, uncompressedStart),
+				VirtualFileOffset.create(compressedEnd, uncompressedEnd));
+
 	}
 
 	public List<ReferenceIndex> createReferenceIndexes(){
