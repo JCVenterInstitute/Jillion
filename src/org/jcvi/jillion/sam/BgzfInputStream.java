@@ -43,7 +43,7 @@ public class BgzfInputStream extends InflaterInputStream {
 	 /**
      * GZIP header magic number.
      */
-    public static final int GZIP_MAGIC_NUMBER = 0x8b1f;
+    private static final int GZIP_MAGIC_NUMBER = 0x8b1f;
 
     /*
      * GZIP block header flag 

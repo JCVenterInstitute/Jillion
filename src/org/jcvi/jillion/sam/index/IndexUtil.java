@@ -27,7 +27,7 @@ public final class IndexUtil {
 	
 	public static void writeIndex(OutputStream out, List<ReferenceIndex> indexes) throws IOException{
 		out.write(BAM_INDEX_MAGIC);
-		//assume little endian like BAM?
+		//assume little endian like BAM
 		IOUtil.putInt(out,indexes.size(), ByteOrder.LITTLE_ENDIAN);
 		for(ReferenceIndex refIndex : indexes){
 			List<Bin> bins = refIndex.getBins();
@@ -37,8 +37,8 @@ public final class IndexUtil {
 				List<Chunk> chunks = bin.getChunks();
 				IOUtil.putInt(out,chunks.size(), ByteOrder.LITTLE_ENDIAN);
 				for(Chunk chunk : chunks){
-					IOUtil.putLong(out,encode(chunk.getBegin()), ByteOrder.LITTLE_ENDIAN);
-					IOUtil.putLong(out,encode(chunk.getEnd()), ByteOrder.LITTLE_ENDIAN);
+					IOUtil.putLong(out,chunk.getBegin().getEncodedValue(), ByteOrder.LITTLE_ENDIAN);
+					IOUtil.putLong(out,chunk.getEnd().getEncodedValue(), ByteOrder.LITTLE_ENDIAN);
 				}
 			}
 			//intervals
@@ -52,9 +52,9 @@ public final class IndexUtil {
 					//use previous?
 					IOUtil.putLong(out, prev, ByteOrder.LITTLE_ENDIAN);
 				}else{
-					long encodedOffset = encode(current);
-					IOUtil.putLong(out, encodedOffset, ByteOrder.LITTLE_ENDIAN);
-					prev = encodedOffset;
+					long encodedValue = current.getEncodedValue();
+					IOUtil.putLong(out, encodedValue, ByteOrder.LITTLE_ENDIAN);
+					prev = encodedValue;
 				}
 			}
 		}
@@ -65,10 +65,6 @@ public final class IndexUtil {
 		
 	}
 	
-	private static long encode(VirtualFileOffset vfo){
-		long ret = vfo.getCompressedBamBlockOffset()<<16;
-		ret |= vfo.getUncompressedOffset();
-		return ret;
-	}
+	
 	
 }
