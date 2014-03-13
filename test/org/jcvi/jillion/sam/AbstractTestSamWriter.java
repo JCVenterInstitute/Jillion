@@ -23,6 +23,12 @@ public class AbstractTestSamWriter {
 		}
 
 		@Override
+		public void visitRecord(SamRecord record, VirtualFileOffset start,
+				VirtualFileOffset end) {
+			records.add(record);
+		}
+
+		@Override
 		public void visitHeader(SamHeader header) {
 			this.header = header;
 		}
