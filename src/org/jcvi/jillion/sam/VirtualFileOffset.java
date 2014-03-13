@@ -30,6 +30,12 @@ public class VirtualFileOffset implements Comparable<VirtualFileOffset>{
 		this.encodedValue = encodedValue;
 	}
 	
+	
+	
+	public long getEncodedValue() {
+		return encodedValue;
+	}
+
 	public long getCompressedBamBlockOffset(){
 		return encodedValue>>16;
 	}
