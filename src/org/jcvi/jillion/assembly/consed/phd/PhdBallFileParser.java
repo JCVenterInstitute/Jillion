@@ -275,8 +275,8 @@ public abstract class PhdBallFileParser implements PhdBallParser{
 						StringTokenizer tokenizer = new StringTokenizer(value);						
 						visitor.visitUngappedRange(Range.of(
 								Range.CoordinateSystem.RESIDUE_BASED,
-								Integer.valueOf(tokenizer.nextToken()),
-								Integer.valueOf(tokenizer.nextToken())));
+								Integer.parseInt(tokenizer.nextToken()),
+								Integer.parseInt(tokenizer.nextToken())));
 					}else if("DATE".equals(key)){
 						try {
 							visitor.visitDate(PhdUtil.parseReadTagDate(value));

@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.jcvi.jillion.internal.core.util.JillionUtil;
 
-public class Bin implements Comparable<Bin>{
+public final class Bin implements Comparable<Bin>{
 
 	private final int binNumber;
 	private final List<Chunk> chunks;
