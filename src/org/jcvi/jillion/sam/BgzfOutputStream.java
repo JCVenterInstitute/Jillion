@@ -302,7 +302,8 @@ public final class BgzfOutputStream extends OutputStream{
 				}
 			}
 			currentCrc32.reset();
-			currentCrc32.update(compressedBuffer, 0, compressedLength);
+			//CRC is the check sum of the UNCOMPRESSED data
+			currentCrc32.update(uncompressedBuffer, 0, currentUsedBufferLength);
 
 			ByteBuffer bgzfBlockBuffer = ByteBuffer.allocate(compressedLength + BGZF_BLOCK_FULL_HEADER_LENGTH);
 			bgzfBlockBuffer.order(ByteOrder.LITTLE_ENDIAN);

@@ -616,7 +616,7 @@ public final class IOUtil {
                  IOUtil.toByteArray(in, 1, endian)).shortValue();
      }
     
-    
+   
     public static short readSignedShort(InputStream in ) throws IOException {
     	//taken from DataInputStream
         int ch1 = in.read();
