@@ -44,17 +44,17 @@ class BgzfInputStream3 extends InflaterInputStream {
 	 /**
      * GZIP header magic number.
      */
-    public final static int GZIP_MAGIC_NUMBER = 0x8b1f;
+    public static final int GZIP_MAGIC_NUMBER = 0x8b1f;
 
     /*
      * GZIP block header flags, 
      * names taken from constants
      * from RFC 1952
      */
-    private final static int FHCRC      = 2; //bit 1
-    private final static int FEXTRA     = 4; //bit 2
-    private final static int FNAME      = 8; //bit 3
-    private final static int FCOMMENT   = 16; //bit 4
+    private static final int FHCRC      = 2; //bit 1
+    private static final int FEXTRA     = 4; //bit 2
+    private static final int FNAME      = 8; //bit 3
+    private static final int FCOMMENT   = 16; //bit 4
 
     /**
      * This is the magic number in the extra fields
@@ -195,8 +195,8 @@ class BgzfInputStream3 extends InflaterInputStream {
      * Reads GZIP Blcok header and returns the total byte number
      * of this member header.
      */
-    private int parseBlockHeader(InputStream this_in) throws IOException {
-        CheckedInputStream in = new CheckedInputStream(this_in, crc);
+    private int parseBlockHeader(InputStream currentStream) throws IOException {
+        CheckedInputStream in = new CheckedInputStream(currentStream, crc);
         crc.reset();
         // Check header magic
         if (IOUtil.readUnsignedShort(in, ByteOrder.LITTLE_ENDIAN) != GZIP_MAGIC_NUMBER) {

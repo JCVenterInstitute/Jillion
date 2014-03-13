@@ -7,7 +7,7 @@ import java.util.List;
 import org.jcvi.jillion.sam.SamUtil;
 import org.jcvi.jillion.sam.VirtualFileOffset;
 
-public class ReferenceIndex {
+public final class ReferenceIndex {
 
 	private final List<Bin> bins;
 	private final VirtualFileOffset[] intervals;

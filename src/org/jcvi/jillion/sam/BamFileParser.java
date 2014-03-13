@@ -127,7 +127,9 @@ final class BamFileParser extends AbstractSamFileParser {
 		builder.setStartPosition(getSignedInt(in)+1);
 		
 		long binMqReadLength = getUnsignedInt(in);
-		int bin = (int)((binMqReadLength>>16) & 0xFFFF);
+		//don't care about bin we can recompute it 
+		//if we need it
+		//int bin = (int)((binMqReadLength>>16) & 0xFFFF);
 		byte mapQuality = (byte)((binMqReadLength>>8) & 0xFF);
 		builder.setMappingQuality(mapQuality);
 		int readNameLength = (int)(binMqReadLength & 0xFF);
