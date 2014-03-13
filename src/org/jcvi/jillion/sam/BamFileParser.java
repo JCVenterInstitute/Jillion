@@ -77,10 +77,10 @@ final class BamFileParser extends AbstractSamFileParser {
 		if(visitor ==null){
 			throw new NullPointerException("visitor can not be null");
 		}
-		BgzfInputStream3 in=null;
+		BgzfInputStream in=null;
 		
 		try{
-			in = new BgzfInputStream3(new BufferedInputStream(new FileInputStream(bamFile)));
+			in = new BgzfInputStream(new BufferedInputStream(new FileInputStream(bamFile)));
 			
 			verifyMagicNumber(in);
 			
@@ -90,17 +90,13 @@ final class BamFileParser extends AbstractSamFileParser {
 			visitor.visitHeader(header);
 			try{
 				while(in.hasMoreData()){	
-				long startBlockOffset = in.getCompressedBlockBytesReadSoFar();
-				int startUnCompressedOffset = in.getUncompressedBytesInCurrentBlock();
+					VirtualFileOffset start = in.getVirutalFileOffset();
 				
-				SamRecord record = parseNextSamRecord(in, refNames, header);
-				
-				long endBlockOffset = in.getCompressedBlockBytesReadSoFar();
-				int endUnCompressedOffset = in.getUncompressedBytesInCurrentBlock();
-				
-				visitor.visitRecord(record, 
-						VirtualFileOffset.create(startBlockOffset, startUnCompressedOffset),
-						VirtualFileOffset.create(endBlockOffset, endUnCompressedOffset));
+					SamRecord record = parseNextSamRecord(in, refNames, header);
+					
+					VirtualFileOffset end = in.getVirutalFileOffset();
+					
+					visitor.visitRecord(record, start,end);
 				}
 			}catch(EOFException e){
 				//ignore, we can't tell if we've hit

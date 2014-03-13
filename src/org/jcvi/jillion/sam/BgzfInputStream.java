@@ -38,8 +38,7 @@ import org.jcvi.jillion.core.io.IOUtil;
  * @author		dkatzel
  *
  */
-public
-class BgzfInputStream3 extends InflaterInputStream {
+public class BgzfInputStream extends InflaterInputStream {
 	
 	 /**
      * GZIP header magic number.
@@ -47,7 +46,7 @@ class BgzfInputStream3 extends InflaterInputStream {
     public static final int GZIP_MAGIC_NUMBER = 0x8b1f;
 
     /*
-     * GZIP block header flags, 
+     * GZIP block header flag 
      * names taken from constants
      * from RFC 1952
      */
@@ -70,15 +69,32 @@ class BgzfInputStream3 extends InflaterInputStream {
     protected CRC32 crc = new CRC32();
 
     /**
-     * Indicates end of input stream.
+     * Indicates end of file
+     * has been reached.
+     * Note : This is different than
+     * closed..
      */
     protected boolean eof;
-
+    /**
+     * Indicates that the user
+     * has called the {@link #close()} method
+     * before we reached the end of file.
+     */
     private volatile boolean closed = false;
-
+    /**
+     * Number of compressed bytes
+     * the full blocks we have read take up.
+     * This is used to compute BAM
+     * VirtualFileOffsets for BAM indexing. 
+     */
     private long compressedBlockBytesReadSoFar=0;
-    
-    private int uncompressedBytesInCurrentBlock=0;
+    /**
+     * Number of uncompressed bytes
+     * in the current block we have read so far.
+     * This is used to compute BAM
+     * VirtualFileOffsets for BAM indexing. 
+     */
+    private int uncompressedBytesReadInCurrentBlock=0;
     
     private int currentBlockSize;
 
@@ -94,7 +110,7 @@ class BgzfInputStream3 extends InflaterInputStream {
      * @exception IOException if an I/O error has occurred
      * @exception IllegalArgumentException if size is <= 0
      */
-    public BgzfInputStream3(InputStream in, int size) throws IOException {
+    public BgzfInputStream(InputStream in, int size) throws IOException {
         super(in, new Inflater(true), size);
         parseBlockHeader(in);
     }
@@ -107,7 +123,7 @@ class BgzfInputStream3 extends InflaterInputStream {
      *                         compression method used is unsupported
      * @exception IOException if an I/O error has occurred
      */
-    public BgzfInputStream3(InputStream in) throws IOException {
+    public BgzfInputStream(InputStream in) throws IOException {
         this(in, 512);
     }
 
@@ -138,7 +154,7 @@ class BgzfInputStream3 extends InflaterInputStream {
         if (bytesRead == -1) {
         	//if we get here we've reached the end of the block
         	compressedBlockBytesReadSoFar +=currentBlockSize;
-        	uncompressedBytesInCurrentBlock=0;
+        	uncompressedBytesReadInCurrentBlock=0;
             if (hasMoreBlocks()){
             	return this.read(buf, off, len);
             }
@@ -147,7 +163,7 @@ class BgzfInputStream3 extends InflaterInputStream {
             eof = true;          
                 
         } else {
-        	uncompressedBytesInCurrentBlock+=bytesRead;
+        	uncompressedBytesReadInCurrentBlock+=bytesRead;
             crc.update(buf, off, bytesRead);
         }
         return bytesRead;
@@ -163,13 +179,22 @@ class BgzfInputStream3 extends InflaterInputStream {
 		return !eof;
 	}
 
-	public long getCompressedBlockBytesReadSoFar() {
-		return compressedBlockBytesReadSoFar;
-	}
-
-	public int getUncompressedBytesInCurrentBlock() {
-		return uncompressedBytesInCurrentBlock;
-	}
+    /**
+     * Get the {@link VirtualFileOffset}
+     * which represents where we are currently
+     * in the {@link BgzfInputStream}.
+     * Any read calls will change the value
+     * returned by this method.
+     * @return a new {@link VirtualFileOffset};
+     * will never be null.  Calling
+     * the method multiple times between reads
+     * will return equal file offsets (but
+     * may not be the same instance).
+     */
+    public VirtualFileOffset getVirutalFileOffset(){
+    	return VirtualFileOffset.create(compressedBlockBytesReadSoFar, uncompressedBytesReadInCurrentBlock);
+    }
+	
 
 	/**
      * Closes this input stream and releases any system resources associated
@@ -278,11 +303,10 @@ class BgzfInputStream3 extends InflaterInputStream {
      * @throws IOException
      */
     private boolean hasMoreBlocks() throws IOException {
-    	System.out.println("block");
         //GZIPBUG FIX
         //This next code block supports handling
         //concatenated blocks which the BGZF uses
-        //Which broke Java pre Java 6u23 (or there abouts)
+        //Which broke Java pre Java 6u23 (or there-abouts)
     	
     	//code mostly taken from various bug reports
     	//that included work around code
