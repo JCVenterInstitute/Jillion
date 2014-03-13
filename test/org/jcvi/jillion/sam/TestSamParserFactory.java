@@ -1,6 +1,8 @@
 package org.jcvi.jillion.sam;
 
 import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 
@@ -22,11 +24,14 @@ public class TestSamParserFactory {
 
 	ResourceHelper resourceHelper = new ResourceHelper(TestSamParserFactory.class);
 	
+	private static final boolean IS_BAM = true;
+	
+	private static final boolean IS_SAM = false;
 	@Test
 	public void parseSamFile() throws IOException, InvalidAttributeException{
 		SamParser sut = SamParserFactory.create(resourceHelper.getFile("example.sam"));
 		
-		SamVisitor visitor = createMockVisitorWithExpectations();
+		SamVisitor visitor = createMockVisitorWithExpectations(IS_SAM);
 		
 		replay(visitor);
 		sut.accept(visitor);
@@ -37,7 +42,7 @@ public class TestSamParserFactory {
 	public void parseBamFile() throws IOException, InvalidAttributeException{
 		SamParser sut = SamParserFactory.create(resourceHelper.getFile("example.bam"));
 		
-		SamVisitor visitor = createMockVisitorWithExpectations();
+		SamVisitor visitor = createMockVisitorWithExpectations(IS_BAM);
 		
 		replay(visitor);
 		sut.accept(visitor);
@@ -45,7 +50,7 @@ public class TestSamParserFactory {
 	}
 
 
-	private SamVisitor createMockVisitorWithExpectations()
+	private SamVisitor createMockVisitorWithExpectations(boolean isBam)
 			throws InvalidAttributeException {
 		SamVisitor visitor = createMock(SamVisitor.class);
 		
@@ -59,7 +64,7 @@ public class TestSamParserFactory {
 		
 		visitor.visitHeader(expectedHeader);
 		
-		visitor.visitRecord(createRecordBuilder(expectedHeader)
+		visitRecord(visitor, createRecordBuilder(expectedHeader)
 								.setQueryName("r001")
 								.setFlags(SamRecordFlags.parseFlags(163))
 								.setReferenceName(ref)
@@ -70,9 +75,9 @@ public class TestSamParserFactory {
 								.setNextPosition(37)
 								.setObservedTemplateLength(39)
 								.setSequence(new NucleotideSequenceBuilder("TTAGATAAAGGATACTG").build())
-								.build());
+								.build(), isBam);
 		
-		visitor.visitRecord(createRecordBuilder(expectedHeader)
+		visitRecord(visitor, createRecordBuilder(expectedHeader)
 				.setQueryName("r002")
 				.setFlags(SamRecordFlags.parseFlags(0))
 				.setReferenceName(ref)
@@ -80,9 +85,9 @@ public class TestSamParserFactory {
 				.setMappingQuality(30)
 				.setCigar(Cigar.parse("3S6M1P1I4M"))
 				.setSequence(new NucleotideSequenceBuilder("AAAAGATAAGGATA").build())
-				.build());
+				.build(), isBam);
 		
-		visitor.visitRecord(createRecordBuilder(expectedHeader)
+		visitRecord(visitor, createRecordBuilder(expectedHeader)
 				.setQueryName("r003")
 				.setFlags(SamRecordFlags.parseFlags(0))
 				.setReferenceName(ref)
@@ -91,9 +96,9 @@ public class TestSamParserFactory {
 				.setCigar(Cigar.parse("5S6M"))
 				.setSequence(new NucleotideSequenceBuilder("GCCTAAGCTAA").build())
 				.addAttribute(new SamAttribute(ReservedSamAttributeKeys.parseKey("SA"), "ref,29,-,6H5M,17,0;"))
-				.build());
+				.build(), isBam);
 		
-		visitor.visitRecord(createRecordBuilder(expectedHeader)
+		visitRecord(visitor, createRecordBuilder(expectedHeader)
 				.setQueryName("r004")
 				.setFlags(SamRecordFlags.parseFlags(0))
 				.setReferenceName(ref)
@@ -101,9 +106,9 @@ public class TestSamParserFactory {
 				.setMappingQuality(30)
 				.setCigar(Cigar.parse("6M14N5M"))
 				.setSequence(new NucleotideSequenceBuilder("ATAGCTTCAGC").build())
-				.build());
+				.build(), isBam);
 		
-		visitor.visitRecord(createRecordBuilder(expectedHeader)
+		visitRecord(visitor, createRecordBuilder(expectedHeader)
 				.setQueryName("r003")
 				.setFlags(SamRecordFlags.parseFlags(2064))
 				.setReferenceName(ref)
@@ -112,9 +117,9 @@ public class TestSamParserFactory {
 				.setCigar(Cigar.parse("6H5M"))
 				.setSequence(new NucleotideSequenceBuilder("TAGGC").build())
 				.addAttribute(new SamAttribute(ReservedSamAttributeKeys.parseKey("SA"), "ref,9,+,5S6M,30,1;"))
-				.build());
+				.build(), isBam);
 		
-		visitor.visitRecord(createRecordBuilder(expectedHeader)
+		visitRecord(visitor, createRecordBuilder(expectedHeader)
 				.setQueryName("r001")
 				.setFlags(SamRecordFlags.parseFlags(83))
 				.setReferenceName(ref)
@@ -126,7 +131,7 @@ public class TestSamParserFactory {
 				.setObservedTemplateLength(-39)
 				.setSequence(new NucleotideSequenceBuilder("CAGCGGCAT").build())
 				.addAttribute(new SamAttribute(ReservedSamAttributeKeys.parseKey("NM"), "1"))
-				.build());
+				.build(), isBam);
 		
 		visitor.visitEnd();
 		return visitor;
@@ -135,5 +140,13 @@ public class TestSamParserFactory {
 	
 	private SamRecord.Builder createRecordBuilder(SamHeader header){
 		return new SamRecord.Builder(header, ReservedAttributeValidator.INSTANCE);
+	}
+	
+	private void visitRecord(SamVisitor visitor, SamRecord record, boolean isBam){
+		if(isBam){
+			visitor.visitRecord(eq(record), isA(VirtualFileOffset.class), isA(VirtualFileOffset.class));
+		}else{
+			visitor.visitRecord(record);
+		}
 	}
 }
