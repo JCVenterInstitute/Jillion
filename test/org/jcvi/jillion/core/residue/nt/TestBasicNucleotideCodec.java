@@ -55,6 +55,18 @@ public class TestBasicNucleotideCodec {
         byte[] encoded =Nucleotides.encodeWithGapSentientals(sut, oddBases);
         assertEquals(oddBases, decode(encoded));
     }
+    
+    @Test
+    public void isGap(){
+    	assertIsGapCorrect(Nucleotides.encodeWithGapSentientals(sut, evenBases));
+        assertIsGapCorrect(Nucleotides.encodeWithGapSentientals(sut, oddBases));
+    }
+
+	private void assertIsGapCorrect(byte[] encoded) {
+		assertTrue(sut.isGap(encoded, 10));
+        assertFalse(sut.isGap(encoded, 9));
+        assertFalse(sut.isGap(encoded, 11));
+	}
     /**
      * this is a regression test for a bug where I was getting
      * the sign wrong for final odd byte values.  C is the base
@@ -82,6 +94,8 @@ public class TestBasicNucleotideCodec {
     	}
     	return list;
     }
+    
+    
     /**
      * to go along with {@link #oddNumberOfBasesEndsWithC()}
      * try every possible base ending

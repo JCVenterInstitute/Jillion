@@ -29,6 +29,7 @@ import java.util.Map;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.AssembledReadBuilder;
+import org.jcvi.jillion.assembly.AssemblyUtil;
 import org.jcvi.jillion.assembly.ReadInfo;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
@@ -461,8 +462,11 @@ public final class DefaultAssembledRead implements AssembledRead {
 		@Override
 		public AssembledReadBuilder<AssembledRead> trim(Range trimRange) {
 			NucleotideSequence untrimmed = getCurrentNucleotideSequence();
-			int numLeft =untrimmed.getUngappedOffsetFor((int)trimRange.getBegin());
-			int numRight =(int)(untrimmed.getUngappedLength()-1  -untrimmed.getUngappedOffsetFor((int)trimRange.getEnd()));
+			int nonGapStart = AssemblyUtil.getRightFlankingNonGapIndex(untrimmed, (int)trimRange.getBegin());
+			
+			int nonGapEnd =AssemblyUtil.getLeftFlankingNonGapIndex(untrimmed, (int)trimRange.getEnd());
+			int numLeft =untrimmed.getUngappedOffsetFor(nonGapStart);
+			int numRight =(int)(untrimmed.getUngappedLength()-1  -untrimmed.getUngappedOffsetFor(nonGapEnd));
 			
 			
 			//for now we are actually trimming the sequence
