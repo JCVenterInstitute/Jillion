@@ -20,6 +20,8 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly;
 
+import static org.junit.Assert.assertEquals;
+
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
@@ -290,6 +292,48 @@ public abstract class AbstractTestAssembledReadBuilder<R extends AssembledRead> 
 		
 		AssemblyTestUtil.assertPlacedReadCorrect(expected, built);
 	}
+	
+	@Test
+	public void trimSequenceThatLeavesStartingGapShouldHaveAdjustedValidRange(){
+		
+		Range initialClearRange = new Range.Builder(5)
+										.shift(3)
+										.build();
+		AssembledReadBuilder<R> builder = createReadBuilder(readId, 
+				new NucleotideSequenceBuilder("AC--GT-T").build(),
+				
+				0, dir, initialClearRange, 8);
+		
+		builder.trim(Range.of(2,7));
+		
+		assertEquals("--GT-T", builder.getCurrentNucleotideSequence().toString());
+		assertEquals(new Range.Builder(initialClearRange)
+									.contractBegin(2)
+									.build(), 
+									builder.getClearRange());
+	}
+	
+	@Test
+	public void trimSequenceThatLeavesEndingGapShouldHaveAdjustedValidRange(){
+		
+		Range initialClearRange = new Range.Builder(5)
+										.shift(3)
+										.build();
+		AssembledReadBuilder<R> builder = createReadBuilder(readId, 
+				new NucleotideSequenceBuilder("AC--GT-T").build(),
+				
+				0, dir, initialClearRange, 8);
+		
+		builder.trim(Range.of(0,6));
+		
+		assertEquals("AC--GT-", builder.getCurrentNucleotideSequence().toString());
+		assertEquals(new Range.Builder(initialClearRange)
+									.contractEnd(1)
+									.build(), 
+									builder.getClearRange());
+	}
+	
+	
 	
 	@Test
 	public void trimSequenceShouldAffectValidRangeAndUngappedFullLengthAndStartOffset(){

@@ -39,6 +39,7 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.jcvi.jillion.assembly.AssemblyUtil;
 import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.assembly.ContigBuilder;
 import org.jcvi.jillion.assembly.util.CoverageMap;
@@ -792,21 +793,33 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
                 }
             }
             for(String readId : contigReads){
+            	if(readId.equals("1IONJCVI_0172_SAJEU:1:1:02175:00765#CCTGAGATACGAT/1")){
+            		System.out.println("here");
+            	}
             	//create a copy so we 
             	//can modify our version without
             	//affecting original
             	AceAssembledReadBuilder readBuilder = aceReadBuilderMap.get(readId)
             											.copy();
-            	Range readTrimRange = new Range.Builder(readBuilder.asRange().intersection(rangeTokeep))
-            						.shift(-readBuilder.getBegin()) //adjust trim range to be relative of read start
-            						.build();
+            	Range.Builder readTrimRangeBuilder = new Range.Builder(readBuilder.asRange().intersection(rangeTokeep))
+            						.shift(-readBuilder.getBegin()); //adjust trim range to be relative of read start
+            						
+            	
+            	//VHTNGS-910 : check that the new trim region
+            	//doesn't start or end in gaps.
+            	//if so trim more.
+            	NucleotideSequence untrimmedReadSequence = readBuilder.getCurrentNucleotideSequence();
+            	int firstNonGapTrimOffset =AssemblyUtil.getRightFlankingNonGapIndex(untrimmedReadSequence, (int) readTrimRangeBuilder.getBegin());
+            	int lastNonGapTrimOffset =AssemblyUtil.getLeftFlankingNonGapIndex(untrimmedReadSequence, (int) readTrimRangeBuilder.getEnd());
+            	
+            	
             	//trim updated
             	//valid range sequence
             	//and clear range
             	//so we can just use the returned values
             	//when adding this adjusted read to the split
             	//contig.
-        		readBuilder.trim(readTrimRange);
+        		readBuilder.trim(Range.of(firstNonGapTrimOffset, lastNonGapTrimOffset));
             	
             	
             	splitContig.addRead(readId, 

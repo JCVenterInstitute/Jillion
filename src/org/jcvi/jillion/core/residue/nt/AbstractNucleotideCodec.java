@@ -149,11 +149,19 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
             	return false;
             }
             int numberOfSentinels = sentinelStrategy.getNext(buf);
+            
+            int firstGapOffset =offsetStrategy.getNext(buf);            
+            
             //special case that first gap is after the offset we care about
-            int currentGapOffset =offsetStrategy.getNext(buf);
-            if(currentGapOffset >gappedOffset){
+            if(firstGapOffset >gappedOffset){
             	return false;
             }
+            //actually need to check the gap offset
+            //since we don't want to skip it!
+            if(firstGapOffset == gappedOffset){
+            	return true;
+            }
+            int currentGapOffset = firstGapOffset;
             for(int i = 1; i< numberOfSentinels; i++){
             	currentGapOffset =offsetStrategy.getNext(buf);
             	if(currentGapOffset == gappedOffset){

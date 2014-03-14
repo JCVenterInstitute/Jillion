@@ -49,6 +49,18 @@ public class TestAcgtGapNucleotideCodec {
         
         assertDecodeByIndexIsCorrect(nucleotides, actual);        
     }
+    
+    @Test
+    public void isGap(){
+    	assertIsGapCorrect(Nucleotides.encodeWithGapSentientals(sut, Nucleotides.parse("ACGT-ACGT")));
+    }
+
+	private void assertIsGapCorrect(byte[] encoded) {
+		assertTrue(sut.isGap(encoded, 4));
+        assertFalse(sut.isGap(encoded, 3));
+        assertFalse(sut.isGap(encoded, 5));
+	}
+	
     private void assertDecodeByIndexIsCorrect(List<Nucleotide> expected, byte[] actual){
     	assertEquals(expected.size(), sut.decodedLengthOf(actual));
        for(int i=0; i<expected.size(); i++){

@@ -26,13 +26,12 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Test;
 /**
  * @author dkatzel
@@ -70,6 +69,15 @@ public class TestDefaultNucleotideSequence {
         assertEquals("on the gap", 1, sut.getNumberOfGapsUntil(8));
         assertEquals("after 1 gap", 1, sut.getNumberOfGapsUntil(9));
         assertEquals("after all gaps", 2, sut.getNumberOfGapsUntil((int)sut.getLength()-1));
+    }
+    
+    @Test
+    public void isGap(){
+    	Set<Integer> gaps = new HashSet<Integer>(sut.getGapOffsets());
+    	
+    	for(int i=0; i< sut.getLength(); i++){
+    		assertEquals(gaps.contains(Integer.valueOf(i)), sut.isGap(i));
+    	}
     }
     
     @Test
