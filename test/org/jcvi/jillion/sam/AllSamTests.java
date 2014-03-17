@@ -14,6 +14,7 @@ import org.junit.runners.Suite.SuiteClasses;
     	AllSamHeaderTests.class,
     	AllAttributeTests.class,
     	
+    	TestVirtualFileOffset.class,
     	TestSamRecordFlags.class,
     	TestBinComputation.class,
     	TestSortOrder.class,
