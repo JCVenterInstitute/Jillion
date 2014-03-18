@@ -4,16 +4,29 @@ import java.util.Arrays;
 
 import org.jcvi.jillion.core.io.IOUtil;
 
-
+/**
+ * {@code UnsignedIntArray} is a  class
+ * that stores arrays of unsigned ints
+ * (opposed to signed bytes like {@code int[]} does.
+ * 
+ * @author dkatzel
+ */
 public class UnsignedIntArray {
 
 	private final int[] array;
-	
+	/**
+	 * Create a new {@link UnsignedIntArray}
+	 * object that is initialized to a COPY
+	 * of the given byte array.
+	 * All values in the array are treated as unsigned.
+	 * @param array the array to copy;
+	 * can not be null.
+	 */
 	public UnsignedIntArray(int[] array){
 		if(array ==null){
 			throw new NullPointerException("array can not be null");
 		}
-		this.array = array;
+		this.array = Arrays.copyOf(array, array.length);
 	}
 	
 	/**

@@ -1,6 +1,7 @@
 package org.jcvi.jillion.sam.index;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,7 +28,7 @@ public final class ReferenceIndex {
 
 
 	public VirtualFileOffset[] getIntervals() {
-		return intervals;
+		return Arrays.copyOf(intervals, intervals.length);
 	}
 
 
