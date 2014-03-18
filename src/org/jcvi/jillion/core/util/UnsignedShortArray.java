@@ -4,16 +4,29 @@ import java.util.Arrays;
 
 import org.jcvi.jillion.core.io.IOUtil;
 
-
+/**
+ * {@code UnsignedShortArrayv} is a  class
+ * that stores arrays of unsigned shorts
+ * (opposed to signed bytes like {@code short[]} does.
+ * 
+ * @author dkatzel
+ */
 public class UnsignedShortArray {
 
 	private final short[] array;
-	
+	/**
+	 * Create a new {@link UnsignedShortArray}
+	 * object that is initialized to a COPY
+	 * of the given byte array.
+	 * All values in the array are treated as unsigned.
+	 * @param array the array to copy;
+	 * can not be null.
+	 */
 	public UnsignedShortArray(short[] array){
 		if(array ==null){
 			throw new NullPointerException("array can not be null");
 		}
-		this.array = array;
+		this.array = Arrays.copyOf(array, array.length);
 	}
 	
 	/**
