@@ -50,6 +50,10 @@ import org.jcvi.jillion.internal.core.util.JillionUtil;
  *
  *
  */
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+		value = {"VA_FORMAT_STRING_USES_NEWLINE"},
+		justification = "\n character is required for .contig format "
+						+ "we don't want to accidentally put in a \r\n on diffent OS")
 public class TigrContigFileWriter implements Closeable{
     private static final int INITIAL_RECORD_BUFFER_SIZE = 2048;
 	private static final CtgFormatReadSorter READ_SORTER = CtgFormatReadSorter.INSTANCE;

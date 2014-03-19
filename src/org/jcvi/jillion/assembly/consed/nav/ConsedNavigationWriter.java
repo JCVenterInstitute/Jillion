@@ -40,6 +40,11 @@ import org.jcvi.jillion.core.Range.CoordinateSystem;
  *
  *
  */
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+		value = {"VA_FORMAT_STRING_USES_NEWLINE"},
+		justification = "\n character is required for .ace format (?) "
+						+ "we don't want to accidentally put in a \r\n on diffent OS"
+						+ "and break consed")
 public final class ConsedNavigationWriter implements Closeable{
 
     private final OutputStream out;
