@@ -31,7 +31,7 @@ import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
 import org.jcvi.jillion.sam.header.SamProgram;
 
-import edu.umd.cs.findbugs.annotations.SuppressWarnings;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * {@code SamUtil} is a utility class
  * for working with Sam or Bam encoded data.
@@ -41,7 +41,7 @@ import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 //SAM formatted data requires '\n' 
 //and not '%n' which will break SAM/BAMs written
 //in Windows
-@SuppressWarnings("VA_FORMAT_STRING_USES_NEWLINE")
+@SuppressFBWarnings("VA_FORMAT_STRING_USES_NEWLINE")
 public final class SamUtil {
 	
 
