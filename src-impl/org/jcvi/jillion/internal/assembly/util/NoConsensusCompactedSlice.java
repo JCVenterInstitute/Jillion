@@ -48,6 +48,10 @@ public class NoConsensusCompactedSlice implements Slice{
      * @param elements
      * @param ids
      */
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+    		value = {"EI_EXPOSE_REP2"},
+    		justification = "only used internally by builders so don't"
+    						+ " have to worry about leaking ref")
     public NoConsensusCompactedSlice(short[] elements, List<String> ids) {
         this.elements = elements;
         this.ids = ids.toArray(new String[ids.size()]);
