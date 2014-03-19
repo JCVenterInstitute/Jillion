@@ -65,7 +65,8 @@ public class TestSortOrder {
 		
 		expect(first.getReferenceName()).andStubReturn(SamRecord.UNAVAILABLE);
 		expect(second.getReferenceName()).andStubReturn(SamRecord.UNAVAILABLE);
-		
+		expect(first.mapped()).andStubReturn(false);
+		expect(second.mapped()).andStubReturn(false);
 		
 		replay(first,second);
 		assertCorrectlySorted(SortOrder.COORDINATE, first, second, header);
@@ -76,6 +77,9 @@ public class TestSortOrder {
 		SamRecord second = createMock(SamRecord.class);
 		
 		SamHeader header = createHeaderWithReferences("mapped");
+		
+		expect(first.mapped()).andStubReturn(true);
+		expect(second.mapped()).andStubReturn(false);
 		
 		expect(first.getReferenceName()).andStubReturn("mapped");
 		expect(second.getReferenceName()).andStubReturn(SamRecord.UNAVAILABLE);
@@ -93,6 +97,9 @@ public class TestSortOrder {
 		
 		expect(first.getReferenceName()).andStubReturn("sameRef");
 		expect(second.getReferenceName()).andStubReturn("sameRef");
+		
+		expect(first.mapped()).andStubReturn(true);
+		expect(second.mapped()).andStubReturn(true);
 		
 		expect(first.getStartPosition()).andStubReturn(1);
 		expect(second.getStartPosition()).andStubReturn(9999);
@@ -114,7 +121,8 @@ public class TestSortOrder {
 		expect(first.getReferenceName()).andStubReturn("zzzzz");
 		expect(second.getReferenceName()).andStubReturn("aaaa");
 	
-		
+		expect(first.mapped()).andStubReturn(true);
+		expect(second.mapped()).andStubReturn(true);
 		
 		replay(first,second);
 		assertCorrectlySorted(SortOrder.COORDINATE, first, second,header, DONT_CHECK_SELVES);
@@ -135,6 +143,8 @@ public class TestSortOrder {
 		expect(first.getQueryName()).andStubReturn("first");
 		expect(second.getQueryName()).andStubReturn("second");
 		
+		expect(first.mapped()).andStubReturn(true);
+		expect(second.mapped()).andStubReturn(true);
 		
 		replay(first,second);
 		assertCorrectlySorted(SortOrder.COORDINATE, first, second,header);
