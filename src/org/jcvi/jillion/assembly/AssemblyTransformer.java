@@ -6,7 +6,7 @@ import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
+
 /**
  * {@code AssemblyTransformer} is an interface
  * to transform one assembly format into another.

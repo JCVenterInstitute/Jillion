@@ -85,9 +85,9 @@ public class UnCommentedProteinFastaRecord implements ProteinFastaRecord{
         if (this.getComment() != null) {
         	record.append(' ').append(this.getComment());
         }
-        record.append(FastaUtil.LINE_SEPARATOR);
-        record.append(this.getRecordBody());
-        record.append(FastaUtil.LINE_SEPARATOR);
+        record.append(FastaUtil.LINE_SEPARATOR)
+		        .append(this.getRecordBody())
+		        .append(FastaUtil.LINE_SEPARATOR);
         
         return record.toString();
     }

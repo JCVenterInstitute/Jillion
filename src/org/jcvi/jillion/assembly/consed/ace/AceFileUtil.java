@@ -144,6 +144,11 @@ public final class AceFileUtil {
 	
     
     private static final String CONTIG_HEADER = "CO %s %d %d %d %s%n";
+    /**
+     * Initial size to use for StringBuilders used to construct
+     * ace encoded read data.
+     */
+	private static final int INITIAL_READ_BUFFER_SIZE = 1024;
    
     
     private AceFileUtil(){
@@ -302,19 +307,19 @@ public final class AceFileUtil {
         	qualities = phd.getQualitySequence();
         }
         
-        StringBuilder readRecord = new StringBuilder();
-        readRecord.append(String.format("RD %s %d 0 0%n",
+        return new StringBuilder(INITIAL_READ_BUFFER_SIZE)
+        		.append(String.format("RD %s %d 0 0%n",
                                             readId,
-                                            fullGappedValidRange.getLength()));
+                                            fullGappedValidRange.getLength()))
         
         
-        readRecord.append(String.format("%s%n%n",
-                AceFileUtil.convertToAcePaddedBasecalls(fullGappedValidRange,qualities)));
-        readRecord.append(String.format("%s%n",createQualityRangeRecord(
-                gappedValidBasecalls,ungappedValidRange,dir, 
-                fullBasecalls.getUngappedLength())));
-        readRecord.append(String.format("%s%n",createPhdRecord(phdInfo)));
-        return readRecord.toString();
+	        .append(String.format("%s%n%n",
+	                AceFileUtil.convertToAcePaddedBasecalls(fullGappedValidRange,qualities)))
+	        .append(String.format("%s%n",createQualityRangeRecord(
+	                gappedValidBasecalls,ungappedValidRange,dir, 
+	                fullBasecalls.getUngappedLength())))
+	        .append(String.format("%s%n",createPhdRecord(phdInfo)))
+	        .toString();
     }
     public static void writeAceContigHeader(String contigId, long consensusLength, long numberOfReads,
     		int numberOfBaseSegments, boolean isComplimented, OutputStream out) throws IOException{

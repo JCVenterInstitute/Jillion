@@ -33,8 +33,8 @@ import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.trace.chromat.scf.header.SCFHeader;
@@ -88,10 +88,10 @@ public class CommentSectionCodec implements SectionCodec {
         }
         StringBuilder builder = new StringBuilder();
         for(Entry<String, String> entry :props.entrySet()){
-            builder.append(entry.getKey());
-            builder.append('=');
-            builder.append(entry.getValue());
-            builder.append('\n');
+            builder.append(entry.getKey())
+            .append('=')
+            .append(entry.getValue())
+            .append('\n');
         }
         builder.append(NULL);
         ByteBuffer buffer = ByteBuffer.wrap(builder.toString().getBytes(IOUtil.UTF_8));

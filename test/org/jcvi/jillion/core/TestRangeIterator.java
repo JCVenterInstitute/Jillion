@@ -32,6 +32,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -50,6 +51,12 @@ public class TestRangeIterator {
             assertEquals(Long.valueOf(i), sut.next());
         }
         assertFalse(sut.hasNext());
+        try{
+        	sut.next();
+        	fail("should throw no such element exception");
+        }catch(NoSuchElementException expected){
+        	//pass
+        }
     }
     
     @Test
@@ -80,7 +87,8 @@ public class TestRangeIterator {
     public void testEndIsInMax(){
     	Range r = Range.of(Long.MAX_VALUE-10, Long.MAX_VALUE);
     	Iterator<Long> sut = r.iterator();
-    	for(int i =0; i< 11; i++){    		
+    	for(int i =0; i< 10; i++){   
+    		assertTrue(sut.hasNext());
             assertEquals(Long.MAX_VALUE-10+i, sut.next().longValue());
         }
         assertFalse(sut.hasNext());

@@ -125,7 +125,7 @@ final class LargeAceFileDataStore implements AceFileDataStore{
 	
 	
 	    
-    protected final void throwExceptionIfClosed() {
+    private final void throwExceptionIfClosed() {
         if(isClosed){
             throw new DataStoreClosedException("DataStore is closed");
         }

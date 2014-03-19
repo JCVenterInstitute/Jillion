@@ -133,8 +133,7 @@ abstract class AbstractAceFileWriter implements AceFileWriter{
 				i++;
 			}
 			//last quality handled specially so we don't add an extra CR
-			formattedString.append(String.format("%02d",iter.next().getQualityScore()));
-			formattedString.append(CR);
+			formattedString.append(String.format("%02d%s",iter.next().getQualityScore(), CR));
 			tempWriter.write(formattedString.toString());
 		
 	}

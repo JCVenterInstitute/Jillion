@@ -43,7 +43,8 @@ import org.jcvi.jillion.core.util.JoinedStringBuilder;
 
 public class PhdBallWriter implements PhdWriter{
 
-	 private static final String BEGIN_SEQUENCE = "BEGIN_SEQUENCE";
+	 private static final int INITIAL_SIZE_READ_TAG_BUFFER = 500;
+	private static final String BEGIN_SEQUENCE = "BEGIN_SEQUENCE";
 	    private static final String BEGIN_COMMENT = "BEGIN_COMMENT";
 	    private static final String END_SEQUENCE = "END_SEQUENCE";
 	    private static final String END_COMMENT = "END_COMMENT";
@@ -55,6 +56,11 @@ public class PhdBallWriter implements PhdWriter{
 	    private static final String END_TAG = "END_TAG\n";
 
 	    private static final String NEW_LINE = String.format("%n");
+	    /**
+	     * Initial size of StringBuffer used to write out phd
+	     * text data.  Buffer will grow if this size is exceeded.
+	     */
+		private static final int INITIAL_PHD_BUFFER_SIZE = 1024;
 	
 	private final Writer writer;
 	/**
@@ -128,9 +134,13 @@ public class PhdBallWriter implements PhdWriter{
 	private void assertCommentIsOnlyOneLine(String fileComment){
 		if(fileComment !=null){
 			Scanner scanner = new Scanner(fileComment);
-			scanner.nextLine();
-			if(scanner.hasNext()){
-				throw new IllegalArgumentException("fileComment can not be multi-line");
+			try{
+				scanner.nextLine();
+				if(scanner.hasNext()){
+					throw new IllegalArgumentException("fileComment can not be multi-line");
+				}
+			}finally{
+				scanner.close();
 			}
 		}
 	}
@@ -177,21 +187,21 @@ public class PhdBallWriter implements PhdWriter{
 	
 	    private void writePhd(Phd phd, Integer version) throws IOException{
 	        try{
-	            StringBuilder phdRecord = new StringBuilder();
+	            StringBuilder phdRecord = new StringBuilder(INITIAL_PHD_BUFFER_SIZE);
 	            if(version ==null){
 	            	phdRecord.append( String.format("%s %s%n%n",BEGIN_SEQUENCE, phd.getId()));
 	            }else{
 	            	phdRecord.append( String.format("%s %s %d%n%n",BEGIN_SEQUENCE, phd.getId(),version));
 	            }
-	            phdRecord.append(createComments(phd));
-	            phdRecord.append(writeDnaSection(phd));
-	            phdRecord.append(NEW_LINE);
+	            phdRecord.append(createComments(phd))
+			            .append(writeDnaSection(phd))
+			            .append(NEW_LINE);
 	            List<PhdReadTag> tags = phd.getReadTags();
 	            if(!tags.isEmpty()){
 	            	 phdRecord.append(writeReadTags(tags));
 	            }
-	            phdRecord.append(String.format("%s%n",END_SEQUENCE));
-	            phdRecord.append(createWholeReadItems(phd));
+	            phdRecord.append(String.format("%s%n",END_SEQUENCE))
+	            	.append(createWholeReadItems(phd));
 	            writer.write(phdRecord.toString());
 	        }catch(Throwable t){
 	            throw new IOException("error writing phd record for "+phd.getId(), t);
@@ -203,26 +213,28 @@ public class PhdBallWriter implements PhdWriter{
 	    private String writeReadTags(List<PhdReadTag> tags) {
 			List<String> printedTags = new ArrayList<String>(tags.size());
 	    	for(PhdReadTag tag : tags){
-				StringBuilder builder = new StringBuilder(500);
-				builder.append(BEGIN_TAG)
+	    		Range range = tag.getUngappedRange();
+				StringBuilder builder = new StringBuilder(INITIAL_SIZE_READ_TAG_BUFFER)
+					.append(BEGIN_TAG)
 					.append(String.format("TYPE: %s%n",tag.getType()))
-					.append(String.format("SOURCE: %s%n",tag.getSource()));
-				Range range = tag.getUngappedRange();
-				builder.append(String.format("UNPADDED_READ_POS: %d %d%n",
-						range.getBegin(Range.CoordinateSystem.RESIDUE_BASED),
-						range.getEnd(Range.CoordinateSystem.RESIDUE_BASED)));
+					.append(String.format("SOURCE: %s%n",tag.getSource()))
 				
-				builder.append(String.format("DATE: %s%n", PhdUtil.formatReadTagDate(tag.getDate())));
+					.append(String.format("UNPADDED_READ_POS: %d %d%n",
+						range.getBegin(Range.CoordinateSystem.RESIDUE_BASED),
+						range.getEnd(Range.CoordinateSystem.RESIDUE_BASED)))
+				
+						.append(String.format("DATE: %s%n", PhdUtil.formatReadTagDate(tag.getDate())));
 				if(tag.getComment() !=null){
-					builder.append(BEGIN_COMMENT).append(NEW_LINE);
-					builder.append(tag.getComment()).append(NEW_LINE);
-					builder.append(END_COMMENT).append(NEW_LINE);
+					builder.append(BEGIN_COMMENT).append(NEW_LINE)
+					.append(tag.getComment()).append(NEW_LINE)
+					.append(END_COMMENT).append(NEW_LINE);
 				}
 				if(tag.getFreeFormData() !=null){
 					builder.append(tag.getFreeFormData()).append(NEW_LINE);
 				}
-				builder.append(END_TAG);
-				printedTags.add(builder.toString());
+				
+				printedTags.add(builder.append(END_TAG)
+									.toString());
 			}
 			return new JoinedStringBuilder(printedTags)
 						.glue(NEW_LINE)
@@ -242,10 +254,10 @@ public class PhdBallWriter implements PhdWriter{
 	    }
 
 	    private StringBuilder writeDnaSection(Phd phd) {
-	        StringBuilder dna = new StringBuilder();
-	        dna.append(String.format("%s%n",BEGIN_DNA));
-	        dna.append(writeCalledInfo(phd));
-	        dna.append(String.format("%s%n",END_DNA));   
+	        StringBuilder dna = new StringBuilder(INITIAL_PHD_BUFFER_SIZE);
+	        dna.append(String.format("%s%n",BEGIN_DNA))
+	        .append(writeCalledInfo(phd))
+	        .append(String.format("%s%n",END_DNA));   
 	        return dna;
 	    }
 
@@ -284,15 +296,14 @@ public class PhdBallWriter implements PhdWriter{
 	    }
 
 	    private StringBuilder createComments(Phd phd) {
-	        StringBuilder comments = new StringBuilder();
-	        
-	        comments.append(BEGIN_COMMENT);
-	        comments.append(NEW_LINE);
+	        StringBuilder comments = new StringBuilder(INITIAL_SIZE_READ_TAG_BUFFER)
+								        .append(BEGIN_COMMENT)
+								        .append(NEW_LINE);
 	        for(Entry<String, String> entry :phd.getComments().entrySet()){
 	            comments.append(String.format("%s: %s%n",entry.getKey(),entry.getValue()));
 	        }
-	        comments.append(END_COMMENT);
-	        comments.append(NEW_LINE);
+	        comments.append(END_COMMENT)
+	        		.append(NEW_LINE);
 	        
 	        return comments;
 	    }

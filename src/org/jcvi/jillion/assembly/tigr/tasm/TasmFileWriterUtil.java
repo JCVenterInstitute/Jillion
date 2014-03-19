@@ -159,19 +159,19 @@ final class TasmFileWriterUtil {
 		return map;
 	}
 	
-	protected static long getNumberOfReads(TasmContig contig){
+	private static long getNumberOfReads(TasmContig contig){
 		return contig.getNumberOfReads();
 	}
 	
-	protected static double getAvgCoverage(TasmContig contig){
+	private static double getAvgCoverage(TasmContig contig){
 		return contig.getAvgCoverage();
 	}
 	
-	protected static String getEditPerson(TasmContig contig){
+	private static String getEditPerson(TasmContig contig){
 		return contig.getEditPerson();
 	}
 	
-	protected static Date getEditDate(TasmContig contig){
+	private static Date getEditDate(TasmContig contig){
 		return contig.getEditDate();
 	}
 	

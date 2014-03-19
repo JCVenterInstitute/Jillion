@@ -540,22 +540,21 @@ public final class DataStoreUtil {
 	    	throwExceptionIfClosed();
 	        return map.size();
 	    }
-		
-		 
-		    protected final void throwExceptionIfClosed() {
-		        if(isClosed){
-		            throw new DataStoreClosedException("DataStore is closed");
-		        }
-		    }
 
-		    @Override
-		    public final void close() throws IOException {
-		        isClosed = true;
-		    }
+		private final void throwExceptionIfClosed() {
+			if (isClosed) {
+				throw new DataStoreClosedException("DataStore is closed");
+			}
+		}
 
-		    public final boolean isClosed() {
-		        return isClosed;
-		    }
+		@Override
+		public final void close() throws IOException {
+			isClosed = true;
+		}
+
+		public final boolean isClosed() {
+			return isClosed;
+		}
 		
 		@Override
 		public StreamingIterator<T> iterator() {

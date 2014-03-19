@@ -306,8 +306,8 @@ final class CoverageMapFactory {
 	    public String toString() {
 	        StringBuffer buf = new StringBuffer();
 	        for(CoverageRegion<V> region : regions){
-	            buf.append(region);
-	            buf.append('\n');
+	            buf.append(region)
+	            	.append('\n');
 	        }
 	        return buf.toString();
 	    }

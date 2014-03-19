@@ -51,7 +51,8 @@ import org.jcvi.jillion.internal.core.util.JillionUtil;
  *
  */
 public class TigrContigFileWriter implements Closeable{
-    private static final CtgFormatReadSorter READ_SORTER = CtgFormatReadSorter.INSTANCE;
+    private static final int INITIAL_RECORD_BUFFER_SIZE = 2048;
+	private static final CtgFormatReadSorter READ_SORTER = CtgFormatReadSorter.INSTANCE;
     private final OutputStream out;
     
     
@@ -81,19 +82,15 @@ public class TigrContigFileWriter implements Closeable{
     
    
     private void writeContigHeader(Contig<? extends AssembledRead> contig) throws IOException {
-        String header = String.format("##%s %d %d bases",
+        String header = String.format("##%s %d %d bases\n",
                 contig.getId(), contig.getNumberOfReads(), contig.getConsensusSequence().getLength());
         
-        writeToOutputStream(header+"\n");
+        writeToOutputStream(header);
     }
 
     private void writeBases(Sequence<Nucleotide> consensus) throws UnsupportedEncodingException, IOException {
-        StringBuilder asString = new StringBuilder();
-        for(Nucleotide glyph : consensus){
-            asString.append(glyph);
-        }
-        
-        String result = asString.toString().replaceAll("(.{60})", "$1\n");
+       
+        String result = consensus.toString().replaceAll("(.{60})", "$1\n");
         if(!result.endsWith("\n")){
             result += "\n";
         }
@@ -106,7 +103,7 @@ public class TigrContigFileWriter implements Closeable{
     }
     
     private void writePlacedReadHeader(AssembledRead placedRead,NucleotideSequence consensus) throws IOException {
-        StringBuilder header = new StringBuilder();
+        StringBuilder header = new StringBuilder(INITIAL_RECORD_BUFFER_SIZE);
         header.append(String.format("#%s(%d) [", placedRead.getId(), placedRead.getGappedStartOffset()));
         int validLeft = (int)placedRead.getReadInfo().getValidRange().getBegin();
         int validRight = (int)placedRead.getReadInfo().getValidRange().getEnd();
@@ -117,11 +114,10 @@ public class TigrContigFileWriter implements Closeable{
             validRight = temp;
         }
 
-        header.append(String.format("] %d bases {%d %d} <%d %d>",
+        header.append(String.format("] %d bases {%d %d} <%d %d>\n",
                 placedRead.getNucleotideSequence().getLength(), validLeft+1, validRight+1, 
                 placedRead.getGappedStartOffset()+1-consensus.getNumberOfGapsUntil((int) placedRead.getGappedStartOffset()), 
                 placedRead.getGappedEndOffset()+1-consensus.getNumberOfGapsUntil((int)placedRead.getGappedEndOffset())));
-        header.append('\n');
         writeToOutputStream(header.toString());
         
     }
