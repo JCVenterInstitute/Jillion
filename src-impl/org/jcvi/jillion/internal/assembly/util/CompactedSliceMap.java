@@ -127,13 +127,15 @@ public final class CompactedSliceMap implements SliceMap {
     private Iterator<PhredQuality> createNewDefaultQualityIterator(
 			final PhredQuality defaultQuality) {
 		return new Iterator<PhredQuality>(){
-
+				
 			@Override
 			public boolean hasNext() {
 				//always return true
 				return true;
 			}
-
+			@edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+					value = {"IT_NO_SUCH_ELEMENT"}, 
+					justification = "only used for fake data will never have no such element exception")				
 			@Override
 			public PhredQuality next() {
 				return defaultQuality;

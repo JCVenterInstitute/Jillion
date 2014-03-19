@@ -45,6 +45,8 @@ public final class ConsedNavigationWriter implements Closeable{
     private final OutputStream out;
     
     private static final Charset UTF_8 = Charset.forName("UTF-8");
+
+	private static final int NAV_ELEMENT_BUFFER_SIZE = 1024;
     
     public static ConsedNavigationWriter create(String title, OutputStream out) throws IOException{
         if(title ==null){
@@ -109,31 +111,37 @@ public final class ConsedNavigationWriter implements Closeable{
     }
     
     public void writeNavigationElement(ReadNavigationElement element) throws IOException{
-        
-        StringBuilder builder = new StringBuilder("BEGIN_REGION\n");
-        builder.append(String.format("TYPE: %s\n",element.getType()));
-        builder.append(String.format("READ: %s\n",element.getTargetId()));
-        Range range = element.getUngappedPositionRange();
-        builder.append(String.format("UNPADDED_READ_POS: %d %d\n",range.getBegin(CoordinateSystem.RESIDUE_BASED), range.getEnd(CoordinateSystem.RESIDUE_BASED)));
-        String comment = element.getComment();
-        //consed requires a comment line even if it is empty
-        builder.append(String.format("COMMENT: %s\n",comment==null? "": comment));
-        builder.append("END_REGION\n");
+    	 Range range = element.getUngappedPositionRange();
+    	 String comment = element.getComment();
+    	 
+        StringBuilder builder = new StringBuilder(NAV_ELEMENT_BUFFER_SIZE)
+        		.append("BEGIN_REGION\n")
+		        .append(String.format("TYPE: %s\n",element.getType()))
+		        .append(String.format("READ: %s\n",element.getTargetId()))
+		       
+		        .append(String.format("UNPADDED_READ_POS: %d %d\n",
+		        		range.getBegin(CoordinateSystem.RESIDUE_BASED), range.getEnd(CoordinateSystem.RESIDUE_BASED)))
+		       
+		        //consed requires a comment line even if it is empty
+		        .append(String.format("COMMENT: %s\n",comment==null? "": comment))
+        		.append("END_REGION\n");
         out.write(builder.toString().getBytes(UTF_8));
     }
     
     public void writeNavigationElement(ConsensusNavigationElement element) throws IOException{
-        
-        StringBuilder builder = new StringBuilder("BEGIN_REGION\n");
-        builder.append(String.format("TYPE: %s\n",element.getType()));
-        builder.append(String.format("CONTIG: %s\n",element.getTargetId()));
-        Range range = element.getUngappedPositionRange();
-        builder.append(String.format("UNPADDED_CONS_POS: %d %d\n",range.getBegin(CoordinateSystem.RESIDUE_BASED), range.getEnd(CoordinateSystem.RESIDUE_BASED)));
-        String comment = element.getComment();
-        //consed requires a comment line even if it is empty
-        builder.append(String.format("COMMENT: %s\n",comment==null? "": comment));
-       
-        builder.append("END_REGION\n");
+    	Range range = element.getUngappedPositionRange();
+    	 String comment = element.getComment();
+        StringBuilder builder = new StringBuilder(NAV_ELEMENT_BUFFER_SIZE)
+        							.append("BEGIN_REGION\n")
+							        .append(String.format("TYPE: %s\n",element.getType()))
+							        .append(String.format("CONTIG: %s\n",element.getTargetId()))
+							        
+							        .append(String.format("UNPADDED_CONS_POS: %d %d\n",range.getBegin(CoordinateSystem.RESIDUE_BASED), range.getEnd(CoordinateSystem.RESIDUE_BASED)))
+							       
+							        //consed requires a comment line even if it is empty
+							        .append(String.format("COMMENT: %s\n",comment==null? "": comment))
+							       
+							        .append("END_REGION\n");
         
         out.write(builder.toString().getBytes(UTF_8));
     }

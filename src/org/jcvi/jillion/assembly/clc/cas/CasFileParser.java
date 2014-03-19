@@ -217,7 +217,7 @@ public final class CasFileParser implements CasParser{
         
     }
 
-	protected void parseScore(CasFileVisitor visitor,
+	private void parseScore(CasFileVisitor visitor,
 			RandomAccessFileInputStream in, long numberOfContigSequences)
 			throws IOException {
 		CasScoreType scoreType = CasScoreType.valueOf((byte) in.read());
@@ -259,7 +259,7 @@ public final class CasFileParser implements CasParser{
 		}
 	}
 
-	protected void parseReadFiles(CasFileVisitor visitor,
+	private void parseReadFiles(CasFileVisitor visitor,
 			RandomAccessFileInputStream in, CasNumberParserStrategy strategy) throws IOException {
 		long numberOfReadFiles = CasUtil.parseByteCountFrom(in);
 		visitor.visitNumberOfReadFiles(numberOfReadFiles);
@@ -296,7 +296,7 @@ public final class CasFileParser implements CasParser{
 		}
 	}
 
-	protected long parseMetadata(CasFileVisitor visitor,
+	private long parseMetadata(CasFileVisitor visitor,
 			RandomAccessFileInputStream in, CasNumberParserStrategy strategy) throws IOException {
 		long numberOfContigSequences = CasUtil.readCasUnsignedInt(in);
 		numberOfReads = strategy.parseNumber(in);
@@ -305,7 +305,7 @@ public final class CasFileParser implements CasParser{
 		return numberOfContigSequences;
 	}
 
-	protected void parseProgramInfo(CasFileVisitor visitor,
+	private void parseProgramInfo(CasFileVisitor visitor,
 			RandomAccessFileInputStream in) throws IOException {
 		String nameOfAssemblyProgram = CasUtil.parseCasStringFrom(in);
 		String version = CasUtil.parseCasStringFrom(in);

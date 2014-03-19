@@ -186,11 +186,9 @@ public enum SortOrder{
 			//are in "arbitrary order"
 			//which means we can do whatever we want
 			//therefore will sort by qname
-			String ref1 =o1.getReferenceName();
-			String ref2 =o2.getReferenceName();
 			
-			boolean ref1DidNotMap = SamRecord.UNAVAILABLE.equals(ref1);
-			boolean ref2DidNotMap = SamRecord.UNAVAILABLE.equals(ref2);
+			boolean ref1DidNotMap = !o1.mapped();
+			boolean ref2DidNotMap = !o2.mapped();
 			
 			if(ref1DidNotMap && ref2DidNotMap){
 				//according to the SAM spec and those reads
@@ -213,6 +211,9 @@ public enum SortOrder{
 			}
 			//if we get this far,
 			//then both reads mapped somewhere
+			String ref1 =o1.getReferenceName();
+			String ref2 =o2.getReferenceName();
+			
 			if(!ref1.equals(ref2)){
 				int index1 =referenceNames.indexOf(ref1);
 				int index2 =referenceNames.indexOf(ref2);

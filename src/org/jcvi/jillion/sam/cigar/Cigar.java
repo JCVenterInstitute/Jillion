@@ -474,8 +474,8 @@ public final class Cigar implements Iterable<CigarElement>{
 	public  String toCigarString() {
 		StringBuilder builder = new StringBuilder(3*elements.length);
 		for(CigarElement e : elements){
-			builder.append(e.getLength());
-			builder.append(e.getOp().getOpCode());
+			builder.append(e.getLength())
+					.append(e.getOp().getOpCode());
 		}
 		return builder.toString();
 	}

@@ -63,12 +63,12 @@ final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegio
     
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder(50);
-        builder.append("coverage region : ");
-        builder.append(range);
-        builder.append(" coverage = ");
-        builder.append(getCoverageDepth());
-        return builder.toString();
+        return new StringBuilder(50)
+			        .append("coverage region : ")
+			        .append(range)
+			        .append(" coverage = ")
+			        .append(getCoverageDepth())
+			        .toString();
     }
     @Override
     public int hashCode() {

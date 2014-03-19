@@ -53,25 +53,25 @@ final class NucleotidePairwiseSequenceAlignmentImpl extends AbstractPairwiseSequ
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder(TO_STRING_BUFFER_SIZE);
-		builder.append("NucleotidePairwiseSequenceAlignmentImpl [getPercentIdentity()=");
-		builder.append(getPercentIdentity());
-		builder.append(", getAlignmentLength()=");
-		builder.append(getAlignmentLength());
-		builder.append(", getNumberOfMismatches()=");
-		builder.append(getNumberOfMismatches());
-		builder.append(", getNumberOfGapOpenings()=");
-		builder.append(getNumberOfGapOpenings());
-		builder.append(", getGappedQueryAlignment()=");
-		builder.append(getGappedQueryAlignment());
-		builder.append(", getGappedSubjectAlignment()=");
-		builder.append(getGappedSubjectAlignment());
-		builder.append(", getQueryRange()=");
-		builder.append(getQueryRange());
-		builder.append(", getSubjectRange()=");
-		builder.append(getSubjectRange());
-		builder.append(", getScore()=");
-		builder.append(getScore());
-		builder.append(']');
+		builder.append("NucleotidePairwiseSequenceAlignmentImpl [getPercentIdentity()=")
+		.append(getPercentIdentity())
+		.append(", getAlignmentLength()=")
+		.append(getAlignmentLength())
+		.append(", getNumberOfMismatches()=")
+		.append(getNumberOfMismatches())
+		.append(", getNumberOfGapOpenings()=")
+		.append(getNumberOfGapOpenings())
+		.append(", getGappedQueryAlignment()=")
+		.append(getGappedQueryAlignment())
+		.append(", getGappedSubjectAlignment()=")
+		.append(getGappedSubjectAlignment())
+		.append(", getQueryRange()=")
+		.append(getQueryRange())
+		.append(", getSubjectRange()=")
+		.append(getSubjectRange())
+		.append(", getScore()=")
+		.append(getScore())
+		.append(']');
 		return builder.toString();
 	}
 
