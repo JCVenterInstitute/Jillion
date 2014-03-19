@@ -95,7 +95,6 @@ public final class SamTransformationService implements AssemblyTransformationSer
 	private static final class SamTransformerVisitor implements SamVisitor{
 
 		private final AssemblyTransformer transformer;
-		private SamHeader header;
 		private final NucleotideSequenceDataStore referenceDataStore;
 		private Map<String,GrowableIntArray> gapOffsetMap;
 		
@@ -108,7 +107,6 @@ public final class SamTransformationService implements AssemblyTransformationSer
 
 		@Override
 		public void visitHeader(SamHeader header) {
-			this.header = header;
 			
 			for(ReferenceSequence refSeq : header.getReferenceSequences()){
 				String id = refSeq.getName();

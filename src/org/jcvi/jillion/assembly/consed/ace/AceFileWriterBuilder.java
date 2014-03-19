@@ -55,6 +55,11 @@ import org.jcvi.jillion.core.io.IOUtil;
  * @author dkatzel
  *
  */
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+		value = {"VA_FORMAT_STRING_USES_NEWLINE"},
+		justification = "\n character is required for .ace format (?) "
+						+ "we don't want to accidentally put in a \r\n on diffent OS"
+						+ "and break consed")
 public final class AceFileWriterBuilder{
 	
 		private boolean createBsRecords=false;
