@@ -104,10 +104,7 @@ public final class Cigar implements Iterable<CigarElement>{
 
 	@Override
 	public Iterator<CigarElement> iterator() {
-		//defensive copy
-		CigarElement[] copy = new CigarElement[elements.length];
-		System.arraycopy(elements, 0, copy, 0, elements.length);
-		return new ArrayIterator<CigarElement>(copy);
+		return new ArrayIterator<CigarElement>(elements);
 	}
 
 	/**

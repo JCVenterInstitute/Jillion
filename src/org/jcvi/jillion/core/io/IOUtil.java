@@ -141,13 +141,12 @@ public final class IOUtil {
      * @param file the file to delete; if this parameter
      * is null, then method does nothing.
      */
-    public static void deleteIgnoreError(File file){
-    	//This method exists solely so we don't
-    	//have file.delete()s without checking return
-    	//values littered throughout the codebase. 
-    	//programs like FindBugs will flag these
-    	//statements as bad code since we don't check return value
-    	//so I would rather have only 1 such warning instead of dozens.
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+			value = {"RV_RETURN_VALUE_IGNORED_BAD_PRACTICE"},
+			justification = "This method exists solely so we don't "
+							+ "have file.delete()s without checking return "
+							+ "values littered throughout the codebase.")
+    public static void deleteIgnoreError(File file){    	
     	if(file!=null && file.exists()){
     		file.delete();
     	}
