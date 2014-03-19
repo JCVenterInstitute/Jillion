@@ -115,35 +115,8 @@ public final class SamUtil {
 		  }
 
 		  @Override
-		  protected DateFormat initialValue() {
-			  //facade DateFormat with multiple versions
-			  //since the standard JDK SimpleDateFormat
-			  //can't handle optional parts
-		   return new DateFormat(){
-			   private static final String DATE_FULL_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
-			   private static final String DAY_ONLY_FORMAT = "yyyy-MM-dd";
-			   
-			   final DateFormat full =new SimpleDateFormat(DATE_FULL_FORMAT);
-			   final DateFormat dayOnly =new SimpleDateFormat(DAY_ONLY_FORMAT);
-
-			@Override
-			public StringBuffer format(Date date, StringBuffer toAppendTo,
-					FieldPosition fieldPosition) {
-				//always format to full length
-				//to support spec
-				return full.format(date, toAppendTo, fieldPosition);
-			}
-
-			@Override
-			public Date parse(String source, ParsePosition pos) {
-				if(source.length() - pos.getIndex() == DAY_ONLY_FORMAT.length()){
-					return dayOnly.parse(source, pos);
-				}
-				return full.parse(source, pos);
-				
-				
-			}
-		   };
+		  protected DateFormat initialValue() {			 
+		   return new SamDateFormat();
 		  }
 
 		  @Override
@@ -600,5 +573,46 @@ public final class SamUtil {
 		}
 	}
 	
+	/**
+	 * {@code SamDateFormat} is a {@link DateFormat}
+	 * that can fall back to multiple date formats if needed.
+	 * This is used because apparently some older sam files
+	 * use a different date format string.
+	 * 
+	 * @author dkatzel
+	 *
+	 */
+	private static final class SamDateFormat extends DateFormat{
+
+		/**
+		 * Default serial version id.
+		 */
+		private static final long serialVersionUID = 1L;
+
+		private static final String DATE_FULL_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
+		private static final String DAY_ONLY_FORMAT = "yyyy-MM-dd";
+
+		final DateFormat full = new SimpleDateFormat(DATE_FULL_FORMAT);
+		final DateFormat dayOnly = new SimpleDateFormat(DAY_ONLY_FORMAT);
+
+		@Override
+		public StringBuffer format(Date date, StringBuffer toAppendTo,
+				FieldPosition fieldPosition) {
+			// always format to full length
+			// to support spec
+			return full.format(date, toAppendTo, fieldPosition);
+		}
+
+		@Override
+		public Date parse(String source, ParsePosition pos) {
+			//if the length to parse is only long enough 
+			//to use the day only format, then use that.
+			if (source.length() - pos.getIndex() == DAY_ONLY_FORMAT.length()) {
+				return dayOnly.parse(source, pos);
+			}
+			return full.parse(source, pos);
+
+		}
+	}
 	
 }
