@@ -628,7 +628,7 @@ public final class Cigar implements Iterable<CigarElement>{
 	 * does not match the cigar unpadded length returned by {@link #getRawUnPaddedReadLength()}
 	 */
 	@SuppressWarnings("fallthrough")
-	@edu.umd.cs.findbugs.annotations.SuppressWarnings("SF_SWITCH_FALLTHROUGH")
+	@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SF_SWITCH_FALLTHROUGH")
 	public NucleotideSequenceBuilder toGappedTrimmedSequenceBuilder( NucleotideSequence rawUngappedSequence) {
 		if(rawUngappedSequence.getNumberOfGaps() !=0){
 			throw new IllegalArgumentException("rawUngapped Sequence can not have gaps");

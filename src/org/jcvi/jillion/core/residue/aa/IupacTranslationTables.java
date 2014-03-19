@@ -293,7 +293,7 @@ public enum IupacTranslationTables implements TranslationTable{
 	}
 
 	@SuppressWarnings("fallthrough")
-	@edu.umd.cs.findbugs.annotations.SuppressWarnings("SF_SWITCH_FALLTHROUGH")
+	@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SF_SWITCH_FALLTHROUGH")
 	private void handleFrame(Iterator<Nucleotide> iter, Frame frame) {
 		//switch uses fall through
 		//so frame 2 skips first 2 bp		
