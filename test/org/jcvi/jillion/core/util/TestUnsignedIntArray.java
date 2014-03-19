@@ -3,6 +3,8 @@ package org.jcvi.jillion.core.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import java.util.Arrays;
+
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.junit.Test;
@@ -54,16 +56,19 @@ public class TestUnsignedIntArray {
 	
 	@Test
 	public void changeValuesInArrayAfterObjCreationShouldSeeUpdatedValues(){
-		int[] expected = new int[]{
+		int[] input = new int[]{
 				12, 42, 57,123, Byte.MAX_VALUE, 2, Byte.MAX_VALUE+1,
 				Short.MAX_VALUE,
 				Integer.MIN_VALUE, -1			
 				
 		};
 		
-		UnsignedIntArray sut = new UnsignedIntArray(expected);
+		UnsignedIntArray sut = new UnsignedIntArray(input);
 		
 		sut.put(3, 100);
+		
+		int[] expected = Arrays.copyOf(input, input.length);
+		expected[3] = 100;
 		assertEquals(expected.length, sut.getLength());
 		for(int i=0; i< expected.length; i++){
 			long actual = sut.get(i);
