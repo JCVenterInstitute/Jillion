@@ -174,6 +174,7 @@ public final class BgzfOutputStream extends OutputStream{
 	/**
 	 * {@inheritDoc}.
 	 */
+	@SuppressWarnings("PMD.SingularField")
 	@Override
 	public void write(int b) throws IOException {
 		singleByteArray[0] = (byte)b;

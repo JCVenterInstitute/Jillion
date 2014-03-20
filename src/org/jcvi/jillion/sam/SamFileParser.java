@@ -41,7 +41,7 @@ final class SamFileParser extends AbstractSamFileParser{
 		if(samFile ==null){
 			throw new NullPointerException("sam file can not be null");
 		}
-		if(!FileUtil.getExtension(samFile).equals("sam")){
+		if(!"sam".equals(FileUtil.getExtension(samFile))){
 			throw new IllegalArgumentException("must be .sam file" + samFile.getAbsolutePath());
 		}
 		if(!samFile.exists()){

@@ -52,7 +52,7 @@ final class BamFileParser extends AbstractSamFileParser {
 		if(bamFile ==null){
 			throw new NullPointerException("bam file can not be null");
 		}
-		if(!FileUtil.getExtension(bamFile).equals("bam")){
+		if(!"bam".equals(FileUtil.getExtension(bamFile))){
 			throw new IllegalArgumentException("must be .bam file" + bamFile.getAbsolutePath());
 		}
 		if(!bamFile.exists()){

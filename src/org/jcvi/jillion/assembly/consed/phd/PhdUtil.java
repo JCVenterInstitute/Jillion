@@ -42,7 +42,7 @@ public final class PhdUtil {
 	 * is mutable and not Thread safe.
 	 * This should let us avoid synchronization.
 	 */
-	private static ThreadLocal<DateFormat> PHD_TAG_DATE_FORMATTER = new ThreadLocal<DateFormat> () {
+	private static ThreadLocal<DateFormat> PHD_TAG_DATE_FORMATTER = new ThreadLocal<DateFormat>(){
 
 		  @Override
 		  public DateFormat get() {

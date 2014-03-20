@@ -59,7 +59,7 @@ public class ConsedTransformationService implements AssemblyTransformationServic
 				throw new NullPointerException("ace prefix can not be null");
 			}
 			editDir = ConsedUtil.getEditDirFor(consedDir);
-			if(editDir == null){
+			if(!editDir.exists()){
 				throw new IllegalStateException("edit_dir does not exist : " + consedDir.getAbsolutePath());
 			}
 			this.consedDir = consedDir;

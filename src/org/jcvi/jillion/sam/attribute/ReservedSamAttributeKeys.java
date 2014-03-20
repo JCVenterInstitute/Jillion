@@ -107,7 +107,7 @@ round(value * 100.0).
 					break;
 				}
 			}
-			if(! found){
+			if(!found){
 				throw new InvalidAttributeException("header must have read group with id "+ value);
 			}
 		}
