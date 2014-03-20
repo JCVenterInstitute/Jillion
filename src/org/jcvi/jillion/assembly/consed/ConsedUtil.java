@@ -315,6 +315,15 @@ public final class ConsedUtil {
             throw new NullPointerException("consedDir can not be null");
         }
 	}
+	/**
+	 * Get the File representing the Consed
+	 * "edit_dir" of this consed package.
+	 * @param consedDir the consed dir to use;
+	 * can not be null, but might not exist.
+	 * @return a new File object with representing
+	 * the edit_dir, this File may not exist on the file system.
+	 * @throws NullPointerException if consedDir is null.
+	 */
     public static File getEditDirFor(File consedDir){
         verifyNotNull(consedDir);
         return new File(consedDir,"edit_dir");

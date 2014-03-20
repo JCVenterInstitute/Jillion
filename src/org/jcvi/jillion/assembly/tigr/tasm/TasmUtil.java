@@ -40,7 +40,7 @@ final class TasmUtil {
 	 * is mutable and not Thread safe.
 	 * This should let us avoid synchronization.
 	 */
-	private static ThreadLocal<DateFormat> EDIT_DATE_FORMAT = new ThreadLocal<DateFormat> () {
+	private static ThreadLocal<DateFormat> EDIT_DATE_FORMAT = new ThreadLocal<DateFormat>(){
 
 		  @Override
 		  public DateFormat get() {

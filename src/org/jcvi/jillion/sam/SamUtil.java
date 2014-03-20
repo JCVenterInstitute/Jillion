@@ -107,7 +107,7 @@ public final class SamUtil {
 	private static final byte[] BAM_MAGIC_NUMBER = new byte[]{'B','A','M',1};
 	
 	
-	private static ThreadLocal<DateFormat> dateFormat = new ThreadLocal<DateFormat> () {
+	private static ThreadLocal<DateFormat> THREAD_LOCAL_DATE_FORMAT = new ThreadLocal<DateFormat>(){
 
 		  @Override
 		  public DateFormat get() {
@@ -258,11 +258,11 @@ public final class SamUtil {
 	}
 	
 	public static Date toDate(String dateString) throws ParseException{
-		return dateFormat.get().parse(dateString);
+		return THREAD_LOCAL_DATE_FORMAT.get().parse(dateString);
 	}
 	
 	public static String formatIsoDate(Date date){
-		return dateFormat.get().format(date);
+		return THREAD_LOCAL_DATE_FORMAT.get().format(date);
 	}
 	/**
 	 *  Calculate the BAM bin for a given Range

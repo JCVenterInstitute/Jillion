@@ -82,7 +82,7 @@ public abstract class AbiChromatogramParser {
 	 * is mutable and not Thread safe.
 	 * This should let us avoid synchronization.
 	 */
-	private static ThreadLocal<DateFormat> DATE_FORMATTER = new ThreadLocal<DateFormat> () {
+	private static ThreadLocal<DateFormat> DATE_FORMATTER = new ThreadLocal<DateFormat>(){
 
 		  @Override
 		  public DateFormat get() {

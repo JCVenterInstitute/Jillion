@@ -80,7 +80,7 @@ public final class AceFileUtil {
 	 * This should let us avoid synchronization.
 	 * </p>
      */   
-	private static ThreadLocal<DateFormat> CHROMAT_DATE_TIME_FORMATTER = new ThreadLocal<DateFormat> () {
+	private static ThreadLocal<DateFormat> CHROMAT_DATE_TIME_FORMATTER = new ThreadLocal<DateFormat>(){
 
 		  @Override
 		  public DateFormat get() {
@@ -116,7 +116,7 @@ public final class AceFileUtil {
 	 * is mutable and not Thread safe.
 	 * This should let us avoid synchronization.
 	 */
-	private static ThreadLocal<DateFormat> TAG_DATE_TIME_FORMATTER = new ThreadLocal<DateFormat> () {
+	private static ThreadLocal<DateFormat> TAG_DATE_TIME_FORMATTER = new ThreadLocal<DateFormat>(){
 
 		  @Override
 		  public DateFormat get() {
