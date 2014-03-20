@@ -3,7 +3,6 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
 	<classpathentry kind="src" path="examples"/>
-	<classpathentry kind="src" path="src-impl"/>
 	<classpathentry kind="src" path="experimental"/>
 	<classpathentry kind="src" path="experimental-test"/>
 	<classpathentry exported="true" kind="lib" path="test-lib/objenesis-1.2.jar"/>
