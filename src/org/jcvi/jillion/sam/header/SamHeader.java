@@ -213,7 +213,7 @@ public final class SamHeader {
 		private SortOrder sortOrder = SortOrder.UNKNOWN;
 		private SamVersion version;
 		
-		private final LinkedHashMap<String, ReferenceSequence> referenceSequences = new LinkedHashMap<String, ReferenceSequence>();
+		private final Map<String, ReferenceSequence> referenceSequences = new LinkedHashMap<String, ReferenceSequence>();
 		
 		private final Map<String, ReadGroup> readGroups = new HashMap<String, ReadGroup>();
 		
@@ -362,10 +362,8 @@ public final class SamHeader {
 			//confirm all program's previous are known?
 			for(SamProgram program : programs.values()){
 				String prevId = program.getPreviousProgramId();
-				if(prevId !=null){
-					if(!programs.containsKey(prevId)){
-						throw new IllegalStateException("known previous program " + prevId + "referenced in " + program.getId());
-					}
+				if(prevId !=null && !programs.containsKey(prevId)){						
+					throw new IllegalStateException("known previous program " + prevId + "referenced in " + program.getId());
 				}
 			}
 			return new SamHeader(this);

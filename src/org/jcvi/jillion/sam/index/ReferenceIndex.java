@@ -36,6 +36,9 @@ public final class ReferenceIndex {
 	public static final class Builder{
 		private final VirtualFileOffset[] intervals;
 		private int currentIntervalArrayOffset=-1;
+		//need to keep type as ArrayList since
+		//we use trimToSize() method which is only on arraylist.
+		@SuppressWarnings("PMD.LooseCoupling")
 		private final ArrayList<Bin> bins = new ArrayList<Bin>();
 		private int currentBinNumber =1;
 		private Bin.Builder currentBinBuilder = null;

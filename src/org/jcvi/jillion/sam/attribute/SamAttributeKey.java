@@ -36,17 +36,22 @@ public final class SamAttributeKey{
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj){
 			return true;
-		if (obj == null)
+		}
+		if (obj == null){
 			return false;
-		if (getClass() != obj.getClass())
+		}		
+		if (getClass() != obj.getClass()){
 			return false;
+		}
 		SamAttributeKey other = (SamAttributeKey) obj;
-		if (key1 != other.key1)
+		if (key1 != other.key1){
 			return false;
-		if (key2 != other.key2)
+		}
+		if (key2 != other.key2){
 			return false;
+		}
 		return true;
 	}
 	/**

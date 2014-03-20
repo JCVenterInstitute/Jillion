@@ -27,7 +27,7 @@ public class SamRecord {
 	private final SamHeader header;
 	private final String queryName, referenceName, nextReferenceName;
 	private final EnumSet<SamRecordFlags> flags;
-	private int startOffset, nextOffset;
+	private final int startOffset, nextOffset;
 	private final byte mappingQuality;
 	private final Cigar cigar;
 	private final NucleotideSequence sequence;
@@ -596,11 +596,11 @@ public class SamRecord {
 					throw new IllegalStateException("sequence and qualities must have same length");
 				}
 			}
-			if(sequence !=null && cigar !=null){
-					
-				if(sequence.getUngappedLength() != cigar.getUnpaddedReadLength(ClipType.HARD_CLIPPED)){
-					throw new IllegalStateException("sequence and cigar must have same unpadded/ ungapped read length");
-				}
+			if(sequence !=null && cigar !=null
+				&& sequence.getUngappedLength() != cigar.getUnpaddedReadLength(ClipType.HARD_CLIPPED)){
+				
+				throw new IllegalStateException("sequence and cigar must have same unpadded/ ungapped read length");
+				
 			}
 			
 		}

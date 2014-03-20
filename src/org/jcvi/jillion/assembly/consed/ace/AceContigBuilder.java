@@ -793,9 +793,6 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
                 }
             }
             for(String readId : contigReads){
-            	if(readId.equals("1IONJCVI_0172_SAJEU:1:1:02175:00765#CCTGAGATACGAT/1")){
-            		System.out.println("here");
-            	}
             	//create a copy so we 
             	//can modify our version without
             	//affecting original

@@ -278,7 +278,7 @@ public final class CasFileParser implements CasParser{
 		}
 	}
 
-	protected void parseReferenceFiles(CasFileVisitor visitor,
+	private void parseReferenceFiles(CasFileVisitor visitor,
 			RandomAccessFileInputStream in, CasNumberParserStrategy strategy) throws IOException {
 		long numberOfContigFiles = CasUtil.parseByteCountFrom(in);
 		visitor.visitNumberOfReferenceFiles(numberOfContigFiles);

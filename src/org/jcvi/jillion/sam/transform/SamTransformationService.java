@@ -96,7 +96,7 @@ public final class SamTransformationService implements AssemblyTransformationSer
 
 		private final AssemblyTransformer transformer;
 		private final NucleotideSequenceDataStore referenceDataStore;
-		private Map<String,GrowableIntArray> gapOffsetMap;
+		private final Map<String,GrowableIntArray> gapOffsetMap;
 		
 		public SamTransformerVisitor(NucleotideSequenceDataStore referenceDataStore, AssemblyTransformer transformer) throws DataStoreException {
 			this.referenceDataStore = referenceDataStore;

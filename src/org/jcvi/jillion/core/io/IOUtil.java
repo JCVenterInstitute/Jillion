@@ -106,12 +106,11 @@ public final class IOUtil {
      * @throws NullPointerException if dir is null.    
      */
     public static void deleteChildren(File dir) throws IOException{
-        if(dir.exists()){
-            if (dir.isDirectory()) {
-                for(File subfile: dir.listFiles()){
-                    recursiveDelete(subfile);
-                }
+        if(dir.exists() && dir.isDirectory()) {
+            for(File subfile: dir.listFiles()){
+                recursiveDelete(subfile);
             }
+            
         }
 
     }

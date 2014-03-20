@@ -58,7 +58,7 @@ class PresortedBamFileWriter implements SamWriter{
 		writeHeader();
 	}
 
-	protected void writeHeader() throws IOException {
+	private void writeHeader() throws IOException {
 		StringBuilder headerAsStringBuilder = SamUtil.encodeHeader(header);
 		int bytesOfReferences =4;
 		for(ReferenceSequence ref: header.getReferenceSequences()){

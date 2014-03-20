@@ -133,7 +133,7 @@ public class CasFileTransformationService implements AssemblyTransformationServi
 					transformer.referenceFile(f.toURI());			
 				
 				} catch (FileNotFoundException e) {
-					throw new IllegalStateException("reference file not found :" + filename);
+					throw new IllegalStateException("reference file not found :" + filename,e );
 				}
 				
 			}
@@ -148,7 +148,7 @@ public class CasFileTransformationService implements AssemblyTransformationServi
 					transformer.readFile(f.toURI());			
 				
 				} catch (FileNotFoundException e) {
-					throw new IllegalStateException("read file not found :" + filename);
+					throw new IllegalStateException("read file not found :" + filename, e);
 				}
 				
 			}

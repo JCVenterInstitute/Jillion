@@ -14,6 +14,22 @@ public final class SamHeaderTagKey {
 
 	private static final SamHeaderTagKey[][] CACHE = new SamHeaderTagKey[122][122];
 	
+	/**
+	 * The two letters of our key
+	 * stored as primitives to save memory.
+	 */
+	private final char key1,key2;
+	
+	SamHeaderTagKey(char key1, char key2) {
+		 if(!SamUtil.isValidKey(key1, key2)){
+			 throw new IllegalArgumentException("invalid key " + key1 + key2);
+		 
+		 }
+		
+		this.key1 = key1;
+		this.key2 = key2;
+	}
+	
 	public static SamHeaderTagKey getKey(String key){
 		if(key.length() !=2){
 			throw new IllegalArgumentException("key string must be 2 chars long " + key);
@@ -39,21 +55,9 @@ public final class SamHeaderTagKey {
 		}
 		
 	}
-	/**
-	 * The two letters of our key
-	 * stored as primitives to save memory.
-	 */
-	private final char key1,key2;
+	
 
-	SamHeaderTagKey(char key1, char key2) {
-		 if(!SamUtil.isValidKey(key1, key2)){
-			 throw new IllegalArgumentException("invalid key " + key1 + key2);
-		 
-		 }
-		
-		this.key1 = key1;
-		this.key2 = key2;
-	}
+	
 	
 
 	@Override
@@ -72,17 +76,22 @@ public final class SamHeaderTagKey {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj){
 			return true;
-		if (obj == null)
+		}
+		if (obj == null){
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()){
 			return false;
+		}
 		SamHeaderTagKey other = (SamHeaderTagKey) obj;
-		if (key1 != other.key1)
+		if (key1 != other.key1){
 			return false;
-		if (key2 != other.key2)
+		}			
+		if (key2 != other.key2){
 			return false;
+		}
 		return true;
 	}
 	/**
