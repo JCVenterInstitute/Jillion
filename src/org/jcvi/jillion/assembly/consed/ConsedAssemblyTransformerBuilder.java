@@ -163,11 +163,12 @@ public class ConsedAssemblyTransformerBuilder {
 		private final PhdConsedTransformerHelper phdHelper;
 		private final byte defaultQualityValue;
 		
-		private Map<String, AceContigBuilder> builderMap = new LinkedHashMap<String, AceContigBuilder>();
-		Map<URI,Date> uriDates = new HashMap<URI, Date>();
-		Map<URI,File> uri2File = new HashMap<URI, File>();
+		private final Map<String, AceContigBuilder> builderMap = new LinkedHashMap<String, AceContigBuilder>();
 		
-		Map<URI,Map<String,String>> comments = new HashMap<URI, Map<String,String>>();
+		private final Map<URI,Date> uriDates = new HashMap<URI, Date>();
+		private final Map<URI,File> uri2File = new HashMap<URI, File>();
+		
+		private final Map<URI,Map<String,String>> comments = new HashMap<URI, Map<String,String>>();
 		
 		public ConsedAssemblyTransformer(ConsedAssemblyTransformerBuilder builder) throws IOException{
 			
@@ -322,10 +323,10 @@ public class ConsedAssemblyTransformerBuilder {
 			PhdBuilder phdBuilder = new PhdBuilder(readId, nucleotideSequence, qualities)
 										.comments(requiredComments);
 			
-			if(positions !=null){
-				phdBuilder.peaks(positions);				
-			}else{
-				phdBuilder.fakePeaks();
+			if(positions ==null){
+				phdBuilder.fakePeaks();			
+			}else{				
+				phdBuilder.peaks(positions);
 			}
 			final PhdInfo phdInfo;
 			try {

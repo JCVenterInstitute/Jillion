@@ -103,7 +103,7 @@ public class BfqFileWriterBuilder {
 	
 	private static class BinaryFastqFileWriter implements FastqRecordWriter {
 		private final OutputStream out;
-		private ByteOrder byteOrder;
+		private final ByteOrder byteOrder;
 		
 		public BinaryFastqFileWriter(File bqf, ByteOrder endian) throws IOException{
 			this.byteOrder = endian;

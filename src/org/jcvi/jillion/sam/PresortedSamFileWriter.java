@@ -23,6 +23,9 @@ import org.jcvi.jillion.sam.header.SamHeader;
  */
 class PresortedSamFileWriter implements SamWriter {
 
+	private static final char UNUSED_FIELD = '*';
+	private static final char NULL_CHAR = '0';
+	private static final char TAB = '\t';
 	private final PrintStream out;
 	private final SamHeader header;
 	private final SamAttributeValidator attributeValidator;
@@ -47,9 +50,9 @@ class PresortedSamFileWriter implements SamWriter {
 
 	
 	private void appendMandatoryField(StringBuilder builder, Integer value){
-		builder.append("\t");
+		builder.append(TAB);
 		if(value ==null){
-			builder.append("0");
+			builder.append(NULL_CHAR);
 		}else{
 			builder.append(value);
 		}
@@ -59,10 +62,10 @@ class PresortedSamFileWriter implements SamWriter {
 	}
 	private void appendMandatoryField(StringBuilder builder, Object value, boolean firstField){
 		if(!firstField){
-			builder.append("\t");
+			builder.append(TAB);
 		}
 		if(value ==null){
-			builder.append("*");
+			builder.append(UNUSED_FIELD);
 		}else{
 			builder.append(value);
 		}
@@ -106,7 +109,7 @@ class PresortedSamFileWriter implements SamWriter {
 			//the getTypeCode includes the 2nd :
 			//since it might need to also include
 			//the first char in the value.
-			builder.append("\t")
+			builder.append(TAB)
 					.append(key.toString()).append(':')		
 					.append(attr.getType().getTextTypeCode())
 					.append(attr.getType().textEncode(attr.getValue()));

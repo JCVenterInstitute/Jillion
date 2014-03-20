@@ -78,18 +78,7 @@ public final class BgzfOutputStream extends OutputStream{
 	 * An End of File Trailer block written to the end
 	 * of BAM files so that unintended file truncation can be easily detected.
 	 */
-	private static final byte[] EOF_MARKER;
-	
-	
-	static{
-		EOF_MARKER = new byte[28];
-		//start with same BGZF block header
-		System.arraycopy(BGZF_BLOCK_HEADER, 0, EOF_MARKER,  0, BGZF_BLOCK_HEADER.length);
-		//the rest of the block is all zeros except for
-		//these two bytes
-		EOF_MARKER[16] = 0x1b;  	//BSIZE - 1 = EOF_MARKER.length - 1
-		EOF_MARKER[18] = 0x03;		//first byte of compressed data ?
-	}
+	private static final byte[] EOF_MARKER;	
 	
 	private final CRC32 currentCrc32 = new CRC32();
 	
@@ -140,6 +129,18 @@ public final class BgzfOutputStream extends OutputStream{
 	 * @see #write(int)
 	 */
 	private final byte[] singleByteArray = new byte[1];
+	
+
+	static{
+		EOF_MARKER = new byte[28];
+		//start with same BGZF block header
+		System.arraycopy(BGZF_BLOCK_HEADER, 0, EOF_MARKER,  0, BGZF_BLOCK_HEADER.length);
+		//the rest of the block is all zeros except for
+		//these two bytes
+		EOF_MARKER[16] = 0x1b;  	//BSIZE - 1 = EOF_MARKER.length - 1
+		EOF_MARKER[18] = 0x03;		//first byte of compressed data ?
+	}
+	
 	/**
 	 * Create a new {@link BgzfOutputStream}
 	 * that will write BGZF encoded data to the given
@@ -259,15 +260,16 @@ public final class BgzfOutputStream extends OutputStream{
 		//so I think we can arbitrarily 
 		//break blocks whenever we need.
 		int currentOffset = off;
-		while(bytesToWriteLength > 0){
+		int bytesLeftToWrite = bytesToWriteLength;
+		while(bytesLeftToWrite > 0){
 			int bytesFreeInBuffer = MAX_UNCOMPRESSED_BLOCK_SIZE - currentUsedBufferLength;
-			int bytesToWriteIntoCurrentBuffer = Math.min(bytesToWriteLength,bytesFreeInBuffer);
+			int bytesToWriteIntoCurrentBuffer = Math.min(bytesLeftToWrite,bytesFreeInBuffer);
 			
 			System.arraycopy(b, currentOffset, uncompressedBuffer, currentUsedBufferLength, bytesToWriteIntoCurrentBuffer);
 			
 			currentUsedBufferLength += bytesToWriteIntoCurrentBuffer;
 			currentOffset += bytesToWriteIntoCurrentBuffer;
-			bytesToWriteLength -= bytesToWriteIntoCurrentBuffer;
+			bytesLeftToWrite -= bytesToWriteIntoCurrentBuffer;
 			
 			if(currentUsedBufferLength == MAX_UNCOMPRESSED_BLOCK_SIZE){
 				//we have filled our uncompressedBuffer

@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Locale;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -44,6 +45,10 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 @SuppressFBWarnings("VA_FORMAT_STRING_USES_NEWLINE")
 public final class SamUtil {
 	
+
+	private static final char COLON = ':';
+
+	private static final char TAB = '\t';
 
 	/**
 	 * The max bin number allowed in a BAM file.
@@ -101,12 +106,7 @@ public final class SamUtil {
 	
 	private static final byte[] BAM_MAGIC_NUMBER = new byte[]{'B','A','M',1};
 	
-	public static final byte[] getBamMagicNumber(){
-		return Arrays.copyOf(BAM_MAGIC_NUMBER, 4);
-	}
-	public static boolean matchesBamMagicNumber(byte[] b){
-		return Arrays.equals(BAM_MAGIC_NUMBER, b);
-	}
+	
 	private static ThreadLocal<DateFormat> dateFormat = new ThreadLocal<DateFormat> () {
 
 		  @Override
@@ -170,6 +170,13 @@ public final class SamUtil {
 		 
 	private SamUtil(){
 		//can not instantiate
+	}
+	
+	public static final byte[] getBamMagicNumber(){
+		return Arrays.copyOf(BAM_MAGIC_NUMBER, 4);
+	}
+	public static boolean matchesBamMagicNumber(byte[] b){
+		return Arrays.equals(BAM_MAGIC_NUMBER, b);
 	}
 	
 	public static NucleotideSequence readBamEncodedSequence(InputStream in, int seqLength) throws IOException {
@@ -564,12 +571,12 @@ public final class SamUtil {
 	}
 	private static void appendIsoDateIfNotNull(StringBuilder builder, String key, Date value){
 		if(value !=null){
-			builder.append("\t").append(key).append(":").append(SamUtil.formatIsoDate(value));
+			builder.append(TAB).append(key).append(COLON).append(SamUtil.formatIsoDate(value));
 		}
 	}
 	private static void appendIfNotNull(StringBuilder builder, String key, Object value){
 		if(value !=null){
-			builder.append("\t").append(key).append(":").append(value);
+			builder.append(TAB).append(key).append(COLON).append(value);
 		}
 	}
 	
@@ -592,8 +599,8 @@ public final class SamUtil {
 		private static final String DATE_FULL_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
 		private static final String DAY_ONLY_FORMAT = "yyyy-MM-dd";
 
-		final DateFormat full = new SimpleDateFormat(DATE_FULL_FORMAT);
-		final DateFormat dayOnly = new SimpleDateFormat(DAY_ONLY_FORMAT);
+		final DateFormat full = new SimpleDateFormat(DATE_FULL_FORMAT, Locale.US);
+		final DateFormat dayOnly = new SimpleDateFormat(DAY_ONLY_FORMAT, Locale.US);
 
 		@Override
 		public StringBuffer format(Date date, StringBuffer toAppendTo,

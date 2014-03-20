@@ -16,7 +16,7 @@ public class BamIndexer implements IndexerCallback{
 	private SamRecord currentRecord;
 	
 	private final SamHeader header;
-	private List<ReferenceIndex.Builder> indexBuilders;
+	private final List<ReferenceIndex.Builder> indexBuilders;
 	private ReferenceIndex.Builder currentBuilder;
 	private String currentRefName;
 	

@@ -74,16 +74,15 @@ public final class Cigar implements Iterable<CigarElement>{
 			int length=0;
 			do{
 				char next = iter.next();
-				if(!isDigit(next)){
-					
+				if(isDigit(next)){
+					length = length*10 +( next - '0');					
+				}else{
 					if(length ==0){
 						throw new IllegalArgumentException("invalid cigar string " + cigarString);
 					}
 					CigarOperation op = CigarOperation.parseOp(next);
 					builder.addElement(new CigarElement(op, length));
 					break;
-				}else{
-					length = length*10 +( next - '0'); 
 				}
 				
 			}while(true);			

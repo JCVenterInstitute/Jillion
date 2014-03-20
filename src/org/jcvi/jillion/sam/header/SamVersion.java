@@ -12,6 +12,8 @@ import java.util.regex.Pattern;
  */
 public final class SamVersion {
 
+	private static final Pattern VERSION_PATTERN = Pattern.compile("^(\\d+)\\.(\\d+)$");
+	
 	private final int major;
 	private final int minor;
 	/**
@@ -141,7 +143,6 @@ public final class SamVersion {
 		return String.format("%d.%d", major, minor);
 	}
 	
-	private static final Pattern VERSION_PATTERN = Pattern.compile("^(\\d+)\\.(\\d+)$");
 	/**
 	 * Parse a SAM version string (which is encoded in a SAM file header)
 	 * into a {@link SamVersion} object.

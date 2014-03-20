@@ -722,8 +722,7 @@ public enum SamAttributeType {
 					String.format("incorrect array type: expected :%s but was %s: %s",
 							optionalArrayType, code, value));
 		}
-		String[] split = SPLIT_ARRAY_PATTERN.split(matcher.group(2));
-		return split;
+		return SPLIT_ARRAY_PATTERN.split(matcher.group(2));
 	}
 	
 	public boolean isPrintableCharacter(){
