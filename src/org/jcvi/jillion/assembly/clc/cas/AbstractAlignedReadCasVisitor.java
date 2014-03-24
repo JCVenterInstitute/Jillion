@@ -48,6 +48,7 @@ import org.jcvi.jillion.trace.Trace;
 import org.jcvi.jillion.trace.TraceDataStore;
 import org.jcvi.jillion.trace.fastq.FastqDataStore;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
+import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
 import org.jcvi.jillion.trace.fastq.FastqRecord;
 import org.jcvi.jillion.trace.fastq.FastqRecordBuilder;
 import org.jcvi.jillion.trace.sff.SffFileIterator;
@@ -79,6 +80,8 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 	
 	private final List<StreamingIterator<? extends Trace>> iterators = new ArrayList<StreamingIterator<? extends Trace>>();
 	
+	private FastqQualityCodec qualityCodec=null;
+	
 	public AbstractAlignedReadCasVisitor(File casFile,
 			CasGappedReferenceDataStore gappedReferenceDataStore) {
 		if(gappedReferenceDataStore ==null){
@@ -90,6 +93,20 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 		this.workingDir = casFile.getParentFile();
 		this.gappedReferenceDataStore = gappedReferenceDataStore;
 	}
+
+	
+	
+	public FastqQualityCodec getQualityCodec() {
+		return qualityCodec;
+	}
+
+
+
+	public void setQualityCodec(FastqQualityCodec qualityCodec) {
+		this.qualityCodec = qualityCodec;
+	}
+
+
 
 	public File getWorkingDir() {
 		return workingDir;
@@ -156,9 +173,13 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 
     protected StreamingIterator<? extends Trace> createFastqIterator(File illuminaFile) throws DataStoreException {
 		try {
-			FastqDataStore datastore = new FastqFileDataStoreBuilder(illuminaFile)
-											.hint(DataStoreProviderHint.ITERATION_ONLY)
-											.build();
+			FastqFileDataStoreBuilder builder = new FastqFileDataStoreBuilder(illuminaFile)
+											.hint(DataStoreProviderHint.ITERATION_ONLY);
+			FastqQualityCodec codecToUse = getQualityCodec();
+			if(codecToUse !=null){
+				builder.qualityCodec(codecToUse);
+			}
+			FastqDataStore datastore = builder.build();
 			return new RemoveWhitespaceFromIdAdapter(datastore.iterator());
 		} catch (IOException e) {
 			throw new IllegalStateException("fastq file no longer exists! : "+ illuminaFile.getAbsolutePath(), e);

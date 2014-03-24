@@ -15,6 +15,7 @@ import org.jcvi.jillion.assembly.clc.cas.CasGappedReferenceDataStoreBuilderVisit
 import org.jcvi.jillion.assembly.clc.cas.CasParser;
 import org.jcvi.jillion.assembly.clc.cas.CasUtil;
 import org.jcvi.jillion.assembly.clc.cas.read.CasPlacedRead;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -25,6 +26,7 @@ import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
 import org.jcvi.jillion.trace.Trace;
 import org.jcvi.jillion.trace.fastq.FastqDataStore;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
+import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
 import org.jcvi.jillion.trace.sff.SffFileIterator;
 
 public class CasFileTransformationService implements AssemblyTransformationService{
@@ -32,6 +34,8 @@ public class CasFileTransformationService implements AssemblyTransformationServi
 	private final File casFile;
 	private final File casDir;
 	private final File chromatDir;
+	
+	private FastqQualityCodec qualityCodec;
 	
 	public CasFileTransformationService(File casFile) throws IOException{
 		this(casFile, null);
@@ -58,6 +62,12 @@ public class CasFileTransformationService implements AssemblyTransformationServi
 
 
 
+	public FastqQualityCodec getQualityCodec() {
+		return qualityCodec;
+	}
+	public void setQualityCodec(FastqQualityCodec qualityCodec) {
+		this.qualityCodec = qualityCodec;
+	}
 	protected File getCasFile() {
 		return casFile;
 	}
@@ -80,13 +90,12 @@ public class CasFileTransformationService implements AssemblyTransformationServi
 		 
 		 CasGappedReferenceDataStore gappedReferenceDataStore = gappedRefVisitor.build();
 	
-		 StreamingIterator<String> idIter =null;
+		 StreamingIterator<DataStoreEntry<NucleotideSequence>> idIter =null;
 		 try{
-			 idIter = gappedReferenceDataStore.idIterator();
+			 idIter = gappedReferenceDataStore.entryIterator();
 			 while(idIter.hasNext()){
-				 String id = idIter.next();
-				 NucleotideSequence gappedReference = gappedReferenceDataStore.get(id);
-				 transformer.referenceOrConsensus(id, gappedReference);
+				 DataStoreEntry<NucleotideSequence> entry = idIter.next();
+				 transformer.referenceOrConsensus(entry.getKey(), entry.getValue());
 			 }
 			 
 		 }catch(DataStoreException e){
@@ -95,7 +104,7 @@ public class CasFileTransformationService implements AssemblyTransformationServi
 			 IOUtil.closeAndIgnoreErrors(idIter);
 		 }
 		 
-		 Visitor visitor = new Visitor(casFile, gappedReferenceDataStore, transformer,chromatDir);
+		 Visitor visitor = new Visitor(casFile, gappedReferenceDataStore, transformer,chromatDir, qualityCodec);
 		 casParser.parse(wrapVisitor(visitor));
 		 transformer.endAssembly();
 		 
@@ -112,10 +121,13 @@ public class CasFileTransformationService implements AssemblyTransformationServi
 		public Visitor(File casFile,  
 				CasGappedReferenceDataStore gappedReferenceDataStore,
 				AssemblyTransformer transformer,
-				File chromatDir) {
+				File chromatDir,
+				FastqQualityCodec qualityCodec) {
 			super(casFile, gappedReferenceDataStore);
 			this.transformer = transformer;
 			this.chromatDir = chromatDir;
+			//maybe null
+			this.setQualityCodec(qualityCodec);
 		}
 
 		@Override
