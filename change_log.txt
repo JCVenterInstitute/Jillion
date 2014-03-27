@@ -3,8 +3,121 @@ Change Log:
 This document lists all changes and refactoring made that either:
 add new features, break the old API or fix known bugs.  There will
 often be many more source code changes that aren't listed if they don't
-change the behavior in any public API classes.
+change the behavior in any public API classes.  The order of changes is mostly
+chronological so the most important changes may not always be ordered first.
 
+
+================
+Jillion 4.0 RC 4 - Added SAM/BAM and MAQ bfa and bfq support.  Promoted pairwise alignment code out of experimental
+                   and into production. Bug fixes and performance improvements.
+================
+
+API Changes
+------------
+1. Added new NucleotideSequenceBuilder constructor that takes a char[]
+
+2. Added append/insert/prepend methods to NucleotideSequenceBuilder that take a char[]
+
+3. Completely changed interfaces for parsing with Visitors.  
+   Followed the AceHandler design but renamed methods.  
+   XFileParser classes are now factories to create instances of XParser interface.
+   XParser has (usually) 3 methods: parse(XVisitor), parse(XVisitor, XMemento) and canParse().
+   parse() is the new name for accept().  canParse() returns a boolean to say 
+   if a call to parse(...) will throw IllegalStateException.  
+   This is because some implementations such as file parsers using an
+   inputStream can only call parse() once.  
+   
+   Any additional calls to parse(...) will fail since we can't always rewind the Stream.
+   The will decouple visiting from an actual file so we could visit off of other
+   types of objects (like Contig objects in tests).
+   
+4.  Changed all class references from XFileParser to XParser objects.
+
+5.  Changed FastaFileBuilders to try to create input File's parent directory if does not exist,
+    this made the contructor throw IOException instead of FileNotFoundException.
+    
+6.  Moved alignment packages out of experimental and into main.  New package is org.jcvi.jillion.align.
+
+    Refactored pairwise alignment code to use more intent revealing PairwiseAlignmentBuilder 
+    class with 2 static factory methods: createNucleotideAlignment( ..) and createProteinAlignment(..)
+    to handle all the messy generics.  Builder has method to specify local vs global alignment 
+    to hide algorithm name implementation details.
+    
+    Added support for Protein Blast results as well as code to auto-detect
+    nucleotide or protein blast results to build the correct HSPs.
+    
+    Renamed ScoringMatrix to SubstitutionMatrix.  Created NucleotideSubsitutionMatrices utility classes.
+    Refactored matrix file parser classes into abstract class with 2 subclasses to handle nucleotide and protein matrices.
+    moved more classes into align package.
+
+7.  Renamed AminoAcidSequence to ProteinSequence.  
+    All other public classes with AminoAcidSequence in their name is now ProteinSequence instead.
+    For example: AminoAcidFastaRecord is now called ProteinFastaRecord.
+
+8.  Added new methods to fastaWriterBuilders #lineSeparator(String) to change line separator from \n to
+    support windows and #allBasesOnOneLine() to force all data on one line instead of splitting the data onto multilines.
+    
+9.  made CompactProteinSequenceCodec package private.
+
+10. Changed cas parser to default to fasta format type for unknown file extension or file without extension. 
+    Previously default was chromatogram.  Chromatograms now must have either 'ab1', 'abi', 'scf' or 'ztr' file extensions.
+    
+11. Added getters and setters to Range.Builder previously only had expand and contract.
+
+12. Created AlnWriter interface and AlnFileWriter classes to handle writing nucleotide and protein aln files.
+
+13. Added Support for reading SAM and BAM formatted files. 
+    SamHeader, Cigar, SamRecord, ReadGroups, SamAttributes etc all have object representations.
+     
+14.  Added new method Range.complement(Collection<Range> ) which will return Ranges in the input collection that are not in "this" Range.
+
+15. Made Range.complementFrom(Collection<Range> ) package private since it is not used anymore outside of the Range class
+    and is confusing since there are other complement methods.
+    
+16. Created new AssemblyTransformer interface which will be used to convert from one format into another. 
+    Created CasAssemblyTransformationService to convert cas files into something else using AssemblyTransformer.
+    Created ConsedAssemblyTransformerBuilder for transforming assemblies into consed packages. 
+    (Passing the built assemblyTransformer from this class into the CasAssemblyTransformationService 
+    will perform a cas2consed conversion.)
+    
+17. Created new class DataStoreEntry which is similar to MapEntry<String, T>. 
+    Added new method to Datastore.entryIterator() which returns a StreamingIterator<DataStoreEntry<T>>.
+
+18.  Added methods isReadOnceOnly() and isReadOnceOnly() and canCreateMemento() to  FastaParser and FastqParser
+     interface to distinguish between file-based and inputStream based datasources.  This may be added to all
+     other parsers eventually.
+
+19.  Modified all fasta and fastq DataStore implementations to accept Parser instances in addition to file and inputStream.
+
+20.  Added support for MAQ binary fasta (.bfa) and binary fastq (.bfq) formatted files.
+     Maq binary fasta and fastq datastore classes delegate to their nucleotide fasta and fastq counterparts by 
+     just passing their BinaryParser isntance to them for improved code re-use.
+     
+21.  FastqFileWriter now has a includeIdOnQualDefLine( boolean) method to add the ids to the quality defline. Some
+     legacy external fastq pipelines require seeing the id on both the sequence and quality deflines so this is to support them.
+     
+     
+
+Bug Fixes
+------------
+1. Fixed bug in QualitySequenceBuilder AND AminoAcidSequenceBuilder where trimming beyond current Range threw Exception.
+
+2. Changed AbstractAceContigBuilderVisitor to get valid range ONLY from QA align coordinates instead of intersection.
+   This solves problem of user edited read extensions not getting parsed correctly.
+   
+3. Fixed bug in NucleotideSequenceBuilder that didn't treat \t as a whitespace character.
+
+4. Changed NucleotideSequenceBuilder to ignore \0 in char arrays.
+
+5. Fixed bug in XML BLAST parser to call visitEnd() at end of file.
+
+
+Performance Improvements
+------------------------
+1.  Added optional fastqCodec field to AbstractAlignedCasReadVisitor so
+    fastq files included in cas assemblies don't have to be parsed twice to guess encoding.
+2.  Increased use of StringBuilders instead of String concatentation. Set large initial buffer sizes
+    to avoid as many re-sizing operations.
 
 ================
 Jillion 4.0 RC 3 - Most changes address performance improvements.
