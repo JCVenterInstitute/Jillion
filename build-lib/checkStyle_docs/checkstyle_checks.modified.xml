@@ -20,7 +20,7 @@
     <property name="tabWidth" value="4" />
 	<!-- used to put in specially formatted @SuppressWarnings to ignore errors  -->
 	<module name="SuppressWarningsHolder"/>
-	<module name="SuppressWarningsFilter" />
+	
 	
     <module name="AvoidStarImport"/>
     <module name="ConstantName"/>
@@ -117,4 +117,5 @@
     <module name="NestedTryDepth"/>
     <!-- <module name="ExplicitInitialization"/> -->
   </module>
+  <module name="SuppressWarningsFilter" />
 </module>
