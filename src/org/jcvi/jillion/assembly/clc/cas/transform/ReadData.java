@@ -7,7 +7,7 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.trace.Trace;
 
-class ReadData implements Trace{
+final class ReadData implements Trace{
 
 	private final PositionSequence positions;
 	private final URI uri;

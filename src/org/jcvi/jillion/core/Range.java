@@ -115,6 +115,9 @@ import org.jcvi.jillion.internal.core.util.JillionUtil;
  * @see #Range.Builder
  * 
  */
+//This is a really long class
+//because of all the private inner classes
+@SuppressWarnings("FileLengthCheck")
 public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 	
 	//This class uses the Serialization Proxy Pattern

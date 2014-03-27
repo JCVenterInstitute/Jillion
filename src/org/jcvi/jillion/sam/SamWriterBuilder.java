@@ -94,7 +94,7 @@ public final class SamWriterBuilder {
 	 * will be used.
 	 * @param validator the validator to use; can not be null.
 	 * @return this
-	 * @thorws NullPointerException if validator is null.
+	 * @throws NullPointerException if validator is null.
 	 */
 	public SamWriterBuilder setSamAttributeValidator(SamAttributeValidator validator){
 		if(validator ==null){
