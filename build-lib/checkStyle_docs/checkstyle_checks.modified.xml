@@ -18,7 +18,10 @@
   <module name="TreeWalker">
 
     <property name="tabWidth" value="4" />
-
+	<!-- used to put in specially formatted @SuppressWarnings to ignore errors  -->
+	<module name="SuppressWarningsHolder"/>
+	<module name="SuppressWarningsFilter" />
+	
     <module name="AvoidStarImport"/>
     <module name="ConstantName"/>
     <module name="EmptyBlock">
@@ -77,6 +80,11 @@
     <module name="ParameterName"/>
     <module name="ParameterNumber">
       <property name="id" value="paramNum"/>
+      <!-- dkatzel - 2014
+      		increase number of allowed parameters to 10 since some visitor methods have
+      		lots of parameters but it would be expensive to make value objects
+      		for them since it's supposed to be low level -->
+      <property name="max" value="10"/>
     </module>
    <!--  <module name="ParenPad"/> -->
     <module name="TypecastParenPad"/>
