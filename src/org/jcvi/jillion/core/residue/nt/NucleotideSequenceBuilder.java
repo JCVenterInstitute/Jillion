@@ -43,6 +43,13 @@ import org.jcvi.jillion.internal.core.util.GrowableIntArray;
  *
  */
 public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<Nucleotide,NucleotideSequence>{
+	/**
+	 * Initial buffer size is {@value} which should
+	 * be enough for most next-gen reads that are seen.
+	 * This should greatly reduce the number of resizes we need to do.
+	 */
+	private static final int INTITAL_BUFFER_SIZE =200;
+	
     private static final String NULL_SEQUENCE_ERROR_MSG = "sequence can not be null";
 	private static final byte GAP_VALUE = Nucleotide.Gap.getOrdinalAsByte();
     private static final byte N_VALUE = Nucleotide.Unknown.getOrdinalAsByte();
@@ -67,8 +74,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * which currently contains no nucleotides.
      */
     public NucleotideSequenceBuilder(){
-        data = new GrowableByteArray();
-        codecDecider = new CodecDecider();
+        this(INTITAL_BUFFER_SIZE);
     }
     
     
