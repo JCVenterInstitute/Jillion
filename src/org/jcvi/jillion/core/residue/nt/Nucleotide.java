@@ -214,6 +214,11 @@ public enum Nucleotide implements Residue {
      * @param base
      * @return
      */
+    //ignore checkstyle method length check 
+    //since huge switch statement
+    //and explanatory comment
+    //were done on purpose
+    @SuppressWarnings("MethodLengthCheck")
 	protected static Nucleotide parseOrNull(char base) {
 		if(base == 32 || (base >=0 && base <=13)){
 			return null;
