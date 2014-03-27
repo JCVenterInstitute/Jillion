@@ -81,10 +81,10 @@
     <module name="ParameterNumber">
       <property name="id" value="paramNum"/>
       <!-- dkatzel - 2014
-      		increase number of allowed parameters to 10 since some visitor methods have
+      		increase number of allowed parameters to 12 since some visitor methods have
       		lots of parameters but it would be expensive to make value objects
       		for them since it's supposed to be low level -->
-      <property name="max" value="10"/>
+      <property name="max" value="12"/>
     </module>
    <!--  <module name="ParenPad"/> -->
     <module name="TypecastParenPad"/>
