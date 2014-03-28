@@ -3,6 +3,7 @@ package org.jcvi.jillion.sam;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,6 +13,7 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
+import org.jcvi.jillion.sam.SamVisitor.SamVisitorCallback.SamVisitorMemento;
 import org.jcvi.jillion.sam.attribute.InvalidAttributeException;
 import org.jcvi.jillion.sam.attribute.ReservedAttributeValidator;
 import org.jcvi.jillion.sam.attribute.ReservedSamAttributeKeys;
@@ -72,19 +74,26 @@ final class SamFileParser extends AbstractSamFileParser{
 		
 		try{
 			parser= new TextLineParser(samFile);
+			AtomicBoolean keepParsing = new AtomicBoolean(true);
 			
+			SamCallback callback = new SamCallback(keepParsing, parser.getPosition());
 			SamHeader header = parseHeader(parser).build();
-			visitor.visitHeader(header);
-			while(parser.hasNextLine()){
+			visitor.visitHeader(callback, header);
+			while(keepParsing.get() && parser.hasNextLine()){
+				callback = new SamCallback(keepParsing, parser.getPosition());
 				String line = parser.nextLine().trim();
 				if(line.isEmpty()){
 					//skip blanks?
 					continue;
 				}			
 				SamRecord record = parseRecord(header, line);
-				visitor.visitRecord(record);
+				visitor.visitRecord(callback, record);
 			}
-			visitor.visitEnd();
+			if(keepParsing.get()){
+				visitor.visitEnd();
+			}else{
+				visitor.halted();
+			}
 		}finally{
 			IOUtil.closeAndIgnoreErrors(parser);
 		}
@@ -144,6 +153,7 @@ final class SamFileParser extends AbstractSamFileParser{
 		}
 		return builder.build();
 	}
+
 	private static NucleotideSequence parseSequence(String s){
 		if(SamRecord.UNAVAILABLE.equals(s)){
 			return null;
@@ -160,12 +170,70 @@ final class SamFileParser extends AbstractSamFileParser{
 	}
 
 	
-	
+	private final class SamCallback extends AbstractCallback{
+		private final long currentPosition;
+		
+		
+		public SamCallback(AtomicBoolean keepParsing, long currentPosition) {
+			super(keepParsing);
+			this.currentPosition = currentPosition;
+		}
+		
+		
 
+		@Override
+		public boolean canCreateMemento() {
+			return true;
+		}
+
+		@Override
+		public SamVisitorMemento createMemento() {
+			return new SamFileMemento(SamFileParser.this, currentPosition);
+		}
+		
+	}
 	
-	
-	
-	
-	
-	
+	private static final class SamFileMemento implements SamVisitorMemento{
+		private final SamFileParser parserInstance;
+		private final long position;
+		
+		public SamFileMemento(SamFileParser parserInstance, long position) {
+			this.parserInstance = parserInstance;
+			this.position = position;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime
+					* result
+					+ ((parserInstance == null) ? 0 : parserInstance.hashCode());
+			result = prime * result + (int) (position ^ (position >>> 32));
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (!(obj instanceof SamFileMemento)) {
+				return false;
+			}
+			SamFileMemento other = (SamFileMemento) obj;
+			//has to be EXACT same instance
+			if (parserInstance != other.parserInstance) {
+				return false;
+			}
+			if (position != other.position) {
+				return false;
+			}
+			return true;
+		}
+		
+	}
 }

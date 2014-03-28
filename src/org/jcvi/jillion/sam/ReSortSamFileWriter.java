@@ -358,12 +358,12 @@ class ReSortSamFileWriter implements SamWriter {
 				encoding.createNewNoValidationSamParser(samFile).accept(new SamVisitor() {
 					
 					@Override
-					public void visitRecord(SamRecord record) {
+					public void visitRecord(SamVisitorCallback callback, SamRecord record) {
 						StreamingSamRecordIterator.this.blockingPut(record);
 						
 					}
 					@Override
-					public void visitRecord(SamRecord record,
+					public void visitRecord(SamVisitorCallback callback, SamRecord record,
 							VirtualFileOffset start, VirtualFileOffset end) {
 						StreamingSamRecordIterator.this.blockingPut(record);
 						
@@ -371,7 +371,7 @@ class ReSortSamFileWriter implements SamWriter {
 					
 					
 					@Override
-					public void visitHeader(SamHeader header) {
+					public void visitHeader(SamVisitorCallback callback, SamHeader header) {
 						//no-op
 						
 					}
@@ -379,6 +379,10 @@ class ReSortSamFileWriter implements SamWriter {
 					@Override
 					public void visitEnd() {
 						//no-op
+						
+					}
+					@Override
+					public void halted() {
 						
 					}
 

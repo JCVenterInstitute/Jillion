@@ -5,12 +5,14 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
+import org.jcvi.jillion.sam.SamVisitor.SamVisitorCallback;
 import org.jcvi.jillion.sam.header.ReadGroup;
 import org.jcvi.jillion.sam.header.ReadGroup.PlatformTechnology;
 import org.jcvi.jillion.sam.header.ReferenceSequence;
@@ -209,4 +211,24 @@ abstract class AbstractSamFileParser implements SamParser{
 		
 	}
 	
+	
+	static abstract class AbstractCallback implements SamVisitorCallback{
+		private final AtomicBoolean keepParsing;		
+		
+
+		public AbstractCallback(AtomicBoolean keepParsing) {
+			this.keepParsing = keepParsing;
+		}
+
+		@Override
+		public void haltParsing() {
+			keepParsing.set(false);
+			
+		}
+		
+		public boolean keepParsing(){
+			return keepParsing.get();
+		}
+		
+	}
 }

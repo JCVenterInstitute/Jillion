@@ -106,7 +106,7 @@ public final class SamTransformationService implements AssemblyTransformationSer
 		}
 
 		@Override
-		public void visitHeader(SamHeader header) {
+		public void visitHeader(SamVisitorCallback callback, SamHeader header) {
 			
 			for(ReferenceSequence refSeq : header.getReferenceSequences()){
 				String id = refSeq.getName();
@@ -128,13 +128,13 @@ public final class SamTransformationService implements AssemblyTransformationSer
 		
 
 		@Override
-		public void visitRecord(SamRecord record, VirtualFileOffset start,
+		public void visitRecord(SamVisitorCallback callback, SamRecord record, VirtualFileOffset start,
 				VirtualFileOffset end) {
-			visitRecord(record);
+			visitRecord(callback, record);
 		}
 
 		@Override
-		public void visitRecord(SamRecord record) {
+		public void visitRecord(SamVisitorCallback callback, SamRecord record) {
 			if(record.isPrimary()){
 				
 				if(record.mapped()){
@@ -197,11 +197,14 @@ public final class SamTransformationService implements AssemblyTransformationSer
 
 		@Override
 		public void visitEnd() {
-			transformer.endAssembly();
-			
+			transformer.endAssembly();			
 		}
-			
 		
+		@Override
+		public void halted() {
+			transformer.endAssembly();		
+		}
+
 	private NucleotideSequenceBuilder toGappedTrimmedSequenceBuilder(Cigar cigar, NucleotideSequence rawUngappedSequence, GrowableIntArray refGaps, int gappedStartOffset, Direction dir) {
 		if(rawUngappedSequence.getNumberOfGaps() !=0){
 			throw new IllegalArgumentException("rawUngapped Sequence can not have gaps");

@@ -58,7 +58,7 @@ final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 	}
 
 	@Override
-	public void visitHeader(SamHeader header) {
+	public void visitHeader(SamVisitorCallback callback, SamHeader header) {
 		//remove anything not mentioned?
 		Set<String> namesUsed = new HashSet<String>();
 		for(ReferenceSequence ref : header.getReferenceSequences()){
@@ -74,14 +74,14 @@ final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 	}
 
 	@Override
-	public void visitRecord(SamRecord record, VirtualFileOffset start,
+	public void visitRecord(SamVisitorCallback callback, SamRecord record, VirtualFileOffset start,
 			VirtualFileOffset end) {
-		visitRecord(record);
+		visitRecord(callback, record);
 		
 	}
 
 	@Override
-	public void visitRecord(SamRecord record) {
+	public void visitRecord(SamVisitorCallback callback, SamRecord record) {
 		if(record.isPrimary() && record.mapped()){
 			
 			String refName = record.getReferenceName();
@@ -110,8 +110,14 @@ final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 	}
 
 	@Override
+	public void halted() {
+		//no-op
+		
+	}
+
+	@Override
 	public void visitEnd() {
-		// TODO no-op
+		//no-op
 		
 	}
 

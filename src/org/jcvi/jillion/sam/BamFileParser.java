@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jcvi.jillion.core.io.FileUtil;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -19,6 +20,7 @@ import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
+import org.jcvi.jillion.sam.SamVisitor.SamVisitorCallback.SamVisitorMemento;
 import org.jcvi.jillion.sam.attribute.InvalidAttributeException;
 import org.jcvi.jillion.sam.attribute.ReservedAttributeValidator;
 import org.jcvi.jillion.sam.attribute.SamAttribute;
@@ -87,23 +89,29 @@ final class BamFileParser extends AbstractSamFileParser {
 			SamHeader.Builder headerBuilder = parseHeader(new TextLineParser(IOUtil.toInputStream(readPascalString(in))));
 			String[] refNames = parseReferenceNamesAndAddToHeader(in, headerBuilder);
 			SamHeader header = headerBuilder.build();
-			visitor.visitHeader(header);
+			AtomicBoolean keepParsing = new AtomicBoolean(true);
+
+			visitor.visitHeader(new BamCallback(keepParsing), header);
 			try{
-				while(in.hasMoreData()){	
+				while(keepParsing.get() && in.hasMoreData()){	
 					VirtualFileOffset start = in.getVirutalFileOffset();
 				
 					SamRecord record = parseNextSamRecord(in, refNames, header);
 					
 					VirtualFileOffset end = in.getVirutalFileOffset();
-					
-					visitor.visitRecord(record, start,end);
+					visitor.visitRecord(new BamCallback(keepParsing, start), 
+										record, start,end);
 				}
 			}catch(EOFException e){
 				//ignore, we can't tell if we've hit
 				//EOF until after we hit it otherwise
 				//we will mess up the offset computations
 			}
-			visitor.visitEnd();
+			if(keepParsing.get()){
+				visitor.visitEnd();
+			}else{
+				visitor.halted();
+			}
 		}finally{
 			IOUtil.closeAndIgnoreErrors(in);
 		}
@@ -355,6 +363,75 @@ final class BamFileParser extends AbstractSamFileParser {
 		
 	}
 	
+	
+	private final class BamCallback extends AbstractCallback{
+		private final long encodedFileOffset;
+		
+		public BamCallback(AtomicBoolean keepParsing){
+			this(keepParsing, VirtualFileOffset.create(0, 0));
+		}
+		public BamCallback(AtomicBoolean keepParsing, VirtualFileOffset currentPosition) {
+			super(keepParsing);
+			this.encodedFileOffset = currentPosition.getEncodedValue();
+		}
+		
+		
+
+		@Override
+		public boolean canCreateMemento() {
+			return true;
+		}
+
+		@Override
+		public SamVisitorMemento createMemento() {
+			return new BamFileMemento(BamFileParser.this, encodedFileOffset);
+		}
+		
+	}
+	
+	private static final class BamFileMemento implements SamVisitorMemento{
+		private final BamFileParser parserInstance;
+		private final long encodedFileOffset;
+		
+		public BamFileMemento(BamFileParser parserInstance, long position) {
+			this.parserInstance = parserInstance;
+			this.encodedFileOffset = position;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime
+					* result
+					+ ((parserInstance == null) ? 0 : parserInstance.hashCode());
+			result = prime * result + (int) (encodedFileOffset ^ (encodedFileOffset >>> 32));
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (!(obj instanceof BamFileMemento)) {
+				return false;
+			}
+			BamFileMemento other = (BamFileMemento) obj;
+			//has to be EXACT same instance
+			if (parserInstance != other.parserInstance) {
+				return false;
+			}
+			if (encodedFileOffset != other.encodedFileOffset) {
+				return false;
+			}
+			return true;
+		}
+		
+	}
 	
 	
 }
