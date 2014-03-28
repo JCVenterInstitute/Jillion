@@ -38,7 +38,7 @@ public interface AceFileVisitorCallback {
 		
 	}
 	/**
-	 * Is this callback capabable of
+	 * Is this callback capable of
 	 * creating {@link AceFileVisitorMemento}s
 	 * via {@link #createMemento()}.
 	 * @return {@code true} if this callback
