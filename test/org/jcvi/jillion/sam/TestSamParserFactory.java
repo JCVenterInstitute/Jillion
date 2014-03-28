@@ -8,8 +8,11 @@ import static org.easymock.EasyMock.verify;
 
 import java.io.IOException;
 
+import org.easymock.EasyMock;
+import org.easymock.IAnswer;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
+import org.jcvi.jillion.sam.SamVisitor.SamVisitorCallback;
 import org.jcvi.jillion.sam.attribute.InvalidAttributeException;
 import org.jcvi.jillion.sam.attribute.ReservedAttributeValidator;
 import org.jcvi.jillion.sam.attribute.ReservedSamAttributeKeys;
@@ -27,11 +30,27 @@ public class TestSamParserFactory {
 	private static final boolean IS_BAM = true;
 	
 	private static final boolean IS_SAM = false;
+	
+	private static enum HaltVisitor implements IAnswer<Void> {
+
+		INSTANCE;
+		
+		@Override
+		public Void answer() throws Throwable {
+
+			SamVisitorCallback callback = (SamVisitorCallback) EasyMock.getCurrentArguments()[0];
+			callback.haltParsing();
+			
+			return null;
+		}
+		
+	}
+	
 	@Test
-	public void parseSamFile() throws IOException, InvalidAttributeException{
+	public void parseHeaderOnlySamFile() throws IOException, InvalidAttributeException{
 		SamParser sut = SamParserFactory.create(resourceHelper.getFile("example.sam"));
 		
-		SamVisitor visitor = createMockVisitorWithExpectations(IS_SAM);
+		SamVisitor visitor = createMockVisitorWithHeaderOnlyExpectations();
 		
 		replay(visitor);
 		sut.accept(visitor);
@@ -39,18 +58,80 @@ public class TestSamParserFactory {
 	}
 	
 	@Test
-	public void parseBamFile() throws IOException, InvalidAttributeException{
+	public void parseHeaderOnlyBamFile() throws IOException, InvalidAttributeException{
 		SamParser sut = SamParserFactory.create(resourceHelper.getFile("example.bam"));
 		
-		SamVisitor visitor = createMockVisitorWithExpectations(IS_BAM);
+		SamVisitor visitor = createMockVisitorWithHeaderOnlyExpectations();
 		
 		replay(visitor);
 		sut.accept(visitor);
 		verify(visitor);
 	}
+	@Test
+	public void parseEntireSamFile() throws IOException, InvalidAttributeException{
+		SamParser sut = SamParserFactory.create(resourceHelper.getFile("example.sam"));
+		
+		SamVisitor visitor = createMockVisitorWithEntireFileExpectations(IS_SAM);
+		
+		replay(visitor);
+		sut.accept(visitor);
+		verify(visitor);
+	}
+	
+	@Test
+	public void parseEntireBamFile() throws IOException, InvalidAttributeException{
+		SamParser sut = SamParserFactory.create(resourceHelper.getFile("example.bam"));
+		
+		SamVisitor visitor = createMockVisitorWithEntireFileExpectations(IS_BAM);
+		
+		replay(visitor);
+		sut.accept(visitor);
+		verify(visitor);
+	}
+	
+	@Test
+	public void parseHalfSamFile() throws IOException, InvalidAttributeException{
+		SamParser sut = SamParserFactory.create(resourceHelper.getFile("example.sam"));
+		
+		SamVisitor visitor = createMockVisitorWithHaltHalfwaythroughFileExpectations(IS_SAM);
+		
+		replay(visitor);
+		sut.accept(visitor);
+		verify(visitor);
+	}
+	
+	@Test
+	public void parseHalfBamFile() throws IOException, InvalidAttributeException{
+		SamParser sut = SamParserFactory.create(resourceHelper.getFile("example.bam"));
+		
+		SamVisitor visitor = createMockVisitorWithHaltHalfwaythroughFileExpectations(IS_BAM);
+		
+		replay(visitor);
+		sut.accept(visitor);
+		verify(visitor);
+	}
+	
 
-
-	private SamVisitor createMockVisitorWithExpectations(boolean isBam)
+	private SamVisitor createMockVisitorWithHeaderOnlyExpectations() throws InvalidAttributeException {
+		SamVisitor visitor = createMock(SamVisitor.class);
+		
+		String ref = "ref";
+		
+		SamHeader expectedHeader = new SamHeader.Builder()
+											.setVersion(new SamVersion(1, 5))
+											.setSortOrder(SortOrder.COORDINATE)
+											.addReferenceSequence(new ReferenceSequence.Builder(ref, 45).build())
+											.build();
+		
+		visitor.visitHeader(isA(SamVisitorCallback.class), eq(expectedHeader));
+		
+		EasyMock.expectLastCall().andAnswer(HaltVisitor.INSTANCE);
+		
+		visitor.halted();
+		return visitor;
+		
+	}
+	private SamVisitor createMockVisitorWithEntireFileExpectations(boolean isBam)
 			throws InvalidAttributeException {
 		SamVisitor visitor = createMock(SamVisitor.class);
 		
@@ -62,7 +143,7 @@ public class TestSamParserFactory {
 											.addReferenceSequence(new ReferenceSequence.Builder(ref, 45).build())
 											.build();
 		
-		visitor.visitHeader(expectedHeader);
+		visitor.visitHeader(isA(SamVisitorCallback.class), eq(expectedHeader));
 		
 		visitRecord(visitor, createRecordBuilder(expectedHeader)
 								.setQueryName("r001")
@@ -138,15 +219,81 @@ public class TestSamParserFactory {
 	}
 	
 	
+	private SamVisitor createMockVisitorWithHaltHalfwaythroughFileExpectations(boolean isBam)
+			throws InvalidAttributeException {
+		SamVisitor visitor = createMock(SamVisitor.class);
+		
+		String ref = "ref";
+		
+		SamHeader expectedHeader = new SamHeader.Builder()
+											.setVersion(new SamVersion(1, 5))
+											.setSortOrder(SortOrder.COORDINATE)
+											.addReferenceSequence(new ReferenceSequence.Builder(ref, 45).build())
+											.build();
+		
+		visitor.visitHeader(isA(SamVisitorCallback.class), eq(expectedHeader));
+		
+		visitRecord(visitor, createRecordBuilder(expectedHeader)
+								.setQueryName("r001")
+								.setFlags(SamRecordFlags.parseFlags(163))
+								.setReferenceName(ref)
+								.setStartPosition(7)
+								.setMappingQuality(30)
+								.setCigar(Cigar.parse("8M2I4M1D3M"))
+								.setNextReferenceName(ref)
+								.setNextPosition(37)
+								.setObservedTemplateLength(39)
+								.setSequence(new NucleotideSequenceBuilder("TTAGATAAAGGATACTG").build())
+								.build(), isBam);
+		
+		visitRecord(visitor, createRecordBuilder(expectedHeader)
+				.setQueryName("r002")
+				.setFlags(SamRecordFlags.parseFlags(0))
+				.setReferenceName(ref)
+				.setStartPosition(9)
+				.setMappingQuality(30)
+				.setCigar(Cigar.parse("3S6M1P1I4M"))
+				.setSequence(new NucleotideSequenceBuilder("AAAAGATAAGGATA").build())
+				.build(), isBam);
+		
+		visitRecord(visitor, createRecordBuilder(expectedHeader)
+				.setQueryName("r003")
+				.setFlags(SamRecordFlags.parseFlags(0))
+				.setReferenceName(ref)
+				.setStartPosition(9)
+				.setMappingQuality(30)
+				.setCigar(Cigar.parse("5S6M"))
+				.setSequence(new NucleotideSequenceBuilder("GCCTAAGCTAA").build())
+				.addAttribute(new SamAttribute(ReservedSamAttributeKeys.parseKey("SA"), "ref,29,-,6H5M,17,0;"))
+				.build(), isBam);
+		
+		visitRecord(visitor, createRecordBuilder(expectedHeader)
+				.setQueryName("r004")
+				.setFlags(SamRecordFlags.parseFlags(0))
+				.setReferenceName(ref)
+				.setStartPosition(16)
+				.setMappingQuality(30)
+				.setCigar(Cigar.parse("6M14N5M"))
+				.setSequence(new NucleotideSequenceBuilder("ATAGCTTCAGC").build())
+				.build(), isBam);
+		
+		EasyMock.expectLastCall().andAnswer(HaltVisitor.INSTANCE);
+		
+		visitor.halted();
+		
+		
+		return visitor;
+	}
+	
 	private SamRecord.Builder createRecordBuilder(SamHeader header){
 		return new SamRecord.Builder(header, ReservedAttributeValidator.INSTANCE);
 	}
 	
 	private void visitRecord(SamVisitor visitor, SamRecord record, boolean isBam){
 		if(isBam){
-			visitor.visitRecord(eq(record), isA(VirtualFileOffset.class), isA(VirtualFileOffset.class));
+			visitor.visitRecord(isA(SamVisitorCallback.class), eq(record), isA(VirtualFileOffset.class), isA(VirtualFileOffset.class));
 		}else{
-			visitor.visitRecord(record);
+			visitor.visitRecord(isA(SamVisitorCallback.class), eq(record));
 		}
 	}
 }

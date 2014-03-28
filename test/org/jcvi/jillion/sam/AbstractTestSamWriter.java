@@ -18,19 +18,24 @@ public class AbstractTestSamWriter {
 		private final List<SamRecord> records = new ArrayList<SamRecord>();
 		private SamHeader header;
 		@Override
-		public void visitRecord(SamRecord record) {
+		public void visitRecord(SamVisitorCallback callback, SamRecord record) {
 			records.add(record);
 		}
 
 		@Override
-		public void visitRecord(SamRecord record, VirtualFileOffset start,
+		public void visitRecord(SamVisitorCallback callback, SamRecord record, VirtualFileOffset start,
 				VirtualFileOffset end) {
 			records.add(record);
 		}
 
 		@Override
-		public void visitHeader(SamHeader header) {
+		public void visitHeader(SamVisitorCallback callback, SamHeader header) {
 			this.header = header;
+		}
+
+		@Override
+		public void halted() {
+			//no-op			
 		}
 
 		@Override
