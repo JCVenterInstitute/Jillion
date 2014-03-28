@@ -56,7 +56,7 @@ public interface FastqVisitor {
 			
 		}
 		/**
-		 * Is this callback capabable of
+		 * Is this callback capable of
 		 * creating {@link FastqVisitorMemento}s
 		 * via {@link #createMemento()}.
 		 * @return {@code true} if this callback
@@ -73,8 +73,8 @@ public interface FastqVisitor {
 		 */
 		FastqVisitorMemento createMemento();
 		/**
-		 * Tell the {@link FastqFileParser} to stop parsing
-		 * the fastq file.  {@link FastqVisitor#visitEnd()}
+		 * Tell the {@link FastqVisitor} to stop parsing
+		 * the fastq file.  {@link FastqVisitor#halted()}
 		 * will still be called.
 		 */
 		void haltParsing();
