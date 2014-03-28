@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 import org.jcvi.jillion.sam.header.SamHeader;
-import org.jcvi.jillion.sam.index.BamIndexer;
 
 /**
  * {@code Encoding}

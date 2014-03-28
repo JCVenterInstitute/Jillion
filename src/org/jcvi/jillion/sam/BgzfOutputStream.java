@@ -19,7 +19,7 @@ import java.util.zip.Deflater;
  * @author dkatzel
  *
  */
-public final class BgzfOutputStream extends OutputStream{
+final class BgzfOutputStream extends OutputStream{
 	
 	/**
 	 * Max compressed block size should never be > max uncompressed block size.

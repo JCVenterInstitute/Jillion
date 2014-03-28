@@ -12,6 +12,9 @@ import org.jcvi.jillion.sam.header.SamHeader;
  *
  */
 enum NullSamAttributeValidator implements SamAttributeValidator{
+	/**
+	 * Singleton instance.
+	 */
 	INSTANCE;
 
 	@Override

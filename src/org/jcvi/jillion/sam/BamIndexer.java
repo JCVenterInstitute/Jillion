@@ -1,17 +1,16 @@
-package org.jcvi.jillion.sam.index;
+package org.jcvi.jillion.sam;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.jcvi.jillion.sam.IndexerCallback;
-import org.jcvi.jillion.sam.SamRecord;
-import org.jcvi.jillion.sam.VirtualFileOffset;
 import org.jcvi.jillion.sam.cigar.Cigar.ClipType;
 import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.sam.index.Bin;
+import org.jcvi.jillion.sam.index.ReferenceIndex;
 
-public class BamIndexer implements IndexerCallback{
+class BamIndexer implements IndexerCallback{
 
 	private SamRecord currentRecord;
 	

@@ -1,13 +1,34 @@
 package org.jcvi.jillion.sam;
 
-
+/**
+ * {@code VirtualFileOffset} is an object
+ * representation of a BAM virtual file offset
+ * as defined in the SAM specification.
+ * The VirutalFileOffset encodes a file offset
+ * as two coordinates : the file offset into
+ * the compressed BAM blocks and then an additional offset
+ * into the <em>un</em>compressed block.
+ * @author dkatzel
+ *
+ */
 public class VirtualFileOffset implements Comparable<VirtualFileOffset>{
 	//2^49 -1
 	private static final long MAX_COMPRESSED_BLOCK_OFFSET = 562949953421311L;
 	//2^17 -1
 	private static final int MAX_UNCOMPRESSED_OFFSET = 131071;
 	private final long encodedValue;
-
+	/**
+	 * Create a new {@link VirtualFileOffset}
+	 * instance using the given compressedBlock offset and 
+	 * uncompressed offset into the current block.
+	 * @param compressedBlockOffset the number of compressed bytes to read
+	 * from the beginning of the BAM file until the current BGZF block is reached;
+	 * must be >=0 and less than 2<sup>49</sup>-1.
+	 * @param uncompressedOffset the number of <em>un</em>compressed bytes 
+	 * read in the current BGZF block; must be between 0 and 2<sup>17</sup>-1.
+	 * @return a new {@link VirtualFileOffset} instance; will never be null.
+	 * @throws IllegalArgumentException if the provided offset values are out of range.
+	 */
 	public static VirtualFileOffset create(long compressedBlockOffset, int uncompressedOffset){
 		if(compressedBlockOffset <0){
 			throw new IllegalArgumentException("compressed BlockOffset can not be negative : " + compressedBlockOffset);
