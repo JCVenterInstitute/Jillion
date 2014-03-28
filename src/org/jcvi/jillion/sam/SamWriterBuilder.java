@@ -7,7 +7,6 @@ import org.jcvi.jillion.core.io.FileUtil;
 import org.jcvi.jillion.sam.attribute.ReservedAttributeValidator;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 import org.jcvi.jillion.sam.header.SamHeader;
-import org.jcvi.jillion.sam.index.BamIndexer;
 /**
  * {@code SamWriterBuilder}
  * is a Builder object that will create

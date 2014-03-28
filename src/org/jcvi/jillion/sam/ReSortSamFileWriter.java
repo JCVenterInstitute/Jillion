@@ -17,7 +17,6 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 import org.jcvi.jillion.sam.header.SamHeader;
-import org.jcvi.jillion.sam.index.BamIndexer;
 /**
  * {@code ReSortSamFileWriter}
  * is a {@link SamWriter} implementation

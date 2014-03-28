@@ -8,6 +8,14 @@ import org.jcvi.jillion.core.io.FileUtil;
 import org.jcvi.jillion.sam.attribute.ReservedAttributeValidator;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 
+/**
+ * {@code SamParserFactory} is a Factory class
+ * for creating {@link SamParser}
+ * instances depending of if the provided file
+ * is a SAM or BAM encoded file.
+ * @author dkatzel
+ *
+ */
 public final class SamParserFactory {
 
 	private SamParserFactory(){

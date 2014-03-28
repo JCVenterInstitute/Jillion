@@ -16,7 +16,6 @@ import org.jcvi.jillion.sam.attribute.ReservedAttributeValidator;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
-import org.jcvi.jillion.sam.index.BamIndexer;
 import org.jcvi.jillion.sam.index.IndexUtil;
 import org.jcvi.jillion.sam.index.ReferenceIndex;
 /**

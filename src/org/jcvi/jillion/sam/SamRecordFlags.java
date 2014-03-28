@@ -2,7 +2,12 @@ package org.jcvi.jillion.sam;
 
 import java.util.EnumSet;
 import java.util.Set;
-
+/**
+ * {@code SamRecordFlags} is an object representation
+ * of the SAM bit flags column for each record.
+ * @author dkatzel
+ *
+ */
 public enum SamRecordFlags {
 
 	/*
@@ -12,7 +17,7 @@ public enum SamRecordFlags {
 0x8 next segment in the template unmapped
 0x10 SEQ being reverse complemented
 0x20 SEQ of the next segment in the template being reversed
-0x40 the rst segment in the template
+0x40 the first segment in the template
 0x80 the last segment in the template
 0x100 secondary alignment
 0x200 not passing quality controls

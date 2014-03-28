@@ -38,7 +38,7 @@ import org.jcvi.jillion.core.io.IOUtil;
  * @author		dkatzel
  *
  */
-public class BgzfInputStream extends InflaterInputStream {
+class BgzfInputStream extends InflaterInputStream {
 	
 	 /**
      * GZIP header magic number.
