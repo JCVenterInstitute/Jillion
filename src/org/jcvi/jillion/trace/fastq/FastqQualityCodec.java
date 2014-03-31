@@ -45,7 +45,7 @@ public enum FastqQualityCodec {
 	 *  Illumina 1.8+ switched to sanger encoding.
 	 *  @see #SANGER
 	 */
-	ILLUMINA{
+	ILLUMINA(64){
 		 @Override
 		    protected PhredQuality decode(char encodedQuality) {
 		        return PhredQuality.valueOf(encodedQuality -64);
@@ -60,7 +60,7 @@ public enum FastqQualityCodec {
 	 * {@code SANGER} supports Sanger encoded qualities.
 	 * .
 	 */
-	SANGER{
+	SANGER(33){
 		 @Override
 		    protected PhredQuality decode(char encodedQuality) {
 		        return PhredQuality.valueOf(encodedQuality -33);
@@ -78,7 +78,7 @@ public enum FastqQualityCodec {
 	 * but <strong>also</strong> the quality scores are
 	 * in Solexa scale and not the Phred scale.
 	 */
-	SOLEXA{
+	SOLEXA(64){
 		    @Override
 		    protected PhredQuality decode(char encodedQuality) {
 		        int solexaQuality =encodedQuality -64;
@@ -109,7 +109,25 @@ public enum FastqQualityCodec {
         		.build();
     }
 
+    private final int offset;
+    
+    FastqQualityCodec(int offset){
+    	this.offset = offset;
+    }
+    
     /**
+     * Get the encoding offset used to encode
+     * the quality values. For example, for {@link #SANGER},
+     * this will return 33, for {@link #ILLUMINA}, it will
+     * return 64.
+     * @return the encoding offset as an int.
+     */
+    public int getOffset() {
+		return offset;
+	}
+
+
+	/**
      * Encode the given qualities into 
      * a FASTQ quality encoded String.
      * @param qualities the qualities to encode
