@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,17 +28,50 @@ public final class IndexUtil {
 		return numIntervals;
 	}
 	
-	public static List<ReferenceIndexBuilder> parseIndex(InputStream in) throws IOException{
+	public static List<ReferenceIndex> parseIndex(InputStream in) throws IOException{
 		byte[] magicNumber = IOUtil.readByteArray(in, 4);
 		if(!BAM_INDEX_MAGIC.equals(magicNumber)){
 			throw new IOException("invalid magic number : " + Arrays.toString(magicNumber));
 		}
 		int numRefs = IOUtil.readSignedInt(in, ByteOrder.LITTLE_ENDIAN);
+		List<ReferenceIndex> refIndexes = new ArrayList<ReferenceIndex>(numRefs);
+		
 		for(int i=0; i<numRefs; i++){
-			ReferenceIndexBuilder builder = new ReferenceIndexBuilder(100);
+			//don't need to use builders
+			//since the file has everything
+			//"prebuilt" for us.
+			int numBins = IOUtil.readSignedInt(in, ByteOrder.LITTLE_ENDIAN);
+			Bin[] bins = new Bin[numBins];
+			for(int j=0; j<numBins; j++){
+				int binId = IOUtil.readSignedInt(in, ByteOrder.LITTLE_ENDIAN);
+				int numChunks = IOUtil.readSignedInt(in, ByteOrder.LITTLE_ENDIAN);
+				Chunk[] chunks = new Chunk[numChunks];
+				
+				for(int k =0; k<numChunks; k++){
+					VirtualFileOffset begin = readVirtualFileOffset(in);					
+					VirtualFileOffset end = readVirtualFileOffset(in);
+					chunks[k] =new Chunk(begin, end);
+				}
+				bins[j] = new BaiBin(binId, chunks);
+			}
+			int numIntervals = IOUtil.readSignedInt(in, ByteOrder.LITTLE_ENDIAN);
+			VirtualFileOffset intervals[] = new VirtualFileOffset[numIntervals];
+			for(int j=0; j< numIntervals; j++){
+				intervals[j] =readVirtualFileOffset(in);
+			}
+			refIndexes.add(new BaiRefIndex(bins,intervals));
 		}
 		
-		return null;
+		return refIndexes;
+	}
+
+	private static VirtualFileOffset readVirtualFileOffset(InputStream in)
+			throws IOException {
+		return new VirtualFileOffset(
+				//technically, the spec says unsigned but 
+				//our bit shifting does casts so it should be ok
+				IOUtil.readSignedLong(in, ByteOrder.LITTLE_ENDIAN)
+				);
 	}
 	
 	public static void writeIndex(OutputStream out, List<ReferenceIndex> indexes) throws IOException{

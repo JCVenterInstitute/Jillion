@@ -3,8 +3,10 @@ package org.jcvi.jillion.sam.index;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
+import org.jcvi.jillion.internal.core.util.JillionUtil;
 import org.jcvi.jillion.sam.SamUtil;
 import org.jcvi.jillion.sam.VirtualFileOffset;
 
@@ -17,7 +19,7 @@ public final class ReferenceIndexBuilder{
 	@SuppressWarnings("PMD.LooseCoupling")
 	private final ArrayList<Bin> bins = new ArrayList<Bin>();
 	private int currentBinNumber =1;
-	private Bin.Builder currentBinBuilder = null;
+	private BinBuilder currentBinBuilder = null;
 	
 	public ReferenceIndexBuilder(int length){
 		this.intervals = new VirtualFileOffset[IndexUtil.getIntervalOffsetFor(length)];
@@ -38,7 +40,7 @@ public final class ReferenceIndexBuilder{
 		}
 		bins.trimToSize();
 		//sort bins in order
-		Collections.sort(bins);
+		Collections.sort(bins, BinSorter.INSTANCE);
 		return new ReferenceIndexImpl(this);
 	}
 
@@ -52,7 +54,7 @@ public final class ReferenceIndexBuilder{
 				bins.add(currentBinBuilder.build());
 			}
 			//make new bin builder for this new bin
-			currentBinBuilder = new Bin.Builder(bin);
+			currentBinBuilder = new BinBuilder(bin);
 			//update bin number
 			currentBinNumber = bin;
 		}
@@ -130,5 +132,16 @@ public final class ReferenceIndexBuilder{
 		public VirtualFileOffset[] getIntervals() {
 			return Arrays.copyOf(intervals, intervals.length);
 		}
+	}
+	
+	private static enum BinSorter implements Comparator<Bin>{
+		
+		INSTANCE;
+
+		@Override
+		public int compare(Bin o1, Bin o2) {
+			return JillionUtil.compare(o1.getBinNumber(), o2.getBinNumber());
+		}
+		
 	}
 }
