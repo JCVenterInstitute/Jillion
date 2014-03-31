@@ -17,7 +17,7 @@ import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
 import org.jcvi.jillion.sam.index.IndexUtil;
-import org.jcvi.jillion.sam.index.ReferenceIndexBuilder;
+import org.jcvi.jillion.sam.index.ReferenceIndex;
 /**
  * {@code PresortedBamFileWriter} is a {@link SamWriter}
  * that writes out BAM files whose {@link SamRecord}s
@@ -96,7 +96,7 @@ class PresortedBamFileWriter implements SamWriter{
 		closed= true;
 		out.close();
 		if(optionalIndexer !=null){
-			List<ReferenceIndexBuilder> indexes =optionalIndexer.createReferenceIndexes();
+			List<ReferenceIndex> indexes =optionalIndexer.createReferenceIndexes();
 			String baseName =FileUtil.getBaseName(bamFile);
 			File indexFileOutFile = new File(bamFile.getParentFile(), baseName + ".bai");
 			OutputStream indexOutStream =null;
