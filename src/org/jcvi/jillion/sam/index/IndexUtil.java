@@ -34,17 +34,17 @@ public final class IndexUtil {
 		}
 		int numRefs = IOUtil.readSignedInt(in, ByteOrder.LITTLE_ENDIAN);
 		for(int i=0; i<numRefs; i++){
-			ReferenceIndexBuilder.Builder builder = new ReferenceIndexBuilder.Builder(100);
+			ReferenceIndexBuilder builder = new ReferenceIndexBuilder(100);
 		}
 		
 		return null;
 	}
 	
-	public static void writeIndex(OutputStream out, List<ReferenceIndexBuilder> indexes) throws IOException{
+	public static void writeIndex(OutputStream out, List<ReferenceIndex> indexes) throws IOException{
 		out.write(BAM_INDEX_MAGIC);
 		//assume little endian like BAM
 		IOUtil.putInt(out,indexes.size(), ByteOrder.LITTLE_ENDIAN);
-		for(ReferenceIndexBuilder refIndex : indexes){
+		for(ReferenceIndex refIndex : indexes){
 			List<Bin> bins = refIndex.getBins();
 			IOUtil.putInt(out,bins.size(), ByteOrder.LITTLE_ENDIAN);
 			for(Bin bin : bins){
