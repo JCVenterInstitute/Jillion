@@ -61,7 +61,7 @@ public final class SamUtil {
 	 * "In BAM, each bin may span 
 	 * 2<sup>29</sup>, 2<sup>26</sup>, 2<sup>23</sup>,
 	 *  2<sup>20</sup>, 2<sup>17</sup> or 2<sup>14</sup> bp. 
-	 *  Bin 0 spans a 512Mbp region,
+	 *  BinBuilder 0 spans a 512Mbp region,
 	 *  bins 1-8 span 64Mbp, 
 	 *  9-72 8Mbp, 
 	 *  73-584 1Mbp, 
