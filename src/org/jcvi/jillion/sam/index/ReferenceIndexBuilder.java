@@ -8,13 +8,13 @@ import java.util.List;
 import org.jcvi.jillion.sam.SamUtil;
 import org.jcvi.jillion.sam.VirtualFileOffset;
 
-public final class ReferenceIndex {
+public final class ReferenceIndexBuilder {
 
 	private final List<Bin> bins;
 	private final VirtualFileOffset[] intervals;
 	
 	
-	private ReferenceIndex(Builder builder){
+	private ReferenceIndexBuilder(Builder builder){
 		this.bins = builder.bins;
 		this.intervals = builder.intervals;
 	}
@@ -54,7 +54,7 @@ public final class ReferenceIndex {
 			updateBins(readStartOffset, readEndOffsetExclusive, start, end);
 		}
 		
-		public ReferenceIndex build(){
+		public ReferenceIndexBuilder build(){
 			if(currentBinBuilder !=null){
 				//add last bin to
 				//our list of bins used.
@@ -63,7 +63,7 @@ public final class ReferenceIndex {
 			bins.trimToSize();
 			//sort bins in order
 			Collections.sort(bins);
-			return new ReferenceIndex(this);
+			return new ReferenceIndexBuilder(this);
 		}
 
 		private void updateBins(int readStartOffset, int readEndOffsetExclusive,

@@ -1,8 +1,10 @@
 package org.jcvi.jillion.sam.index;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 import java.util.List;
 
 import org.jcvi.jillion.core.io.IOUtil;
@@ -25,11 +27,24 @@ public final class IndexUtil {
 		return numIntervals;
 	}
 	
-	public static void writeIndex(OutputStream out, List<ReferenceIndex> indexes) throws IOException{
+	public static List<ReferenceIndexBuilder> parseIndex(InputStream in) throws IOException{
+		byte[] magicNumber = IOUtil.readByteArray(in, 4);
+		if(!BAM_INDEX_MAGIC.equals(magicNumber)){
+			throw new IOException("invalid magic number : " + Arrays.toString(magicNumber));
+		}
+		int numRefs = IOUtil.readSignedInt(in, ByteOrder.LITTLE_ENDIAN);
+		for(int i=0; i<numRefs; i++){
+			ReferenceIndexBuilder.Builder builder = new ReferenceIndexBuilder.Builder(100);
+		}
+		
+		return null;
+	}
+	
+	public static void writeIndex(OutputStream out, List<ReferenceIndexBuilder> indexes) throws IOException{
 		out.write(BAM_INDEX_MAGIC);
 		//assume little endian like BAM
 		IOUtil.putInt(out,indexes.size(), ByteOrder.LITTLE_ENDIAN);
-		for(ReferenceIndex refIndex : indexes){
+		for(ReferenceIndexBuilder refIndex : indexes){
 			List<Bin> bins = refIndex.getBins();
 			IOUtil.putInt(out,bins.size(), ByteOrder.LITTLE_ENDIAN);
 			for(Bin bin : bins){
