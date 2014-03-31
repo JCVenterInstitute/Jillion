@@ -8,25 +8,25 @@ import org.jcvi.jillion.sam.cigar.Cigar.ClipType;
 import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
 import org.jcvi.jillion.sam.index.Bin;
-import org.jcvi.jillion.sam.index.ReferenceIndex;
+import org.jcvi.jillion.sam.index.ReferenceIndexBuilder;
 
 class BamIndexer implements IndexerCallback{
 
 	private SamRecord currentRecord;
 	
 	private final SamHeader header;
-	private final List<ReferenceIndex.Builder> indexBuilders;
-	private ReferenceIndex.Builder currentBuilder;
+	private final List<ReferenceIndexBuilder.Builder> indexBuilders;
+	private ReferenceIndexBuilder.Builder currentBuilder;
 	private String currentRefName;
 	
 	public BamIndexer(SamHeader header) {
 		
 		this.header = header;
 		Collection<ReferenceSequence> referenceSequences = header.getReferenceSequences();
-		this.indexBuilders = new ArrayList<ReferenceIndex.Builder>(referenceSequences.size());
+		this.indexBuilders = new ArrayList<ReferenceIndexBuilder.Builder>(referenceSequences.size());
 
 		for(ReferenceSequence refSeq : referenceSequences){
-			indexBuilders.add(new ReferenceIndex.Builder(refSeq.getLength()));
+			indexBuilders.add(new ReferenceIndexBuilder.Builder(refSeq.getLength()));
 		}
 	}
 	
@@ -61,10 +61,10 @@ class BamIndexer implements IndexerCallback{
 
 	}
 
-	public List<ReferenceIndex> createReferenceIndexes(){
-		List<ReferenceIndex> list = new ArrayList<ReferenceIndex>(indexBuilders.size());
-		for(ReferenceIndex.Builder builder : indexBuilders){
-			ReferenceIndex refIndex = builder.build();
+	public List<ReferenceIndexBuilder> createReferenceIndexes(){
+		List<ReferenceIndexBuilder> list = new ArrayList<ReferenceIndexBuilder>(indexBuilders.size());
+		for(ReferenceIndexBuilder.Builder builder : indexBuilders){
+			ReferenceIndexBuilder refIndex = builder.build();
 			
 			System.out.println(refIndex.getBins().size());
 			for(Bin bin : refIndex.getBins()){
