@@ -35,6 +35,8 @@ import org.junit.runners.Suite.SuiteClasses;
     	
     	TestFastqRecordBuilder.class,
     	
+    	TestFastqQualityCodecOffsets.class,
+    	
         TestSangerFastQQualityCodec.class,
         TestIlluminaFastQQualityCodec.class,
         TestSangerFastQQualityCodecActual.class,
