@@ -30,6 +30,8 @@ public final class SamHeader {
 	private final Map<String, ReferenceSequence> referenceSequences;
 	private final Map<String, Integer> referenceIndexMap;
 	
+	private final Map<Integer, ReferenceSequence> indexReferenceMap;
+	
 	private final Map<String, ReadGroup> readGroups;
 	
 	private final Map<String, SamProgram> programs;
@@ -46,10 +48,14 @@ public final class SamHeader {
 		this.programs =  Collections.unmodifiableMap(new HashMap<String, SamProgram>(builder.programs));
 		
 		this.comments = Collections.unmodifiableList(new ArrayList<String>(builder.comments));
-		referenceIndexMap = new HashMap<String, Integer>();
+		referenceIndexMap = new LinkedHashMap<String, Integer>();
+		indexReferenceMap = new LinkedHashMap<Integer, ReferenceSequence>();
+		
 		int i=0;
 		for(ReferenceSequence refSeq : referenceSequences.values()){
-			referenceIndexMap.put(refSeq.getName(), Integer.valueOf(i));
+			Integer index = Integer.valueOf(i);
+			referenceIndexMap.put(refSeq.getName(), index);
+			indexReferenceMap.put(index, refSeq);
 			i++;
 		}
 	}
@@ -388,6 +394,12 @@ public final class SamHeader {
 		
 	}
 	
+
+	public ReferenceSequence getReferenceSequence(int i) {
+		return indexReferenceMap.get(Integer.valueOf(i));
+		
+	}
+	
 	public void validRecord(SamRecord record, SamAttributeValidator attributeValidator) throws SamValidationException{
 		//reference names must be present in a SQ-SN tag
 		String refName =record.getReferenceName();
@@ -411,4 +423,7 @@ public final class SamHeader {
 		}
 		return sortOrder.createComparator(this);
 	}
+
+
+
 }

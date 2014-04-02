@@ -8,8 +8,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.sam.SamUtil;
 import org.jcvi.jillion.sam.VirtualFileOffset;
+import org.jcvi.jillion.sam.header.ReferenceSequence;
+import org.jcvi.jillion.sam.header.SamHeader;
 
 public final class IndexUtil {
 
@@ -28,9 +32,9 @@ public final class IndexUtil {
 		return numIntervals;
 	}
 	
-	public static List<ReferenceIndex> parseIndex(InputStream in) throws IOException{
+	public static List<ReferenceIndex> parseIndex(InputStream in, SamHeader header) throws IOException{
 		byte[] magicNumber = IOUtil.readByteArray(in, 4);
-		if(!BAM_INDEX_MAGIC.equals(magicNumber)){
+		if(!Arrays.equals(BAM_INDEX_MAGIC, magicNumber)){
 			throw new IOException("invalid magic number : " + Arrays.toString(magicNumber));
 		}
 		int numRefs = IOUtil.readSignedInt(in, ByteOrder.LITTLE_ENDIAN);
@@ -41,7 +45,15 @@ public final class IndexUtil {
 			//since the file has everything
 			//"prebuilt" for us.
 			int numBins = IOUtil.readSignedInt(in, ByteOrder.LITTLE_ENDIAN);
+			ReferenceSequence refSeq = header.getReferenceSequence(i);
+			if(refSeq ==null){
+				throw new NullPointerException("no ref " + i);
+			}
+			int maxBin = SamUtil.computeBinFor(new Range.Builder(1)
+											.shift(refSeq.getLength())
+											.build());
 			Bin[] bins = new Bin[numBins];
+			int numOfBinsUsed=0;
 			for(int j=0; j<numBins; j++){
 				int binId = IOUtil.readSignedInt(in, ByteOrder.LITTLE_ENDIAN);
 				int numChunks = IOUtil.readSignedInt(in, ByteOrder.LITTLE_ENDIAN);
@@ -52,14 +64,23 @@ public final class IndexUtil {
 					VirtualFileOffset end = readVirtualFileOffset(in);
 					chunks[k] =new Chunk(begin, end);
 				}
-				bins[j] = new BaiBin(binId, chunks);
+				if(binId<=maxBin){
+					//picard and samtools violate their
+					//spec and put additional meta data in the
+					//max bin (37450) which we will ignore for now.
+					
+					bins[j] = new BaiBin(binId, chunks);
+					numOfBinsUsed++;
+				}
+				
 			}
 			int numIntervals = IOUtil.readSignedInt(in, ByteOrder.LITTLE_ENDIAN);
 			VirtualFileOffset intervals[] = new VirtualFileOffset[numIntervals];
 			for(int j=0; j< numIntervals; j++){
 				intervals[j] =readVirtualFileOffset(in);
 			}
-			refIndexes.add(new BaiRefIndex(bins,intervals));
+			refIndexes.add(new BaiRefIndex(Arrays.copyOf(bins, numOfBinsUsed),
+					intervals));
 		}
 		
 		return refIndexes;
@@ -74,11 +95,13 @@ public final class IndexUtil {
 				);
 	}
 	
-	public static void writeIndex(OutputStream out, List<ReferenceIndex> indexes) throws IOException{
+	public static void writeIndex(OutputStream out, BamIndex indexes) throws IOException{
 		out.write(BAM_INDEX_MAGIC);
 		//assume little endian like BAM
-		IOUtil.putInt(out,indexes.size(), ByteOrder.LITTLE_ENDIAN);
-		for(ReferenceIndex refIndex : indexes){
+		int numberOfIndexes = indexes.getNumberOfIndexes();
+		IOUtil.putInt(out,numberOfIndexes, ByteOrder.LITTLE_ENDIAN);
+		for(int i =0; i<numberOfIndexes; i++){
+			ReferenceIndex refIndex = indexes.getReferenceIndex(i);
 			List<Bin> bins = refIndex.getBins();
 			IOUtil.putInt(out,bins.size(), ByteOrder.LITTLE_ENDIAN);
 			for(Bin bin : bins){
@@ -94,8 +117,8 @@ public final class IndexUtil {
 			VirtualFileOffset[] intervals =refIndex.getIntervals();
 			IOUtil.putInt(out,intervals.length, ByteOrder.LITTLE_ENDIAN);
 			long prev =0;
-			for(int i=0; i<intervals.length; i++){
-				VirtualFileOffset current = intervals[i];
+			for(int j=0; j<intervals.length; j++){
+				VirtualFileOffset current = intervals[j];
 				if(current ==null){
 					//no offset for this interval
 					//use previous?

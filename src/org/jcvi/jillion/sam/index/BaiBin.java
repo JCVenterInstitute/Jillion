@@ -39,7 +39,7 @@ class BaiBin implements Bin {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + binId;
-		result = prime * result + ((chunks == null) ? 0 : chunks.hashCode());
+		result = prime * result + chunks.hashCode();
 		return result;
 	}
 
@@ -51,21 +51,22 @@ class BaiBin implements Bin {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof BaiBin)) {
+		if (!(obj instanceof Bin)) {
 			return false;
 		}
-		BaiBin other = (BaiBin) obj;
-		if (binId != other.binId) {
+		Bin other = (Bin) obj;
+		if (binId != other.getBinNumber()) {
 			return false;
 		}
-		if (chunks == null) {
-			if (other.chunks != null) {
-				return false;
-			}
-		} else if (!chunks.equals(other.chunks)) {
+		if (!chunks.equals(other.getChunks())) {
 			return false;
 		}
 		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "BaiBin [binId=" + binId + ", chunks=" + chunks + "]";
 	}
 	
 	

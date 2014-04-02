@@ -186,13 +186,8 @@ public final class SamUtil {
 		//first fully populate all but last byte
 		for(int i=0; i<seqBytes.length-1; i++){
 			byte value = seqBytes[i];
-			try{
 			builder.append(BAM_ENCODED_BASES[(value>>4) & 0x0F]);
-			builder.append(BAM_ENCODED_BASES[value & 0x0F]);
-			}catch(RuntimeException t){
-				System.out.println( " i = " + i + " value = " + value);
-				throw t;
-			}
+			builder.append(BAM_ENCODED_BASES[value & 0x0F]);			
 		}
 		byte lastByte = seqBytes[seqBytes.length-1];
 		//for last byte we should always include high nibble
@@ -471,14 +466,9 @@ public final class SamUtil {
 		//write all but last byte which 
 		//will use all bits
 		for(int i=0; i<data.length -1; i++){
-			try{
 			int value = BAM_ENCODED_BASES_TO_ORDINAL[iter.next().ordinal()] <<4;
 			value |= BAM_ENCODED_BASES_TO_ORDINAL[iter.next().ordinal()];
-			data[i] = (byte)value;
-			}catch(Exception e){
-				System.out.println(i);
-				throw new RuntimeException(e);
-			}
+			data[i] = (byte)value;			
 		}
 		//last byte will def use higher order bits
 		int value = BAM_ENCODED_BASES_TO_ORDINAL[iter.next().ordinal()] <<4;

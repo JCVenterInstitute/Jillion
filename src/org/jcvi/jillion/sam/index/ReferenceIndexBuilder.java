@@ -13,7 +13,8 @@ import org.jcvi.jillion.sam.VirtualFileOffset;
 public final class ReferenceIndexBuilder{
 	
 	private final VirtualFileOffset[] intervals;
-	private int currentIntervalArrayOffset=-1;
+
+	private int largestIndexUsed=-1;
 	//need to keep type as ArrayList since
 	//we use trimToSize() method which is only on arraylist.
 	@SuppressWarnings("PMD.LooseCoupling")
@@ -28,7 +29,7 @@ public final class ReferenceIndexBuilder{
 	
 	public void addAlignment(int readStartOffset, int readEndOffsetExclusive, VirtualFileOffset start, VirtualFileOffset end){
 		
-		updateIntervals(readStartOffset, start);		
+		updateIntervals(readStartOffset, readEndOffsetExclusive-1, start);		
 		updateBins(readStartOffset, readEndOffsetExclusive, start, end);
 	}
 	
@@ -43,7 +44,7 @@ public final class ReferenceIndexBuilder{
 		Collections.sort(bins, BinSorter.INSTANCE);
 		return new ReferenceIndexImpl(this);
 	}
-
+	
 	private void updateBins(int readStartOffset, int readEndOffsetExclusive,
 			VirtualFileOffset start, VirtualFileOffset end) {
 		int bin = SamUtil.computeBinFor(readStartOffset, readEndOffsetExclusive);
@@ -66,11 +67,18 @@ public final class ReferenceIndexBuilder{
 		
 	}
 
-	public void updateIntervals(int readStartOffset, VirtualFileOffset start) {
-		int interval = IndexUtil.getIntervalOffsetFor(readStartOffset) -1;
-		if(interval > currentIntervalArrayOffset){
-			intervals[interval] = start;
-			currentIntervalArrayOffset = interval;
+	public void updateIntervals(int readStartOffset, int readEndOffset, VirtualFileOffset start) {
+		int startInterval = IndexUtil.getIntervalOffsetFor(readStartOffset) -1;
+		int endInterval = IndexUtil.getIntervalOffsetFor(readEndOffset) -1;
+		
+		if(endInterval > largestIndexUsed){
+			largestIndexUsed = endInterval;
+		}
+		for(int i = startInterval; i<=endInterval; i++){
+			VirtualFileOffset currentValue = intervals[i];
+			if(currentValue ==null || start.compareTo(currentValue) < 0){
+				intervals[i] = start;
+			}
 		}
 	}
 
@@ -82,7 +90,21 @@ public final class ReferenceIndexBuilder{
 		
 		private ReferenceIndexImpl(ReferenceIndexBuilder builder){
 			this.bins = builder.bins;
-			this.intervals = builder.intervals;
+			this.intervals = Arrays.copyOf(builder.intervals, builder.largestIndexUsed+1);
+			
+			//match sam tools which only includes upto the max intervals seen
+			//instead of the intervals possible for the reference seq length
+			//AND fills in unused interval virtualFileOffsets with the
+			//previous value.
+			VirtualFileOffset prev = new VirtualFileOffset(0);
+			for(int i=0; i<intervals.length; i++){
+				if(intervals[i] ==null){
+					intervals[i] = prev;
+				}else{
+					prev = intervals[i];
+				}
+			}
+			
 		}
 		
 		
@@ -132,6 +154,16 @@ public final class ReferenceIndexBuilder{
 		public VirtualFileOffset[] getIntervals() {
 			return Arrays.copyOf(intervals, intervals.length);
 		}
+
+
+
+		@Override
+		public String toString() {
+			return "ReferenceIndexImpl [bins=" + bins + ", intervals="
+					+ Arrays.toString(intervals) + "]";
+		}
+		
+		
 	}
 	
 	private static enum BinSorter implements Comparator<Bin>{
@@ -144,4 +176,6 @@ public final class ReferenceIndexBuilder{
 		}
 		
 	}
+
+	
 }

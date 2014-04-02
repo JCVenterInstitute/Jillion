@@ -16,6 +16,7 @@ import org.jcvi.jillion.sam.attribute.ReservedAttributeValidator;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.sam.index.BamIndex;
 import org.jcvi.jillion.sam.index.IndexUtil;
 import org.jcvi.jillion.sam.index.ReferenceIndex;
 /**
@@ -102,7 +103,7 @@ class PresortedBamFileWriter implements SamWriter{
 			OutputStream indexOutStream =null;
 			try{
 				indexOutStream = new BufferedOutputStream(new FileOutputStream(indexFileOutFile));
-				IndexUtil.writeIndex(indexOutStream, indexes);
+				IndexUtil.writeIndex(indexOutStream, new BamIndex(header, indexes));
 			}finally{
 				IOUtil.closeAndIgnoreErrors(indexOutStream);
 			}
