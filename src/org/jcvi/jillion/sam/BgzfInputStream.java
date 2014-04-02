@@ -101,8 +101,6 @@ class BgzfInputStream extends InflaterInputStream {
     
     private int currentBlockSize;
 
-    VirtualFileOffset TO_BE_FOUND = VirtualFileOffset.create(345108, 0);
-    
 
     /**
      * Creates a new input stream with the specified buffer size.
@@ -159,6 +157,16 @@ class BgzfInputStream extends InflaterInputStream {
         if(len ==0){
         	return 0;
         }
+        //Most of the try block below
+        //was taken from InflaterInputStream
+        //so we don't have to call super.read()
+        //and since super.read() will return -1
+        //and set eof flags which we don't want.
+        //If we are at the end of the block
+        //we can simplify our code by 
+        //checking if we have more blocks immediately
+        //instead of checking for -1 and 
+        //resetting flags.
         try {
             int bytesRead;
             while ((bytesRead = inf.inflate(buf, off, len)) == 0) {
@@ -182,7 +190,7 @@ class BgzfInputStream extends InflaterInputStream {
             return bytesRead;
         } catch (DataFormatException e) {
             String s = e.getMessage();
-            throw new ZipException(s != null ? s : "Invalid ZLIB data format");
+            throw new ZipException(s == null ? "Invalid ZLIB data format" : s);
         }
         
     }
