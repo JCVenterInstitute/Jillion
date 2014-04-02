@@ -8,6 +8,7 @@ import java.io.SequenceInputStream;
 import java.nio.ByteOrder;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedInputStream;
+import java.util.zip.DataFormatException;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 import java.util.zip.ZipException;
@@ -40,7 +41,9 @@ import org.jcvi.jillion.core.io.IOUtil;
  */
 class BgzfInputStream extends InflaterInputStream {
 	
-	 /**
+	 private static final int BGZF_XLEN_LENGTH = 6;
+
+	/**
      * GZIP header magic number.
      */
     private static final int GZIP_MAGIC_NUMBER = 0x8b1f;
@@ -62,6 +65,12 @@ class BgzfInputStream extends InflaterInputStream {
 	private static final int BGZF_MAGIC_NUMBER = 0x4243;
 	
     private static final int BGZF_EXTRA_FIELDS_LENGTH = 8;
+    /**
+     * The max buffer a compressed block can be.
+     * We also use this as the GZIP buffer size
+     * so it's easier to compute where we are in a block.
+     */
+    private static final int BUFFER_SIZE = 0xFFFF;
 
 	/**
      * CRC-32 for uncompressed data.
@@ -88,16 +97,11 @@ class BgzfInputStream extends InflaterInputStream {
      * VirtualFileOffsets for BAM indexing. 
      */
     private long compressedBlockBytesReadSoFar=0;
-    /**
-     * Number of uncompressed bytes
-     * in the current block we have read so far.
-     * This is used to compute BAM
-     * VirtualFileOffsets for BAM indexing. 
-     */
-    private int uncompressedBytesReadInCurrentBlock=0;
+
     
     private int currentBlockSize;
 
+    VirtualFileOffset TO_BE_FOUND = VirtualFileOffset.create(345108, 0);
     
 
     /**
@@ -110,7 +114,7 @@ class BgzfInputStream extends InflaterInputStream {
      * @exception IOException if an I/O error has occurred
      * @exception IllegalArgumentException if size is <= 0
      */
-    public BgzfInputStream(InputStream in, int size) throws IOException {
+    private BgzfInputStream(InputStream in, int size) throws IOException {
         super(in, new Inflater(true), size);
         parseBlockHeader(in);
     }
@@ -124,7 +128,7 @@ class BgzfInputStream extends InflaterInputStream {
      * @exception IOException if an I/O error has occurred
      */
     public BgzfInputStream(InputStream in) throws IOException {
-        this(in, 512);
+        this(in, BUFFER_SIZE);
     }
 
     /**
@@ -150,25 +154,41 @@ class BgzfInputStream extends InflaterInputStream {
         if (!hasMoreData()) {
             return -1;
         }
-        int bytesRead = super.read(buf, off, len);
-        if (bytesRead == -1) {
-        	//if we get here we've reached the end of the block
-        	compressedBlockBytesReadSoFar +=currentBlockSize;
-        	uncompressedBytesReadInCurrentBlock=0;
-            if (hasMoreBlocks()){
-            	return this.read(buf, off, len);
-            }
-            //if we get here
-            //then we are done parsing the BAM file
-            eof = true;          
-                
-        } else {
-        	uncompressedBytesReadInCurrentBlock+=bytesRead;
-            crc.update(buf, off, bytesRead);
+        //don't read anything
+        //unless we have to
+        if(len ==0){
+        	return 0;
         }
-        return bytesRead;
+        try {
+            int bytesRead;
+            while ((bytesRead = inf.inflate(buf, off, len)) == 0) {
+                if (inf.finished() || inf.needsDictionary()) {
+                	//if we get here we've reached the end of the block
+                	compressedBlockBytesReadSoFar +=currentBlockSize;
+                    if (hasMoreBlocks()){
+                    	return this.read(buf, off, len);
+                    }
+                    //if we get here
+                    //then we are done parsing the BAM file
+                    eof = true;
+                    return -1;
+                }
+                if (inf.needsInput()) {
+                    fill();
+                }
+            }  	
+            crc.update(buf, off, bytesRead);
+            
+            return bytesRead;
+        } catch (DataFormatException e) {
+            String s = e.getMessage();
+            throw new ZipException(s != null ? s : "Invalid ZLIB data format");
+        }
+        
     }
 
+  
+    
     private void assertNotClosed() throws IOException {
         if (closed) {
             throw new IOException("BAM file is closed");
@@ -191,8 +211,16 @@ class BgzfInputStream extends InflaterInputStream {
      * will return equal file offsets (but
      * may not be the same instance).
      */
-    public VirtualFileOffset getVirutalFileOffset(){
+    public VirtualFileOffset getVirutalFileOffset(){    	
+    	int uncompressedBytesReadInCurrentBlock = (int)this.inf.getBytesWritten();
+    	if(uncompressedBytesReadInCurrentBlock > BUFFER_SIZE){
+    		//this will cause an overflow in the encoded virtual file offset
+    		//we should be able to just return the beginning of the next block...
+    		return VirtualFileOffset.create(compressedBlockBytesReadSoFar + currentBlockSize, 0);
+        	
+    	}
     	return VirtualFileOffset.create(compressedBlockBytesReadSoFar, uncompressedBytesReadInCurrentBlock);
+    	
     }
 	
 
@@ -234,10 +262,11 @@ class BgzfInputStream extends InflaterInputStream {
         // Read flags
         int flg = IOUtil.readUnsignedByte(in);
         // Skip MTIME, XFL, and OS fields
-        IOUtil.blockingSkip(in, 6);
+        IOUtil.blockingSkip(in, BGZF_XLEN_LENGTH);
         
         int headerLength = 10;
         currentBlockSize = parseCurrentBgzfBlockSize(in, flg);
+
         headerLength += BGZF_EXTRA_FIELDS_LENGTH;
         // Skip optional file name if present
         if ((flg & FNAME) == FNAME) {

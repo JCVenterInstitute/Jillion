@@ -95,7 +95,6 @@ final class BamFileParser extends AbstractSamFileParser {
 			try{
 				while(keepParsing.get() && in.hasMoreData()){	
 					VirtualFileOffset start = in.getVirutalFileOffset();
-				
 					SamRecord record = parseNextSamRecord(in, refNames, header);
 					
 					VirtualFileOffset end = in.getVirutalFileOffset();

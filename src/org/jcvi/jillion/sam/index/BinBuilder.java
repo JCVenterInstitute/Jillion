@@ -114,14 +114,14 @@ public final class BinBuilder {
 			if (obj == null) {
 				return false;
 			}
-			if (!(obj instanceof BinBuilder)) {
+			if (!(obj instanceof Bin)) {
 				return false;
 			}
-			BinBuilder other = (BinBuilder) obj;
-			if (binNumber != other.binNumber) {
+			Bin other = (Bin) obj;
+			if (binNumber != other.getBinNumber()) {
 				return false;
 			}
-			if (!chunks.equals(other.chunks)) {
+			if (!chunks.equals(other.getChunks())) {
 				return false;
 			}
 			return true;
