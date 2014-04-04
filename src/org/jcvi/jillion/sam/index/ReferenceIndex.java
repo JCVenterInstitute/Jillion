@@ -29,5 +29,18 @@ public interface ReferenceIndex {
 	 * there might be null cells in the array.
 	 */
 	VirtualFileOffset[] getIntervals();
+	
+	boolean hasMetaData();
+	
+	Long getNumberOfUnAlignedReads();
+
+	Long getNumberOfAlignedReads();
+	
+	VirtualFileOffset getLowestStartOffset();
+
+
+
+	VirtualFileOffset getHighestEndOffset();
+	int getNumberOfBins();
 
 }

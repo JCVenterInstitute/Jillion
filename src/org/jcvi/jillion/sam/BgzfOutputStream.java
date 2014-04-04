@@ -81,9 +81,6 @@ final class BgzfOutputStream extends OutputStream{
 	private static final byte[] EOF_MARKER;	
 	
 	private final CRC32 currentCrc32 = new CRC32();
-	
-	
-	private final Deflater currentDeflater = new Deflater(GZIP_COMPRESSION_LEVEL, true);
 	/**
 	 * The number of bytes written to our uncompressedBuffer
 	 * so far that have not yet been flushed.
@@ -220,18 +217,21 @@ final class BgzfOutputStream extends OutputStream{
 		}else{
 			//get before and after values
 			//for our callback
-			long compressedStart = compressedBytesWrittenSoFar;
-			int uncompressedStart = currentUsedBufferLength;
+			VirtualFileOffset start = getVirtualFileOffset();
 			
 			handleWriteBody(b, off, bytesToWriteLength);
 			
-			long compressedEnd= compressedBytesWrittenSoFar;
-			int uncompressedEnd = currentUsedBufferLength;
+			VirtualFileOffset end = getVirtualFileOffset();
 			
-			callback.encodedIndex(compressedStart, uncompressedStart, 
-									compressedEnd, uncompressedEnd);
+			
+			callback.encodedIndex(start, end);
 		}
 		
+	}
+	
+	
+	public VirtualFileOffset getVirtualFileOffset(){
+		return VirtualFileOffset.create(compressedBytesWrittenSoFar, currentUsedBufferLength);
 	}
 	/**
 	 * Take the given bytes to be written and
@@ -289,6 +289,12 @@ final class BgzfOutputStream extends OutputStream{
 	@Override
 	public void flush() throws IOException {
 		if(currentUsedBufferLength >0){
+			//create a new Deflater each time.
+			//There were problems caused by re-using
+			//the deflater across blocks
+			//probably because we call finish() ?
+			Deflater currentDeflater = new Deflater(GZIP_COMPRESSION_LEVEL, true);
+			
 			currentDeflater.setInput(uncompressedBuffer, 0, currentUsedBufferLength);
 			currentDeflater.finish();
 			
@@ -325,9 +331,9 @@ final class BgzfOutputStream extends OutputStream{
 			byte[] asBytes = new byte[bgzfBlockBuffer.remaining()];
 			bgzfBlockBuffer.get(asBytes);
 			out.write(asBytes);
-			out.flush();
+			//out.flush();
 			//update counters
-			compressedBytesWrittenSoFar +=asBytes.length;
+			compressedBytesWrittenSoFar += asBytes.length;
 			//reset buffer
 			currentUsedBufferLength = 0;
 		}

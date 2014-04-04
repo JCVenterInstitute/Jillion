@@ -1177,11 +1177,16 @@ public final class IOUtil {
 	 * @param suffix The suffix string to be used in generating the file's name;
 	 *			 may be null, in which case the suffix ".tmp" will be used
 	 * @param directory The directory in which the file is to be created, 
-	 *			or null if the default temporary-file directory is to be used
+	 *			or null if the default temporary-file directory is to be used.
+	 *			If the directory is not null and does not exist,
+	 *			then it will be created.
 	 * @return a new File object that points to this new created directory.
 	 * @throws IOException
 	 */
 	public static File createTempDir(String prefix, String suffix, File directory) throws IOException{
+		if(directory !=null && !directory.exists()){
+			IOUtil.mkdirs(directory);
+		}
 		File tmpDir = File.createTempFile(prefix, suffix, directory);
 		//now that we have a new empty file
        //we need to delete it and then create it again, but this

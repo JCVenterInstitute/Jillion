@@ -7,7 +7,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-    TestBamIndexParser.class	
+    TestBamIndexParser.class,
+    TestBamIndexWriter.class
     }
     )
 public class AllBamIndexTests {

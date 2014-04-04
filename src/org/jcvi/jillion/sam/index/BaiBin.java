@@ -19,8 +19,6 @@ class BaiBin implements Bin {
 		for(Chunk c : chunks){
 			chunkList.add(c);
 		}
-		//TODO add code to remove bin meta data
-		//which Picard stores as last bin?
 		this.chunks = Collections.unmodifiableList(chunkList);
 	}
 

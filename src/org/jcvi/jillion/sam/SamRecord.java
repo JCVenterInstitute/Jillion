@@ -11,6 +11,7 @@ import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.sam.attribute.InvalidAttributeException;
+import org.jcvi.jillion.sam.attribute.ReservedAttributeValidator;
 import org.jcvi.jillion.sam.attribute.ReservedSamAttributeKeys;
 import org.jcvi.jillion.sam.attribute.SamAttribute;
 import org.jcvi.jillion.sam.attribute.SamAttributeKey;
@@ -287,15 +288,17 @@ public class SamRecord {
 		private String queryName= UNAVAILABLE, referenceName = null,
 				nextReferenceName = null;
 		private EnumSet<SamRecordFlags> flags;
-		private int startPosition =NOT_SET, nextPosition= 0;
-		private byte mappingQuality=-1;
+		private int startPosition =0, nextPosition= 0;
+		private byte mappingQuality= -1;
 		private Cigar cigar;
 		private NucleotideSequence sequence;
 		private QualitySequence qualities;
 		
 		private int observedTemplateLength = 0;
 		
-		
+		public Builder(SamHeader header){
+			this(header, ReservedAttributeValidator.INSTANCE);
+		}
 		public Builder(SamHeader header, SamAttributeValidator attributeValidator){
 			if(header ==null){
 				throw new NullPointerException("header can not be null");
