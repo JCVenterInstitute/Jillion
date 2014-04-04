@@ -1,6 +1,5 @@
 package org.jcvi.jillion.sam;
 
 interface IndexerCallback{
-	void encodedIndex(long compressedStart, int uncompressedStart,
-					  long compressedEnd, int uncompressedEnd);
+	void encodedIndex(VirtualFileOffset start, VirtualFileOffset end);
 }

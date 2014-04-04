@@ -6,10 +6,12 @@ import java.io.PrintStream;
 import java.util.EnumSet;
 
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.sam.attribute.SamAttribute;
 import org.jcvi.jillion.sam.attribute.SamAttributeKey;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
 /**
  * {@code PresortedSamFileWriter} is a {@link SamWriter}
  * that writes out SAM files whose {@link SamRecord}s
@@ -94,13 +96,19 @@ class PresortedSamFileWriter implements SamWriter {
 		}
 		appendMandatoryField(builder, record.getReferenceName());
 		appendMandatoryField(builder, record.getStartPosition());
-		appendMandatoryField(builder, record.getMappingQuality());
+		//convert negative numbers into unsigned values
+		//so -1 (mapping quality not available) becomes 255 as per SAM spec
+		//appendMandatoryField(builder, IOUtil.toUnsignedByte(record.getMappingQuality()));
+		appendMandatoryField(builder, Math.max(0, record.getMappingQuality()));
+		
 		appendMandatoryField(builder, record.getCigar());
 		appendMandatoryField(builder, record.getNextName());
 		appendMandatoryField(builder, record.getNextOffset());
 		appendMandatoryField(builder, record.getObservedTemplateLength());
 		appendMandatoryField(builder, record.getSequence());
-		appendMandatoryField(builder, record.getQualities());
+		//always encode qualities in SANGER ?
+		QualitySequence quals =record.getQualities();
+		appendMandatoryField(builder, quals ==null? null : FastqQualityCodec.SANGER.encode(quals));
 		
 		for(SamAttribute attr : record.getAttributes()){
 			SamAttributeKey key = attr.getKey();

@@ -26,6 +26,7 @@ public class BamIndex {
 	
 	private final List<ReferenceIndex> indexes;
 	
+	private final Long totalNumberOfUnmappedReads;
 	
 	public static BamIndex createFromFiles(File bam, File bai) throws IOException{
 		SamHeaderParser headerParser = new SamHeaderParser();
@@ -35,9 +36,7 @@ public class BamIndex {
 		InputStream in=null;
 		try{
 			in = new BufferedInputStream(new FileInputStream(bai));
-			List<ReferenceIndex> indexes = IndexUtil.parseIndex(in, header);
-			
-			return new BamIndex(header, indexes);
+			return IndexUtil.parseIndex(in, header);
 		}finally{
 			IOUtil.closeAndIgnoreErrors(in);;
 		}
@@ -81,8 +80,10 @@ public class BamIndex {
 		
 		
 	}
-
 	public BamIndex(SamHeader header, List<ReferenceIndex> indexes){
+		this(header, indexes, null);
+	}
+	public BamIndex(SamHeader header, List<ReferenceIndex> indexes, Long totalNumberOfUnmappedReads){
 		int refIndex=0;
 		Collection<ReferenceSequence> referenceSequences = header.getReferenceSequences();
 		indexOfRefNames = new HashMap<String, Integer>(MapUtil.computeMinHashMapSizeWithoutRehashing(referenceSequences.size()));
@@ -93,19 +94,15 @@ public class BamIndex {
 		}
 		
 		this.indexes = new ArrayList<ReferenceIndex>(indexes);
+		this.totalNumberOfUnmappedReads = totalNumberOfUnmappedReads;
 	}
 	
-	public BamIndex(Map<String, Integer> indexOfRefNames,
-			List<ReferenceIndex> indexes) {
-		this.indexOfRefNames = indexOfRefNames;
-		this.indexes = indexes;
-	}
 	
 	public ReferenceIndex getReferenceIndex(int i){
 		return indexes.get(i);
 	}
 	
-	public int getNumberOfIndexes(){
+	public int getNumberOfReferenceIndexes(){
 		return indexes.size();
 	}
 	
@@ -154,6 +151,10 @@ public class BamIndex {
 			return false;
 		}
 		return true;
+	}
+	
+	public Long getTotalNumberOfUnmappedReads() {
+		return totalNumberOfUnmappedReads;
 	}
 	
 	

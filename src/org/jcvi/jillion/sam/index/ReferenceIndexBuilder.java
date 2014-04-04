@@ -3,12 +3,11 @@ package org.jcvi.jillion.sam.index;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
-import org.jcvi.jillion.internal.core.util.JillionUtil;
 import org.jcvi.jillion.sam.SamUtil;
 import org.jcvi.jillion.sam.VirtualFileOffset;
+import org.jcvi.jillion.sam.index.IndexUtil.BinSorter;
 
 public final class ReferenceIndexBuilder{
 	
@@ -21,6 +20,9 @@ public final class ReferenceIndexBuilder{
 	private final ArrayList<Bin> bins = new ArrayList<Bin>();
 	private int currentBinNumber =1;
 	private BinBuilder currentBinBuilder = null;
+	private long numberOfUnalignedReads=0, numberOfAlignedReads=0;
+	private VirtualFileOffset lowestStart = new VirtualFileOffset(Long.MAX_VALUE);
+	private VirtualFileOffset higestEnd = new VirtualFileOffset(0L);
 	
 	public ReferenceIndexBuilder(int length){
 		this.intervals = new VirtualFileOffset[IndexUtil.getIntervalOffsetFor(length)];
@@ -29,8 +31,12 @@ public final class ReferenceIndexBuilder{
 	
 	public void addAlignment(int readStartOffset, int readEndOffsetExclusive, VirtualFileOffset start, VirtualFileOffset end){
 		
-		updateIntervals(readStartOffset, readEndOffsetExclusive-1, start);		
+		updateIntervals(readStartOffset, readEndOffsetExclusive-1, start, end);		
 		updateBins(readStartOffset, readEndOffsetExclusive, start, end);
+	}
+	
+	public void incrementUnmappedCount() {
+		numberOfUnalignedReads++;
 	}
 	
 	public ReferenceIndex build(){
@@ -64,10 +70,10 @@ public final class ReferenceIndexBuilder{
 		//so if bin isn't greater than the current bin number
 		//than we must be in the same bin.
 		currentBinBuilder.addChunk(new Chunk(start, end));
-		
+		numberOfAlignedReads++;
 	}
 
-	public void updateIntervals(int readStartOffset, int readEndOffset, VirtualFileOffset start) {
+	public void updateIntervals(int readStartOffset, int readEndOffset, VirtualFileOffset start, VirtualFileOffset end) {
 		int startInterval = IndexUtil.getIntervalOffsetFor(readStartOffset) -1;
 		int endInterval = IndexUtil.getIntervalOffsetFor(readEndOffset) -1;
 		
@@ -80,12 +86,21 @@ public final class ReferenceIndexBuilder{
 				intervals[i] = start;
 			}
 		}
+		
+		if(start.compareTo(lowestStart)<0){
+			lowestStart = start;
+		}
+		if(end.compareTo(higestEnd) >0){
+			higestEnd = end;
+		}
 	}
 
 	private static final class ReferenceIndexImpl implements ReferenceIndex {
 
 		private final List<Bin> bins;
 		private final VirtualFileOffset[] intervals;
+		private final Long numberOfUnAlignedReads, numberOfAlignedReads;
+		private final VirtualFileOffset lowestOffset, highestOffset;
 		
 		
 		private ReferenceIndexImpl(ReferenceIndexBuilder builder){
@@ -104,11 +119,52 @@ public final class ReferenceIndexBuilder{
 					prev = intervals[i];
 				}
 			}
-			
+			numberOfUnAlignedReads = Long.valueOf(builder.numberOfUnalignedReads);
+			numberOfAlignedReads = Long.valueOf(builder.numberOfAlignedReads);
+			lowestOffset = builder.lowestStart;
+			highestOffset = builder.higestEnd;
 		}
 		
 		
 		
+		public Long getNumberOfUnAlignedReads() {
+			return numberOfUnAlignedReads;
+		}
+
+
+
+		public Long getNumberOfAlignedReads() {
+			return numberOfAlignedReads;
+		}
+
+
+		@Override
+		public boolean hasMetaData() {
+			return true;
+		}
+
+
+
+		@Override
+		public int getNumberOfBins() {
+			return bins.size();
+		}
+
+
+
+		@Override
+		public VirtualFileOffset getLowestStartOffset() {
+			return lowestOffset;
+		}
+
+
+		@Override
+		public VirtualFileOffset getHighestEndOffset() {
+			return highestOffset;
+		}
+
+
+
 		@Override
 		public List<Bin> getBins() {
 			return Collections.unmodifiableList(bins);
@@ -166,16 +222,9 @@ public final class ReferenceIndexBuilder{
 		
 	}
 	
-	private static enum BinSorter implements Comparator<Bin>{
-		
-		INSTANCE;
+	
 
-		@Override
-		public int compare(Bin o1, Bin o2) {
-			return JillionUtil.compare(o1.getBinNumber(), o2.getBinNumber());
-		}
-		
-	}
+	
 
 	
 }

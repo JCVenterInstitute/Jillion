@@ -10,17 +10,22 @@ import org.jcvi.jillion.sam.VirtualFileOffset;
 class BaiRefIndex implements ReferenceIndex {
 	private final List<Bin> bins;
 	private VirtualFileOffset[] intervals;
-	
+	private Long unalignedCount, alignedCount;
+	private VirtualFileOffset lowestStart, highestEnd;
 	
 	public BaiRefIndex(Bin[] bins, VirtualFileOffset[] intervals) {
 		this.intervals = intervals;
 		
 		List<Bin> binList = new ArrayList<Bin>(bins.length);
 		for(Bin b : bins){
-			binList.add(b);
+			if(b!=null){
+				binList.add(b);
+			}
 		}
-		//TODO add code to remove bin meta data
-		//which Picard stores as last bin?
+		//sam tools doesn't sort the bins!
+		//so sort it just in case
+		Collections.sort(binList, IndexUtil.BinSorter.INSTANCE);
+		
 		this.bins = Collections.unmodifiableList(binList);
 		
 	}
@@ -28,6 +33,52 @@ class BaiRefIndex implements ReferenceIndex {
 	@Override
 	public List<Bin> getBins() {
 		return bins;
+	}
+
+	@Override
+	public int getNumberOfBins() {
+		return bins.size();
+	}
+
+	@Override
+	public boolean hasMetaData() {
+		return lowestStart !=null && highestEnd !=null
+				&& alignedCount !=null && unalignedCount !=null;
+	}
+
+	@Override
+	public VirtualFileOffset getLowestStartOffset() {
+		return lowestStart;
+	}
+
+	public void setLowestStartOffset(VirtualFileOffset lowestStart) {
+		this.lowestStart = lowestStart;
+	}
+	@Override
+	public VirtualFileOffset getHighestEndOffset() {
+		return highestEnd;
+	}
+
+	public void setHighestEndOffset(VirtualFileOffset highestEnd) {
+		this.highestEnd = highestEnd;
+	}
+
+	public void setUnalignedCount(Long unalignedCount) {
+		this.unalignedCount = unalignedCount;
+	}
+
+	public void setAlignedCount(Long alignedCount) {
+		this.alignedCount = alignedCount;
+	}
+
+	@Override
+	public Long getNumberOfUnAlignedReads() {
+		return unalignedCount;
+	}
+
+	@Override
+	public Long getNumberOfAlignedReads() {
+		return alignedCount;
 	}
 
 	@Override
