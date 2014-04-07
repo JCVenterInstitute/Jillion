@@ -1,4 +1,4 @@
-package org.jcvi.jillion.sam.index;
+package org.jcvi.jillion.internal.sam.index;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jcvi.jillion.sam.VirtualFileOffset;
+import org.jcvi.jillion.sam.index.Bin;
+import org.jcvi.jillion.sam.index.ReferenceIndex;
 
 class BaiRefIndex implements ReferenceIndex {
 	private final List<Bin> bins;

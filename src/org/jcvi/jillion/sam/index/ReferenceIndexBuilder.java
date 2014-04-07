@@ -5,9 +5,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.jcvi.jillion.sam.SamUtil;
+import org.jcvi.jillion.internal.sam.SamUtil;
+import org.jcvi.jillion.internal.sam.index.IndexUtil;
+import org.jcvi.jillion.internal.sam.index.IndexUtil.BinSorter;
 import org.jcvi.jillion.sam.VirtualFileOffset;
-import org.jcvi.jillion.sam.index.IndexUtil.BinSorter;
 
 public final class ReferenceIndexBuilder{
 	

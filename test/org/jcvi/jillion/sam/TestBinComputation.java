@@ -4,6 +4,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.internal.sam.SamUtil;
 import org.junit.Test;
 public class TestBinComputation {
 

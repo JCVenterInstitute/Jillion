@@ -1,6 +1,6 @@
 package org.jcvi.jillion.sam.header;
 
-import org.jcvi.jillion.sam.SamUtil;
+import org.jcvi.jillion.internal.sam.SamUtil;
 
 /**
  * {@code SamHeaderTagKey}

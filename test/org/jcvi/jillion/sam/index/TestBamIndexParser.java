@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.jillion.internal.ResourceHelper;
-import org.jcvi.jillion.sam.BamIndexer;
+import org.jcvi.jillion.internal.sam.index.BamIndexer;
 import org.jcvi.jillion.sam.SamParserFactory;
 import org.jcvi.jillion.sam.SamRecord;
 import org.jcvi.jillion.sam.SamVisitor;

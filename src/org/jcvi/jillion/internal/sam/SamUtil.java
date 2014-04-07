@@ -1,4 +1,4 @@
-package org.jcvi.jillion.sam;
+package org.jcvi.jillion.internal.sam;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,6 +21,8 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.sam.SamRecord;
+import org.jcvi.jillion.sam.SamRecordFlags;
 import org.jcvi.jillion.sam.attribute.SamAttribute;
 import org.jcvi.jillion.sam.attribute.SamAttributeKey;
 import org.jcvi.jillion.sam.attribute.SamAttributeType;

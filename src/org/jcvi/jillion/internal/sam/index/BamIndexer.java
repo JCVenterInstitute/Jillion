@@ -1,9 +1,12 @@
-package org.jcvi.jillion.sam;
+package org.jcvi.jillion.internal.sam.index;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.jcvi.jillion.internal.sam.IndexerCallback;
+import org.jcvi.jillion.sam.SamRecord;
+import org.jcvi.jillion.sam.VirtualFileOffset;
 import org.jcvi.jillion.sam.cigar.Cigar.ClipType;
 import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
