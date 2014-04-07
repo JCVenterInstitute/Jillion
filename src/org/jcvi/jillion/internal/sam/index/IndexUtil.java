@@ -1,4 +1,4 @@
-package org.jcvi.jillion.sam.index;
+package org.jcvi.jillion.internal.sam.index;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,10 +13,14 @@ import java.util.List;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.core.util.JillionUtil;
-import org.jcvi.jillion.sam.SamUtil;
+import org.jcvi.jillion.internal.sam.SamUtil;
 import org.jcvi.jillion.sam.VirtualFileOffset;
 import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.sam.index.BamIndex;
+import org.jcvi.jillion.sam.index.Bin;
+import org.jcvi.jillion.sam.index.Chunk;
+import org.jcvi.jillion.sam.index.ReferenceIndex;
 
 public final class IndexUtil {
 

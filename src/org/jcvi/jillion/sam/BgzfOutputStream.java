@@ -6,6 +6,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.zip.CRC32;
 import java.util.zip.Deflater;
+
+import org.jcvi.jillion.internal.sam.IndexerCallback;
 /**
  * {@code BgzfOutputStream} is an {@link OutputStream}
  * implementation that writes out data as

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.jillion.core.io.FileUtil;
+import org.jcvi.jillion.internal.sam.index.BamIndexer;
 import org.jcvi.jillion.sam.attribute.ReservedAttributeValidator;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 import org.jcvi.jillion.sam.header.SamHeader;

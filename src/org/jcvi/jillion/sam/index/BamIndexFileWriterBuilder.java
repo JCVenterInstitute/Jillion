@@ -9,7 +9,8 @@ import java.io.OutputStream;
 
 import org.jcvi.jillion.core.io.FileUtil;
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.sam.BamIndexer;
+import org.jcvi.jillion.internal.sam.index.BamIndexer;
+import org.jcvi.jillion.internal.sam.index.IndexUtil;
 import org.jcvi.jillion.sam.SamParser;
 import org.jcvi.jillion.sam.SamParserFactory;
 import org.jcvi.jillion.sam.SamRecord;

@@ -1,6 +1,6 @@
 package org.jcvi.jillion.sam.attribute;
 
-import org.jcvi.jillion.sam.SamUtil;
+import org.jcvi.jillion.internal.sam.SamUtil;
 
 public final class SamAttributeKey{
 	/**

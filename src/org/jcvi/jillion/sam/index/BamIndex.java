@@ -13,6 +13,7 @@ import java.util.Map;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.MapUtil;
+import org.jcvi.jillion.internal.sam.index.IndexUtil;
 import org.jcvi.jillion.sam.SamParserFactory;
 import org.jcvi.jillion.sam.SamRecord;
 import org.jcvi.jillion.sam.SamVisitor;
