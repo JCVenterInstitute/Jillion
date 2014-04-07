@@ -19,7 +19,14 @@
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
 package org.jcvi.jillion.sam.header;
-
+/**
+ * {@code ReferenceSequence} is an object
+ * representation of the metadata for a 
+ * reference used in a SAM or BAM file.
+ * 
+ * @author dkatzel
+ *
+ */
 public class ReferenceSequence {
 
 	private final String name;
@@ -53,21 +60,27 @@ public class ReferenceSequence {
 
 
 
-
+	/**
+	 * Get the human readable name of this reference sequence.
+	 * @return a String; will never be null.
+	 */
 	public String getName() {
 		return name;
 	}
 
 
 
-
+	/**
+	 * Get the number of bases in this reference sequence.
+	 * @return the number of bases; will always be > 0.
+	 */
 	public int getLength() {
 		return length;
 	}
 
 
 
-
+	
 	public String getGenomeAssemblyId() {
 		return genomeAssemblyId;
 	}
@@ -179,7 +192,18 @@ public class ReferenceSequence {
 		private String uri;
 		private String md5;
 		
-		
+		/**
+		 * Create a new Builder instance
+		 * which is initialized to have 
+		 * it's name and length set to the specified
+		 * values and all other values set to {@code null}. 
+		 * @param name the name of this ReferenceSequence;
+		 * can not be null.
+		 * @param length the length of this ReferenceSequence;
+		 * can not be <1. 
+		 * @throws NullPointerException if name is null.
+		 * @throws IllegalArgumentException if length <1.
+		 */
 		public Builder(String name, int length){
 			if(name ==null){
 				throw new NullPointerException("name can not be null");
@@ -210,7 +234,13 @@ public class ReferenceSequence {
 			md5= copy.getMd5();
 		}
 
-
+		/**
+		 * Change this reference's name.
+		 * @param name the name to change it to;
+		 * can not be null.
+		 * @return this.
+		 * @throws NullPointerException if name is null.
+		 */
 		public Builder setName(String name) {
 			if(name ==null){
 				throw new NullPointerException("name can not be null");
@@ -218,7 +248,13 @@ public class ReferenceSequence {
 			this.name = name;
 			return this;
 		}
-
+		/**
+		 * Change the length of this reference.
+		 * @param length the length of this ReferenceSequence;
+		 * can not be <1. 
+		 * @throws IllegalArgumentException if length <1.
+		 * @return this.
+		 */
 		public Builder setLength(int length) {
 			if(length<1){
 				throw new IllegalArgumentException("length must >=1");
@@ -279,7 +315,12 @@ public class ReferenceSequence {
 		public int getLength() {
 			return length;
 		}
-		
+		/**
+		 * Create a new {@link ReferenceSequence}
+		 * instance using the current values in this Builder.
+		 * @return a  new {@link ReferenceSequence},
+		 * will never be null.
+		 */
 		public ReferenceSequence build(){
 			return new ReferenceSequence(this);
 		}

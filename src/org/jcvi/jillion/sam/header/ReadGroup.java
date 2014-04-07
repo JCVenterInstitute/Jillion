@@ -234,6 +234,11 @@ public class ReadGroup {
 				+ ((sequencingCenter == null) ? 0 : sequencingCenter.hashCode());
 		return result;
 	}
+	/**
+	 * Two ReadGroups are equal if they have the same values
+	 * for all fields.
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
@@ -326,7 +331,12 @@ public class ReadGroup {
 
 
 
-
+	/**
+	 * {@code Builder} class to construct
+	 * a {@link ReadGroup} using a fluent interface.
+	 * @author dkatzel
+	 *
+	 */
 	public static class Builder{
 		private String id;
 
@@ -361,7 +371,17 @@ public class ReadGroup {
 			}
 			this.id = id;
 		}
-		
+		/**
+		 * Create a new Builder object
+		 * whose values are initialized to the
+		 * values of the given ReadGroup.
+		 * These values can be changed by the using
+		 * this Builder's mutator methods.
+		 * 
+		 * @param copy the ReadGroup whose
+		 * values to copy; can not be null.
+		 * @throws NullPointerException if copy is null.
+		 */
 		public Builder(ReadGroup copy){
 			this.id = copy.id;
 			this.sequencingCenter = copy.sequencingCenter;

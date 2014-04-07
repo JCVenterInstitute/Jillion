@@ -48,7 +48,19 @@ public class BamIndex {
 	private final List<ReferenceIndex> indexes;
 	
 	private final Long totalNumberOfUnmappedReads;
-	
+	/**
+	 * Create a new {@link BamIndex} instance 
+	 * using the given sorted BAM file and corresponding
+	 * BAM index file.  The sort
+	 * order is assumed to be in {@link org.jcvi.jillion.sam.SortOrder#COORDINATE}
+	 * even if the header says otherwise.
+	 * Only the header is parsed from the BAM file to get header information.
+	 * @param bam the BAM file to parse; file must exist.
+	 * @param bai the BAM index file to parse; file must exist.  It is 
+	 * assumed that the index corresponds to the the data in the BAM file.
+	 * @return a new {@link BamIndex} instance; will never be null.
+	 * @throws IOException if there is a problem parsing either file.
+	 */
 	public static BamIndex createFromFiles(File bam, File bai) throws IOException{
 		SamHeaderParser headerParser = new SamHeaderParser();
 		SamParserFactory.create(bam).accept(headerParser);
