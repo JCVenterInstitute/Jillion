@@ -27,6 +27,7 @@ import static org.easymock.EasyMock.getCurrentArguments;
 import static org.easymock.EasyMock.isA;
 import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -124,7 +125,7 @@ public class TestTraceArchiveWriter {
 		
 		File i11TraceFile = new File(rootInputDir, "trace/P030548_I11_JTC_swineorigininfluenza_1064144673279_1064144673333_040_1119369014702.ztr");
 		assertEquals("./traces/I11.ztr", i11.getAttribute(TraceInfoField.TRACE_FILE));
-		TestUtil.contentsAreEqual(i11TraceFile, new File(outputDir, "trace/I11.ztr"));
+		assertTrue(TestUtil.contentsAreEqual(i11TraceFile, new File(outputDir, "traces/I11.ztr")));
 		
 		ZtrChromatogram i11Chromo = new ZtrChromatogramBuilder(i11TraceFile.getName(), i11TraceFile)
 									.build();
