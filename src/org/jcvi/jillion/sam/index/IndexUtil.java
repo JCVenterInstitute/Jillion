@@ -81,9 +81,6 @@ public final class IndexUtil {
 					alignedCount = chunks[1].getBegin().getEncodedValue();
 					unAlignedCount = chunks[1].getEnd().getEncodedValue();
 					
-					//bins[j] = new BaiBin(binId, chunks);
-					//numOfBinsUsed++;
-					
 				}else{
 					bins[j] = new BaiBin(binId, chunks);
 					numOfBinsUsed++;
@@ -205,6 +202,11 @@ public final class IndexUtil {
 		return new BaiBin(METADATA_BIN_ID, chunks);
 	}
 
+	/**
+	 * Sorts Bins by bin number in increasing order.
+	 * @author dkatzel
+	 *
+	 */
 	public static enum BinSorter implements Comparator<Bin>{
 		
 		INSTANCE;
