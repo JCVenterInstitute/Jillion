@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 J. Craig Venter Institute.
+ * Copyright (c) 2009 - 2014 J. Craig Venter Institute.
  * 	This file is part of Jillion
  * 
  * 	 Jillion is free software: you can redistribute it and/or modify
