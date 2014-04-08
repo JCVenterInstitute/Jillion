@@ -33,6 +33,7 @@ public class CreateBamIndexFromBam {
 		
 		new BamIndexFileWriterBuilder(bamFile, baiFile)
 				.includeMetaData(true) //includes metadata that Picard and samtools use
+				.assumeSorted(true)
 				.build();
 				
 

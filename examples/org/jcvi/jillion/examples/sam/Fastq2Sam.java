@@ -31,7 +31,7 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.sam.SamRecord;
 import org.jcvi.jillion.sam.SamRecordFlags;
 import org.jcvi.jillion.sam.SamWriter;
-import org.jcvi.jillion.sam.SamWriterBuilder;
+import org.jcvi.jillion.sam.SamFileWriterBuilder;
 import org.jcvi.jillion.sam.SortOrder;
 import org.jcvi.jillion.sam.attribute.InvalidAttributeException;
 import org.jcvi.jillion.sam.attribute.ReservedSamAttributeKeys;
@@ -64,7 +64,7 @@ public class Fastq2Sam {
 							.build();
 		
 		//File outputFile = new File("/path/to/bam.or.sam");
-		SamWriter samWriter = new SamWriterBuilder(outputFile, header)
+		SamWriter samWriter = new SamFileWriterBuilder(outputFile, header)
 									.reSortBy(SortOrder.QUERY_NAME)
 									.setTempRootDir(new File("/usr/local/scratch/dkatzel/fastq2sam/tmpDir"))
 									.build();

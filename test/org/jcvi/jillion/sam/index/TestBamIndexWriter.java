@@ -35,7 +35,7 @@ import org.jcvi.jillion.sam.SamParserFactory;
 import org.jcvi.jillion.sam.SamRecord;
 import org.jcvi.jillion.sam.SamVisitor;
 import org.jcvi.jillion.sam.SamWriter;
-import org.jcvi.jillion.sam.SamWriterBuilder;
+import org.jcvi.jillion.sam.SamFileWriterBuilder;
 import org.jcvi.jillion.sam.SortOrder;
 import org.jcvi.jillion.sam.VirtualFileOffset;
 import org.jcvi.jillion.sam.header.SamHeader;
@@ -107,7 +107,7 @@ public class TestBamIndexWriter {
 		File incorrectlySortedFile = tmpDir.newFile("wrongSort.bam");
 		File actualBaiFile = tmpDir.newFile("actual.bai");
 		for(SortOrder incorrectSortOrder : Arrays.asList(SortOrder.QUERY_NAME, SortOrder.UNKNOWN, SortOrder.UNSORTED)){
-			SamWriter writer = new SamWriterBuilder(incorrectlySortedFile, originalHeader)
+			SamWriter writer = new SamFileWriterBuilder(incorrectlySortedFile, originalHeader)
 														.forceHeaderSortOrder(incorrectSortOrder)
 														.build();
 			
@@ -133,7 +133,7 @@ public class TestBamIndexWriter {
 		File newBam = reWriteBam(bamFile, createHeader(originalHeader, SortOrder.COORDINATE));
 		File expectedBai = createIndex(newBam);
 		for(SortOrder incorrectSortOrder : Arrays.asList(SortOrder.QUERY_NAME, SortOrder.UNKNOWN, SortOrder.UNSORTED)){
-			SamWriter writer = new SamWriterBuilder(incorrectlySortedFile, createHeader(originalHeader, incorrectSortOrder))
+			SamWriter writer = new SamFileWriterBuilder(incorrectlySortedFile, createHeader(originalHeader, incorrectSortOrder))
 														.forceHeaderSortOrder(incorrectSortOrder)
 														.build();
 			
@@ -170,7 +170,7 @@ public class TestBamIndexWriter {
 	private File reWriteBam(File bamFile, SamHeader header) throws IOException{
 		File newBam = tmpDir.newFile(bamFile.getName());
 		
-		SamWriter writer = new SamWriterBuilder(newBam, header)
+		SamWriter writer = new SamFileWriterBuilder(newBam, header)
 								.build();
 
 		writeAllRecords(bamFile, writer);
