@@ -103,7 +103,7 @@ class PresortedSamFileWriter implements SamWriter {
 	@Override
 	public void writeRecord(SamRecord record) throws IOException {
 		try{
-			header.validRecord(record, attributeValidator);
+			header.validateRecord(record, attributeValidator);
 		}catch(SamValidationException e){
 			throw new IOException("can not write record due to validation error(s)",e);
 		}

@@ -22,8 +22,23 @@ package org.jcvi.jillion.sam;
 
 import java.io.Closeable;
 import java.io.IOException;
-
+/**
+ * {@code SamWriter} is an interface for
+ * writing SAM or BAM encoded files.
+ * @author dkatzel
+ *
+ */
 public interface SamWriter extends Closeable{
-
+	/**
+	 * Write the given record to the SAM or BAM file.
+	 * Different implementations of {@link SamWriter}
+	 * might delay actually writing out the {@link SamRecord}
+	 * either to improve disk writing performance
+	 * or to re-sort records.
+	 * @param record the {@link SamRecord} to write;
+	 * can not be null.
+	 * @throws IOException if there is a problem writing the {@link SamRecord}
+	 * @throws NullPointerException if record is null.
+	 */
 	void writeRecord(SamRecord record) throws IOException;
 }
