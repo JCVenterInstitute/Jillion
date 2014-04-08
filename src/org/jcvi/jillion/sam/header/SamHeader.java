@@ -419,8 +419,29 @@ public final class SamHeader {
 		return indexReferenceMap.get(Integer.valueOf(i));
 		
 	}
-	
-	public void validRecord(SamRecord record, SamAttributeValidator attributeValidator) throws SamValidationException{
+	/**
+	 * Validate the given {@link SamRecord} using the given
+	 * {@link SamAttributeValidator}.
+	 * <br/>
+	 * A {@link SamRecord} is invalid if:
+	 * <ul>
+	 * <li>The {@link SamRecord#getReferenceName()} is not null
+	 * and this SamHeader does not have the {@link ReferenceSequence} via 
+	 * {@link #hasReferenceSequence(String)}.</li>
+	 * <li>The {@link SamRecord#getNextName()} is not null
+	 * and this SamHeader does not have the {@link ReferenceSequence} via 
+	 * {@link #hasReferenceSequence(String)}.</li>
+	 * <li>Any of the {@link SamAttribute}s in the {@link SamRecord}
+	 * fail the validation of the given {@link SamAttributeValidator}</li>
+	 * </ul>
+	 * @param record the {@link SamRecord} to validate;
+	 * can not be null.
+	 * @param attributeValidator the {@link SamAttributeValidator};
+	 * can not be null.
+	 * @throws SamValidationException if there is a validation problem.
+	 * @throws NullPointerException if either parameter is null.
+	 */
+	public void validateRecord(SamRecord record, SamAttributeValidator attributeValidator) throws SamValidationException{
 		//reference names must be present in a SQ-SN tag
 		String refName =record.getReferenceName();
 		if(refName !=null && !this.hasReferenceSequence(refName)){

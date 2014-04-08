@@ -122,9 +122,12 @@ class ReSortSamFileWriter implements SamWriter {
 
 	@Override
 	public void writeRecord(SamRecord record) throws IOException {
+		if(record==null){
+			throw new NullPointerException("record can not be null");
+		}
 		persistInMemoryCacheIfNeeded();
 		try{
-			header.validRecord(record, attributeValidator);
+			header.validateRecord(record, attributeValidator);
 		}catch(SamValidationException e){
 			throw new IOException("can not write record due to validation error(s)",e);
 		}
