@@ -49,18 +49,66 @@ public interface ReferenceIndex {
 	 * there might be null cells in the array.
 	 */
 	VirtualFileOffset[] getIntervals();
-	
+	/**
+	 * Does this ReferenceIndex contain
+	 * optional metadata?
+	 * Some implementations of BAM indexes include 
+	 * metadata that is not in the BAM index specification.
+	 * 
+	 * @return {@code true} if {@link #getNumberOfAlignedReads()},
+	 * {@link #getNumberOfUnAlignedReads()}, {@link #getLowestStartOffset()}
+	 * and {@link #getHighestEndOffset()} all return non-null values;
+	 * {@code false} otherwise.
+	 */
 	boolean hasMetaData();
-	
+	/**
+	 * Get the optional metadata field which contains the number
+	 * of unaligned reads in this reference.
+	 * @return {@code null} if this reference does not
+	 * have metadata; otherwise a long.
+	 * @see #hasMetaData()
+	 */
 	Long getNumberOfUnAlignedReads();
-
+	/**
+	 * Get the optional metadata field which contains the number
+	 * of aligned reads in this reference.
+	 * @return {@code null} if this reference does not
+	 * have metadata; otherwise a long.
+	 * @see #hasMetaData()
+	 */
 	Long getNumberOfAlignedReads();
-	
+	/**
+	 * Get the optional metadata field which contains the lowest begin
+	 * {@link VirtualFileOffset} that references this reference.
+	 * @return {@code null} if this reference does not
+	 * have metadata; otherwise a {@link VirtualFileOffset}.
+	 * @see #hasMetaData()
+	 */
 	VirtualFileOffset getLowestStartOffset();
-
-
-
+	/**
+	 * Get the optional metadata field which contains the highest end
+	 * {@link VirtualFileOffset} that references this reference.
+	 * @return {@code null} if this reference does not
+	 * have metadata; otherwise a {@link VirtualFileOffset}.
+	 * @see #hasMetaData()
+	 */
 	VirtualFileOffset getHighestEndOffset();
+	/**
+	 * Get the number of {@link Bin}s in this reference.
+	 * This is the same as {@code getBins().size()}
+	 * @return an int will always be >=0.
+	 */
 	int getNumberOfBins();
-
+	/**
+	 * Two ReferenceIndexes are equal
+	 * if they have the same {@link Bin}s
+	 * and the same intervals.
+	 * <br/>
+	 * <strong>Note</strong> Since the metadata
+	 * fields are optional, they do not count 
+	 * towards equality checks.
+	 * {@inheritDoc}
+	 */
+	@Override
+	boolean equals(Object obj);
 }

@@ -18,10 +18,13 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.sam.index;
+package org.jcvi.jillion.internal.sam.index;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.jcvi.jillion.sam.index.Bin;
+import org.jcvi.jillion.sam.index.Chunk;
 
 public final class BinBuilder {
 

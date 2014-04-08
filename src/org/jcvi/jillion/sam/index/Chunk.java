@@ -22,10 +22,26 @@ package org.jcvi.jillion.sam.index;
 
 import org.jcvi.jillion.sam.VirtualFileOffset;
 
+/**
+ * A {@code Chunk} represents a single span of alignments
+ * where all the aligned reads in the sorted BAM belong
+ * to the same {@link Bin}.
+ * @author dkatzel
+ *
+ */
 public class Chunk {
 
 	private final VirtualFileOffset begin,end;
-
+	/**
+	 * Create a new Chunk with the given begin and end {@link VirtualFileOffset}s.
+	 * Usually begin < end however, some BamIndex implementations
+	 * violate this rule to store metadata in a backwards
+	 * compatible way.
+	 * @param begin the begin offset; can not be null.
+	 * @param end the begin offset; can not be null.
+	 * @throws NullPointerException if either parameter
+	 * is null.
+	 */
 	public Chunk(VirtualFileOffset begin, VirtualFileOffset end) {
 		if(begin ==null){
 			throw new NullPointerException("begin can not be null");
@@ -36,11 +52,19 @@ public class Chunk {
 		this.begin = begin;
 		this.end = end;
 	}
-
+	/**
+	 * Get the {@link VirtualFileOffset}
+	 * of the beginning of this Chunk.
+	 * @return a VirtualFileOffset, will never be null.
+	 */
 	public VirtualFileOffset getBegin() {
 		return begin;
 	}
-
+	/**
+	 * Get the {@link VirtualFileOffset}
+	 * of the end of this Chunk.
+	 * @return a VirtualFileOffset, will never be null.
+	 */
 	public VirtualFileOffset getEnd() {
 		return end;
 	}
@@ -53,7 +77,11 @@ public class Chunk {
 		result = prime * result +  end.hashCode();
 		return result;
 	}
-
+	/**
+	 * Two {@link Chunk}s are equal if they have
+	 * the same begin and end values.
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
