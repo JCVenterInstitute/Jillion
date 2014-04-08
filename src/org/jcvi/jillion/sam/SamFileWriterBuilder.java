@@ -29,7 +29,7 @@ import org.jcvi.jillion.sam.attribute.ReservedAttributeValidator;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 import org.jcvi.jillion.sam.header.SamHeader;
 /**
- * {@code SamWriterBuilder}
+ * {@code SamFileWriterBuilder}
  * is a Builder object that will create
  * a {@link SamWriter} implementation
  * to write out either SAM or BAM formatted files
@@ -40,7 +40,7 @@ import org.jcvi.jillion.sam.header.SamHeader;
  * @author dkatzel
  *
  */
-public final class SamWriterBuilder {
+public final class SamFileWriterBuilder {
 
 	
 	private static final int DEFAULT_RECORDS_IN_MEMORY = 2000000; //2 million
@@ -67,7 +67,7 @@ public final class SamWriterBuilder {
 		return DEFAULT_RECORDS_IN_MEMORY;
 	}
 	/**
-	 * Create a new {@link SamWriterBuilder} instance
+	 * Create a new {@link SamFileWriterBuilder} instance
 	 * that will write out {@link SamRecord}s
 	 * to the given output file.  The file encoding
 	 * to use is determined by the file extension of the output file.
@@ -80,7 +80,7 @@ public final class SamWriterBuilder {
 	 * or {@link #reSortBy(SortOrder, int)} or {@link #forceHeaderSortOrder(SortOrder)}.
 	 * @throws NullPointerException if either parameter is null.
 	 */
-	public SamWriterBuilder(File outputFile, SamHeader header){
+	public SamFileWriterBuilder(File outputFile, SamHeader header){
 		if(outputFile == null){
 			throw new NullPointerException("output file can not be null");
 		}
@@ -101,7 +101,7 @@ public final class SamWriterBuilder {
 	 * if used.
 	 * @return this.
 	 */
-	public SamWriterBuilder setTempRootDir(File tmpDir){
+	public SamFileWriterBuilder setTempRootDir(File tmpDir){
 		this.tmpDirRoot = tmpDir;
 		return this;
 	}
@@ -116,7 +116,7 @@ public final class SamWriterBuilder {
 	 * @return this
 	 * @throws NullPointerException if validator is null.
 	 */
-	public SamWriterBuilder setSamAttributeValidator(SamAttributeValidator validator){
+	public SamFileWriterBuilder setSamAttributeValidator(SamAttributeValidator validator){
 		if(validator ==null){
 			throw new NullPointerException("validator can not be null");
 		}
@@ -124,7 +124,7 @@ public final class SamWriterBuilder {
 		return this;
 	}
 	
-	public SamWriterBuilder createBamIndex(boolean createBamIndex){
+	public SamFileWriterBuilder createBamIndex(boolean createBamIndex){
 		this.makeBamIndex = createBamIndex;
 		return this;
 	}
@@ -139,7 +139,7 @@ public final class SamWriterBuilder {
 	 * @return this.
 	 * @see #reSortBy(SortOrder, int).
 	 */
-	public SamWriterBuilder reSortBy(SortOrder sortOrder){
+	public SamFileWriterBuilder reSortBy(SortOrder sortOrder){
 		return reSortBy(sortOrder, DEFAULT_RECORDS_IN_MEMORY);
 	}
 	/**
@@ -159,7 +159,7 @@ public final class SamWriterBuilder {
 	 * @throws NullPointerException if sortOrder is not specified.
 	 * @throws IllegalArgumentException if maxRecordsToKeepInMemory < 1.
 	 */
-	public SamWriterBuilder reSortBy(SortOrder sortOrder, int maxRecordsToKeepInMemory){
+	public SamFileWriterBuilder reSortBy(SortOrder sortOrder, int maxRecordsToKeepInMemory){
 		if(sortOrder ==null){
 			throw new NullPointerException("sort order can not be null");
 		}
@@ -183,7 +183,7 @@ public final class SamWriterBuilder {
 	 * then the sort order will be set to {@link SortOrder#UNKNOWN}.
 	 * @return this.
 	 */
-	public SamWriterBuilder forceHeaderSortOrder(SortOrder sortOrder){
+	public SamFileWriterBuilder forceHeaderSortOrder(SortOrder sortOrder){
 		headerBuilder.setSortOrder(sortOrder);
 		return this;
 	}

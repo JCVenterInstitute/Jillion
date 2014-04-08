@@ -57,7 +57,7 @@ public abstract class AbstractTestResortedSamFileWriter extends AbstractTestSamW
 	private void writeShuffledRecordsAndAssertWrittenInSortedOrder(
 			SortOrder sortOrder) throws IOException {
 		File f = createOutputSamOrBamFile();
-		SamWriter writer = new SamWriterBuilder(f, getHeader())
+		SamWriter writer = new SamFileWriterBuilder(f, getHeader())
 									.setTempRootDir(tempDir.getRoot())
 									.reSortBy(sortOrder)
 									.build();

@@ -43,7 +43,7 @@ public abstract class AbstractTestPresortedSamFileWriter extends AbstractTestSam
 	public void outputFileMatchesExactly() throws IOException{
 		File f = createOutputSamOrBamFile();
 		
-		SamWriter writer = new SamWriterBuilder(f, getHeader())
+		SamWriter writer = new SamFileWriterBuilder(f, getHeader())
 									.setTempRootDir(tempDir.getRoot())
 									.build();
 		List<SamRecord> expectedRecords = getRecords();
@@ -57,7 +57,7 @@ public abstract class AbstractTestPresortedSamFileWriter extends AbstractTestSam
 	public void settingSortOrderUnknownDoesNotAlterWriteOrder() throws IOException{
 		File f = createOutputSamOrBamFile();
 		
-		SamWriter writer = new SamWriterBuilder(f, getHeader())
+		SamWriter writer = new SamFileWriterBuilder(f, getHeader())
 									.setTempRootDir(tempDir.getRoot())
 									.reSortBy(SortOrder.UNKNOWN)
 									.build();
@@ -73,7 +73,7 @@ public abstract class AbstractTestPresortedSamFileWriter extends AbstractTestSam
 	public void settingSortOrderUnSortedDoesNotAlterWriteOrder() throws IOException{
 		File f = createOutputSamOrBamFile();
 		
-		SamWriter writer = new SamWriterBuilder(f, getHeader())
+		SamWriter writer = new SamFileWriterBuilder(f, getHeader())
 									.setTempRootDir(tempDir.getRoot())
 									.reSortBy(SortOrder.UNSORTED)
 									.build();
