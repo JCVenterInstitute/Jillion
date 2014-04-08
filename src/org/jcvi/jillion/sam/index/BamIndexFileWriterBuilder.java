@@ -45,7 +45,7 @@ import org.jcvi.jillion.sam.header.SamHeader;
  * @author dkatzel
  *
  */
-public class BamIndexFileWriterBuilder {
+public final class BamIndexFileWriterBuilder {
 
 	
 	private boolean includeMetaData=false;

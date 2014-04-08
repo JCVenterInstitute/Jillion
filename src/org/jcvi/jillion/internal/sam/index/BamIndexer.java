@@ -32,7 +32,6 @@ import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
 import org.jcvi.jillion.sam.index.BamIndex;
 import org.jcvi.jillion.sam.index.ReferenceIndex;
-import org.jcvi.jillion.sam.index.ReferenceIndexBuilder;
 
 public class BamIndexer implements IndexerCallback{
 
