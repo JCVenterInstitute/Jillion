@@ -462,12 +462,10 @@ public final class SamUtil {
 		}
 		
 		int bytesWritten =buf.position();
-		buf.flip();
-		buf.putInt(bytesWritten -4);
 		buf.position(0);
-		byte[] asBytes = new byte[buf.remaining()];
-		buf.get(asBytes);
-		out.write(asBytes);
+		buf.putInt(bytesWritten -4);
+
+		out.write(Arrays.copyOf(buf.array(), bytesWritten));
 	}
 	
 	
@@ -608,11 +606,20 @@ public final class SamUtil {
 		 */
 		private static final long serialVersionUID = 1L;
 
+		//these date formats have been seen in example SAM/BAMS
+		//the expected format described in SAM spec
 		private static final String DATE_FULL_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
+		//in older SAM files?
 		private static final String DAY_ONLY_FORMAT = "yyyy-MM-dd";
+		//this format is seen from bams produced from bwa sampe ?
+		private static final String NO_SECONDS_FORMAT = "yyyy-MM-dd'T'HH:mm";
 
+		private static final int DAY_ONLY_LENGTH = 10;
+		private static final int NOT_SECONDS_LENGTH = 16;
+		
 		final DateFormat full = new SimpleDateFormat(DATE_FULL_FORMAT, Locale.US);
 		final DateFormat dayOnly = new SimpleDateFormat(DAY_ONLY_FORMAT, Locale.US);
+		final DateFormat noSeconds = new SimpleDateFormat(NO_SECONDS_FORMAT, Locale.US);
 
 		@Override
 		public StringBuffer format(Date date, StringBuffer toAppendTo,
@@ -626,8 +633,11 @@ public final class SamUtil {
 		public Date parse(String source, ParsePosition pos) {
 			//if the length to parse is only long enough 
 			//to use the day only format, then use that.
-			if (source.length() - pos.getIndex() == DAY_ONLY_FORMAT.length()) {
+			int inputLength = source.length() - pos.getIndex();
+			if (inputLength == DAY_ONLY_LENGTH) {
 				return dayOnly.parse(source, pos);
+			}else if(inputLength == NOT_SECONDS_LENGTH) {
+				return noSeconds.parse(source, pos);				
 			}
 			return full.parse(source, pos);
 
