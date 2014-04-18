@@ -395,6 +395,8 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
                 final int unEncodedSize, ByteBuffer result) {
         	
             int groupSize = getNucleotidesPerGroup();
+            //create variable i outside of for loop
+            //so it can be used afterwards
             int i=0;
 			for(; i<unEncodedSize-groupSize; i+=groupSize){
 				encodeCompleteGroup(glyphs, result,i);
