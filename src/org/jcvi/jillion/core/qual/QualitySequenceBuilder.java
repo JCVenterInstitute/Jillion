@@ -47,6 +47,8 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 	private static final int DEFAULT_CAPACITY = 200;
 	
 	private GrowableByteArray builder;
+	
+	private boolean turnOffDataCompression=false;
 	/**
 	 * Create a new empty builder with the default
 	 * capacity.
@@ -254,6 +256,23 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 					String.format("invalid offset %d only values between 0 and %d are allowed", offset, getLength()));
 		}
 	}
+	
+	/**
+     * Turn off more extreme data compression which
+     * will improve cpu performance at the cost
+     * of the built {@link QualitySequence} taking up more memory.
+     * By default, if this method is not called, then 
+     * the data compression is turned ON which is the equivalent
+     * of calling this method with the parameter set to {@code false}.
+     * @param turnOffDataCompression {@code true} to turn off data compression;
+     * {@code false} to keep data compression on.  Defaults to {@code false}. 
+     * @return this.
+     */
+    public QualitySequenceBuilder turnOffDataCompression(boolean turnOffDataCompression){
+    	this.turnOffDataCompression = turnOffDataCompression;
+    	return this;
+    }
+    
 	/**
 	 * Creates a new {@link QualitySequence} using
 	 * the given quality values thus far.
@@ -261,9 +280,11 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 	@Override
 	public QualitySequence build() {
 		byte[] array = builder.toArray();
-		byte[] runLengthEncoded = RunLengthEncodedQualityCodec.INSTANCE.encode(array);
-		if(runLengthEncoded.length < builder.getCurrentLength()){
-			return new RunLengthEncodedQualitySequence(runLengthEncoded);
+		if(!turnOffDataCompression){
+			byte[] runLengthEncoded = RunLengthEncodedQualityCodec.INSTANCE.encode(array);
+			if(runLengthEncoded.length < builder.getCurrentLength()){
+				return new RunLengthEncodedQualitySequence(runLengthEncoded);
+			}
 		}
 		
 		return new EncodedQualitySequence(DefaultQualitySymbolCodec.INSTANCE, array);
