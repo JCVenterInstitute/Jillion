@@ -6,6 +6,32 @@ often be many more source code changes that aren't listed if they don't
 change the behavior in any public API classes.  The order of changes is mostly
 chronological so the most important changes may not always be ordered first.
 
+================
+Jillion 4.0 RC 5 - Added support for indexed BAM files and improvemented SAM/BAM API.
+                   Bug fixes and performance improvements.  Added more javadoc.
+================
+
+API Changes
+-----------
+1.  Moved many previously public classes in SAM and BAM packages to be in "internal" packages.
+    Which are not intended to be used by external clients.  This greatly simplifies the public facing API.
+
+2.  Added BAM index support for reading and writing.  This includes support for BAM "metadata" records
+    which are not in the SAM specification but are created and used by both samtools and Picard.
+
+3.  Added FastqQualityCodec.getOffset() method to get the integer offset for the encoding.  This will
+    return 33 or 64 depending on the implementation. 
+
+Bug Fixes
+----------
+1.  Fixed bug in BAM VirtualFileOffset computation so it matches Picard.  The bug was 
+    related to computing the offset at a BGZF block boundary.  Picard sets the offset
+    to the beginning of the next block.
+    
+Performance Improvements
+------------------------
+1. Improved BAM parsing and writing code to be 25% faster.  Some of these improvements
+   might also improve cas file parsing. 
 
 ================
 Jillion 4.0 RC 4 - Added SAM/BAM and MAQ bfa and bfq support.  Promoted pairwise alignment code out of experimental
@@ -110,6 +136,9 @@ Bug Fixes
 4. Changed NucleotideSequenceBuilder to ignore \0 in char arrays.
 
 5. Fixed bug in XML BLAST parser to call visitEnd() at end of file.
+
+6. Major Bug fix in ResidueSequence.isGap() which didn't work for the NucleotideCodecs
+   if the offset requested was the first gap in the read! 
 
 
 Performance Improvements
