@@ -205,6 +205,12 @@ public final class SamUtil {
 		byte[] seqBytes = new byte[(seqLength+1)/2];
 		IOUtil.blockingRead(in, seqBytes);
 		NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(seqLength);
+		//we turn off data compression since we
+		//usually stream through millions of these records and
+		//often throw the results away
+		//so we don't care if temporarily we take up more memory
+		builder.turnOffDataCompression(true);
+		
 		//first fully populate all but last byte
 		for(int i=0; i<seqBytes.length-1; i++){
 			byte value = seqBytes[i];

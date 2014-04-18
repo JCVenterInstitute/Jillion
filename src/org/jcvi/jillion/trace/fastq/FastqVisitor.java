@@ -78,6 +78,22 @@ public interface FastqVisitor {
 		 * will still be called.
 		 */
 		void haltParsing();
+		 /**
+	     * Turn off more extreme data compression which
+	     * will improve cpu performance at the cost
+	     * of the built {@link NucleotideSequence} taking up more memory.
+	     * Changing this value will affect all downstream {@link FastqRecord}s created
+	     * from the same {@link FastqParser#parse(FastqVisitor)} call.
+	     * This method may be called more than once to toggle compression off then back on
+	     * etc. 
+	     * By default, if this method is not called, then 
+	     * the data compression is turned ON which is the equivalent
+	     * of calling this method with the parameter set to {@code false}.
+	     * @param turnOffDataCompression {@code true} to turn off data compression;
+	     * {@code false} to keep data compression on.  Defaults to {@code false}. 
+	     * @return this.
+	     */
+		void turnOffDataCompression(boolean turnOffDataCompression);
 	}
 	/**
      * Visit the defline of a the current fastq record.

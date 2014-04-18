@@ -387,6 +387,10 @@ final class LargeFastqFileDataStore implements FastqDataStore {
 							return null;
 						}
 						if (filter.accept(id)) {
+							//don't waste CPU time saving a few bytes of memory
+							//since we are only iterating through
+							//and will probably throw the read away after reading it once.
+							callback.turnOffDataCompression(true);
 							return new AbstractFastqRecordVisitor(id,optionalComment,qualityCodec) {
 								
 								@Override
