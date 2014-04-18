@@ -20,6 +20,9 @@
  ******************************************************************************/
 package org.jcvi.jillion.sam;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
@@ -27,6 +30,7 @@ import java.nio.ByteOrder;
 import java.util.zip.CRC32;
 import java.util.zip.Deflater;
 
+import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.sam.IndexerCallback;
 /**
  * {@code BgzfOutputStream} is an {@link OutputStream}
@@ -164,32 +168,25 @@ final class BgzfOutputStream extends OutputStream{
 	 * Create a new {@link BgzfOutputStream}
 	 * that will write BGZF encoded data to the given
 	 * outputStream.
-	 * @param out the {@link OutputStream} to write to;
-	 * can not be null;
-	 * @throws NullPointerException if out is null.
-	 */
-	public BgzfOutputStream(OutputStream out){
-		this(out, null);
-	}
-	/**
-	 * Create a new {@link BgzfOutputStream}
-	 * that will write BGZF encoded data to the given
-	 * outputStream.
-	 * @param out the {@link OutputStream} to write to;
-	 * can not be null;
+	 * @param outputBam the {@link File} to write to;
+	 * can not be null.  If the file, or any parent directories
+	 * do not exist, then they will be created.
 	 * @param callback the {@link IndexerCallback} to call back to
 	 * on during when writing to this {@link BgzfOutputStream};
 	 * if {@code null} then no callbacks will be called.
 	 * 
 	 * @throws NullPointerException if out is null.
+	 * @throws IOException if there is a problem creating the output file.
 	 */
-	public BgzfOutputStream(OutputStream out, IndexerCallback callback) {
-		if(out==null){
+	public BgzfOutputStream(File outputBam, IndexerCallback callback) throws IOException {
+		if(outputBam ==null){
 			throw new NullPointerException("output can not be null");
 		}
-		this.out = out;
+		IOUtil.mkdirs(outputBam.getParentFile());
+		this.out = new BufferedOutputStream(new FileOutputStream(outputBam), MAX_COMPRESSED_BLOCK_SIZE);
 		this.callback = callback;
 	}
+	
 	/**
 	 * {@inheritDoc}.
 	 */

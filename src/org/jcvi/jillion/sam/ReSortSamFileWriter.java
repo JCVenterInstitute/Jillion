@@ -133,7 +133,6 @@ class ReSortSamFileWriter implements SamWriter {
 		}
 		
 		inMemoryArray[currentInMemSize++] = record;
-
 	}
 
 	/**

@@ -111,8 +111,7 @@ public final class CasUtil {
      * @throws IOException if there is a problem reading the inputStream.
      */
     static short readCasUnsignedByte(InputStream in) throws IOException{
-        return new BigInteger(1,
-                 IOUtil.toByteArray(in, 1, ByteOrder.LITTLE_ENDIAN)).shortValue();
+    	return IOUtil.readUnsignedByte(in, ByteOrder.LITTLE_ENDIAN);
      }
     /**
      * Read the next unsigned short in the given inputStream.
@@ -122,8 +121,7 @@ public final class CasUtil {
      * @throws IOException if there is a problem reading the inputStream.
      */
     static int readCasUnsignedShort(InputStream in) throws IOException{
-        return new BigInteger(1,
-                 IOUtil.toByteArray(in, 2, ByteOrder.LITTLE_ENDIAN)).intValue();
+    	return IOUtil.readUnsignedShort(in, ByteOrder.LITTLE_ENDIAN);
      }
     /**
      * Read the next unsigned int in the given inputStream.
@@ -148,8 +146,9 @@ public final class CasUtil {
      * @see #readCasUnsignedInt(InputStream, int)
      */
     static long readCasUnsignedInt(InputStream in, int numberOfBytesInNumber) throws IOException{
-        return new BigInteger(1,
-                 IOUtil.toByteArray(in, numberOfBytesInNumber, ByteOrder.LITTLE_ENDIAN)).longValue();
+    	byte[] array =IOUtil.readByteArray(in, numberOfBytesInNumber);
+    	array = IOUtil.switchEndian(array);    	
+    	return new BigInteger(1,array).longValue();
      }
     /**
      * Read the next unsigned long in the given inputStream.
@@ -159,8 +158,7 @@ public final class CasUtil {
      * @throws IOException if there is a problem reading the inputStream.
      */
     static BigInteger readCasUnsignedLong(InputStream in) throws IOException{
-        return new BigInteger(1,
-                 IOUtil.toByteArray(in, 8, ByteOrder.LITTLE_ENDIAN));
+    	return IOUtil.readUnsignedLong(in,ByteOrder.LITTLE_ENDIAN);
      }
     
     

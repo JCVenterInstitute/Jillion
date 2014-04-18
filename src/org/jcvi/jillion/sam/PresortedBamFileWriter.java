@@ -71,9 +71,7 @@ class PresortedBamFileWriter implements SamWriter{
 		this.bamFile = outputFile;
 		this.attributeValidator = attributeValidator;
 		this.optionalIndexer = optionalIndexer;
-		//create parent dirs if needed
-		IOUtil.mkdirs(bamFile.getParentFile());
-		out = new BgzfOutputStream(new BufferedOutputStream(new FileOutputStream(bamFile)),optionalIndexer);
+		out = new BgzfOutputStream(bamFile,optionalIndexer);
 		
 		writeHeader();
 	}
