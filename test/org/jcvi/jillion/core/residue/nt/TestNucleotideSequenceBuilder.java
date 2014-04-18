@@ -28,6 +28,7 @@ import static org.junit.Assert.assertTrue;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.junit.Test;
+import org.powermock.reflect.Whitebox;
 /**
  * @author dkatzel
  *
@@ -761,5 +762,16 @@ public class TestNucleotideSequenceBuilder {
     	sut.insert(2,"ACGT");
     	assertArrayEquals(new int[]{1,8}, sut.getNOffsets());
     	assertEquals("ANACGTCGNTT", sut.build().toString());
+    }
+    
+    @Test
+    public void turnOffCompression(){
+    	NucleotideSequence uncompressed =new NucleotideSequenceBuilder("ACGTACGTTACG")
+    													.turnOffDataCompression(true)
+    													.build();
+    	NucleotideCodec codec = (NucleotideCodec) Whitebox.getInternalState(uncompressed, "codec");
+    	assertTrue(codec instanceof BasicNucleotideCodec);
+    	
+    													
     }
 }

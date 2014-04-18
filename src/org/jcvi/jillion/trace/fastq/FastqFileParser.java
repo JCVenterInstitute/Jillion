@@ -126,7 +126,9 @@ public abstract class FastqFileParser implements FastqParser{
         	}
         }while(inBasecallBlock);
         
-        NucleotideSequence sequence = sequenceBuilder.build();
+        NucleotideSequence sequence = sequenceBuilder
+							        		.turnOffDataCompression(parserState.turnOffDataCompression())
+							        		.build();
         	recordVisitor.visitNucleotides(sequence);
         
         if(!parserState.keepParsing()){
@@ -247,6 +249,13 @@ public abstract class FastqFileParser implements FastqParser{
 		final ParserState getParserState() {
 			return parserState;
 		}
+
+		@Override
+		public void turnOffDataCompression(boolean turnOffDataCompression) {
+			parserState.turnOffDataCompression(turnOffDataCompression);
+			
+		}
+		
 		
 		
 	}
@@ -295,11 +304,26 @@ public abstract class FastqFileParser implements FastqParser{
 	private static class ParserState{
 		private final long currentOffset;
 		private final AtomicBoolean keepParsing;
+		//we probably don't care 
+		//about concurrency here.
+		//if the client ever turns off compression
+		//it will probably be only once or twice over the lifetime
+		//of the parser.
+		private volatile boolean turnOffDataCompression = false;
 		
 		ParserState(long startOffset){
 			this(startOffset, new AtomicBoolean(true));
 		}
 		
+		public void turnOffDataCompression(boolean turnOffDataCompression) {
+			this.turnOffDataCompression = turnOffDataCompression;
+			
+		}
+		
+		public boolean turnOffDataCompression(){
+			return turnOffDataCompression;
+		}
+
 		public final long getCurrentOffset() {
 			return currentOffset;
 		}

@@ -898,7 +898,21 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         return this;
     }
     
-    
+    /**
+     * Turn off more extreme data compression which
+     * will improve cpu performance at the cost
+     * of the built {@link NucleotideSequence} taking up more memory.
+     * By default, if this method is not called, then 
+     * the data compression is turned ON which is the equivalent
+     * of calling this method with the parameter set to {@code false}.
+     * @param turnOffDataCompression {@code true} to turn off data compression;
+     * {@code false} to keep data compression on.  Defaults to {@code false}. 
+     * @return this.
+     */
+    public NucleotideSequenceBuilder turnOffDataCompression(boolean turnOffDataCompression){
+    	codecDecider.forceBasicCompression(turnOffDataCompression);
+    	return this;
+    }
     /**
      * {@inheritDoc}
      * 
@@ -964,6 +978,9 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         private AlignedReference alignedReference=null;
         private GrowableIntArray gapOffsets;
         private GrowableIntArray nOffsets;
+        
+        private boolean forceBasicCodec = false;
+        
         CodecDecider(){
         	//needs to be initialized
         	gapOffsets = new GrowableIntArray(12);
@@ -974,7 +991,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         	int numberOfGaps = gapOffsets.getCurrentLength();
             int numberOfNs = nOffsets.getCurrentLength();
             
-			if(numberOfNonNAmbiguities>0 || (numberOfGaps>0 && numberOfNs >0)){
+			if(forceBasicCodec || numberOfNonNAmbiguities>0 || (numberOfGaps>0 && numberOfNs >0)){
                 byte[] encodedBytes= BasicNucleotideCodec.INSTANCE.encode(currentLength, gapOffsets.toArray(), iterator);
                 return new DefaultNucleotideSequence(BasicNucleotideCodec.INSTANCE, encodedBytes);
 			}
@@ -1011,6 +1028,11 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         	copy.alignedReference = alignedReference;
         	copy.gapOffsets = gapOffsets.copy();
         	return copy;
+        	
+        }
+        
+        void forceBasicCompression(boolean forceBasicCompression){
+        	this.forceBasicCodec = forceBasicCompression;
         	
         }
         

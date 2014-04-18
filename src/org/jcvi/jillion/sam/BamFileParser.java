@@ -341,16 +341,25 @@ final class BamFileParser extends AbstractSamFileParser {
 		byte[] bytes = new byte[seqLength];
 		IOUtil.blockingRead(in, bytes);
 		if(bytes[0] == -1){
+			//assume all values are negative
+			/*
 			//check all neg
 			for(int i=1; i<bytes.length; i++){
 				if(bytes[i] != -1){
 					throw new IllegalStateException("invalid qualities some but not all values are set");
 				}
 			}
+			*/
 			//if we are here all are -1 (not set)
 			return null;
 		}
-		return new QualitySequenceBuilder(bytes).build();
+		return new QualitySequenceBuilder(bytes)
+					//we turn off data compression since we
+					//usually stream through millions of these records and
+					//often throw the results away
+					//so we don't care if temporarily we take up more memory
+					.turnOffDataCompression(true)
+					.build();
 	}
 	private long getUnsignedInt(InputStream in) throws IOException {
 		return IOUtil.readUnsignedInt(in, ByteOrder.LITTLE_ENDIAN);

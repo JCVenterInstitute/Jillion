@@ -176,8 +176,12 @@ public abstract class BfqFileParser implements FastqParser{
 				IOUtil.blockingSkip(in, numBases);
 			}else{				
 				byte[] basesAndQualities= IOUtil.readByteArray(in, numBases);
-				NucleotideSequenceBuilder basesBuilder = new NucleotideSequenceBuilder(numBases);
-				QualitySequenceBuilder qualitiesBuilder = new QualitySequenceBuilder(numBases);
+				boolean turnOffCompression = callback.turnOffCompression;
+				
+				NucleotideSequenceBuilder basesBuilder = new NucleotideSequenceBuilder(numBases)
+																.turnOffDataCompression(turnOffCompression);
+				QualitySequenceBuilder qualitiesBuilder = new QualitySequenceBuilder(numBases)
+																.turnOffDataCompression(turnOffCompression);
 				for(int i=0; i<basesAndQualities.length; i++){
 					int value = basesAndQualities[i];
 					if(value ==0){
@@ -269,6 +273,8 @@ public abstract class BfqFileParser implements FastqParser{
 	private class Callback implements FastqVisitorCallback{
 		private final AtomicBoolean keepParsing;
 		private long currentOffset;
+		private volatile boolean turnOffCompression;
+		
 		
 		private Callback(long startOffset){
 			this.currentOffset = startOffset;
@@ -296,6 +302,13 @@ public abstract class BfqFileParser implements FastqParser{
 		public void updateCurrentOffset(long offset){
 			this.currentOffset = offset;
 		}
+		@Override
+		public void turnOffDataCompression(boolean turnOffDataCompression) {
+			this.turnOffCompression = turnOffDataCompression;
+			
+		}
+		
+		
 	}
 	
 	private static final class BfqMemento implements FastqVisitorMemento{
