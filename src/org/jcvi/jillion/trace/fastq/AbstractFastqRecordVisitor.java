@@ -31,13 +31,18 @@ public abstract class AbstractFastqRecordVisitor implements FastqRecordVisitor{
 	
 	private NucleotideSequence currentBasecalls;
 	private QualitySequence currentQualities;
-
+	private boolean turnOffCompression;
 	
 	public AbstractFastqRecordVisitor(String id, String optionalComment,
-			FastqQualityCodec qualityCodec) {
+			FastqQualityCodec qualityCodec){
+		this(id,optionalComment, qualityCodec, false);
+	}
+	public AbstractFastqRecordVisitor(String id, String optionalComment,
+			FastqQualityCodec qualityCodec, boolean turnOffCompression) {
 		this.id = id;
 		this.optionalComment = optionalComment;
 		this.qualityCodec = qualityCodec;
+		this.turnOffCompression = turnOffCompression;
 	}
 
 	@Override
@@ -48,7 +53,7 @@ public abstract class AbstractFastqRecordVisitor implements FastqRecordVisitor{
 
 	@Override
 	public final void visitEncodedQualities(String encodedQualities) {
-		currentQualities = qualityCodec.decode(encodedQualities);
+		currentQualities = qualityCodec.decode(encodedQualities, turnOffCompression);
 		
 	}
 	

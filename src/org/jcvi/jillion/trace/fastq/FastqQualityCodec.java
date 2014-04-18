@@ -25,8 +25,6 @@
  */
 package org.jcvi.jillion.trace.fastq;
 
-import java.nio.ByteBuffer;
-
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
@@ -45,32 +43,12 @@ public enum FastqQualityCodec {
 	 *  Illumina 1.8+ switched to sanger encoding.
 	 *  @see #SANGER
 	 */
-	ILLUMINA(64){
-		 @Override
-		    protected PhredQuality decode(char encodedQuality) {
-		        return PhredQuality.valueOf(encodedQuality -64);
-		    }
-
-		    @Override
-		    protected char encode(PhredQuality quality) {
-		        return (char)(quality.getQualityScore()+64);
-		    }
-	},
+	ILLUMINA(64),
 	/**
 	 * {@code SANGER} supports Sanger encoded qualities.
 	 * .
 	 */
-	SANGER(33){
-		 @Override
-		    protected PhredQuality decode(char encodedQuality) {
-		        return PhredQuality.valueOf(encodedQuality -33);
-		    }
-
-		    @Override
-		    protected char encode(PhredQuality quality) {
-		        return (char)(quality.getQualityScore()+33);
-		    }
-	},
+	SANGER(33),
 	/**
 	 * {@code SOLEXA} is a {@link FastqQualityCodec}
 	 * that supports qualities not only encoded in
@@ -90,6 +68,15 @@ public enum FastqQualityCodec {
 		        int solexaQuality = SolexaUtil.convertPhredQualityToSolexaQuality(quality);
 		        return (char)(solexaQuality +64);
 		    }
+		    
+		    public QualitySequence decode(String fastqQualities) {
+		    	QualitySequenceBuilder builder = new QualitySequenceBuilder(fastqQualities.length());
+		      
+		        for(int i=0; i<fastqQualities.length(); i++){        	;
+		            builder.append(SolexaUtil.convertSolexaQualityToPhredQuality(fastqQualities.charAt(i) - 64));
+		        }
+		        return builder.build();
+		    }
 	}
 	;
 
@@ -101,11 +88,24 @@ public enum FastqQualityCodec {
 	 * the decoded FASTQ quality values.
 	 */
     public QualitySequence decode(String fastqQualities) {
-        ByteBuffer buffer = ByteBuffer.allocate(fastqQualities.length());
-        for(int i=0; i<fastqQualities.length(); i++){
-            buffer.put(decode(fastqQualities.charAt(i)).getQualityScore());
+    	return decode(fastqQualities, false);
+    }
+	/**
+	 * Decode the given FASTQ quality encoded String
+	 * into the equivalent Encoded Qualities.
+	 * @param fastqQualities
+	 * @param turnOffCompression 
+	 * @return a new EncodedGlyphs representing
+	 * the decoded FASTQ quality values.
+	 */
+    public QualitySequence decode(String fastqQualities, boolean turnOffCompression) {
+    	byte[] buffer = new byte[fastqQualities.length()];
+      
+        for(int i=0; i<fastqQualities.length(); i++){        	;
+            buffer[i] =(byte)(fastqQualities.charAt(i) - offset);
         }
-        return new QualitySequenceBuilder(buffer.array())
+        return new QualitySequenceBuilder(buffer)
+        		.turnOffDataCompression(turnOffCompression)
         		.build();
     }
 
@@ -125,6 +125,15 @@ public enum FastqQualityCodec {
     public int getOffset() {
 		return offset;
 	}
+    
+    protected PhredQuality decode(char encodedQuality) {
+        return PhredQuality.valueOf(encodedQuality -offset);
+    }
+
+   
+    protected char encode(PhredQuality quality) {
+        return (char)(quality.getQualityScore()+offset);
+    }
 
 
 	/**
@@ -142,7 +151,6 @@ public enum FastqQualityCodec {
         return builder.toString();
     }
     
-    protected abstract PhredQuality decode(char encodedQuality);
-    protected abstract char encode(PhredQuality quality);
+    
     
 }

@@ -178,14 +178,16 @@ final class SamFileParser extends AbstractSamFileParser{
 		if(SamRecord.UNAVAILABLE.equals(s)){
 			return null;
 		}
-		return new NucleotideSequenceBuilder(s).build();
+		return new NucleotideSequenceBuilder(s)
+						.turnOffDataCompression(true)
+						.build();
 	}
 	private static QualitySequence parseQualities(String s){
 		if(SamRecord.UNAVAILABLE.equals(s)){
 			return null;
 		}
 		//always encoded in sanger format
-		return FastqQualityCodec.SANGER.decode(s);
+		return FastqQualityCodec.SANGER.decode(s, true);
 
 	}
 
