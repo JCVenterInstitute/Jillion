@@ -21,7 +21,10 @@
 package org.jcvi.jillion.sam;
 
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.SequenceInputStream;
@@ -145,7 +148,18 @@ class BgzfInputStream extends InflaterInputStream {
      *                         compression method used is unsupported
      * @exception IOException if an I/O error has occurred
      */
-    public BgzfInputStream(InputStream in) throws IOException {
+    public BgzfInputStream(File bam) throws IOException {
+        this(new BufferedInputStream(new FileInputStream(bam),BUFFER_SIZE));
+    }
+    /**
+     * Creates a new input stream with a default buffer size.
+     * @param in the input stream
+     *
+     * @exception ZipException if a GZIP format error has occurred or the
+     *                         compression method used is unsupported
+     * @exception IOException if an I/O error has occurred
+     */
+    private BgzfInputStream(InputStream in) throws IOException {
         this(in, BUFFER_SIZE);
     }
 

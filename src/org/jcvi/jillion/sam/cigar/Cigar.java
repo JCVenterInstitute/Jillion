@@ -33,6 +33,10 @@ import org.jcvi.jillion.core.util.iter.IteratorUtil;
 
 public final class Cigar implements Iterable<CigarElement>{
 	/**
+	 * Singleton instance of an empty {@link Cigar}.
+	 */
+	public static final Cigar EMPTY_CIGAR = new Cigar.Builder(0).build();
+	/**
 	 * The various types of clipping
 	 * operations performed on a sequence.
 	 * @author dkatzel

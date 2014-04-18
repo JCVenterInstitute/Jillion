@@ -415,12 +415,13 @@ public final class SamUtil {
 		int startOffset = record.getStartPosition() -1;
 		buf.putInt(startOffset);
 		long binMapNameLength;
-		Cigar cigar = record.getCigar();
+		final Cigar cigar;
 		if(record.mapped()){
+			cigar = record.getCigar();
 			binMapNameLength =computeBinFor(startOffset, startOffset + cigar.getPaddedReadLength(ClipType.SOFT_CLIPPED) -1);
 		}else{
 			binMapNameLength =0;
-			cigar = new Cigar.Builder(0).build();
+			cigar = Cigar.EMPTY_CIGAR;
 		}
 		binMapNameLength<<=16;
 		binMapNameLength |= (record.getMappingQuality() <<8);

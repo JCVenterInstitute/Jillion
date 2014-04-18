@@ -607,6 +607,7 @@ public class SamRecord {
 			if(IDENTICAL.equals(nextReferenceName)){
 				nextReferenceName = referenceName;
 			}
+			//TODO force unmapped read to have mapping quality of 0?
 			
 			return new SamRecord(this);
 		}

@@ -584,34 +584,44 @@ public final class IOUtil {
         return newByteArray;
 
     }
-    
-    public static BigInteger readUnsignedLong(InputStream in, ByteOrder endian) throws IOException{
-        return new BigInteger(1,
-                 IOUtil.toByteArray(in, 8, endian));
-     }
+   
     public static long readUnsignedInt(InputStream in, ByteOrder endian) throws IOException{
-        return new BigInteger(1,
-                 IOUtil.toByteArray(in, 4, endian)).longValue();
+    	byte[] array = IOUtil.toByteArray(in, 4);
+    	if(endian == ByteOrder.LITTLE_ENDIAN	){
+    		long tmp = (array[3] &0xFFL) << 24;
+    		tmp |=(array[2] & 0xFF) << 16;
+    		tmp |=(array[1] & 0xFF) << 8;
+    		tmp |=array[0] & 0xFF;
+        	return tmp;
+        }
+    	long tmp = (array[0] &0xFFL) << 24;
+		tmp |=(array[1] &0xFF) << 16;
+		tmp |=(array[2]&0xFF) << 8;
+		tmp |=array[3] &0xFF;
+    	return tmp;
+    	//default to BIG which is what DataInputStream uses
+    	//return ((array[0] << 24L) | (array[1] << 16) | (array[2] << 8) | (array[3] << 0)) & 0xFFFF;
+    	
      }
-    public static long readUnsignedInt(byte[] array){
-        return new BigInteger(1,
-                 array).longValue();
-     }
-    public static int readUnsignedShort(byte[] array){
-        return new BigInteger(1,
-                 array).intValue();
-     }
-    public static short readUnsignedByte(byte[] array){
-        return new BigInteger(1,
-                 array).shortValue();
-     }
+   
     public static int readUnsignedShort(InputStream in, ByteOrder endian) throws IOException{
-        return new BigInteger(1,
-                 IOUtil.toByteArray(in, 2, endian)).intValue();
+    	byte[] array = IOUtil.toByteArray(in, 2);
+    	if(endian == ByteOrder.LITTLE_ENDIAN){
+    		int tmp = (array[1] & 0xFF) << 8;
+    		tmp |=array[0] & 0xFF;
+        	return tmp;
+    	}
+		int tmp = (array[0] & 0xFF) << 8;
+		tmp |=array[1] & 0xFF;
+    	return tmp;
+    	
      }
     public static short readUnsignedByte(InputStream in, ByteOrder endian) throws IOException{
-        return new BigInteger(1,
-                 IOUtil.toByteArray(in, 1, endian)).shortValue();
+    	int value = in.read();
+    	if(value == -1){
+    		throw new EOFException();
+    	}
+    	return (short)value;
      }
     
    
@@ -730,7 +740,11 @@ public final class IOUtil {
     
     
     public static BigInteger readUnsignedLong(InputStream in) throws IOException{
-       return readUnsignedLong(in, ByteOrder.BIG_ENDIAN);
+    	return readUnsignedLong(in, ByteOrder.BIG_ENDIAN);
+     }
+    public static BigInteger readUnsignedLong(InputStream in, ByteOrder endian) throws IOException{
+    	return new BigInteger(1,
+                IOUtil.toByteArray(in, 8, endian));
      }
     public static long readUnsignedInt(InputStream in) throws IOException{
         return readUnsignedInt(in, ByteOrder.BIG_ENDIAN);
@@ -1037,7 +1051,7 @@ public final class IOUtil {
 		InputStream in = null;
 		try{
 			in = new BufferedInputStream(new FileInputStream(f));
-			return toByteArray(in, ByteOrder.BIG_ENDIAN);
+			return toByteArray(in);
 		}finally{
 			IOUtil.closeAndIgnoreErrors(in);
 		}
@@ -1053,26 +1067,9 @@ public final class IOUtil {
      * @throws IOException if there is a problem reading the Stream.
      */
 	public static byte[] toByteArray(InputStream input) throws IOException {
-		return toByteArray(input, ByteOrder.BIG_ENDIAN);
-	}
-	/**
-     * Copy the contents of the given {@link InputStream}
-     * and return it as a byte[] using the given {@link Endian}
-     * order.
-     * @param input the inputStream to convert into a byte[].  
-     * This stream is not closed when the method finishes.
-     * @param endian the {@link ByteOrder} to use; null is considered
-     * {@link ByteOrder#BIG_ENDIAN} (the default).
-     * @return a new byte array instance containing all the bytes
-     * from the given inputStream.
-     * @throws IOException if there is a problem reading the Stream.
-     */
-	public static byte[] toByteArray(InputStream input, ByteOrder byteOrder) throws IOException {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
         copy(input, output);
-        if(byteOrder ==ByteOrder.LITTLE_ENDIAN){
-        	return switchEndian(output.toByteArray());
-        }
+        
         return output.toByteArray();
 	}
 	 /**

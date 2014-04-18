@@ -32,6 +32,12 @@ import org.junit.Test;
 public class TestCigar {
 
 	@Test
+	public void emptyCigar(){
+		assertEquals(Cigar.EMPTY_CIGAR, new Cigar.Builder(0).build());
+		assertEquals(0, Cigar.EMPTY_CIGAR.getNumberOfElements());
+	}
+	
+	@Test
 	public void validCigarStrings(){
 		String cigarString = "8M2I40M1D3M";
 		Cigar cigar = Cigar.parse(cigarString);

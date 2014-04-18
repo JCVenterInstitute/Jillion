@@ -20,11 +20,9 @@
  ******************************************************************************/
 package org.jcvi.jillion.sam;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -103,7 +101,7 @@ final class BamFileParser extends AbstractSamFileParser {
 		BgzfInputStream in=null;
 		
 		try{
-			in = new BgzfInputStream(new BufferedInputStream(new FileInputStream(bamFile)));
+			in = new BgzfInputStream(bamFile);
 			
 			verifyMagicNumber(in);
 			

@@ -25,18 +25,23 @@
  */
 package org.jcvi.jillion.assembly.clc.cas;
 
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.isA;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 
-import org.jcvi.jillion.assembly.clc.cas.CasUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.testUtil.EasyMockUtil;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.easymock.EasyMock.*;
 public class TestCasUtil {
 
     @Test
@@ -92,9 +97,8 @@ public class TestCasUtil {
     public void readCasUnsignedByteByteValue() throws IOException{
         InputStream in = createMock(InputStream.class);
         short expected = 120;
-        byte[] asLittleEndian =IOUtil.switchEndian(IOUtil.convertUnsignedByteToByteArray(expected));
-        expect(in.read(isA(byte[].class), eq(0),eq(1)))
-                .andAnswer(EasyMockUtil.writeArrayToInputStream(asLittleEndian));
+        expect(in.read()).andReturn((int)expected);
+
         replay(in);
         assertEquals(expected, CasUtil.readCasUnsignedByte(in));
         verify(in);
@@ -103,9 +107,7 @@ public class TestCasUtil {
     public void readCasUnsignedByteShortValue() throws IOException{
         InputStream in = createMock(InputStream.class);
         short expected = Byte.MAX_VALUE+1;
-        byte[] asLittleEndian =IOUtil.switchEndian(IOUtil.convertUnsignedByteToByteArray(expected));
-        expect(in.read(isA(byte[].class), eq(0),eq(1)))
-                .andAnswer(EasyMockUtil.writeArrayToInputStream(asLittleEndian));
+        expect(in.read()).andReturn((int)expected);
         replay(in);
         assertEquals(expected, CasUtil.readCasUnsignedByte(in));
         verify(in);
