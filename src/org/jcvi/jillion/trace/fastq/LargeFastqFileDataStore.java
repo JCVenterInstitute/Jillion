@@ -391,7 +391,7 @@ final class LargeFastqFileDataStore implements FastqDataStore {
 							//since we are only iterating through
 							//and will probably throw the read away after reading it once.
 							callback.turnOffDataCompression(true);
-							return new AbstractFastqRecordVisitor(id,optionalComment,qualityCodec) {
+							return new AbstractFastqRecordVisitor(id,optionalComment,qualityCodec, true) {
 								
 								@Override
 								protected void visitRecord(FastqRecord record) {
