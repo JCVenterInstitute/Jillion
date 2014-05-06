@@ -103,7 +103,8 @@ abstract class AbstractCoverageMapBuilder<P extends Rangeable> implements Builde
     	CoverageRegionBuilder<P> previousBuilder=null;
         for (int i = coverageRegionBuilders.size() - 1; i >= 0; i--) {
             CoverageRegionBuilder<P> builder = coverageRegionBuilders.get(i);
-            if(previousBuilder!=null && previousBuilder.getElements().equals(builder.getElements())){
+            
+            if(builder.hasSameElementsAs(previousBuilder)){
             	//merge region
             	builder.end(previousBuilder.end());
             	//remove previous
@@ -223,7 +224,7 @@ abstract class AbstractCoverageMapBuilder<P extends Rangeable> implements Builde
 
     private void addEnteringObjectToPreviousRegionBuilder() {
         CoverageRegionBuilder<P> builder =getPreviousRegion();
-        if(this.maxAllowedCoverage !=null && builder.getElements().size()>=maxAllowedCoverage.intValue()){
+        if(this.maxAllowedCoverage !=null && builder.getCurrentCoverageDepth()>=maxAllowedCoverage.intValue()){
             return;
         }
         getPreviousRegion().offer(enteringObject);
