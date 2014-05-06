@@ -217,6 +217,23 @@ final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegio
 		public Collection<T> getElements() {
 			return new ArrayList<T>(elements);
 		}
+		@Override
+		public int getCurrentCoverageDepth() {
+			return elements.size();
+		}
+		@Override
+		public boolean hasSameElementsAs(CoverageRegionBuilder<T> other) {
+			if(other==null){
+				return false;
+			}
+			
+			if(elements.size() != other.getCurrentCoverageDepth()) {				
+				return false;
+			}
+			return elements.containsAll(other.getElements());
+		}
+		
+		
         
     }
     /**

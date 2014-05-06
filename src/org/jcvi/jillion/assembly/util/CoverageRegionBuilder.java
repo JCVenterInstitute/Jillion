@@ -46,4 +46,8 @@ interface CoverageRegionBuilder<P extends Rangeable> extends Builder<CoverageReg
    CoverageRegionBuilder<P> shift(long shift);
    
    Collection<P> getElements();
+   
+   int getCurrentCoverageDepth();
+   
+   boolean hasSameElementsAs(CoverageRegionBuilder<P> other);
 }
