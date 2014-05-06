@@ -42,6 +42,9 @@ abstract class AbstractCoverageMapBuilder<P extends Rangeable> implements Builde
 
     private P enteringObject;
     private P leavingObject;
+    
+    private Range enteringObjectRange, leavingObjectRange;
+    
     private final Queue<P> coveringObjects;
     private Iterator<P> enteringIterator;
     private Iterator<P> leavingIterator;
@@ -71,7 +74,10 @@ abstract class AbstractCoverageMapBuilder<P extends Rangeable> implements Builde
         leavingIterator = createLeavingIterator();
 
         enteringObject = getNextObject(enteringIterator);
+        enteringObjectRange = enteringObject ==null? null :enteringObject.asRange();
+        
         leavingObject = getNextObject(leavingIterator);
+        leavingObjectRange = leavingObject ==null? null :leavingObject.asRange();
         coverageRegionBuilders = new ArrayList<CoverageRegionBuilder<P>>();
     }
 
@@ -116,7 +122,6 @@ abstract class AbstractCoverageMapBuilder<P extends Rangeable> implements Builde
                 coverageRegionBuilders.remove(i);
             }
         }
-
     }
 
     private boolean anyRegionBuildersCreated() {
@@ -164,6 +169,7 @@ abstract class AbstractCoverageMapBuilder<P extends Rangeable> implements Builde
     private void skipAllLeavingObjectsWithSameEndCoordinate() {
         long endCoord = leavingObject.asRange().getEnd();
         leavingObject = getNextObject(leavingIterator);
+        leavingObjectRange = leavingObject ==null? null :leavingObject.asRange();
         while (stillHaveLeavingObjects()
                 && currentLeavingObjectHasEndCoordinate(endCoord)) {
             removeLeavingObjectFromPreviousRegionBuilder();
@@ -180,12 +186,16 @@ abstract class AbstractCoverageMapBuilder<P extends Rangeable> implements Builde
     }
 
     private void handleEnteringObject() {
-        long startCoord = enteringObject.asRange().getBegin();
+        long startCoord = enteringObjectRange.getBegin();
         createNewRegionWithEnteringAmplicon();
         enteringObject = getNextObject(enteringIterator);
+        enteringObjectRange = enteringObject ==null? null :enteringObject.asRange();
+        
         handleAmpliconsWithSameStartCoord(startCoord);
     }
 
+    
+    
     private void handleLeavingObject() {
         createNewRegionWithoutCurrentLeavingObject();
         skipAllLeavingObjectsWithSameEndCoordinate();
@@ -194,16 +204,17 @@ abstract class AbstractCoverageMapBuilder<P extends Rangeable> implements Builde
     private void removeAndAdvanceLeavingObject() {
         coveringObjects.remove(leavingObject);
         leavingObject = getNextObject(leavingIterator);
+        leavingObjectRange = leavingObject ==null? null :leavingObject.asRange();
     }
 
     private boolean isAbutment() {
-        return leavingObject.asRange().getEnd() == enteringObject.asRange().getBegin() - 1;
+        return leavingObjectRange.getEnd() == enteringObjectRange.getBegin() - 1;
 
     }
 
     private void handleAmpliconsWithSameStartCoord(long regionStart) {
         while (stillHaveEnteringObjects()
-                && enteringObject.asRange().getBegin() == regionStart) {
+                && enteringObjectRange.getBegin() == regionStart) {
             // next amplicon also starts here, add this to current region
             addEnteringObjectToPreviousRegionBuilder();
             addAndAdvanceEnteringObject();
@@ -221,18 +232,19 @@ abstract class AbstractCoverageMapBuilder<P extends Rangeable> implements Builde
     private void addAndAdvanceEnteringObject() {
         coveringObjects.offer(enteringObject);
         enteringObject = getNextObject(enteringIterator);
+        enteringObjectRange = enteringObject ==null? null :enteringObject.asRange();
     }
 
     private boolean isEntering() {
-        return enteringObject.asRange().getBegin() <= leavingObject.asRange().getEnd() ;
+        return enteringObjectRange.getBegin() <= leavingObjectRange.getEnd() ;
     }
 
     private void createNewRegionWithoutCurrentLeavingObject() {
         coveringObjects.remove(leavingObject);
-        final long endCoordinate = leavingObject.asRange().getEnd();
+        final long endCoordinate = leavingObjectRange.getEnd();
 
         setEndCoordinateOfPreviousRegion(endCoordinate);
-        coverageRegionBuilders.add(createNewCoverageRegionBuilder(coveringObjects, leavingObject.asRange().getEnd() + 1, maxAllowedCoverage ));
+        coverageRegionBuilders.add(createNewCoverageRegionBuilder(coveringObjects, leavingObjectRange.getEnd() + 1, maxAllowedCoverage ));
 
     }
 
@@ -242,11 +254,11 @@ abstract class AbstractCoverageMapBuilder<P extends Rangeable> implements Builde
 
     private void createNewRegionWithEnteringAmplicon() {
         if (!coverageRegionBuilders.isEmpty()) {
-            final long endCoordinate = enteringObject.asRange().getBegin() - 1;
+            final long endCoordinate = enteringObjectRange.getBegin() - 1;
             setEndCoordinateOfPreviousRegion(endCoordinate);
         }
         coveringObjects.offer(enteringObject);
-        coverageRegionBuilders.add(createNewCoverageRegionBuilder(coveringObjects, enteringObject.asRange().getBegin(), maxAllowedCoverage ));
+        coverageRegionBuilders.add(createNewCoverageRegionBuilder(coveringObjects, enteringObjectRange.getBegin(), maxAllowedCoverage ));
 
     }
 
