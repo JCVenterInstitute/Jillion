@@ -21,6 +21,8 @@
 package org.jcvi.jillion.sam;
 
 import java.io.IOException;
+
+import org.jcvi.jillion.sam.header.SamHeader;
 /**
  * {@code SamParser}
  * is an interface that can parse
@@ -46,4 +48,10 @@ public interface SamParser {
 	 * @throws NullPointerException if visitor is null.
 	 */
 	void accept(SamVisitor visitor) throws IOException;
+	/**
+	 * Get the {@link SamHeader}
+	 * for this SAM or BAM file.
+	 * @return
+	 */
+	SamHeader getHeader() throws IOException;
 }
