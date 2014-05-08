@@ -63,4 +63,24 @@ final class EncodedQualitySequence extends EncodedSequence<PhredQuality> impleme
 	public byte[] toArray(){
        return ((QualitySymbolCodec)getCodec()).toQualityValueArray(data);
     }
+
+
+	@Override
+	public double getAvgQuality() {
+		return ((QualitySymbolCodec)getCodec()).getAvgQuality(data);
+	}
+
+
+	@Override
+	public PhredQuality getMinQuality() {
+		return ((QualitySymbolCodec)getCodec()).getMinQuality(data);
+	}
+
+
+	@Override
+	public PhredQuality getMaxQuality() {
+		return ((QualitySymbolCodec)getCodec()).getMaxQuality(data);
+	}
+	
+	
 }

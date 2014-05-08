@@ -61,8 +61,8 @@ public interface QualitySequence extends Sequence<PhredQuality>{
      * Get the average quality score as a double.
      * This calculation only works on a sequence
      * that is not empty.
-     * @return the avg quality score as a dobule.
-     * @trhows ArithmeticException if the sequence length is 0.
+     * @return the avg quality score as a double.
+     * @throws ArithmeticException if the sequence length is 0.
      */
     double getAvgQuality() throws ArithmeticException;
     /**

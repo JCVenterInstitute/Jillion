@@ -99,5 +99,20 @@ class RunLengthEncodedQualitySequence implements QualitySequence{
         
     }
 
-	
+	@Override
+	public double getAvgQuality() {
+		return RunLengthEncodedQualityCodec.INSTANCE.getAvgQuality(encodedData);
+	}
+
+
+	@Override
+	public PhredQuality getMinQuality() {
+		return RunLengthEncodedQualityCodec.INSTANCE.getMinQuality(encodedData);
+	}
+
+
+	@Override
+	public PhredQuality getMaxQuality() {
+		return RunLengthEncodedQualityCodec.INSTANCE.getMaxQuality(encodedData);
+	}
 }
