@@ -246,8 +246,143 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
    
    
     @Override
+	public double getAvgQuality(byte[] encodedData) {
+    	ByteBuffer buf = ByteBuffer.wrap(encodedData);
+        int length=buf.getInt();  
+        //short circuit if empty
+        if(length ==0){
+        	throw new ArithmeticException("sequence length is 0");
+        }
+       
+        byte guard = buf.get();
+        ValueSizeStrategy valueSizeStrategy = ValueSizeStrategy.values()[buf.get()];
+		
+        long sum=0;
+        
+        int currentOffset=0;
+        
+        byte currentValue;
+        int runLength;
+        while(currentOffset<length){
+        	byte runLengthCode = buf.get();
+	        if( runLengthCode == guard){                                  
+	        	int count = valueSizeStrategy.getNext(buf);          	 
+	        	if(count==0){
+	        		runLength=1;
+	        		currentValue = guard;
+	        	}else{
+	        		currentValue = buf.get();  
+	        		runLength=count;
+	        	}
+	        }
+	        else{
+	        	runLength=1;
+	        	currentValue = runLengthCode;
+	        }
+	        sum += currentValue *runLength;
+	        
+	        int endOffset = currentOffset+runLength;
+	       
+	        currentOffset=endOffset;
+        }
+        return sum/ (double)length;
+	}
+
+
+	@Override
+	public PhredQuality getMinQuality(byte[] encodedData) {
+		ByteBuffer buf = ByteBuffer.wrap(encodedData);
+        int length=buf.getInt();  
+        //short circuit if empty
+        if(length ==0){
+        	return null;
+        }
+       
+        byte guard = buf.get();
+        ValueSizeStrategy valueSizeStrategy = ValueSizeStrategy.values()[buf.get()];
+		
+        byte min = PhredQuality.MAX_VALUE;
+        
+        int currentOffset=0;
+        
+        byte currentValue;
+        int runLength;
+        while(currentOffset<length){
+        	byte runLengthCode = buf.get();
+	        if( runLengthCode == guard){                                  
+	        	int count = valueSizeStrategy.getNext(buf);          	 
+	        	if(count==0){
+	        		runLength=1;
+	        		currentValue = guard;
+	        	}else{
+	        		currentValue = buf.get();  
+	        		runLength=count;
+	        	}
+	        }
+	        else{
+	        	runLength=1;
+	        	currentValue = runLengthCode;
+	        }
+	        
+	        if(currentValue < min){
+	        	min = currentValue;
+	        }
+	        int endOffset = currentOffset+runLength;
+	       
+	        currentOffset=endOffset;
+        }
+        return PhredQuality.valueOf(min);
+	}
+
+
+	@Override
+	public PhredQuality getMaxQuality(byte[] encodedData) {
+		ByteBuffer buf = ByteBuffer.wrap(encodedData);
+        int length=buf.getInt();  
+        //short circuit if empty
+        if(length ==0){
+        	return null;
+        }
+       
+        byte guard = buf.get();
+        ValueSizeStrategy valueSizeStrategy = ValueSizeStrategy.values()[buf.get()];
+		
+        byte max = PhredQuality.MIN_VALUE;
+        
+        int currentOffset=0;
+        
+        byte currentValue;
+        int runLength;
+        while(currentOffset<length){
+        	byte runLengthCode = buf.get();
+	        if( runLengthCode == guard){                                  
+	        	int count = valueSizeStrategy.getNext(buf);          	 
+	        	if(count==0){
+	        		runLength=1;
+	        		currentValue = guard;
+	        	}else{
+	        		currentValue = buf.get();  
+	        		runLength=count;
+	        	}
+	        }
+	        else{
+	        	runLength=1;
+	        	currentValue = runLengthCode;
+	        }
+	        
+	        if(currentValue > max){
+	        	max = currentValue;
+	        }
+	        int endOffset = currentOffset+runLength;
+	       
+	        currentOffset=endOffset;
+        }
+        return PhredQuality.valueOf(max);
+	}
+
+
+	@Override
 	public byte[] toQualityValueArray(byte[] encodedData) {
-		// TODO quickly generate array using runLengths
     	ByteBuffer buf = ByteBuffer.wrap(encodedData);
         int length=buf.getInt();  
         //short circuit if empty

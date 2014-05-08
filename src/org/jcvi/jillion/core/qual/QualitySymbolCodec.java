@@ -34,4 +34,10 @@ interface QualitySymbolCodec extends GlyphCodec<PhredQuality>{
 	 byte[] encode(Collection<PhredQuality> glyphs);
 	 
 	 byte[] toQualityValueArray(byte[] encodedData);
+	 
+	 double getAvgQuality(byte[] encodedData);
+	    
+    PhredQuality getMinQuality(byte[] encodedData);
+    
+    PhredQuality getMaxQuality(byte[] encodedData);
 }

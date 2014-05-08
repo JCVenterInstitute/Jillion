@@ -66,6 +66,51 @@ enum DefaultQualitySymbolCodec implements QualitySymbolCodec{
 		System.arraycopy(encodedData, 0, decoded, 0, decoded.length);
 		return decoded;
 	}
+
+	@Override
+	public double getAvgQuality(byte[] encodedData) {
+	
+		if(encodedData.length==0){
+			throw new ArithmeticException("length is 0");
+		}
+		long sum = 0;
+		for(int i=0; i<encodedData.length; i++){
+			sum +=encodedData[i];
+		}
+		return sum/ (double) encodedData.length;
+	}
+
+	@Override
+	public PhredQuality getMinQuality(byte[] encodedData) {
+		if(encodedData.length ==0){
+			return null;
+		}
+		byte min = PhredQuality.MAX_VALUE;
+		
+		for(int i=0; i<encodedData.length; i++){
+			byte current = encodedData[i];
+			if(current < min){
+				min = current;
+			}
+		}
+		return PhredQuality.valueOf(min);
+	}
+
+	@Override
+	public PhredQuality getMaxQuality(byte[] encodedData) {
+		if(encodedData.length ==0){
+			return null;
+		}
+		byte max = PhredQuality.MIN_VALUE;
+		
+		for(int i=0; i<encodedData.length; i++){
+			byte current = encodedData[i];
+			if(current > max){
+				max = current;
+			}
+		}
+		return PhredQuality.valueOf(max);
+	}
     
     
 }
