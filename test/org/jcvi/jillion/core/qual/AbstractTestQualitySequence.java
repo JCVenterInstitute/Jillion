@@ -23,6 +23,7 @@ package org.jcvi.jillion.core.qual;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Iterator;
@@ -106,4 +107,34 @@ public abstract class AbstractTestQualitySequence {
 		assertArrayEquals(qualities, sut.toArray());
 	}
 	
+	@Test
+	public void minQuality(){
+		assertEquals(20, sut.getMinQuality().getQualityScore());
+	}
+	@Test
+	public void maxQuality(){
+		assertEquals(60, sut.getMaxQuality().getQualityScore());
+	}
+	@Test
+	public void avgQuality(){
+		assertEquals(32.222222D, sut.getAvgQuality(), 0.0001D);
+	}
+	
+	@Test
+	public void minQualityOnEmptySequenceShouldReturnNull(){
+		assertNull(createEmtpySequence().getMinQuality());
+	}
+
+	private QualitySequence createEmtpySequence() {
+		return create(new byte[0]);
+	}
+	@Test
+	public void maxQualityOnEmptySequenceShouldReturnNull(){
+		assertNull(createEmtpySequence().getMaxQuality());
+	}
+	
+	@Test(expected = ArithmeticException.class)
+	public void avgQualityOnEmptySequenceShouldThrowArithmeticException(){
+		createEmtpySequence().getAvgQuality();
+	}
 }
