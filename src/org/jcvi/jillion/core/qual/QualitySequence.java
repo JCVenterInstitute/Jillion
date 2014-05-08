@@ -57,4 +57,26 @@ public interface QualitySequence extends Sequence<PhredQuality>{
      * @return a new byte array, never null.
      */
     byte[] toArray();
+    /**
+     * Get the average quality score as a double.
+     * This calculation only works on a sequence
+     * that is not empty.
+     * @return the avg quality score as a dobule.
+     * @trhows ArithmeticException if the sequence length is 0.
+     */
+    double getAvgQuality() throws ArithmeticException;
+    /**
+     * Get the min {@link PhredQuality} in the 
+     * Sequence.
+     * @return a {@link PhredQuality} or {@code null}
+     * if the sequence is empty.
+     */
+    PhredQuality getMinQuality();
+    /**
+     * Get the min {@link PhredQuality} in the 
+     * Sequence.
+     * @return a {@link PhredQuality} or {@code null}
+     * if the sequence is empty.
+     */
+    PhredQuality getMaxQuality();
 }
