@@ -28,12 +28,15 @@ package org.jcvi.jillion.assembly.util;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Rangeable;
+import org.jcvi.jillion.core.util.MapUtil;
 
 final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegion<T> {
     private final Collection<T> elements;
@@ -75,47 +78,36 @@ final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegio
         final int prime = 31;
         int result = 1;
         result = prime * result + range.hashCode();
-        result = prime * result + computeElementHashCode();
+        //need to use hashSet to give same elements in different order
+        //same hashcode
+        result = prime * result + new HashSet<T>(elements).hashCode();
 
         return result;
     }
-    /**
-     * Computes hashcode of collection without
-     * having to worry about implementation
-     * details of how collection is stored.
-     * @return
-     */
-    private int computeElementHashCode(){
-    	int hashCode = 1;
-    	Iterator<T> i = elements.iterator();
-    	while (i.hasNext()) {
-    	    T obj = i.next();
-    	    hashCode = 31*hashCode + (obj==null ? 0 : obj.hashCode());
-    	}
-    	return hashCode;
-    }
+    
     /**
      * Iterate thru our elements and the other elements
      * to see if they match
      * @param otherRegion
      * @return
      */
-    private boolean elementsAreEqual(CoverageRegion<?> otherRegion){
-		Iterator<?> otherIterator = otherRegion.iterator();
-		Iterator<?> iter = iterator();
-    	while(iter.hasNext() && otherIterator.hasNext()){
-    		if(!iter.next().equals(otherIterator.next())){
-    			return false;
-    		}
-    	}
-    	if(
-    			(iter.hasNext() && !otherIterator.hasNext())
-    			||
-    			(!iter.hasNext() && otherIterator.hasNext())
-    			){
+    @SuppressWarnings("rawtypes")
+	private boolean elementsAreEqual(CoverageRegion<?> otherRegion){
+    	
+    	int otherDepth = otherRegion.getCoverageDepth();
+    	//must have same # of elements
+    	if(otherDepth !=elements.size()){
     		return false;
     	}
-    	return true;
+		Set set =new HashSet(MapUtil.computeMinHashMapSizeWithoutRehashing(otherDepth));
+		
+    	
+    	Iterator otherIterator = otherRegion.iterator();
+    	while(otherIterator.hasNext()){
+    		set.add(otherIterator.next());
+    	}
+    	return new HashSet<T>(elements).equals(set);
+    	
     }
     @Override
     public boolean equals(Object obj) {
@@ -138,6 +130,7 @@ final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegio
         private Queue<T> elements;
         private boolean endIsSet;
         
+        @Override
         public  boolean isEndIsSet() {
             return endIsSet;
         }
@@ -190,10 +183,12 @@ final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegio
             endIsSet=true;
             return this;
         }
-        
-        public Builder<T>  offer(T element){
+        public Builder<T>  add(T element){
             elements.offer(element);
             return this;
+        }
+        public boolean  offer(T element){
+            return elements.offer(element);
         }
         public Builder<T>  remove(T element){
             elements.remove(element);
@@ -232,6 +227,30 @@ final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegio
 			}
 			return elements.containsAll(other.getElements());
 		}
+		@Override
+		public Range asRange() {
+			return Range.of(start, end);
+		}
+		@Override
+		public boolean rangeIsEmpty() {
+			return end == start -1;
+		}
+		@Override
+		public void forceAdd(T element) {
+			try{
+				elements.add(element);
+			}catch(IllegalStateException e){
+				//we are capacity restricted
+				//and hit that limit.
+				
+				//make new unrestricted list
+				elements = new ArrayDeque<T>(elements);
+				//add the new one
+				elements.add(element);
+			}
+			
+		}
+		
 		
 		
         

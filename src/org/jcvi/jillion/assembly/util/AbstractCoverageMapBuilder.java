@@ -28,7 +28,10 @@ package org.jcvi.jillion.assembly.util;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -49,19 +52,31 @@ abstract class AbstractCoverageMapBuilder<P extends Rangeable> implements Builde
     private Iterator<P> enteringIterator;
     private Iterator<P> leavingIterator;
     private List<CoverageRegionBuilder<P>> coverageRegionBuilders;
-    private final Integer maxAllowedCoverage;
+    
+    private final Integer maxAllowedCoverage, minRequiredCoverage;
+    
+    
     protected abstract Iterator<P> createEnteringIterator();
     protected abstract Iterator<P> createLeavingIterator();
+    
+    private List<P> sortedOverMaxCoverageObjects = new LinkedList<P>();
     
     protected abstract CoverageMap<P> build(List<CoverageRegionBuilder<P>> coverageRegionBuilders);
     
     public AbstractCoverageMapBuilder(){
         coveringObjects =  new ArrayDeque<P>();
         this.maxAllowedCoverage =null;
+        this.minRequiredCoverage = null;
     }
     public AbstractCoverageMapBuilder(int maxAllowedCoverage) {
         coveringObjects =  new ArrayBlockingQueue<P>(maxAllowedCoverage);
         this.maxAllowedCoverage = maxAllowedCoverage;
+        this.minRequiredCoverage = null;
+    }
+    public AbstractCoverageMapBuilder(int maxAllowedCoverage, int minRequiredCoverage) {
+        coveringObjects =  new ArrayBlockingQueue<P>(maxAllowedCoverage);
+        this.maxAllowedCoverage = maxAllowedCoverage;
+        this.minRequiredCoverage = minRequiredCoverage;
     }
     @Override
     public CoverageMap<P> build() {
@@ -84,9 +99,83 @@ abstract class AbstractCoverageMapBuilder<P extends Rangeable> implements Builde
     private void createListOfRegionBuilders() {
         createAllRegionBuilders();
         if (anyRegionBuildersCreated()) {
-            removeLastRegionBuilder();
+            removeLastRegionBuilder();            
             removeAnyBuildersWithEmptyRanges();
+            addSkippedReadsIfPossible();
             combineConsecutiveRegionsWithSameCoveringObjects();
+        }
+    }
+    
+    private void addSkippedReadsIfPossible(){
+    	if(minRequiredCoverage !=null && !sortedOverMaxCoverageObjects.isEmpty()){
+        	Collections.sort(sortedOverMaxCoverageObjects, new Comparator<P>() {
+				@Override
+				public int compare(P o1, P o2) {
+					return Range.Comparators.LONGEST_TO_SHORTEST.compare(o1.asRange(), o2.asRange());
+				}
+        		
+			});
+        	int minCoverageLevel = minRequiredCoverage.intValue();
+        	if(sortedOverMaxCoverageObjects.isEmpty()){
+        		return;
+        	}
+        	for(P e : sortedOverMaxCoverageObjects){
+        		Range range = e.asRange();
+        		List<CoverageRegionBuilder<P>> intersectingRegions = getIntersectionRegionBuilders(range.getBegin(), range.getEnd());
+				boolean shouldAdd = false;
+				for(CoverageRegionBuilder<P> builder : intersectingRegions){
+					if(builder.getCurrentCoverageDepth() < minCoverageLevel){
+						shouldAdd = true;
+						break;
+					}
+				}
+				if(shouldAdd){
+	        		for(CoverageRegionBuilder<P> builder : intersectingRegions){
+	        			//might need to split builder into mulitple
+	        			//if the read doesn't cover entire range.
+	        			long builderStart = builder.start();
+	        			long builderEnd = builder.end();
+	        			if(range.getBegin() <=builderStart && range.getEnd() >=builderEnd){
+	        				//full span builder we can just add
+	        				builder.forceAdd(e);
+	        			}else{
+	        				//need to split builder into 2
+	        				Collection<P> oldElements = builder.getElements();
+	        				if(range.getBegin()> builderStart){
+	        					//add new builder on 3' side
+	        					CoverageRegionBuilder<P> rightBuilder =createNewCoverageRegionBuilder(oldElements, builderStart, null)
+	        																.end(range.getBegin() -1);
+	        					
+	        					CoverageRegionBuilder<P> leftBuilder =createNewCoverageRegionBuilder(oldElements, range.getBegin(), null)
+	        															.add(e)
+	        															.end(builderEnd);
+	        					
+	        					int i= getBuilderOffsetFor(builderStart);
+	        					
+	        					this.coverageRegionBuilders.remove(i);
+	        					this.coverageRegionBuilders.add(i, leftBuilder);
+	        					this.coverageRegionBuilders.add(i, rightBuilder);
+	        				}else{
+	        					//add new builder to 5' side
+	        					CoverageRegionBuilder<P> leftBuilder =createNewCoverageRegionBuilder(oldElements, builderStart, null);
+	        					leftBuilder.offer(e);
+	        					leftBuilder.end(range.getEnd());
+	        					
+	        					CoverageRegionBuilder<P> rightBuilder =createNewCoverageRegionBuilder(oldElements, range.getEnd() +1, null);
+	        					rightBuilder.end(builderEnd);
+	        					
+	        					int i= getBuilderOffsetFor(builderStart);
+	        					
+	        					this.coverageRegionBuilders.remove(i);
+	        					this.coverageRegionBuilders.add(i, leftBuilder);
+	        					this.coverageRegionBuilders.add(i, rightBuilder);
+	        				}
+							
+	        			}
+	        		}
+				}
+        	}
+        	
         }
     }
     /**
@@ -117,9 +206,7 @@ abstract class AbstractCoverageMapBuilder<P extends Rangeable> implements Builde
 	private void removeAnyBuildersWithEmptyRanges() {
         //iterate backwards to avoid concurrent modification errors
         for (int i = coverageRegionBuilders.size() - 1; i >= 0; i--) {
-            CoverageRegionBuilder<P> builder = coverageRegionBuilders.get(i);
-            Range range = Range.of(builder.start(), builder.end());
-            if (range.isEmpty()) {
+            if (coverageRegionBuilders.get(i).rangeIsEmpty()) {
                 coverageRegionBuilders.remove(i);
             }
         }
@@ -150,8 +237,41 @@ abstract class AbstractCoverageMapBuilder<P extends Rangeable> implements Builde
                 handleLeavingObject();
             }
         }
+        
     }
 
+    private int getBuilderOffsetFor(long startCoord){
+    	for(int i=0; i<coverageRegionBuilders.size(); i++){
+    		if(startCoord ==coverageRegionBuilders.get(i).start()){
+    			return i;
+    		}
+    	}
+    	throw new IllegalStateException("no coverage region builder with start coord " + startCoord);
+    }
+    
+    private List<CoverageRegionBuilder<P>> getIntersectionRegionBuilders(long start, long end){
+
+    	List<CoverageRegionBuilder<P>> intersectingRegions = new ArrayList<CoverageRegionBuilder<P>>();
+    	for(int i=0; i< coverageRegionBuilders.size(); i++ ){
+    		CoverageRegionBuilder<P> builder = coverageRegionBuilders.get(i);
+			long regionStart = builder.start();
+    		//since we are iterating in order,
+    		//we only need to check the start boundary
+    		//to see when we start intersecting
+			//if the region boundary is beyond our read
+    		//then we can stop looking.
+    		if(regionStart > end){
+    			break;
+    		}
+    		
+    		if(regionStart>=start){
+    			intersectingRegions.add(builder);    			
+    		}
+    		
+    	}
+    	return intersectingRegions;
+    }
+    
     private boolean stillHaveEnteringObjects() {
         return enteringObject != null;
     }
@@ -200,6 +320,9 @@ abstract class AbstractCoverageMapBuilder<P extends Rangeable> implements Builde
     private void handleLeavingObject() {
         createNewRegionWithoutCurrentLeavingObject();
         skipAllLeavingObjectsWithSameEndCoordinate();
+        
+        
+        
     }
 
     private void removeAndAdvanceLeavingObject() {
@@ -223,11 +346,10 @@ abstract class AbstractCoverageMapBuilder<P extends Rangeable> implements Builde
     }
 
     private void addEnteringObjectToPreviousRegionBuilder() {
-        CoverageRegionBuilder<P> builder =getPreviousRegion();
-        if(this.maxAllowedCoverage !=null && builder.getCurrentCoverageDepth()>=maxAllowedCoverage.intValue()){
-            return;
+        if(!getPreviousRegion().offer(enteringObject) && minRequiredCoverage !=null){        
+            	sortedOverMaxCoverageObjects.add(enteringObject);
         }
-        getPreviousRegion().offer(enteringObject);
+        
     }
 
     private void addAndAdvanceEnteringObject() {
@@ -258,8 +380,12 @@ abstract class AbstractCoverageMapBuilder<P extends Rangeable> implements Builde
             final long endCoordinate = enteringObjectRange.getBegin() - 1;
             setEndCoordinateOfPreviousRegion(endCoordinate);
         }
-        coveringObjects.offer(enteringObject);
+        boolean added =coveringObjects.offer(enteringObject);
+        if(!added && minRequiredCoverage !=null){
+        	this.sortedOverMaxCoverageObjects.add(enteringObject);
+        }
         coverageRegionBuilders.add(createNewCoverageRegionBuilder(coveringObjects, enteringObjectRange.getBegin(), maxAllowedCoverage ));
+        
 
     }
 
