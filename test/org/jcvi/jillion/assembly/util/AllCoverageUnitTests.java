@@ -36,7 +36,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestDefaultCoverageMapBuilder.class,
         TestCoverageRestrictedMap.class,
         TestCoverageMapBuilderUseUngappedCoords.class,
-        TestCoverageMapBuilderMaxCoverage.class
+        TestCoverageMapBuilderMaxCoverage.class,
+        TestCoverageMapBuilderMinCoverage.class
     }
     )
 public class AllCoverageUnitTests {

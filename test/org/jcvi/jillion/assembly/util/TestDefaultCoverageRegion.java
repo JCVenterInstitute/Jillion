@@ -25,17 +25,18 @@
  */
 package org.jcvi.jillion.assembly.util;
 
+import static org.easymock.EasyMock.createMock;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.jcvi.jillion.assembly.util.CoverageRegion;
-import org.jcvi.jillion.assembly.util.DefaultCoverageRegion;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.junit.Test;
-import static org.easymock.EasyMock.*;
-import static org.junit.Assert.*;
 public class TestDefaultCoverageRegion {
 
     Range seq1 = createMock(Range.class);
@@ -58,7 +59,7 @@ public class TestDefaultCoverageRegion {
     public void add(){
 
         DefaultCoverageRegion<Range> region = new DefaultCoverageRegion.Builder<Range>(start,Arrays.asList(seq1))
-                                    .offer(seq2)
+                                    .add(seq2)
                                     .end(end)
                                         .build();
         assertEquals(range, region.asRange());
@@ -163,14 +164,14 @@ public class TestDefaultCoverageRegion {
     }
     
     @Test
-    public void sameElementsDifferentOrderIsNotEqual(){
+    public void sameElementsDifferentOrderAreEqual(){
         DefaultCoverageRegion<Range> differentElementOrder = new DefaultCoverageRegion.Builder<Range>(
                                     start,
                                     Arrays.asList(seq2,seq1))
                                         .end(end)
                                         .build();
         
-        TestUtil.assertNotEqualAndHashcodeDifferent(sut, differentElementOrder);
+        TestUtil.assertEqualAndHashcodeSame(sut, differentElementOrder);
     }
     
 }

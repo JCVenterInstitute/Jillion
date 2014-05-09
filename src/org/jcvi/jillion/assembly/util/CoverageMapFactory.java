@@ -88,8 +88,38 @@ final class CoverageMapFactory {
    	 */
        public static <R extends Rangeable> CoverageMap<R> 
                create(Collection<R> elements, int maxAllowedCoverage){
-    	   return create(elements, maxAllowedCoverage, false);
+    	   return new Builder<R>(elements,maxAllowedCoverage, false).build();
        }
+       /**
+      	 * Create a new {@link CoverageMap} using the given
+      	 * {@link Rangeable}s but limiting the max coverage
+      	 * in the map to {@code maxAllowedCoverage}.  
+      	 * @param elements the elements to create a coverage map of.
+      	 * @param maxAllowedCoverage Any
+      	 * elements that would cause the max coverage to exceed this threshold
+      	 * will be ignored.
+      	 * @return a new {@link CoverageMap}; never null.
+      	 * @param <R> The type of {@link Rangeable} used in this map.
+      	 */
+          public static <R extends Rangeable> CoverageMap<R> 
+                  create(Collection<R> elements, int maxAllowedCoverage, boolean startAtOrigin){
+        	  return new Builder<R>(elements,maxAllowedCoverage, startAtOrigin).build();
+          }
+       /**
+      	 * Create a new {@link CoverageMap} using the given
+      	 * {@link Rangeable}s but limiting the max coverage
+      	 * in the map to {@code maxAllowedCoverage}.  
+      	 * @param elements the elements to create a coverage map of.
+      	 * @param maxAllowedCoverage Any
+      	 * elements that would cause the max coverage to exceed this threshold
+      	 * will be ignored.
+      	 * @return a new {@link CoverageMap}; never null.
+      	 * @param <R> The type of {@link Rangeable} used in this map.
+      	 */
+          public static <R extends Rangeable> CoverageMap<R> 
+                  create(Collection<R> elements, int maxAllowedCoverage, int minRequiredCoverage){
+       	   return create(elements, maxAllowedCoverage, minRequiredCoverage, false);
+          }
     /**
 	 * Create a new {@link CoverageMap} using the given
 	 * {@link Rangeable}s but limiting the max coverage
@@ -102,9 +132,9 @@ final class CoverageMapFactory {
 	 * @param <R> The type of {@link Rangeable} used in this map.
 	 */
     public static <R extends Rangeable> CoverageMap<R> 
-            create(Collection<R> elements, int maxAllowedCoverage,
+            create(Collection<R> elements, int maxAllowedCoverage,  int minRequiredCoverage,
             		boolean startAtOrigin){
-        return new Builder<R>(elements,maxAllowedCoverage, startAtOrigin).build();
+        return new Builder<R>(elements,maxAllowedCoverage, minRequiredCoverage, startAtOrigin).build();
     }
 
     public static <R extends AssembledRead> CoverageMap<R> createUngappedCoverageMap(
@@ -447,6 +477,11 @@ final class CoverageMapFactory {
         
         public Builder(Collection<P> elements, int maxAllowedCoverage, boolean startAtOrigin){
             super(maxAllowedCoverage);
+            initialize(elements);
+            this.startAtOrigin = startAtOrigin;
+        }
+        public Builder(Collection<P> elements, int maxAllowedCoverage, int minRequiredCoverage, boolean startAtOrigin){
+            super(maxAllowedCoverage, minRequiredCoverage);
             initialize(elements);
             this.startAtOrigin = startAtOrigin;
         }

@@ -30,16 +30,21 @@ import java.util.Collection;
 import org.jcvi.jillion.core.Rangeable;
 import org.jcvi.jillion.core.util.Builder;
 
-interface CoverageRegionBuilder<P extends Rangeable> extends Builder<CoverageRegion<P>> {
+interface CoverageRegionBuilder<P extends Rangeable> extends Builder<CoverageRegion<P>>, Rangeable {
 
    long start();
-    
+   
+   public  boolean isEndIsSet();
+   
    boolean canSetEndTo(long end);
    long end();
     
    CoverageRegionBuilder<P> end(long end);
    
-   CoverageRegionBuilder<P> offer(P element);
+   boolean offer(P element);
+   
+   CoverageRegionBuilder<P> add(P element);
+   
    CoverageRegionBuilder<P> remove(P element);
    CoverageRegionBuilder<P> removeAll(Collection<P> elements);
    
@@ -50,4 +55,9 @@ interface CoverageRegionBuilder<P extends Rangeable> extends Builder<CoverageReg
    int getCurrentCoverageDepth();
    
    boolean hasSameElementsAs(CoverageRegionBuilder<P> other);
+
+   boolean rangeIsEmpty();
+   
+   void forceAdd(P element);
+
 }

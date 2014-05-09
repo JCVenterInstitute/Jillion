@@ -42,7 +42,8 @@ public final class CoverageMapBuilder<T extends Rangeable> {
 	private static final int NOT_SET = -1;
 	private final Collection<T> elements;
 	private int maxCoverage=NOT_SET;
-	
+	private int minCoverage=NOT_SET;
+			
 	private boolean startAtOrigin=false;
 	/**
 	 * Create a new Builder instance that will
@@ -66,7 +67,7 @@ public final class CoverageMapBuilder<T extends Rangeable> {
 	 * the specified max will not be included in the CoverageMap. 
 	 * <p/>
 	 * This exclusion is performed by computing
-	 * read arrival and departure values so the first reads
+	 * element arrival and departure values so the first elements
 	 * providing coverage by start coordinate will be included while
 	 * the "maxCoverage-th" read will be excluded:
 	 * 
@@ -92,6 +93,56 @@ public final class CoverageMapBuilder<T extends Rangeable> {
 		this.maxCoverage = maxCoverage;
 		return this;
 	}
+	
+	
+	/**
+	 * Set the PREFERRED maximum coverage depth any {@link CoverageRegion}
+	 * in the resulting CoverageMap will have.
+	 * Any {@link AssembledRead} in the {@link Contig}
+	 *  that provides additional coverage than
+	 * the specified max will not be included in the CoverageMap
+	 * EXCEPT if there are other nearby {@link CoverageRegion}s
+	 * whose coverage depth will be below the specified
+	 * {@code requiredMinCoverage}. 
+	 * <p/>
+	 * This exclusion is performed by computing
+	 * element arrival and departure values so the first elements
+	 * providing coverage by start coordinate will be included while
+	 * the "maxCoverage-th" element will be excluded:
+	 * 
+	 * In the following diagram, if maxCoverage is set to 4
+	 * and {@code requiredMinCoverage} is set to 2,
+	 * then element7 will still be included because
+	 * even though it causes 5x coverage
+	 * at some of its offsets, the end of the read 
+	 * provides 2x coverage at that position so the read must stay.
+	 * <pre>
+	 * ---------------------------
+	 * 1x|	=element1=   =element5=
+	 * 2x|	  =element2=    =element6=
+	 * 3x|	  =element3=     =element8=
+	 * 4x|	    =element4=   
+	 * 5x|	     =element7=
+	 * </pre>
+	 * @param preferredMaxCoverage the maximum coverage any {@link CoverageRegion}
+	 * will strive to have; must be >=0.
+	 * @param requiredMinCoverage the minimum coverage any 
+	 * {@link CoverageRegion} must have even at the expense of exceeding the 
+	 * preferredMaxCoverage; must be >=0.
+	 * @return this
+	 */
+	public CoverageMapBuilder<T> maxAllowedCoverage(int preferredMaxCoverage, int requiredMinCoverage) {
+		if(preferredMaxCoverage<0){
+			throw new IllegalArgumentException("maxCoverage must be positive");
+		}
+		if(requiredMinCoverage<0){
+			throw new IllegalArgumentException("requiredMinCoverage must be positive");
+		}
+		this.maxCoverage = preferredMaxCoverage;
+		this.minCoverage = requiredMinCoverage;
+		
+		return this;
+	}
 	/**
 	 * Create a new {@link CoverageMap} instance using the contig provided
 	 * by this constructor and filtered by any options set.
@@ -102,7 +153,11 @@ public final class CoverageMapBuilder<T extends Rangeable> {
 		if(maxCoverage == NOT_SET){
 			return CoverageMapFactory.create(elements,startAtOrigin);
 		}
-		return CoverageMapFactory.create(elements, maxCoverage,startAtOrigin);
+		if(minCoverage == NOT_SET){
+			return CoverageMapFactory.create(elements, maxCoverage,startAtOrigin);
+		}
+		return CoverageMapFactory.create(elements, maxCoverage,minCoverage, startAtOrigin);
+		
 	}
 	/**
 	 * Forces a {@link CoverageRegion} to cover

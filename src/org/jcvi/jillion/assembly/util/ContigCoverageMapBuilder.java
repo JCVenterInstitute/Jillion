@@ -52,6 +52,7 @@ public final class ContigCoverageMapBuilder<R extends AssembledRead> {
 	private ReadFilter<? super R> filter = null;
 	
 	private int maxCoverage=NOT_SET;
+	private int minCoverage = NOT_SET;
 	
 	private boolean useUngappedCoordinates=false;
 	
@@ -73,8 +74,8 @@ public final class ContigCoverageMapBuilder<R extends AssembledRead> {
 	}
 	/**
 	 * Set the maximum coverage depth any {@link CoverageRegion}
-	 * in the resulting CoverageMap will have,
-	 * any {@link AssembledRead} in the {@link Contig}
+	 * in the resulting CoverageMap will have.
+	 * Any {@link AssembledRead} in the {@link Contig}
 	 *  that provides additional coverage than
 	 * the specified max will not be included in the CoverageMap. 
 	 * This exclusion is performed AFTER any read filtering
@@ -102,12 +103,67 @@ public final class ContigCoverageMapBuilder<R extends AssembledRead> {
 	 * @param maxCoverage the maxCoverage any {@link CoverageRegion}
 	 * will be allowed to have; must be >=0.
 	 * @return this
+	 * @see #maxAllowedCoverage(int, int)
 	 */
 	public ContigCoverageMapBuilder<R> maxAllowedCoverage(int maxCoverage){
 		if(maxCoverage<0){
 			throw new IllegalArgumentException("maxCoverage must be positive");
 		}
 		this.maxCoverage = maxCoverage;
+		return this;
+	}
+	
+	/**
+	 * Set the PREFERRED maximum coverage depth any {@link CoverageRegion}
+	 * in the resulting CoverageMap will have.
+	 * Any {@link AssembledRead} in the {@link Contig}
+	 *  that provides additional coverage than
+	 * the specified max will not be included in the CoverageMap
+	 * EXCEPT if there are other nearby {@link CoverageRegion}s
+	 * whose coverage depth will be below the specified
+	 * {@code requiredMinCoverage}. 
+	 * This exclusion is performed AFTER any read filtering
+	 * performed by the filter specified by
+	 * {@link #filter(ReadFilter)}.  So it is possible for 
+	 * a {@link ReadFilter} to accept a read and still have that
+	 * read excluded due to the maxCoverage threshold.
+	 * <p/>
+	 * This exclusion is performed by computing
+	 * read arrival and departure values so the first reads
+	 * providing coverage by start coordinate will be included while
+	 * the "maxCoverage-th" read will be excluded:
+	 * 
+	 * In the following diagram, if maxCoverage is set to 4
+	 * and {@code requiredMinCoverage} is set to 2,
+	 * then read7 will still be included because
+	 * even though it causes 5x coverage
+	 * at some of its offsets, the end of the read 
+	 * provides 2x coverage at that position so the read must stay.
+	 * <pre>
+	 * ---------------------------
+	 * 1x|	=read1=   =read5=
+	 * 2x|	  =read2=    =read6=
+	 * 3x|	  =read3=     =read8=
+	 * 4x|	    =read4=   
+	 * 5x|	     =read7=
+	 * </pre>
+	 * @param preferredMaxCoverage the maximum coverage any {@link CoverageRegion}
+	 * will strive to have; must be >=0.
+	 * @param requiredMinCoverage the minimum coverage any 
+	 * {@link CoverageRegion} must have even at the expense of exceeding the 
+	 * preferredMaxCoverage; must be >=0.
+	 * @return this
+	 */
+	public ContigCoverageMapBuilder<R> maxAllowedCoverage(int preferredMaxCoverage, int requiredMinCoverage) {
+		if(preferredMaxCoverage<0){
+			throw new IllegalArgumentException("maxCoverage must be positive");
+		}
+		if(requiredMinCoverage<0){
+			throw new IllegalArgumentException("requiredMinCoverage must be positive");
+		}
+		this.maxCoverage = preferredMaxCoverage;
+		this.minCoverage = requiredMinCoverage;
+		
 		return this;
 	}
 	/**
@@ -164,7 +220,12 @@ public final class ContigCoverageMapBuilder<R extends AssembledRead> {
 			if(maxCoverage == NOT_SET){
 				gappedCoverageMap = CoverageMapFactory.create(readsToInclude);
 			}else{
-				gappedCoverageMap = CoverageMapFactory.create(readsToInclude, maxCoverage);
+				if(minCoverage ==NOT_SET){
+					gappedCoverageMap = CoverageMapFactory.create(readsToInclude, maxCoverage);
+				}else{
+					gappedCoverageMap = CoverageMapFactory.create(readsToInclude, maxCoverage, minCoverage);
+				}
+				
 			}
 			if(useUngappedCoordinates){
 				return CoverageMapFactory.createUngappedCoverageMap(contig.getConsensusSequence(), gappedCoverageMap);
@@ -175,5 +236,6 @@ public final class ContigCoverageMapBuilder<R extends AssembledRead> {
 			IOUtil.closeAndIgnoreErrors(iter);
 		}
 	}
+	
 	
 }
