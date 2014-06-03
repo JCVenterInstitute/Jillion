@@ -43,7 +43,18 @@ import org.jcvi.jillion.core.util.Builder;
 
 abstract class AbstractCoverageMapBuilder<P extends Rangeable> implements Builder<CoverageMap<P>> {
 
-    private P enteringObject;
+    private static enum MinCoverageSelectorComparator implements Comparator<Rangeable> {
+    	
+    	INSTANCE;
+    	
+		@Override
+		public int compare(Rangeable o1, Rangeable o2) {
+			return Range.Comparators.LONGEST_TO_SHORTEST.compare(
+					o1.asRange(), o2.asRange());
+		}
+	}
+
+	private P enteringObject;
     private P leavingObject;
     
     private Range enteringObjectRange, leavingObjectRange;
@@ -59,7 +70,7 @@ abstract class AbstractCoverageMapBuilder<P extends Rangeable> implements Builde
     protected abstract Iterator<P> createEnteringIterator();
     protected abstract Iterator<P> createLeavingIterator();
     
-    private List<P> sortedOverMaxCoverageObjects = new LinkedList<P>();
+    private final List<P> sortedOverMaxCoverageObjects = new LinkedList<P>();
     
     protected abstract CoverageMap<P> build(List<CoverageRegionBuilder<P>> coverageRegionBuilders);
     
@@ -107,77 +118,84 @@ abstract class AbstractCoverageMapBuilder<P extends Rangeable> implements Builde
     }
     
     private void addSkippedReadsIfPossible(){
-    	if(minRequiredCoverage !=null && !sortedOverMaxCoverageObjects.isEmpty()){
-        	Collections.sort(sortedOverMaxCoverageObjects, new Comparator<P>() {
-				@Override
-				public int compare(P o1, P o2) {
-					return Range.Comparators.LONGEST_TO_SHORTEST.compare(o1.asRange(), o2.asRange());
-				}
-        		
-			});
-        	int minCoverageLevel = minRequiredCoverage.intValue();
-        	if(sortedOverMaxCoverageObjects.isEmpty()){
-        		return;
-        	}
-        	for(P e : sortedOverMaxCoverageObjects){
-        		Range range = e.asRange();
-        		List<CoverageRegionBuilder<P>> intersectingRegions = getIntersectionRegionBuilders(range.getBegin(), range.getEnd());
-				boolean shouldAdd = false;
-				for(CoverageRegionBuilder<P> builder : intersectingRegions){
-					if(builder.getCurrentCoverageDepth() < minCoverageLevel){
-						shouldAdd = true;
-						break;
-					}
-				}
-				if(shouldAdd){
-	        		for(CoverageRegionBuilder<P> builder : intersectingRegions){
-	        			//might need to split builder into mulitple
-	        			//if the read doesn't cover entire range.
-	        			long builderStart = builder.start();
-	        			long builderEnd = builder.end();
-	        			if(range.getBegin() <=builderStart && range.getEnd() >=builderEnd){
-	        				//full span builder we can just add
-	        				builder.forceAdd(e);
-	        			}else{
-	        				//need to split builder into 2
-	        				Collection<P> oldElements = builder.getElements();
-	        				if(range.getBegin()> builderStart){
-	        					//add new builder on 3' side
-	        					CoverageRegionBuilder<P> rightBuilder =createNewCoverageRegionBuilder(oldElements, builderStart, null)
-	        																.end(range.getBegin() -1);
-	        					
-	        					CoverageRegionBuilder<P> leftBuilder =createNewCoverageRegionBuilder(oldElements, range.getBegin(), null)
-	        															.add(e)
-	        															.end(builderEnd);
-	        					
-	        					int i= getBuilderOffsetFor(builderStart);
-	        					
-	        					this.coverageRegionBuilders.remove(i);
-	        					this.coverageRegionBuilders.add(i, leftBuilder);
-	        					this.coverageRegionBuilders.add(i, rightBuilder);
-	        				}else{
-	        					//add new builder to 5' side
-	        					CoverageRegionBuilder<P> leftBuilder =createNewCoverageRegionBuilder(oldElements, builderStart, null);
-	        					leftBuilder.offer(e);
-	        					leftBuilder.end(range.getEnd());
-	        					
-	        					CoverageRegionBuilder<P> rightBuilder =createNewCoverageRegionBuilder(oldElements, range.getEnd() +1, null);
-	        					rightBuilder.end(builderEnd);
-	        					
-	        					int i= getBuilderOffsetFor(builderStart);
-	        					
-	        					this.coverageRegionBuilders.remove(i);
-	        					this.coverageRegionBuilders.add(i, leftBuilder);
-	        					this.coverageRegionBuilders.add(i, rightBuilder);
-	        				}
-							
-	        			}
-	        		}
-				}
-        	}
-        	
-        }
+    	if(minRequiredCoverage == null || sortedOverMaxCoverageObjects.isEmpty()){
+    		//nothing to add
+    		return;
+    	}
+		Collections.sort(sortedOverMaxCoverageObjects, MinCoverageSelectorComparator.INSTANCE);
+		int minCoverageLevel = minRequiredCoverage.intValue();
+		if (sortedOverMaxCoverageObjects.isEmpty()) {
+			return;
+		}
+		for (P e : sortedOverMaxCoverageObjects) {
+			Range range = e.asRange();
+			List<CoverageRegionBuilder<P>> intersectingRegions = getIntersectionRegionBuilders(range.getBegin(), range.getEnd());
+			
+			if (readProvidesMinRequiredCoverage(minCoverageLevel, intersectingRegions)) {
+				addReadToCoverageRegionBuilders(e, range, intersectingRegions);
+			}
+		}
+        
     }
+	private void addReadToCoverageRegionBuilders(P e, Range range, List<CoverageRegionBuilder<P>> intersectingRegions) {
+		for (CoverageRegionBuilder<P> builder : intersectingRegions) {
+			// might need to split builder into multiple
+			// if the read doesn't cover entire range.
+			long builderStart = builder.start();
+			long builderEnd = builder.end();
+			if (range.getBegin() <= builderStart && range.getEnd() >= builderEnd) {
+				// full span builder we can just add
+				builder.forceAdd(e);
+			} else {
+				// need to split builder into 2
+				Collection<P> oldElements = builder.getElements();
+				if (range.getBegin() > builderStart) {
+					// add new builder on 3' side
+					CoverageRegionBuilder<P> rightBuilder = createNewCoverageRegionBuilder(
+							oldElements, builderStart, null).end(
+							range.getBegin() - 1);
+
+					CoverageRegionBuilder<P> leftBuilder = createNewCoverageRegionBuilder(
+							oldElements, range.getBegin(), null).add(e)
+							.end(builderEnd);
+
+					int i = getBuilderOffsetFor(builderStart);
+
+					this.coverageRegionBuilders.remove(i);
+					this.coverageRegionBuilders.add(i, leftBuilder);
+					this.coverageRegionBuilders.add(i, rightBuilder);
+				} else {
+					// add new builder to 5' side
+					CoverageRegionBuilder<P> leftBuilder = createNewCoverageRegionBuilder(
+							oldElements, builderStart, null);
+					leftBuilder.offer(e);
+					leftBuilder.end(range.getEnd());
+
+					CoverageRegionBuilder<P> rightBuilder = createNewCoverageRegionBuilder(
+							oldElements, range.getEnd() + 1, null);
+					rightBuilder.end(builderEnd);
+
+					int i = getBuilderOffsetFor(builderStart);
+
+					this.coverageRegionBuilders.remove(i);
+					this.coverageRegionBuilders.add(i, leftBuilder);
+					this.coverageRegionBuilders.add(i, rightBuilder);
+				}
+
+			}
+		}
+	}
+	private boolean readProvidesMinRequiredCoverage(int minCoverageLevel,
+			List<CoverageRegionBuilder<P>> intersectingRegions) {
+		boolean shouldAdd = false;
+		for (CoverageRegionBuilder<P> builder : intersectingRegions) {
+			if (builder.getCurrentCoverageDepth() < minCoverageLevel) {
+				shouldAdd = true;
+				break;
+			}
+		}
+		return shouldAdd;
+	}
     /**
      * If we restrict the max coverage
      * then we could have adjacent coverageRegions

@@ -91,7 +91,7 @@ final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegio
      * @param otherRegion
      * @return
      */
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
 	private boolean elementsAreEqual(CoverageRegion<?> otherRegion){
     	
     	int otherDepth = otherRegion.getCoverageDepth();
