@@ -34,7 +34,7 @@ interface CoverageRegionBuilder<P extends Rangeable> extends Builder<CoverageReg
 
    long start();
    
-   public  boolean isEndIsSet();
+   boolean isEndIsSet();
    
    boolean canSetEndTo(long end);
    long end();
