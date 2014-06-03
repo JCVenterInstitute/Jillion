@@ -426,7 +426,7 @@ public class AssemblyArchiveWriterBuilder {
 					tempOut.write(String.format("<congaps source=\"INLINE\">%s</congaps>%n",deltaGapString));
 				}
 				if(crossLinkContigSubmission){
-					tempOut.write("<consensus source=\"ACCESSION\"></consensus>%n");
+					tempOut.write(String.format("<consensus source=\"ACCESSION\"></consensus>%n"));
 				}else{
 					tempOut.write(String.format("<consensus source=\"INLINE\">%s</consensus>%n", 
 							new NucleotideSequenceBuilder(consensusSequence).ungap().toString()));
