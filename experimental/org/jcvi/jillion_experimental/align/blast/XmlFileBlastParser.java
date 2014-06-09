@@ -55,7 +55,7 @@ import org.xml.sax.helpers.DefaultHandler;
  *
  *
  */
-public final class XmlFileBlastParser2 implements BlastParser{
+public final class XmlFileBlastParser implements BlastParser{
 
 	private final SAXParser parser;
 	private OpenAwareInputStream inputStream;
@@ -64,12 +64,12 @@ public final class XmlFileBlastParser2 implements BlastParser{
 	
 	public static BlastParser create(File xml) throws IOException{
 		 SAXParser parser = createSaxParser();
-		 return new XmlFileBlastParser2(parser, xml);
+		 return new XmlFileBlastParser(parser, xml);
 	}
 	
 	public static BlastParser create(InputStream xml) throws IOException{
 		 SAXParser parser = createSaxParser();
-		 return new XmlFileBlastParser2(parser, xml);
+		 return new XmlFileBlastParser(parser, xml);
 	}
 
 	private static SAXParser createSaxParser() throws IOException {
@@ -85,11 +85,11 @@ public final class XmlFileBlastParser2 implements BlastParser{
 		return parser;
 	}
 	
-    private XmlFileBlastParser2(SAXParser parser, InputStream inputStream){
+    private XmlFileBlastParser(SAXParser parser, InputStream inputStream){
     	this.parser = parser;
     	this.inputStream = new OpenAwareInputStream(inputStream);
     }
-    private XmlFileBlastParser2(SAXParser parser, File file){
+    private XmlFileBlastParser(SAXParser parser, File file){
     	this.parser = parser;
     	this.file = file;
     }
