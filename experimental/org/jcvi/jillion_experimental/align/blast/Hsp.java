@@ -47,7 +47,16 @@ public interface Hsp<R extends Residue, S extends ResidueSequence<R>> extends Se
 	 * @return a String; will never be null.
 	 */
     String getSubjectId();
-
+    /**
+	 * Get the defline of the Subject in this Hsp.
+	 * @return a String; may be null if not specified.
+	 */
+    String getSubjectDefinition();
+    
+    Integer getQueryLength();
+    
+    Integer getSubjectLength();
+    
     /**
      * Get the Expectation value of this hit.
      * The value provides a measure of statistical
@@ -67,6 +76,16 @@ public interface Hsp<R extends Residue, S extends ResidueSequence<R>> extends Se
      */
     
     BigDecimal getBitScore();
+    
+    Float getHspScore();
+    
+   
+    
+    Integer getNumberOfIdentitcalMatches();
+    
+    Integer getNumberOfPositiveMatches();
+
+    Integer getHitFrame();
     /**
      * Does this Hsp contain the actual
      * alignment information.  If {@code true}
@@ -130,4 +149,6 @@ public interface Hsp<R extends Residue, S extends ResidueSequence<R>> extends Se
         
         
     }
+    
+	
 }

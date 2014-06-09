@@ -42,11 +42,16 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
 
         private String queryId;
         private String subjectId;
+        private String subjectDef;
+        
         private Double percentIdentity;
         private BigDecimal eValue, bitScore;
         private DirectedRange queryRange, subjectRange;
-        private Integer numGapsOpenings ,numMismatches,alignmentLength;
+        private Integer numGapsOpenings ,numMismatches, numIdentical, numPositive,
+        	alignmentLength, queryLength, subjectLength;
         private S queryAlignment, subjectAlignment;
+        private Float hspScore;
+        private Integer hitFrame;
         
         
         /**
@@ -191,7 +196,10 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
             this.queryId = trimmed;
             return this;
         }
-        
+        public HspBuilder<R,S>  subjectDef(String subjectDef){           
+            this.subjectDef = subjectDef;
+            return this;
+        }
         public HspBuilder<R,S>  subject(String subjectId){
             if(subjectId ==null){
                 throw new NullPointerException("subject id can not be null");
@@ -265,11 +273,53 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
             this.numMismatches = numberOfMismatches;
             return this;
         }
+        public HspBuilder<R,S>  numIdenticalMatches(int numIdentical){
+            if(numIdentical<0){
+                throw new IllegalArgumentException("number of identical can not be negative : " + numIdentical);
+            }
+            this.numIdentical = numIdentical;
+            return this;
+        }
+        public HspBuilder<R,S>  numPositiveMatches(int numPositive){
+            if(numPositive<0){
+                throw new IllegalArgumentException("number of positive matches can not be negative : " + numIdentical);
+            }
+            this.numPositive = numPositive;
+            return this;
+        }
         public HspBuilder<R,S>  alignmentLength(int alignmentLength){
             if(alignmentLength<0){
                 throw new IllegalArgumentException("alignment length can not be negative : " + alignmentLength);
             }
             this.alignmentLength = alignmentLength;
+            return this;
+        }
+        
+        public HspBuilder<R,S> hitFrame(Integer frame) {
+    		this.hitFrame = frame;
+    		return this;
+    	}
+        
+        
+        public HspBuilder<R,S>  queryLength(int queryLength){
+            if(queryLength<0){
+                throw new IllegalArgumentException("query length can not be negative : " + queryLength);
+            }
+            this.queryLength = queryLength;
+            return this;
+        }
+        public HspBuilder<R,S>  subjectLength(int subjectLength){
+            if(subjectLength<0){
+                throw new IllegalArgumentException("subject length can not be negative : " + subjectLength);
+            }
+            this.subjectLength = subjectLength;
+            return this;
+        }
+        public HspBuilder<R,S>  hspScore(float hspScore){
+            if(hspScore <0){
+                throw new IllegalArgumentException("hsp score can not be negative : " + hspScore);
+            }
+            this.hspScore = hspScore;
             return this;
         }
         /**
@@ -278,15 +328,20 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
         @Override
         public Hsp<R,S>  build() {
             verifyAllValuesSet();
-            return new BlastHitImpl<R,S> (queryId, subjectId, 
-                    percentIdentity, bitScore, 
-                    eValue, 
-                    queryRange, subjectRange, 
-                    numGapsOpenings, numMismatches, alignmentLength,
-                    queryAlignment, subjectAlignment);
+            sanityCheckValues();
+            return new BlastHitImpl<R,S> (this);
         }
 
-        /**
+        private void sanityCheckValues() {
+        	if(numPositive !=null && numIdentical != null){
+        		if(numPositive < numIdentical){
+        			throw new IllegalStateException("number of matches must be >= number of identical matches");
+        		}
+        	}
+			
+			
+		}
+		/**
          * 
          */
         private void verifyAllValuesSet() {
@@ -323,36 +378,84 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
 
     private static final class BlastHitImpl<R extends Residue, S extends ResidueSequence<R>> implements Hsp<R,S>{
         
-    private final String queryId,subjectId;
+    private final String queryId,subjectId, subjectDef;
     private final double percentIdentity;
     private final BigDecimal eValue, bitScore;
     private final DirectedRange queryRange, subjectRange;
-    private final int numGapsOpenings,numMismatches;
+    private final int numGapsOpenings,numMismatches ;
     private final int alignmentLength;
     private final S queryAlignment;
     private final S subjectAlignment;
+    private final Integer queryLength, subjectLength,numIdenticalMatches,numPositiveMatches;
+    private final Float hspScore;
+    private final Integer hitFrame;
     
-    private BlastHitImpl(String queryId, String subjectId,
-            double percentIdentity, BigDecimal bitScore, BigDecimal eValue,
-            DirectedRange queryRange, DirectedRange subjectRange, int numGapsOpenings,
-            int numMismatches, int alignmentLength,
-            S queryAlignment,S subjectAlignment) {
-        this.queryId = queryId;
-        this.subjectId = subjectId;
-        this.percentIdentity = percentIdentity;
-        this.bitScore = bitScore;
-        this.eValue = eValue;
-        this.queryRange = queryRange;
-        this.subjectRange = subjectRange;
-        this.numGapsOpenings = numGapsOpenings;
-        this.numMismatches = numMismatches;
-        this.alignmentLength = alignmentLength;
-        this.queryAlignment = queryAlignment;
-        this.subjectAlignment = subjectAlignment;
+    private BlastHitImpl(HspBuilder<R,S> builder) {
+        this.queryId = builder.queryId;
+        this.subjectId = builder.subjectId;
+        this.percentIdentity = builder.percentIdentity;
+        this.bitScore = builder.bitScore;
+        this.eValue = builder.eValue;
+        this.queryRange = builder.queryRange;
+        this.subjectRange = builder.subjectRange;
+        this.numGapsOpenings = builder.numGapsOpenings;
+        this.numMismatches = builder.numMismatches;
+        this.alignmentLength = builder.alignmentLength;
+        this.queryAlignment = builder.queryAlignment;
+        this.subjectAlignment = builder.subjectAlignment;
+        this.queryLength = builder.queryLength;
+        this.hspScore = builder.hspScore;
+        this.subjectDef = builder.subjectDef;
+        this.subjectLength = builder.subjectLength;
+        this.numIdenticalMatches = builder.numIdentical;
+        this.numPositiveMatches = builder.numPositive;
+        this.hitFrame = builder.hitFrame;
     }
 
 
-        /**
+   @Override
+	public Integer getHitFrame() {
+		return hitFrame;
+	}
+
+
+@Override
+	public Integer getNumberOfIdentitcalMatches() {
+		return numIdenticalMatches;
+	}
+
+
+	@Override
+	public Integer getNumberOfPositiveMatches() {
+		return numPositiveMatches;
+	}
+
+
+@Override
+	public Integer getSubjectLength() {
+		return subjectLength;
+	}
+
+
+@Override
+	public String getSubjectDefinition() {
+		return subjectDef;
+	}
+
+
+@Override
+	public Float getHspScore() {
+		return hspScore;
+	}
+
+
+@Override
+	public Integer getQueryLength() {
+		return queryLength;
+	}
+
+
+   /**
     * {@inheritDoc}
     */
     @Override
@@ -598,4 +701,8 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
             return true;
         }
     }
+
+
+
+	
 }

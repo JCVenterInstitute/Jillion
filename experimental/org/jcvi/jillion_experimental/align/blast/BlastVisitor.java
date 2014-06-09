@@ -43,4 +43,9 @@ public interface BlastVisitor{
      * The File has been completely visited.
      */
     void visitEnd();
+
+	void visitInfo(String programName, String programVersion,
+			String blastDb, String queryId);
+
+	void visitHit(BlastHit build);
 }
