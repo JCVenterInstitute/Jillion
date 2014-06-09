@@ -60,7 +60,13 @@ public enum AminoAcid implements Residue{
     Asparagine("Asparagine","Asn",'N'),
     Aspartic_Acid("Aspartic Acid", "Asp",'D'),
     Glutamic_Acid("Glutamic Acid","Glu",'E'),
+    //ambiguities
     Unknown_Amino_Acid("Unknown Amino Acid", "Uknown", 'X'),
+    Aspartate_or_Asparagine("Aspartate or Asparagine", "Asx", 'B'),
+    Glutamate_or_Glutamine("Glutamate or Glutamine", "Glx", 'Z'),
+    //Selenocysteine - inserted as a post-translational modification
+    Selenocysteine("Selenocysteine", "Sec", 'U'),
+    
     Gap("Gap", "Gap", '-'){
 
 		@Override

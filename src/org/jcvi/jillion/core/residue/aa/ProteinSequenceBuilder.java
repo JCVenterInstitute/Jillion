@@ -66,16 +66,14 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 		builder = new GrowableByteArray(initialCapacity);
 	}
 	/**
-     * Creates a new NucleotideSequenceBuilder instance
+     * Creates a new ProteinSequenceBuilder instance
      * which currently contains the given sequence.
      *  Any whitespace in the input string will be ignored.
-     *  This method is able to parse both
-     * '*' (consed) and '-' (TIGR) as gap characters. 
      * @param sequence the initial nucleotide sequence.
      * @throws NullPointerException if sequence is null.
      * @throws IllegalArgumentException if any non-whitespace
      * in character in the sequence can not be converted
-     * into a {@link Nucleotide}.
+     * into an {@link AminoAcid}.
      */
 	public ProteinSequenceBuilder(CharSequence sequence){
 		builder = new GrowableByteArray(sequence.length());

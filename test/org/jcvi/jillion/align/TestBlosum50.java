@@ -22,7 +22,6 @@ package org.jcvi.jillion.align;
 
 import static org.junit.Assert.assertEquals;
 
-import org.jcvi.jillion.align.BlosumMatrices;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.junit.Test;
 public class TestBlosum50 extends AbstractBlosumTest{
@@ -54,6 +53,10 @@ public class TestBlosum50 extends AbstractBlosumTest{
 				0F);
 		assertEquals(-5F,
 				blosum50.getValue(AminoAcid.STOP, AminoAcid.Alanine),
+				0F);
+		
+		assertEquals(-3F,
+				blosum50.getValue(AminoAcid.Glutamate_or_Glutamine, AminoAcid.Isoleucine),
 				0F);
 	}
 	
