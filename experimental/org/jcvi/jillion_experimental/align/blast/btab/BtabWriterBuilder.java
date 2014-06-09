@@ -100,6 +100,8 @@ public final class BtabWriterBuilder {
 	/**
 	 * Create a new {@link BtabWriter} instance
 	 * using the configuration so far.
+	 * The returned BtabWriter implementation is 
+	 * NOT thread-safe.
 	 * @return a new {@link BtabWriter} instance;
 	 * will never be null.
 	 * @throws IOException if there is a problem creating 
@@ -199,8 +201,7 @@ public final class BtabWriterBuilder {
 			
 		}
 		/**
-		 * following TIGR standards flip
-		 * begin and end coords if hit is reversed
+		 * flip begin and end coords if hit is reversed
 		 */	
 		private void appendRangeCoordinates(DirectedRange directedRange,
 				List<String> fields) {
