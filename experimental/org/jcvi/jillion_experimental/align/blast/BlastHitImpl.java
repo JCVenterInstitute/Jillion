@@ -67,6 +67,103 @@ class BlastHitImpl implements BlastHit{
 	public List<Hsp> getHsps() {
 		return hsps;
 	}
+	
+	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((dbName == null) ? 0 : dbName.hashCode());
+		result = prime * result + ((hsps == null) ? 0 : hsps.hashCode());
+		result = prime * result
+				+ ((programName == null) ? 0 : programName.hashCode());
+		result = prime * result + ((queryId == null) ? 0 : queryId.hashCode());
+		result = prime * result
+				+ ((queryLength == null) ? 0 : queryLength.hashCode());
+		result = prime
+				* result
+				+ ((subjectDeflineComment == null) ? 0 : subjectDeflineComment
+						.hashCode());
+		result = prime * result
+				+ ((subjectId == null) ? 0 : subjectId.hashCode());
+		result = prime * result
+				+ ((subjectLength == null) ? 0 : subjectLength.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof BlastHitImpl)) {
+			return false;
+		}
+		BlastHitImpl other = (BlastHitImpl) obj;
+		if (dbName == null) {
+			if (other.dbName != null) {
+				return false;
+			}
+		} else if (!dbName.equals(other.dbName)) {
+			return false;
+		}
+		if (hsps == null) {
+			if (other.hsps != null) {
+				return false;
+			}
+		} else if (!hsps.equals(other.hsps)) {
+			return false;
+		}
+		if (programName == null) {
+			if (other.programName != null) {
+				return false;
+			}
+		} else if (!programName.equals(other.programName)) {
+			return false;
+		}
+		if (queryId == null) {
+			if (other.queryId != null) {
+				return false;
+			}
+		} else if (!queryId.equals(other.queryId)) {
+			return false;
+		}
+		if (queryLength == null) {
+			if (other.queryLength != null) {
+				return false;
+			}
+		} else if (!queryLength.equals(other.queryLength)) {
+			return false;
+		}
+		if (subjectDeflineComment == null) {
+			if (other.subjectDeflineComment != null) {
+				return false;
+			}
+		} else if (!subjectDeflineComment.equals(other.subjectDeflineComment)) {
+			return false;
+		}
+		if (subjectId == null) {
+			if (other.subjectId != null) {
+				return false;
+			}
+		} else if (!subjectId.equals(other.subjectId)) {
+			return false;
+		}
+		if (subjectLength == null) {
+			if (other.subjectLength != null) {
+				return false;
+			}
+		} else if (!subjectLength.equals(other.subjectLength)) {
+			return false;
+		}
+		return true;
+	}
+
+
 
 	private static enum HspComparator implements Comparator<Hsp> {
 		INSTANCE;

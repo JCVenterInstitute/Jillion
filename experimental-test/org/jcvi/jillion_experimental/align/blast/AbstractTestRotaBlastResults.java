@@ -85,12 +85,7 @@ public abstract class AbstractTestRotaBlastResults {
 
 		SortedSet<Hsp<?,?>> hsps = new TreeSet<Hsp<?,?>>(Hsp.Comparators.BIT_SCORE_BEST_TO_WORST);
 		
-		@Override
-		public void visitHsp(Hsp<?,?> hsp) {
-			hsps.add(hsp);
-			
-		}
-
+		
 		
 
 		@Override
@@ -103,8 +98,10 @@ public abstract class AbstractTestRotaBlastResults {
 
 
 		@Override
-		public void visitHit(BlastHit build) {
-			// TODO Auto-generated method stub
+		public void visitHit(BlastHit hit) {
+			for(Hsp<?,?> hsp : hit.getHsps()){
+				hsps.add(hsp);
+			}
 			
 		}
 

@@ -66,42 +66,47 @@ public class TestTabularBlastParser {
      */
     private void setupExpectations() {
         
+        sut.visitHit(new BlastHitImpl.Builder("AF178033","EMORG:AF031391")
+        				.addHsp(HspBuilder.forBlastN().query("AF178033")
+        		                .subject("EMORG:AF031391")
+        		                .percentIdentity(85.48D)
+        		                .alignmentLength(806)
+        		                .numMismatches(117)
+        		                .numGapOpenings(0)
+        		                .queryRange(DirectedRange.create(Range.of(CoordinateSystem.RESIDUE_BASED,1,806)))
+        		                .subjectRange(DirectedRange.create(Range.of(CoordinateSystem.RESIDUE_BASED,99,904)))
+        		                .eValue(new BigDecimal("0.0"))
+        		                .bitScore(new BigDecimal("644.8"))
+        		                .build())
+    		                .build());
+       
         
-        sut.visitHsp(HspBuilder.forBlastN().query("AF178033")
-                .subject("EMORG:AF031391")
-                .percentIdentity(85.48D)
-                .alignmentLength(806)
-                .numMismatches(117)
-                .numGapOpenings(0)
-                .queryRange(DirectedRange.create(Range.of(CoordinateSystem.RESIDUE_BASED,1,806)))
-                .subjectRange(DirectedRange.create(Range.of(CoordinateSystem.RESIDUE_BASED,99,904)))
-                .eValue(new BigDecimal("0.0"))
-                .bitScore(new BigDecimal("644.8"))
-                .build());
-        
-        sut.visitHsp(HspBuilder.forBlastN().query("AF178033")
-                .subject("EMORG:AF353201")
-                .percentIdentity(85.36D)
-                .alignmentLength(806)
-                .numMismatches(118)
-                .numGapOpenings(0)
-                .queryRange(DirectedRange.create(Range.of(CoordinateSystem.RESIDUE_BASED,1,806)))
-                .subjectRange(DirectedRange.create(Range.of(CoordinateSystem.RESIDUE_BASED,99,904)))
-                .eValue(new BigDecimal("1e-179"))
-                .bitScore(new BigDecimal("636.8"))
-                .build());
-        
-        sut.visitHsp(HspBuilder.forBlastN().query("AF178033")
-                .subject("EMORG:AF353200")
-                .percentIdentity(84.99D)
-                .alignmentLength(806)
-                .numMismatches(121)
-                .numGapOpenings(0)
-                .queryRange(DirectedRange.create(Range.of(CoordinateSystem.RESIDUE_BASED,1,806)))
-                .subjectRange(DirectedRange.create(Range.of(CoordinateSystem.RESIDUE_BASED,99,904)))
-                .eValue(new BigDecimal("2e-172"))
-                .bitScore(new BigDecimal("613.0"))
-                .build());
+        sut.visitHit(new BlastHitImpl.Builder("AF178033","EMORG:AF353201")
+						.addHsp(HspBuilder.forBlastN().query("AF178033")
+				                .subject("EMORG:AF353201")
+				                .percentIdentity(85.36D)
+				                .alignmentLength(806)
+				                .numMismatches(118)
+				                .numGapOpenings(0)
+				                .queryRange(DirectedRange.create(Range.of(CoordinateSystem.RESIDUE_BASED,1,806)))
+				                .subjectRange(DirectedRange.create(Range.of(CoordinateSystem.RESIDUE_BASED,99,904)))
+				                .eValue(new BigDecimal("1e-179"))
+				                .bitScore(new BigDecimal("636.8"))
+				                .build())
+			            .build());
+        sut.visitHit(new BlastHitImpl.Builder("AF178033","EMORG:AF353200")
+						.addHsp(HspBuilder.forBlastN().query("AF178033")
+				                .subject("EMORG:AF353200")
+				                .percentIdentity(84.99D)
+				                .alignmentLength(806)
+				                .numMismatches(121)
+				                .numGapOpenings(0)
+				                .queryRange(DirectedRange.create(Range.of(CoordinateSystem.RESIDUE_BASED,1,806)))
+				                .subjectRange(DirectedRange.create(Range.of(CoordinateSystem.RESIDUE_BASED,99,904)))
+				                .eValue(new BigDecimal("2e-172"))
+				                .bitScore(new BigDecimal("613.0"))
+				                .build())
+				            .build());
         
         sut.visitEnd();
         
