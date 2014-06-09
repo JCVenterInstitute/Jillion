@@ -23,7 +23,7 @@ package org.jcvi.jillion_experimental.align.blast;
 
 /**
  * {@code BlastVisitor} is a visitor 
- * interface to visit {@link Hsp}
+ * interface to visit {@link BlastHit}s
  * encoded in blast output.
  * 
  * @author dkatzel
@@ -31,14 +31,7 @@ package org.jcvi.jillion_experimental.align.blast;
  *
  */
 public interface BlastVisitor{
-	/**
-	 * Visit the next {@link Hsp}
-	 * in the blast output.
-	 * @param hsp the {@link Hsp} being visited;
-	 * will never be null.
-	 */
-    void visitHsp(Hsp<?,?> hsp);
-   
+
     /**
      * The File has been completely visited.
      */
@@ -46,6 +39,11 @@ public interface BlastVisitor{
 
 	void visitInfo(String programName, String programVersion,
 			String blastDb, String queryId);
-
-	void visitHit(BlastHit build);
+	/**
+	 * Visit the next {@link BlastHit}
+	 * in the blast output.
+	 * @param hit the {@link BlastHit} being visited;
+	 * will never be null.
+	 */
+	void visitHit(BlastHit hit);
 }

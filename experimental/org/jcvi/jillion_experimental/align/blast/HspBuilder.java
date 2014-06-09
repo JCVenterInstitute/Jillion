@@ -329,7 +329,7 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
         public Hsp<R,S>  build() {
             verifyAllValuesSet();
             sanityCheckValues();
-            return new BlastHitImpl<R,S> (this);
+            return new HspImpl<R,S> (this);
         }
 
         private void sanityCheckValues() {
@@ -376,7 +376,7 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
         
     
 
-    private static final class BlastHitImpl<R extends Residue, S extends ResidueSequence<R>> implements Hsp<R,S>{
+    private static final class HspImpl<R extends Residue, S extends ResidueSequence<R>> implements Hsp<R,S>{
         
     private final String queryId,subjectId, subjectDef;
     private final double percentIdentity;
@@ -390,7 +390,7 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
     private final Float hspScore;
     private final Integer hitFrame;
     
-    private BlastHitImpl(HspBuilder<R,S> builder) {
+    private HspImpl(HspBuilder<R,S> builder) {
         this.queryId = builder.queryId;
         this.subjectId = builder.subjectId;
         this.percentIdentity = builder.percentIdentity;
@@ -487,7 +487,7 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
         */
         @Override
         public String toString() {
-            return "BlastHitImpl [queryId=" + queryId + ", subjectId="
+            return "HspImpl [queryId=" + queryId + ", subjectId="
                     + subjectId + ", percentIdentity=" + percentIdentity
                     + ", eValue=" + eValue + ", bitScore=" + bitScore
                     + ", queryRange=" + queryRange + ", subjectRange="
@@ -625,10 +625,10 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
             if (obj == null) {
                 return false;
             }
-            if (!(obj instanceof BlastHitImpl)) {
+            if (!(obj instanceof HspImpl)) {
                 return false;
             }
-            BlastHitImpl other = (BlastHitImpl) obj;
+            HspImpl other = (HspImpl) obj;
             if (alignmentLength != other.alignmentLength) {
                 return false;
             }

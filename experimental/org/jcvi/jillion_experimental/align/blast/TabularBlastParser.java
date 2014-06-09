@@ -64,6 +64,8 @@ public abstract class TabularBlastParser implements BlastParser{
         boolean parsedHeader=false;
         String type=null;
         try{
+        	 BlastHitImpl.Builder blastHitBuilder=null;
+	           
 	        while(parser.hasNextLine()){
 	            String line = parser.nextLine();
 	            if(!parsedHeader && type==null){
@@ -74,21 +76,26 @@ public abstract class TabularBlastParser implements BlastParser{
 	            	}
 	            }
 	            Matcher matcher = HIT_PATTERN.matcher(line);
+	            String prevQuery=null, prevSubject=null;
+	            
 	            if(matcher.find()){
 	            	parsedHeader=true;
 	                DirectedRange queryRange = DirectedRange.parse(matcher.group(7), matcher.group(8), CoordinateSystem.RESIDUE_BASED);
 	                DirectedRange subjectRange = DirectedRange.parse(matcher.group(9), matcher.group(10), CoordinateSystem.RESIDUE_BASED);
 	           
-					HspBuilder<?, ?> builder;
+					HspBuilder<?, ?> hspBuilder;
 					if(type!=null){
-						builder= HspBuilder.forType(type);
+						hspBuilder= HspBuilder.forType(type);
 					}else{
 						//doesn't really matter since we don't have
 						//sequences anyway ?
-						builder= HspBuilder.forBlastN();
+						hspBuilder= HspBuilder.forBlastN();
 					}
-					Hsp<?,?> hit =builder.query(matcher.group(1))
-	                                .subject(matcher.group(2))
+					String queryId = matcher.group(1);
+					String subjectId = matcher.group(2);
+					
+					Hsp<?,?> hsp =hspBuilder.query(queryId)
+	                                .subject(subjectId)
 	                                .percentIdentity(Double.parseDouble(matcher.group(3)))
 	                                .alignmentLength(Integer.parseInt(matcher.group(4)))
 	                                .numMismatches(Integer.parseInt(matcher.group(5)))
@@ -98,9 +105,22 @@ public abstract class TabularBlastParser implements BlastParser{
 	                                .queryRange(queryRange)
 	                                .subjectRange(subjectRange)
 	                                .build();
-	                visitor.visitHsp(hit);
+					//accumulate consecutive HSPs if the subject and query match previous?
+					if(!queryId.equals(prevQuery) || !subjectId.equals(prevSubject)){
+						if(blastHitBuilder !=null){
+							visitor.visitHit(blastHitBuilder.build());
+						}
+						blastHitBuilder = new BlastHitImpl.Builder(queryId, subjectId);
+					}
+	                blastHitBuilder.addHsp(hsp);
+	                prevQuery = queryId;
+	                prevSubject = subjectId;
+	                
 	            }
 	        }
+	        if(blastHitBuilder !=null){
+				visitor.visitHit(blastHitBuilder.build());
+			}
 	        visitor.visitEnd();
         }finally{
         	IOUtil.closeAndIgnoreErrors(parser);
