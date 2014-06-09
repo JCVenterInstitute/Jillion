@@ -27,7 +27,7 @@ import org.jcvi.jillion.internal.ResourceHelper;
 public class TestXmlRotaBlastResults extends AbstractTestRotaBlastResults{
 
 	public TestXmlRotaBlastResults() throws IOException {
-		super(XmlFileBlastParser2.create(
+		super(XmlFileBlastParser.create(
 				new ResourceHelper(TestXmlRotaBlastResults.class)
 				.getFile("files/rota.blast.xml.out")));
 	}
