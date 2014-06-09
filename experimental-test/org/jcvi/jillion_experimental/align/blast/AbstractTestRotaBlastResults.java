@@ -94,6 +94,23 @@ public abstract class AbstractTestRotaBlastResults {
 		
 
 		@Override
+		public void visitInfo(String programName, String programVersion,
+				String blastDb, String queryId) {
+			// TODO Auto-generated method stub
+			
+		}
+
+
+
+		@Override
+		public void visitHit(BlastHit build) {
+			// TODO Auto-generated method stub
+			
+		}
+
+
+
+		@Override
 		public void visitEnd() {
 			// TODO Auto-generated method stub
 			
