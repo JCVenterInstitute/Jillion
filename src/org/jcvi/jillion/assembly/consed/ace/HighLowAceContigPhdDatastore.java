@@ -23,7 +23,6 @@ package org.jcvi.jillion.assembly.consed.ace;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,75 +49,36 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
  * for determining if the value is high or low depends on if the 
  * provided basecall in the ace file is upper or lower case.
  * This implementation is helpful if only approximate quality 
- * values are needed and speed and memory usage demands
- * that the actual phd file can not be used.
+ * values are needed and the actual phd file(s) either do not exist,
+ * or speed and memory usage demands
+ * that the actual phd files can not be used.
  * @author dkatzel
  */
 public final class HighLowAceContigPhdDatastore implements PhdDataStore{
-    public static final PhredQuality DEFAULT_LOW_QUALITY = PhredQuality.valueOf(15);
-    public static final PhredQuality DEFAULT_HIGH_QUALITY = AceFileUtil.ACE_DEFAULT_HIGH_QUALITY_THRESHOLD;
     private final PhdDataStore delegate;
     
-    public static PhdDataStore create(File aceContigFile, final String contigId) throws IOException{
-        return new HighLowAceContigPhdDatastore(aceContigFile, contigId);
-    }
-    public static PhdDataStore create(File aceContigFile,DataStoreFilter filter) throws IOException{
-        return new HighLowAceContigPhdDatastore(aceContigFile, filter,DEFAULT_LOW_QUALITY,DEFAULT_HIGH_QUALITY);
-    }
+    
+    
     public static PhdDataStore create(File aceContigFile) throws IOException{
-        return new HighLowAceContigPhdDatastore(aceContigFile,DEFAULT_LOW_QUALITY,DEFAULT_HIGH_QUALITY);
+        return new Builder(aceContigFile).build();
     }
-    public static PhdDataStore create(InputStream aceContigFile) throws IOException{
-        return new HighLowAceContigPhdDatastore(aceContigFile,DEFAULT_LOW_QUALITY,DEFAULT_HIGH_QUALITY);
+    public static PhdDataStore create(InputStream aceContigFileStream) throws IOException{
+        return new Builder(aceContigFileStream).build();
     }
-    public static PhdDataStore create(InputStream aceContigFile, String contigId) throws IOException{
-        return new HighLowAceContigPhdDatastore(aceContigFile,contigId, DEFAULT_LOW_QUALITY,DEFAULT_HIGH_QUALITY);
-    }
-    private HighLowAceContigPhdDatastore(File aceContigFile, final String contigId) throws IOException{
-        this(aceContigFile,contigId,DEFAULT_LOW_QUALITY,DEFAULT_HIGH_QUALITY);
-    }
-    private HighLowAceContigPhdDatastore(File aceContigFile, final String contigId, 
-            final PhredQuality lowQuality, final PhredQuality highQuality) throws IOException{
-        FullLengthPhdParser2 visitor = new FullLengthPhdParser2(contigId, lowQuality,highQuality);
-        
-        AceFileParser.create(aceContigFile).parse(visitor);
-        delegate = DataStoreUtil.adapt(PhdDataStore.class, visitor.getPhds());
-        
-    }
+   
     
-    private HighLowAceContigPhdDatastore(File aceContigFile, DataStoreFilter filter, 
-            final PhredQuality lowQuality, final PhredQuality highQuality) throws IOException{
-        FullLengthPhdParser2 visitor = new FullLengthPhdParser2(filter,null, lowQuality,highQuality);
-        
-        AceFileParser.create(aceContigFile).parse(visitor);
-        delegate = DataStoreUtil.adapt(PhdDataStore.class, visitor.getPhds());
-        
-    }
-    private HighLowAceContigPhdDatastore(InputStream aceContigFile,
-            final PhredQuality lowQuality, final PhredQuality highQuality) throws IOException{
-        FullLengthPhdParser2 visitor = new FullLengthPhdParser2(lowQuality,highQuality);
-        
-        AceFileParser.create(aceContigFile).parse(visitor);
-        delegate = DataStoreUtil.adapt(PhdDataStore.class, visitor.getPhds());
-        
-    }
-    private HighLowAceContigPhdDatastore(InputStream aceContigFile, String contigId,
-            final PhredQuality lowQuality, final PhredQuality highQuality) throws IOException{
-        FullLengthPhdParser2 visitor = new FullLengthPhdParser2(contigId,lowQuality,highQuality);
-        
-        AceFileParser.create(aceContigFile).parse(visitor);
-        delegate = DataStoreUtil.adapt(PhdDataStore.class, visitor.getPhds());
-        
-    }
     
-    private HighLowAceContigPhdDatastore(File aceContigFile, 
-            final PhredQuality lowQuality, final PhredQuality highQuality) throws IOException{
-        FullLengthPhdParser2 visitor = new FullLengthPhdParser2(lowQuality,highQuality);
+    private HighLowAceContigPhdDatastore(Builder builder) throws IOException{
+        FullLengthPhdParser2 visitor = new FullLengthPhdParser2(builder);
         
-        AceFileParser.create(aceContigFile).parse(visitor);
+        builder.parser.parse(visitor);
         delegate = DataStoreUtil.adapt(PhdDataStore.class, visitor.getPhds());
         
     }
+   
+   
+    
+    
 
     /**
     * {@inheritDoc}
@@ -196,23 +156,17 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
     private static final class FullLengthPhdParser2 extends AbstractAceFileVisitor{
 
     	private Map<String, Phd> phds=null;
-        private final DataStoreFilter filter;
-        private final String singleContigId;
+        private final DataStoreFilter contigFilter, readFilter;
         private final byte lowQuality;
         private final byte highQuality;
-        
-        
-        private FullLengthPhdParser2(final PhredQuality lowQuality, final PhredQuality highQuality) {
-            this(DataStoreFilters.alwaysAccept(),null,lowQuality,highQuality);
-        }
-        private FullLengthPhdParser2(String contigId, final PhredQuality lowQuality, final PhredQuality highQuality) {
-            this(DataStoreFilters.newIncludeFilter(Collections.singleton(contigId)),contigId,lowQuality,highQuality);
-        }
-        private FullLengthPhdParser2(DataStoreFilter filter,String contigId, final PhredQuality lowQuality, final PhredQuality highQuality) {
-            this.filter = filter;
-            this.singleContigId = contigId;
-            this.lowQuality = lowQuality.getQualityScore();
-            this.highQuality = highQuality.getQualityScore();
+        private final boolean oneContigOnly;
+       
+        FullLengthPhdParser2(Builder builder) {
+            this.contigFilter = builder.contigFilter;
+            this.readFilter = builder.readFilter;
+            this.lowQuality = builder.lowQuality.getQualityScore();
+            this.highQuality = builder.highQuality.getQualityScore();
+            this.oneContigOnly = builder.oneContigOnly;
         }
         /**
          * @return the phds
@@ -223,21 +177,14 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
         
 		@Override
 		public void visitHeader(int numberOfContigs, long totalNumberOfReads) {
-			if(singleContigId==null){
-            	int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(totalNumberOfReads);
-                phds = new HashMap<String, Phd>(mapSize);
-            }
+        	int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(totalNumberOfReads);
+            phds = new HashMap<String, Phd>(mapSize);            
 		}
 		@Override
 		public AceContigVisitor visitContig(final AceFileVisitorCallback callback,
 				String contigId, int numberOfBases, final int numberOfReads,
 				int numberOfBaseSegments, boolean reverseComplemented) {
-			if(filter.accept(contigId)){
-				//visit if this is our contig or we want all contigs
-				if(this.singleContigId!=null){
-					int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(numberOfReads);
-	                phds = new HashMap<String, Phd>(mapSize);
-				}
+			if(contigFilter.accept(contigId)){				
 				return new AbstractAceContigVisitor() {
 					int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(numberOfReads);
 					final Map<String, Direction> directions = new HashMap<String, Direction>(mapSize);
@@ -246,22 +193,26 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
 					@Override
 					public void visitAlignedReadInfo(String readId,
 							Direction dir, int gappedStartOffset) {
-						directions.put(readId, dir);
+						if(readFilter.accept(readId)){
+							directions.put(readId, dir);
+						}
 					}
 
+
 					@Override
-					public void visitEnd() {
-						//we have finished the current contig
-						//if this is the only contig we care about
-						//halt parsing
-						if(FullLengthPhdParser2.this.singleContigId!=null){
+					public void visitEnd() {						
+						if(oneContigOnly){
 							callback.haltParsing();
 						}
 					}
 
+
 					@Override
 					public AceContigReadVisitor visitBeginRead(String readId, int gappedLength) {
-						return new IndividualReadPhdBuilderVisitor(readId, gappedLength, directions.get(readId));
+						if(readFilter.accept(readId)){
+							return new IndividualReadPhdBuilderVisitor(readId, gappedLength, directions.get(readId));
+						}
+						return null;
 					}
 					
 				};
@@ -318,5 +269,135 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
                  phds.put(readId,phd);
 			}
 		}
+    }
+    
+    /**
+     * {@code Builder} class to customize how creating the objects in the {@link PhdDataStore}
+     * from the ace file.
+     * @author dkatzel
+     *
+     */
+    public static final class Builder{
+    	
+    	static final int DEFAULT_LOW_QUALITY = 15;
+    	static final int DEFAULT_HIGH_QUALITY = 30;
+    	
+    	
+    	private final AceParser parser;
+    	private DataStoreFilter readFilter = DataStoreFilters.alwaysAccept();
+    	private DataStoreFilter contigFilter = DataStoreFilters.alwaysAccept();
+    	
+    	private PhredQuality lowQuality = PhredQuality.valueOf(DEFAULT_LOW_QUALITY);
+    	private PhredQuality highQuality = PhredQuality.valueOf(DEFAULT_HIGH_QUALITY);
+    	
+    	private boolean oneContigOnly=false;
+    	/**
+    	 * Create a new Builder instance that will use the given 
+    	 * Ace encoded file as the source for all Phd objects
+    	 * in the PhdDataStore to be built.
+    	 * @param aceFile the ace file to use; can not be null and must exist.
+    	 * @throws IOException if the ace file does not exist.
+    	 * @throws NullPointerException if the aceFile is null.
+    	 */
+    	public Builder(File aceFile) throws IOException{
+    		parser = AceFileParser.create(aceFile);
+    	}
+    	/**
+    	 * Create a new Builder instance that will use the given 
+    	 * Ace encoded {@link InputStream} as the source for all Phd objects
+    	 * in the PhdDataStore to be built.
+    	 * @param in the InputStream to use; can not be null and must exist.
+    	 * @throws IOException if the ace file does not exist.
+    	 * @throws NullPointerException if the InputStream is null.
+    	 */
+    	public Builder(InputStream in) throws IOException{
+    		parser = AceFileParser.create(in);
+    	}
+    	/**
+    	 * Set the {@link PhredQuality} score to use
+    	 * for each lowercase base found. If this method 
+    	 * is not called, then the default value of 
+    	 * {@value org.jcvi.jillion.assembly.consed.ace.HighLowAceContigPhdDatastore.Builder#DEFAULT_LOW_QUALITY} will be used.
+    	 * @param qv the PhredQuality value as an int to use for lowercase letters.
+    	 * @return this
+    	 * @throws IllegalArgumentException - if qualityScore < 0 or > Byte.MAX_VALUE.
+    	 */
+    	public Builder lowercaseQuality(int qv){
+    		lowQuality = PhredQuality.valueOf(qv);
+    		return this;
+    	}
+    	/**
+    	 * Set the {@link PhredQuality} score to use
+    	 * for each uppercase base found. If this method 
+    	 * is not called, then the default value of 
+    	 * {@value org.jcvi.jillion.assembly.consed.ace.HighLowAceContigPhdDatastore.Builder#DEFAULT_HIGH_QUALITY} will be used.
+    	 * @param qv the PhredQuality value as an int to use for uppercase letters.
+    	 * @return this
+    	 * @throws IllegalArgumentException - if qualityScore < 0 or > Byte.MAX_VALUE.
+    	 */
+    	public Builder uppercaseQuality(int qv){
+    		highQuality = PhredQuality.valueOf(qv);
+    		return this;
+    	}
+    	/**
+    	 * Set the {@link DataStoreFilter} to use to only 
+    	 * include the reads that pass the given filter.  If a Contig Filter is also
+    	 * used by setting {@link #contigFilter(DataStoreFilter)}
+    	 * then only reads that match this filter <strong>from reads in contigs
+    	 * that also pass the contig filter</strong> are included..  If this method
+    	 * is not called, then all reads in accepted contigs are included in the datastore.
+    	 * @param filter a {@link DataStoreFilter} to filter
+    	 * by <em>contigId</em>; can not be null.
+    	 * @return this.
+    	 * @throws NullPointerException if filter is null.
+    	 */
+    	public Builder readFilter(DataStoreFilter filter){
+    		if(filter ==null){
+    			throw new NullPointerException("readFilter can not be null");
+    		}
+    		this.readFilter = filter;
+    		return this;
+    	}
+    	/**
+    	 * Set the {@link DataStoreFilter} to use to only 
+    	 * consider contigs that pass the filter.  If this method
+    	 * is not called, then all contigs are included in the datastore.
+    	 * @param filter a {@link DataStoreFilter} to filter
+    	 * by <em>contigId</em>; can not be null.
+    	 * @return this.
+    	 * @throws NullPointerException if filter is null.
+    	 */
+    	public Builder contigFilter(DataStoreFilter filter){
+    		if(filter ==null){
+    			throw new NullPointerException("contigFilter can not be null");
+    		}
+    		this.contigFilter = filter;
+    		return this;
+    	}
+    	/**
+    	 * Flag to set that this DataStore will only
+    	 * include reads from the first contig
+    	 * that passes the contig filter (as specified
+    	 * by {@link #contigFilter(DataStoreFilter)}).
+    	 * Once the first accepted contig is completely parsed,
+    	 * the parser will halt parsing the ace file.  This
+    	 * can be very helpful if you only quickly want to parse
+    	 * only a portion of a very large ace file.
+    	 * @return this
+    	 */
+    	public Builder forOneContigOnly(){
+    		oneContigOnly = true;
+    		return this;
+    	}
+    	/**
+    	 * Create a new {@link PhdDataStore} that constructs
+    	 * {@link Phd} objects from the given ace data 
+    	 * using the current configuration set in this Builder. 
+    	 * @return a new {@link PhdDataStore} will never be null.
+    	 * @throws IOException if there is a problem parsing the ace data.
+    	 */
+    	public PhdDataStore build() throws IOException{
+    		return new HighLowAceContigPhdDatastore(this);
+    	}
     }
 }

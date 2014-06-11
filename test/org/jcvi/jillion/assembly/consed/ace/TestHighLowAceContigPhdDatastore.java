@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.jcvi.jillion.assembly.consed.ace.HighLowAceContigPhdDatastore;
 import org.jcvi.jillion.assembly.consed.phd.Phd;
 import org.jcvi.jillion.assembly.consed.phd.PhdBuilder;
 import org.jcvi.jillion.assembly.consed.phd.PhdDataStore;
@@ -50,7 +49,7 @@ public class TestHighLowAceContigPhdDatastore {
     @Before
     public void setup() throws IOException{
         File ace = rs.getFile("files/sample.ace");
-        sut = HighLowAceContigPhdDatastore.create(ace, "Contig1");
+        sut = HighLowAceContigPhdDatastore.create(ace);
     }
     
     @After
@@ -172,19 +171,19 @@ public class TestHighLowAceContigPhdDatastore {
 
     private void addLowQualities(QualitySequenceBuilder builder, int numberOfQualities) {
     	byte[] array = new byte[numberOfQualities];
-    	Arrays.fill(array, HighLowAceContigPhdDatastore.DEFAULT_LOW_QUALITY.getQualityScore());
+    	Arrays.fill(array, (byte) HighLowAceContigPhdDatastore.Builder.DEFAULT_LOW_QUALITY);
         builder.append(array);       
     }
     private void addLowQuality(QualitySequenceBuilder builder){
-       builder.append(HighLowAceContigPhdDatastore.DEFAULT_LOW_QUALITY.getQualityScore());
+       builder.append((byte) HighLowAceContigPhdDatastore.Builder.DEFAULT_LOW_QUALITY);
     }
     private void addHighQualities(QualitySequenceBuilder builder, int numberOfQualities) {
     	byte[] array = new byte[numberOfQualities];
-    	Arrays.fill(array, HighLowAceContigPhdDatastore.DEFAULT_HIGH_QUALITY.getQualityScore());
+    	Arrays.fill(array, (byte) HighLowAceContigPhdDatastore.Builder.DEFAULT_HIGH_QUALITY);
         builder.append(array); 
     }
     
     private void addHighQuality(QualitySequenceBuilder builder){
-    	builder.append(HighLowAceContigPhdDatastore.DEFAULT_HIGH_QUALITY.getQualityScore());
+    	builder.append((byte)HighLowAceContigPhdDatastore.Builder.DEFAULT_HIGH_QUALITY);
     }
 }
