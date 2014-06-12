@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- This XML was taken from a Stackoverlow question http://stackoverflow.com/questions/24183955/blast-output-adds-empty-iteration -->
+<!DOCTYPE BlastOutput PUBLIC "-//NCBI//NCBI BlastOutput/EN" "http://www.ncbi.nlm.nih.gov/dtd/NCBI_BlastOutput.dtd">
+    <BlastOutput>
+  <BlastOutput_program>blastn</BlastOutput_program>
+  <BlastOutput_version>blastn 2.2.26 [Sep-21-2011]</BlastOutput_version>
+  <BlastOutput_reference>~Reference: Altschul, Stephen F., Thomas L. Madden, Alejandro A. Schaffer, ~Jinghui Zhang, Zheng Zhang, Webb Miller, and David J. Lipman (1997), ~&quot;Gapped BLAST and PSI-BLAST: a new generation of protein database search~programs&quot;,  Nucleic Acids Res. 25:3389-3402.</BlastOutput_reference>
+  <BlastOutput_db>/bio/db/blast/miRNA_hair</BlastOutput_db>
+  <BlastOutput_query-ID>lcl|1_0</BlastOutput_query-ID>
+  <BlastOutput_query-def>1 &lt;unknown description&gt;</BlastOutput_query-def>
+  <BlastOutput_query-len>33</BlastOutput_query-len>
+  <BlastOutput_param>
+    <Parameters>
+      <Parameters_expect>0.01</Parameters_expect>
+      <Parameters_sc-match>1</Parameters_sc-match>
+      <Parameters_sc-mismatch>-9999</Parameters_sc-mismatch>
+      <Parameters_gap-open>0</Parameters_gap-open>
+      <Parameters_gap-extend>0</Parameters_gap-extend>
+      <Parameters_filter>F</Parameters_filter>
+    </Parameters>
+  </BlastOutput_param>
+  <BlastOutput_iterations>
+    <Iteration>
+      <Iteration_iter-num>1</Iteration_iter-num>
+      <Iteration_query-ID>lcl|1_0</Iteration_query-ID>
+      <Iteration_query-def>1 &lt;unknown description&gt;</Iteration_query-def>
+      <Iteration_query-len>33</Iteration_query-len>
+      <Iteration_stat>
+        <Statistics>
+          <Statistics_db-num>16772</Statistics_db-num>
+          <Statistics_db-len>1687748</Statistics_db-len>
+          <Statistics_hsp-len>0</Statistics_hsp-len>
+          <Statistics_eff-space>0</Statistics_eff-space>
+          <Statistics_kappa>0.75</Statistics_kappa>
+          <Statistics_lambda>1.38629</Statistics_lambda>
+          <Statistics_entropy>1.38629</Statistics_entropy>
+        </Statistics>
+      </Iteration_stat>
+      <Iteration_message>No hits found</Iteration_message>
+    </Iteration>
+    <Iteration>
+      <Iteration_iter-num>2</Iteration_iter-num>
+      <Iteration_query-ID>lcl|2_0</Iteration_query-ID>
+      <Iteration_query-def>2 &lt;unknown description&gt;</Iteration_query-def>
+      <Iteration_query-len>24</Iteration_query-len>
+      <Iteration_stat>
+        <Statistics>
+          <Statistics_db-num>16772</Statistics_db-num>
+          <Statistics_db-len>1687748</Statistics_db-len>
+          <Statistics_hsp-len>0</Statistics_hsp-len>
+          <Statistics_eff-space>0</Statistics_eff-space>
+          <Statistics_kappa>0.75</Statistics_kappa>
+          <Statistics_lambda>1.38629</Statistics_lambda>
+          <Statistics_entropy>1.38629</Statistics_entropy>
+        </Statistics>
+      </Iteration_stat>
+      <Iteration_message>No hits found</Iteration_message>
+    </Iteration>
+    <Iteration>
+      <Iteration_iter-num>3</Iteration_iter-num>
+      <Iteration_query-ID>lcl|3_0</Iteration_query-ID>
+      <Iteration_query-def>3 &lt;unknown description&gt;</Iteration_query-def>
+      <Iteration_query-len>27</Iteration_query-len>
+      <Iteration_stat>
+        <Statistics>
+          <Statistics_db-num>16772</Statistics_db-num>
+          <Statistics_db-len>1687748</Statistics_db-len>
+          <Statistics_hsp-len>0</Statistics_hsp-len>
+          <Statistics_eff-space>0</Statistics_eff-space>
+          <Statistics_kappa>0.75</Statistics_kappa>
+          <Statistics_lambda>1.38629</Statistics_lambda>
+          <Statistics_entropy>1.38629</Statistics_entropy>
+        </Statistics>
+      </Iteration_stat>
+      <Iteration_message>No hits found</Iteration_message>
+    </Iteration>
+    <Iteration>
+      <Iteration_iter-num>4</Iteration_iter-num>
+      <Iteration_query-ID>lcl|4_0</Iteration_query-ID>
+      <Iteration_query-def>4 &lt;unknown description&gt;</Iteration_query-def>
+      <Iteration_query-len>25</Iteration_query-len>
+      <Iteration_stat>
+        <Statistics>
+          <Statistics_db-num>16772</Statistics_db-num>
+          <Statistics_db-len>1687748</Statistics_db-len>
+          <Statistics_hsp-len>0</Statistics_hsp-len>
+          <Statistics_eff-space>0</Statistics_eff-space>
+          <Statistics_kappa>0.75</Statistics_kappa>
+          <Statistics_lambda>1.38629</Statistics_lambda>
+          <Statistics_entropy>1.38629</Statistics_entropy>
+        </Statistics>
+      </Iteration_stat>
+      <Iteration_message>No hits found</Iteration_message>
+    </Iteration>
+    <Iteration>
+      <Iteration_iter-num>5</Iteration_iter-num>
+      <Iteration_query-ID>lcl|5_0</Iteration_query-ID>
+      <Iteration_query-def>5 &lt;unknown description&gt;</Iteration_query-def>
+      <Iteration_query-len>27</Iteration_query-len>
+      <Iteration_stat>
+        <Statistics>
+          <Statistics_db-num>16772</Statistics_db-num>
+          <Statistics_db-len>1687748</Statistics_db-len>
+          <Statistics_hsp-len>0</Statistics_hsp-len>
+          <Statistics_eff-space>0</Statistics_eff-space>
+          <Statistics_kappa>0.75</Statistics_kappa>
+          <Statistics_lambda>1.38629</Statistics_lambda>
+          <Statistics_entropy>1.38629</Statistics_entropy>
+        </Statistics>
+      </Iteration_stat>
+      <Iteration_message>No hits found</Iteration_message>
+    </Iteration>
+    <Iteration>
+      <Iteration_iter-num>6</Iteration_iter-num>
+      <Iteration_query-ID>lcl|6_0</Iteration_query-ID>
+      <Iteration_query-def>6 &lt;unknown description&gt;</Iteration_query-def>
+      <Iteration_query-len>35</Iteration_query-len>
+      <Iteration_stat>
+        <Statistics>
+          <Statistics_db-num>16772</Statistics_db-num>
+          <Statistics_db-len>1687748</Statistics_db-len>
+          <Statistics_hsp-len>0</Statistics_hsp-len>
+          <Statistics_eff-space>0</Statistics_eff-space>
+          <Statistics_kappa>0.75</Statistics_kappa>
+          <Statistics_lambda>1.38629</Statistics_lambda>
+          <Statistics_entropy>1.38629</Statistics_entropy>
+        </Statistics>
+      </Iteration_stat>
+      <Iteration_message>No hits found</Iteration_message>
+    </Iteration>
+    <Iteration>
+      <Iteration_iter-num>7</Iteration_iter-num>
+      <Iteration_query-ID>lcl|7_0</Iteration_query-ID>
+      <Iteration_query-def>7 &lt;unknown description&gt;</Iteration_query-def>
+      <Iteration_query-len>26</Iteration_query-len>
+      <Iteration_stat>
+        <Statistics>
+          <Statistics_db-num>16772</Statistics_db-num>
+          <Statistics_db-len>1687748</Statistics_db-len>
+          <Statistics_hsp-len>0</Statistics_hsp-len>
+          <Statistics_eff-space>0</Statistics_eff-space>
+          <Statistics_kappa>0.75</Statistics_kappa>
+          <Statistics_lambda>1.38629</Statistics_lambda>
+          <Statistics_entropy>1.38629</Statistics_entropy>
+        </Statistics>
+      </Iteration_stat>
+      <Iteration_message>No hits found</Iteration_message>
+    </Iteration>
+    <Iteration>
+      <Iteration_iter-num>8</Iteration_iter-num>
+      <Iteration_query-ID>lcl|8_0</Iteration_query-ID>
+      <Iteration_query-def>8 &lt;unknown description&gt;</Iteration_query-def>
+      <Iteration_query-len>40</Iteration_query-len>
+      <Iteration_stat>
+        <Statistics>
+          <Statistics_db-num>16772</Statistics_db-num>
+          <Statistics_db-len>1687748</Statistics_db-len>
+          <Statistics_hsp-len>0</Statistics_hsp-len>
+          <Statistics_eff-space>0</Statistics_eff-space>
+          <Statistics_kappa>0.75</Statistics_kappa>
+          <Statistics_lambda>1.38629</Statistics_lambda>
+          <Statistics_entropy>1.38629</Statistics_entropy>
+        </Statistics>
+      </Iteration_stat>
+      <Iteration_message>No hits found</Iteration_message>
+    </Iteration>
+    <Iteration>
+      <Iteration_iter-num>1</Iteration_iter-num>
+      <Iteration_stat>
+        <Statistics>
+          <Statistics_db-num>16772</Statistics_db-num>
+          <Statistics_db-len>1687748</Statistics_db-len>
+          <Statistics_hsp-len>0</Statistics_hsp-len>
+          <Statistics_eff-space>0</Statistics_eff-space>
+          <Statistics_kappa>0.75</Statistics_kappa>
+          <Statistics_lambda>1.38629</Statistics_lambda>
+          <Statistics_entropy>1.38629</Statistics_entropy>
+        </Statistics>
+      </Iteration_stat>
+    </Iteration>
+  </BlastOutput_iterations>
+</BlastOutput>
