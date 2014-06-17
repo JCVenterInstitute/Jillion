@@ -84,7 +84,7 @@ public final class BlosumMatrices {
 		String file = String.format("blosum%d.matrix",value);
 		try {
 			return AminoAcidSubstitutionMatrixFileParser.parse(
-					RESOURCE_HELPER.getFile(file));
+					RESOURCE_HELPER.getFileAsStream(file));
 		} catch (IOException e) {
 			throw new IllegalStateException("could not parse substitution matrix file", e);
 		}
