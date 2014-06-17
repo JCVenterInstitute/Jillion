@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.align;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 /**
  * {@code NucleotideSubstitutionMatrices}
@@ -41,7 +40,7 @@ public final class NucleotideSubstitutionMatrices {
 																		.build();
 	static{
 		try {
-			NUC_4_4 = NucleotidePropertyFileScoringMatrixParser.parse(new File(NucleotideSubstitutionMatrices.class.getResource("nuc4.4.matrix").getFile()));
+			NUC_4_4 = NucleotidePropertyFileScoringMatrixParser.parse(NucleotideSubstitutionMatrices.class.getResourceAsStream("nuc4.4.matrix"));
 		} catch (FileNotFoundException e) {
 			throw new IllegalStateException("could not parse nuc4.4.matrix file", e);
 		}
