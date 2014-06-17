@@ -44,6 +44,18 @@ final class NucleotidePropertyFileScoringMatrixParser extends AbstractSubstituti
 			}
 		}
 	}
+	
+	public static NucleotidePropertyFileScoringMatrixParser parse(InputStream maxtrix) throws FileNotFoundException{
+		InputStream in = null;
+		try{
+			in = new BufferedInputStream(maxtrix);
+			return new NucleotidePropertyFileScoringMatrixParser(in);
+		}finally{
+			if(in !=null){
+				IOUtil.closeAndIgnoreErrors(in);
+			}
+		}
+	}
 	private NucleotidePropertyFileScoringMatrixParser(InputStream in) {
 		super(in);
 	}
