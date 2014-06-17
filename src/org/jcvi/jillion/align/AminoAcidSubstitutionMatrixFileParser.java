@@ -45,6 +45,18 @@ final class AminoAcidSubstitutionMatrixFileParser extends AbstractSubstitutionMa
 		}
 	}
 	
+	public static AminoAcidSubstitutionMatrixFileParser parse(InputStream maxtrix) throws FileNotFoundException{
+		InputStream in = null;
+		try{
+			in = new BufferedInputStream(maxtrix);
+			return new AminoAcidSubstitutionMatrixFileParser(in);
+		}finally{
+			if(in !=null){
+				IOUtil.closeAndIgnoreErrors(in);
+			}
+		}
+	}
+	
 	private AminoAcidSubstitutionMatrixFileParser(InputStream in) {
 		super(in);
 	}
