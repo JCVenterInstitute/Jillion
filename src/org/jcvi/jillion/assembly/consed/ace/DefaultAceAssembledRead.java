@@ -324,13 +324,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
         public Range asRange(){
             return delegateBuilder.asRange();
         }
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public synchronized NucleotideSequenceBuilder getNucleotideSequenceBuilder() {
-            return delegateBuilder.getNucleotideSequenceBuilder();
-        }
+       
         
         /**
         * {@inheritDoc}

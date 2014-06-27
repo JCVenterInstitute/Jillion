@@ -311,13 +311,7 @@ final class DefaultAsmAssembledRead implements AsmAssembledRead{
         public Range asRange(){
             return delegateBuilder.asRange();
         }
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public synchronized NucleotideSequenceBuilder getNucleotideSequenceBuilder() {
-            return delegateBuilder.getNucleotideSequenceBuilder();
-        }
+
         
         /**
         * {@inheritDoc}

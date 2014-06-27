@@ -27,7 +27,6 @@ import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 import org.jcvi.jillion.internal.assembly.DefaultAssembledRead;
 
@@ -296,14 +295,7 @@ final class DefaultTasmAssembledRead implements TasmAssembledRead{
             return delegate.asRange();
         }
 
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public NucleotideSequenceBuilder getNucleotideSequenceBuilder() {
-            return delegate.getNucleotideSequenceBuilder();
-        }
-
+       
         /**
         * {@inheritDoc}
         */
