@@ -55,11 +55,12 @@ final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegio
     public int getCoverageDepth() {
         return elements.size();
     }
-
-   
-    
     
     @Override
+	public long getLength() {
+		return range.getLength();
+	}
+	@Override
 	public Iterator<T> iterator() {
 		return elements.iterator();
 	}
