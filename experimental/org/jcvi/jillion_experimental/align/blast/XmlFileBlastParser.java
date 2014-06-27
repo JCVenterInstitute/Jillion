@@ -23,6 +23,7 @@ package org.jcvi.jillion_experimental.align.blast;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.math.BigDecimal;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,6 +43,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
 import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
@@ -74,6 +76,7 @@ public final class XmlFileBlastParser implements BlastParser{
 
 	private static SAXParser createSaxParser() throws IOException {
 		SAXParserFactory spf = SAXParserFactory.newInstance();
+		spf.setValidating(false);
 		 SAXParser parser;
 		try {
 			parser = spf.newSAXParser();
@@ -188,6 +191,20 @@ public final class XmlFileBlastParser implements BlastParser{
         SaxBlastParser(BlastVisitor visitor){
             this.visitor = visitor;
         }
+        
+        
+        
+        @Override
+		public InputSource resolveEntity(String publicId, String systemId)
+				throws IOException, SAXException {
+			//for some stupid reason, SAXParser#parse()
+        	//ignores our dtd validation settings
+        	//
+        	//so we have to override this method
+        	//to do a NullObject dtd resolution and check
+			return new InputSource(new StringReader(""));
+		}
+        
         /**
         * {@inheritDoc}
         */
