@@ -47,5 +47,12 @@ public interface CoverageRegion<T extends Rangeable> extends Rangeable, Iterable
      * this region.
      * @return an integer {@code >= 0}.
      */
-    int getCoverageDepth();    
+    int getCoverageDepth();   
+    /**
+     * Get the length of this coverage region.
+     * Should return the same value as the length 
+     * from {@code asRange().getLength()}.
+     * @return the length; will always be >=0.
+     */
+    long getLength();
 }
