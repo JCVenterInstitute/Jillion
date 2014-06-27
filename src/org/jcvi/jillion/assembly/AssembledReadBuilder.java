@@ -25,7 +25,6 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Rangeable;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 
 /**
  * {@code AssembledReadBuilder} is a {@link Builder}
@@ -139,10 +138,6 @@ public interface AssembledReadBuilder<R extends AssembledRead> extends Rangeable
      */
     Range asRange();
 
-    /**
-     * @return the basesBuilder
-     */
-    NucleotideSequenceBuilder getNucleotideSequenceBuilder();
     /**
      * Get the current gapped bases of this read 
      * as a NucleotideSequence.  This sequence is immutable
