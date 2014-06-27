@@ -37,7 +37,7 @@ public class TestDefaultAceAssembledReadBuilder extends AbstractTestAssembledRea
 		AceAssembledReadBuilder builder= DefaultAceAssembledRead.createBuilder(
 				readId, validBases, offset, 
 				dir, clearRange, phdInfo,
-				ungappedFullLength);
+				ungappedFullLength,null);
 
 		return builder;
 	}

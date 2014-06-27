@@ -44,9 +44,10 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
     
     
     public static AceAssembledReadBuilder createBuilder(String readId, NucleotideSequence validBases,int offset,
-            Direction dir, Range clearRange, PhdInfo phdInfo,int ungappedFullLength){
+            Direction dir, Range clearRange, PhdInfo phdInfo,int ungappedFullLength,
+            AceContigBuilder callback){
         return new Builder(readId, validBases, offset, 
-                dir, clearRange, phdInfo, ungappedFullLength);
+                dir, clearRange, phdInfo, ungappedFullLength,callback);
     }
     private DefaultAceAssembledRead(AssembledRead placedRead, PhdInfo phdInfo) {
         this.placedRead = placedRead;
@@ -188,17 +189,19 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
     }
 
 
-    private static class Builder implements AceAssembledReadBuilder{
+    static final class Builder implements AceAssembledReadBuilder{
         private final PhdInfo phdInfo;        
         private final AssembledReadBuilder<AssembledRead> delegateBuilder;
-        
+        private AceContigBuilder contigBuilder;
         
         public Builder(String readId, NucleotideSequence validBases,int offset,
-                            Direction dir, Range clearRange, PhdInfo phdInfo,int ungappedFullLength){
+                            Direction dir, Range clearRange, PhdInfo phdInfo,int ungappedFullLength,
+                            AceContigBuilder callback){
             this.delegateBuilder = DefaultAssembledRead.createBuilder(
                     readId, validBases, offset, dir,
                     clearRange, ungappedFullLength);
             this.phdInfo = phdInfo;
+            this.contigBuilder = callback;
         }
         
         private Builder(Builder copy){
@@ -210,12 +213,24 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
         @Override
 		public AceAssembledReadBuilder trim(Range trimRange) {
 			delegateBuilder.trim(trimRange);
+			fireContigSizeUpdate();
 			return this;
 		}
 
 		@Override
 		public AceAssembledReadBuilder copy() {
 			return new Builder(this);
+		}
+		
+		public void setParentContigBuilder(AceContigBuilder contigBuilder){
+			this.contigBuilder = contigBuilder;
+			
+		}
+		
+		private void fireContigSizeUpdate(){
+			if(contigBuilder !=null){
+				contigBuilder.updatedReadRange(getId(), getBegin(), getEnd());
+			}
 		}
 		
         /**
@@ -238,6 +253,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
         @Override
         public Builder setStartOffset(int newOffset){
             delegateBuilder.setStartOffset(newOffset);
+            fireContigSizeUpdate();
             return this;
         }
       
@@ -249,6 +265,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
         @Override
         public Builder shift(int numberOfBases){
             delegateBuilder.shift(numberOfBases);
+            fireContigSizeUpdate();
             return this;
         }
         /**
@@ -301,6 +318,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
         @Override
         public Builder reAbacus(Range gappedValidRangeToChange, NucleotideSequence newBasecalls){
             delegateBuilder.reAbacus(gappedValidRangeToChange, newBasecalls);
+            fireContigSizeUpdate();
             return this;
         }
         /**
@@ -324,7 +342,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
         public Range asRange(){
             return delegateBuilder.asRange();
         }
-       
+        
         
         /**
         * {@inheritDoc}
@@ -337,6 +355,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
 		@Override
 		public AceAssembledReadBuilder append(Nucleotide base) {
 			delegateBuilder.append(base);
+			fireContigSizeUpdate();
 			return this;
 		}
 
@@ -345,6 +364,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
 		public AceAssembledReadBuilder append(
 				Iterable<Nucleotide> sequence) {
 			delegateBuilder.append(sequence);
+			fireContigSizeUpdate();
 			return this;
 		}
 
@@ -352,6 +372,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
 		@Override
 		public AceAssembledReadBuilder append(String sequence) {
 			delegateBuilder.append(sequence);
+			fireContigSizeUpdate();
 			return this;
 		}
 
@@ -360,6 +381,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
 		public AceAssembledReadBuilder insert(int offset,
 				String sequence) {
 			delegateBuilder.insert(offset, sequence);
+			fireContigSizeUpdate();
 			return this;
 		}
 
@@ -368,6 +390,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
 		public AceAssembledReadBuilder replace(int offset,
 				Nucleotide replacement) {
 			delegateBuilder.replace(offset, replacement);
+			fireContigSizeUpdate();
 			return this;
 		}
 
@@ -375,6 +398,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
 		@Override
 		public AceAssembledReadBuilder delete(Range range) {
 			delegateBuilder.delete(range);
+			fireContigSizeUpdate();
 			return this;
 		}
 
@@ -400,6 +424,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
 		@Override
 		public AceAssembledReadBuilder prepend(String sequence) {
 			delegateBuilder.prepend(sequence);
+			fireContigSizeUpdate();
 			return this;
 		}
 
@@ -408,6 +433,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
 		public AceAssembledReadBuilder insert(int offset,
 				Iterable<Nucleotide> sequence) {
 			delegateBuilder.insert(offset, sequence);
+			fireContigSizeUpdate();
 			return this;
 		}
 
@@ -416,6 +442,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
 		public AceAssembledReadBuilder insert(int offset,
 				Nucleotide base) {
 			delegateBuilder.insert(offset, base);
+			fireContigSizeUpdate();
 			return this;
 		}
 
@@ -424,6 +451,7 @@ final class DefaultAceAssembledRead implements AceAssembledRead {
 		public AceAssembledReadBuilder prepend(
 				Iterable<Nucleotide> sequence) {
 			delegateBuilder.prepend(sequence);
+			fireContigSizeUpdate();
 			return this;
 		}
 
