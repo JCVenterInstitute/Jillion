@@ -46,6 +46,7 @@ public final class DefaultAssembledRead implements AssembledRead {
     private final ReferenceMappedNucleotideSequence sequence;
     private final String id;
     private final ReadInfo readInfo;
+
     
     public static AssembledReadBuilder<AssembledRead> createBuilder(String readId, 
             NucleotideSequence validBases,int offset,
@@ -61,7 +62,8 @@ public final class DefaultAssembledRead implements AssembledRead {
                  ungappedFullLength);
     }
     
-    public DefaultAssembledRead(String id, ReferenceMappedNucleotideSequence sequence, long start, Direction sequenceDirection, int ungappedFullLength, Range validRange){
+    public DefaultAssembledRead(String id, ReferenceMappedNucleotideSequence sequence, 
+    		long start, Direction sequenceDirection, int ungappedFullLength, Range validRange){
        this.id = id;
        this.sequence = sequence;
         this.start= start;
@@ -210,7 +212,6 @@ public final class DefaultAssembledRead implements AssembledRead {
         private final Direction dir;
         private int ungappedFullLength;
         
-        
         private Builder( Builder copy){
         	this.readId = copy.readId;
             this.dir =copy.dir;
@@ -283,6 +284,7 @@ public final class DefaultAssembledRead implements AssembledRead {
             return this;
         }
         
+       
         /**
         * {@inheritDoc}
         */
@@ -394,11 +396,8 @@ public final class DefaultAssembledRead implements AssembledRead {
         public Range asRange(){
             return Range.of(offset,getEnd());
         }
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public synchronized NucleotideSequenceBuilder getNucleotideSequenceBuilder() {
+
+        private synchronized NucleotideSequenceBuilder getNucleotideSequenceBuilder() {
             if(basesBuilder==null){
                 this.basesBuilder = new NucleotideSequenceBuilder(originalSequence);
                 originalSequence=null;
@@ -524,7 +523,6 @@ public final class DefaultAssembledRead implements AssembledRead {
 				//update ungapped full length accordingly
 				ungappedFullLength-=numberOfUngappedBasesDeleted;
 			}
-			
 			return this;
 		}
 

@@ -22,6 +22,12 @@ package org.jcvi.jillion.core.util.iter;
 
 import java.io.Closeable;
 import java.util.Iterator;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+import org.jcvi.jillion.core.io.StreamUtil;
 
 /**
  * {@code StreamingIterator} is an
@@ -114,6 +120,29 @@ public interface StreamingIterator<T> extends Closeable, Iterator<T>{
      * @throws UnsupportedOperationException always.
      */
     @Override
-    void remove();
+    default void remove(){
+    	throw new UnsupportedOperationException();
+    }
+    /**
+     * Convert this StreamingIterator into aJava 8 {@link Stream}.
+     * The returned Stream
+     * must be closed when finished so it is recommended
+     * that it is enclosed in a try-with-resource block.
+     * <strong>Note:</strong> The returned Stream
+     * will iterate over the elements in this
+     * Stream so if this method is called,
+     * do not call {@link #next()} or {@link #close()}
+     * directly
+     * or make any assumptions from
+     * the returned values of {@link #hasNext()}.
+     * @return a new Stream,
+     *  will never be null.
+     */
+    default Stream<T> toStream(){
+    	return StreamSupport.stream(Spliterators.spliteratorUnknownSize(
+                	this, Spliterator.ORDERED | Spliterator.NONNULL), false)
+                .onClose(
+                		StreamUtil.newOnCloseRunnableThatThrowsUncheckedIOExceptionIfNecessary(this));
+    }
 
 }

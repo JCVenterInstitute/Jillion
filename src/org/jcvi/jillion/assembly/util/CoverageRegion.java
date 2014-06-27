@@ -26,6 +26,8 @@
 package org.jcvi.jillion.assembly.util;
 
 
+import java.util.stream.Stream;
+
 import org.jcvi.jillion.core.Rangeable;
 /**
  * A {@link CoverageRegion} is a contiguous 
@@ -47,5 +49,15 @@ public interface CoverageRegion<T extends Rangeable> extends Rangeable, Iterable
      * this region.
      * @return an integer {@code >= 0}.
      */
-    int getCoverageDepth();    
+    int getCoverageDepth();
+    /**
+     * Get the length of this coverage region.
+     * Should return the same value as the length 
+     * from {@code asRange().getLength()}.
+     * @return the length; will always be >=0.
+     */
+    long getLength();
+    
+    
+    Stream<T> streamElements();
 }

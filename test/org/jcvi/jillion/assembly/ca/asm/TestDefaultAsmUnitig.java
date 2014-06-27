@@ -25,8 +25,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
+import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -78,12 +81,17 @@ public class TestDefaultAsmUnitig {
 		
 		AsmAssembledRead read =unitig.getRead("read1");
 		assertEquals("ACGTACGT", read.getNucleotideSequence().toString());
-		assertIteratorMatches(Arrays.asList(read, unitig.getRead("read2")), unitig.getReadIterator());
+		assertEquals(toMap(Arrays.asList(read, unitig.getRead("read2")).iterator()), toMap(unitig.getReadIterator()));
+	//	assertIteratorMatches(Arrays.asList(read, unitig.getRead("read2")), unitig.getReadIterator());
 	}
 	
 	
 	
-	
+	private <T extends AssembledRead>	Map<String, T> toMap(Iterator<T> iterator){
+		Map<String, T> map = new HashMap<String, T>();
+		iterator.forEachRemaining(read -> map.put(read.getId(), read));
+		return map;
+	}
 	private <T> void  assertIteratorMatches(Iterable<T> expected, StreamingIterator<T> actual){
 		try{
 			Iterator<T> expectedIter = expected.iterator();

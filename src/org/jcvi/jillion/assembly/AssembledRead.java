@@ -118,4 +118,6 @@ public interface AssembledRead extends Rangeable{
     ReferenceMappedNucleotideSequence getNucleotideSequence();
     
     ReadInfo getReadInfo();
+    
+    
 }

@@ -20,10 +20,16 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace.sff;
 
-import org.jcvi.jillion.trace.sff.Sff454NameUtil;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+
 import org.joda.time.DateTime;
 import org.junit.Test;
-import static org.junit.Assert.*;
 /**
  * @author dkatzel
  *
@@ -80,5 +86,17 @@ public class TestSff454NameUtil {
         assertEquals("EBO6PME01EE3WX", Sff454NameUtil.generateAccessionNumberFor(rigRunName, 1, new Sff454NameUtil.Location(1695,767)));
     }
     
+    @Test
+    public void computeRigRunName(){
+    	LocalDateTime dateTime = LocalDateTime.of(2006,9,4,6,18,48);
+    	String rigName = "build04";
+    	String username = "adminrig";
+    	String freeForm = "blahblah";
+    	
+    	Date legacyDate =Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
+    	
+    	assertEquals("R_2006_09_04_06_18_48_build04_adminrig_blahblah", 
+    			Sff454NameUtil.computeRigRunName(legacyDate, rigName, username, freeForm));
+    }
     
 }

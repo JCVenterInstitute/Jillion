@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Rangeable;
@@ -60,6 +61,14 @@ final class  DefaultCoverageRegion<T extends Rangeable> implements CoverageRegio
     
     
     @Override
+	public Stream<T> streamElements() {
+		return elements.stream();
+	}
+	@Override
+	public long getLength() {
+		return range.getLength();
+	}
+	@Override
 	public Iterator<T> iterator() {
 		return elements.iterator();
 	}

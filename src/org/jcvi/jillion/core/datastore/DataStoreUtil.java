@@ -32,6 +32,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
@@ -68,7 +70,7 @@ public final class DataStoreUtil {
      * @param <T> the "To" type.  This is the type that we want to convert the type F into which may
      * require method calls or new object creation.
 	 */
-	public interface AdapterCallback<F,T>{
+	public interface AdapterCallback<F,T> extends Function<F, T>{
 		/**
 		 * Get the adapted type from the original type.
 		 * @param from the object to adapt;
@@ -80,6 +82,10 @@ public final class DataStoreUtil {
 		 * will throw a NullPointerException.
 		 */
 		T get(F from);
+		
+		default T apply(F from){
+			return get(from);
+		}
 	}
 	
 	
@@ -199,7 +205,7 @@ public final class DataStoreUtil {
      * @param <D> the Database interface type we want the returned datastore to mimic.
      */
     @SuppressWarnings("unchecked")
-	public static final <F, T, D extends DataStore<T>> D adapt(Class<D> datastoreInterface, DataStore<F> delegate, AdapterCallback<F, T> callback){
+	public static final <F, T, D extends DataStore<T>> D adapt(Class<D> datastoreInterface, DataStore<F> delegate, Function<F, T> callback){
     	return (D) Proxy.newProxyInstance(datastoreInterface.getClassLoader(), new Class<?>[]{datastoreInterface},
     			new DataStoreInvocationHandler<T>(new AdaptedDataStore<F, T>(delegate, callback)));
     }
@@ -341,9 +347,9 @@ public final class DataStoreUtil {
     }
     private static class AdaptedDataStore<F, T> implements DataStore<T>{
     	private final DataStore<F> delegate;
-    	private final AdapterCallback<F,T> callback;
+    	private final Function<F,T> callback;
     	
-		public AdaptedDataStore(DataStore<F> delegate,AdapterCallback<F,T> callback) {
+		public AdaptedDataStore(DataStore<F> delegate,Function<F,T> callback) {
 			this.delegate = delegate;
 			this.callback =callback;
 		}
@@ -369,7 +375,7 @@ public final class DataStoreUtil {
 		}
 
 		private T getResultFromCallback(F original) {
-			T ret= callback.get(original);
+			T ret= callback.apply(original);
 			if(ret==null){
 				throw new NullPointerException("return value of call back can not be null");
 				
@@ -397,7 +403,7 @@ public final class DataStoreUtil {
 				public DataStoreEntry<T> next() {
 					DataStoreEntry<F> next = delegateIterator.next();
 					String key = next.getKey();
-					T ret= callback.get(next.getValue());
+					T ret= callback.apply(next.getValue());
 					return new DataStoreEntry<T>(key, ret);
 				}
 
@@ -514,7 +520,15 @@ public final class DataStoreUtil {
 	    		this.map.put(key, value);
 	    	}
 	    }
+	    
+	    
 	    @Override
+		public Stream<T> streamRecords() throws DataStoreException {
+			return map.values().stream();
+		}
+
+
+		@Override
 	    public boolean contains(String id) throws DataStoreException {
 	    	if(id ==null){
 	    		throw new NullPointerException("id can not be null");

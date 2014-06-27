@@ -25,6 +25,8 @@
  */
 package org.jcvi.jillion.assembly;
 
+import java.util.stream.Stream;
+
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 /**
@@ -78,4 +80,15 @@ public interface Contig<T extends AssembledRead>{
      * with the given id; {@code false} otherwise.
      */
     boolean containsRead(String readId);
+    /**
+     * Create a {@link Stream} of the {@link AssembledRead}s
+     * in this contig.  By default, this method
+     * delegates to {@link #getReadIterator()}'s {@link StreamingIterator#toStream()}
+     * method.
+     * @return a new Stream of reads.
+     * @since 5.0
+     */
+    default Stream<T> streamReads(){
+    	return getReadIterator().toStream();
+    }
 }

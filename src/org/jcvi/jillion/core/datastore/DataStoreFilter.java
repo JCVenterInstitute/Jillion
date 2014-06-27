@@ -20,6 +20,8 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.datastore;
 
+import java.util.function.Predicate;
+
 /**
  * {@code DataStoreFilter} is a filter that can be applied
  * to a DataStore to only allow certain Datastore ids.
@@ -27,7 +29,7 @@ package org.jcvi.jillion.core.datastore;
  *
  *
  */
-public interface DataStoreFilter {
+public interface DataStoreFilter extends Predicate<String>{
     /**
      * Is the given id accepted by the filter.
      * @param id the id to check.
@@ -35,4 +37,12 @@ public interface DataStoreFilter {
      * by the filter {@code false} otherwise.
      */
     boolean accept(String id);
+    /**
+     * By default, delegate {@link Predicate#test(Object)}
+     * to {@link #accept(String)}.
+     * {@inheritDoc}
+     */
+    default boolean test(String id){
+    	return accept(id);
+    }
 }

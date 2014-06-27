@@ -31,7 +31,6 @@ import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
@@ -272,10 +271,7 @@ public class TigrContigBuilder extends AbstractContigBuilder<TigrContigRead, Tig
 			return builder.asRange();
 		}
 
-		@Override
-		public NucleotideSequenceBuilder getNucleotideSequenceBuilder() {
-			return builder.getNucleotideSequenceBuilder();
-		}
+		
 
 		@Override
 		public NucleotideSequence getCurrentNucleotideSequence() {

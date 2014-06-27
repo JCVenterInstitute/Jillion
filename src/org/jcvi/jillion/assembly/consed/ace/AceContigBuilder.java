@@ -38,6 +38,7 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.stream.Stream;
 
 import org.jcvi.jillion.assembly.AssemblyUtil;
 import org.jcvi.jillion.assembly.Contig;
@@ -522,7 +523,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
         return DefaultAceAssembledRead.createBuilder(
                 readId,validBases,
                 offset,
-                dir,clearRange,phdInfo,ungappedFullLength);
+                dir,clearRange,phdInfo,ungappedFullLength, this);
     }
     private void adjustContigLeftAndRight(NucleotideSequence validBases, int offset) {
         adjustContigLeft(offset);
@@ -530,6 +531,10 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     }
     private void adjustContigRight(NucleotideSequence validBases, int offset) {
         final int endOfNewRead = offset+ (int)validBases.getLength()-1;
+        adjustContigRight(endOfNewRead);
+    }
+    private void adjustContigRight(int endOfNewRead) {
+        
         if((initialConsensus ==null || endOfNewRead <= initialConsensus.getLength()) && (contigRight ==-1 || endOfNewRead > contigRight)){
             contigRight = endOfNewRead ;
         }
@@ -542,7 +547,15 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     }
     
     
-    /**
+	void updatedReadRange(String id, long begin, long end) {
+		if(aceReadBuilderMap.containsKey(id)){
+			adjustContigLeft((int)begin);
+			adjustContigRight((int)end);
+		}
+		
+	}
+
+	/**
     * {@inheritDoc}
     */
     @Override
@@ -589,6 +602,9 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
 		
         for(AceAssembledReadBuilder aceReadBuilder : aceReadBuilderMap.values()){
         	int newOffset = (int)aceReadBuilder.getBegin() - contigLeft;
+        	//turn off firing updates
+        	//since we don't want to update contigLeft and right anymore
+        	((DefaultAceAssembledRead.Builder)aceReadBuilder).setParentContigBuilder(null);
             aceReadBuilder.setStartOffset(newOffset);
             placedReads.add(aceReadBuilder.build(validConsensus));                
         } 
@@ -810,6 +826,16 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
             	int lastNonGapTrimOffset =AssemblyUtil.getLeftFlankingNonGapIndex(untrimmedReadSequence, (int) readTrimRangeBuilder.getEnd());
             	
             	
+            	
+            	//null out copy's parent contigBuilder
+            	//to avoid erroneous trim calls
+            	//to the wrong contig builder.
+            	//(we don't want to alter the original contig)
+            	//we discard this read builder anyway when
+            	//we add the final trimmed data to our new builder anyway.
+            	((DefaultAceAssembledRead.Builder)readBuilder).setParentContigBuilder(null);
+            	
+            	
             	//trim updated
             	//valid range sequence
             	//and clear range
@@ -871,6 +897,13 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
         
         
         @Override
+		public Stream<AceAssembledRead> streamReads() {
+			return contig.streamReads();
+		}
+
+
+
+		@Override
 		public QualitySequence getConsensusQualitySequence() {
 			return consensusQualities;
 		}
@@ -964,9 +997,8 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
 			if (contig.getNumberOfReads()!=other.getNumberOfReads()) {
 				return false;
 			}
-			StreamingIterator<AceAssembledRead> readIter=null;
-			try{
-				readIter = contig.getReadIterator();
+
+			try(StreamingIterator<AceAssembledRead> readIter = contig.getReadIterator()){
 				while(readIter.hasNext()){
 					AceAssembledRead read = readIter.next();
 					String readId = read.getId();
@@ -977,8 +1009,6 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
 						return false;
 					}
 				}
-			}finally{
-				IOUtil.closeAndIgnoreErrors(readIter);
 			}			
 			return true;
 		}
