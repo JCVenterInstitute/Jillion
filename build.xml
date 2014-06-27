@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Jillion" default="unit.tests" basedir=".">
 	<!--Used to set the required version of Java that RUNS the jars -->
-	<property name="jdk.version" value="1.6" />
-	<property name="version" value="4.0" />
+	<property name="jdk.version" value="1.8" />
+	<property name="version" value="5.0" />
 	<property name="project-name" value="Jillion" />
 	<property name="bin" value ="bin_ant"/>
 	<property name="reports" value ="reports"/>
@@ -62,11 +62,26 @@
 		<fileset dir="${analysis}" includes="**/*.jar"/>
 		<pathelement path= "${bin}"/>
 		</path>
-
+	
+	<path id="svnant.classpth">
+		<fileset dir="${analysis}/svn" includes="**/*.jar"/>
+	  </path>
+	
+	<taskdef name="svn" classname="com.googlecode.svntask.SvnTask" classpathref="svnant.classpth"/>
+	
+	
 	
 	<target name="revision" 
+			description = "sets the property 'revision' to the svn revision can be later used with ${revision}">
+		<svn>
+						<info path="." revisionProperty="revision" />
+					</svn>
+	</target>
+	<!--
+	<target name="revision" 
 		description = "sets the property 'revision' to the svn revision can be later used with ${revision}">
-		<!-- svntask.xml  now in root dir of svntask.dkatzel.svn1.7.jar --> 
+		 svntask.xml  now in root dir of svntask.dkatzel.svn1.7.jar --> 
+	<!--
 		<typedef resource="svntask.xml">
 		            <classpath>
 		                    <fileset dir="${analysis}/svn"/>
@@ -76,7 +91,7 @@
 				<info path="." revisionProperty="revision" />
 			</svn>
 		</target>
-	
+	-->
 	<target name="bin"
 	         description="Compile Java source and test files" depends="source.only.bin">
 		<!-- source already compiled so only compile tests -->
