@@ -26,6 +26,7 @@
 package org.jcvi.jillion.core.datastore;
 
 import java.io.Closeable;
+import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 /**
@@ -163,5 +164,16 @@ public interface DataStore<T> extends Closeable{
      * @throws DataStoreClosedException if this {@link DataStore} is closed.
      */
     StreamingIterator<DataStoreEntry<T>> entryIterator() throws DataStoreException;
+    
+    /**
+     * Create a new {@link Stream} of the records
+     * in this DataStore.
+     * @return
+     * @throws DataStoreException
+     * @since 5.0
+     */
+    default Stream<T> streamRecords() throws DataStoreException{
+    	return iterator().toStream();
+    }
     
 }

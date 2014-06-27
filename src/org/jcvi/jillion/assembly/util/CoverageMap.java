@@ -26,6 +26,7 @@
 package org.jcvi.jillion.assembly.util;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Rangeable;
@@ -74,6 +75,8 @@ public interface CoverageMap <T extends Rangeable> extends Iterable<CoverageRegi
      */
     boolean isEmpty();
 
+    CoverageMapStats getStats();
+    
     /**
      * Get the average coverage depth at each offset
      * in the coverage map. This is the same as (but may be more
@@ -126,4 +129,25 @@ public interface CoverageMap <T extends Rangeable> extends Iterable<CoverageRegi
      * It is possible for the returned CoverageRegion to have 0 depth of coverage.
      */
     CoverageRegion<T> getRegionWhichCovers(long offset);
+    /**
+     * Create a {@link Stream} of all the {@link CoverageRegion}s
+     * in this Coverage Map.
+     * @return a new Stream.
+     * @since 5.0
+     */
+    Stream<CoverageRegion<T>> stream();
+    /**
+     * Create a {@link Stream} of all the {@link CoverageRegion}s
+     * in this Coverage Map that intersect the given Range coordinates.
+     * This should return an equivalent Stream as
+     * <pre>
+     * {@code getRegionsWhichIntersect(range).stream()}
+     * </pre>
+     * but might be more efficient.
+     * @param range the Range to get all the coverageRegions for.
+     * @return a new Stream
+     * @throws NullPointerException if range is null.
+     * @since 5.0
+     */
+    Stream<CoverageRegion<T>> stream(Range range);
 }

@@ -22,4 +22,13 @@ package org.jcvi.jillion.core.util.iter;
 
 public interface PeekableStreamingIterator<T> extends StreamingIterator<T>, PeekableIterator<T>{
 
+	/**
+	 * Remove is not supported.
+	 * Will always throw {@link UnsupportedOperationException}.
+	 * @throws UnsupportedOperationException always.
+	 */
+	@Override
+	default void remove(){
+		throw new UnsupportedOperationException();
+	}
 }

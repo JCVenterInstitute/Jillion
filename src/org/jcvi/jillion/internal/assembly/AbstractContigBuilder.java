@@ -325,6 +325,7 @@ public abstract class AbstractContigBuilder<P extends AssembledRead, C extends C
         public NucleotideSequenceBuilder getConsensusBuilder() {
             return consensus;
         }
+		
         
         
    

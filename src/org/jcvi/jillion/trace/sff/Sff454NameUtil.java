@@ -21,12 +21,17 @@
 package org.jcvi.jillion.trace.sff;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.jcvi.jillion.internal.core.util.Validator;
 
 /**
  * 454 Universal Accession Numbers are generated for each read based on the date
@@ -44,6 +49,7 @@ public final class Sff454NameUtil {
      */
     private static final Pattern UNIVERSAL_ACCCESSION_NUM_PATTERN = Pattern.compile("^([A-Z0-9]{7}\\d\\d[A-Z0-9]{5})\\S*$");
     
+    private static final Predicate<String> STRING_NOT_EMPTY = (s)-> !s.isEmpty();
     
     private Sff454NameUtil(){
         //can not instantiate
@@ -76,6 +82,39 @@ public final class Sff454NameUtil {
         throw new IllegalArgumentException("not a valid 454 read id: "+ readId);
     }
     /**
+     * Compute a Rig Run Name String for the given 
+     * date of the run, the rig name, the user who executed the run
+     * @param date
+     * @param rigName
+     * @param username
+     * @param uniqueRunName
+     * @return
+     */
+    public static String computeRigRunName(Date date, String rigName, String username, String uniqueRunName){
+    	if(date ==null){
+    		throw new NullPointerException("date can not be null");
+    	}
+    	
+		Validator.validate(username, STRING_NOT_EMPTY, (u)->"username is empty");
+		Validator.validate(uniqueRunName, STRING_NOT_EMPTY, (u)->"unique run is empty");
+    	
+    	LocalDateTime datetime =LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+    	
+    	return String.format("R_%04d_%02d_%02d_%02d_%02d_%02d_%s_%s_%s",
+    			datetime.getYear(),
+    			datetime.getMonthValue(),
+    			datetime.getDayOfMonth(),
+    			datetime.getHour(),
+    			datetime.getMinute(),
+    			datetime.getSecond(),
+    			rigName,
+    			username,
+    			uniqueRunName
+    			);
+    }
+   
+   
+    /**
      * Generate the correct 454 Universal Accession Number
      * for the given rigRunName, region number and well location.
      * @param rigRunName the name of the 454 rig run (usually starts 
@@ -102,6 +141,8 @@ public final class Sff454NameUtil {
         RigRun rigRun = new RigRun(rigRunName);
         
         final Date dateOfRigRun = rigRun.getDate();
+        
+        
         final BigInteger encodedDate = _454DateEncoder.INSTANCE.encode(dateOfRigRun);
         return new StringBuilder()
                     .append(_454Base36Encoder.INSTANCE.encode(encodedDate))
@@ -111,6 +152,7 @@ public final class Sff454NameUtil {
                     .toString();
         
     }
+	
     
     
     /**
@@ -132,6 +174,8 @@ public final class Sff454NameUtil {
         BigInteger timeStamp = _454Base36Encoder.INSTANCE.decode(substring);        
         return _454DateEncoder.INSTANCE.decode(timeStamp);
     }
+    
+    
     
     /**
      * Parse the region number of where on the machine this
@@ -394,6 +438,7 @@ public final class Sff454NameUtil {
         private final Date dateOfRun;
         private final char hash;
         
+       
         private RigRun(String rigRunName){
             this.dateOfRun = parseDateFrom(rigRunName);
             this.hash = generate454Hash(rigRunName);

@@ -233,6 +233,8 @@ public final class IOUtil {
                 //ignored on purpose
         }
     }
+    
+    
     /**
      * Close the given {@link ResultSet} and ignore any exceptions
      * that are thrown.  Passing in a null will do nothing.

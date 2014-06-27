@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.AssemblyUtil;
@@ -205,23 +206,12 @@ final class CoverageMapFactory {
     private static final class CoverageMapImpl<V extends Rangeable> implements CoverageMap<V>{
 	    private final CoverageRegion<V>[] regions;
 	    /**
-	     * The avg coverage of this coverage map
-	     * we will lazy load this value
-	     * since it could be expensive to compute.
+	     * Statistics of this coverage map
+	     * lazily computed since it is an
+	     * expensive operation.
 	     */
-	    private Double avgCoverage =null;
-	    /**
-	     * The min coverage of this coverage map
-	     * we will lazy load this value
-	     * since it could be expensive to compute.
-	     */
-	    private Integer minCoverage =null;
-	    /**
-	     * The max coverage of this coverage map
-	     * we will lazy load this value
-	     * since it could be expensive to compute.
-	     */
-	    private Integer maxCoverage =null;
+	    private CoverageMapStats stats=null;
+	    
 	    /**
 	     *
 	     * Creates a new <code>CoverageMapImpl</code>.
@@ -239,28 +229,33 @@ final class CoverageMapFactory {
 	    public CoverageRegion<V> getRegion(int i) {	    	
 	        return regions[i];
 	    }
-	    
+	    @Override
+	    public synchronized CoverageMapStats getStats(){
+	    	if(stats ==null){
+	    		computeStats();
+	    	}
+	    	return stats;
+	    }
 	    @Override
 	    public synchronized double getAverageCoverage(){
-	        if(avgCoverage ==null){
-		    	computeMinMaxAndAvgCoverage();
+	        if(stats ==null){
+		    	computeStats();
 	        }
-	        return avgCoverage;
+	        return stats.getAvgCoverage();
 	    }
-		public synchronized void computeMinMaxAndAvgCoverage() {
+		public synchronized void computeStats() {
 			
 			if(isEmpty()){
-				avgCoverage = 0D;
-				minCoverage = 0;
-				maxCoverage = 0;
+				stats = new CoverageMapStats(0, 0, 0);
 				return;
 			}
+			/*
 			long totalLength = 0L;
 			long totalCoverage =0L;
 			
 			int minCoverage = Integer.MAX_VALUE;
 			int maxCoverage = Integer.MIN_VALUE;
-			
+			/*
 			for(CoverageRegion<?> region : this){
 				long regionLength = region.asRange().getLength();
 				totalLength +=regionLength;
@@ -273,32 +268,29 @@ final class CoverageMapFactory {
 					maxCoverage = coverageDepth;
 				}
 			}
-			if(totalLength==0L){
-				avgCoverage=0D;
-				minCoverage = 0;
-				maxCoverage = 0;
-			}else{
-				avgCoverage = totalCoverage/(double)totalLength;
-				this.minCoverage = minCoverage;
-				this.maxCoverage = maxCoverage;
-			}
+			*/
+			//use java 8 streams for faster performance?
+			stats = Arrays.stream(regions)
+											.parallel()
+											.collect(CoverageMapCollectors.computeStats());
+			
 		}
 	  
 	    
 	    
 	    @Override
 		public synchronized int getMinCoverage() {
-	    	if(minCoverage ==null){
-		    	computeMinMaxAndAvgCoverage();
+	    	if(stats ==null){
+		    	computeStats();
 	        }
-			return minCoverage;
+			return stats.getMinCoverage();
 		}
 		@Override
 		public synchronized int getMaxCoverage() {
-	    	if(maxCoverage ==null){
-		    	computeMinMaxAndAvgCoverage();
+	    	if(stats ==null){
+		    	computeStats();
 	        }
-			return maxCoverage;
+			return stats.getMaxCoverage();
 		}
 		@Override
 	    public boolean equals(Object obj) {
@@ -415,6 +407,58 @@ final class CoverageMapFactory {
 	    public boolean isEmpty() {
 	        return regions.length==0;
 	    }
+		@Override
+		public Stream<CoverageRegion<V>> stream() {
+			return Arrays.stream(regions);
+		}
+		@Override
+		public Stream<CoverageRegion<V>> stream(Range range) {
+			//TODO this beginning part of the code 
+			//is copy and pasted from #getRegionsWhichIntersect
+			
+			if(range ==null){
+	    		throw new NullPointerException("range can not be null");
+	    	}
+	    	if(this.isEmpty() || range.isEmpty()){
+	    		//empty coverage map or
+	    		//empty ranges never intersect anything
+	    		return Collections.<CoverageRegion<V>>emptyList().stream();
+	    	}	    	
+	    	if(regions[0].asRange().getBegin() > range.getEnd()){
+	    		//region is entirely before coverage map
+	    		return Collections.<CoverageRegion<V>>emptyList().stream();
+	    	}
+	    	if(regions[regions.length-1].asRange().getEnd() < range.getBegin()){
+	    		//region is entirely after coverage map
+	    		return Collections.<CoverageRegion<V>>emptyList().stream();
+	    	}
+	    	CoverageRegion<V> fakeRegion = new DefaultCoverageRegion.Builder<V>(range.getBegin(), Collections.<V>emptyList())
+	    											.end(range.getEnd())
+	    											.build();
+	    	
+	    	int beginIndex =Arrays.binarySearch(regions, fakeRegion, CoverageRegionComparators.BY_BEGIN);
+	    	int endIndex =Arrays.binarySearch(regions, fakeRegion, CoverageRegionComparators.BY_END);
+	    	
+	    	
+	    	//Arrays.binarySearch will return a negative
+	    	//(index+1) if the key isn't found but the 
+	    	//absolute value -1 is where the key 
+	    	//WOULD be if it was in the array
+	    	//which is good enough for our intersection
+	    	//so we need to adjust the offset by either 1 if it's
+	    	//the end index or 2
+	    	//if its the beginIndex
+	    	//to get
+	    	//the flanking region to be included
+	    	
+	    	int correctedBeginIndex = Math.max(0, beginIndex<0? Math.abs(beginIndex) -2 : beginIndex);
+	    	int correctedEndIndex = Math.min(regions.length -1, endIndex <0? Math.abs(endIndex)-1  : endIndex);
+	    	
+			return Arrays.stream(regions, correctedBeginIndex, correctedEndIndex +1);
+		}
+	    
+	    
+	    
 
     }
     

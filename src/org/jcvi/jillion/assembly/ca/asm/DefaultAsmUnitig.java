@@ -28,7 +28,6 @@ import org.jcvi.jillion.assembly.util.GapQualityValueStrategy;
 import org.jcvi.jillion.assembly.util.consensus.ConsensusCaller;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
@@ -128,9 +127,8 @@ final class DefaultAsmUnitig implements AsmUnitig{
 		if (getNumberOfReads()!=other.getNumberOfReads()) {
 			return false;
 		}
-		StreamingIterator<AsmAssembledRead> readIter=null;
-		try{
-			readIter = getReadIterator();
+		try(StreamingIterator<AsmAssembledRead> readIter = getReadIterator()){
+			
 			while(readIter.hasNext()){
 				AsmAssembledRead read = readIter.next();
 				String readId = read.getId();
@@ -141,9 +139,7 @@ final class DefaultAsmUnitig implements AsmUnitig{
 					return false;
 				}
 			}
-		}finally{
-			IOUtil.closeAndIgnoreErrors(readIter);
-		}			
+		}		
 		return true;
 	}
 	
@@ -243,6 +239,8 @@ final class DefaultAsmUnitig implements AsmUnitig{
 			delegate.addRead(readId, validBases,offset,dir,clearRange,ungappedFullLength,isSurrogate);
 			return this;
 		}
+		
+		
 		
 	}
 }

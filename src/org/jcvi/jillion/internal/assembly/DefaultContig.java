@@ -29,6 +29,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.AssembledReadBuilder;
@@ -107,6 +108,10 @@ public final class DefaultContig<T extends AssembledRead> implements Contig<T>{
 
 
     @Override
+   	public Stream<T> streamReads() {
+   		return mapById.values().stream();
+   	}
+	@Override
     public boolean containsRead(String placedReadId) {
         return mapById.containsKey(placedReadId);
     }

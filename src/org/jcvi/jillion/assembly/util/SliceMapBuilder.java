@@ -21,6 +21,7 @@
 package org.jcvi.jillion.assembly.util;
 
 import java.util.NoSuchElementException;
+import java.util.function.Predicate;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
@@ -40,7 +41,7 @@ public final class SliceMapBuilder<R extends AssembledRead> implements Builder<S
 	private PhredQuality defaultQuality;
 	private GapQualityValueStrategy qualityValueStrategy = GapQualityValueStrategy.LOWEST_FLANKING;
 	
-	private ReadFilter<? super R> filter=null;
+	private Predicate<? super R> filter=null;
 	
 	public SliceMapBuilder(Contig<R> contig, PhredQuality defaultQuality){
 		if(contig ==null){
@@ -84,7 +85,7 @@ public final class SliceMapBuilder<R extends AssembledRead> implements Builder<S
 	 * @see #maxAllowedCoverage(int)
 	 * @throws NullPointerException if filter is null.
 	 */
-	public SliceMapBuilder<R> filter(ReadFilter<? super R> filter){
+	public SliceMapBuilder<R> filter(Predicate<? super R> filter){
 		if(filter==null){
 			throw new IllegalArgumentException("filter can not be null");
 		}
@@ -128,7 +129,7 @@ public final class SliceMapBuilder<R extends AssembledRead> implements Builder<S
 			current=endToken;
 			while(delegate.hasNext()){
 				R next = delegate.next();
-				if(filter.accept(next)){
+				if(filter.test(next)){
 					current=next;
 					break;
 				}

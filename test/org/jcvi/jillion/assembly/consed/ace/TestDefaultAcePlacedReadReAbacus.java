@@ -25,9 +25,6 @@ import static org.junit.Assert.fail;
 
 import java.util.Date;
 
-import org.jcvi.jillion.assembly.consed.ace.AceAssembledReadBuilder;
-import org.jcvi.jillion.assembly.consed.ace.DefaultAceAssembledRead;
-import org.jcvi.jillion.assembly.consed.ace.PhdInfo;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -53,14 +50,14 @@ public class TestDefaultAcePlacedReadReAbacus {
     AceAssembledReadBuilder sut = DefaultAceAssembledRead.createBuilder(
             readId, originalSequence, 
             originalStartOffset, 
-            dir, validRange, phdInfo, ungappedFullLength);
+            dir, validRange, phdInfo, ungappedFullLength,null);
 
     @Before
     public void createBuilder(){
         sut = DefaultAceAssembledRead.createBuilder(
                 readId, originalSequence, 
                 originalStartOffset, 
-                dir, validRange, phdInfo, ungappedFullLength);
+                dir, validRange, phdInfo, ungappedFullLength, null);
     }
     @Test
     public void confirmInitialValues(){
@@ -69,7 +66,7 @@ public class TestDefaultAcePlacedReadReAbacus {
         assertEquals(dir, sut.getDirection());
         assertEquals(phdInfo, sut.getPhdInfo());
         assertEquals(ungappedFullLength, sut.getUngappedFullLength());
-        assertEquals(originalSequence, sut.getNucleotideSequenceBuilder().build());
+        assertEquals(originalSequence, sut.getCurrentNucleotideSequence());
         assertEquals(validRange, sut.getClearRange());
     }
     
@@ -82,7 +79,7 @@ public class TestDefaultAcePlacedReadReAbacus {
         assertEquals(dir, sut.getDirection());
         assertEquals(phdInfo, sut.getPhdInfo());
         assertEquals(ungappedFullLength, sut.getUngappedFullLength());
-        assertEquals(originalSequence, sut.getNucleotideSequenceBuilder().build());
+        assertEquals(originalSequence, sut.getCurrentNucleotideSequence());
         assertEquals(validRange, sut.getClearRange());
     }
     
@@ -93,7 +90,7 @@ public class TestDefaultAcePlacedReadReAbacus {
         assertEquals(readId, sut.getId());       
         assertEquals(8, sut.getLength());
         assertEquals(originalStartOffset+7, sut.getEnd());
-        assertEquals("ACGTACGT", sut.getNucleotideSequenceBuilder().toString());
+        assertEquals("ACGTACGT", sut.getCurrentNucleotideSequence().toString());
         assertEquals(validRange, sut.getClearRange());
         
     }

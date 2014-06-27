@@ -48,7 +48,7 @@ public final class FastaRecordDataStoreAdapter{
      * @return a new {@code DataStore<T>} which wraps the given datastore. 
      */
     public static <S,T extends Sequence<S>,F extends FastaRecord<S,T>, D extends DataStore<T>> D adapt(Class<D> datastoreToMimic, DataStore<F> datastoreOfFastaRecords){
-       return DataStoreUtil.adapt(datastoreToMimic, datastoreOfFastaRecords, new DataStoreUtil.AdapterCallback<F, T>() {
+      /* return DataStoreUtil.adapt(datastoreToMimic, datastoreOfFastaRecords, new DataStoreUtil.AdapterCallback<F, T>() {
 
 		@Override
 		public T get(F from) {
@@ -56,6 +56,11 @@ public final class FastaRecordDataStoreAdapter{
 		}
     	   
        });
+       */
+    	
+    	return DataStoreUtil.adapt(datastoreToMimic, datastoreOfFastaRecords,
+    			from-> 	from.getSequence()        	   
+           );
     }
     
 }

@@ -20,6 +20,8 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.util;
 
+import java.util.function.Predicate;
+
 import org.jcvi.jillion.assembly.AssembledRead;
 /**
  * A ReadFilter can be used to include/exclude
@@ -31,7 +33,7 @@ import org.jcvi.jillion.assembly.AssembledRead;
  * that will be used to back the {@link CoverageMap} should be the
  * same type as the CoverageMap will use. 
  */
-public  interface ReadFilter<R extends AssembledRead>{
+public  interface ReadFilter<R extends AssembledRead> extends Predicate<R>{
 	/**
 	 * Should this read be included in the
 	 * {@link CoverageMap}.
@@ -42,4 +44,9 @@ public  interface ReadFilter<R extends AssembledRead>{
 	 * {@code false} otherwise.
 	 */
 	boolean accept(R read);
+	
+	
+	default boolean test(R read){
+		return accept(read);
+	}
 }
