@@ -394,11 +394,8 @@ public final class DefaultAssembledRead implements AssembledRead {
         public Range asRange(){
             return Range.of(offset,getEnd());
         }
-        /**
-        * {@inheritDoc}
-        */
-        @Override
-        public synchronized NucleotideSequenceBuilder getNucleotideSequenceBuilder() {
+       
+        private synchronized NucleotideSequenceBuilder getNucleotideSequenceBuilder() {
             if(basesBuilder==null){
                 this.basesBuilder = new NucleotideSequenceBuilder(originalSequence);
                 originalSequence=null;
