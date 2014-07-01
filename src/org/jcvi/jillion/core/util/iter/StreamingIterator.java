@@ -124,7 +124,7 @@ public interface StreamingIterator<T> extends Closeable, Iterator<T>{
     	throw new UnsupportedOperationException();
     }
     /**
-     * Convert this StreamingIterator into aJava 8 {@link Stream}.
+     * Convert this StreamingIterator into a Java 8 {@link Stream}.
      * The returned Stream
      * must be closed when finished so it is recommended
      * that it is enclosed in a try-with-resource block.
@@ -137,10 +137,12 @@ public interface StreamingIterator<T> extends Closeable, Iterator<T>{
      * the returned values of {@link #hasNext()}.
      * @return a new Stream,
      *  will never be null.
+     *  
+     * @since 5.0
      */
     default Stream<T> toStream(){
     	return StreamSupport.stream(Spliterators.spliteratorUnknownSize(
-                	this, Spliterator.ORDERED | Spliterator.NONNULL), false)
+                	this, Spliterator.IMMUTABLE| Spliterator.ORDERED | Spliterator.NONNULL), false)
                 .onClose(
                 		StreamUtil.newOnCloseRunnableThatThrowsUncheckedIOExceptionIfNecessary(this));
     }
