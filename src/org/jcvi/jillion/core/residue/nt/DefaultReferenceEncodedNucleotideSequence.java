@@ -482,4 +482,10 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 		return reference;
 	}
 
+	@Override
+	public NucleotideSequenceBuilder toBuilder() {
+		return new NucleotideSequenceBuilder(this)
+						.setReferenceHint(reference, startOffset);
+	}
+
 }

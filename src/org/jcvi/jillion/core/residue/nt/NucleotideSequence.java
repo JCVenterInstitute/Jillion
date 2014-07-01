@@ -62,4 +62,29 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide>, Seriali
      */
     @Override
     int hashCode();
+    
+    /**
+     * Creates a new {@link NucleotideSequenceBuilder}
+     * object. 
+     * @return a new {@link NucleotideSequenceBuilder}
+     * instance initialized to the this Sequence;
+     * will never be null but may be empty.
+     * @implSpec
+     *  This is the same as
+     * <pre>
+     * return {@code new NucleotideSequenceBuilder(this)}
+     * </pre>
+     * @implNote
+     * Implementations of this method should add
+     * any additional settings or flags to optimize
+     * the Builder to that
+     * the final built Sequence should be the same
+     * class with the same optimization characteristics
+     * as this Sequence instance. For example,
+     * a {@link ReferenceMappedNucleotideSequence}
+     * should make a builder that uses the same reference.
+     * @since 5.0
+     */
+    @Override
+    NucleotideSequenceBuilder toBuilder();
 }

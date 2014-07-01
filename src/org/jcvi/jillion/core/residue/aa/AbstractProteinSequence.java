@@ -107,6 +107,17 @@ abstract class AbstractProteinSequence extends AbstractResidueSequence<AminoAcid
 		}
 		return builder.toString();
 	}
+	
+	
+	
+	
+	@Override
+	public ProteinSequenceBuilder toBuilder() {
+		return new ProteinSequenceBuilder(this);
+	}
+
+
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

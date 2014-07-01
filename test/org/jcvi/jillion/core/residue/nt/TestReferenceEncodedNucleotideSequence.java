@@ -191,6 +191,8 @@ public class TestReferenceEncodedNucleotideSequence {
        
         assertEquals(sequence.length(), actual.getLength());
         assertEquals(sequence, actual.toString());
+        
+        assertEquals(actual, actual.toBuilder().build());
     }
     
 }

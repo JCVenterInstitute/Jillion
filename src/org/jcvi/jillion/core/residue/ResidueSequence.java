@@ -23,8 +23,6 @@ package org.jcvi.jillion.core.residue;
 import java.util.List;
 
 import org.jcvi.jillion.core.Sequence;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
  * {@code ResidueSequence} is a {@link Sequence}
  * of {@link Residue} that may contain gaps.  There are extra
@@ -122,5 +120,14 @@ public interface ResidueSequence<R extends Residue> extends Sequence<R> {
      */
     @Override
     int hashCode();
+    
+    /**
+     * Create a new Builder object that is initialized
+     * to the current sequence.  Any changes made to the returned Builder
+     * will <strong>NOT</strong> affect this immutable Sequence.
+     * @return a new Builder instance, will never be null.
+     * @see 5.0
+     */
+    ResidueSequenceBuilder<R, ? extends ResidueSequence<R>> toBuilder();
 
 }
