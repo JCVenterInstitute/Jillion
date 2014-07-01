@@ -184,4 +184,9 @@ public class TestDefaultNucleotideSequence {
     	NucleotideSequence seq = new NucleotideSequenceBuilder("----ACGT").build();
     	assertEquals(4, seq.getGappedOffsetFor(0));
     }
+    
+    @Test
+    public void toBuilder(){
+    	assertEquals(sut, sut.toBuilder().build());
+    }
 }

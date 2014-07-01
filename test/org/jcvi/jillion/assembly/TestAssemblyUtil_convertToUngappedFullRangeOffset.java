@@ -202,6 +202,13 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
 			throw new UnsupportedOperationException("invalid for adapted sequence");
 			
 		}
+
+		@Override
+		public NucleotideSequenceBuilder toBuilder() {
+			return delegate.toBuilder();
+		}
+		
+		
     	
     }
     private class MockPlacedReadBuilder implements Builder<AssembledRead>{

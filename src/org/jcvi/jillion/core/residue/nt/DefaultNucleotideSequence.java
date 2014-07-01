@@ -190,5 +190,13 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
 			return new DefaultNucleotideSequence(seq.codec, seq.data);
 		}
 	}
+
+	@Override
+	public NucleotideSequenceBuilder toBuilder() {
+		return new NucleotideSequenceBuilder(this);
+	}
+	
+	
+	
 	
 }

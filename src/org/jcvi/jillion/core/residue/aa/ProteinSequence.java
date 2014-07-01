@@ -39,4 +39,6 @@ import org.jcvi.jillion.core.residue.ResidueSequence;
  */
 public interface ProteinSequence extends ResidueSequence<AminoAcid>, Serializable {
 
+	@Override
+	ProteinSequenceBuilder toBuilder();
 }
