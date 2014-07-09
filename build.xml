@@ -227,6 +227,10 @@
 	
 	<target name="javadoc" description = "generate javadoc from source">
 		<delete dir="javadoc" verbose ="true"/>
+		<!-- Need to tell javadoc how to use new Java 8 tags 
+		@implSpec @implNote and @apiNote
+		which are currently only used internally by JDK (as of 8u5)-->
+					
 		<javadoc packagenames ="org.jcvi.jillion.*"	
 			excludepackagenames = "org.jcvi.jillion.internal.*"
 				sourcepathref = "javadoc.sourcepath"
@@ -235,11 +239,9 @@
 				windowtitle = "${project-name} API"
 				linksource= "yes"
 				overview="${src}/overview-summary.html"
-			access="public">					
+			    additionalparam="-tag implSpec:a:&quot;Implementation specification:&quot; -tag implNote:a:&quot;Implementation Note:&quot; -tag apiNote:a:&quot;API Note:&quot;"
+			access="public"/>					
 
-
-
-		</javadoc>
 		</target>
 	
 	<target name = "checkstyle" description = "generates checkstyle report on source">
