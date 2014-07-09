@@ -10,7 +10,7 @@ public final class Validator {
 			throw new NullPointerException();
 		}
 		if(!validation.test(value)){
-			new ValidationException(message.apply(value));
+			throw new ValidationException(message.apply(value));
 		}
 	}
 }
