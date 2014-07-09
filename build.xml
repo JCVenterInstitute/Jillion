@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Jillion" default="unit.tests" basedir=".">
+<project name="Jillion" default="unit.tests" basedir="." 
+	xmlns:jacoco="antlib:org.jacoco.ant">
+	
 	<!--Used to set the required version of Java that RUNS the jars -->
 	<property name="jdk.version" value="1.8" />
 	<property name="version" value="5.0" />
@@ -9,6 +11,9 @@
 	<property name="src" value ="src"/>
 	<property name="test" value ="test"/>
 	<property name ="test-lib" value="test-lib"/>
+	
+	<property name="jacoco.report.dir" location="${reports}/jacoco"/>
+	<property name="jacoco.output.file" location="${reports}/jacoco.exec"/>
 	
 	<property name="experimental" value ="experimental"/>
 		<property name ="experimental-test" value="experimental-test"/>
@@ -28,12 +33,10 @@
             	<fileset dir="${analysis}" includes="**/*.jar"/>
           </classpath>
     </taskdef>
-    
-	<taskdef resource="emma_ant.properties" >
-        <classpath>
-            <fileset dir="${analysis}/emma"/>
-   		</classpath>
-    </taskdef>
+	
+	<taskdef uri="antlib:org.jacoco.ant"
+	             resource="org/jacoco/ant/antlib.xml"
+	             classpath="${analysis}/jacoco/jacocoant.jar"/>
 	
     <taskdef resource="checkstyletask.properties"
          classpath="${analysis}/checkstyle-5.7-all.jar"/>
@@ -126,15 +129,7 @@
 				<src path="${src}"/>
 				<compilerarg line="-Xlint:all"/>
 		  	</javac>
-			<emma enabled="${emma.enabled}" >
-				
-								      <instr instrpath="${bin}"
-								             mode="overwrite"
-								      		merge="false"
-								      	filter ="+org.jcvi.jillion*"
-								      >
-						      		</instr>
-						  	    </emma>
+			
 			<copy todir="${bin}">
 				<fileset dir="${src}" excludes="**/*.java"/>
 			</copy>
@@ -142,16 +137,10 @@
 		 </target>
 		
 	
-	
-	<target name="emma" description="turns on EMMA's on-the-fly instrumentation mode" >
-	    <property name="emma.enabled" value="true" />
-		<!-- delete old coverage files -->
-		<delete dir="coverage"></delete>
-		<delete dir="emma"></delete>
-		<delete file="coverage.ec"></delete>
-		<delete file="coverage.em"></delete>
-		<delete file="coverage.xml"></delete>
-	  </target>
+	 <target name="jacoco"
+	            description="turns on JaCoCo on-the-fly instrumentation for source code">
+	        <property name="jacoco.enabled" value="true"/>
+	    </target>
 	
 	<target name="clean"
          description="Clean generated files">
@@ -182,47 +171,71 @@
 	    </findbugs>
   </target>
 	
-	<target name ="unit.tests" depends ="bin">
-			<junit haltonfailure="no" showoutput="yes"
+	<target name="-jacoco.unit.tests"
+	            depends="bin" if="jacoco.enabled">
+	        <!--runs unit tests and also computing coverage, called by unit.tests if jacoco IS enabled.-->
+	        <echo level="verbose" message="Running tests with jacoco coverage checks"/>
+	        <jacoco:coverage
+	                destfile="${jacoco.output.file}" append = "true">
+	            <junit haltonfailure="no" showoutput="yes"
+					errorproperty="unit.test.failed"
+					failureproperty="unit.test.failed"
+					fork="true">
+	                <formatter type="xml"/>
+
+	                <test name="org.jcvi.AllUnitTests"/>
+	                <classpath refid="test.classpath"/>
+	            </junit>
+	        </jacoco:coverage>
+	    </target>
+	
+	
+	 <target name="-not.jacoco.unit.tests"
+	            depends="bin" unless="jacoco.enabled">
+	        <!--runs unit tests without also computing coverage, called by unit.tests if jacoco not enabled.-->
+	        <echo level="verbose" message="Running tests WITHOUT jacoco coverage checks"/>
+	        <junit 
+	        	haltonfailure="no" showoutput="yes"
 				errorproperty="unit.test.failed"
 				failureproperty="unit.test.failed"
-				fork="true">		
-				<formatter type="xml"/>
-				
-			  <test name="org.jcvi.AllUnitTests"/>
-				<classpath refid = "test.classpath" />
-			</junit>
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		<fail if= "unit.test.failed">
-			Unit tests failed.
-		</fail>
-		
-		</target>
+				fork="true">
+	            <formatter type="xml"/>
+	            <test name="org.jcvi.AllUnitTests"/>
+	            <classpath refid="test.classpath"/>
+	        </junit>
+	    </target>
+
+	    <target name="unit.tests"
+	            description="runs unit tests with or without coverage depending on if jacoco is enabled."
+	            depends="bin, -jacoco.unit.tests, -not.jacoco.unit.tests">
+	        <fail if="unit.test.failed" message="Unit tests failed"/>
+	    </target>
 	
-	<target name = "report.emma" description = "generates emma report for instrumented classes">
-		<emma enabled="${emma.enabled}" > 
-			<report>
-				<sourcepath>
-				          <dirset dir="${src}" />
-				</sourcepath>
-				<infileset dir="." includes="*.em, *.ec" />
-	 	 		<xml outfile = "coverage.xml"/>
-				<html outfile="coverage.html"
-					    		depth="method"
-				                columns="name,class,method,block,line"/>
-		 	</report>
-		</emma>
-	</target>
 	
+	
+	<target name="report.jacoco"
+	            description="generates JaCoCo report for instrumented classes">
+	        <mkdir dir="${jacoco.report.dir}"/>
+	        <jacoco:report>
+
+	            <executiondata>
+	                <file file="${jacoco.output.file}"/>
+	            </executiondata>
+
+	            <structure name="${project-name}">
+	                <classfiles>
+	                    <fileset dir="${bin}"/>
+	                </classfiles>
+	                <sourcefiles encoding="UTF-8">
+	                    <fileset dir="${src}"/>
+	                </sourcefiles>
+	            </structure>
+
+	            <html destdir="${jacoco.report.dir}"/>
+
+	        </jacoco:report>
+
+	    </target>
 	
 	
 	<target name="javadoc" description = "generate javadoc from source">
