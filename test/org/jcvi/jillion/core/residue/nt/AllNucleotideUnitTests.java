@@ -51,7 +51,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestTriplet.class,
         
         TestSerializeDefaultNucleotideSequence.class,
-        TestSerializeReferenceEncodedNucleotideSequence.class
+        TestSerializeReferenceEncodedNucleotideSequence.class,
+        TestNucleotideSequencePermuter.class
     }
 )
 public class AllNucleotideUnitTests {
