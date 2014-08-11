@@ -195,7 +195,7 @@ public final class BtabWriterBuilder {
 						fields.add(formattedEvalue + "\t");
 					}
 					
-					out.println(new JoinedStringBuilder(fields).glue("\t").build());
+					out.println(JoinedStringBuilder.create(fields).glue("\t").build());
 				}
 			
 			
