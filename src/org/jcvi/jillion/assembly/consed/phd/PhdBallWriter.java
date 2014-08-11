@@ -236,14 +236,14 @@ public class PhdBallWriter implements PhdWriter{
 				printedTags.add(builder.append(END_TAG)
 									.toString());
 			}
-			return new JoinedStringBuilder(printedTags)
+			return JoinedStringBuilder.create(printedTags)
 						.glue(NEW_LINE)
 						.build();
 		}
 		private StringBuilder createWholeReadItems(Phd phd) {
 	        StringBuilder tags = new StringBuilder();
 	        for(PhdWholeReadItem tag : phd.getWholeReadItems()){
-	        	String lines = new JoinedStringBuilder(tag.getLines())
+	        	String lines = JoinedStringBuilder.create(tag.getLines())
 	        						.glue(NEW_LINE)
 	        						.build();
 	            tags.append(String.format("WR{%n%s%n}%n",lines));
