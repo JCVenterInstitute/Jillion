@@ -25,7 +25,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -60,6 +62,40 @@ public abstract class FastqFileParser implements FastqParser{
 	 */
 	public static FastqParser create(File fastqFile) throws IOException{
 		return new FileBasedFastqFileParser(fastqFile);
+	}
+	/**
+	 * Create a new {@link FastqFileParser} instance
+	 * that will parse the given a compressed fastq file. This factory method should be used in preference
+	 * to {@link #create(InputStream)} if the file needs to be parsed
+	 * multiple times.  
+	 * @param fastqFile the file to parse.
+	 * @param toInputStream {@link Function} to convert the given {@link File}
+	 * into a <strong>new</strong> raw {@link InputStream}.  This allows the parser to handle compressed
+	 * files.  A new InputStream should be created each time the function is called.  Can not be null.
+	 * 
+	 * @apiNote 
+	 * For example if you wanted to parse a gzipped fastq file:
+	 * <pre>
+	 * {@code
+	 * Function &lt;File, InputStream&gt; toGzipInputStream = f -&gt; {
+	 * 	try {
+	 * 		return new GZIPInputStream(new FileInputStream(f));
+	 * 	} catch (IOException e) {
+	 * 		throw new UncheckedIOException(e);
+	 * 	}
+	 * };
+	 * 
+	 * FastqFileParser parser = FastqFileParser.create(gzippedFfastqFile,toGzipInputStream);
+	 * </pre>
+	 * 
+	 * @implNote The performance of random accessing records in this fastq file
+	 * is dependent on {@link InputStream#skip(long)} implementation returned by the function.
+	 * 
+	 * @throws IOException  if the file does not exist or can not be read.
+	 * @throws NullPointerException if any parameters are null or if the function returns null.
+	 */
+	public static FastqParser create(File fastqFile, Function<File, InputStream> toInputStream) throws IOException{
+		return new FileBasedFastqFileParser(fastqFile, toInputStream);
 	}
 	/**
 	 * Create a new {@link FastqFileParser} instance
@@ -347,12 +383,20 @@ public abstract class FastqFileParser implements FastqParser{
 	
 	private static class FileBasedFastqFileParser extends FastqFileParser{
 		private final File fastqFile;
-		
+		private final Function<File, InputStream> toInputStream;
 		
 		public FileBasedFastqFileParser(File fastqFile) throws IOException {
 			IOUtil.verifyIsReadable(fastqFile);
 			
 			this.fastqFile = fastqFile;
+			toInputStream =null;
+		}
+		public FileBasedFastqFileParser(File fastqFile, Function<File, InputStream> toInputStream) throws IOException {
+			Objects.requireNonNull(toInputStream);
+			IOUtil.verifyIsReadable(fastqFile);
+			
+			this.fastqFile = fastqFile;
+			this.toInputStream =toInputStream;
 		}
 
 
@@ -386,12 +430,13 @@ public abstract class FastqFileParser implements FastqParser{
 			if(visitor ==null){
 				throw new NullPointerException("visitor can not be null");
 			}
-			InputStream in = new BufferedInputStream(new FileInputStream(fastqFile));
-			try{
+			
+			try(InputStream in = toInputStream ==null ?
+											new BufferedInputStream(new FileInputStream(fastqFile))
+									:	toInputStream.apply(fastqFile);
+				){
 				TextLineParser parser = new TextLineParser(in);
 				parseFastqFile(visitor, parser);			
-			}finally{
-				IOUtil.closeAndIgnoreErrors(in);
 			}
 		}
 
@@ -406,13 +451,18 @@ public abstract class FastqFileParser implements FastqParser{
 				throw new NullPointerException("visitor can not be null");
 			}
 			long startOffset = ((OffsetMemento)memento).getValue();
-			InputStream in = null;
-			try{
-				in = new RandomAccessFileInputStream(fastqFile, startOffset);
-				TextLineParser parser = new TextLineParser(in, startOffset);
-				parseFastqFile(visitor, parser);	
-			}finally{
-				IOUtil.closeAndIgnoreErrors(in);
+			if(toInputStream ==null){
+				try(InputStream in = new RandomAccessFileInputStream(fastqFile, startOffset)){
+					TextLineParser parser = new TextLineParser(in, startOffset);
+					parseFastqFile(visitor, parser);	
+				}
+			}else{
+				try(InputStream in = toInputStream.apply(fastqFile)){
+					//skip to offset
+					in.skip(startOffset);
+					TextLineParser parser = new TextLineParser(in, startOffset);
+					parseFastqFile(visitor, parser);
+				}
 			}
 		}		
 	}

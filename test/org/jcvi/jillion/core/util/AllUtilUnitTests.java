@@ -49,7 +49,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestFileIterator.class,
         TestDepthFirstFileIterator.class,
         TestBreadthFirstFileIterator.class,
-        TestStringUtilities.class,
+        TestJoinedStringBuilder.class,
         TestMultipleWrapper.class,
         TestChainedIterator.class,
         TestStreamingAdapter.class,

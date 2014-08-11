@@ -20,31 +20,32 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import org.jcvi.jillion.core.util.JoinedStringBuilder;
+import java.util.Arrays;
+
 import org.junit.Test;
 
-public class TestStringUtilities {
+public class TestJoinedStringBuilder {
 
   
     
     @Test
     public void joinBuilderStringsWithNoGlue(){
         assertEquals("LarryMoeCurly",
-                new JoinedStringBuilder("Larry","Moe","Curly").build());
+                new JoinedStringBuilder<>("Larry","Moe","Curly").build());
     }
     
     @Test
     public void joinBuilderNoElements(){
         assertEquals("",
-                new JoinedStringBuilder().build());
+                new JoinedStringBuilder<>().build());
     }
     
     @Test
     public void joinBuilderStringsWithGlue(){
         assertEquals("Larry,Moe,Curly",
-                new JoinedStringBuilder("Larry","Moe","Curly")
+                new JoinedStringBuilder<>("Larry","Moe","Curly")
                         .glue(",")
                         .build());
     }
@@ -52,20 +53,20 @@ public class TestStringUtilities {
     @Test
     public void joinBuilderObjectsWithNoGlue(){
         assertEquals("LarryMoeCurly",
-                new JoinedStringBuilder(new Object[]{"Larry","Moe","Curly"}).build());
+                new JoinedStringBuilder<>(new Object[]{"Larry","Moe","Curly"}).build());
     }
     
     @Test
     public void joinBuilderObjectsWithGlue(){
         assertEquals("Larry,Moe,Curly",
-                new JoinedStringBuilder(new Object[]{"Larry","Moe","Curly"})
+                new JoinedStringBuilder<>(new Object[]{"Larry","Moe","Curly"})
                         .glue(",")
                         .build());
     }
     @Test
     public void joinBuilderObjectsWithPrefix(){
         assertEquals("Stooges=Larry,Moe,Curly",
-                new JoinedStringBuilder(new Object[]{"Larry","Moe","Curly"})
+                new JoinedStringBuilder<>(new Object[]{"Larry","Moe","Curly"})
                         .glue(",")
                         .prefix("Stooges=")
                         .build());
@@ -73,11 +74,29 @@ public class TestStringUtilities {
     @Test
     public void joinBuilderObjectsWithSuffix(){
         assertEquals("Larry,Moe,Curly were the best stooges",
-                new JoinedStringBuilder(new Object[]{"Larry","Moe","Curly"})
+                new JoinedStringBuilder<>(new Object[]{"Larry","Moe","Curly"})
                         .glue(",")
                         .suffix(" were the best stooges")
                         .build());
     }
     
 
+    @Test
+    public void transformToUpper(){
+    	assertEquals("ABC,DEF",
+    			new JoinedStringBuilder<>(Arrays.asList("abc", "def"))
+    					.glue(",")
+    					.transform(s -> ((String)s).toUpperCase())
+    					.build()
+    			);
+    }
+    @Test
+    public void transformWrapWithQuotes(){
+    	assertEquals("'abc','def'",
+    			new JoinedStringBuilder<>(Arrays.asList("abc", "def"))
+    					.glue(",")
+    					.transform(s -> "'"+s+"'")
+    					.build()
+    			);
+    }
 }

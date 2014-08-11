@@ -22,6 +22,8 @@ package org.jcvi.jillion.core.util;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Objects;
+import java.util.function.Function;
 
 /**
  * {@code JoinedStringBuilder}
@@ -32,18 +34,52 @@ import java.util.Iterator;
  * with other Objects. Objects
  * to be joined use their {@link Object#toString()}
  * method to get their String representation.
+ * unless otherwise told to transform it differently 
+ * using the {@link #transform(Function)}.
+ * 
  * <br/>
  * <strong>This class is not thread-safe.</strong>
  * @author dkatzel
  *
  *
  */
-public final class JoinedStringBuilder implements Builder<String>{
-    private final Iterable<?> elements;
+public final class JoinedStringBuilder<T> implements Builder<String>{
+    private final Iterable<T> elements;
     private Object glue;
     private Object prefix;
     private Object suffix;
     private boolean includeEmptyStrings=false;
+    /**
+     * Default transformation function, defaults to toString().
+     */
+    private Function<T, String> valueTransformer = Object::toString;
+    
+    /**
+     * Create a new {@link JoinedStringBuilder} instance
+     * that will join the given elements together
+     * in their iteration order.
+     * @param elements the Objects to be joined.
+     * If an element is null, then it will be skipped
+     * during the join.
+     * @param <T> The type of object being joined.
+     */
+    public static <T> JoinedStringBuilder<T> create(Iterable<T> elements){
+    	return new JoinedStringBuilder<T>(elements);
+    }
+    /**
+     * Create a new {@link JoinedStringBuilder} instance
+     * that will join the given elements together
+     * in their iteration order.
+     * @param elements the Objects to be joined.
+     * If an element is null, then it will be skipped
+     * during the join.
+     * @param <T> The type of object being joined.
+     */
+    @SafeVarargs
+    public static <T> JoinedStringBuilder<T> create(T... elements){
+    	return new JoinedStringBuilder<T>(elements);
+    }
+    
     /**
      * Join the given elements together
      * in their iteration order.
@@ -51,7 +87,7 @@ public final class JoinedStringBuilder implements Builder<String>{
      * If an element is null, then it will be skipped
      * during the join.
      */
-    public JoinedStringBuilder(Iterable<?> elements){
+    JoinedStringBuilder(Iterable<T> elements){
         this.elements = elements;
     }
     /**
@@ -61,7 +97,8 @@ public final class JoinedStringBuilder implements Builder<String>{
      * If an element is null, then it will be skipped
      * during the join.
      */
-    public JoinedStringBuilder(Object... elements){
+    @SafeVarargs
+	JoinedStringBuilder(T... elements){
         this(Arrays.asList(elements));
     }
     /**
@@ -72,7 +109,7 @@ public final class JoinedStringBuilder implements Builder<String>{
      * then no glue will be used.
      * @return this
      */
-    public JoinedStringBuilder glue(Object glue){
+    public JoinedStringBuilder<T> glue(Object glue){
         this.glue = glue;
         return this;
     }
@@ -85,7 +122,7 @@ public final class JoinedStringBuilder implements Builder<String>{
      * or {@code null} if there should be no prefix.
      * @return this
      */
-    public JoinedStringBuilder prefix(Object prefix){
+    public JoinedStringBuilder<T> prefix(Object prefix){
         this.prefix = prefix;
         return this;
     }  
@@ -96,7 +133,7 @@ public final class JoinedStringBuilder implements Builder<String>{
      * @param value 
      * @return this
      */
-    public JoinedStringBuilder includeEmptyStrings(boolean value){
+    public JoinedStringBuilder<T> includeEmptyStrings(boolean value){
     	includeEmptyStrings = value;
     	return this;
     }
@@ -109,7 +146,7 @@ public final class JoinedStringBuilder implements Builder<String>{
      * or {@code null} if there should be no suffix.
      * @return this
      */
-    public JoinedStringBuilder suffix(Object suffix){
+    public JoinedStringBuilder<T> suffix(Object suffix){
         this.suffix = suffix;
         return this;
     }  
@@ -126,20 +163,20 @@ public final class JoinedStringBuilder implements Builder<String>{
         if(prefix!=null){
             joined.append(prefix);
         }
-        Iterator<?> iter = elements.iterator();
+        Iterator<T> iter = elements.iterator();
         if(iter.hasNext()){
-            Object firstElement= iter.next();
+            T firstElement= iter.next();
             if(firstElement!=null){
-                joined.append(firstElement.toString());
+                joined.append(valueTransformer.apply(firstElement));
             }
         }
         
         while(iter.hasNext()){
             
-            Object item = iter.next();
+            T item = iter.next();
             if (item != null)
             {   
-                String itemString = item.toString();
+                String itemString = valueTransformer.apply(item);
                 if (glue != null && joined.length() > 0 && (includeEmptyStrings || itemString.length() > 0))
                 {
                     joined.append(glue.toString());
@@ -152,6 +189,19 @@ public final class JoinedStringBuilder implements Builder<String>{
         }
         return joined.toString();
     }
+    /**
+     * Apply the given Transformation function to each value
+     * in the elements to join. If this method is not called,
+     * then the default transformation just calls each element's
+     * toString().
+     * @param transformer the transformer to use; can not be null.
+     * @return this.
+     */
+	public JoinedStringBuilder<T> transform(Function<T, String> transformer) {
+		Objects.requireNonNull(transformer);
+		valueTransformer = transformer;
+		return this;
+	}
     
     
 }

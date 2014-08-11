@@ -103,7 +103,7 @@ public class TestTextLineParser {
 				"",
 				"4th after blank line");
 											
-		InputStream in = toInputStream(new JoinedStringBuilder(lines)
+		InputStream in = toInputStream(JoinedStringBuilder.create(lines)
 											.glue(eol)
 											.includeEmptyStrings(true)
 											.build());
