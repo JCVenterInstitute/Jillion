@@ -128,10 +128,6 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
         delegate.close();        
     }
 
-    /**
-    * {@inheritDoc}
-     * @throws DataStoreException 
-    */
     @Override
     public StreamingIterator<Phd> iterator() throws DataStoreException {
         return delegate.iterator();

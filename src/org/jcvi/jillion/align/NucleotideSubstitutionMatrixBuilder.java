@@ -75,7 +75,7 @@ public final class NucleotideSubstitutionMatrixBuilder  implements Builder<Nucle
 		 * possible combinations of non-ambiguous to ambiguous (The diagonal in the matrix).
 		 * Any future calls to any mutator methods
 		 * may modify some or all of the scores set by this value.
-		 * @param matchScore the score of an exact match.
+		 * @param ambiguityScore the score of an ambiguity match.
 		 * @return this
 		 */
 		public NucleotideSubstitutionMatrixBuilder ambiguityScore(float ambiguityScore){
@@ -97,14 +97,15 @@ public final class NucleotideSubstitutionMatrixBuilder  implements Builder<Nucle
 		 * Explicitly set the substitution score 
 		 * of the given two {@link Nucleotide}s
 		 * to the given value.
-		 * @param a
-		 * @param b
-		 * @param score
-		 * @return
+		 * @param a one {@link Nucleotide}; can not be null.
+		 * @param b the {@link Nucleotide}; can not be null
+		 * @param score the substitution score from a to b or b to a.
+		 * @return this
+		 * @throws NullPointerException if a or b are null.
 		 */
-		public NucleotideSubstitutionMatrixBuilder set(Nucleotide n1, Nucleotide n2, float score){
-			int i = n1.ordinal();
-			int j = n2.ordinal();
+		public NucleotideSubstitutionMatrixBuilder set(Nucleotide a, Nucleotide b, float score){
+			int i = a.ordinal();
+			int j = b.ordinal();
 			matrix[i][j] = score;
 			matrix[j][i] = score;
 			return this;

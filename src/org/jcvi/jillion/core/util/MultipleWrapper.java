@@ -93,6 +93,7 @@ public final class  MultipleWrapper<T> implements InvocationHandler{
      * createMultipleWrapper(classType,ReturnPolicy.RETURN_FIRST,delegates)}
      * @see #createMultipleWrapper(Class, ReturnPolicy, Object...)
      */
+    @SafeVarargs
     public static <T,I extends T> T createMultipleWrapper(Class<T> classType,I... delegates){
        return createMultipleWrapper(classType,ReturnPolicy.RETURN_FIRST,Arrays.asList(delegates));
     }
@@ -102,6 +103,7 @@ public final class  MultipleWrapper<T> implements InvocationHandler{
      * createMultipleWrapper(classType,ReturnPolicy.RETURN_FIRST,delegates)}
      * @see #createMultipleWrapper(Class, ReturnPolicy, Object...)
      */
+    @SafeVarargs
     public static <T,I extends T> T createMultipleWrapper(Class<T> classType,ReturnPolicy policy,I... delegates){
        return createMultipleWrapper(classType,policy,Arrays.asList(delegates));
     }

@@ -55,7 +55,8 @@ public final  class MathUtil {
             throw new IllegalArgumentException("must pass in at least one value");
         }
 	}
-    public static <N extends Number> N minOf(N...numbers){
+    @SafeVarargs
+	public static <N extends Number> N minOf(N...numbers){
         return minOf(Arrays.asList(numbers));
     }
     public static <N extends Number> N maxOf(Collection<N> numbers){
@@ -71,10 +72,12 @@ public final  class MathUtil {
 
         return currentMax;
     }
-    public static <N extends Number> N maxOf(N...integers){
+    
+    @SafeVarargs
+	public static <N extends Number> N maxOf(N...integers){
         return maxOf(Arrays.asList(integers));
     }
-
+    @SafeVarargs
     public static<N extends Number> Double averageOf(N... values){
         return averageOf(Arrays.asList(values));
     }
@@ -123,6 +126,7 @@ public final  class MathUtil {
         }
         return sum;
     }
+    @SafeVarargs
     public static <N extends Number & Comparable<N>> Long medianOf(N... values){
         return medianOf(Arrays.asList(values));
     }

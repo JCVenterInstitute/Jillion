@@ -84,9 +84,10 @@ public final class AceFileDataStoreBuilder {
 	 * @param aceStream the {@link InputStream} that will
 	 * be used to make a {@link AceFileDataStore}.
 	 * The stream must be uncompressed.
-	 * @throws NullPointerException if aceFile is aceStream.
+	 * 
+	 * @throws NullPointerException if aceFile is aceStream. 
 	 */
-	public AceFileDataStoreBuilder(InputStream aceStream) throws IOException{
+	public AceFileDataStoreBuilder(InputStream aceStream){
 		if(aceStream ==null){
 			throw new NullPointerException("inputstream can not be null");
 		}		
