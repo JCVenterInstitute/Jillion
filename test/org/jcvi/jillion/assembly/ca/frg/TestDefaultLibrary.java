@@ -25,12 +25,9 @@
  */
 package org.jcvi.jillion.assembly.ca.frg;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
-import org.jcvi.jillion.assembly.ca.frg.DefaultLibrary;
-import org.jcvi.jillion.assembly.ca.frg.Distance;
-import org.jcvi.jillion.assembly.ca.frg.Library;
-import org.jcvi.jillion.assembly.ca.frg.MateOrientation;
 import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.junit.Test;
 
@@ -52,17 +49,17 @@ public class TestDefaultLibrary {
         assertEquals(orientation, sut.getMateOrientation());
     }
     
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected=NullPointerException.class)
     public void nullIdShouldThrowIllegalArgumentException(){
         new DefaultLibrary(null, distance, orientation);
     }
     
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected=NullPointerException.class)
     public void nullDistanceShouldThrowIllegalArgumentException(){
         new DefaultLibrary(id, null, orientation);
     }
     
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected=NullPointerException.class)
     public void nullMateOrientationShouldThrowIllegalArgumentException(){
         new DefaultLibrary(id, distance, null);
     }

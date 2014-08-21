@@ -34,14 +34,19 @@ public class DefaultLibrary implements Library{
     
     
     /**
-     * @param id
-     * @param distance
-     * @param mateOrientation
+     * Create a new Library instance.
+     * 
+     * @param id the library's Id.
+     * @param distance the Library's {@link Distance};
+     * can not be null.
+     * @param mateOrientation the {@link MateOrientation};
+     * can not be null.
+     * @throws NullPointerException if any parameters are null.
      */
     public DefaultLibrary(String id, Distance distance,
             MateOrientation mateOrientation) {
         if(id==null || distance == null || mateOrientation ==null){
-            throw new IllegalArgumentException("can not have null fields");
+            throw new NullPointerException("can not have null fields");
         }
         this.id = id;
         this.distance = distance;
