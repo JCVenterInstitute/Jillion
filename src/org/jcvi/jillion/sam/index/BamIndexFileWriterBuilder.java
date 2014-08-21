@@ -75,10 +75,10 @@ public final class BamIndexFileWriterBuilder {
 			throw new NullPointerException("output bai file can not be null");
 		}
 		
-		if(!FileUtil.getExtension(inputBamFile).equalsIgnoreCase("bam")){
+		if(!"bam".equalsIgnoreCase(FileUtil.getExtension(inputBamFile))){
 			throw new IllegalArgumentException("input file is not a bam file " + inputBamFile.getAbsolutePath());
 		}
-		if(!FileUtil.getExtension(outputBaiFile).equalsIgnoreCase("bai")){
+		if(!"bai".equalsIgnoreCase(FileUtil.getExtension(outputBaiFile))){
 			throw new IllegalArgumentException("input file is not a bai file " + outputBaiFile.getAbsolutePath());
 		}
 		if(!inputBamFile.exists()){
