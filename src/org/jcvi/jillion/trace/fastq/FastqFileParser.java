@@ -459,7 +459,7 @@ public abstract class FastqFileParser implements FastqParser{
 			}else{
 				try(InputStream in = toInputStream.apply(fastqFile)){
 					//skip to offset
-					in.skip(startOffset);
+					IOUtil.blockingSkip(in, startOffset);
 					TextLineParser parser = new TextLineParser(in, startOffset);
 					parseFastqFile(visitor, parser);
 				}
