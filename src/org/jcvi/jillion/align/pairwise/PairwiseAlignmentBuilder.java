@@ -96,7 +96,9 @@ public final class PairwiseAlignmentBuilder<R extends Residue, S extends Residue
 	}
 	/**
 	 * Set the gap penalty without an extension penalty,
-	 * this is the same as calling {@link #gapPenalty(float, float) gapPenalty(open, 0)}
+	 * this is the same as calling {@link #gapPenalty(float, float) gapPenalty(open, 0)}.
+	 * @param open the penalty score for creating a new gap; usually a negative number.
+	 * @return this
 	 * @see #gapPenalty(float, float)
 	 */
 	public PairwiseAlignmentBuilder<R,S,A> gapPenalty(float open){

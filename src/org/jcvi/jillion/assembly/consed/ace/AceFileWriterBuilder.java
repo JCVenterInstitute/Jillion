@@ -84,7 +84,8 @@ public final class AceFileWriterBuilder{
 		 * to format the full length nucleotide sequences
 		 * by encoding high vs low quality values by using
 		 * upper vs lowercase letters respectively.
-		 * @throws IOException 
+		 * @throws IOException  if there is a problem creating
+		 * output file.
 		 */
 		public AceFileWriterBuilder(File outputAceFile,PhdDataStore datastore) throws IOException{
 			if(outputAceFile ==null){

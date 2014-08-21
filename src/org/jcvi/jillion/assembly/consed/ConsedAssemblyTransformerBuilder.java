@@ -152,8 +152,10 @@ public class ConsedAssemblyTransformerBuilder {
 	 * Set the default quality value to use if an aligned read
 	 * does not have associated quality data.  If not called,
 	 * then the default is {@value #DEFAULT_QUALITY_VALUE}
-	 * @param qualityValue
-	 * @return
+	 * @param qualityValue the quality value to use;
+	 * must be between 0 and {@link Byte#MAX_VALUE}.
+	 * @return this.
+	 * @throws IllegalArgumentException if if qualityScore < 0 or > {@link Byte#MAX_VALUE}.
 	 */
 	public ConsedAssemblyTransformerBuilder setDefaultQualityValue(int qualityValue){
 		//Phredquality object does all validation for us

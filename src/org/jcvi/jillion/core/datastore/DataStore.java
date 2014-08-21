@@ -168,9 +168,10 @@ public interface DataStore<T> extends Closeable{
     /**
      * Create a new {@link Stream} of the records
      * in this DataStore.
-     * @return
+     * @return a new Stream.
      * @throws DataStoreException
      * @since 5.0
+     * @throws DataStoreException if there is a problem creating this stream.
      */
     default Stream<T> streamRecords() throws DataStoreException{
     	return iterator().toStream();
