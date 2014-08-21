@@ -47,7 +47,7 @@ public class AceAssembledReadAdapter implements AceAssembledRead{
      * 
      * @param phdDate the faked {@link Date} to use as the phd date;
      * can not be null.
-     * @param tracefile the {@link File} to point to as the source file
+     * @param traceFile the {@link File} to point to as the source file
      * that contained this trace data (sanger chromatogram, sff file etc).
      * 
      */
