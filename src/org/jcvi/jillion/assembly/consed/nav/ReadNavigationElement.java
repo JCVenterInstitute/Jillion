@@ -71,7 +71,12 @@ public class ReadNavigationElement extends AbstractNavigationElement{
      * @param read the read to make a {@link ReadNavigationElement}
      * for; cannot be null.
      * @param gappedFeatureValidRange the gapped feature range coordinates; cannot be null.
+     * @param fullLength the full length 
+     * of the untrimmed read (used if needed to convert to reverse complement).
+     * 
      * @return a new ReadNavigationElement.
+     * 
+     * 
      * @see #buildReadNavigationElement(AssembledRead, Range, int,String)
      */
     public ReadNavigationElement buildReadNavigationElement(AssembledRead read, 
@@ -89,6 +94,8 @@ public class ReadNavigationElement extends AbstractNavigationElement{
      * @param gappedFeatureValidRange the gapped feature range coordinates; cannot be null.
      * @param comment a comment that describes why this element exists
      * (may be null).
+     * @param fullLength the full length 
+     * of the untrimmed read (used if needed to convert to reverse complement).
      * @return a new ReadNavigationElement.
      */
     public ReadNavigationElement buildReadNavigationElement(AssembledRead read, 
