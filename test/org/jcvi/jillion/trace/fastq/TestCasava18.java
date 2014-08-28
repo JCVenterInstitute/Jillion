@@ -41,7 +41,7 @@ import org.junit.Test;
 public class TestCasava18 {
     
     @Test
-    public void parseMateInfoCorrectly() throws FileNotFoundException, IOException{
+    public void parseIndexedRead() throws FileNotFoundException, IOException{
     	
     	
         FastqVisitor visitor = new FastqVisitor() {
@@ -64,5 +64,31 @@ public class TestCasava18 {
 
         ResourceHelper resources = new ResourceHelper(TestCasava18.class);
         FastqFileParser.create(resources.getFile("files/casava1.8.fastq")).parse(visitor);
+    }
+    
+    @Test
+    public void parseNotIndexedRead() throws FileNotFoundException, IOException{
+    	
+    	
+        FastqVisitor visitor = new FastqVisitor() {
+			
+			@Override
+			public void visitEnd() {
+				//no-op				
+			}
+			@Override
+			public void halted(){
+				//no-op
+	    	}
+			@Override
+			public FastqRecordVisitor visitDefline(FastqVisitorCallback callback,
+					String id, String optionalComment) {
+				assertEquals("EAS139:136:FC706VJ:2:5:1000:12850 1:Y:18:", id);
+				return null;
+			}
+		};
+
+        ResourceHelper resources = new ResourceHelper(TestCasava18.class);
+        FastqFileParser.create(resources.getFile("files/casava1.8.miseq.fastq")).parse(visitor);
     }
 }
