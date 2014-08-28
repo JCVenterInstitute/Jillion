@@ -48,7 +48,7 @@ import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback.FastqVisit
  */
 public abstract class FastqFileParser implements FastqParser{
 
-	private static final Pattern CASAVA_1_8_DEFLINE_PATTERN = Pattern.compile("^@(\\S+\\s+\\d:[N|Y]:\\d+:\\S+)\\s*$");
+	private static final Pattern CASAVA_1_8_DEFLINE_PATTERN = Pattern.compile("^@(\\S+\\s+\\d:[N|Y]:\\d+:(\\S+)?)\\s*$");
 	
 	private final NucleotideSequenceBuilder sequenceBuilder = new NucleotideSequenceBuilder(2000);
 	private final StringBuilder qualityBuilder = new StringBuilder(2000);
