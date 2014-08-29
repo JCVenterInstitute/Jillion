@@ -32,7 +32,6 @@ import org.jcvi.jillion.assembly.GappedReferenceBuilder;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -124,10 +123,11 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
             try {
             	File refFile = CasUtil.getFileFor(casDir, filePath);
             	NucleotideFastaDataStore datastore = new NucleotideFastaFileDataStoreBuilder(refFile)
-            												.hint(DataStoreProviderHint.ITERATION_ONLY)
             												.build();
+            	
+            	
             	StreamingIterator<NucleotideFastaRecord> iter=null;
-            	try{
+            	try{            		
             		iter = datastore.iterator();
             		while(iter.hasNext()){
             			NucleotideFastaRecord next = iter.next();
