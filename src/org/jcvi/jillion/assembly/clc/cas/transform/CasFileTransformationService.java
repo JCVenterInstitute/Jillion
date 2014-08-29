@@ -105,7 +105,7 @@ public class CasFileTransformationService implements AssemblyTransformationServi
 		}
 		CasGappedReferenceDataStoreBuilderVisitor gappedRefVisitor = new CasGappedReferenceDataStoreBuilderVisitor(casDir);
 		 
-		 CasParser casParser = CasFileParser.create(casFile);
+		 CasParser casParser = CasFileParser.create(casFile, true);
 		casParser.parse(gappedRefVisitor);
 		 
 		 CasGappedReferenceDataStore gappedReferenceDataStore = gappedRefVisitor.build();

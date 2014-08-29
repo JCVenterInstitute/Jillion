@@ -76,21 +76,48 @@ public final class CasFileParser implements CasParser{
     
     /**
      * Create a new {@link CasParser} instance to parse the given
-     * cas formatted file.  Please note, that the file won't
+     * cas formatted file without first validating it.  Please note, that the file won't
      * actually be parsed until {@link CasParser#parse(CasFileVisitor)}
      * is called.
+     * This is the same as calling 
+     * {@link #create(File, boolean) create(casFile, false)} (no validation).
      * @param casFile the cas formatted file to parse;
      * can not be null and must exist.
      * @return a new {@link CasParser} instance; 
      * will never be null.
      * @throws IOException if the casFile does not exist.
      * @throws NullPointerException if casFile is null.
+     * @see #create(File, boolean)
      */
     public static CasParser create(File casFile) throws IOException{
-    	return new CasFileParser(casFile);
+    	return new CasFileParser(casFile, false);
+    }
+    /**
+     * Create a new {@link CasParser} instance to parse the given
+     * cas formatted file.
+     * @param casFile the cas formatted file to parse;
+     * can not be null and must exist.
+     * @param validate validate the cas input data at construction time.
+     * If set to {@code true}, then this constructor will fail fast if there are discrepancies between what the cas file
+     * was assembled with and what the data files currently look like.
+     * For example: if an input file no longer has the same number of records
+     * or a different number of bases etc.  If validation fails,
+     * then an {@link IllegalStateException} is thrown by this
+     * constructor.  Validation is very time consuming since
+     * all input files must be completely parsed so use validation 
+     * with care.
+     * @return a new {@link CasParser} instance; 
+     * will never be null.
+     * @throws IOException if the casFile does not exist.
+     * @throws NullPointerException if casFile is null.
+     * @throws IllegalStateException if validate is set to {@code true}
+     * and validation fails.
+     */
+    public static CasParser create(File casFile, boolean validate) throws IOException{
+    	return new CasFileParser(casFile, false);
     }
     
-    private CasFileParser(File file) throws IOException{
+    private CasFileParser(File file, boolean validate) throws IOException{
     	if(file ==null){
     		throw new NullPointerException("cas file can not be null");
     	}
@@ -98,6 +125,10 @@ public final class CasFileParser implements CasParser{
     		throw new FileNotFoundException(file.getAbsolutePath());
     	}
     	this.casFile = file;
+    	if(validate){
+    		CasValidator validator = new CasValidator(casFile.getParentFile());
+    		parse(validator);
+    	}
     }
     @Override
     public void parse(CasFileVisitor visitor) throws IOException{

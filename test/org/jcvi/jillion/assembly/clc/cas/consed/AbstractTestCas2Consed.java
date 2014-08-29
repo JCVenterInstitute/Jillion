@@ -74,10 +74,19 @@ public abstract class AbstractTestCas2Consed {
 	 }
 	    
 	    @Test
-	    public void parseCas() throws IOException, DataStoreException{
-	        File casFile = RESOURCES.getFile(pathToCas);
+	    public void parseCasWithoutValidating() throws IOException, DataStoreException{	    	
+	        parseCas(false);
+	    }
+	    @Test
+	    public void parseCasAndValidate() throws IOException, DataStoreException{
+	    	
+	        parseCas(true);
+	    }
+		private void parseCas(boolean validate) throws IOException,
+				DataStoreException {
+			File casFile = RESOURCES.getFile(pathToCas);
 	        CasGappedReferenceDataStoreBuilderVisitor gappedRefVisitor = new CasGappedReferenceDataStoreBuilderVisitor(casFile.getParentFile());
-	        CasParser casFileParser = CasFileParser.create(casFile);
+	        CasParser casFileParser = CasFileParser.create(casFile, validate);
 			casFileParser.parse(gappedRefVisitor);
 	        CasGappedReferenceDataStore gappedReferenceDataStore = gappedRefVisitor.build();
 	        
@@ -109,7 +118,7 @@ public abstract class AbstractTestCas2Consed {
 	        }finally{
 	        	IOUtil.closeAndIgnoreErrors(iter);
 	        }
-	    }
+		}
 
 		private void assertReadsCorrectlyPlaced(AceContig contig,
 				TigrContig expectedContig) {
