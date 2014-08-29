@@ -3,6 +3,8 @@ package org.jcvi.jillion.assembly.clc.cas;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
@@ -57,7 +59,7 @@ final class CasFileInfoValidator {
 			File file = CasUtil.getFileFor(dirOfCas, fileName);
 			actualInfo.add(getActualFileInfoFor(file));
 		}
-		actualInfo.assertMatches(expected);
+		actualInfo.assertMatches(dirOfCas, expected);
 	}
 
 	private static ActualFileInfo getFastaInfo(File fastaFile) throws IOException, DataStoreException {
@@ -125,18 +127,27 @@ final class CasFileInfoValidator {
 			this.numberOfResidues = this.numberOfResidues.add(other.numberOfResidues);
 		}
 		
-		public void assertMatches(CasFileInfo expected){
+		public void assertMatches(File dirOfCas, CasFileInfo expected) throws IOException{
 			if(numberOfRecords !=expected.getNumberOfSequences()){
 	    		throw new IllegalStateException(
-	    				"file(s) "+expected.getFileNames() +" have wrong number of sequences" +
-	    						numberOfRecords + " instead of " + expected.getNumberOfSequences() + " usually this is caused by the input files getting updated after the cas was created");
+	    				"file(s) "+getActualFilePaths(dirOfCas, expected) +" have wrong number of sequences: " +
+	    						numberOfRecords + " instead of " + expected.getNumberOfSequences() + ". Usually this is caused by the input files getting updated after the cas was created");
 	    	}
 			
 			if(!numberOfResidues.equals(expected.getNumberOfResidues())){
 	    		throw new IllegalStateException(
-	    				"file(s) "+expected.getFileNames() +" have wrong number of residues" +
-	    						numberOfResidues + " instead of " + expected.getNumberOfResidues() + " usually this is caused by the input files getting updated after the cas was created");
+	    				"file(s) "+getActualFilePaths(dirOfCas, expected) +" have wrong number of residues: " +
+	    						numberOfResidues + " instead of " + expected.getNumberOfResidues() + ". Usually this is caused by the input files getting updated after the cas was created");
 	    	}
 		}
+	}
+	
+	private static List<String> getActualFilePaths(File dirOfCas, CasFileInfo info) throws IOException{
+		List<String> fileNames = info.getFileNames();
+		List<String> list = new ArrayList<>(fileNames.size());
+		for(String filename : fileNames){
+			list.add(CasUtil.getFileFor(dirOfCas, filename).getCanonicalPath());
+		}
+		return list;
 	}
 }

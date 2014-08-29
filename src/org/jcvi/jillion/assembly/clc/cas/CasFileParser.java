@@ -114,7 +114,7 @@ public final class CasFileParser implements CasParser{
      * and validation fails.
      */
     public static CasParser create(File casFile, boolean validate) throws IOException{
-    	return new CasFileParser(casFile, false);
+    	return new CasFileParser(casFile, validate);
     }
     
     private CasFileParser(File file, boolean validate) throws IOException{
