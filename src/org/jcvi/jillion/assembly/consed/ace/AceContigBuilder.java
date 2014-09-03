@@ -535,7 +535,8 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
     }
     private void adjustContigRight(int endOfNewRead) {
         
-        if((initialConsensus ==null || endOfNewRead <= initialConsensus.getLength()) && (contigRight ==-1 || endOfNewRead > contigRight)){
+     //   if((initialConsensus ==null || endOfNewRead <= initialConsensus.getLength()) && (contigRight ==-1 || endOfNewRead > contigRight)){
+    	 if(contigRight ==-1 || endOfNewRead > contigRight){
             contigRight = endOfNewRead ;
         }
     }
