@@ -559,12 +559,18 @@ public final class AceFileUtil {
     
     /**
      * Compute the consensus quality sequence as computed by the same algorithm consed uses.
+     * 
      * @param contig the contig to compute the consensus qualities for; can not be null.
      * ConsensusQualities will only represent the qualities for the UNGAPPED 
      * consensus sequence.
+     * @param readQualities a {@link QualitySequenceDataStore} containing
+     * {@link QualitySequence}s for the underlying reads;
+     * can not be null.
+     * 
      * @return a {@link QualitySequence} can not be null.
-     * @throws DataStoreException 
-     * @throws NullPointerException if contig is null.
+     * @throws DataStoreException if there is a problem fetching quality data from 
+     * the {@link QualitySequenceDataStore}.
+     * @throws NullPointerException if either parameter is null.
      */
     public static QualitySequence computeConsensusQualities(Contig<? extends AssembledRead> contig, QualitySequenceDataStore readQualities) throws DataStoreException{
     	return ConsedConsensusQualityComputer.computeConsensusQualities(contig, readQualities);
