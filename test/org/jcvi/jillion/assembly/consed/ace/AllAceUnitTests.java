@@ -86,7 +86,8 @@ import org.junit.runners.Suite.SuiteClasses;
        
        TestAceFileParserWithNegativeReadAlignValues.class,
        
-       TestDenovoAceContigBuilder.class
+       TestDenovoAceContigBuilder.class,
+       TestAceContigBuilderInsertGapsIntoRead.class
        
     }
 )
