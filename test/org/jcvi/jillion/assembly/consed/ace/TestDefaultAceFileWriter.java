@@ -101,6 +101,40 @@ public class TestDefaultAceFileWriter {
 				.create(outputFile);
 		assertContigsAreEqual(aceDataStore, reparsedAceDataStore);
 	}
+	
+	@Test
+	public void callingClose2xShouldIgnore2ndCall() throws IOException, DataStoreException {
+		File contigFile = resources.getFile("files/flu_644151.contig");
+		File seqFile = resources.getFile("files/flu_644151.seq");
+		File qualFile = resources.getFile("files/flu_644151.qual");
+
+		final Date phdDate = new Date(0L);
+		NucleotideSequenceDataStore nucleotideDataStore = FastaRecordDataStoreAdapter
+				.adapt(NucleotideSequenceDataStore.class,
+						new NucleotideFastaFileDataStoreBuilder(seqFile)
+								.build());
+		final QualityFastaDataStore qualityFastaDataStore = new QualityFastaFileDataStoreBuilder(
+				qualFile).build();
+		QualitySequenceDataStore qualityDataStore = FastaRecordDataStoreAdapter
+				.adapt(QualitySequenceDataStore.class, qualityFastaDataStore);
+
+		PhdDataStore phdDataStore = new ArtificalPhdDataStore(
+				nucleotideDataStore, qualityDataStore, phdDate);
+
+		AceFileDataStore aceDataStore = AceAdapterContigFileDataStore
+				.create(qualityFastaDataStore, phdDate, contigFile);
+
+		File outputFile = folder.newFile();
+
+		AceFileWriter sut = new AceFileWriterBuilder(outputFile, phdDataStore)
+				.tmpDir(tmpDir).build();
+		writeContigs(aceDataStore, sut);
+		sut.close();
+		sut.close();
+		AceFileDataStore reparsedAceDataStore = DefaultAceFileDataStore
+				.create(outputFile);
+		assertContigsAreEqual(aceDataStore, reparsedAceDataStore);
+	}
 
 	@Test
 	public void convertCtg2AceWithComputedConsensusQualities()
