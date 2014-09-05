@@ -66,6 +66,8 @@ public final class AceFileWriterBuilder{
 		private final PhdDataStore phdDataStore;
 		private final OutputStream out;
 		private File tmpDir;
+		
+	
 		/**
 		 * Create a new Builder instance
 		 * which will build a new instance of 
@@ -173,6 +175,8 @@ private static final class DefaultAceFileWriter extends AbstractAceFileWriter{
 	
 	ByteArrayOutputStream tagOutputStream = new ByteArrayOutputStream(DEFAULT_BUFFER_SIZE);
 	
+	private volatile boolean isOpen = true;
+	
 	private DefaultAceFileWriter(OutputStream out, PhdDataStore phdDatastore,File tmpDir,
 			boolean createBsRecords) throws IOException {
 		super(createBsRecords);
@@ -188,13 +192,19 @@ private static final class DefaultAceFileWriter extends AbstractAceFileWriter{
 
 	@Override
 	public void close() throws IOException {
-		
-		tempWriter.close();
-		writeAceFileHeader();
-		copyTempFileData();
-		copyTagData();
-		out.close();
-		IOUtil.deleteIgnoreError(tempFile);
+		//2014-09-04:
+		//only close once!
+		//any additional calls to close
+		//should be no-op
+		if(isOpen){
+			isOpen=false;
+			tempWriter.close();
+			writeAceFileHeader();
+			copyTempFileData();
+			copyTagData();
+			out.close();
+			IOUtil.deleteIgnoreError(tempFile);
+		}
 		
 	}
 
