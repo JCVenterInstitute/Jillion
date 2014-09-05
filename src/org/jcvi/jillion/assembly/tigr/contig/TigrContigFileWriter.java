@@ -25,7 +25,10 @@
  */
 package org.jcvi.jillion.assembly.tigr.contig;
 
+import java.io.BufferedOutputStream;
 import java.io.Closeable;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -59,7 +62,10 @@ public class TigrContigFileWriter implements Closeable{
 	private static final CtgFormatReadSorter READ_SORTER = CtgFormatReadSorter.INSTANCE;
     private final OutputStream out;
     
-    
+    public TigrContigFileWriter(File out) throws IOException{
+    	IOUtil.mkdirs(out.getParentFile());
+    	this.out = new BufferedOutputStream(new FileOutputStream(out));
+    }
     public TigrContigFileWriter(OutputStream out) {
         this.out = out;
     }
