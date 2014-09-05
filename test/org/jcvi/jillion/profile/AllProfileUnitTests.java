@@ -23,16 +23,8 @@
  *
  * @author dkatzel
  */
-package org.jcvi;
+package org.jcvi.jillion.profile;
 
-import org.jcvi.jillion.assembly.AllAssemblyUnitTests;
-import org.jcvi.jillion.core.AllCoreUnitTests;
-import org.jcvi.jillion.fasta.AllFastaUnitTests;
-import org.jcvi.jillion.maq.AllMaqTests;
-import org.jcvi.jillion.profile.AllProfileUnitTests;
-import org.jcvi.jillion.sam.AllSamTests;
-import org.jcvi.jillion.trace.AllTraceUnitTests;
-import org.jcvi.jillion_experimental.AllExperimentalTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -42,16 +34,8 @@ import org.junit.runners.Suite.SuiteClasses;
     {
         
         
-    	 AllCoreUnitTests.class,         
-        AllFastaUnitTests.class,
-        AllTraceUnitTests.class,
-        AllAssemblyUnitTests.class,
-        AllSamTests.class,
-        AllMaqTests.class,
-        AllProfileUnitTests.class,
-        
-        AllExperimentalTests.class
+    	TestProfileWriterBuilder.class
     }
 )
-public class AllUnitTests {
+public class AllProfileUnitTests {
 }

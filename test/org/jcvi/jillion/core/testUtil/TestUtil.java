@@ -30,6 +30,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -101,18 +102,25 @@ public final class TestUtil {
 		}
     	
     }
-    
+    public static String getFileAsString(File f) throws IOException{
+
+    	try(InputStream in = new BufferedInputStream(new FileInputStream(f));
+    		ByteArrayOutputStream out = new ByteArrayOutputStream((int)f.length())){
+    		IOUtil.copy(in, out);
+    		return new String(out.toByteArray(), IOUtil.UTF_8);
+    	}
+ 
+    }
     public static boolean contentsAreEqual(File file1, File file2) throws IOException{
 		if(file1.length() != file2.length()){
 			return false;
 		}
 		
-		InputStream in1 =null;
-		InputStream in2 =null;
+
 		
-		try{
-			in1 = new BufferedInputStream(new FileInputStream(file1));
-			in2 = new BufferedInputStream(new FileInputStream(file2));
+		try(InputStream in1= new BufferedInputStream(new FileInputStream(file1));
+				InputStream in2= new BufferedInputStream(new FileInputStream(file2));
+			){
 			int value1,value2;
 			do{
 				value1 = in1.read();
@@ -122,8 +130,6 @@ public final class TestUtil {
 				}
 			}while(value1 >=0);
 			return true;
-		}finally{
-			IOUtil.closeAndIgnoreErrors(in1,in2);
 		}
 		
 	}
