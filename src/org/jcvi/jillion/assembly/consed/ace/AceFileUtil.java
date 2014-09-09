@@ -291,6 +291,9 @@ public final class AceFileUtil {
     }
     public static synchronized String createAcePlacedReadRecord(String readId, AssembledRead placedRead, Phd phd, PhdInfo phdInfo){
         
+    	if(phd==null){
+    		throw new NullPointerException("phd can not be null for " + readId);
+    	}
         NucleotideSequence nucleotideSequence = placedRead.getNucleotideSequence();
 		final NucleotideSequence gappedValidBasecalls = nucleotideSequence; 
         final Range ungappedValidRange = placedRead.getReadInfo().getValidRange();
