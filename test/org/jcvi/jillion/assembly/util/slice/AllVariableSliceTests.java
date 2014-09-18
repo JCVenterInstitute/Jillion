@@ -23,7 +23,7 @@
  *
  * @author dkatzel
  */
-package org.jcvi.jillion.assembly.util;
+package org.jcvi.jillion.assembly.util.slice;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -32,15 +32,10 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     { 
-        TestDefaultCoverageRegion.class,
-        TestDefaultCoverageMapBuilder.class,
-        TestCoverageRestrictedMap.class,
-        TestCoverageMapBuilderUseUngappedCoords.class,
-        TestCoverageMapBuilderMaxCoverage.class,
-        TestCoverageMapBuilderMinCoverage.class,
-        
+        TestSingleNucleotideSliceMap.class,
+        TestVariableNucleotideSliceMap.class
     }
     )
-public class AllCoverageUnitTests {
+public class AllVariableSliceTests {
 
 }

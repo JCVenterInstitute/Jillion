@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -27,11 +28,11 @@ class SimpleProfileWriter implements ProfileWriter {
 	
 	private final NucleotideSequence reference;
 	private final boolean include0xEdges;
-	
+	private final boolean ignoreGappedConsensusPositions;
 	private volatile boolean isOpen=true;
 	
 	public SimpleProfileWriter(File outputFile, DisplayCountStrategy displayStrategy, MostFrequentTieBreakerRule tieBreakerRule,
-			NucleotideSequence referenceOfConsensus,boolean include0xEdges) throws IOException {
+			NucleotideSequence referenceOfConsensus,boolean include0xEdges, boolean ignoreGappedConsensusPositions) throws IOException {
 		IOUtil.mkdirs(outputFile.getParentFile());
 		this.writer = new PrintWriter(outputFile);
 		this.lineWriterStrategy = displayStrategy;
@@ -39,16 +40,18 @@ class SimpleProfileWriter implements ProfileWriter {
 		this.tieBreakerRule = tieBreakerRule;
 		this.reference = referenceOfConsensus;
 		this.include0xEdges = include0xEdges;
+		this.ignoreGappedConsensusPositions = ignoreGappedConsensusPositions;
 
 	}
 
-	public SimpleProfileWriter(OutputStream out, DisplayCountStrategy displayStrategy,MostFrequentTieBreakerRule tieBreakerRule, NucleotideSequence referenceOfConsensus,boolean include0xEdges){
+	public SimpleProfileWriter(OutputStream out, DisplayCountStrategy displayStrategy,MostFrequentTieBreakerRule tieBreakerRule, NucleotideSequence referenceOfConsensus,boolean include0xEdges, boolean ignoreGappedConsensusPositions){
 		this.writer = new PrintWriter(out);
 		this.lineWriterStrategy = displayStrategy;
 		this.counts = new double[(int)referenceOfConsensus.getLength()][5];
 		this.tieBreakerRule = tieBreakerRule;
 		this.reference = referenceOfConsensus;
 		this.include0xEdges = include0xEdges;
+		this.ignoreGappedConsensusPositions = ignoreGappedConsensusPositions;
 	}
 	
 	@Override
@@ -62,20 +65,43 @@ class SimpleProfileWriter implements ProfileWriter {
 		writer.printf("#Major\t-\tA\tC\tG\tT%n");
 		int start = getStartOffset();
 		int end = getEndOffset();
-		for(int i=start; i<= end; i++){
+		if(ignoreGappedConsensusPositions){
+			int[] gapOffsets = reference.getGapOffsets().stream().mapToInt(i -> i.intValue()).toArray();
+			for(int i=start; i<= end; i++){
+				if(Arrays.binarySearch(gapOffsets, i)>=0){
+					//i is a gap skip it
+					continue;
+				}
+				
+				Nucleotide mostFreq = getMostFrequentBase(i,
+													counts[i][0],
+													counts[i][1],
+													counts[i][2],
+													counts[i][3]);
+				lineWriterStrategy.write(writer, mostFreq, counts[i][4],
+							counts[i][0],
+							counts[i][1],
+							counts[i][2],
+							counts[i][3]
+							);
+			}
 			
-			
-			Nucleotide mostFreq = getMostFrequentBase(i,
-												counts[i][0],
-												counts[i][1],
-												counts[i][2],
-												counts[i][3]);
-			lineWriterStrategy.write(writer, mostFreq, counts[i][4],
-						counts[i][0],
-						counts[i][1],
-						counts[i][2],
-						counts[i][3]
-						);
+		}else{
+			for(int i=start; i<= end; i++){
+				
+				
+				Nucleotide mostFreq = getMostFrequentBase(i,
+													counts[i][0],
+													counts[i][1],
+													counts[i][2],
+													counts[i][3]);
+				lineWriterStrategy.write(writer, mostFreq, counts[i][4],
+							counts[i][0],
+							counts[i][1],
+							counts[i][2],
+							counts[i][3]
+							);
+			}
 		}
 		}finally{
 			IOUtil.closeAndIgnoreErrors(writer);
