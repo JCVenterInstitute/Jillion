@@ -194,13 +194,12 @@ public final class AssemblyUtil {
      * of the range are in ungapped coordinate space) for the given
      * gapped {@link NucleotideSequence} and gapped {@link Range}.
      * @param gappedSequence the gapped {@link NucleotideSequence} needed
-     * to compute the ungapped coordinates from.  The resulting
-     * ungapped range will be in the same coordinate system that the
-     * input gapped range is in.
+     * to compute the ungapped coordinates from.  
      * @param gappedRange the Range of gapped coordinates.
-     * @return a new Range in the same coordinate system as the input
-     * range; never null.
+     * @return a new Range never null.
      * @throws NullPointerException if either argument is null.
+     * @throws IndexOutOfBoundsException if the given Range goes beyond
+     * the gapped sequence.
      */
     public static Range toUngappedRange(final NucleotideSequence gappedSequence,
             Range gappedRange) {
