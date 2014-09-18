@@ -113,6 +113,77 @@ public class TestProfileWriterBuilder {
 		assertEquals(expected, new String(out.toByteArray(), "UTF-8"));		
 		
 	}
+	
+	@Test
+	public void createProfileWithMajorityGaps() throws IOException{
+		Contig<?> contig = new ContigBuilder("AC-TACGT")
+								.addRead("read1", 0, "AC-TACGT")
+								.addRead("read2", 0, "AC-TACGT")
+								.addRead("read3", 4,     "ACGT")
+								.build();
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		
+		
+		try(ProfileWriter sut = new ProfileWriterBuilder(out, contig.getConsensusSequence())
+														.build();
+			StreamingIterator<? extends AssembledRead> iter = contig.getReadIterator()){
+			
+			while(iter.hasNext()){
+				AssembledRead read = iter.next();
+				sut.addSequence((int)read.getGappedStartOffset(), read.getNucleotideSequence());
+			}
+		}
+		
+		String expected = String.format("#Major\t-\tA\tC\tG\tT%n"+
+										"A\t0\t2\t0\t0\t0%n"+
+										"C\t0\t0\t2\t0\t0%n"+
+										"A\t2\t0\t0\t0\t0%n"+
+										"T\t0\t0\t0\t0\t2%n"+
+										"A\t0\t3\t0\t0\t0%n"+
+										"C\t0\t0\t3\t0\t0%n"+
+										"G\t0\t0\t0\t3\t0%n"+
+										"T\t0\t0\t0\t0\t3%n");
+										
+		assertEquals(expected, new String(out.toByteArray(), "UTF-8"));		
+		
+	}
+	
+	@Test
+	public void createProfileIgnoreSlicesWithGapInConsensus() throws IOException{
+		Contig<?> contig = new ContigBuilder("AC-TACGT")
+								.addRead("read1", 0, "AC-TACGT")
+								.addRead("read2", 0, "AC-TACGT")
+								.addRead("read3", 4,     "ACGT")
+								.build();
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		
+		
+		try(ProfileWriter sut = new ProfileWriterBuilder(out, contig.getConsensusSequence())
+													.ignoreGappedConsensusPositions(true)
+														.build();
+			StreamingIterator<? extends AssembledRead> iter = contig.getReadIterator()){
+			
+			while(iter.hasNext()){
+				AssembledRead read = iter.next();
+				sut.addSequence((int)read.getGappedStartOffset(), read.getNucleotideSequence());
+			}
+		}
+		
+		String expected = String.format("#Major\t-\tA\tC\tG\tT%n"+
+										"A\t0\t2\t0\t0\t0%n"+
+										"C\t0\t0\t2\t0\t0%n"+
+									//	"A\t2\t0\t0\t0\t0%n"+
+										"T\t0\t0\t0\t0\t2%n"+
+										"A\t0\t3\t0\t0\t0%n"+
+										"C\t0\t0\t3\t0\t0%n"+
+										"G\t0\t0\t0\t3\t0%n"+
+										"T\t0\t0\t0\t0\t3%n");
+										
+		assertEquals(expected, new String(out.toByteArray(), "UTF-8"));		
+		
+	}
+	
+	
 	@Test
 	public void createProfileWithAmbiguitiesShouldBeFractional() throws IOException{
 		Contig<?> contig = new ContigBuilder("ACGTACGT")

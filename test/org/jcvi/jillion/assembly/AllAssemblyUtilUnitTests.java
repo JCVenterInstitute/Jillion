@@ -22,6 +22,7 @@ package org.jcvi.jillion.assembly;
 
 import org.jcvi.jillion.assembly.util.AllCoverageUnitTests;
 import org.jcvi.jillion.assembly.util.AllSliceUnitTests;
+import org.jcvi.jillion.assembly.util.slice.AllVariableSliceTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -36,7 +37,9 @@ import org.junit.runners.Suite.SuiteClasses;
          TestAssemblyUtil_convertToUngappedFullRangeOffset.class,
          
         AllCoverageUnitTests.class,
-        AllSliceUnitTests.class
+        AllSliceUnitTests.class,
+
+        AllVariableSliceTests.class
     }
     )
 public class AllAssemblyUtilUnitTests {

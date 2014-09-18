@@ -24,6 +24,7 @@ public class ProfileWriterBuilder {
 	private MostFrequentTieBreakerRule tieBreakerRule = MostFrequentTieBreakerRule.LOWEST_ASCII;
 	
 	private boolean include0xEdges=true;
+	private boolean ignoreGappedConsensusPositions = false;
 	/**
 	 * Create a new ProfileWriterBuilder that will use
 	 * the given reference or consensus sequence as the profile
@@ -126,8 +127,13 @@ public class ProfileWriterBuilder {
 	public ProfileWriter build() throws IOException{
 		if(outputFile ==null){
 			//use stream
-			return new SimpleProfileWriter(outStream, displayPercentages, tieBreakerRule, referenceOrConsensus, include0xEdges);
+			return new SimpleProfileWriter(outStream, displayPercentages, tieBreakerRule, referenceOrConsensus, include0xEdges, ignoreGappedConsensusPositions);
 		}
-		return new SimpleProfileWriter(outputFile, displayPercentages, tieBreakerRule, referenceOrConsensus, include0xEdges);
+		return new SimpleProfileWriter(outputFile, displayPercentages, tieBreakerRule, referenceOrConsensus, include0xEdges, ignoreGappedConsensusPositions);
+	}
+	
+	public ProfileWriterBuilder ignoreGappedConsensusPositions(boolean ignoreGappedConsensusPositions) {
+		this.ignoreGappedConsensusPositions = ignoreGappedConsensusPositions;
+		return this;
 	}
 }
