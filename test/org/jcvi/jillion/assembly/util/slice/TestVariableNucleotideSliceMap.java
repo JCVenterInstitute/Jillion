@@ -1,13 +1,10 @@
 package org.jcvi.jillion.assembly.util.slice;
 
+import static org.jcvi.jillion.assembly.util.slice.VariableWidthSliceTestUtil.createSlice;
+import static org.jcvi.jillion.assembly.util.slice.VariableWidthSliceTestUtil.seq;
 import static org.junit.Assert.assertEquals;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Test;
 public class TestVariableNucleotideSliceMap {
@@ -15,7 +12,7 @@ public class TestVariableNucleotideSliceMap {
 	
 	@Test
 	public void noGapsSkipIncompleteNothingToSkip(){
-		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("ACGTTA"), 3, true)
+		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("ACGTTA"), 3)
 											.add(0, new NucleotideSequenceBuilder("ACGTTA").build())
 											.add(3, new NucleotideSequenceBuilder(   "TTA").build())
 											.add(3, new NucleotideSequenceBuilder(   "GGA").build())
@@ -30,7 +27,7 @@ public class TestVariableNucleotideSliceMap {
 	
 	@Test
 	public void readHasNegativeOffset(){
-		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("NNACGTTA"), 3, true, Range.of(2,7))
+		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("NNACGTTA"), 3, Range.of(2,7))
 											.add(2, new NucleotideSequenceBuilder("ACGTTAnnn").build())
 											.add(5, new NucleotideSequenceBuilder(   "TTA").build())
 											.add(5, new NucleotideSequenceBuilder(   "GGA").build())
@@ -47,7 +44,7 @@ public class TestVariableNucleotideSliceMap {
 	public void veryGappy(){
 		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(
 				                                        //codon splits            |   |     |      | 
-				                                                              seq("AC-G-T--AC--T-G-T"), 3, true)
+				                                                              seq("AC-G-T--AC--T-G-T"), 3)
 											.add(0, new NucleotideSequenceBuilder("AC-G-T--AC--T-G-T").build())
 											.add(3, new NucleotideSequenceBuilder(   "G-T--AC--T-G-T").build())
 											.add(10, new NucleotideSequenceBuilder(         "NNTTGGT").build())
@@ -67,7 +64,7 @@ public class TestVariableNucleotideSliceMap {
 	
 	@Test
 	public void readStartsInFrame1AndGoesBeyondReferenceSeqShouldIgnoreDownstream(){
-		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("ACGTTA"), 3, true)
+		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("ACGTTA"), 3)
 											.add(0, new NucleotideSequenceBuilder("ACGTTANNNNNN").build())
 											.add(3, new NucleotideSequenceBuilder(   "TTA").build())
 											.add(3, new NucleotideSequenceBuilder(   "GGA").build())
@@ -81,7 +78,7 @@ public class TestVariableNucleotideSliceMap {
 	}
 	@Test
 	public void readStartsInFrame2AndGoesBeyondReferenceSeqShouldIgnoreDownstream(){
-		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("ACGTTA"), 3, true)
+		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("ACGTTA"), 3)
 											.add(0, new NucleotideSequenceBuilder("ACGTTA").build())
 											.add(1, new NucleotideSequenceBuilder( "CGTTANNNN").build())
 											.add(3, new NucleotideSequenceBuilder(   "TTA").build())
@@ -96,7 +93,7 @@ public class TestVariableNucleotideSliceMap {
 	}
 	@Test
 	public void readStartsInFrame2WithGapsAndGoesBeyondReferenceSeqShouldIgnoreDownstream(){
-		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("ACGTTA"), 3, true)
+		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("ACGTTA"), 3)
 											.add(0, new NucleotideSequenceBuilder("ACGTTA").build())
 											.add(1, new NucleotideSequenceBuilder( "C-TTANNNN").build())
 											.add(3, new NucleotideSequenceBuilder(   "TTA").build())
@@ -112,7 +109,7 @@ public class TestVariableNucleotideSliceMap {
 	
 	@Test
 	public void readStartsInFrame3AndGoesBeyondReferenceSeqShouldIgnoreDownstream(){
-		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("ACGTTA"), 3, true)
+		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("ACGTTA"), 3)
 											.add(0, new NucleotideSequenceBuilder("ACGTTA").build())
 											.add(2, new NucleotideSequenceBuilder(  "GTTANNNN").build())
 											.add(3, new NucleotideSequenceBuilder(   "TTA").build())
@@ -128,7 +125,7 @@ public class TestVariableNucleotideSliceMap {
 	
 	@Test
 	public void consensusHasGaps(){
-		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("AC-GTTA"), 3, true)
+		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("AC-GTTA"), 3)
 											.add(0, new NucleotideSequenceBuilder("AC-GTTA").build())
 											.add(4, new NucleotideSequenceBuilder(   "TTA").build())
 											.add(4, new NucleotideSequenceBuilder(   "GGA").build())
@@ -143,7 +140,7 @@ public class TestVariableNucleotideSliceMap {
 	
 	@Test
 	public void consensusHasGapsMakeMapOfSubRange(){
-		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("AC-GTTANNNN"), 3, true, Range.of(0,6))
+		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("AC-GTTANNNN"), 3, Range.of(0,6))
 											.add(0, new NucleotideSequenceBuilder("AC-GTTA").build())
 											.add(4, new NucleotideSequenceBuilder(   "TTA").build())
 											.add(4, new NucleotideSequenceBuilder(   "GGA").build())
@@ -158,7 +155,7 @@ public class TestVariableNucleotideSliceMap {
 	
 	@Test
 	public void consensusHasGapsMakeMapOfSubRangeWithReadExtendingBeyond(){
-		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("AC-GTTANNNN"), 3, true, Range.of(0,6))
+		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("AC-GTTANNNN"), 3, Range.of(0,6))
 											.add(0, new NucleotideSequenceBuilder("AC-GTTATTTTTTTTTTTTTTT").build())
 											.add(3, new NucleotideSequenceBuilder(   "GT-ATTTTT").build())
 											.add(4, new NucleotideSequenceBuilder(   "GGACCCCCCCCCCCCCCCCCCCCCCCCC").build())
@@ -175,7 +172,7 @@ public class TestVariableNucleotideSliceMap {
 	
 	@Test
 	public void readHasInternalGapsSkipIncompleteNothingToSkip(){
-		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("ACGTTA"), 3,true)
+		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("ACGTTA"), 3)
 											.add(0, new NucleotideSequenceBuilder("ACGTTA").build())
 											.add(3, new NucleotideSequenceBuilder(   "T-A").build())
 											.add(3, new NucleotideSequenceBuilder(   "GGA").build())
@@ -192,7 +189,7 @@ public class TestVariableNucleotideSliceMap {
 	
 	@Test
 	public void readEndsInsideSliceShouldShouldSkip(){
-		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("ACGTTA"), 3,true)
+		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("ACGTTA"), 3)
 											.add(0, new NucleotideSequenceBuilder("ACGTTA").build())
 											.add(3, new NucleotideSequenceBuilder(   "TT").build())
 											.add(3, new NucleotideSequenceBuilder(   "GGA").build())
@@ -209,7 +206,7 @@ public class TestVariableNucleotideSliceMap {
 	
 	@Test
 	public void readStartsFrame3InsideSliceShouldSkip(){
-		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("ACGTTA"), 3, true)
+		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("ACGTTA"), 3)
 											.add(0, new NucleotideSequenceBuilder("ACGTTA").build())
 											.add(2, new NucleotideSequenceBuilder(  "GTTA").build())
 											.add(3, new NucleotideSequenceBuilder(   "GGA").build())
@@ -223,7 +220,7 @@ public class TestVariableNucleotideSliceMap {
 	}
 	@Test
 	public void readStartsFrame2InsideSliceShouldSkip(){
-		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("ACGTTA"), 3, true)
+		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("ACGTTA"), 3)
 											.add(0, new NucleotideSequenceBuilder("ACGTTA").build())
 											.add(1, new NucleotideSequenceBuilder( "CGTTA").build())
 											.add(3, new NucleotideSequenceBuilder(   "GGA").build())
@@ -238,7 +235,7 @@ public class TestVariableNucleotideSliceMap {
 	
 	@Test
 	public void readStartsCondon2Frame2InsideSliceShouldSkip(){
-		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("ACGTTACCC"), 3, true)
+		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("ACGTTACCC"), 3)
 											.add(0, new NucleotideSequenceBuilder("ACGTTACCC").build())
 											.add(1, new NucleotideSequenceBuilder( "CGTTACCC").build())
 											.add(3, new NucleotideSequenceBuilder(   "GGACCC").build())
@@ -255,7 +252,7 @@ public class TestVariableNucleotideSliceMap {
 	}
 	@Test
 	public void readStartsCondon2Frame3InsideSliceShouldSkip(){
-		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("ACGTTACCC"), 3, true)
+		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("ACGTTACCC"), 3)
 											.add(0, new NucleotideSequenceBuilder("ACGTTACCC").build())
 											.add(1, new NucleotideSequenceBuilder( "CGTTACCC").build())
 											.add(3, new NucleotideSequenceBuilder(   "GGACCC").build())
@@ -272,7 +269,7 @@ public class TestVariableNucleotideSliceMap {
 	}
 	@Test
 	public void readStartsCondon2Frame1InsideSliceShouldSkip(){
-		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("ACGTTACCC"), 3, true)
+		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("ACGTTACCC"), 3)
 											.add(0, new NucleotideSequenceBuilder("ACGTTACCC").build())
 											.add(1, new NucleotideSequenceBuilder( "CGTTACCC").build())
 											.add(3, new NucleotideSequenceBuilder(   "GGACCC").build())
@@ -290,7 +287,7 @@ public class TestVariableNucleotideSliceMap {
 	
 	@Test
 	public void gappedReadStartsInsideSliceShouldSkip(){
-		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(     seq("ACGTTA"), 3, true)
+		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(     seq("ACGTTA"), 3)
 																.add(0, new NucleotideSequenceBuilder("ACGTTA").build())
 																.add(1, new NucleotideSequenceBuilder( "C-TTA").build())
 																.add(3, new NucleotideSequenceBuilder(   "GGA").build())
@@ -306,7 +303,7 @@ public class TestVariableNucleotideSliceMap {
 	
 	@Test
 	public void mixOfLeadingTrailingAndInternalGapsShouldSkip(){
-		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("ACGTTA"), 3, true)
+		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("ACGTTA"), 3)
 											.add(0, new NucleotideSequenceBuilder("ACGTTA").build())
 											.add(2, new NucleotideSequenceBuilder(  "GTTA").build())
 											.add(3, new NucleotideSequenceBuilder(   "G-A").build())
@@ -323,7 +320,7 @@ public class TestVariableNucleotideSliceMap {
 	@Test
 	public void mixOfLeadingTrailingAndInternalGapsAndConsensusGaps(){
 		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(
-				                                                              seq("A-C-GTT-A"), 3, true)
+				                                                              seq("A-C-GTT-A"), 3)
 											.add(0, new NucleotideSequenceBuilder("ACC-GTTAA").build())
 											.add(0, new NucleotideSequenceBuilder("A-CGGTT-A").build())
 											.add(4, new NucleotideSequenceBuilder(    "GTT-A").build())
@@ -341,7 +338,7 @@ public class TestVariableNucleotideSliceMap {
 	
 	@Test
 	public void consensusSubset(){
-		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("NA-C-GTT-A"), 3, true, Range.of(1, 9))
+		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("NA-C-GTT-A"), 3, Range.of(1, 9))
 											.add(0, new NucleotideSequenceBuilder("NACC-GTTAA").build())
 											.add(0, new NucleotideSequenceBuilder("NA-CGGTT-A").build())
 											.add(5, new NucleotideSequenceBuilder(     "GTT-A").build())
@@ -357,28 +354,5 @@ public class TestVariableNucleotideSliceMap {
 		assertEquals(createSlice(seq("TT-A"), "TTAA", "TT-A","TT-A", "---A", "-TAA"), actual.getSlice(1));
 	}
 	
-	private NucleotideSequence seq(String bases){
-		return new NucleotideSequenceBuilder(bases).build();
-	}
 	
-	
-	private VariableWidthNucleotideSlice createSlice(NucleotideSequence ref,String...triplets){
-		
-		List<List<Nucleotide>> elements = new ArrayList<>();
-		for(String triple : triplets){
-			char[] chars =triple.toCharArray();
-			List<Nucleotide> ns = new ArrayList<>(chars.length);
-			for(int i=0; i<chars.length; i++){
-				ns.add(Nucleotide.parse(chars[i]));
-			}
-			elements.add(ns);
-		}
-		
-		int max = elements.stream().mapToInt(l -> l.size()).max().orElse(0);
-		VariableWidthNucleotideSlice.Builder builder = new VariableWidthNucleotideSlice.Builder(ref);
-		for(List<Nucleotide> element : elements){
-			builder.add(element);
-		}
-		return builder.build();
-	}
 }

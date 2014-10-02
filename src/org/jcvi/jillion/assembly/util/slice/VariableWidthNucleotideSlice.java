@@ -17,6 +17,7 @@ import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.JoinedStringBuilder;
 
 public class VariableWidthNucleotideSlice implements VariableWidthSlice<Nucleotide>{
 
@@ -99,18 +100,24 @@ public class VariableWidthNucleotideSlice implements VariableWidthSlice<Nucleoti
 
 	public static class Builder{
 		private final int width;
+		private final int startOffset;
 		private final NucleotideSequence gappedReference;
 		
 		private final Map<List<Nucleotide>, LongAdder> countMap = new ConcurrentHashMap<>();
 		
 		public Builder(NucleotideSequence gappedReference) {
+			this(gappedReference, 0);
+		}
+		public Builder(NucleotideSequence gappedReference, int startOffset) {
 			Objects.requireNonNull(gappedReference);
+
 			if(gappedReference.getUngappedLength() <0){
 				throw new IllegalArgumentException("ungappedWidth must be >=1");
 			}
 			
 			this.width = (int)gappedReference.getLength();
 			this.gappedReference = gappedReference;
+			this.startOffset = startOffset;
 		}
 
 		private void assertNoElementsNull(List<Nucleotide> list){
@@ -136,7 +143,7 @@ public class VariableWidthNucleotideSlice implements VariableWidthSlice<Nucleoti
 		}
 		public Builder add(List<Nucleotide> list){
 			if(list.size() != width){
-				throw new IllegalArgumentException("width does is not length " + width + " : " + list);
+				throw new IllegalArgumentException("width is not length " + width + " : " + list);
 			}			
 			assertNoElementsNull(list);
 			countMap.computeIfAbsent(list, k -> new LongAdder()).increment();
@@ -148,7 +155,7 @@ public class VariableWidthNucleotideSlice implements VariableWidthSlice<Nucleoti
 			return new VariableWidthNucleotideSlice(this);
 		}
 
-		public Builder add(int i, NucleotideSequence seq) {
+		public Builder addMultiple(int i, NucleotideSequence seq) {
 			List<Nucleotide> list = new ArrayList<>();
 			for(Nucleotide n : seq){
 				list.add(n);
@@ -157,18 +164,20 @@ public class VariableWidthNucleotideSlice implements VariableWidthSlice<Nucleoti
 			return this;
 		}
 
-		public void skipBases(int frame, Iterator<Nucleotide> iter) {
-			int gappedOffset = gappedReference.getGappedOffsetFor(frame -1);
-			int numberOfBasesToSkip = width - gappedOffset;
+		public void skipBases(int gappedOffset, Iterator<Nucleotide> iter) {
+			int numberOfBasesToSkip = width - (gappedOffset - startOffset);
 			for(int i=0; iter.hasNext() && i<numberOfBasesToSkip; i++){
 				iter.next();
 			}
 			
 		}
 
-		public void skipBases(Iterator<Nucleotide> iter) {
-			for(int i=0; iter.hasNext() && i<width; i++){
-				iter.next();
+		public void addBeginningOfRead(int gappedStartOffset,
+				Iterator<Nucleotide> iter) {
+			if(startOffset == gappedStartOffset){
+				add(iter);
+			}else{
+				skipBases(gappedStartOffset, iter);
 			}
 			
 		}
@@ -176,7 +185,11 @@ public class VariableWidthNucleotideSlice implements VariableWidthSlice<Nucleoti
 
 	@Override
 	public String toString() {
-		return "VariableWidthNucleotideSlice [list=" + list + "]";
+		return JoinedStringBuilder.create(list)
+									.prefix("[ ")
+									.glue(", ")
+									.suffix(" ]")
+									.build();
 	}
 
 }

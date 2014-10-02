@@ -33,7 +33,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     { 
         TestSingleNucleotideSliceMap.class,
-        TestVariableNucleotideSliceMap.class
+        TestVariableNucleotideSliceMap.class,
+        TestRnaEditedCodonSliceMap.class,
+        TestRnaEditedCodonSliceMapRealData.class
     }
     )
 public class AllVariableSliceTests {
