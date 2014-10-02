@@ -45,7 +45,7 @@ import org.junit.runners.Suite.SuiteClasses;
         
         TestFastqParser.class,
         TestFastqParserWithFunctionLambda.class,
-        
+        TestInvalidFastq.class,
         
         TestDefaultFastQFileDataStore.class,
         TestDefaultMultiLineFastqRecordsInDataStore.class,
