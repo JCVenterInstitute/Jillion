@@ -26,6 +26,7 @@ import java.util.Iterator;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
+import org.jcvi.jillion.core.util.SingleThreadAdder;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.PeekableIterator;
 import org.jcvi.jillion.internal.core.util.GrowableByteArray;
@@ -335,6 +336,78 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     	assertInsertionParametersValid(offset, sequence);
 		return insert(offset, new NewValues(sequence));
     }
+    
+    /**
+     * Replace the sequence currently located at the given
+     * {@link Range} with the given replacementSequence.
+     * 
+     * @apiNote This is the same as calling:
+     * <pre>
+     * 	delete(gappedRangeToBeReplaced);
+     * 	insert((int)gappedRangeToBeReplaced.getBegin(), replacementSeq);
+     * </pre>
+     * @param gappedRangeToBeReplaced the range of this sequence to be replaced.
+     * @param replacementSeq the sequence use in this range.
+     */
+	public NucleotideSequenceBuilder replace(Range gappedRangeToBeReplaced, NucleotideSequenceBuilder replacementSeq) {
+		delete(gappedRangeToBeReplaced);
+		insert((int)gappedRangeToBeReplaced.getBegin(), replacementSeq);	
+		return this;
+	}
+	/**
+     * Replace the sequence currently located at the given
+     * {@link Range} with the given replacementSequence.
+     * 
+     * @apiNote This is the same as calling:
+     * <pre>
+     * 	delete(gappedRangeToBeReplaced);
+     * 	insert((int)gappedRangeToBeReplaced.getBegin(), replacementSeq);
+     * </pre>
+     * @param gappedRangeToBeReplaced the range of this sequence to be replaced.
+     * @param replacementSeq the sequence use in this range.
+     */
+	public NucleotideSequenceBuilder replace(Range gappedRangeToBeReplaced, char[] replacementSeq) {
+		delete(gappedRangeToBeReplaced);
+		insert((int)gappedRangeToBeReplaced.getBegin(), replacementSeq);	
+		return this;
+	}
+	
+	/**
+     * Replace the sequence currently located at the given
+     * {@link Range} with the given replacementSequence.
+     * 
+     * @apiNote This is the same as calling:
+     * <pre>
+     * 	delete(gappedRangeToBeReplaced);
+     * 	insert((int)gappedRangeToBeReplaced.getBegin(), replacementSeq);
+     * </pre>
+     * @param gappedRangeToBeReplaced the range of this sequence to be replaced.
+     * @param replacementSeq the sequence use in this range.
+     */
+	public NucleotideSequenceBuilder replace(Range gappedRangeToBeReplaced, String replacementSeq) {
+		delete(gappedRangeToBeReplaced);
+		insert((int)gappedRangeToBeReplaced.getBegin(), replacementSeq);	
+		return this;
+	}
+	
+	/**
+     * Replace the sequence currently located at the given
+     * {@link Range} with the given replacementSequence.
+     * 
+     * @apiNote This is the same as calling:
+     * <pre>
+     * 	delete(gappedRangeToBeReplaced);
+     * 	insert((int)gappedRangeToBeReplaced.getBegin(), replacementSeq);
+     * </pre>
+     * @param gappedRangeToBeReplaced the range of this sequence to be replaced.
+     * @param replacementSeq the sequence use in this range.
+     */
+	public NucleotideSequenceBuilder replace(Range gappedRangeToBeReplaced, NucleotideSequence replacementSeq) {
+		delete(gappedRangeToBeReplaced);
+		insert((int)gappedRangeToBeReplaced.getBegin(), replacementSeq);	
+		return this;
+	}
+    
     private void assertNotNull(Object sequence) {
         if(sequence ==null){
             throw new NullPointerException(NULL_SEQUENCE_ERROR_MSG);
@@ -438,6 +511,11 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 	public int getNumGaps(){
         return codecDecider.getNumberOfGaps();
     }
+	public int[] getGapOffsets() {
+		return codecDecider.gapOffsets.toArray();		
+	}
+
+	
     int[] getNOffsets(){
     	return codecDecider.nOffsets.toArray();
     }
@@ -562,12 +640,17 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         if(offset<0){
             throw new IllegalArgumentException("offset can not have negatives coordinates: "+ offset);
         }
-        if(offset>= getLength()){
+        if(offset> getLength()){
             throw new IllegalArgumentException(
                     String.format("offset can not start beyond current length (%d) : %d", getLength(),offset));
-        }   
+        }
         NucleotideSequenceBuilder otherSequenceBuilder = (NucleotideSequenceBuilder)otherBuilder;
         NewValues newValues = new NewValues(otherSequenceBuilder);
+        if(offset == getLength()){
+        	//act like append!
+        	return append(newValues);
+        }
+       
         return insert(offset, newValues);
     }
     
@@ -777,7 +860,20 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 	public NucleotideSequenceBuilder copy(){	
 		return new NucleotideSequenceBuilder(this);
 	}
-    
+    /**
+     * Create a copy of only the {@link Range}
+     * to use. If the range extends beyond this builder's
+     * sequence, then only the intersecting portion is used.
+     * 
+     * @param gappedRange the range in gapped coordinates; can not be null.
+     * 
+     * @return a new NucleotideSequenceBuilder; will never be null.
+     * 
+     * @since 5.0
+     */
+	public NucleotideSequenceBuilder copy(Range gappedRange) {
+		return new NucleotideSequenceBuilder(data.subArray(gappedRange));
+	}
    
 	@Override
 	public int hashCode() {
@@ -807,6 +903,82 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 		
 		
 		return Arrays.equals(data.toArray(),other.data.toArray());
+	}
+	/**
+	 * Convenience equality check against a {@link NucleotideSequence}
+	 * so that we don't have to build this builder
+	 * just to check.
+	 * @param other the {@link NucleotideSequence} to check against;
+	 * may be null.
+	 * @return {@code false} if other is null or does not have the 
+	 * exact same length and {@link Nucleotide}s in the same order;
+	 * {@code true} otherwise.
+	 * @since 5.0
+	 */
+	public boolean isEqualTo(NucleotideSequence other){
+		if(other ==null){
+			return false;
+		}
+		if(getLength() != other.getLength()){
+			return false;
+		}
+		Iterator<Nucleotide> iter = iterator();
+		Iterator<Nucleotide> otherIter = other.iterator();
+		while(iter.hasNext()){
+			if(!iter.next().equals(otherIter.next())){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	public boolean isEqualToIgnoringGaps(NucleotideSequence other){
+	    	if(other ==null){
+	    		return false;
+	    	}
+	    	if(getUngappedLength() != other.getUngappedLength()){
+	    		return false;
+	    	}
+	    	Iterator<Nucleotide> iter = iterator();
+	    	Iterator<Nucleotide> otherIter = other.iterator(); 
+	    	while(iter.hasNext()){
+	    		//have to duplicate get non-gap
+	    		//code because can't use private helper method
+	    		//inside a default method.
+	    		Nucleotide nextNonGap = getNextNonGapBaseFrom(iter);
+	    		
+	    		if(nextNonGap !=null){    			
+	    			//haven't reached the end of our sequence
+	    			//yet so check the other sequence for equality
+	    			Nucleotide nextOtherNonGap=getNextNonGapBaseFrom(otherIter);
+		    		
+		    		//if we get this far,
+		    		//then the our next base is NOT a gap
+		    		//so the other seq better equal
+		    		if(!nextNonGap.equals(nextOtherNonGap)){
+		    			return false;
+		    		}
+	    		}
+	    		
+	    	}
+	    	//if we get this far then our entire sequences
+	    	//matched. because we previously
+	    	//checked that the ungapped lengths matched
+	    	//so if either iterator still has elements
+	    	//they must all be gaps.
+	    	return true;
+	    }
+
+
+	private Nucleotide getNextNonGapBaseFrom(Iterator<Nucleotide> iter) {
+		Nucleotide nextNonGap;
+		do{
+			nextNonGap =iter.next();
+		}while(nextNonGap.isGap() && iter.hasNext());
+		if(nextNonGap.isGap()){
+			return null;
+		}
+		return nextNonGap;
 	}
 	
 	
@@ -960,7 +1132,28 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 		codecDecider.ungap();
 		return this;
     }
-
+    
+    public Range toGappedRange(Range ungappedRegion) {
+    	int ungappedStart = (int)ungappedRegion.getBegin();
+    	int ungappedEnd = (int)ungappedRegion.getEnd();
+    	return Range.of(getGappedOffsetFor(ungappedStart),
+    			getGappedOffsetFor(ungappedEnd)
+    			); 
+	}
+    
+    public int getGappedOffsetFor(int ungappedOffset){
+    	SingleThreadAdder currentOffset = new SingleThreadAdder(ungappedOffset);
+    	codecDecider.gapOffsets.stream()
+    							.forEach(i ->{
+    								if( i <= currentOffset.intValue()){
+    									currentOffset.increment();
+    								}
+    							});
+    	
+    	return currentOffset.intValue();
+    }
+    
+   
     /**
      * This class keeps track of the number of special
      * nucleotides (gaps, N, ambiguities etc)
@@ -1216,7 +1409,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
             }
         }
 
-        
+      
         
         void ungap(){
         	//first we have to shift the N's
@@ -1307,11 +1500,14 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     		nOffsets = new GrowableIntArray(12);
 			gapOffsets = new GrowableIntArray(12);
 			
-    		int offset =0;
-    		for(byte b : data){
-    			handleOrdinal(b, offset);
-    			offset++;
-    		}
+    		
+    		SingleThreadAdder offset = new SingleThreadAdder();
+    		data.stream()
+    				.forEach(i->{
+    					handleOrdinal((byte)i, offset.intValue());
+    					offset.increment();
+    				});
+    		
     	}
     	
     	public NewValues(Nucleotide nucleotide){
@@ -1486,4 +1682,18 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     	
     	
     }
+
+
+
+	
+
+
+
+
+
+	
+
+
+
+	
 }

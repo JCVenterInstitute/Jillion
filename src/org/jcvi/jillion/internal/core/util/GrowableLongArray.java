@@ -23,6 +23,7 @@ package org.jcvi.jillion.internal.core.util;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.stream.LongStream;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.core.util.iter.PrimitiveArrayIterators;
@@ -465,5 +466,15 @@ public final class GrowableLongArray implements Iterable<Long>{
 			}
 		}
 		return count;
+	}
+	
+	/**
+	 * Create a sequential {@link LongStream}
+	 * of the current array.
+	 * @return a new {@link LongStream}
+	 * will never be null but may be empty.
+	 */
+	public LongStream stream() {
+		return Arrays.stream(data, 0, currentLength);		
 	}
 }

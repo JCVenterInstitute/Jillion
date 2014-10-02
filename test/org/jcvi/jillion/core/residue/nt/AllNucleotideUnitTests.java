@@ -46,7 +46,11 @@ import org.junit.runners.Suite.SuiteClasses;
         TestReferenceEncodedNucleotideSequence_gappedtoUngapped.class,
         TestVHTNGS_365.class,
         TestNucleotideGlyph_GetGlyphsFor.class,
+        
         TestNucleotideSequenceBuilder.class,
+        TestNucleotideSequenceBuilderIsEqualToIgnoringGaps.class,
+        
+        TestNucleotideSequenceIsEqualToIgnoringGaps.class,
         
         TestTriplet.class,
         

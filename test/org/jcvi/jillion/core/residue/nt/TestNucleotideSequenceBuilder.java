@@ -22,6 +22,7 @@ package org.jcvi.jillion.core.residue.nt;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -774,4 +775,146 @@ public class TestNucleotideSequenceBuilder {
     	
     													
     }
+    
+    
+    @Test
+    public void toUngappedRangeWithNoGapsShouldReturnSameRange(){
+    	Range range = Range.of(2,5);
+    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGTACGTTACG");
+    	
+    	assertEquals(range, sut.toGappedRange(range));
+    }
+    
+    @Test
+    public void toUngappedRangeWithOnlyUpstreamGapsShouldReturnSameRange(){
+    	Range range = Range.of(2,5);
+    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGTACGTT-AC-G");
+    	
+    	assertEquals(range, sut.toGappedRange(range));
+    }
+    
+    @Test
+    public void toUngappedRangeDownStreamGapsOnly(){
+    	Range range = Range.of(2,5);
+    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("A-CGTACGTTACG");
+    	
+    	assertEquals(new Range.Builder(range)
+    								.shift(1)
+    								.build()
+						, sut.toGappedRange(range));
+    }
+    
+    @Test
+    public void toUngappedRangeWithOnlyInternalGapsShouldGrowEnd(){
+    	Range range = Range.of(2,5);
+    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACG-TACGTTACG");
+    	
+    	assertEquals(new Range.Builder(range)
+								.expandEnd(1)
+								.build(), 
+							sut.toGappedRange(range));
+    }
+    
+    @Test
+    public void toUngappedRangeWithMultipleInternalGapsShouldGrowEnd(){
+    	Range range = Range.of(2,5);
+    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACG-TA-CGTTACG");
+    	
+    	assertEquals(new Range.Builder(range)
+								.expandEnd(2)
+								.build(), 
+						sut.toGappedRange(range));
+    }
+    
+    @Test
+    public void toUngappedRangeWithConsecutiveInternalGapsShouldGrowEnd(){
+    	Range range = Range.of(2,5);
+    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACG--TA--CGTTACG");
+    	
+    	assertEquals(new Range.Builder(range)
+								.expandEnd(4)
+								.build(), 
+						sut.toGappedRange(range));
+    }
+    
+    @Test
+    public void toUngappedRangeWithGapsAllOver(){
+    	Range range = Range.of(2,5);
+    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("A-CG--TA--CGTTA-C--G");
+    	
+    	assertEquals(new Range.Builder(range)
+								.expandEnd(4)
+								.shift(1)
+								.build(), 
+						sut.toGappedRange(range));
+    }
+    
+    @Test
+    public void isEqualToNullShouldReturnFalse(){
+    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+    	assertFalse(sut.isEqualTo(null));
+    	
+    }
+    
+    @Test
+    public void isEqualToSameSequence(){
+    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+    	assertTrue(sut.isEqualTo(sut.build()));
+    }
+    
+    @Test
+    public void isEqualToDifferentSequenceShouldReturnFalse(){
+    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+    	assertFalse(sut.isEqualTo(new NucleotideSequenceBuilder("ACGC").build()));
+    }
+    
+    @Test
+    public void isEqualToDifferentOtherSequenceLengthSeqShouldReturnFalse(){
+    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+    	assertFalse(sut.isEqualTo(new NucleotideSequenceBuilder("ACGTC").build()));
+    }
+    @Test
+    public void isEqualToDifferentSequenceLengthSeqShouldReturnFalse(){
+    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGTC");
+    	assertFalse(sut.isEqualTo(new NucleotideSequenceBuilder("ACGT").build()));
+    }
+    
+    @Test
+    public void copySubRangeWithFullRange(){
+    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+    	
+    	assertEquals(sut, sut.copy(Range.ofLength(4)));
+    	
+    }
+    
+    @Test
+    public void copySubRange(){
+    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+    	
+    	Range range = Range.of(1,2);
+		NucleotideSequenceBuilder subrange = sut.copy(range);
+		assertEquals(sut.trim(range), subrange);
+    	
+    }
+    
+    @Test
+    public void copySubRangeGoesBeyondLengthShouldOnlyCopyTilLength(){
+    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+    	
+    	Range range = Range.of(1,10);
+		NucleotideSequenceBuilder subrange = sut.copy(range);
+		assertEquals(sut.trim(range), subrange);
+    }
+    
+    @Test
+    public void copySubRangeGoesBeforeStartShouldOnlyCopyStartingAtStart(){
+    	NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+    	
+    	Range range = Range.of(-10,2);
+		NucleotideSequenceBuilder subrange = sut.copy(range);
+		assertEquals(sut.trim(range), subrange);
+    }
+    
+    
+    
 }

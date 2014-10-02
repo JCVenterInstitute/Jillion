@@ -189,4 +189,5 @@ public class TestDefaultNucleotideSequence {
     public void toBuilder(){
     	assertEquals(sut, sut.toBuilder().build());
     }
+    
 }
