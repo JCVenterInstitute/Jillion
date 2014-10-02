@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.util.JoinedStringBuilder;
 
 public class VariableWidthNucleotideSliceElement implements VariableWidthSliceElement<Nucleotide>{
 
@@ -33,9 +34,12 @@ public class VariableWidthNucleotideSliceElement implements VariableWidthSliceEl
 
 	@Override
 	public String toString() {
-		return "VariableWidthNucleotideSliceElement [list=" + list + ", count="
-				+ count + "]";
+		return JoinedStringBuilder.create(list)
+									.prefix("[")
+									.suffix(" = " + count + "]")
+									.build();
 	}
+
 
 	@Override
 	public int hashCode() {

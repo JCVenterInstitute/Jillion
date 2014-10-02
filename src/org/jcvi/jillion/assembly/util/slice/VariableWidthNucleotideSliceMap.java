@@ -1,7 +1,6 @@
 package org.jcvi.jillion.assembly.util.slice;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
@@ -11,7 +10,6 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.core.util.iter.IteratorUtil;
 
 public class VariableWidthNucleotideSliceMap implements VariableWidthSliceMap<Nucleotide>{
 
@@ -75,17 +73,15 @@ public class VariableWidthNucleotideSliceMap implements VariableWidthSliceMap<Nu
 	public static class Builder{
 		private final VariableWidthNucleotideSlice.Builder[] builders;
 		private final int widthPerSlice;
-		private final NucleotideSequence untrimmedGappedReferenceSequence, trimmedGappedReferenceSequence;
+		private final NucleotideSequence trimmedGappedReferenceSequence;
 		private final Range gappedInclusiveRange;
 		
+		
 		public Builder(NucleotideSequence gappedReferenceSequence, int ungappedWidthPerSlice){
-			this(gappedReferenceSequence, ungappedWidthPerSlice, false);
+			this(gappedReferenceSequence, ungappedWidthPerSlice, Range.ofLength(gappedReferenceSequence.getLength()));
 		}
-		public Builder(NucleotideSequence gappedReferenceSequence, int ungappedWidthPerSlice, boolean skipIncompleteCodon){
-			this(gappedReferenceSequence, ungappedWidthPerSlice, skipIncompleteCodon, Range.ofLength(gappedReferenceSequence.getLength()));
-		}
-		public Builder(NucleotideSequence gappedReferenceSequence, int ungappedWidthPerSlice, boolean skipIncompleteCodon, Range gappedIncludeRange){
-			this.untrimmedGappedReferenceSequence = gappedReferenceSequence;
+		public Builder(NucleotideSequence gappedReferenceSequence, int ungappedWidthPerSlice, Range gappedIncludeRange){
+
 			this.trimmedGappedReferenceSequence = new NucleotideSequenceBuilder(gappedReferenceSequence)
 															.trim(gappedIncludeRange)
 															.build();
@@ -97,7 +93,8 @@ public class VariableWidthNucleotideSliceMap implements VariableWidthSliceMap<Nu
 			}
 			long rem = ungappedLength % ungappedWidthPerSlice;
 			if(rem !=0){
-				throw new IllegalArgumentException("ungapped width per slice must be a factor of the ungapped sequence length");
+				throw new IllegalArgumentException("ungapped width per slice (" +ungappedWidthPerSlice + 
+						") must be a factor of the ungapped sequence length " + ungappedLength);
 			}
 			int numberOfSlices = (int) (ungappedLength/ungappedWidthPerSlice);
 
@@ -106,9 +103,11 @@ public class VariableWidthNucleotideSliceMap implements VariableWidthSliceMap<Nu
 			
 			Iterator<Nucleotide> iter = this.trimmedGappedReferenceSequence.iterator();
 			int i=0;
+			int currentGappedOffset=0;
 			while(iter.hasNext()){
 				NucleotideSequence gappedRefSubSeq = computeNumberOfGappedBasesReferenceSlice(ungappedWidthPerSlice, iter);
-				builders[i++] =  new VariableWidthNucleotideSlice.Builder(gappedRefSubSeq);
+				builders[i++] =  new VariableWidthNucleotideSlice.Builder(gappedRefSubSeq,currentGappedOffset);
+				currentGappedOffset += (int) gappedRefSubSeq.getLength();
 			}
 			
 		}
@@ -120,22 +119,7 @@ public class VariableWidthNucleotideSliceMap implements VariableWidthSliceMap<Nu
 			}
 			return builder.build();
 		}
-		private int computeNumberOfGappedBasesForNextUngapped(
-				int ungappedWidthPerSlice, Iterator<Nucleotide> iter) {
-			int currentGappedLength=0, currentUngappedLength=0;
-			while(iter.hasNext() && currentUngappedLength < ungappedWidthPerSlice ){
-				Nucleotide n = iter.next();
-				currentGappedLength++;
-				if(!n.isGap()){
-					currentUngappedLength++;
-				}
-			}
-			if(currentUngappedLength < ungappedWidthPerSlice){
-				//shouldn't happen since we check for this upstream
-				throw new IllegalStateException("ungapped seq length not divisble by slice width");
-			}
-			return currentGappedLength;
-		}
+		
 		public Builder add(int offset, NucleotideSequence seq){
 			Range readRange = new Range.Builder(seq.getLength())
 									.shift(offset)
@@ -162,11 +146,12 @@ public class VariableWidthNucleotideSliceMap implements VariableWidthSliceMap<Nu
 			Iterator<Nucleotide> iter = trimmedSeq.iterator();
 			//handle initial specially to check for leading gaps
 			
-			int frame = ungappedStartOffset % widthPerSlice +1;
 			
+			builders[currentOffset++].addBeginningOfRead(adjustedTrimmedGappedRefOffset, iter);
+			/*
+			int frame = ungappedStartOffset % widthPerSlice +1; 
 			if(frame!=1){
-				builders[currentOffset++].skipBases(frame, iter);				
-
+				builders[currentOffset++].skipBases(frame, iter);	
 			}else{
 				//just because we start in frame 1
 				//doesn't mean we start at the beginning of the slice bin
@@ -186,9 +171,9 @@ public class VariableWidthNucleotideSliceMap implements VariableWidthSliceMap<Nu
 				}
 			}
 			
-			
+			*/
 			//handle the rest
-			while(currentOffset < builders.length){			
+			while(iter.hasNext() && currentOffset < builders.length){			
 				builders[currentOffset++].add(iter);
 				
 			}
