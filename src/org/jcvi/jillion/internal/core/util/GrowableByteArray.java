@@ -23,6 +23,7 @@ package org.jcvi.jillion.internal.core.util;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.stream.IntStream;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.core.util.iter.PrimitiveArrayIterators;
@@ -389,10 +390,11 @@ public final class GrowableByteArray implements Iterable<Byte>{
 		int start = (int)range.getBegin();
 		int end = (int) range.getEnd() +1;
 		if(start <0){
-			throw new IllegalArgumentException("start must be >=0");
+			start=0;
 		}
 		if(end >currentLength){
-			end = currentLength-1;
+			//end is exclusive
+			end = currentLength;
 		}
 		
 		return new GrowableByteArray(Arrays.copyOfRange(data, start, end));
@@ -483,5 +485,21 @@ public final class GrowableByteArray implements Iterable<Byte>{
 			}
 		}
 		return count;
+	}
+	
+	/**
+	 * Create a sequential {@link IntStream}
+	 * of the current array.
+	 * @return a new {@link IntStream}
+	 * will never be null but may be empty.
+	 */
+	public IntStream stream() {
+		//there isn't a method to convert a byte[]
+		//into an IntStream so we have to do it ourselves
+		int[] copy = new int[currentLength];
+		for(int i=0; i<currentLength; i++){
+			copy[i] = data[i];
+		}
+		return Arrays.stream(copy, 0, currentLength);		
 	}
 }

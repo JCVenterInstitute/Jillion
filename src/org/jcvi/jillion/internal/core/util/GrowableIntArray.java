@@ -23,6 +23,7 @@ package org.jcvi.jillion.internal.core.util;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.stream.IntStream;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.core.util.iter.PrimitiveArrayIterators;
@@ -458,5 +459,14 @@ public final class GrowableIntArray implements Iterable<Integer>{
 			}
 		}
 		return count;
+	}
+	/**
+	 * Create a sequential {@link IntStream}
+	 * of the current array.
+	 * @return a new {@link IntStream}
+	 * will never be null but may be empty.
+	 */
+	public IntStream stream() {
+		return Arrays.stream(data, 0, currentLength);		
 	}
 }

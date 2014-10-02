@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.jillion.core.Sequence;
@@ -108,10 +109,57 @@ public interface ResidueSequence<R extends Residue> extends Sequence<R> {
      * Two {@link ResidueSequence}s are equal
      * if they contain the same residues 
      * in the same order. 
-     * {@inheritDoc}
+     * {@inheritDoc}.
+     * 
+     * @see #isEqualIgnoringGaps(ResidueSequence)
      */
     @Override
     boolean equals(Object o);
+    
+    
+    default boolean isEqualToIgnoringGaps(ResidueSequence<? extends R> other){
+    	if(other ==null){
+    		return false;
+    	}
+    	if(getUngappedLength() != other.getUngappedLength()){
+    		return false;
+    	}
+    	Iterator<R> iter = iterator();
+    	Iterator<? extends R> otherIter = other.iterator(); 
+    	while(iter.hasNext()){
+    		//have to duplicate get non-gap
+    		//code because can't use private helper method
+    		//inside a default method.
+    		R nextNonGap;
+    		do{
+    			nextNonGap =iter.next();
+    		}while(nextNonGap.isGap() && iter.hasNext());
+    		
+    		R nextOtherNonGap=null;
+    		
+    		if(!nextNonGap.isGap()){    			
+    			//haven't reached the end of our sequence
+    			//yet so check the other sequence for equality
+	    		do{
+	    			nextOtherNonGap =otherIter.next();
+	    		}while(nextOtherNonGap.isGap() && otherIter.hasNext());
+	    		
+	    		//if we get this far,
+	    		//then the our next base is NOT a gap
+	    		//so the other seq better equal
+	    		if(!nextNonGap.equals(nextOtherNonGap)){
+	    			return false;
+	    		}
+    		}
+    		
+    	}
+    	//if we get this far then our entire sequences
+    	//matched. because we previously
+    	//checked that the ungapped lengths matched
+    	//so if either iterator still has elements
+    	//they must all be gaps.
+    	return true;
+    }
     /**
      * The HashCode of a {@link ResidueSequence}
      * is computed by summing the hashcodes
