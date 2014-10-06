@@ -305,6 +305,8 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * Any whitespace in the input string will be ignored.
      *  This method is able to parse both
      * '*' (consed) and '-' (TIGR) as gap characters. 
+     * If the offset = the current length then this insertion
+     * is treated as an append.
      * @param offset the GAPPED offset into this mutable sequence
      * to begin insertion.
      * @param sequence the nucleotide sequence to be 
@@ -325,6 +327,8 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * Any whitespace or '\0' characters will be ignored.
      *  This method is able to parse both
      * '*' (consed) and '-' (TIGR) as gap characters. 
+     * If the offset = the current length then this insertion
+     * is treated as an append.
      * @param offset the GAPPED offset into this mutable sequence
      * to begin insertion.
      * @param sequence the nucleotide sequence to be 
@@ -622,7 +626,9 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * bases where n is the length of the given sequence to insert.
      * Any further modifications to the passed in builder
      * will not be reflected in this builder.  This is an equivalent but more efficient operation
-     * as {@code this.insert(offset, otherBuilder.build())}
+     * as {@code this.insert(offset, otherBuilder.build())}.
+     * If the offset = the current length then this insertion
+     * is treated as an append.
      * 
      * @param offset the <strong>gapped</strong> offset into this mutable sequence
      * to begin insertion.
@@ -662,6 +668,8 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * downstream of this offset before this insert method
      * was executed, then those nucleotides will be shifted by 1
      * base.
+     * If the offset = the current length then this insertion
+     * is treated as an append.
      * @param offset the GAPPED offset into this mutable sequence
      * to begin insertion.
      * @param base the {@link Nucleotide} to be 
