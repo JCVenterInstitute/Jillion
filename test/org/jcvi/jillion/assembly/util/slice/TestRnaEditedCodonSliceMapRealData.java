@@ -79,6 +79,117 @@ public class TestRnaEditedCodonSliceMapRealData {
 	}
 	
 	@Test
+	public void readStartsAtBeginningOfButHasExtraBasesInConsensusGaps(){
+		VariableWidthNucleotideSliceMap actual = new CodonSliceMapBuilder(
+				uneditedConsensus,
+				Range.ofLength(uneditedConsensus.getUngappedLength()),
+				rnaEdit
+				)
+		// cons =NNN--A-A-A-A--------A------G---G--G"+"CACAG--GAGAG-AAGTT");
+		//		    AAA-A-A-A--------A------G---G--G"
+		.add(3, seq("AAA-A-A-A--------A------G---G--G" + "CACAG--GAGAG-AAGTT"))
+		
+		.build();
+		
+		assertEquals(uneditedConsensus.getLength() +4, actual.getConsensusLength());
+		assertEquals(10, actual.getNumberOfSlices());
+		
+		assertEquals(createSlice(seq("NNN")), actual.getSlice(0));
+		assertEquals(createSlice(seq("--A-A-A"), "AAA-A-A"), actual.getSlice(1));
+		assertEquals(createSlice(seq("-A--------A------G"), "-A--------A------G"), actual.getSlice(2));
+		assertEquals(createSlice(seq("---G--Gg"), "---G--Gg"), actual.getSlice(3));
+		assertEquals(createSlice(seq("ggg"), "ggg"), actual.getSlice(4));
+		assertEquals(createSlice(seq("CAC"), "CAC"), actual.getSlice(5));
+		assertEquals(createSlice(seq("AG--G"), "AG--G"), actual.getSlice(6));
+		assertEquals(createSlice(seq("AGA"), "AGA"), actual.getSlice(7));
+		assertEquals(createSlice(seq("G-AA"), "G-AA"), actual.getSlice(8));
+		assertEquals(createSlice(seq("GTT"), "GTT"), actual.getSlice(9));
+	}
+	
+	@Test
+	public void readStartsAtBeginningOfButDoesntMatchEditSeqAndHasExtraBasesInConsensusGaps(){
+		VariableWidthNucleotideSliceMap actual = new CodonSliceMapBuilder(
+				uneditedConsensus,
+				Range.ofLength(uneditedConsensus.getUngappedLength()),
+				rnaEdit
+				)
+		// cons =NNN--A-A-A-A--------A------G---G--G"+"CACAG--GAGAG-AAGTT");
+		//		    AAA-A-A-A--------A------G---G--G"
+		.add(3, seq("AAA-A-A-A--------A------G---GNNG" + "CACAG--GAGAG-AAGTT"))
+		
+		.build();
+		
+		assertEquals(uneditedConsensus.getLength() +4, actual.getConsensusLength());
+		assertEquals(10, actual.getNumberOfSlices());
+		
+		assertEquals(createSlice(seq("NNN")), actual.getSlice(0));
+		assertEquals(createSlice(seq("--A-A-A"), "AAA-A-A"), actual.getSlice(1));
+		assertEquals(createSlice(seq("-A--------A------G"), "-A--------A------G"), actual.getSlice(2));
+		assertEquals(createSlice(seq("---G--Gg"), "---GNNG-"), actual.getSlice(3));
+		assertEquals(createSlice(seq("ggg"), "---"), actual.getSlice(4));
+		assertEquals(createSlice(seq("CAC"), "CAC"), actual.getSlice(5));
+		assertEquals(createSlice(seq("AG--G"), "AG--G"), actual.getSlice(6));
+		assertEquals(createSlice(seq("AGA"), "AGA"), actual.getSlice(7));
+		assertEquals(createSlice(seq("G-AA"), "G-AA"), actual.getSlice(8));
+		assertEquals(createSlice(seq("GTT"), "GTT"), actual.getSlice(9));
+	}
+	@Test
+	public void readStartsAtBeginningOfButDoesntMatchEditSeqReadEndsInsideEditRegionTrailingGapsTrimmed(){
+		VariableWidthNucleotideSliceMap actual = new CodonSliceMapBuilder(
+				uneditedConsensus,
+				Range.ofLength(uneditedConsensus.getUngappedLength()),
+				rnaEdit
+				)
+		// cons =NNN--A-A-A-A--------A------G---G--G"+"CACAG--GAGAG-AAGTT");
+		//		    AAA-A-A-A--------A------G---G--G"
+		.add(3, seq("AAA-A-A-A--------A------G---GNNG"))
+		
+		.build();
+		
+		assertEquals(uneditedConsensus.getLength() +4, actual.getConsensusLength());
+		assertEquals(10, actual.getNumberOfSlices());
+		
+		assertEquals(createSlice(seq("NNN")), actual.getSlice(0));
+		assertEquals(createSlice(seq("--A-A-A"), "AAA-A-A"), actual.getSlice(1));
+		assertEquals(createSlice(seq("-A--------A------G"), "-A--------A------G"), actual.getSlice(2));
+		assertEquals(createSlice(seq("---G--Gg") ), actual.getSlice(3));
+		assertEquals(createSlice(seq("ggg") ), actual.getSlice(4));
+		assertEquals(createSlice(seq("CAC")), actual.getSlice(5));
+		assertEquals(createSlice(seq("AG--G")), actual.getSlice(6));
+		assertEquals(createSlice(seq("AGA")), actual.getSlice(7));
+		assertEquals(createSlice(seq("G-AA")), actual.getSlice(8));
+		assertEquals(createSlice(seq("GTT")), actual.getSlice(9));
+	}
+	
+	@Test
+	public void readStartsAt2ndFrameOfEditRegion(){
+		VariableWidthNucleotideSliceMap actual = new CodonSliceMapBuilder(
+				uneditedConsensus,
+				Range.ofLength(uneditedConsensus.getUngappedLength()),
+				rnaEdit
+				)
+		// cons =NNN--A-A-A-A--------A------G---G--G"+"CACAG--GAGAG-AAGTT");
+		//		        A-A-A--------A------G---G--G"
+		.add(7, seq("A-A-A--------A------G---G--G" + "CACAG--GAGAG-AAGTT"))
+		
+		.build();
+		
+		assertEquals(uneditedConsensus.getLength() +4, actual.getConsensusLength());
+		assertEquals(10, actual.getNumberOfSlices());
+		
+		assertEquals(createSlice(seq("NNN")), actual.getSlice(0));
+		assertEquals(createSlice(seq("--A-A-A")), actual.getSlice(1));
+		assertEquals(createSlice(seq("-A--------A------G"), "-A--------A------G"), actual.getSlice(2));
+		assertEquals(createSlice(seq("---G--Gg"), "---G--Gg"), actual.getSlice(3));
+		assertEquals(createSlice(seq("ggg"), "ggg"), actual.getSlice(4));
+		assertEquals(createSlice(seq("CAC"), "CAC"), actual.getSlice(5));
+		assertEquals(createSlice(seq("AG--G"), "AG--G"), actual.getSlice(6));
+		assertEquals(createSlice(seq("AGA"), "AGA"), actual.getSlice(7));
+		assertEquals(createSlice(seq("G-AA"), "G-AA"), actual.getSlice(8));
+		assertEquals(createSlice(seq("GTT"), "GTT"), actual.getSlice(9));
+	}
+	
+	@Test
 	public void readStarts1bpIntoGappedEditRegion(){
 		VariableWidthNucleotideSliceMap actual = new CodonSliceMapBuilder(
 				uneditedConsensus,
@@ -104,6 +215,7 @@ public class TestRnaEditedCodonSliceMapRealData {
 		assertEquals(createSlice(seq("G-AA"), "G-AA"), actual.getSlice(8));
 		assertEquals(createSlice(seq("GTT"), "GTT"), actual.getSlice(9));
 	}
+	
 	@Test
 	public void readStartsIntoGappedEditRegion(){
 		CodonSliceMapBuilder builder = new CodonSliceMapBuilder(
