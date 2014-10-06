@@ -103,7 +103,7 @@ public class TestRnaEditedCodonSliceMap {
 	}
 	
 	@Test
-	public void partialReadEndsInsideEditAreaShouldReplaceRegionWithGaps(){
+	public void partialReadEndsInsideEditAreaShouldIncludeEverythingInSlicesExceptLastCodonOfRead(){
 		VariableWidthNucleotideSliceMap actual = new CodonSliceMapBuilder(seq("NAAAAGGGTTT"), Range.ofLength(11),
 															new RnaEdit(Range.of(1,7),
 																	seq("AAAAGGG"),
@@ -117,8 +117,8 @@ public class TestRnaEditedCodonSliceMap {
 		assertEquals(15, actual.getConsensusLength());
 		assertEquals(5, actual.getNumberOfSlices());
 		
-		assertEquals(createSlice(seq("NAA"), "NAA","NAA"), actual.getSlice(0));
-		assertEquals(createSlice(seq("AAG"), "AAG","AAG"), actual.getSlice(1));
+		assertEquals(createSlice(seq("NAA"), "NAA","NAA","NAA"), actual.getSlice(0));
+		assertEquals(createSlice(seq("AAG"), "AAG","AAG" /* , "AA-" */), actual.getSlice(1));
 		assertEquals(createSlice(seq("GGG"), "GGG","GGG"), actual.getSlice(2));
 		assertEquals(createSlice(seq("GGG"), "GGG","GGG"), actual.getSlice(3));
 		assertEquals(createSlice(seq("TTT"), "TTT","TTT"), actual.getSlice(4));

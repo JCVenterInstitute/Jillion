@@ -135,6 +135,17 @@ public class CodonSliceMapBuilder{
 					seq.insert(gaps[i], Nucleotide.Gap);
 				}
 			}else{
+				//all gaps in this edit region
+				//just add more gaps to account for
+				//added bases.
+				//downstream we will trim off trailing gaps
+				//so we can add gaps here without worry
+				//and maintain the alignment if we have more seq
+				//in this read beyond edit region
+				char[] gaps = new char[numberOfBasesAdded];
+				Arrays.fill(gaps, '-');
+				seq.append(gaps);		
+				/*
 				long unGappedLength = seq.getUngappedLength();
 				if(unGappedLength ==0){
 					//all gaps in this edit region
@@ -157,6 +168,7 @@ public class CodonSliceMapBuilder{
 					seq.clear();
 					seq.append(gaps);
 				}
+				*/
 			}
 			
 		}
