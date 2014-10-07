@@ -3,6 +3,7 @@ package org.jcvi.jillion.profile;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +35,7 @@ class SimpleProfileWriter implements ProfileWriter {
 	public SimpleProfileWriter(File outputFile, DisplayCountStrategy displayStrategy, MostFrequentTieBreakerRule tieBreakerRule,
 			NucleotideSequence referenceOfConsensus,boolean include0xEdges, boolean ignoreGappedConsensusPositions) throws IOException {
 		IOUtil.mkdirs(outputFile.getParentFile());
-		this.writer = new PrintWriter(outputFile);
+		this.writer = new PrintWriter(outputFile, IOUtil.UTF_8_NAME);
 		this.lineWriterStrategy = displayStrategy;
 		this.counts = new double[(int)referenceOfConsensus.getLength()][5];
 		this.tieBreakerRule = tieBreakerRule;
@@ -45,7 +46,7 @@ class SimpleProfileWriter implements ProfileWriter {
 	}
 
 	public SimpleProfileWriter(OutputStream out, DisplayCountStrategy displayStrategy,MostFrequentTieBreakerRule tieBreakerRule, NucleotideSequence referenceOfConsensus,boolean include0xEdges, boolean ignoreGappedConsensusPositions){
-		this.writer = new PrintWriter(out);
+		this.writer = new PrintWriter(new OutputStreamWriter(out, IOUtil.UTF_8));
 		this.lineWriterStrategy = displayStrategy;
 		this.counts = new double[(int)referenceOfConsensus.getLength()][5];
 		this.tieBreakerRule = tieBreakerRule;
