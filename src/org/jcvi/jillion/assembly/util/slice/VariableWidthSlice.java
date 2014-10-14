@@ -3,9 +3,9 @@ package org.jcvi.jillion.assembly.util.slice;
 import java.util.List;
 import java.util.stream.Stream;
 
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.Sequence;
 
-public interface VariableWidthSlice<T> {
+public interface VariableWidthSlice<T, S extends Sequence<T>> {
 
 	Stream<VariableWidthSliceElement<T>> elements();
 	
@@ -13,5 +13,7 @@ public interface VariableWidthSlice<T> {
 	
 	int getSliceLength();
 	
-	int getCountFor(List<Nucleotide> sliceElementSeq);
+	int getCountFor(List<T> sliceElementSeq);
+	
+	S getGappedReferenceSequence();
 }

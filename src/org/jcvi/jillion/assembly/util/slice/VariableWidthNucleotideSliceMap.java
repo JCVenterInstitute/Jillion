@@ -11,7 +11,7 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 
-public class VariableWidthNucleotideSliceMap implements VariableWidthSliceMap<Nucleotide>{
+public class VariableWidthNucleotideSliceMap implements VariableWidthSliceMap<Nucleotide, NucleotideSequence>{
 
 	private final VariableWidthNucleotideSlice[] slices;
 	private final int widthPerSlice;
@@ -30,7 +30,7 @@ public class VariableWidthNucleotideSliceMap implements VariableWidthSliceMap<Nu
 	}
 	
 	@Override
-	public VariableWidthSlice<Nucleotide> getSlice(int offset) {
+	public VariableWidthSlice<Nucleotide, NucleotideSequence> getSlice(int offset) {
 		return slices[offset];
 	}
 
@@ -39,24 +39,24 @@ public class VariableWidthNucleotideSliceMap implements VariableWidthSliceMap<Nu
 		return (int) gappedReferenceSequence.getLength();
 	}
 	
-	public Stream<VariableWidthSlice<Nucleotide>> getSlicesThatIntersectGapped(Range gappedRange){
+	public Stream<VariableWidthSlice<Nucleotide, NucleotideSequence>> getSlicesThatIntersectGapped(Range gappedRange){
 		
 		int startSliceOffset = gappedReferenceSequence.getUngappedOffsetFor((int)gappedRange.getBegin()) /widthPerSlice;
 		int endSliceOffset = gappedReferenceSequence.getUngappedOffsetFor((int)gappedRange.getEnd()) /widthPerSlice;
 		
-		List<VariableWidthSlice<Nucleotide>> list = new ArrayList<>(endSliceOffset-startSliceOffset +1);
+		List<VariableWidthSlice<Nucleotide, NucleotideSequence>> list = new ArrayList<>(endSliceOffset-startSliceOffset +1);
 		for(int i= Math.max(0, startSliceOffset); i< slices.length && i <=endSliceOffset; i++){
 			list.add(slices[i]);
 		}
 		return list.stream();
 	}
 	
-	public Stream<VariableWidthSlice<Nucleotide>> getSlicesThatIntersectUngapped(Range ungappedRange){
+	public Stream<VariableWidthSlice<Nucleotide, NucleotideSequence>> getSlicesThatIntersectUngapped(Range ungappedRange){
 		
 		int startSliceOffset = (int) (ungappedRange.getBegin() /widthPerSlice);
 		int endSliceOffset = (int) (ungappedRange.getEnd() /widthPerSlice);
 		
-		List<VariableWidthSlice<Nucleotide>> list = new ArrayList<>(endSliceOffset-startSliceOffset +1);
+		List<VariableWidthSlice<Nucleotide, NucleotideSequence>> list = new ArrayList<>(endSliceOffset-startSliceOffset +1);
 		for(int i= Math.max(0, startSliceOffset); i< slices.length && i <=endSliceOffset; i++){
 			list.add(slices[i]);
 		}

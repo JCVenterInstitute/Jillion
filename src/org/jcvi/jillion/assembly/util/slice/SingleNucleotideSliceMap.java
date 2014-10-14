@@ -1,12 +1,11 @@
 package org.jcvi.jillion.assembly.util.slice;
 
-import java.util.Arrays;
 import java.util.Iterator;
 
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
-public class SingleNucleotideSliceMap implements VariableWidthSliceMap<Nucleotide>{
+public class SingleNucleotideSliceMap implements VariableWidthSliceMap<Nucleotide, NucleotideSequence>{
 
 	private final SingleNucleotideSlice[] slices;
 	
@@ -19,7 +18,7 @@ public class SingleNucleotideSliceMap implements VariableWidthSliceMap<Nucleotid
 	}
 	
 	@Override
-	public VariableWidthSlice<Nucleotide> getSlice(int offset) {
+	public VariableWidthSlice<Nucleotide, NucleotideSequence> getSlice(int offset) {
 		return slices[offset];
 	}
 
@@ -41,9 +40,13 @@ public class SingleNucleotideSliceMap implements VariableWidthSliceMap<Nucleotid
 	public static class Builder{
 		private final SingleNucleotideSlice.Builder[] builders;
 		
-		public Builder(int gappedConsensusLength){
-			builders = new SingleNucleotideSlice.Builder[gappedConsensusLength];
-			Arrays.parallelSetAll(builders,(i)->new SingleNucleotideSlice.Builder());
+		public Builder(NucleotideSequence gappedReference){
+			builders = new SingleNucleotideSlice.Builder[(int)gappedReference.getLength()];
+			Iterator<Nucleotide> iter = gappedReference.iterator();
+			int i=0;
+			while(iter.hasNext()){
+				builders[i++] = new SingleNucleotideSlice.Builder(iter.next());
+			}
 		}
 		
 		public Builder add(int offset, NucleotideSequence seq){

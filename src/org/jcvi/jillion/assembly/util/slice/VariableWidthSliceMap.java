@@ -1,8 +1,10 @@
 package org.jcvi.jillion.assembly.util.slice;
 
-public interface VariableWidthSliceMap<T> {
+import org.jcvi.jillion.core.Sequence;
 
-	VariableWidthSlice<T> getSlice(int offset);
+public interface VariableWidthSliceMap<T, S extends Sequence<T>> {
+
+	VariableWidthSlice<T, S> getSlice(int offset);
 
 	int getConsensusLength();
 	
