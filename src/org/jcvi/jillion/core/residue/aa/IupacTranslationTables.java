@@ -225,15 +225,23 @@ public enum IupacTranslationTables implements TranslationTable{
 
 	@Override
 	public ProteinSequence translate(NucleotideSequence sequence) {
-		return translate(sequence, Frame.ZERO);
+		return translate(sequence, Frame.ZERO,true);
+	}
+	@Override
+	public ProteinSequence translate(NucleotideSequence sequence, boolean substituteStart) {
+		return translate(sequence, Frame.ZERO, substituteStart);
 	}
 
 	@Override
 	public ProteinSequence translate(NucleotideSequence sequence, Frame frame) {
-		return translate(sequence, frame, (int)sequence.getLength());
+		return translate(sequence, frame, true);
 	}
 	@Override
-	public ProteinSequence translate(Iterable<Nucleotide> sequence, Frame frame, int length) {
+	public ProteinSequence translate(NucleotideSequence sequence, Frame frame, boolean substituteStart) {
+		return translate(sequence, frame, (int)sequence.getLength(), substituteStart);
+	}
+	@Override
+	public ProteinSequence translate(Iterable<Nucleotide> sequence, Frame frame, int length, boolean substituteStart) {
 		if(sequence ==null){
 			throw new NullPointerException("sequence can not be null");
 		}
@@ -247,7 +255,7 @@ public enum IupacTranslationTables implements TranslationTable{
 		Iterator<Nucleotide> iter = sequence.iterator();
 		ProteinSequenceBuilder builder = new ProteinSequenceBuilder(length/3);
 		handleFrame(iter, frame);
-		boolean seenStart=false;
+		boolean seenStart=!substituteStart;
 		long currentOffset=0;
 		
 		while(iter.hasNext() && currentOffset <length){
@@ -268,6 +276,10 @@ public enum IupacTranslationTables implements TranslationTable{
 			}
 		}
 		return builder.build();
+	}
+	@Override
+	public ProteinSequence translate(Iterable<Nucleotide> sequence, Frame frame, int length) {
+		return translate(sequence, frame, length,true);
 	}
 
 	private Triplet getNextTriplet(Iterator<Nucleotide> iter){

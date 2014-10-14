@@ -42,7 +42,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestMementoProteinFastaFileDataStore.class,
         TestIterationOnlyProteinFastaFileDataStore.class,
         
-        TestIupacTranslationTables.class
+        TestIupacTranslationTables.class,
+        TestIupacTranslationTableDoNotSubstituteStart.class
     }
     )
 public class AllAminoAcidUnitTests {
