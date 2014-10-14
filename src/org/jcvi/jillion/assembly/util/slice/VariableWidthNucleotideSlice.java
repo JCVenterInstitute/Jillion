@@ -19,11 +19,11 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.JoinedStringBuilder;
 
-public class VariableWidthNucleotideSlice implements VariableWidthSlice<Nucleotide>{
+public class VariableWidthNucleotideSlice implements VariableWidthSlice<Nucleotide, NucleotideSequence>{
 
 	
 	private final List<VariableWidthSliceElement<Nucleotide>> list = new ArrayList<VariableWidthSliceElement<Nucleotide>>();
-	
+	private final NucleotideSequence gappedReference;
 	private VariableWidthNucleotideSlice(Builder builder){
 		
 		for(Entry<List<Nucleotide>, LongAdder> entry : builder.countMap.entrySet()){
@@ -32,10 +32,18 @@ public class VariableWidthNucleotideSlice implements VariableWidthSlice<Nucleoti
 		//sort them
 		Collections.sort(list);
 		
+		this.gappedReference = builder.gappedReference;
+		
 	}
 	
 	
-	
+	@Override
+	public NucleotideSequence getGappedReferenceSequence() {
+		return gappedReference;
+	}
+
+
+
 	@Override
 	public int getSliceLength() {
 		return list.stream().mapToInt(e-> e.getLength()).max().orElse(0);
@@ -94,7 +102,7 @@ public class VariableWidthNucleotideSlice implements VariableWidthSlice<Nucleoti
 			}
 			return true;
 		}
-		VariableWidthSlice<?> other = (VariableWidthSlice<?>) obj;
+		VariableWidthSlice<?,?> other = (VariableWidthSlice<?,?>) obj;
 		return list.equals(other.elements().collect(Collectors.toList()));
 	}
 
