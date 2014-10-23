@@ -6,6 +6,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -19,6 +20,7 @@ import org.jcvi.jillion.trace.fastq.FastqRecord;
 import org.jcvi.jillion.trace.sff.SffFileDataStore;
 import org.jcvi.jillion.trace.sff.SffFileDataStoreBuilder;
 import org.jcvi.jillion.trace.sff.SffFlowgram;
+import org.jcvi.jillion.trace.sff.SffUtil;
 
 final class CasFileInfoValidator {
 	
@@ -103,7 +105,13 @@ final class CasFileInfoValidator {
 			){
 			ActualFileInfo actual = new ActualFileInfo();
 			while(iter.hasNext()){
-				actual.add(iter.next().getNucleotideSequence());
+				//cas files only count the trimmed
+				//part of the sequence
+				SffFlowgram flowgram = iter.next();
+				Range trimRange = SffUtil.computeTrimRangeFor(flowgram);
+				actual.add(flowgram.getNucleotideSequence().toBuilder()
+											.trim(trimRange)
+											.build());
 			}
 			return actual;
 		}
