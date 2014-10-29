@@ -523,6 +523,14 @@ public class TestNucleotideSequenceBuilder {
     }
     
     @Test
+    public void trimInsideConstructor(){
+    	NucleotideSequence seq = new NucleotideSequenceBuilder("ACGT").build();
+    	 assertEquals("CG",
+                 new NucleotideSequenceBuilder(seq, Range.of(1,2))
+                         .build().toString());
+    }
+    
+    @Test
     public void trimNegativeBeginShouldAdjustTo0(){
     	 assertEquals("ACG",
                  new NucleotideSequenceBuilder("ACGT")
