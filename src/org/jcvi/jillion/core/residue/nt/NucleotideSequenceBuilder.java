@@ -195,9 +195,24 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     	this.codecDecider = new CodecDecider(newValues);
     }
     
-
-	public NucleotideSequenceBuilder(NucleotideSequence seq, Range r) {
-		NewValues newValues = new NewValues(seq.iterator(r));
+    /**
+     * Creates a new NucleotideSequenceBuilder instance
+     * which currently contains the only the portion
+     * of the given sequence within the specified {@link Range}.
+     * 
+     * @apiNote This should be a more efficient way of achieving
+     *  <pre>
+     *  {@code new NucleotideSequenceBuilder(seq)
+     *  			.trim(range)}
+     *  </pre>
+     * 
+     * @param sequence the initial nucleotide sequence.
+     * @param range the range of the sequence to use; can not be null.
+     * @throws NullPointerException if sequence is null.
+     * @throws IndexOutOfBoundsException if Range contains values outside of the possible sequence offsets.
+     */
+	public NucleotideSequenceBuilder(NucleotideSequence seq, Range range) {
+		NewValues newValues = new NewValues(seq.iterator(range));
 		this.data = newValues.getData();
 		codecDecider = new CodecDecider(newValues);
 	}
