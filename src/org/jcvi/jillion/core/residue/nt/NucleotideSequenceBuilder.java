@@ -196,6 +196,13 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     }
     
 
+	public NucleotideSequenceBuilder(NucleotideSequence seq, Range r) {
+		NewValues newValues = new NewValues(seq.iterator(r));
+		this.data = newValues.getData();
+		codecDecider = new CodecDecider(newValues);
+	}
+
+
 	/**
      * Appends the given base to the end
      * of the builder's mutable sequence.
@@ -1584,7 +1591,17 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
             	offset++;            	
             }
     	}
-    	
+    	public NewValues(Iterator<Nucleotide> iter){
+    		nOffsets = new GrowableIntArray(12);
+			gapOffsets = new GrowableIntArray(12);
+    		data = new GrowableByteArray(100);
+            int offset=0;
+            while(iter.hasNext()){
+            	Nucleotide n = iter.next();
+            	handle(n, offset);
+            	offset++;            	
+            }
+    	}
     	public NewValues(Iterable<Nucleotide> nucleotides){
     		nOffsets = new GrowableIntArray(12);
 			gapOffsets = new GrowableIntArray(12);
