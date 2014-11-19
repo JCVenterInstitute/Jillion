@@ -41,6 +41,9 @@ import org.junit.runners.Suite.SuiteClasses;
         TestConsedUtilGetNextAceVersion.class,
         
         TestConsedUtilGetLatestAce.class,
+        
+        TestConsedUtilGetAcePrefix.class,
+        TestConsedUtilGetConsedDir.class,
 
         
         AllPhdUnitTests.class,
