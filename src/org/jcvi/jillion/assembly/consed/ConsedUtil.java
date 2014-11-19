@@ -346,6 +346,56 @@ public final class ConsedUtil {
         }
         return Integer.parseInt(matcher.group(3));
     }
+    /**
+     * Get the root consed directory for the given 
+     * ace file.
+     * @param aceFile the ace file to use; can not be null
+     * but does not have to exist.
+     * @return a File which may or may not exist
+     * @throws NullPointerException if aceFile is null.
+     */
+    public static File getConsedDirFor(File aceFile){
+		//consed/edit_dir/ace.version
+		return aceFile.getParentFile().getParentFile();
+    }
+    /**
+     * Gets the part of the ace file name
+     * before the ".ace" part.  This method
+     * works on files that end in either
+     * ".ace" or ".ace.\d+".
+     * 
+     * @param aceFile the ace {@link File} whose
+     * name is to be parsed;
+     * can not be null.
+     * @return the part of the name before ".ace".
+     * @throws NullPointerException if aceFile is null.
+     * 
+     * @apiNote This is the same as
+     * <pre>
+     * {@code getAcePrefixFor(aceFile.getName())}
+     * </pre>
+     * 
+     * @see #getAcePrefixFor(String)
+     */
+    public static String getAcePrefixFor(File aceFile){
+    	return getAcePrefixFor(aceFile.getName());
+    }
+    /**
+     * Gets the part of the ace file name
+     * before the ".ace" part.  This method
+     * works on files that end in either
+     * ".ace" or ".ace.\d+".
+     * 
+     * @param aceFileName the ace file name to parse;
+     * can not be null.
+     * @return the part of the name before ".ace".
+     * @throws NullPointerException if aceFileName is null.
+     */
+    public static String getAcePrefixFor(String aceFileName){
+    	//supports both ace.version
+    	//and just plain .ace
+    	return aceFileName.replaceAll("\\.ace(\\.\\d+)?$", "");
+    }
     
     public static String generateNextAceVersionNameFor(File consedAceFile){
         String name = consedAceFile.getName();
