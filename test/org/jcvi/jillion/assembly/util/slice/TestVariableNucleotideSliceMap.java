@@ -370,5 +370,23 @@ public class TestVariableNucleotideSliceMap {
 		assertEquals(createSlice(seq("TTA"),"T-A", "TTA", "GGA"), actual.getSlice(1));
 	}
 	
+	@Test
+	public void readStartsAfterCdsShouldBeSkipped(){
+		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("ACGTTANNNN"), 3, Range.ofLength(6))
+											.add(0, new NucleotideSequenceBuilder("ACGTTA").build())
+											.add(3, new NucleotideSequenceBuilder(   "TTA").build())
+											.add(3, new NucleotideSequenceBuilder(   "GGA").build())											
+											//problem read
+											.add(6, new NucleotideSequenceBuilder(      "NNNN").build())
+											.build();
+		
+		assertEquals(6, actual.getConsensusLength());
+		assertEquals(2, actual.getNumberOfSlices());
+		
+		assertEquals(createSlice(seq("ACG"),"ACG"), actual.getSlice(0));
+		assertEquals(createSlice(seq("TTA"),"TTA", "TTA", "GGA"), actual.getSlice(1));
+		
+	}
+	
 	
 }
