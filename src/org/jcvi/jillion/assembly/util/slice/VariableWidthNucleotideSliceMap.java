@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.jcvi.jillion.assembly.AssemblyUtil;
@@ -117,6 +118,15 @@ public class VariableWidthNucleotideSliceMap implements VariableWidthSliceMap<Nu
 			Range gappedFullReferenceRange = new Range.Builder(gappedReferenceSequence.getLength())
 														.shift(startOffset)
 														.build();
+			//check to make sure we intersect the exons somewhere...
+			Optional<Range> intersect =gappedExons.stream()
+											.filter(exon -> exon.intersects(gappedFullReferenceRange))
+											.findAny();
+			if(!intersect.isPresent()){
+				//sequence doesn't intersect any exons 
+				return new NucleotideSequenceBuilder().build();
+				
+			}
 			List<Range> gappedIntrons = gappedFullReferenceRange.complement(this.gappedExons);
 			
 			NucleotideSequenceBuilder trimmedGappedReferenceBuilder =new NucleotideSequenceBuilder(gappedReferenceSequence);
@@ -130,8 +140,7 @@ public class VariableWidthNucleotideSliceMap implements VariableWidthSliceMap<Nu
 				trimmedGappedReferenceBuilder.delete(seqRangeToDelete);
 			}
 			
-			NucleotideSequence tmp = trimmedGappedReferenceBuilder.build();
-			return tmp;
+			return trimmedGappedReferenceBuilder.build();
 		}
 		private NucleotideSequence computeNumberOfGappedBasesReferenceSlice(int ungappedWidthPerSlice, Iterator<Nucleotide> iter){
 			NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(ungappedWidthPerSlice *2);
@@ -146,14 +155,17 @@ public class VariableWidthNucleotideSliceMap implements VariableWidthSliceMap<Nu
 			
 			
 			NucleotideSequence splicedSequence = getSplicedSequenceFor(seq, offset);
+			if(splicedSequence.getLength() ==0){
+				//read entirely spliced out or doesn't intersect
+				//with CDS so skip it
+				return this;
+			}
 			int splicedStartOffset = getSplicedStartOffsetFor(offset);
 			
 			//because our slices may start with gaps, we need to get the right flanking non-gap
 			//offset to find the correct first builder bin to use
 			int flankingGappedRefOffset =	AssemblyUtil.getRightFlankingNonGapIndex(trimmedGappedReferenceSequence, splicedStartOffset);
-			if(flankingGappedRefOffset <0){
-				System.out.println("here");
-			}
+
 			int ungappedStartOffset = trimmedGappedReferenceSequence.getUngappedOffsetFor(flankingGappedRefOffset);
 			int currentOffset = ungappedStartOffset/widthPerSlice;
 			
