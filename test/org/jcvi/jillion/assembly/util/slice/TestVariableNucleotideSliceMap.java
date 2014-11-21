@@ -158,7 +158,7 @@ public class TestVariableNucleotideSliceMap {
 		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("AC-GTTANNNN"), 3, Range.of(0,6))
 											.add(0, new NucleotideSequenceBuilder("AC-GTTATTTTTTTTTTTTTTT").build())
 											.add(3, new NucleotideSequenceBuilder(   "GT-ATTTTT").build())
-											.add(4, new NucleotideSequenceBuilder(   "GGACCCCCCCCCCCCCCCCCCCCCCCCC").build())
+											.add(4, new NucleotideSequenceBuilder(    "GGACCCCCCCCCCCCCCCCCCCCCCCCC").build())
 											.build();
 		
 		assertEquals(7, actual.getConsensusLength());
@@ -352,6 +352,22 @@ public class TestVariableNucleotideSliceMap {
 		
 		assertEquals(createSlice(seq("A-C-G"), "ACC-G","A-CGG" ), actual.getSlice(0));
 		assertEquals(createSlice(seq("TT-A"), "TTAA", "TT-A","TT-A", "---A", "-TAA"), actual.getSlice(1));
+	}
+	
+	
+	@Test
+	public void splicedExons(){
+		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("AC-GTNTANNNN"), 3, Range.of(0,4), Range.of(6,7))
+											.add(0, new NucleotideSequenceBuilder("AC-GT"+"N"+"TATTTTTTTTTTTTTTT").build())
+											.add(3, new NucleotideSequenceBuilder(   "GT"+"N"+"-ATTTTT").build())
+											.add(4, new NucleotideSequenceBuilder(    "G"+"N"+"GACCCCCCCCCCCCCCCCCCCCCCCCC").build())
+											.build();
+		
+		assertEquals(7, actual.getConsensusLength());
+		assertEquals(2, actual.getNumberOfSlices());
+		
+		assertEquals(createSlice(seq("AC-G"),"AC-G"), actual.getSlice(0));
+		assertEquals(createSlice(seq("TTA"),"T-A", "TTA", "GGA"), actual.getSlice(1));
 	}
 	
 	
