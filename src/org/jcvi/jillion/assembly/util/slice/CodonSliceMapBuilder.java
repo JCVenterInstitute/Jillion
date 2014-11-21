@@ -1,6 +1,7 @@
 package org.jcvi.jillion.assembly.util.slice;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Objects;
 
 import org.jcvi.jillion.core.Range;
@@ -14,9 +15,14 @@ public class CodonSliceMapBuilder{
 	private VariableWidthNucleotideSliceMap.Builder builder;
 	private final RnaEdit rnaEdit;
 	
-	//TODO support splicing (multiple exons)
+	
 	public CodonSliceMapBuilder(NucleotideSequence fullgappedSequence, Range ungappedExon){
 		this.builder = new VariableWidthNucleotideSliceMap.Builder(fullgappedSequence, 3,ungappedExon);
+		this.rnaEdit = null;
+	}
+	public CodonSliceMapBuilder(NucleotideSequence fullgappedSequence, Collection<Range> ungappedExons){
+		this.builder = new VariableWidthNucleotideSliceMap.Builder(fullgappedSequence, 3,
+									ungappedExons.toArray(new Range[ungappedExons.size()]));
 		this.rnaEdit = null;
 	}
 	

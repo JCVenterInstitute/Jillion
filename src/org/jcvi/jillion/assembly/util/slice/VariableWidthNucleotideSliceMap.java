@@ -1,6 +1,7 @@
 package org.jcvi.jillion.assembly.util.slice;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
@@ -74,18 +75,17 @@ public class VariableWidthNucleotideSliceMap implements VariableWidthSliceMap<Nu
 		private final VariableWidthNucleotideSlice.Builder[] builders;
 		private final int widthPerSlice;
 		private final NucleotideSequence trimmedGappedReferenceSequence;
-		private final Range gappedInclusiveRange;
+
+		private final List<Range> gappedExons;
 		
 		
 		public Builder(NucleotideSequence gappedReferenceSequence, int ungappedWidthPerSlice){
 			this(gappedReferenceSequence, ungappedWidthPerSlice, Range.ofLength(gappedReferenceSequence.getLength()));
 		}
-		public Builder(NucleotideSequence gappedReferenceSequence, int ungappedWidthPerSlice, Range gappedIncludeRange){
+		public Builder(NucleotideSequence gappedReferenceSequence, int ungappedWidthPerSlice, Range...gappedExons){
+			this.gappedExons = Arrays.asList(gappedExons);
+			this.trimmedGappedReferenceSequence = getSplicedSequenceFor(gappedReferenceSequence, 0);
 
-			this.trimmedGappedReferenceSequence = new NucleotideSequenceBuilder(gappedReferenceSequence)
-															.trim(gappedIncludeRange)
-															.build();
-			this.gappedInclusiveRange = gappedIncludeRange;
 			
 			long ungappedLength = this.trimmedGappedReferenceSequence.getUngappedLength();
 			if(ungappedWidthPerSlice > ungappedLength){
@@ -111,6 +111,28 @@ public class VariableWidthNucleotideSliceMap implements VariableWidthSliceMap<Nu
 			}
 			
 		}
+		private NucleotideSequence getSplicedSequenceFor(
+				NucleotideSequence gappedReferenceSequence,
+				int startOffset) {
+			Range gappedFullReferenceRange = new Range.Builder(gappedReferenceSequence.getLength())
+														.shift(startOffset)
+														.build();
+			List<Range> gappedIntrons = gappedFullReferenceRange.complement(this.gappedExons);
+			
+			NucleotideSequenceBuilder trimmedGappedReferenceBuilder =new NucleotideSequenceBuilder(gappedReferenceSequence);
+			//iterate backwards to avoid having to shift coordinates
+			for(int i= gappedIntrons.size()-1; i>=0; i--){
+				//have to re-shift by start offset to get into read coord space
+				Range refRangeToDelete = gappedIntrons.get(i);
+				Range seqRangeToDelete = new Range.Builder(refRangeToDelete)
+													.shift(-startOffset)
+													.build();
+				trimmedGappedReferenceBuilder.delete(seqRangeToDelete);
+			}
+			
+			NucleotideSequence tmp = trimmedGappedReferenceBuilder.build();
+			return tmp;
+		}
 		private NucleotideSequence computeNumberOfGappedBasesReferenceSlice(int ungappedWidthPerSlice, Iterator<Nucleotide> iter){
 			NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(ungappedWidthPerSlice *2);
 
@@ -121,64 +143,60 @@ public class VariableWidthNucleotideSliceMap implements VariableWidthSliceMap<Nu
 		}
 		
 		public Builder add(int offset, NucleotideSequence seq){
-			Range readRange = new Range.Builder(seq.getLength())
-									.shift(offset)
-									.build();
-			Range intersectedRange = readRange.intersection(gappedInclusiveRange);
-			if(intersectedRange.isEmpty()){
-				//don't add
-				return this;
-			}
 			
-			Range readTrimRange = new Range.Builder(intersectedRange.getLength())
-											.shift(intersectedRange.getBegin() -offset)
-											.build();
-			NucleotideSequence trimmedSeq = new NucleotideSequenceBuilder(seq)
-													.trim(readTrimRange)
-													.build();
-			int adjustedTrimmedGappedRefOffset = (int) (intersectedRange.getBegin() - gappedInclusiveRange.getBegin());
+			
+			NucleotideSequence splicedSequence = getSplicedSequenceFor(seq, offset);
+			int splicedStartOffset = getSplicedStartOffsetFor(offset);
+			
 			//because our slices may start with gaps, we need to get the right flanking non-gap
 			//offset to find the correct first builder bin to use
-			int flankingGappedRefOffset =	AssemblyUtil.getRightFlankingNonGapIndex(trimmedGappedReferenceSequence, adjustedTrimmedGappedRefOffset);
+			int flankingGappedRefOffset =	AssemblyUtil.getRightFlankingNonGapIndex(trimmedGappedReferenceSequence, splicedStartOffset);
+			if(flankingGappedRefOffset <0){
+				System.out.println("here");
+			}
 			int ungappedStartOffset = trimmedGappedReferenceSequence.getUngappedOffsetFor(flankingGappedRefOffset);
 			int currentOffset = ungappedStartOffset/widthPerSlice;
 			
-			Iterator<Nucleotide> iter = trimmedSeq.iterator();
+			Iterator<Nucleotide> iter = splicedSequence.iterator();
 			//handle initial specially to check for leading gaps
 			
 			
-			builders[currentOffset++].addBeginningOfRead(adjustedTrimmedGappedRefOffset, iter);
-			/*
-			int frame = ungappedStartOffset % widthPerSlice +1; 
-			if(frame!=1){
-				builders[currentOffset++].skipBases(frame, iter);	
-			}else{
-				//just because we start in frame 1
-				//doesn't mean we start at the beginning of the slice bin
-				//the slice could start with gaps and we could start 
-				//beyond those gaps
-				int ungappedCodonOffset = currentOffset* widthPerSlice;
-				int firstGappedOffsetOfCodon = ungappedCodonOffset ==0 ? 0: trimmedGappedReferenceSequence.getGappedOffsetFor(ungappedCodonOffset -1) +1;
-				if(firstGappedOffsetOfCodon !=adjustedTrimmedGappedRefOffset){
-					//skip the entire codon!
-					int numberOfPadsToAdd = adjustedTrimmedGappedRefOffset - firstGappedOffsetOfCodon;
-					List<Nucleotide> l = new ArrayList<>(numberOfPadsToAdd);
-					for(int i=0; i< numberOfPadsToAdd; i++){
-						l.add(Nucleotide.Gap);
-					}
-					iter = IteratorUtil.createChainedIterator(Arrays.asList(l.iterator(), iter));
-					builders[currentOffset++].skipBases(iter);	
-				}
-			}
+			builders[currentOffset++].addBeginningOfRead(splicedStartOffset, iter);
 			
-			*/
 			//handle the rest
 			while(iter.hasNext() && currentOffset < builders.length){			
 				builders[currentOffset++].add(iter);
 				
 			}
 			
+			
+			
 			return this;
+		}
+		private int getSplicedStartOffsetFor(int offset) {
+			//we need to subtract the gapped length of our introns
+			
+			Range upstreamOfRead = 	Range.ofLength(offset);
+			List<Range> upstreamIntrons = upstreamOfRead.complement(gappedExons);
+			if(upstreamIntrons.isEmpty()){
+				//the splicedStartOffset doesn't take into account any bases 
+				//BEFORE THE exons so we have to still adjust it to get it into
+				//exon coordinate space
+				//this should be safe since we should always have at least 1 exon
+				
+				int exonStart = (int) gappedExons.get(0).getBegin();
+				//only adjust if offset is >= our first exon start
+				if(exonStart <= offset){
+					return offset - exonStart;
+				}
+				return offset;
+			}
+			
+			long intronLength = 0;
+			for(Range r : upstreamIntrons){
+				intronLength+= r.getLength();
+			}
+			return offset - (int) intronLength;
 		}
 		
 		public VariableWidthNucleotideSliceMap build(){
