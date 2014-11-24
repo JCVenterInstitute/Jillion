@@ -2,6 +2,7 @@ package org.jcvi.jillion.assembly.util.slice;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -85,6 +86,9 @@ public class VariableWidthNucleotideSliceMap implements VariableWidthSliceMap<Nu
 		}
 		public Builder(NucleotideSequence gappedReferenceSequence, int ungappedWidthPerSlice, Range...gappedExons){
 			this.gappedExons = Arrays.asList(gappedExons);
+			//sort list incase it's out of order
+			Collections.sort(this.gappedExons, Range.Comparators.ARRIVAL);
+			
 			this.trimmedGappedReferenceSequence = getSplicedSequenceFor(gappedReferenceSequence, 0);
 
 			
@@ -115,6 +119,7 @@ public class VariableWidthNucleotideSliceMap implements VariableWidthSliceMap<Nu
 		private NucleotideSequence getSplicedSequenceFor(
 				NucleotideSequence gappedReferenceSequence,
 				int startOffset) {
+			
 			Range gappedFullReferenceRange = new Range.Builder(gappedReferenceSequence.getLength())
 														.shift(startOffset)
 														.build();
@@ -197,8 +202,12 @@ public class VariableWidthNucleotideSliceMap implements VariableWidthSliceMap<Nu
 				//this should be safe since we should always have at least 1 exon
 				
 				int exonStart = (int) gappedExons.get(0).getBegin();
-				//only adjust if offset is >= our first exon start
-				if(exonStart <= offset){
+				if(offset < exonStart){
+					//adjust our offset to be the start of the exon
+					//our spliced sequence should fix the string length
+					return 0;
+				}
+				else if(exonStart <= offset){
 					return offset - exonStart;
 				}
 				return offset;
