@@ -388,5 +388,58 @@ public class TestVariableNucleotideSliceMap {
 		
 	}
 	
+	@Test
+	public void readStartsBeforeCdsButIntersectsItToo(){
+		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("NNACGTTANNNN"), 3, Range.of(2,7))
+											.add(2, new NucleotideSequenceBuilder("ACGTTA").build())
+											.add(5, new NucleotideSequenceBuilder(   "TTA").build())
+											.add(5, new NucleotideSequenceBuilder(   "GGA").build())											
+											//problem read
+											.add(0, new NucleotideSequenceBuilder("NNACG").build())
+											.build();
+		
+		assertEquals(6, actual.getConsensusLength());
+		assertEquals(2, actual.getNumberOfSlices());
+		
+		assertEquals(createSlice(seq("ACG"),"ACG","ACG"), actual.getSlice(0));
+		assertEquals(createSlice(seq("TTA"),"TTA", "TTA", "GGA"), actual.getSlice(1));
+		
+	}
+	
+	@Test
+	public void readStartsBeforeCdsButIntersectsItTooRegressionCheckDontHaveNegativeStartOffset(){
+		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("NNNNNNNNNNNNACGTTANNNN"), 3, Range.of(12,17))
+											.add(12, new NucleotideSequenceBuilder("ACGTTA").build())
+											.add(15, new NucleotideSequenceBuilder(   "TTA").build())
+											.add(15, new NucleotideSequenceBuilder(   "GGA").build())											
+											//problem read
+											.add(0, new NucleotideSequenceBuilder("NNNNNNNNNNNNACGTTANNNNNNNNNNNNNNNNNNN").build())
+											.build();
+		
+		assertEquals(6, actual.getConsensusLength());
+		assertEquals(2, actual.getNumberOfSlices());
+		
+		assertEquals(createSlice(seq("ACG"),"ACG","ACG"), actual.getSlice(0));
+		assertEquals(createSlice(seq("TTA"),"TTA", "TTA", "GGA", "TTA"), actual.getSlice(1));
+		
+	}
+	
+	@Test
+	public void readStartsBeforeCdsButStartOffsetIsMoreThanRefSplicedLength(){
+		VariableWidthNucleotideSliceMap actual = new VariableWidthNucleotideSliceMap.Builder(seq("NNNNNNNNNNNNNNNNNNNNNNACGTTA"), 3, Range.of(22,27))
+											.add(22, new NucleotideSequenceBuilder("ACGTTA").build())
+											.add(25, new NucleotideSequenceBuilder(   "TTA").build())
+											.add(25, new NucleotideSequenceBuilder(   "GGA").build())											
+											//problem read
+											.add(10, new NucleotideSequenceBuilder("NNNNNNNNNNNNACGTTANNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN").build())
+											.build();
+		
+		assertEquals(6, actual.getConsensusLength());
+		assertEquals(2, actual.getNumberOfSlices());
+		
+		assertEquals(createSlice(seq("ACG"),"ACG","ACG"), actual.getSlice(0));
+		assertEquals(createSlice(seq("TTA"),"TTA", "TTA", "GGA", "TTA"), actual.getSlice(1));
+		
+	}
 	
 }

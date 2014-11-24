@@ -53,17 +53,7 @@ public class CodonSliceMapBuilder{
 																				.shift(adjustedStartOffset)
 																				.build());
 			
-			/*int numberOfLeadingGaps = editedReadBuilder.getGappedOffsetFor(0);
-			if(numberOfLeadingGaps >0){
-				editedReadBuilder.delete(Range.ofLength(numberOfLeadingGaps));
-				//have to adjust start offset but by how much?
-				//can't be leading number of gaps because that would include
-				//entire region
-				int numberOfAdjustedBases = adjustedStartOffset - offset;
-				adjustedStartOffset +=numberOfLeadingGaps- numberOfAdjustedBases;
-				
-			}
-			*/
+			
 			int lastNonGapOffset = editedReadBuilder.getGappedOffsetFor((int)(editedReadBuilder.getUngappedLength() -1));
 			long numberOfTrailingGaps = editedReadBuilder.getLength() -	lastNonGapOffset -1;
 			if(numberOfTrailingGaps >0){
@@ -151,30 +141,7 @@ public class CodonSliceMapBuilder{
 				char[] gaps = new char[numberOfBasesAdded];
 				Arrays.fill(gaps, '-');
 				seq.append(gaps);		
-				/*
-				long unGappedLength = seq.getUngappedLength();
-				if(unGappedLength ==0){
-					//all gaps in this edit region
-					//just add more gaps to account for
-					//added bases
-					char[] gaps = new char[numberOfBasesAdded];
-					Arrays.fill(gaps, '-');
-					seq.append(gaps);					
-				}else{
-					//TODO possibly some kind of alignment
-					//and adding gaps where appropriate to keep
-					//everything in frame...but
-					
-					//for now just replace with gaps?
-					//if we are missing bases this number will be negative
-					int numberOfMissingBases = (int)(unGappedLength - inputSequence.getLength());
-					
-					char[] gaps = new char[seq.getNumGaps() + (int)editedSequence.getLength() - numberOfMissingBases];
-					Arrays.fill(gaps, '-');
-					seq.clear();
-					seq.append(gaps);
-				}
-				*/
+				
 			}
 			
 		}
