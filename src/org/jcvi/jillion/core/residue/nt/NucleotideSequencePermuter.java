@@ -1,7 +1,6 @@
 package org.jcvi.jillion.core.residue.nt;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -99,7 +98,7 @@ public final class NucleotideSequencePermuter {
 	 * @param sequences
 	 * @return
 	 */
-	public static Set<NucleotideSequence> permuteAmbiguities(Collection<NucleotideSequence> sequences){
+	public static Set<NucleotideSequence> permuteAmbiguities(Iterable<NucleotideSequence> sequences){
 		Set<NucleotideSequence> set = new LinkedHashSet<>();
 		for(NucleotideSequence seq : sequences){
 			set.addAll(permuteAmbiguities(seq));
