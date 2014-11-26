@@ -53,7 +53,7 @@ public class SingleNucleotideSlice implements VariableWidthSlice<Nucleotide, Nuc
 
 	@Override
 	public int getCountFor(List<Nucleotide> sliceElementSeq) {
-		if(sliceElementSeq.size() !=0){
+		if(sliceElementSeq.size() ==0){
 			return 0;
 		}
 		for(VariableWidthSliceElement<Nucleotide> e : list){
@@ -133,6 +133,18 @@ public class SingleNucleotideSlice implements VariableWidthSlice<Nucleotide, Nuc
 		
 		public SingleNucleotideSlice build(){
 			return new SingleNucleotideSlice(this);
+		}
+		
+		@Override
+		public String toString() {
+			StringBuilder b = new StringBuilder("{");
+			for(int i=0; i<counts.length; i++){
+				if(counts[i] >0){
+					b.append(Nucleotide.VALUES.get(i)).append(":").append(counts[i]).append(" ");
+				}
+			}
+			b.append("}");
+			return b.toString();
 		}
 	}
 
