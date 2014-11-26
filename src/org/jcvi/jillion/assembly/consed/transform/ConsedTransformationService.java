@@ -22,11 +22,28 @@ package org.jcvi.jillion.assembly.consed.transform;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jcvi.jillion.assembly.AssemblyTransformationService;
 import org.jcvi.jillion.assembly.AssemblyTransformer;
+import org.jcvi.jillion.assembly.AssemblyUtil;
+import org.jcvi.jillion.assembly.ReadInfo;
 import org.jcvi.jillion.assembly.consed.ConsedUtil;
+import org.jcvi.jillion.assembly.consed.ConsedUtil.ClipPointsType;
+import org.jcvi.jillion.assembly.consed.ace.AbstractAceFileVisitor;
+import org.jcvi.jillion.assembly.consed.ace.AceContigReadVisitor;
+import org.jcvi.jillion.assembly.consed.ace.AceContigVisitor;
+import org.jcvi.jillion.assembly.consed.ace.AceFileParser;
+import org.jcvi.jillion.assembly.consed.ace.AceFileVisitorCallback;
 import org.jcvi.jillion.assembly.consed.phd.PhdDataStore;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Range.CoordinateSystem;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 
 public class ConsedTransformationService implements AssemblyTransformationService{
 
@@ -55,11 +72,163 @@ public class ConsedTransformationService implements AssemblyTransformationServic
 	}
 	
 	@Override
-	public void transform(AssemblyTransformer transformer) throws IOException {
+	public void transform(final AssemblyTransformer transformer) throws IOException {
 		if(transformer ==null){
 			throw new NullPointerException("transformer can not be null");
 		}
-		
+		//TODO implement!!
+		AceFileParser.create(aceFile)
+						.parse(new AbstractAceFileVisitor() {
+
+							@Override
+							public AceContigVisitor visitContig(
+									AceFileVisitorCallback callback,
+									String contigId, int consensusLength,
+									int numberOfReads,
+									int numberOfBaseSegments,
+									boolean reverseComplemented) {
+								return new AceContigVisitor() {
+									NucleotideSequenceBuilder consensusBuilder = new NucleotideSequenceBuilder();
+									boolean madeReferenceCallYet = false;
+									
+									Map<String, Integer> readStarts = new HashMap<>();
+									Map<String, Direction> readDirs = new HashMap<>();
+									
+									@Override
+									public void visitEnd() {
+										if(!madeReferenceCallYet){
+											makeReferenceCall();
+										}
+										
+									}
+									
+									@Override
+									public void visitConsensusQualities(
+											QualitySequence ungappedConsensusQualities) {
+										//no-op
+										
+									}
+									
+									@Override
+									public AceContigReadVisitor visitBeginRead(String readId, int gappedLength) {
+										if(!madeReferenceCallYet){
+											makeReferenceCall();
+										}
+										return new AceContigReadVisitor() {
+											NucleotideSequenceBuilder fullLengthReadBuilder = new NucleotideSequenceBuilder();
+											Range gappedValidRange = null;
+											
+											@Override
+											public void visitTraceDescriptionLine(String traceName, String phdName,
+													Date date) {
+												//no-op
+												
+											}
+											
+											@Override
+											public void visitQualityLine(int qualLeft, int qualRight, int alignLeft,
+													int alignRight) {
+												ClipPointsType clipPointsType = ConsedUtil.ClipPointsType.getType(qualLeft, qualRight, alignLeft, alignRight);
+												if(clipPointsType != ClipPointsType.VALID){
+													return;
+												}
+												//dkatzel 4/2011 - There have been cases when qual coords and align coords
+										        //do not match; usually qual is a sub set of align
+										        //but occasionally, qual goes beyond the align coords.
+										        //I guess this happens in a referenced based alignment for
+										        //reads at the edges when the reads have good quality 
+										        //beyond the reference.
+										        //It might also be possible that the read has been 
+										        //edited and that could have changed the coordinates.
+										        //Therefore intersect the qual and align coords
+										        //to find the region we are interested in
+										        Range qualityRange = Range.of(CoordinateSystem.RESIDUE_BASED, qualLeft,qualRight);
+										        Range alignmentRange = Range.of(CoordinateSystem.RESIDUE_BASED, alignLeft,alignRight);
+										        gappedValidRange =qualityRange.intersection(alignmentRange);
+										        
+										       
+											}
+											
+											@Override
+											public void visitEnd() {
+												
+												NucleotideSequence gappedValidRangeSequence = fullLengthReadBuilder.copy()
+																								.trim(gappedValidRange)
+																								.build();
+												//TODO make this more efficient.
+												//currently have to create NucleteotideSequence just
+												//to convert from gapped to ungapped coords
+												NucleotideSequence gappedFullLengthSequence = fullLengthReadBuilder.build();
+												
+												NucleotideSequence ungappedFullLengthSequence = fullLengthReadBuilder.ungap().build();
+												
+												
+												transformer.aligned(readId, 
+														//TODO add support for phd ball?
+														ungappedFullLengthSequence, null, null, 
+														null, contigId, 
+														readStarts.get(readId), readDirs.get(readId), 
+														gappedValidRangeSequence, 
+														new ReadInfo(AssemblyUtil.toUngappedRange(gappedFullLengthSequence, gappedValidRange),
+																(int)ungappedFullLengthSequence.getLength()));
+												
+											}
+											
+											@Override
+											public void visitBasesLine(String mixedCaseBasecalls) {
+												fullLengthReadBuilder.append(mixedCaseBasecalls);
+												
+											}
+											
+											@Override
+											public void halted() {
+												//no-op
+												
+											}
+										};
+									}
+									
+									private void makeReferenceCall() {
+										madeReferenceCallYet =true;
+										//TODO do we have to worry about contigLeft and right?
+										transformer.referenceOrConsensus(contigId, consensusBuilder.build());
+										
+									}
+
+									@Override
+									public void visitBasesLine(String mixedCaseBasecalls) {
+										consensusBuilder.append(mixedCaseBasecalls);
+										
+									}
+									
+									@Override
+									public void visitBaseSegment(Range gappedConsensusRange, String readId) {
+										//no-op
+										
+									}
+									
+									@Override
+									public void visitAlignedReadInfo(String readId, Direction dir,
+											int gappedStartPosition) {
+										//no-op
+										readStarts.put(readId, gappedStartPosition -1);
+										readDirs.put(readId, dir);
+									}
+									
+									@Override
+									public void halted() {
+										//no-op
+										
+									}
+								};
+							}
+
+							@Override
+							public void visitEnd() {
+								transformer.endAssembly();
+							}
+							
+						});
 	}
 
 	public static class Builder{
