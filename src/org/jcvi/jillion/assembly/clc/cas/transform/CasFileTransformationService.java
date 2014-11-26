@@ -124,7 +124,7 @@ public class CasFileTransformationService implements AssemblyTransformationServi
 			 IOUtil.closeAndIgnoreErrors(idIter);
 		 }
 		 
-		 Visitor visitor = new Visitor(casFile, gappedReferenceDataStore, transformer,chromatDir, qualityCodec);
+		 Visitor visitor = new Visitor(casFile.getParentFile(), gappedReferenceDataStore, transformer,chromatDir, qualityCodec);
 		 casParser.parse(wrapVisitor(visitor));
 		 transformer.endAssembly();
 		 
@@ -138,12 +138,12 @@ public class CasFileTransformationService implements AssemblyTransformationServi
 
 		private final AssemblyTransformer transformer;
 		private final File chromatDir;
-		public Visitor(File casFile,  
+		public Visitor(File workingDir,  
 				CasGappedReferenceDataStore gappedReferenceDataStore,
 				AssemblyTransformer transformer,
 				File chromatDir,
 				FastqQualityCodec qualityCodec) {
-			super(casFile, gappedReferenceDataStore);
+			super(workingDir, gappedReferenceDataStore);
 			this.transformer = transformer;
 			this.chromatDir = chromatDir;
 			//maybe null

@@ -81,16 +81,25 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 	private final List<StreamingIterator<? extends Trace>> iterators = new ArrayList<StreamingIterator<? extends Trace>>();
 	
 	private FastqQualityCodec qualityCodec=null;
-	
-	public AbstractAlignedReadCasVisitor(File casFile,
+	/**
+	 * Create a new AbstractAlignedReadCasVisitor instance.
+	 * 
+	 * @param workingDir the working directory of the cas file;
+	 * may be null (means current directory).
+	 * 
+	 * @param gappedReferenceDataStore {@link CasGappedReferenceDataStore}
+	 * which contains the precomputed gapped referenced by 
+	 * in this cas file for these alignments; can not be null.
+	 * 
+	 * @thorws NullPointerException if gappedReferenceDataStore is null.
+	 */
+	public AbstractAlignedReadCasVisitor(File workingDir,
 			CasGappedReferenceDataStore gappedReferenceDataStore) {
 		if(gappedReferenceDataStore ==null){
 			throw new NullPointerException("gapped Reference DataStore can not be null");
 		}
-		if(casFile ==null){
-			throw new NullPointerException("cas file can not be null");
-		}
-		this.workingDir = casFile.getParentFile();
+		
+		this.workingDir = workingDir;
 		this.gappedReferenceDataStore = gappedReferenceDataStore;
 	}
 

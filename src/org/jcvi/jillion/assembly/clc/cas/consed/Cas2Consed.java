@@ -79,7 +79,7 @@ public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
 	
 	public Cas2Consed(File casFile,	CasGappedReferenceDataStore gappedReferenceDataStore, File consedOutputDir,
 			String prefix) throws DataStoreException, IOException {
-		super(casFile, gappedReferenceDataStore);
+		super(casFile.getParentFile(), gappedReferenceDataStore);
 		
 		if(consedOutputDir ==null){
 			throw new NullPointerException("output dir can not be null");
