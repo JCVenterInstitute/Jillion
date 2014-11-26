@@ -21,6 +21,7 @@
 package org.jcvi.jillion_experimental.primer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.jcvi.jillion.align.NucleotideSubstitutionMatrix;
@@ -93,6 +94,12 @@ public class PrimerDetector {
 
     public List<DirectedRange> detect(NucleotideSequence sequence,
             NucleotideSequenceDataStore primersDataStore) {
+    	
+    	if(sequence.getLength() ==0){
+    		//obviously an empty sequence can't have any hits
+    		return Collections.emptyList();
+    	}
+    	
         List<DirectedRange> ranges = new ArrayList<DirectedRange>();
         StreamingIterator<NucleotideSequence> iter =null; 
         try{
