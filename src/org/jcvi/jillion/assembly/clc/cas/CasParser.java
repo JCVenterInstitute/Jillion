@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.clc.cas;
 
+import java.io.File;
 import java.io.IOException;
 /**
  * {@code CasParser} is an interface that will
@@ -55,5 +56,13 @@ public interface CasParser {
 	 * @see #canParse()
 	 */
 	void parse(CasFileVisitor visitor) throws IOException;	
+	
+	 /**
+     * Get the cas file's working directory where all relative paths
+     * in the cas are referenced from.
+     * @return a File; may be null if working dir is the root
+     * or local directory. (Similar to File#getParentFile())
+     */
+    File getWorkingDir();
 	
 }

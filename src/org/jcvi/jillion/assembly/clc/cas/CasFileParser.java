@@ -116,6 +116,16 @@ public final class CasFileParser implements CasParser{
     public static CasParser create(File casFile, boolean validate) throws IOException{
     	return new CasFileParser(casFile, validate);
     }
+    /**
+     * Get the cas file's working directory where all relative paths
+     * in the cas are referenced from.
+     * @return a File; may be null if working dir is the root
+     * or local directory. (Similar to File#getParentFile())
+     */
+    @Override
+    public File getWorkingDir(){
+    	return casFile.getParentFile();
+    }
     
     private CasFileParser(File file, boolean validate) throws IOException{
     	if(file ==null){
@@ -126,7 +136,7 @@ public final class CasFileParser implements CasParser{
     	}
     	this.casFile = file;
     	if(validate){
-    		CasValidator validator = new CasValidator(casFile.getParentFile());
+    		CasValidator validator = new CasValidator(getWorkingDir());
     		parse(validator);
     	}
     }
