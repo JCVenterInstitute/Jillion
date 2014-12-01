@@ -26,9 +26,28 @@
 package org.jcvi.jillion.assembly.clc.cas;
 
 public enum CasAlignmentRegionType {
-    
+    /**
+     * The read and reference have the same
+     * number of bases, most of which match,
+     * but there may be mismatches
+     * but not any gaps.
+     */
     MATCH_MISMATCH,
+    /**
+     * The read has extra bases
+     * vs the reference.  (The reference must
+     * add gaps to compensate).
+     */
     INSERT,
+    /**
+     * The read has less bases
+     * vs the reference.  (The read must
+     * add gaps to compensate).
+     */
     DELETION,
+    /**
+     * There was a phase change,
+     * only valid for SOLID reads.
+     */
     PHASE_CHANGE
 }

@@ -98,7 +98,7 @@ public final class AssemblyUtil {
     }
     
     /**
-     * Reverse Compliment the given validRange with regards to its fullLength.
+     * Reverse Complement the given validRange with regards to its fullLength.
      * @param validRange the valid Range to reverseCompliment.
      * @param fullLength the full length of the untrimmed basecalls.
      * @return a new Range that corresponds to the reverse complemented valid range.
