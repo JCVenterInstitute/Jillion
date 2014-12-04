@@ -23,6 +23,7 @@ package org.jcvi.jillion.assembly.clc.cas.transform;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Objects;
 
 import org.jcvi.jillion.assembly.AssemblyTransformationService;
 import org.jcvi.jillion.assembly.AssemblyTransformer;
@@ -51,11 +52,11 @@ import org.jcvi.jillion.trace.sff.SffFileIterator;
 
 public class CasFileTransformationService implements AssemblyTransformationService{
 
-	private final File casFile;
-	private final File casDir;
+	
 	private final File chromatDir;
 	
 	private FastqQualityCodec qualityCodec;
+	private final CasParser casParser;
 	
 	public CasFileTransformationService(File casFile) throws IOException{
 		this(casFile, null);
@@ -74,13 +75,21 @@ public class CasFileTransformationService implements AssemblyTransformationServi
 			if(!chromatDir.isDirectory()){
 				throw new IOException("chromat dir must be a directory"+ chromatDir.getAbsolutePath());
 			}
-		}
-		this.casFile = casFile;
-		casDir = casFile.getParentFile();
+		}		
+		this.chromatDir = chromatDir;
+		this.casParser = CasFileParser.create(casFile, true);
+	}
+	
+	public CasFileTransformationService(CasParser parser) throws IOException{
+		this(parser, null);
+	}
+	
+	public CasFileTransformationService(CasParser parser, File chromatDir) throws IOException{
+
+		Objects.requireNonNull(parser);
+		this.casParser = parser;		
 		this.chromatDir = chromatDir;
 	}
-
-
 
 	public FastqQualityCodec getQualityCodec() {
 		return qualityCodec;
@@ -88,11 +97,9 @@ public class CasFileTransformationService implements AssemblyTransformationServi
 	public void setQualityCodec(FastqQualityCodec qualityCodec) {
 		this.qualityCodec = qualityCodec;
 	}
-	protected File getCasFile() {
-		return casFile;
-	}
+	
 	protected File getCasDir() {
-		return casDir;
+		return casParser.getWorkingDir();
 	}
 	protected File getChromatDir() {
 		return chromatDir;
@@ -103,9 +110,9 @@ public class CasFileTransformationService implements AssemblyTransformationServi
 		if(transformer == null){
 			throw new NullPointerException("transformer can not be null");
 		}
-		CasGappedReferenceDataStoreBuilderVisitor gappedRefVisitor = new CasGappedReferenceDataStoreBuilderVisitor(casDir);
+		CasGappedReferenceDataStoreBuilderVisitor gappedRefVisitor = new CasGappedReferenceDataStoreBuilderVisitor(casParser.getWorkingDir());
 		 
-		 CasParser casParser = CasFileParser.create(casFile, true);
+		
 		casParser.parse(gappedRefVisitor);
 		 
 		 CasGappedReferenceDataStore gappedReferenceDataStore = gappedRefVisitor.build();
@@ -124,7 +131,7 @@ public class CasFileTransformationService implements AssemblyTransformationServi
 			 IOUtil.closeAndIgnoreErrors(idIter);
 		 }
 		 
-		 Visitor visitor = new Visitor(casFile.getParentFile(), gappedReferenceDataStore, transformer,chromatDir, qualityCodec);
+		 Visitor visitor = new Visitor(casParser.getWorkingDir(), gappedReferenceDataStore, transformer,chromatDir, qualityCodec);
 		 casParser.parse(wrapVisitor(visitor));
 		 transformer.endAssembly();
 		 
