@@ -243,7 +243,7 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 		if(sequences.isEmpty()){
 			seqLength = currentSequenceLength;
 		}else if(seqLength != currentSequenceLength){
-			throw new IOException(String.format("invalid sequence length, all sequences so far have been %d residues but this one is %d", seqLength, currentSequenceLength));
+			throw new IOException(String.format("invalid sequence length, all sequences so far have been %d residues but %s is %d", seqLength,id, currentSequenceLength));
 		}
 		if(sequences.containsKey(id)){
 			throw new IllegalArgumentException(String.format("id %s already has been written",id));
