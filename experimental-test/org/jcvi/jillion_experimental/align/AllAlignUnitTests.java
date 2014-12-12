@@ -33,6 +33,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestAlnUtil.class,
         TestAminoAcidAlnParser.class,
         TestAlnFileWithResidueCounts.class,
+        TestAlnFileParserLowercaseBases.class,
         
         TestNucleotideSequenceAlignmentBuilder.class,
         TestGappedNucleotideAlignmentDataStore.class,
