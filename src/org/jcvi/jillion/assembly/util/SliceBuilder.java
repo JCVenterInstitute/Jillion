@@ -311,6 +311,11 @@ public final class SliceBuilder implements Builder<Slice>{
     	}
     	return new ConsensusCompactedSlice(bytes.toArray(), ids,consensus);
     }
+	@Override
+	public String toString() {
+		return "SliceBuilder [bytes=" + bytes + ", ids=" + ids + ", consensus="
+				+ consensus + "]";
+	}
 
 
 }
