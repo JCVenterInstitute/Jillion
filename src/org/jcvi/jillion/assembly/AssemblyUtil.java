@@ -53,9 +53,32 @@ public final class AssemblyUtil {
      * basecalls of the given read. 
      */
     public static NucleotideSequence buildGappedComplementedFullRangeBases(AssembledRead assembledRead, NucleotideSequence ungappedUncomplementedFullRangeBases){
+    	return buildGappedComplementedFullRangeBases(assembledRead, ungappedUncomplementedFullRangeBases, false);
+    }
+    /**
+     * Create a {@link NucleotideSequence} that corresponds to the gapped full range
+     * (untrimmed, uncomplemented, gapped) version of the given {@link AssembledRead}.
+     * Generally, the returned sequence will be the trimmed off portions of the read
+     * (from primer/barcode or bad quality) flanking the gapped sequence
+     * from the assembled read (the good quality trimmed sequence returned by
+     * {@link AssembledRead#getNucleotideSequence()} ).
+     * @param assembledRead the read to work on.
+     * @param ungappedUncomplementedFullRangeBases the ungapped uncomplemented
+     * full (raw) version of the basecalls as originally called from the sequencer.
+     * @param turnOffCompression Turn off more extreme data compression when making the resulting
+     * {@link NucleotideSequence} which will improve cpu performance 
+     * at the cost of the built NucleotideSequence taking up more memory.
+     * 
+     * @return a {@link NucleotideSequence} of the gapped, untrimmed uncomplemented
+     * basecalls of the given read. 
+     */
+    public static NucleotideSequence buildGappedComplementedFullRangeBases(AssembledRead assembledRead, 
+    													NucleotideSequence ungappedUncomplementedFullRangeBases,
+    												boolean turnOffCompression){
         Direction dir =assembledRead.getDirection();
         Range validRange = assembledRead.getReadInfo().getValidRange();
-        NucleotideSequenceBuilder ungappedFullRangeComplimentedBuilder = new NucleotideSequenceBuilder(ungappedUncomplementedFullRangeBases);
+        NucleotideSequenceBuilder ungappedFullRangeComplimentedBuilder = new NucleotideSequenceBuilder(ungappedUncomplementedFullRangeBases)
+        																		.turnOffDataCompression(turnOffCompression);
         if(dir==Direction.REVERSE){
             validRange = AssemblyUtil.reverseComplementValidRange(
                     validRange,
@@ -63,11 +86,15 @@ public final class AssemblyUtil {
             ungappedFullRangeComplimentedBuilder.reverseComplement();
             
         }
-        NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder((int)ungappedFullRangeComplimentedBuilder.getLength());
-        builder.append(ungappedFullRangeComplimentedBuilder.copy().trim(new Range.Builder(validRange.getBegin()).build()));
+        //set initial size to 2x ungapped full length 
+        //just incase assembly is really gappy.
+        //if the sequence is still larger, the builder will dynamically grow
+        //but this should cover 99+% of use case without expensive re-sizing.
+        NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder((int)( 2* ungappedFullRangeComplimentedBuilder.getLength()));
+        builder.append(ungappedFullRangeComplimentedBuilder.copy(new Range.Builder(validRange.getBegin()).build()));
         //need to use read's sequence since that might be gapped
         builder.append(assembledRead.getNucleotideSequence());
-        builder.append(ungappedFullRangeComplimentedBuilder.copy().trim(Range.of(validRange.getEnd()+1, ungappedFullRangeComplimentedBuilder.getLength() -1)));
+        builder.append(ungappedFullRangeComplimentedBuilder.copy(Range.of(validRange.getEnd()+1, ungappedFullRangeComplimentedBuilder.getLength() -1)));
      
         return builder.build();
     }
