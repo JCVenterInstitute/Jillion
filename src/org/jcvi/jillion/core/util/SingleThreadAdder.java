@@ -48,4 +48,11 @@ public class SingleThreadAdder {
 	public int intValue(){		
 		return (int)value;
 	}
+
+	@Override
+	public String toString() {
+		return "SingleThreadAdder [value=" + value + "]";
+	}
+	
+	
 }
