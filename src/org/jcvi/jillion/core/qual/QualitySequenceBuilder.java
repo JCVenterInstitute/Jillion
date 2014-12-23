@@ -60,7 +60,7 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 	 * Create a new empty builder with the given
 	 * capacity.
 	 * @throws NegativeArraySizeException if initialCapacity
-	 * is <=0.
+	 * is <0.
 	 */
 	public QualitySequenceBuilder(int initialCapacity){
 		this.builder = new GrowableByteArray(initialCapacity);
