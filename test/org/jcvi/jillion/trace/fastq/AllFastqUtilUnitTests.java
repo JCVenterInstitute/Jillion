@@ -32,7 +32,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        TestGuessQualityCodec.class
+        TestGuessQualityCodec.class,
+        TestFastqQualityCodecGuesserAllEither.class
     }
     )
 public class AllFastqUtilUnitTests {
