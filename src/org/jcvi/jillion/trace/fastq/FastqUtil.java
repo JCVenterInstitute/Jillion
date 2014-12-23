@@ -191,7 +191,7 @@ public final class FastqUtil {
     	}
     	//sanger uses 33 as an offset so any ascii values around there will 
     	//automatically be sanger
-    	
+    	int sangerOffset = FastqQualityCodec.SANGER.getOffset();
     	//solexa and illumina encoding have offsets of 64 so they look very similar
     	//except solexa uses a different log scale and can actually have scores as low
     	//as -5 (ascii value 59) so any values from ascii 59-63 mean solexa
@@ -206,9 +206,10 @@ public final class FastqUtil {
     	//sure i is in range before accessing
     	//the internal array.
     	char[] chars = encodedQualities.toCharArray();
+    	
     	for(int i=0; i<chars.length; i++){
     		int asciiValue = chars[i];
-    		if(asciiValue <33){
+    		if(asciiValue <sangerOffset){
     			throw new IllegalArgumentException(
     					String.format(
     							"invalid encoded qualities has out of range ascii value %d : '%s'", 
@@ -228,6 +229,22 @@ public final class FastqUtil {
     			minQuality = asciiValue;
     		}
     	}
+    	//if we get this far, we don't have 
+    	//any QVs ascii values < 59
+    	//we could still be sanger
+    	//and only have high quality qvs
+    	//(possible but unlikely outside of testing)
+    	//or only low super low illumina/solexa qvs
+    	//most qvs are between 1-40 so check to see if we have
+    	//any values beyond that.
+    	
+		if(maxQuality <  sangerOffset + 41){
+			//we have QVs up to sanger 40
+			//or illumina qv 9
+			//assume sanger
+			return FastqQualityCodec.SANGER;
+		}
+    	
     	if(hasSolexaOnlyValues){
     		return FastqQualityCodec.SOLEXA;
     	}

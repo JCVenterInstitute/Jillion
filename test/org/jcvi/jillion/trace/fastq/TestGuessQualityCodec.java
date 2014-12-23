@@ -20,10 +20,10 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace.fastq;
 
-import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
-import org.jcvi.jillion.trace.fastq.FastqUtil;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestGuessQualityCodec {
 
 	@Test
@@ -49,5 +49,14 @@ public class TestGuessQualityCodec {
 	@Test
 	public void emptyStringReturnsNull(){
 		assertNull(FastqUtil.guessQualityCodecUsed(""));
+	}
+	
+	
+	@Test
+	public void qvsAllSanger30(){
+		//sanger qv 30 = "?" = 30 +33 = 63 which is less than illumina offset
+
+		String quals = "??????????";
+		assertEquals(FastqQualityCodec.SANGER, FastqUtil.guessQualityCodecUsed(quals));
 	}
 }
