@@ -30,12 +30,12 @@ public class CodonSliceMapBuilder{
 		this.rnaEdit = rnaEdit;
 		NucleotideSequence editedReference = rnaEdit.editReference(fullgappedSequence)
 													.build();
-		Range gappedExon = Range.of(fullgappedSequence.getGappedOffsetFor((int)ungappedExon.getBegin()),
-									fullgappedSequence.getGappedOffsetFor((int)ungappedExon.getEnd()));
-		Range updatedGappedExon = new Range.Builder(gappedExon)
+		Range updatedUngappedExon = new Range.Builder(ungappedExon)
 											  .expandEnd(rnaEdit.getNumberOfBasesAdded())
 											  .build();
-		this.builder = new VariableWidthNucleotideSliceMap.Builder(editedReference, 3,updatedGappedExon);
+		Range gappedEditedExon = Range.of(editedReference.getGappedOffsetFor((int)updatedUngappedExon.getBegin()),
+										editedReference.getGappedOffsetFor((int)updatedUngappedExon.getEnd()));
+		this.builder = new VariableWidthNucleotideSliceMap.Builder(editedReference, 3,gappedEditedExon);
 	}
 	
 	public CodonSliceMapBuilder add(int offset, NucleotideSequence seq){
