@@ -62,33 +62,32 @@ public class DefaultCasPlacedReadFromCasAlignmentBuilder implements Builder<Defa
         if(gappedReference ==null){
             throw new NullPointerException("null gappedReference for id "+ readId);
         }
-        this.gappedReference = gappedReference;
-        try{
-        this.readId = readId;
-        this.startOffset = startOffset;
-        this.referenceOffset = startOffset;
-        this.fullUngappedLength = fullRangeSequence.getUngappedLength();
-        NucleotideSequenceBuilder allBasesBuilder = new NucleotideSequenceBuilder(fullRangeSequence);
-        if(traceTrimRange!=null){
-        	allBasesBuilder.trim(traceTrimRange);
-        }
-        													
-        if(isReversed){
-        	allBasesBuilder.reverseComplement();
-            validRangeStart = traceTrimRange ==null?0:AssemblyUtil.reverseComplementValidRange(traceTrimRange, fullUngappedLength).getBegin();
-        }
-        else{
-            validRangeStart = traceTrimRange ==null?0:traceTrimRange.getBegin();
-        }
-        validUngappedBases = allBasesBuilder.build();
-        dir = isReversed? Direction.REVERSE: Direction.FORWARD;
-        
-        gappedValidSequenceBuilder = new NucleotideSequenceBuilder((int)(validUngappedBases.getLength() *2));
-    }catch(Exception e){
-        throw new IllegalStateException("error building alignment for read "+ readId,e);
-    }
-       // dir= SequenceDirection.FORWARD;
-        
+	        this.gappedReference = gappedReference;
+	        try{
+	        this.readId = readId;
+	        this.startOffset = startOffset;
+	        this.referenceOffset = startOffset;
+	        this.fullUngappedLength = fullRangeSequence.getUngappedLength();
+	        NucleotideSequenceBuilder allBasesBuilder = new NucleotideSequenceBuilder(fullRangeSequence);
+	        if(traceTrimRange!=null){
+	        	allBasesBuilder.trim(traceTrimRange);
+	        }
+	        													
+	        if(isReversed){
+	        	allBasesBuilder.reverseComplement();
+	            validRangeStart = traceTrimRange ==null?0:AssemblyUtil.reverseComplementValidRange(traceTrimRange, fullUngappedLength).getBegin();
+	        }
+	        else{
+	            validRangeStart = traceTrimRange ==null?0:traceTrimRange.getBegin();
+	        }
+	        validUngappedBases = allBasesBuilder.build();
+	        dir = isReversed? Direction.REVERSE: Direction.FORWARD;
+	        
+	        gappedValidSequenceBuilder = new NucleotideSequenceBuilder((int)(validUngappedBases.getLength() *2));
+	    }catch(Exception e){
+	        throw new IllegalStateException("error building alignment for read "+ readId,e);
+	    }
+	        
     }
    
     public DefaultCasPlacedReadFromCasAlignmentBuilder addAlignmentRegions(List<CasAlignmentRegion> regions, NucleotideSequence referenceBases){
