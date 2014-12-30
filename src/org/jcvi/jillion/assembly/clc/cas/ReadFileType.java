@@ -33,7 +33,7 @@ import org.jcvi.jillion.internal.trace.chromat.ChromatogramUtil;
  *
  *
  */
-enum ReadFileType {
+public enum ReadFileType {
 	/**
 	 * The reads are stored in an SFF file.
 	 */
