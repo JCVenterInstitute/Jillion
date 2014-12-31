@@ -297,8 +297,9 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 			        
 			        List<CasAlignmentRegion> regionsToConsider = new ArrayList<CasAlignmentRegion>(alignment.getAlignmentRegions());
 			        int lastIndex = regionsToConsider.size()-1;
-			        if(regionsToConsider.get(lastIndex).getType()==CasAlignmentRegionType.INSERT){
+			        while(regionsToConsider.get(lastIndex).getType()==CasAlignmentRegionType.INSERT){
 			            regionsToConsider.remove(lastIndex);
+			            lastIndex--;
 			        }
 			        
 			        NucleotideSequence sequence = currentTrace.getNucleotideSequence();
