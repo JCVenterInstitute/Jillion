@@ -56,6 +56,7 @@ import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.joda.time.DateTimeUtils;
 /**
  * {@code ConsedAssemblyTransformerBuilder}
  * will build an {@link AssemblyTransformer}
@@ -219,7 +220,7 @@ public class ConsedAssemblyTransformerBuilder {
 			this.defaultQualityValue = builder.defaultQualityValue;
 			
 			//add default
-			Date currentDate = new Date();
+			Date currentDate = new Date(DateTimeUtils.currentTimeMillis());
 			uriDates.put(null, currentDate);
 			comments.put(null, computeRequiredCommentsFor(null, currentDate));
 			

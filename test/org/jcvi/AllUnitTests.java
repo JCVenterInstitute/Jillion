@@ -31,6 +31,7 @@ import org.jcvi.jillion.fasta.AllFastaUnitTests;
 import org.jcvi.jillion.maq.AllMaqTests;
 import org.jcvi.jillion.profile.AllProfileUnitTests;
 import org.jcvi.jillion.sam.AllSamTests;
+import org.jcvi.jillion.testutils.AllTestUtilsTests;
 import org.jcvi.jillion.trace.AllTraceUnitTests;
 import org.jcvi.jillion_experimental.AllExperimentalTests;
 import org.junit.runner.RunWith;
@@ -49,6 +50,8 @@ import org.junit.runners.Suite.SuiteClasses;
         AllSamTests.class,
         AllMaqTests.class,
         AllProfileUnitTests.class,
+        AllTestUtilsTests.class,
+        
         
         AllExperimentalTests.class
     }
