@@ -33,7 +33,7 @@ import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriter;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriterBuilder;
 
 
-public class CasParserTestDouble implements CasParser {
+public final class CasParserTestDouble implements CasParser {
 	
 	private static final NucleotideSequence EMPTY_SEQ = new NucleotideSequenceBuilder().build();
 	
@@ -480,7 +480,7 @@ public class CasParserTestDouble implements CasParser {
 		private final Builder builder;
 		
 		
-		private List<CasAlignmentRegionImpl> regions = new ArrayList<>();
+		private final List<CasAlignmentRegionImpl> regions = new ArrayList<>();
 		
 		private AlignmentBuilder(Builder builder, String refName, long ungappedStart,
 				Direction dir) {

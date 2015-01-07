@@ -9,7 +9,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 public interface RecordWriter extends Closeable{
 	
-	public static final PhredQuality DEFAULT_QV  = PhredQuality.valueOf(30);
+	static final PhredQuality DEFAULT_QV  = PhredQuality.valueOf(30);
 	
 	void write(String id, NucleotideSequence seq) throws IOException;
 	boolean canWriteAnotherRecord();

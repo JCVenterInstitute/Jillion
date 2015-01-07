@@ -23,7 +23,7 @@ import org.jcvi.jillion.trace.sff.SffWriterBuilder;
 public final class SffRecordWriter implements RecordWriter{
 
 	private static final Range NO_CLIP = Range.of(CoordinateSystem.RESIDUE_BASED, 0,0);
-	private File sffFile;
+	private final File sffFile;
 	private final SffWriter writer;
 	private final int maxNumberOfRecordsToWrite;
 	private final NucleotideSequence flowSequence;
