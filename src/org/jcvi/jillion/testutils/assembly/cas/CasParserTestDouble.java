@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jcvi.jillion.assembly.clc.cas.CasAlignment;
@@ -31,11 +32,21 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.ArrayIterator;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriter;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriterBuilder;
+import org.jcvi.jillion.testutils.NucleotideSequenceTestUtil;
 
-
+/**
+ * {@code CasParserTestDouble} is a {@link CasParser}
+ * implementation that will allow
+ * {@link CasFileVisitor}s to get visit messages from
+ * arbitrary cas data without needing a real
+ * cas file.
+ * @see CasParserTestDouble.Builder
+ * @author dkatzel
+ *
+ */
 public final class CasParserTestDouble implements CasParser {
 	
-	private static final NucleotideSequence EMPTY_SEQ = new NucleotideSequenceBuilder().build();
+	private static final NucleotideSequence EMPTY_SEQ = NucleotideSequenceTestUtil.emptySeq();
 	
 	private static final CasMatch NOT_MATCHED = new CasMatch() {
 		
@@ -170,6 +181,17 @@ public final class CasParserTestDouble implements CasParser {
 		return workingDir;
 	}
 
+	/**
+	 * This class allows arbitrary cas data to be visited
+	 * without needing a real underlying CLC .cas encoded file.
+	 * This allows test code to make up cas alignments to fit
+	 * the situation under test.  The builder will
+	 * make all related reference and read files as well
+	 * in case the visiting code needs to reference or parse them.
+	 * 
+	 * @author dkatzel
+	 *
+	 */
 	public static class Builder{
 		private final List<CasMatch> matches = new ArrayList<>();
 		
@@ -187,11 +209,35 @@ public final class CasParserTestDouble implements CasParser {
 		private RecordWriter currentRecordWriter;
 		
 		private CasFileInfo refFileInfo, readFileInfo;
-		
+		/**
+		 * 
+		 * @param workingDir
+		 * @throws IOException
+		 */
 		public Builder(File workingDir) throws IOException{
 			this(workingDir, new FastaRecordWriter(workingDir));
 		}
-		
+		/**
+		 * Create a new Builder instance which will
+		 * use the provided working directory to write all 
+		 * of its read and reference files.
+		 * 
+		 * @param workingDir the working directory to use 
+		 * which will not only be the root of the reference and read files
+		 * created but will also be returned by {@link CasParser#getWorkingDir()}.
+		 * 
+		 * @param recordWriters {@link RecordWriter}s to use to write
+		 * the underlying read data.  The record writers will be used
+		 * in the provided order.  The Builder to keep using a RecordWriter
+		 * until it has reached its max records to be written as specified 
+		 * by {@link RecordWriter#canWriteAnotherRecord()}, then it will
+		 * move onto the next RecordWriter.  No {@link RecordWriter}s
+		 * can be null.
+		 * @throws NullPointerException if any recordWriters are null.
+		 * @throws IllegalStateException if no RecordWriters are provided.
+		 * @throws IOException if there is a problem creating the working directory
+		 * or opening a file for writing in that directory.
+		 */
 		public Builder(File workingDir, RecordWriter...recordWriters) throws IOException{
 			
 			for(RecordWriter recordWriter : recordWriters){
@@ -211,10 +257,37 @@ public final class CasParserTestDouble implements CasParser {
 			currentRecordWriter = recordWriterIterator.next();
 			
 		}
-		
+		/**
+		 * Add a reference with the given reference name
+		 * and the provided full sequence.  This reference
+		 * can now be referred to by its name 
+		 * in {@link #forwardMatch(String, long)} and {@link #reverseMatch(String, long)}
+		 * and the reference and sequence will be written to the reference fasta file.
+		 * 
+		 * @param name the reference name.
+		 * @param sequence the nucleotide sequence as a String.
+		 * 
+		 * @return this
+		 * 
+		 * @throws NullPointerException if either parameter is null.
+		 * @throws IllegalStateException if a reference with the same name
+		 * already exists.
+		 * @throws IllegalArgumentException if the given sequence is emtpy
+		 * or has any invalid bases.
+		 */
 		public Builder addReference(String name, String sequence){
-			refIndex.put(name, refIndex.size());
+			Objects.requireNonNull(name);
+			Objects.requireNonNull(sequence);
+			if(references.containsKey(name)){
+				throw new IllegalStateException("reference name already exists : " + name);
+			}
+			
+			
 			NucleotideSequence seq = new NucleotideSequenceBuilder(sequence).build();
+			if(seq.getLength() ==0){
+				throw new IllegalArgumentException("sequence must not be empty");
+			}
+			refIndex.put(name, refIndex.size());
 			references.put(name, seq);
 			
 			try {
@@ -224,6 +297,21 @@ public final class CasParserTestDouble implements CasParser {
 			}
 			return this;
 		}
+		/**
+		 * Create a new {@link AlignmentBuilder} to make an alignment
+		 * of a read that matches the given reference in the forward direction.
+		 * 
+		 * @param refName the reference the read aligns to (this name 
+		 * must already exist by a previous call to {@link #addReference(String, String)} ).
+		 * @param ungappedStart the ungapped left most offset (0- based) that this
+		 * read begins to align to the reference PROVIDING COVERAGE.  If the read starts off
+		 * with trimmed off   ({@link CasAlignmentRegionType#INSERT} ) bases,
+		 * then this offset value should be the value after those. 
+		 * @return a new {@link AlignmentBuilder}
+		 * 
+		 * @throws IllegalArgumentException if refName is not known or if ungappedStart
+		 * starts beyond the reference end.
+		 */
 		public AlignmentBuilder forwardMatch(String refName, long ungappedStart){
 			
 			validateReadParameters(refName, ungappedStart);
@@ -239,6 +327,21 @@ public final class CasParserTestDouble implements CasParser {
 				throw new IllegalArgumentException("read starts beyond reference " + ungappedStart);
 			}
 		}
+		/**
+		 * Create a new {@link AlignmentBuilder} to make an alignment
+		 * of a read that matches the given reference in the reverse direction.
+		 * 
+		 * @param refName the reference the read aligns to (this name 
+		 * must already exist by a previous call to {@link #addReference(String, String)} ).
+		 * @param ungappedStart the ungapped left most offset (0- based) that this
+		 * read begins to align to the reference PROVIDING COVERAGE.  If the read starts off
+		 * with trimmed off   ({@link CasAlignmentRegionType#INSERT} ) bases,
+		 * then this offset value should be the value after those. 
+		 * @return a new {@link AlignmentBuilder}
+		 * 
+		 * @throws IllegalArgumentException if refName is not known or if ungappedStart
+		 * starts beyond the reference end.
+		 */
 		public AlignmentBuilder reverseMatch(String refName, long ungappedStart){
 			validateReadParameters(refName, ungappedStart);
 			return new AlignmentBuilder(this,refName, ungappedStart, Direction.REVERSE);
@@ -430,7 +533,17 @@ public final class CasParserTestDouble implements CasParser {
 		
 
 		
-
+		/**
+		 * Write all the underlying read and reference files
+		 * out and create a new {@link CasParser} instance
+		 * that will make the visit calls that conform to the 
+		 * alignment data previously given.
+		 * @return a new {@link CasParser} instance; will never be null.
+		 * 
+		 * @throws IOException if there is a problem writing any of the files.
+		 * 
+		 * @throws IllegalStateException if no alignments were written.
+		 */
 		public CasParserTestDouble build() throws IOException{
 			if(readCounter ==0){
 				//have to have some reads!
@@ -451,7 +564,11 @@ public final class CasParserTestDouble implements CasParser {
 			readFileInfo = new CasFileInfoImpl(paths, readCounter, residueCounter);
 			return new CasParserTestDouble(this);
 		}
-
+		/**
+		 * Write a Read that did not align to any of the references.
+		 * By default, this will write a new read with 10 Ns.
+		 * @return this
+		 */
 		public Builder unMatched() {
 			updateCurrentRecordWriterIfNeeded();
 			//make a read of 10 Ns
@@ -470,7 +587,12 @@ public final class CasParserTestDouble implements CasParser {
 			
 		}
 	}
-	
+	/**
+	 * Class that builds an alignment
+	 * for a single read to a reference.
+	 * @author dkatzel
+	 *
+	 */
 	public static final class AlignmentBuilder{
 		
 
@@ -489,17 +611,52 @@ public final class CasParserTestDouble implements CasParser {
 			this.ungappedStart = ungappedStart;
 			this.dir = dir;
 		}
-		
+		/**
+		 * Add a new {@link CasAlignmentRegion} of the specified
+		 * length.  The read's ungapped sequence of the will default
+		 * to either the reference sequence if the type is a 
+		 * {@link CasAlignmentRegionType#MATCH_MISMATCH} or
+		 * Ns for {@link CasAlignmentRegionType#INSERT}s.
+		 * @param type the alignment type; can not be null.
+		 * @param length the length; must be  >= 1.
+		 * @return this
+		 * 
+		 * @throws NullPointerException if type is null.
+		 * @throws IllegalArgumentException if length < 1
+		 */
 		public AlignmentBuilder addAlignmentRegion(CasAlignmentRegionType type, int length){
 			regions.add(new CasAlignmentRegionImpl(type,length));
 			return this;
 		}
-		
+		/**
+		 * Add a new {@link CasAlignmentRegion} of the specified
+		 * sequence. The sequence provided is in the ALIGNED
+		 * orientation.  So a reverse read will have the 
+		 * final full sequence reverse complemented 
+		 * when it is written out to the read file.
+		 * 
+		 * The decision to use the aligned orientation
+		 * is to make tests more clear by having
+		 * the reverse reads easily understandable
+		 * from an alignment context without having
+		 * to mentally reverse complement when reading code.
+		 * 
+		 * @param type the alignment type; can not be null.
+		 * @param length the length; must be  >= 1.
+		 * @return this
+		 * 
+		 * @throws NullPointerException if type is null.
+		 * @throws IllegalArgumentException if length < 1
+		 */
 		public AlignmentBuilder addAlignmentRegion(CasAlignmentRegionType type, String sequence){
 			regions.add(new CasAlignmentRegionImpl(type,sequence));
 			return this;
 		}
-
+		/**
+		 * This read's alignment is complete.
+		 * @return the parent CasParserTestDouble.Builder instance
+		 * that created this object.
+		 */
 		public CasParserTestDouble.Builder build(){
 			return builder.match(refName, ungappedStart, dir, regions.toArray(new CasAlignmentRegionImpl[regions.size()]));
 		}
@@ -512,14 +669,23 @@ public final class CasParserTestDouble implements CasParser {
 		private final NucleotideSequence seq;
 		
 		private CasAlignmentRegionImpl(CasAlignmentRegionType type, int length) {
+			Objects.requireNonNull(type);
+			if(length <1){
+				throw new IllegalArgumentException("length must be positive");
+			}
 			this.type = type;
 			this.length = length;
 			this.seq = null;
 		}
+		
 		private CasAlignmentRegionImpl(CasAlignmentRegionType type, String seq){
+			Objects.requireNonNull(type);
 			this.type = type;
 			this.seq = new NucleotideSequenceBuilder(seq).build();
 			this.length = (int)this.seq.getLength();
+			if(length <1){
+				throw new IllegalArgumentException("length must be positive");
+			}
 		}
 
 		@Override

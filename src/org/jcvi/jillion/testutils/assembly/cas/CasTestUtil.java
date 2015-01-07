@@ -27,7 +27,20 @@ public final class CasTestUtil {
 		return gappedRefVisitor.build();
 	}
 	
-	
+	/**
+	 * Get the list of {@link File}s used as input to the
+	 * Cas assembly. 
+	 * 
+	 * @param parser the {@link CasParser} instance to parse
+	 * the read files from; can not be null.
+	 * 
+	 * @return a List of Files of the read files.  The order
+	 * in the list is the order of the files in the cas.
+	 * This order is crucial to parsing any alignment data.
+	 * 
+	 * @throws IOException if there is a problem parsing the cas file.
+	 * @throws NullPointerException if parser is null.
+	 */
 	public static List<File> getReadFiles(CasParser parser) throws IOException{
 		List<File> files = new ArrayList<File>();
 		parser.parse(new AbstractCasFileVisitor() {
