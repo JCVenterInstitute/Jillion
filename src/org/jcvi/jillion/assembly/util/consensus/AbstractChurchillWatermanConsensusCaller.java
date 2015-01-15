@@ -41,6 +41,7 @@ import org.jcvi.jillion.assembly.util.Slice;
 import org.jcvi.jillion.assembly.util.SliceElement;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.util.SingleThreadAdder;
 /**
  * Calculate Consensus for a slice using Bayes formula and the procedure from
  * <pre>
@@ -110,23 +111,27 @@ abstract class AbstractChurchillWatermanConsensusCaller implements ConsensusCall
     }
     
     protected final Map<Nucleotide, Integer> generateQualityValueSumMap(Slice slice) {
-        Map<Nucleotide, Integer> qualityValueSumMap = initalizeNucleotideMap();
+        Map<Nucleotide, SingleThreadAdder> qualityValueSumMap = initalizeNucleotideMap();
         for(SliceElement sliceElement : slice){
             Nucleotide basecall =sliceElement.getBase();
-            final Integer previousSum = qualityValueSumMap.get(basecall);
+            final SingleThreadAdder previousSum = qualityValueSumMap.get(basecall);
             //ignore not ACGT-?
             if(previousSum!=null){
-                qualityValueSumMap.put(basecall, Integer.valueOf(previousSum + sliceElement.getQuality().getQualityScore()));
+               previousSum.add(sliceElement.getQuality().getQualityScore());
             }
             
         }
-        return qualityValueSumMap;
+        Map<Nucleotide, Integer> map = new EnumMap<>(Nucleotide.class);
+        for(Entry<Nucleotide, SingleThreadAdder> entry :qualityValueSumMap.entrySet()){
+        	map.put(entry.getKey(), entry.getValue().intValue());
+        }
+        return map;
     }
 
-    private Map<Nucleotide, Integer> initalizeNucleotideMap() {
-        Map<Nucleotide, Integer> map = new EnumMap<Nucleotide, Integer>(Nucleotide.class);
+    private Map<Nucleotide, SingleThreadAdder> initalizeNucleotideMap() {
+        Map<Nucleotide, SingleThreadAdder> map = new EnumMap<Nucleotide, SingleThreadAdder>(Nucleotide.class);
         for(Nucleotide glyph : ConsensusUtil.BASES_TO_CONSIDER){
-            map.put(glyph, Integer.valueOf(0));
+            map.put(glyph, new SingleThreadAdder(0));
         }
         return map;
     }
