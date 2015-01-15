@@ -302,7 +302,7 @@ public final class Caches
     
         protected LRUCache(int maxAllowedSize, float loadFactor)
         {
-            super(MapUtil.computeMinHashMapSizeWithoutRehashing(maxAllowedSize), loadFactor, true);
+            super(MapUtil.computeMinHashMapSizeWithoutRehashing(maxAllowedSize, loadFactor),loadFactor, true);
             this.maxAllowedSize = maxAllowedSize;
         }
     
