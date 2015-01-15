@@ -26,6 +26,7 @@
 package org.jcvi.jillion.assembly.util.consensus;
 
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -35,6 +36,7 @@ import org.jcvi.jillion.assembly.util.Slice;
 import org.jcvi.jillion.assembly.util.SliceElement;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.util.MapValueComparator;
+import org.jcvi.jillion.core.util.SingleThreadAdder;
 /**
  * {@code MostFrequentBasecallConsensusCaller} is a {@link ConsensusCaller}
  * implementation that will return the most frequent basecall in
@@ -56,18 +58,19 @@ public enum MostFrequentBasecallConsensusCaller implements ConsensusCaller{
         if(slice==null){
             return new DefaultConsensusResult(Nucleotide.Unknown, 0);
         }
-        Map<Nucleotide, Integer> histogramMap = new EnumMap<Nucleotide, Integer>(Nucleotide.class);
-        Map<Nucleotide, Integer> qualitySums = new EnumMap<Nucleotide, Integer>(Nucleotide.class);
+        Map<Nucleotide, SingleThreadAdder> histogramMap = new EnumMap<Nucleotide, SingleThreadAdder>(Nucleotide.class);
+        Map<Nucleotide, SingleThreadAdder> qualitySums = new EnumMap<Nucleotide, SingleThreadAdder>(Nucleotide.class);
         for(SliceElement sliceElement : slice){
             Nucleotide base =sliceElement.getBase();
-            if(qualitySums.containsKey(base)){
-            	histogramMap.put(base, Integer.valueOf(histogramMap.get(base).intValue()+1));
-            	qualitySums.put(base, qualitySums.get(base) + sliceElement.getQuality().getQualityScore());
-           }else{            
-             	histogramMap.put(base, Integer.valueOf(1));
-                qualitySums.put(base, Integer.valueOf(sliceElement.getQuality().getQualityScore()));
-          
-            }           
+            SingleThreadAdder sum = histogramMap.get(base);
+            if(sum ==null){
+            	histogramMap.put(base, new SingleThreadAdder(1));
+            	qualitySums.put(base, new SingleThreadAdder(sliceElement.getQuality().getQualityScore()));
+            }else{
+            	sum.increment();
+            	qualitySums.get(base).add(sliceElement.getQuality().getQualityScore());
+            }
+                   
         }
         Nucleotide consensus= findMostOccuringBaseWithHighestQvs(histogramMap, qualitySums);
         int sum = getCumulativeQualityConsensusValue(qualitySums, consensus);
@@ -76,14 +79,14 @@ public enum MostFrequentBasecallConsensusCaller implements ConsensusCaller{
 
 
 	private int getCumulativeQualityConsensusValue(
-			Map<Nucleotide, Integer> qualitySums, Nucleotide consensus) {
+			Map<Nucleotide, SingleThreadAdder> qualitySums, Nucleotide consensus) {
 		int sum=0;
-        for(Entry<Nucleotide, Integer> entry : qualitySums.entrySet()){
+        for(Entry<Nucleotide, SingleThreadAdder> entry : qualitySums.entrySet()){
             if(entry.getKey() == consensus){
-                sum+= entry.getValue();
+                sum+= entry.getValue().intValue();
             }
             else{
-                sum -= entry.getValue();
+                sum -= entry.getValue().intValue();
             }
         }
 		return sum;
@@ -98,18 +101,23 @@ public enum MostFrequentBasecallConsensusCaller implements ConsensusCaller{
      * @param qualitySums
      * @return
      */
-    private Nucleotide findMostOccuringBaseWithHighestQvs(Map<Nucleotide, Integer> histogramMap,Map<Nucleotide, Integer> qualitySums ){
+    private Nucleotide findMostOccuringBaseWithHighestQvs(Map<Nucleotide, SingleThreadAdder> histogramMap,Map<Nucleotide, SingleThreadAdder> qualitySums ){
         if(histogramMap.isEmpty()){
             return Nucleotide.Unknown;
         }
-        SortedMap<Nucleotide, Integer> sortedMap = MapValueComparator.sortDescending(histogramMap);
+        Map<Nucleotide, Integer> intMap = new HashMap<Nucleotide, Integer>();
+        for(Entry<Nucleotide, SingleThreadAdder> entry : histogramMap.entrySet()){
+        	intMap.put(entry.getKey(), entry.getValue().intValue());
+        }
+       
+        SortedMap<Nucleotide, Integer> sortedMap = MapValueComparator.sortDescending(intMap);
         
         Iterator<Entry<Nucleotide, Integer>> iter = sortedMap.entrySet().iterator();
         //has to have at least one
         Entry<Nucleotide, Integer> most = iter.next();
         Nucleotide consensus = most.getKey();
-        int count = most.getValue();
-        int bestQv = qualitySums.get(consensus);
+        int count = most.getValue().intValue();
+        int bestQv = qualitySums.get(consensus).intValue();
         while(iter.hasNext()){
         	Entry<Nucleotide, Integer> next = iter.next();
         	if(next.getValue().intValue() <count){
