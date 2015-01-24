@@ -30,7 +30,7 @@ import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 
-final class DefaultCasPlacedRead implements CasPlacedRead{
+public final class DefaultCasPlacedRead implements CasPlacedRead{
 
     private final long startOffset;
     private final Direction dir;
