@@ -24,12 +24,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jcvi.jillion.assembly.ReAlignReads;
+import org.jcvi.jillion.assembly.ReAlignReads.ReAlignResult;
 import org.jcvi.jillion.assembly.clc.cas.read.CasPlacedRead;
-import org.jcvi.jillion.assembly.clc.cas.read.DefaultCasPlacedReadFromCasAlignmentBuilder;
+import org.jcvi.jillion.assembly.clc.cas.read.DefaultCasPlacedRead;
+import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
@@ -39,6 +44,7 @@ import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
@@ -81,6 +87,8 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 	private final List<StreamingIterator<? extends Trace>> iterators = new ArrayList<StreamingIterator<? extends Trace>>();
 	
 	private FastqQualityCodec qualityCodec=null;
+	
+	private Map<String, ReAlignReads> reAligners = new HashMap<String, ReAlignReads>();
 	/**
 	 * Create a new AbstractAlignedReadCasVisitor instance.
 	 * 
@@ -283,7 +291,6 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 				CasAlignment alignment = match.getChosenAlignment();
 				long refIndex = alignment.getReferenceIndex();
 				String refId = gappedReferenceDataStore.getIdByIndex(refIndex);
-				CasPlacedRead read =null;
 				String readId = currentTrace.getId();
 				try {
 					if(refId ==null){
@@ -291,19 +298,13 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 						throw new IllegalStateException("could not get get gapped reference for index "+ refIndex);
 					
 					}
-					NucleotideSequence gappedReference = gappedReferenceDataStore.get(refId);
-					long ungappedStartOffset = alignment.getStartOfMatch();
-			        long gappedStartOffset = gappedReference.getGappedOffsetFor((int)ungappedStartOffset);
-			        
-			        List<CasAlignmentRegion> regionsToConsider = new ArrayList<CasAlignmentRegion>(alignment.getAlignmentRegions());
-			        int lastIndex = regionsToConsider.size()-1;
-			        while(regionsToConsider.get(lastIndex).getType()==CasAlignmentRegionType.INSERT){
-			            regionsToConsider.remove(lastIndex);
-			            lastIndex--;
-			        }
-			        
-			        NucleotideSequence sequence = currentTrace.getNucleotideSequence();
-			        
+					ReAlignReads reAligner =reAligners.get(refId);
+					if(reAligner ==null){
+						NucleotideSequence gappedReference = gappedReferenceDataStore.get(refId);
+						reAligner = new ReAlignReads(gappedReference, true);
+						reAligners.put(refId, reAligner);
+					}
+					 
 			        Range trimRange = match.getTrimRange();
 			        if(trimRange ==null && currentTrace instanceof SffFlowgram){
 			        	//CLC uses the trimmed flowgrams when aligning
@@ -311,14 +312,18 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 			        	//and the read is a flowgram, then use it's trim range 
 			        	trimRange = SffUtil.computeTrimRangeFor((SffFlowgram)currentTrace);
 			        }
-			        DefaultCasPlacedReadFromCasAlignmentBuilder readBuilder= new DefaultCasPlacedReadFromCasAlignmentBuilder(readId,
-			       		 gappedReference,
-			       		sequence, 
-			       		alignment.readIsReversed(), gappedStartOffset,
-			       		trimRange);
+			        Direction dir = alignment.readIsReversed()? Direction.REVERSE : Direction.FORWARD;
+			       ReAlignResult reAlignResult= reAligner.realignValidBases(currentTrace.getNucleotideSequence(), 
+			    		   alignment.getStartOfMatch(),
+			        		dir,
+			        			alignment.getAlignmentRegions(), trimRange);
 			        
-			        readBuilder.addAlignmentRegions(regionsToConsider, gappedReference);
-			        read = readBuilder.build();
+			       CasPlacedRead read=  new DefaultCasPlacedRead(readId, 
+			    		  (ReferenceMappedNucleotideSequence) reAlignResult.getGappedValidBases(),
+			    		   reAlignResult.getGappedStartOffset(), reAlignResult.getValidRange(), 
+			    		   dir,(int)currentTrace.getNucleotideSequence().getLength());
+			       
+			      
 			        
 			        AbstractAlignedReadCasVisitor.this.aligned(currentTrace, refId, read);
 				} catch (Throwable e) {
