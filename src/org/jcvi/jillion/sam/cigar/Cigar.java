@@ -673,6 +673,25 @@ public final class Cigar implements Iterable<CigarElement>{
 							builder.insert(currentOffset, gaps);
 							currentOffset+=e.getLength();
 							break;
+			case SKIPPED:
+				//In cDNA-to-genome alignment, we may want to distinguish introns from deletions in exons.
+				//We introduce openation 'N' to represent long skip on the reference sequence.
+				//Suppose the spliced alignment is:
+				//REF: AGCTAGCATCGTGTCGCCCGTCTAGCATACGCATGATCGACTGTCAGCTAGTCAGACTAGTCGATCGATGTG
+				//READ:          GTGTAACCC................................TCAGAATA
+				//where '...' on the read sequence indicates intron. 
+				//The CIGAR for this alignment is : 9M32N8M.
+				//
+				//it looks like tophat just skips them completely?
+				//skip completely
+				
+				char[] skips = new char[e.getLength()];
+				Arrays.fill(skips, '-');
+				builder.insert(currentOffset, skips);
+				
+				currentOffset+=e.getLength();
+				
+				break;
 			default :
 				currentOffset+=e.getLength();
 				ungappedLength+=e.getLength();
