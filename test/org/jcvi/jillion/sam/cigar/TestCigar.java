@@ -28,6 +28,7 @@ import java.util.Arrays;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.testUtil.TestUtil;
+import org.jcvi.jillion.testutils.NucleotideSequenceTestUtil;
 import org.junit.Test;
 public class TestCigar {
 
@@ -103,6 +104,20 @@ public class TestCigar {
 	public void validCigarSoftAndHardClipssAtEnds(){
 		Cigar cigar = Cigar.parse("3H5S1M3S6H");
 		assertEquals("3H5S1M3S6H", cigar.toCigarString());
+	}
+	
+	
+	@Test
+	public void splicedAlignment(){
+		NucleotideSequence read = NucleotideSequenceTestUtil.create("GTGTAACCCTCAGAATA");
+		Cigar cigar = Cigar.parse("9M32N8M");
+		
+		assertEquals(NucleotideSequenceTestUtil.create(
+				"GTGTAACCC"+
+				NucleotideSequenceTestUtil.create("*", 32)
+				+ "TCAGAATA"),
+				cigar.toGappedTrimmedSequence(read)
+				);
 	}
 	
 	@Test
