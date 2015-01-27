@@ -330,15 +330,16 @@ public class SamRecord {
 			this.attributeValidator = attributeValidator;
 		}
 		/**
-		 * Add the given attribute to this record.
+		 * Add the given attribute to this record. Since
+		 * the SAM spec says an attribute can only
+		 * appear once per record, if there are
+		 * multiple instances of the same attribute key,
+		 * then the later value will silently overwrite the previous value.
 		 * @param attribute the attribute to add;
 		 * can not be null.
 		 * @return this
 		 * @throws NullPointerException if attribute is null.
-		 * @throws InvalidAttributeException if an attribute with the 
-		 * same {@link SamAttributeKey}
-		 * already exists in this record,
-		 * or if the attribute fails the given {@link SamAttributeValidator}.
+		 * @throws InvalidAttributeException if the attribute fails the given {@link SamAttributeValidator}.
 		 * @see #removeAttribute(SamAttributeKey)
 		 */
 		public Builder addAttribute(SamAttribute attribute) throws InvalidAttributeException{
@@ -346,9 +347,7 @@ public class SamRecord {
 				throw new NullPointerException("attribute can not be null");
 			}
 			SamAttributeKey key = attribute.getKey();
-			if(attributes.containsKey(key)){
-				throw new InvalidAttributeException("attribute with key already exists " + key);
-			}
+			
 			attributeValidator.validate(header, attribute);
 			attributes.put(key, attribute);
 			return this;

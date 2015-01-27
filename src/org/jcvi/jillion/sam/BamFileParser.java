@@ -225,6 +225,7 @@ final class BamFileParser extends AbstractSamFileParser {
 					builder.addAttribute(attribute);
 				} catch (InvalidAttributeException e) {
 					throw new IOException("invalid attribute " + attribute, e);
+					
 				}
 			}
 		}
@@ -263,7 +264,7 @@ final class BamFileParser extends AbstractSamFileParser {
 		switch(type){
 		//all single integer types are actually just SIGNED_INT in SAM
 			case 'i' :  return new SamAttribute(key, SamAttributeType.SIGNED_INT,  IOUtil.readSignedInt(in));
-			case 'I' : return new SamAttribute(key, SamAttributeType.SIGNED_INT, IOUtil.readUnsignedInt(in));
+			case 'I' : return new SamAttribute(key, SamAttributeType.UNSIGNED_INT, IOUtil.readUnsignedInt(in));
 
 			case 'Z' : return new SamAttribute(key, SamAttributeType.STRING, readNullTerminatedStringAttribute(in));
 			case 'B' : return handleArray(key,in);
