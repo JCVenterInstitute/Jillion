@@ -541,6 +541,12 @@ public final class Cigar implements Iterable<CigarElement>{
 		public Builder(){
 			elements = new ArrayList<CigarElement>();
 		}
+		public Builder(Cigar cigar) {
+			elements = new ArrayList<>(cigar.getNumberOfElements());
+			for(CigarElement e : cigar){
+				elements.add(e);
+			}
+		}
 		public Builder addElement(CigarOperation op, int length){
 			return addElement(new CigarElement(op, length));
 		}
@@ -583,6 +589,17 @@ public final class Cigar implements Iterable<CigarElement>{
 				}
 			}
 			
+		}
+		public Builder removeHardClips() {
+			//hard clips must be the first and/or last operations
+			int lastIndex = elements.size()-1;
+			if(elements.get(lastIndex).getOp() == CigarOperation.HARD_CLIP){
+				elements.remove(lastIndex);
+			}
+			if(elements.get(0).getOp() == CigarOperation.HARD_CLIP){
+				elements.remove(0);
+			}
+			return this;
 		}
 	}
 	
@@ -666,12 +683,17 @@ public final class Cigar implements Iterable<CigarElement>{
 							ungappedLength+=e.getLength();
 							break;
 			//insert gap into read
-			case DELETION : 
-			case PADDING : 
-							char[] gaps = new char[e.getLength()];
+			case DELETION : char[] gaps = new char[e.getLength()];
 							Arrays.fill(gaps, '-');
 							builder.insert(currentOffset, gaps);
 							currentOffset+=e.getLength();
+							break;
+			case PADDING : //silent deletion against padded ref?
+						/*	char[] pads = new char[e.getLength()];
+							Arrays.fill(pads, '-');
+							builder.insert(currentOffset, pads);
+							currentOffset+=e.getLength();
+							*/
 							break;
 			case SKIPPED:
 				//In cDNA-to-genome alignment, we may want to distinguish introns from deletions in exons.
