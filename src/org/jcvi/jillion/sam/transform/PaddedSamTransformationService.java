@@ -83,9 +83,9 @@ public final class PaddedSamTransformationService implements AssemblyTransformat
 	 * @throws IOException if there is a problem parsing the input file.
 	 * @throws NullPointerException if the file is null.
 	 */
-	public PaddedSamTransformationService(File samFile) throws IOException {
+	public PaddedSamTransformationService(File paddedSamOrBamFile) throws IOException {
 		
-		parser = SamParserFactory.create(samFile);
+		parser = SamParserFactory.create(paddedSamOrBamFile);
 		
 	}
 	/**
@@ -94,6 +94,10 @@ public final class PaddedSamTransformationService implements AssemblyTransformat
 	 * @param transformer the {@link AssemblyTransformer} instance to call
 	 * the methods on; can not be null.
 	 * @throws NullPointerException if transformer is null.
+	 * @throws IllegalStateException if there is any problem parsing the file
+	 * including not providing a padded reference
+	 * and not encountering the padded reference 
+	 * sequences before they are used in a read alignment.
 	 */
 	@Override
 	public void transform(final AssemblyTransformer transformer){
