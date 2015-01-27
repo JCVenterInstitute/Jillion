@@ -24,6 +24,7 @@ import org.jcvi.jillion.sam.attribute.AllAttributeTests;
 import org.jcvi.jillion.sam.cigar.AllCigarTests;
 import org.jcvi.jillion.sam.header.AllSamHeaderTests;
 import org.jcvi.jillion.sam.index.AllBamIndexTests;
+import org.jcvi.jillion.sam.transform.AllSamTransformationServiceTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -48,7 +49,9 @@ import org.junit.runners.Suite.SuiteClasses;
     	TestResortedBamFileWriter.class,
     	TestResortedSamFileWriter.class,
     	
-    	AllBamIndexTests.class
+    	AllBamIndexTests.class,
+    	
+    	AllSamTransformationServiceTests.class
     }
     )
 public class AllSamTests {
