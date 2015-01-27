@@ -22,10 +22,12 @@ package org.jcvi.jillion.sam.transform;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.jcvi.jillion.assembly.AssemblyTransformationService;
 import org.jcvi.jillion.assembly.AssemblyTransformer;
@@ -36,13 +38,9 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.jillion.core.util.MapUtil;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 import org.jcvi.jillion.sam.SamParser;
 import org.jcvi.jillion.sam.SamParserFactory;
@@ -52,46 +50,43 @@ import org.jcvi.jillion.sam.SamVisitor;
 import org.jcvi.jillion.sam.VirtualFileOffset;
 import org.jcvi.jillion.sam.cigar.Cigar;
 import org.jcvi.jillion.sam.cigar.Cigar.ClipType;
-import org.jcvi.jillion.sam.cigar.CigarElement;
-import org.jcvi.jillion.sam.cigar.CigarOperation;
 import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
 /**
- * {@code SamTransformationService}
- * is a class that can parse a SAM file
+ * {@code PaddedSamTransformationService}
+ * is a class that can parse a <em>padded</em>SAM file
+ * was produced from a denovo assembler
+ * and contains the padded read alignments
+ * to a padded reference/consensus
  * and call the appropriate methods
  * on a given {@link AssemblyTransformer}
  * so the transformer can get assembly and alignment 
- * information from the SAM file without knowing
+ * information from the padded SAM file without knowing
  * anything about how SAM files are formatted.
  * 
  * @author dkatzel
  *
  */
-public final class SamTransformationService implements AssemblyTransformationService{
+public final class PaddedSamTransformationService implements AssemblyTransformationService{
 
 	
-	private final NucleotideSequenceDataStore referenceDataStore;
 	private final SamParser parser;
 	
 	/**
 	 * Create a new {@link SamTransformationService} using
-	 * the given SAM encoded file and a fasta file of the ungapped
-	 * references sequences referred to in the SAM.  The ids in the fasta file
-	 * must match the reference sequence names in the SAM file (@SQ SN:$ID) in the SAM header.
+	 * the given padded SAM encoded file  which
+	 * should already include the gapped reference sequences
+	 * inside it.
 	 * @param samFile the SAM file to parse and transform; can not be null
 	 * and must exist.
-	 * @param referenceFasta the reference fasta file; can not be null and must exist.
-	 * @throws IOException if there is a problem parsing the input files.
-	 * @throws NullPointerException if either parameter is null.
+	 * 
+	 * @throws IOException if there is a problem parsing the input file.
+	 * @throws NullPointerException if the file is null.
 	 */
-	public SamTransformationService(File samFile, File referenceFasta) throws IOException {
+	public PaddedSamTransformationService(File samFile) throws IOException {
 		
 		parser = SamParserFactory.create(samFile);
-		NucleotideFastaDataStore ungappedReferenceDataStore = new NucleotideFastaFileDataStoreBuilder(referenceFasta)
-																	.build();
 		
-		referenceDataStore = SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(parser, ungappedReferenceDataStore);
 	}
 	/**
 	 * Parse the SAM file and call the appropriate methods on the given
@@ -106,7 +101,7 @@ public final class SamTransformationService implements AssemblyTransformationSer
 			throw new NullPointerException("transformer can not be null");
 		}
 		try {
-			SamTransformerVisitor visitor = new SamTransformerVisitor(referenceDataStore, transformer);
+			SamTransformerVisitor visitor = new SamTransformerVisitor(transformer);
 			parser.accept(visitor);
 		} catch (Exception e) {
 			throw new IllegalStateException("error parsing sam file", e);
@@ -116,35 +111,30 @@ public final class SamTransformationService implements AssemblyTransformationSer
 	
 	private static final class SamTransformerVisitor implements SamVisitor{
 
+		private static final Set<SamRecordFlags> FILTERED_AND_UNMAPPED = SamRecordFlags.parseFlags(516);
 		private final AssemblyTransformer transformer;
-		private final NucleotideSequenceDataStore referenceDataStore;
-		private final Map<String,GrowableIntArray> gapOffsetMap;
+		private Map<String,GrowableIntArray> gapOffsetMap;
+		private Map<String, NucleotideSequence> paddedReferenceSequences;
+		private Set<String> referenceNames;
 		
-		public SamTransformerVisitor(NucleotideSequenceDataStore referenceDataStore, AssemblyTransformer transformer) throws DataStoreException {
-			this.referenceDataStore = referenceDataStore;
+		
+		public SamTransformerVisitor(AssemblyTransformer transformer) throws DataStoreException {
 			this.transformer = transformer;
-			gapOffsetMap = new HashMap<String, GrowableIntArray>(MapUtil.computeMinHashMapSizeWithoutRehashing(referenceDataStore.getNumberOfRecords()));
-			
+		
 		}
 
 		@Override
 		public void visitHeader(SamVisitorCallback callback, SamHeader header) {
 			
-			for(ReferenceSequence refSeq : header.getReferenceSequences()){
-				String id = refSeq.getName();
-				try {
-					NucleotideSequence ref = referenceDataStore.get(id);
-					if(ref ==null){
-						throw new IllegalStateException("error could not find reference sequence in fasta file with id " + id);
-					}
-					gapOffsetMap.put(id,  new GrowableIntArray(ref.getGapOffsets()));
-					
-					transformer.referenceOrConsensus(id, ref);
-				} catch (DataStoreException e) {
-					throw new IllegalStateException("error getting reference sequence from fasta file", e);
-				}
-				
+			Collection<ReferenceSequence> referenceSequences = header.getReferenceSequences();
+			int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(referenceSequences.size());
+			referenceNames = new HashSet<>(capacity);
+			paddedReferenceSequences = new HashMap<>(capacity);
+			gapOffsetMap = new HashMap<>(capacity);
+			for(ReferenceSequence refSeq : referenceSequences){
+				referenceNames.add(refSeq.getName());
 			}
+			
 		}
 			
 		
@@ -155,25 +145,35 @@ public final class SamTransformationService implements AssemblyTransformationSer
 			visitRecord(callback, record);
 		}
 
+		private boolean isReference(SamRecord record){
+			//according to the SAMv1 spec
+			//padded references should have
+			//an identical RNAME, POS set to 1 and FLAG to 516 (filtered and unmapped)
+			return referenceNames.contains(record.getQueryName()) 
+					&& record.getStartPosition() == 1
+					&& record.getFlags().equals(FILTERED_AND_UNMAPPED);
+				
+		}
 		@Override
 		public void visitRecord(SamVisitorCallback callback, SamRecord record) {
+			
 			if(record.isPrimary()){
 				
 				if(record.mapped()){
 					String refName = record.getReferenceName();
-					try {
-						NucleotideSequence referenceSeq = referenceDataStore.get(refName);
 					
+					NucleotideSequence referenceSeq = paddedReferenceSequences.get(refName);
+					if(referenceSeq ==null){
+						throw new IllegalStateException("error padded reference sequence not defined in sam/bam file : " + refName);
+					}
 					Direction dir = record.getDirection();
 					Cigar cigar = record.getCigar();
 					int rawLength = cigar.getUnpaddedReadLength(ClipType.RAW);
 					Range validRange;
-					int gappedStartOffset = referenceSeq.getGappedOffsetFor(record.getStartPosition()-1);
+					//padded sams use gapped offset so don't have to convert
+					int gappedStartOffset = record.getStartPosition()-1;
 					
 					
-					//extra insertions have been added to the reference
-					//from other reads that we don't know about
-					//modify the cigar accordingly
 					NucleotideSequence rawSequence;
 					QualitySequence quals;
 					if(dir == Direction.FORWARD){
@@ -193,11 +193,9 @@ public final class SamTransformationService implements AssemblyTransformationSer
 						}
 						validRange = AssemblyUtil.reverseComplementValidRange(cigar.getValidRange(), rawLength);
 					}
+					System.out.println(record.getQueryName());
+					NucleotideSequence gappedReadSequence =removeHardClipsFrom(cigar).toGappedTrimmedSequence(record.getSequence());
 					
-					NucleotideSequence gappedReadSequence =toGappedTrimmedSequenceBuilder(cigar, rawSequence, gapOffsetMap.get(refName), gappedStartOffset, dir)
-															.build();
-					
-				
 					//if the read is mated SAM doesn't put the /1 or /2 ?
 					//what happens in CASAVA 1.8 reads?
 					String readName = record.getQueryName();
@@ -224,15 +222,28 @@ public final class SamTransformationService implements AssemblyTransformationSer
 							gappedReadSequence, 
 							
 							new ReadInfo(validRange, rawLength));
-					} catch (DataStoreException e) {
-						throw new IllegalStateException("unknown reference " + refName, e);
-					}
+					
+				}else if(isReference(record)){
+					//add padded sequence to our map of references
+					String name = record.getQueryName();
+					Cigar cigar = record.getCigar();
+					NucleotideSequence gappedSequence = cigar.toGappedTrimmedSequence(record.getSequence());
+					paddedReferenceSequences.put(name, gappedSequence);
+					gapOffsetMap.put(name, new GrowableIntArray(gappedSequence.getGapOffsets()));
+					
+					transformer.referenceOrConsensus(name, gappedSequence);
 				}else{
 					transformer.notAligned(record.getQueryName(), record.getSequence(), record.getQualities(), null, null);
 					
 				}
 			}
 				
+		}
+
+		private Cigar removeHardClipsFrom(Cigar cigar) {
+			return new Cigar.Builder(cigar)
+					.removeHardClips()
+					.build();
 		}
 
 		@Override
@@ -245,67 +256,7 @@ public final class SamTransformationService implements AssemblyTransformationSer
 			transformer.endAssembly();		
 		}
 
-	private NucleotideSequenceBuilder toGappedTrimmedSequenceBuilder(Cigar cigar, NucleotideSequence rawUngappedSequence, GrowableIntArray refGaps, int gappedStartOffset, Direction dir) {
-		if(rawUngappedSequence.getNumberOfGaps() !=0){
-			throw new IllegalArgumentException("rawUngapped Sequence can not have gaps");
-		}
-		
-		NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder((int)rawUngappedSequence.getLength());
-		int referenceOffset = gappedStartOffset;
-		
-		Iterator<Nucleotide> ungappedBasesIter;
-		if(dir == Direction.FORWARD){
-			ungappedBasesIter= rawUngappedSequence.iterator();
-		}else{
-			ungappedBasesIter= new NucleotideSequenceBuilder(rawUngappedSequence)
-									.reverseComplement()
-									.iterator();
-		}
-		for(CigarElement e : cigar){
-			if(e.getOp() == CigarOperation.HARD_CLIP ||e.getOp() == CigarOperation.SOFT_CLIP ){
-				//skip over clipped bases
-				for(int i=0; i<e.getLength(); i++){
-					ungappedBasesIter.next();
-				}
-				continue;
-			}
-			referenceOffset = appendBases(builder, ungappedBasesIter, refGaps, referenceOffset, e);
-			
-		}
-		
-		return builder;
-	}
 	
-	private int appendBases(NucleotideSequenceBuilder builder, Iterator<Nucleotide> ungappedReadBaseIterator, GrowableIntArray refGaps, int refOffset, CigarElement e){
-		
-		int ret = refOffset;
-		for(int i=0; i<e.getLength(); i++){
-			
-			if(e.getOp() != CigarOperation.INSERTION){
-				while(refGaps.binarySearch(ret) >=0){
-					//insert gap
-					builder.append(Nucleotide.Gap);
-					ret++;
-				}
-			}
-			if(e.getOp() == CigarOperation.PADDING){
-				//remove this many gaps
-				builder.delete(new Range.Builder(1)
-										.shift(builder.getLength()-1)
-										.build());
-			}
-			else if(e.getOp() ==CigarOperation.DELETION ||e.getOp() == CigarOperation.SKIPPED){
-				//insert gap
-				builder.append(Nucleotide.Gap);
-				
-			}else{
-				builder.append(ungappedReadBaseIterator.next());			
-				
-			}
-			ret++;
-		}
-		return ret;
-	}
 	
 }
 }
