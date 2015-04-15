@@ -56,7 +56,7 @@ public enum ReadFileType {
     public static ReadFileType getTypeFromFile(File readFile) throws IOException{
     	String readFileName= readFile.getName();
     	String extension =FileUtil.getExtension(readFileName);
-        if("fastq".equals(extension) || readFileName.matches("\\S*/?s_+\\d+_sequence\\.txt") || readFileName.endsWith(".fastq.untrimmed")){
+        if("fastq".equals(extension) || readFileName.matches(".+\\d+_sequence\\.txt") || readFileName.endsWith(".fastq.untrimmed")){
            return FASTQ;
         }if("sff".equals(extension)){
             return SFF;
