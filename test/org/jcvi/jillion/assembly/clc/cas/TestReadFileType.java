@@ -127,11 +127,15 @@ public class TestReadFileType {
                 ReadFileType.getTypeFromFile(new File("my.fastq")));
     }
  
-    
     @Test
     public void s_1_sequenceDotTxtShouldBeIlluminaFile()throws IOException{
         assertEquals(ReadFileType.FASTQ, 
                 ReadFileType.getTypeFromFile(new File("s_1_sequence.txt")));
+    }
+    @Test
+    public void s_5_1_sequenceDotTxtShouldBeIlluminaFile()throws IOException{
+        assertEquals(ReadFileType.FASTQ, 
+                ReadFileType.getTypeFromFile(new File("s_5_1_sequence.txt")));
     }
   
     @Test
