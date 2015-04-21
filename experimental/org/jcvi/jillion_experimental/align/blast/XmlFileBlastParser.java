@@ -173,6 +173,8 @@ public final class XmlFileBlastParser implements BlastParser{
         private static final String ITERATION_QUERY_ID = "Iteration_query-def";
         private static final String ITERATION_QUERY_LENGTH = "Iteration_query-len";
         
+        private static final String HIT_ACCESSION = "Hit_accession";
+        
         private HspBuilder<?,?> hspBuilder;
         private final BlastVisitor visitor;
         private String tempVal=null;
@@ -219,7 +221,7 @@ public final class XmlFileBlastParser implements BlastParser{
         		hitBuilder = new BlastHitImpl.Builder(queryId, subjectId);
         	
         		hitBuilder.setQueryLength(queryLength);
-        		hitBuilder.setSubjectDeflineComment(subjectDeflineComment);
+        		hitBuilder.setSubjectDefline(subjectDeflineComment);
         		
         		hitBuilder.setBlastDbName(blastDb);
         		hitBuilder.setBlastProgramName(programName);
@@ -357,15 +359,28 @@ public final class XmlFileBlastParser implements BlastParser{
                  	//only include up to first whitespace
                  	Matcher matcher = DEFLINE_PATTERN.matcher(tempVal);
                  	if(matcher.find()){            		
-                         hspBuilder.subject(matcher.group(1));
-                         subjectId = matcher.group(1);
-                         subjectDeflineComment = matcher.group(2).trim();
+                 		if("No definition line found".equals(tempVal)){
+                 				hspBuilder.subject(tempVal);
+	                         
+	                         subjectId = tempVal; 
+                 		}else{
+	                         hspBuilder.subject(matcher.group(1));
+	                         
+	                         subjectId = matcher.group(1); 
+                 		}
+                         subjectDeflineComment = tempVal.trim();
                          hspBuilder.subjectDef(subjectDeflineComment);
                  	}else{
                  		//doesn't match defline pattern
                  		//use whole string?
                  		hspBuilder.subject(tempVal);
+                 		subjectId = tempVal.trim();
+                 		hspBuilder.subject(subjectId);
                  	}
+             }else if(HIT_ACCESSION.equals(qName) && "No definition line found".equals(subjectId)){
+            	 //VHTNGS-1131 use accession hit as subject if no defline found
+            	 subjectId = tempVal.trim();
+            	 hspBuilder.subject(subjectId);
         	}else if(PROGRAM_NAME.equals(qName)){
             	isNucleotide = "blastn".equalsIgnoreCase(tempVal);
             	programName = tempVal;
