@@ -7,7 +7,7 @@ import java.util.List;
 
 class BlastHitImpl implements BlastHit{
 
-	private final String queryId, subjectId, subjectDeflineComment, programName, dbName;;
+	private final String queryId, subjectId, subjectDefline, programName, dbName;;
 
 	private final Integer queryLength, subjectLength;
 	//initialize to empty list
@@ -18,7 +18,7 @@ class BlastHitImpl implements BlastHit{
 		this.subjectId = builder.subjectId;
 		this.queryLength = builder.queryLength;
 		this.subjectLength = builder.subjectLength;
-		this.subjectDeflineComment = builder.subjectDeflineComment;
+		this.subjectDefline = builder.subjectDeflineComment;
 		this.programName = builder.programName;
 		this.dbName = builder.dbName;
 		
@@ -50,7 +50,7 @@ class BlastHitImpl implements BlastHit{
 
 	@Override
 	public String getSubjectDefinition() {
-		return subjectDeflineComment;
+		return subjectDefline;
 	}
 
 	@Override
@@ -83,7 +83,7 @@ class BlastHitImpl implements BlastHit{
 				+ ((queryLength == null) ? 0 : queryLength.hashCode());
 		result = prime
 				* result
-				+ ((subjectDeflineComment == null) ? 0 : subjectDeflineComment
+				+ ((subjectDefline == null) ? 0 : subjectDefline
 						.hashCode());
 		result = prime * result
 				+ ((subjectId == null) ? 0 : subjectId.hashCode());
@@ -139,11 +139,11 @@ class BlastHitImpl implements BlastHit{
 		} else if (!queryLength.equals(other.queryLength)) {
 			return false;
 		}
-		if (subjectDeflineComment == null) {
-			if (other.subjectDeflineComment != null) {
+		if (subjectDefline == null) {
+			if (other.subjectDefline != null) {
 				return false;
 			}
-		} else if (!subjectDeflineComment.equals(other.subjectDeflineComment)) {
+		} else if (!subjectDefline.equals(other.subjectDefline)) {
 			return false;
 		}
 		if (subjectId == null) {
@@ -212,8 +212,8 @@ class BlastHitImpl implements BlastHit{
 			return this;
 		}
 		
-		public Builder setSubjectDeflineComment(String subjectDeflineComment){
-			this.subjectDeflineComment = subjectDeflineComment;
+		public Builder setSubjectDefline(String subjectDefline){
+			this.subjectDeflineComment = subjectDefline;
 			return this;
 		}
 		

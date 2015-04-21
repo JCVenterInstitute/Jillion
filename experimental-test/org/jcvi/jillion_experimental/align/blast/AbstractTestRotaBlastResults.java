@@ -25,8 +25,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.junit.Test;
 
@@ -78,40 +76,5 @@ public abstract class AbstractTestRotaBlastResults {
 		//can't check number of hsps because tabular and xml
 		//return different number of hsps!  however the top hits (at least) all match
 	//	assertEquals(683, visitor.hsps.size());
-	}
-	
-	
-	private static class MyBlastVisitor implements BlastVisitor{
-
-		SortedSet<Hsp<?,?>> hsps = new TreeSet<Hsp<?,?>>(Hsp.Comparators.BIT_SCORE_BEST_TO_WORST);
-		
-		
-		
-
-		@Override
-		public void visitInfo(String programName, String programVersion,
-				String blastDb, String queryId) {
-			// TODO Auto-generated method stub
-			
-		}
-
-
-
-		@Override
-		public void visitHit(BlastHit hit) {
-			for(Hsp<?,?> hsp : hit.getHsps()){
-				hsps.add(hsp);
-			}
-			
-		}
-
-
-
-		@Override
-		public void visitEnd() {
-			// TODO Auto-generated method stub
-			
-		}
-		
 	}
 }

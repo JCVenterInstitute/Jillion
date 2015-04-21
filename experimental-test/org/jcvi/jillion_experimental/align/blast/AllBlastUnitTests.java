@@ -32,7 +32,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestTabularRotaBlastResults.class,
         TestXmlRotaBlastResults.class,
         
-        TestBlastXmlWithNoHits.class
+        TestBlastXmlWithNoHits.class,
+        TestBlastXmlNoDefLine.class
     }
     )
 public class AllBlastUnitTests {
