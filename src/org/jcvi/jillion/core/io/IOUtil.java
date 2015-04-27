@@ -26,6 +26,8 @@
 package org.jcvi.jillion.core.io;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -33,10 +35,12 @@ import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.io.StringWriter;
@@ -1218,6 +1222,41 @@ public final class IOUtil {
 		if (!f.canRead()) {
 			throw new IOException("file is not readable: " + f.getAbsolutePath());
 		}
+	}
+	
+	/**
+	 * Create a new {@link BufferedReader} instance
+	 * that reads the given file in the given {@link Charset}.
+	 * 
+	 * @param file the file to read.
+	 * 
+	 * @param charset the name of the {@link Charset} to use.
+	 * 
+	 * @return a new {@link BufferedReader}.
+	 * 
+	 * @throws IOException if there is a problem reading the file or translating the
+	 * charset name into a {@link Charset}.
+	 * @throws NullPointerException if either parameter is null.
+	 */
+	public static BufferedReader createNewBufferedReader(File file, String charset) throws IOException{
+		 return new BufferedReader(
+					new InputStreamReader(new FileInputStream(file), charset));
+	}
+	
+	/**
+	 * Create a new {@link BufferedWriter} instance
+	 * that reads the given file in the given {@link Charset}.
+	 * 
+	 * @param file the file to write to, will be overwritten.
+	 * @param charset the name of the {@link Charset} to use.
+	 * @return a new {@link BufferedWriter}.
+	 * @throws IOException if there is a problem creating the file or translating the
+	 * charset name into a {@link Charset}.
+	 * @throws NullPointerException if either parameter is null.
+	 */
+	public static BufferedWriter createNewBufferedWriter(File file, String charset) throws IOException{
+		 return new BufferedWriter(
+					new OutputStreamWriter(new FileOutputStream(file), charset));
 	}
 	
 }
