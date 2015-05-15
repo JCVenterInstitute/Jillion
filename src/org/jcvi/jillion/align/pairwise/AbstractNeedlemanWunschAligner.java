@@ -20,11 +20,12 @@
  ******************************************************************************/
 package org.jcvi.jillion.align.pairwise;
 
+import java.util.Arrays;
+
 import org.jcvi.jillion.align.SequenceAlignment;
 import org.jcvi.jillion.align.SubstitutionMatrix;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequence;
-import org.jcvi.jillion.core.util.MathUtil;
 /**
  * {@code AbstractNeedlemanWunschAligner} 
  * implements Needleman-Wunsch (with Gotoh improvements) specific implementations.
@@ -94,7 +95,11 @@ abstract class AbstractNeedlemanWunschAligner <R extends Residue, S extends Resi
 	@Override
 	protected WalkBack computeBestWalkBack(float alignmentScore,
 			float horrizontalGapPenalty, float verticalGapPenalty){
-			float bestScore = MathUtil.maxOf(alignmentScore, horrizontalGapPenalty, verticalGapPenalty);
+				
+			double[] array = new double[]{alignmentScore, horrizontalGapPenalty, verticalGapPenalty};
+			
+			float bestScore = (float)Arrays.stream(array)
+										.max().getAsDouble();
 			final TracebackDirection dir;
 			//can't switch on float... so ugly if/else block below
 			if (bestScore == alignmentScore){
