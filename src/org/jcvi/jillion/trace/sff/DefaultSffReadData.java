@@ -25,12 +25,10 @@
  */
 package org.jcvi.jillion.trace.sff;
 
-import java.math.BigInteger;
 import java.util.Arrays;
 
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.util.MathUtil;
 import org.jcvi.jillion.core.util.ObjectsUtil;
 
 final class DefaultSffReadData implements SffReadData {
@@ -66,8 +64,13 @@ final class DefaultSffReadData implements SffReadData {
     }
 
     private void indexesWithinBounds(byte[] indexes, short[] values) {
-        final BigInteger sum = MathUtil.sumOf(indexes);
-        if(sum.compareTo(BigInteger.valueOf(values.length)) >0){
+       // final BigInteger sum = MathUtil.sumOf(indexes);
+    	 long sum=0;
+    	 for(int i=0; i<indexes.length; i++){
+            sum+=indexes[i];
+         }
+    	
+        if(sum> values.length){
             throw new ArrayIndexOutOfBoundsException("indexed flowgram value refers to "+ sum
                     + "flowgram value length is" + values.length);
         }

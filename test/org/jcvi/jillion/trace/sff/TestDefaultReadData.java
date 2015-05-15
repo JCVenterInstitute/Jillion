@@ -25,6 +25,11 @@
  */
 package org.jcvi.jillion.trace.sff;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Arrays;
 
 import org.jcvi.jillion.core.qual.QualitySequence;
@@ -32,10 +37,7 @@ import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.testUtil.TestUtil;
-import org.jcvi.jillion.core.util.MathUtil;
-import org.jcvi.jillion.trace.sff.DefaultSffReadData;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class TestDefaultReadData {
 
@@ -148,11 +150,20 @@ public class TestDefaultReadData {
                                         qualities);
             fail("should throw ArrayIndexOutOfBoundsException when values length is less than last indexed index");
         }catch(ArrayIndexOutOfBoundsException expected){
-            String expectedMessage = "indexed flowgram value refers to "+ MathUtil.sumOf(indexes) +
+            String expectedMessage = "indexed flowgram value refers to "+ sumOf(indexes) +
             "flowgram value length is" + differentValues.length;
             assertEquals(expectedMessage,expected.getMessage());
         }
     }
+    
+    private static int sumOf(byte[] indexes){
+    	int sum =0;
+    	for(int i=0; i<indexes.length; i++){
+    		sum+=indexes[i];
+    	}
+    	return sum;
+    }
+    
     @Test
     public void constructorFailsNullQualitiesShouldThrowNullPointerException(){
         try{

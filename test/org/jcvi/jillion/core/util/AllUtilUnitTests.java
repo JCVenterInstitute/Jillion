@@ -42,7 +42,6 @@ import org.junit.runners.Suite.SuiteClasses;
     	
     	TestObjectsUtil.class,
         TestRunLength.class,
-        MathUtilSuite.class,
         TestLRUCache.class,
         TestWeakReferenceLRUCache.class,
         TestEmptyIterator.class,
