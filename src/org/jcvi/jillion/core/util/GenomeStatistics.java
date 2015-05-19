@@ -1,7 +1,7 @@
 package org.jcvi.jillion.core.util;
 
 import java.util.Collections;
-import java.util.OptionalDouble;
+import java.util.OptionalInt;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
@@ -29,7 +29,7 @@ public final class GenomeStatistics {
 	 * that will compute the Nx value of the elements in the given stream.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #nXBuilder(double)}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalDouble}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -41,7 +41,7 @@ public final class GenomeStatistics {
 	 * to compute N50, the percentage value is {@code 0.5}.
 	 * 
 	 * 
-	 * @return an {@link OptionalDouble} which either has
+	 * @return an {@link OptionalInt} which either has
 	 * a value, or is empty if there was an error computing it.
 	 * 
 	 * @throws NullPointerException if either stream or mapper are null.
@@ -53,7 +53,7 @@ public final class GenomeStatistics {
 	 * like the object Stream does.  In order save users from manually creating collectors
 	 * themselves, it was easier to create a helper method that creates the collector then executes it.
 	 */
-	public static OptionalDouble nX(IntStream stream, double percentage){
+	public static OptionalInt nX(IntStream stream, double percentage){
 		return stream.collect(  ()->GenomeStatistics.nXBuilder(percentage), 
 								(builder, v)-> builder.add(v),
 								(a,b)-> a.merge(b))
@@ -65,7 +65,7 @@ public final class GenomeStatistics {
 	 * that will compute the Nx value of the elements in the given stream.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #nXBuilder(double)}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalDouble}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -79,7 +79,7 @@ public final class GenomeStatistics {
 	 * to compute N50, the percentage value is {@code 0.5}.
 	 * 
 	 * 
-	 * @return an {@link OptionalDouble} which either has
+	 * @return an {@link OptionalInt} which either has
 	 * a value, or is empty if there was an error computing it.
 	 * 
 	 * @throws NullPointerException if either stream or mapper are null.
@@ -91,7 +91,7 @@ public final class GenomeStatistics {
 	 * like the object Stream does.  In order save users from manually creating collectors
 	 * themselves, it was easier to create a helper method that creates the collector then executes it.
 	 */
-	public static OptionalDouble nX(LongStream stream, double percentage){
+	public static OptionalInt nX(LongStream stream, double percentage){
 		return stream.collect(  ()->GenomeStatistics.nXBuilder(percentage), 
 								(builder, v)-> builder.add(v),
 								(a,b)-> a.merge(b))
@@ -102,7 +102,7 @@ public final class GenomeStatistics {
 	 * Compute the N50 value of the elements in the given {@link IntStream}.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #n50Builder()}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalDouble}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -111,7 +111,7 @@ public final class GenomeStatistics {
 	 * 
 	 * 
 	 * 
-	 * @return an {@link OptionalDouble} which either has
+	 * @return an {@link OptionalInt} which either has
 	 * a value, or is empty if there was an error computing it.
 	 * 
 	 * @throws NullPointerException if stream is null.
@@ -124,14 +124,14 @@ public final class GenomeStatistics {
 	 * 
 	 * @implNote This is the same as {@link #nX(IntStream, double) nX(stream, .5D)}
 	 */
-	public static  OptionalDouble n50(IntStream stream){
+	public static  OptionalInt n50(IntStream stream){
 			return nX(stream, .5D);		
 	}
 	/**
 	 * Compute the N50 value of the elements in the given {@link LongStream}.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #n50Builder()}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalDouble}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -140,7 +140,7 @@ public final class GenomeStatistics {
 	 * 
 	 * 
 	 * 
-	 * @return an {@link OptionalDouble} which either has
+	 * @return an {@link OptionalInt} which either has
 	 * a value, or is empty if there was an error computing it.
 	 * 
 	 * @throws NullPointerException if stream is null.
@@ -153,7 +153,7 @@ public final class GenomeStatistics {
 	 * 
 	 * @implNote This is the same as {@link #nX(LongStream, double) nX(stream, .5D)}
 	 */
-	public static  OptionalDouble n50(LongStream stream){
+	public static  OptionalInt n50(LongStream stream){
 		return nX(stream, .5D);	
 	}
 	
@@ -161,7 +161,7 @@ public final class GenomeStatistics {
 	 * Compute the N75 value of the elements in the given {@link IntStream}.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #n75Builder()}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalDouble}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -170,7 +170,7 @@ public final class GenomeStatistics {
 	 * 
 	 * 
 	 * 
-	 * @return an {@link OptionalDouble} which either has
+	 * @return an {@link OptionalInt} which either has
 	 * a value, or is empty if there was an error computing it.
 	 * 
 	 * @throws NullPointerException if stream is null.
@@ -183,14 +183,14 @@ public final class GenomeStatistics {
 	 * 
 	 * @implNote This is the same as {@link #nX(IntStream, double) nX(stream, .75D)}
 	 */
-	public static  OptionalDouble n75(IntStream stream){
+	public static  OptionalInt n75(IntStream stream){
 		return nX(stream, .75D);		
 	}
 	/**
 	 * Compute the N75 value of the elements in the given {@link LongStream}.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #n75Builder()}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalDouble}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -199,7 +199,7 @@ public final class GenomeStatistics {
 	 * 
 	 * 
 	 * 
-	 * @return an {@link OptionalDouble} which either has
+	 * @return an {@link OptionalInt} which either has
 	 * a value, or is empty if there was an error computing it.
 	 * 
 	 * @throws NullPointerException if stream is null.
@@ -212,7 +212,7 @@ public final class GenomeStatistics {
 	 * 
 	 * @implNote This is the same as {@link #nX(LongStream, double) nX(stream, .75D)}
 	 */
-	public static OptionalDouble n75(LongStream stream) {
+	public static OptionalInt n75(LongStream stream) {
 		return nX(stream, .75D);
 	}
 	
@@ -221,7 +221,7 @@ public final class GenomeStatistics {
 	 * Compute the N90 value of the elements in the given {@link IntStream}.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #n90Builder()}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalDouble}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -230,7 +230,7 @@ public final class GenomeStatistics {
 	 * 
 	 * 
 	 * 
-	 * @return an {@link OptionalDouble} which either has
+	 * @return an {@link OptionalInt} which either has
 	 * a value, or is empty if there was an error computing it.
 	 * 
 	 * @throws NullPointerException if stream is null.
@@ -243,14 +243,14 @@ public final class GenomeStatistics {
 	 * 
 	 * @implNote This is the same as {@link #nX(IntStream, double) nX(stream, .9D)}
 	 */
-	public static  OptionalDouble n90(IntStream stream){
+	public static  OptionalInt n90(IntStream stream){
 		return nX(stream, .9D);		
 	}
 	/**
 	 * Compute the N90 value of the elements in the given {@link LongStream}.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #n90Builder()}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalDouble}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -259,7 +259,7 @@ public final class GenomeStatistics {
 	 * 
 	 * 
 	 * 
-	 * @return an {@link OptionalDouble} which either has
+	 * @return an {@link OptionalInt} which either has
 	 * a value, or is empty if there was an error computing it.
 	 * 
 	 * @throws NullPointerException if stream is null.
@@ -272,7 +272,7 @@ public final class GenomeStatistics {
 	 * 
 	 * @implNote This is the same as {@link #nX(LongStream, double) nX(stream, .9D)}
 	 */
-	public static OptionalDouble n90(LongStream stream) {
+	public static OptionalInt n90(LongStream stream) {
 		return nX(stream, .9D);
 	}
 	
@@ -283,7 +283,7 @@ public final class GenomeStatistics {
 	 * that will compute the NGx value of the elements in the given stream.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ngXBuilder(double)}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalDouble}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -297,7 +297,7 @@ public final class GenomeStatistics {
 	 * @param genomeLength the (expected) genome length which is used to determine
 	 * when we have X% covered.
 	 * 
-	 * @return an {@link OptionalDouble} which either has
+	 * @return an {@link OptionalInt} which either has
 	 * a value, or is empty if there was an error computing it.
 	 * 
 	 * @throws NullPointerException if either stream is null.
@@ -309,9 +309,9 @@ public final class GenomeStatistics {
 	 * like the object Stream does.  In order save users from manually creating collectors
 	 * themselves, it was easier to create a helper method that creates the collector then executes it.
 	 */
-	public static  OptionalDouble ngX(LongStream stream, double percentage, long genomeLength){
+	public static  OptionalInt ngX(LongStream stream, double percentage, long genomeLength){
 		return stream
-				.collect(()->GenomeStatistics.nXBuilder(percentage), 
+				.collect(()->GenomeStatistics.ngXBuilder(genomeLength, percentage), 
 					(builder, v)-> builder.add(v),
 					(a,b)-> a.merge(b))
 					.build();
@@ -322,7 +322,7 @@ public final class GenomeStatistics {
 	 * that will compute the NGx value of the elements in the given stream.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ngXBuilder(double)}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalDouble}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -336,7 +336,7 @@ public final class GenomeStatistics {
 	 * @param genomeLength the (expected) genome length which is used to determine
 	 * when we have X% covered.
 	 * 
-	 * @return an {@link OptionalDouble} which either has
+	 * @return an {@link OptionalInt} which either has
 	 * a value, or is empty if there was an error computing it.
 	 * 
 	 * @throws NullPointerException if either stream is null.
@@ -348,9 +348,9 @@ public final class GenomeStatistics {
 	 * like the object Stream does.  In order save users from manually creating collectors
 	 * themselves, it was easier to create a helper method that creates the collector then executes it.
 	 */
-	public static  OptionalDouble ngX(IntStream stream, double percentage, long genomeLength){
+	public static  OptionalInt ngX(IntStream stream, double percentage, long genomeLength){
 		return stream
-				.collect(()->GenomeStatistics.nXBuilder(percentage), 
+				.collect(()->GenomeStatistics.ngXBuilder(genomeLength, percentage), 
 					(builder, v)-> builder.add(v),
 					(a,b)-> a.merge(b))
 					.build();
@@ -365,7 +365,7 @@ public final class GenomeStatistics {
 	 * Compute the NG50 value of the elements in the given {@link IntStream}.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ng50Builder(long)}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalDouble}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -375,7 +375,7 @@ public final class GenomeStatistics {
 	 * @param genomeLength the (expected) genome length which is used to determine
 	 * when we have X% covered.
 	 * 
-	 * @return an {@link OptionalDouble} which either has
+	 * @return an {@link OptionalInt} which either has
 	 * a value, or is empty if there was an error computing it.
 	 * 
 	 * @throws NullPointerException if stream is null.
@@ -388,14 +388,14 @@ public final class GenomeStatistics {
 	 * 
 	 * @implNote This is the same as {@link #ngX(IntStream, double, long) ngX(stream, .5D, genomeLength)}
 	 */
-	public static OptionalDouble ng50(IntStream stream, long genomeLength){
+	public static OptionalInt ng50(IntStream stream, long genomeLength){
 			return ngX(stream, .5D, genomeLength);		
 	}
 	/**
 	 * Compute the NG50 value of the elements in the given {@link LongStream}.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ng50Builder(long)}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalDouble}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -405,7 +405,7 @@ public final class GenomeStatistics {
 	 * @param genomeLength the (expected) genome length which is used to determine
 	 * when we have X% covered.
 	 * 
-	 * @return an {@link OptionalDouble} which either has
+	 * @return an {@link OptionalInt} which either has
 	 * a value, or is empty if there was an error computing it.
 	 * 
 	 * @throws NullPointerException if stream is null.
@@ -418,7 +418,7 @@ public final class GenomeStatistics {
 	 * 
 	 * @implNote This is the same as {@link #ngX(LongStream, double, long) ngX(stream, .5D, genomeLength)}
 	 */
-	public static OptionalDouble ng50(LongStream stream, long genomeLength){
+	public static OptionalInt ng50(LongStream stream, long genomeLength){
 		return ngX(stream, .5D, genomeLength);		
 	}
 	
@@ -427,7 +427,7 @@ public final class GenomeStatistics {
 	 * Compute the NG75 value of the elements in the given {@link IntStream}.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ng75Builder(int)}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalDouble}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -437,7 +437,7 @@ public final class GenomeStatistics {
 	 * @param genomeLength the (expected) genome length which is used to determine
 	 * when we have X% covered.
 	 * 
-	 * @return an {@link OptionalDouble} which either has
+	 * @return an {@link OptionalInt} which either has
 	 * a value, or is empty if there was an error computing it.
 	 * 
 	 * @throws NullPointerException if stream is null.
@@ -450,14 +450,14 @@ public final class GenomeStatistics {
 	 * 
 	 * @implNote This is the same as {@link #ngX(IntStream, double, long) ngX(stream, .75D, genomeLength)}
 	 */
-	public static OptionalDouble ng55(IntStream stream, long genomeLength){
+	public static OptionalInt ng75(IntStream stream, long genomeLength){
 			return ngX(stream, .75D, genomeLength);		
 	}
 	/**
 	 * Compute the NG75 value of the elements in the given {@link LongStream}.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ng75Builder(int)}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalDouble}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -467,7 +467,7 @@ public final class GenomeStatistics {
 	 * @param genomeLength the (expected) genome length which is used to determine
 	 * when we have X% covered.
 	 * 
-	 * @return an {@link OptionalDouble} which either has
+	 * @return an {@link OptionalInt} which either has
 	 * a value, or is empty if there was an error computing it.
 	 * 
 	 * @throws NullPointerException if stream is null.
@@ -480,7 +480,7 @@ public final class GenomeStatistics {
 	 * 
 	 * @implNote This is the same as {@link #ngX(LongStream, double, long) ngX(stream, .75D, genomeLength)}
 	 */
-	public static OptionalDouble ng75(LongStream stream, long genomeLength){
+	public static OptionalInt ng75(LongStream stream, long genomeLength){
 		return ngX(stream, .75D, genomeLength);		
 	}
 	
@@ -488,7 +488,7 @@ public final class GenomeStatistics {
 	 * Compute the NG90 value of the elements in the given {@link IntStream}.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ng90Builder(long)}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalDouble}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -498,7 +498,7 @@ public final class GenomeStatistics {
 	 * @param genomeLength the (expected) genome length which is used to determine
 	 * when we have X% covered.
 	 * 
-	 * @return an {@link OptionalDouble} which either has
+	 * @return an {@link OptionalInt} which either has
 	 * a value, or is empty if there was an error computing it.
 	 * 
 	 * @throws NullPointerException if stream is null.
@@ -511,14 +511,14 @@ public final class GenomeStatistics {
 	 * 
 	 * @implNote This is the same as {@link #ngX(IntStream, double, long) ngX(stream, .9D, genomeLength)}
 	 */
-	public static OptionalDouble ng90(IntStream stream, long genomeLength){
+	public static OptionalInt ng90(IntStream stream, long genomeLength){
 			return ngX(stream, .9D, genomeLength);		
 	}
 	/**
 	 * Compute the NG90 value of the elements in the given {@link LongStream}.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ng90Builder(long)}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalDouble}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -528,7 +528,7 @@ public final class GenomeStatistics {
 	 * @param genomeLength the (expected) genome length which is used to determine
 	 * when we have X% covered.
 	 * 
-	 * @return an {@link OptionalDouble} which either has
+	 * @return an {@link OptionalInt} which either has
 	 * a value, or is empty if there was an error computing it.
 	 * 
 	 * @throws NullPointerException if stream is null.
@@ -541,7 +541,7 @@ public final class GenomeStatistics {
 	 * 
 	 * @implNote This is the same as {@link #ngX(LongStream, double, long) ngX(stream, .9D, genomeLength)}
 	 */
-	public static OptionalDouble ng90(LongStream stream, long genomeLength){
+	public static OptionalInt ng90(LongStream stream, long genomeLength){
 		return ngX(stream, .9D, genomeLength);		
 	}
 	
@@ -614,8 +614,13 @@ public final class GenomeStatistics {
 	 * that will compute NG50. This is equivalent to calling
 	 * {@link #ngXBuilder(long, double) nxBuilder(genomeLength, 0.5D)}
 	 * 
+	 *  @param genomeLength the (expected) genome length which is used to determine
+	 * when we have 50% covered.
+	 * 
 	 * @return a new {@link GenomeStatisticsBuilder} instance to add the 
 	 * contig lengths to.
+	 * 
+	 * @throws IllegalArgumentException if genomeLength < 1
 	 * 
 	 * @see #ngXBuilder(long, double)
 	 */
@@ -627,8 +632,13 @@ public final class GenomeStatistics {
 	 * that will compute NG75. This is equivalent to calling
 	 * {@link #ngXBuilder(long, double) nxBuilder(genomeLength, 0.75D)}
 	 * 
+	 * @param genomeLength the (expected) genome length which is used to determine
+	 * when we have 75% covered.
+	 * 
 	 * @return a new {@link GenomeStatisticsBuilder} instance to add the 
 	 * contig lengths to.
+	 * 
+	 * @throws IllegalArgumentException if genomeLength < 1
 	 * 
 	 * @see #ngXBuilder(long, double)
 	 */
@@ -640,9 +650,14 @@ public final class GenomeStatistics {
 	 * that will compute NG90. This is equivalent to calling
 	 * {@link #ngXBuilder(long, double) nxBuilder(genomeLength, 0.9D)}
 	 * 
+	 * @param genomeLength the (expected) genome length which is used to determine
+	 * when we have 90% covered.
+	 * 
 	 * @return a new {@link GenomeStatisticsBuilder} instance to add the 
 	 * contig lengths to.
 	 * 
+	 * @throws IllegalArgumentException if genomeLength < 1
+	 *  
 	 * @see #ngXBuilder(long, double)
 	 */
 	public static GenomeStatisticsBuilder ng90Builder(long genomeLength){
@@ -702,7 +717,7 @@ public final class GenomeStatistics {
 		 */
 		GenomeStatisticsBuilder add(int length);
 		/**
-		 * Convience method for adding a length that is of type
+		 * Convenience method for adding a length that is of type
 		 * long.  The value must still be between 1 and {@link Integer#MAX_VALUE}.
 		 * 
 		 * @apiNote this method exists because many Jillion objects
@@ -738,10 +753,10 @@ public final class GenomeStatistics {
 		/**
 		 * Compute the genome statistic.
 		 * 
-		 * @return an {@link OptionalDouble} which either has
+		 * @return an {@link OptionalInt} which either has
 		 * a value, or is empty if there was an error computing it.
 		 */
-		OptionalDouble build();
+		OptionalInt build();
 	}
 	
 	
@@ -789,9 +804,9 @@ public final class GenomeStatistics {
 	
 
 		@Override
-		public OptionalDouble build() {
+		public OptionalInt build() {
 			if(array.getCurrentLength() ==0){
-				return OptionalDouble.empty();
+				return OptionalInt.empty();
 			}
 			array.sort();
 			
@@ -804,11 +819,11 @@ public final class GenomeStatistics {
 				int value = sorted[i];
 				valueSoFar +=value;
 				if( (valueSoFar/divisor) >= percentage){
-					return OptionalDouble.of(value);
+					return OptionalInt.of(value);
 				}
 			}
 			
-			return OptionalDouble.empty();
+			return OptionalInt.empty();
 		}
 
 		protected abstract double computeDivisor(int[] sorted);
@@ -843,6 +858,9 @@ public final class GenomeStatistics {
 		
 		public NGStatBuilder(long genomeLength, double percentage) {
 			super(percentage);
+			if(genomeLength <1){
+				throw new IllegalArgumentException("genome length must be >= 1");
+			}
 			this.genomeLength = genomeLength;
 		}
 
@@ -854,13 +872,22 @@ public final class GenomeStatistics {
 		
 	}
 	
-	private static class NgXLongCollector implements Collector<Long, GenomeStatisticsBuilder, OptionalDouble>{
+	private static class NgXCollector<T extends Number> implements Collector<T, GenomeStatisticsBuilder, OptionalInt>{
 
 		private final long genomeLength;
 		private final double percentage;
 		
 		
-		public NgXLongCollector(long genomeLength, double percentage) {
+		public NgXCollector(long genomeLength, double percentage) {
+			if(genomeLength <= 0){
+				throw new IllegalArgumentException("genome length must be > 0");
+			}
+			if(percentage <= 0){
+				throw new IllegalArgumentException("percentage must be > 0");
+			}
+			if(percentage >=1){
+				throw new IllegalArgumentException("percentage must be < 1");
+			}
 			this.genomeLength = genomeLength;
 			this.percentage = percentage;
 		}
@@ -872,8 +899,8 @@ public final class GenomeStatistics {
 		}
 
 		@Override
-		public BiConsumer<GenomeStatisticsBuilder, Long> accumulator() {
-			return (builder, v)-> builder.add(v);
+		public BiConsumer<GenomeStatisticsBuilder, T> accumulator() {
+			return (builder, v)-> builder.add(v.longValue());
 		}
 
 		@Override
@@ -882,7 +909,7 @@ public final class GenomeStatistics {
 		}
 
 		@Override
-		public Function<GenomeStatisticsBuilder, OptionalDouble> finisher() {
+		public Function<GenomeStatisticsBuilder, OptionalInt> finisher() {
 			return GenomeStatisticsBuilder::build;
 		}
 
@@ -892,21 +919,112 @@ public final class GenomeStatistics {
 		}
 		
 	}
-	
-	public static Collector<Long, GenomeStatisticsBuilder, OptionalDouble> ng50Collector(long genomeLength){
+	/**
+	 * Collect all the elements of a Stream of Numbers
+	 * and compute the NG50 value.  The end result
+	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ng50Builder(long)}
+	 * and then manually adding each element of the stream to the builder then returning
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
+	 * parallel stream.
+	 * 
+	 * @param genomeLength the (expected) genome length which is used to determine
+	 * when we have X% covered.
+	 * 
+	 * @return an {@link OptionalInt} which either has
+	 * a value, or is empty if there was an error computing it.
+	 * 
+	 * @throws IllegalArgumentException if genomeLength < 1.
+	 * 
+	 * 
+	 * @implNote This is the same as {@link #ngXCollector(long, double) ngX(genomeLength, .5D)}
+	 */
+	public static<T extends Number> Collector<T, GenomeStatisticsBuilder, OptionalInt> ng50Collector(long genomeLength){
 		return ngXCollector(genomeLength, .5D);
 	}
-	public static Collector<Long, GenomeStatisticsBuilder, OptionalDouble> ngXCollector(long genomeLength, double percentage){
-		return new NgXLongCollector(genomeLength, percentage);
+	/**
+	 * Collect all the elements of a Stream of Numbers
+	 * and compute the NG90 value.  The end result
+	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ng90Builder(long)}
+	 * and then manually adding each element of the stream to the builder then returning
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
+	 * parallel stream.
+	 * 
+	 * @param genomeLength the (expected) genome length which is used to determine
+	 * when we have X% covered.
+	 * 
+	 * @return an {@link OptionalInt} which either has
+	 * a value, or is empty if there was an error computing it.
+	 * 
+	 * @throws IllegalArgumentException if genomeLength < 1.
+	 * 
+	 * 
+	 * @implNote This is the same as {@link #ngXCollector(long, double) ngX(genomeLength, .9D)}
+	 */
+	public static<T extends Number> Collector<T, GenomeStatisticsBuilder, OptionalInt> ng90Collector(long genomeLength){
+		return ngXCollector(genomeLength, .9D);
+	}
+	/**
+	 * Collect all the elements of a Stream of Numbers
+	 * and compute the NG75 value.  The end result
+	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ng75Builder(long)}
+	 * and then manually adding each element of the stream to the builder then returning
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
+	 * parallel stream.
+	 * 
+	 * @param genomeLength the (expected) genome length which is used to determine
+	 * when we have X% covered.
+	 * 
+	 * @return an {@link OptionalInt} which either has
+	 * a value, or is empty if there was an error computing it.
+	 * 
+	 * @throws IllegalArgumentException if genomeLength < 1.
+	 * 
+	 * 
+	 * @implNote This is the same as {@link #ngXCollector(long, double) ngX(genomeLength, .75D)}
+	 */
+	public static<T extends Number> Collector<T, GenomeStatisticsBuilder, OptionalInt> ng75Collector(long genomeLength){
+		return ngXCollector(genomeLength, .75D);
+	}
+	/**
+	 * Collect all the elements of a Stream of Numbers
+	 * and compute the  NGx value for any percentage.  For example
+	 * to compute NG50, the percentage value is {@code 0.5}.
+	 * 
+	 * The end result
+	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ngXBuilder(long)}
+	 * and then manually adding each element of the stream to the builder then returning
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
+	 * parallel stream.
+	 * 
+	 * @param genomeLength the (expected) genome length which is used to determine
+	 * when we have X% covered.
+	 * @param percentage the percentage value to compute; must be between
+	 * 0 and 1 <em>exclusive</em>.  For example
+	 * to compute N50, the percentage value is {@code 0.5}.
+	 * 
+	 * 
+	 * @return an {@link OptionalInt} which either has
+	 * a value, or is empty if there was an error computing it.
+	 * 
+	 * @throws IllegalArgumentException if genomeLength < 1 or
+	 * percentage >= 1 or percentage <= 0.
+	 * 
+	 */
+	public static <T extends Number> Collector<T, GenomeStatisticsBuilder, OptionalInt> ngXCollector(long genomeLength, double percentage){
+		return new NgXCollector<T>(genomeLength, percentage);
 	}
 	
 	
-	private static class NXLongCollector implements Collector<Long, GenomeStatisticsBuilder, OptionalDouble>{
+	private static class NXCollector<T extends Number> implements Collector<T, GenomeStatisticsBuilder, OptionalInt>{
 
 		private final double percentage;
 		
 		
-		public NXLongCollector(double percentage) {
+		public NXCollector(double percentage) {
 			this.percentage = percentage;
 		}
 
@@ -917,8 +1035,8 @@ public final class GenomeStatistics {
 		}
 
 		@Override
-		public BiConsumer<GenomeStatisticsBuilder, Long> accumulator() {
-			return (builder, v)-> builder.add(v);
+		public BiConsumer<GenomeStatisticsBuilder, T> accumulator() {
+			return (builder, v)-> builder.add(v.longValue());
 		}
 
 		@Override
@@ -927,7 +1045,7 @@ public final class GenomeStatistics {
 		}
 
 		@Override
-		public Function<GenomeStatisticsBuilder, OptionalDouble> finisher() {
+		public Function<GenomeStatisticsBuilder, OptionalInt> finisher() {
 			return GenomeStatisticsBuilder::build;
 		}
 
@@ -938,55 +1056,99 @@ public final class GenomeStatistics {
 		
 	}
 	
-	private static class NXIntCollector implements Collector<Integer, GenomeStatisticsBuilder, OptionalDouble>{
-
-		private final double percentage;
-		
-		
-		public NXIntCollector(double percentage) {
-			this.percentage = percentage;
-		}
-
-		@Override
-		public Supplier<GenomeStatisticsBuilder> supplier() {
-
-			return () -> new NStatBuilder(percentage);
-		}
-
-		@Override
-		public BiConsumer<GenomeStatisticsBuilder, Integer> accumulator() {
-			return (builder, v)-> builder.add(v);
-		}
-
-		@Override
-		public BinaryOperator<GenomeStatisticsBuilder> combiner() {
-			return (a, b)-> a.merge(b);
-		}
-
-		@Override
-		public Function<GenomeStatisticsBuilder, OptionalDouble> finisher() {
-			return GenomeStatisticsBuilder::build;
-		}
-
-		@Override
-		public Set<java.util.stream.Collector.Characteristics> characteristics() {
-			return Collections.singleton(Characteristics.UNORDERED);
-		}
-		
+	
+	/**
+	 * Collect all the elements of a Stream of Numbers
+	 * and compute the N50 value.  The end result
+	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #n50Builder(long)}
+	 * and then manually adding each element of the stream to the builder then returning
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
+	 * parallel stream.
+	 * 
+	 * 
+	 * @return an {@link OptionalInt} which either has
+	 * a value, or is empty if there was an error computing it.
+	 * 
+	 * @throws IllegalArgumentException if genomeLength < 1.
+	 * 
+	 * 
+	 * @implNote This is the same as {@link #nXCollector(long, double) ngX(.5D)}
+	 */
+	public static <T extends Number> Collector<T, GenomeStatisticsBuilder, OptionalInt> n50Collector(){
+		return nXCollector(.5D);
+	}
+	/**
+	 * Collect all the elements of a Stream of Numbers
+	 * and compute the N90 value.  The end result
+	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #n90Builder(long)}
+	 * and then manually adding each element of the stream to the builder then returning
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
+	 * parallel stream.
+	 * 
+	 * 
+	 * @return an {@link OptionalInt} which either has
+	 * a value, or is empty if there was an error computing it.
+	 * 
+	 * @throws IllegalArgumentException if genomeLength < 1.
+	 * 
+	 * 
+	 * @implNote This is the same as {@link #nXCollector(long, double) ngX(.9D)}
+	 */
+	public static <T extends Number> Collector<T, GenomeStatisticsBuilder, OptionalInt> n90Collector(){
+		return nXCollector(.9D);
+	}
+	/**
+	 * Collect all the elements of a Stream of Numbers
+	 * and compute the N75 value.  The end result
+	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #n75Builder(long)}
+	 * and then manually adding each element of the stream to the builder then returning
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
+	 * parallel stream.
+	 * 
+	 * 
+	 * @return an {@link OptionalInt} which either has
+	 * a value, or is empty if there was an error computing it.
+	 * 
+	 * @throws IllegalArgumentException if genomeLength < 1.
+	 * 
+	 * 
+	 * @implNote This is the same as {@link #nXCollector(long, double) ngX(.55D)}
+	 */
+	public static <T extends Number> Collector<T, GenomeStatisticsBuilder, OptionalInt> n75Collector(){
+		return nXCollector(.75D);
 	}
 	
-	public static Collector<Long, GenomeStatisticsBuilder, OptionalDouble> n50LongCollector(){
-		return nXLongCollector(.5D);
-	}
-	public static Collector<Long, GenomeStatisticsBuilder, OptionalDouble> nXLongCollector( double percentage){
-		return new NXLongCollector(percentage);
+	/**
+	 * Collect all the elements of a Stream of Numbers
+	 * and compute the  Nx value for any percentage.  For example
+	 * to compute N50, the percentage value is {@code 0.5}.
+	 * 
+	 * The end result
+	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #nXBuilder(long)}
+	 * and then manually adding each element of the stream to the builder then returning
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
+	 * parallel stream.
+	 * 
+	 * @param percentage the percentage value to compute; must be between
+	 * 0 and 1 <em>exclusive</em>.  For example
+	 * to compute N50, the percentage value is {@code 0.5}.
+	 * 
+	 * 
+	 * @return an {@link OptionalInt} which either has
+	 * a value, or is empty if there was an error computing it.
+	 * 
+	 * @throws IllegalArgumentException if
+	 * percentage >= 1 or percentage <= 0.
+	 * 
+	 */
+	public static <T extends Number> Collector<T, GenomeStatisticsBuilder, OptionalInt> nXCollector( double percentage){
+		return new NXCollector<T>(percentage);
 	}
 	
-	public static Collector<Integer, GenomeStatisticsBuilder, OptionalDouble> n50IntCollector(){
-		return nXIntCollector(.5D);
-	}
-	public static Collector<Integer, GenomeStatisticsBuilder, OptionalDouble> nXIntCollector( double percentage){
-		return new NXIntCollector(percentage);
-	}
+	
 	
 }
