@@ -120,6 +120,13 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		currentLength = copy.currentLength;
 	}
 	/**
+	 * Creates a new {@link GrowableIntrray}
+	 * with a default initial capacity.
+	 */
+	public GrowableIntArray() {
+		this(16);
+	}
+	/**
 	 * Create a new instance of GrowableShortArray
 	 * that is an exact copy of this instance.
 	 * Any future modifications to either the original
