@@ -1,89 +1,101 @@
 package org.jcvi.jillion.core.util;
 
-import static org.junit.Assert.assertEquals;
+import static org.easymock.EasyMock.createMock;
+import static org.junit.Assert.assertFalse;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.OptionalDouble;
-import java.util.stream.LongStream;
+import java.util.OptionalInt;
+import java.util.stream.IntStream;
 
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.testutils.NucleotideSequenceTestUtil;
+import org.jcvi.jillion.core.util.GenomeStatistics.GenomeStatisticsBuilder;
 import org.junit.Test;
+
 public class TestGenomeStatistics {
 
 	@Test
-	public void n50(){
-		assertEquals(70, GenomeStatistics.n50Builder()
-						.add(80)
-						.add(70)
-						.add(50)
-						.add(40)
-						.add(30)
-						.add(20)
-						.build().getAsDouble(), .01D);
+	public void emptyCollector(){
+		assertFalse(GenomeStatistics.n50(IntStream.empty()).isPresent());
 	}
 	
 	@Test
-	public void anotherN50(){
-		assertEquals(50, GenomeStatistics.n50Builder()
-						.add(80)
-						.add(70)
-						.add(50)
-						.add(40)
-						.add(30)
-						.add(20)
-						.add(10)
-						.add(5)
-						.build().getAsDouble(), .01D);
+	public void allLengthsNotEnoughToMeetPercentageValueShouldReturnEmpty(){
+		
+		OptionalInt value = Arrays.asList(1,2,3)
+										.stream()
+										.collect(GenomeStatistics.ng50Collector(100));
+						
+		assertFalse(value.isPresent());
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void negativeGenomeSizeShouldThrowIllegalArgumentException(){
+		GenomeStatistics.ng50Builder(-1);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void negativePercentShouldThrowIllegalArgumentException(){
+		GenomeStatistics.nXBuilder(-1);
+	}
+	@Test(expected = IllegalArgumentException.class)
+	public void onehundredPercentShouldThrowIllegalArgumentException(){
+		GenomeStatistics.nXBuilder(1);
+	}
+	@Test(expected = IllegalArgumentException.class)
+	public void zeroLengthNGCollectorShouldThrowIllegalArgumentException(){
+		GenomeStatistics.ngXCollector(0, .5D);
+	}
+	@Test(expected = IllegalArgumentException.class)
+	public void negativePercentNGCollectorShouldThrowIllegalArgumentException(){
+		GenomeStatistics.ngXCollector(1000, -1);
+	}
+	@Test(expected = IllegalArgumentException.class)
+	public void onehundredPercentNGCollectorShouldThrowIllegalArgumentException(){
+		GenomeStatistics.ngXCollector(1000, 1);
 	}
 	
 	
-	@Test
-	public void n50collector(){
-		
-		List<NucleotideSequence> seqs = Arrays.asList(NucleotideSequenceTestUtil.createRandom(80),
-				NucleotideSequenceTestUtil.createRandom(70),
-				NucleotideSequenceTestUtil.createRandom(50),
-				NucleotideSequenceTestUtil.createRandom(40),
-				NucleotideSequenceTestUtil.createRandom(30),
-				NucleotideSequenceTestUtil.createRandom(20));
-		
-		
-		
-		LongStream stream = seqs.stream()
-							.mapToLong(NucleotideSequence::getLength);
-		
-		OptionalDouble result = GenomeStatistics.nX(stream, .5D);
-		
-		
-					
-		assertEquals(70, result.getAsDouble(), .01D);
+	@Test(expected = IllegalArgumentException.class)
+	public void zeroLengthNGShouldThrowIllegalArgumentException(){
+		GenomeStatistics.ngXBuilder(0, .5D);
+	}
+	@Test(expected = IllegalArgumentException.class)
+	public void negativePercentNGShouldThrowIllegalArgumentException(){
+		GenomeStatistics.ngXBuilder(1000, -1);
+	}
+	@Test(expected = IllegalArgumentException.class)
+	public void onehundredPercentNGShouldThrowIllegalArgumentException(){
+		GenomeStatistics.ngXBuilder(1000, 1);
 	}
 	
-	
-	@Test
-	public void ng50collector(){
-		
-		List<NucleotideSequence> seqs = Arrays.asList(NucleotideSequenceTestUtil.createRandom(80),
-				NucleotideSequenceTestUtil.createRandom(70),
-				NucleotideSequenceTestUtil.createRandom(50),
-				NucleotideSequenceTestUtil.createRandom(40),
-				NucleotideSequenceTestUtil.createRandom(30),
-				NucleotideSequenceTestUtil.createRandom(20));
-		
-		
-		
-		
-		OptionalDouble result = GenomeStatistics.ng50(seqs.stream().mapToLong(NucleotideSequence::getLength)
-									, 300);
-					
-		OptionalDouble result2 = seqs.stream()
-										.map(NucleotideSequence::getLength)
-										.collect(GenomeStatistics.ng50Collector(300));
-		assertEquals(70, result2.getAsDouble(), .01D);
-		assertEquals(70, result.getAsDouble(), .01D);
+	@Test(expected = IllegalArgumentException.class)
+	public void negativeLengthAddedShouldThrowException(){
+		GenomeStatistics.n50Builder()
+						.add(-1);
 	}
 	
+	@Test(expected = IllegalArgumentException.class)
+	public void lengthLargerThanIntMaxAddedShouldThrowException(){
+		
+		long value = Integer.MAX_VALUE + 1L;
+		
+		GenomeStatistics.n50Builder()
+						.add(value);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void lengthSmallerThanIntMinAddedShouldThrowException(){
+		
+		long value = Integer.MIN_VALUE - 1L;
+		
+		GenomeStatistics.n50Builder()
+						.add(value);
+	}
+	
+	@Test(expected = IllegalStateException.class)
+	public void mergingNonBuilderShouldThrowException(){
+		GenomeStatisticsBuilder builder = GenomeStatistics.n50Builder();
+		
+		builder.merge(createMock(GenomeStatisticsBuilder.class));
+	}
 	
 }

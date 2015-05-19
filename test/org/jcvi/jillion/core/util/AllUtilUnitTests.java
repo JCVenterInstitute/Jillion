@@ -78,7 +78,15 @@ import org.junit.runners.Suite.SuiteClasses;
         TestUnsignedShortArray.class,
         TestUnsignedIntArray.class,
         
-        TestGenomeStatistics.class
+        TestGenomeStatistics.class,
+        
+        TestN50Computations.class,
+        TestN75Computations.class,
+        TestN90Computations.class,
+        
+        TestNG50Computations.class,
+        TestNG75Computations.class,
+        TestNG90Computations.class
         
     }
     )
