@@ -76,7 +76,9 @@ import org.junit.runners.Suite.SuiteClasses;
         
         TestUnsignedByteArray.class,
         TestUnsignedShortArray.class,
-        TestUnsignedIntArray.class
+        TestUnsignedIntArray.class,
+        
+        TestGenomeStatistics.class
         
     }
     )
