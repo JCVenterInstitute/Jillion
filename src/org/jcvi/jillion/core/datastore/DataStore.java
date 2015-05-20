@@ -173,7 +173,7 @@ public interface DataStore<T> extends Closeable{
      * @since 5.0
      * @throws DataStoreException if there is a problem creating this stream.
      */
-    default Stream<T> streamRecords() throws DataStoreException{
+    default Stream<T> records() throws DataStoreException{
     	return iterator().toStream();
     }
     
