@@ -88,7 +88,7 @@ public interface Contig<T extends AssembledRead>{
      * @return a new Stream of reads.
      * @since 5.0
      */
-    default Stream<T> streamReads(){
+    default Stream<T> reads(){
     	return getReadIterator().toStream();
     }
 }

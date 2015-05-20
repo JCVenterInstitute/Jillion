@@ -108,7 +108,7 @@ public final class DefaultContig<T extends AssembledRead> implements Contig<T>{
 
 
     @Override
-   	public Stream<T> streamReads() {
+   	public Stream<T> reads() {
    		return mapById.values().stream();
    	}
 	@Override

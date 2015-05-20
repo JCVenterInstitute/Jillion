@@ -898,8 +898,8 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
         
         
         @Override
-		public Stream<AceAssembledRead> streamReads() {
-			return contig.streamReads();
+		public Stream<AceAssembledRead> reads() {
+			return contig.reads();
 		}
 
 

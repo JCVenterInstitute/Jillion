@@ -523,7 +523,7 @@ public final class DataStoreUtil {
 	    
 	    
 	    @Override
-		public Stream<T> streamRecords() throws DataStoreException {
+		public Stream<T> records() throws DataStoreException {
 			return map.values().stream();
 		}
 
