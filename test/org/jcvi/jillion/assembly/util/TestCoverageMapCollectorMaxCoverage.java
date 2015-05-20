@@ -22,16 +22,15 @@ package org.jcvi.jillion.assembly.util;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
-public class TestCoverageMapBuilderMaxCoverage extends AbstractTestCoverageMapWithMaxCoverage{
+public class TestCoverageMapCollectorMaxCoverage extends AbstractTestCoverageMapWithMaxCoverage{
 
 	protected CoverageMap<AssembledRead> createCoverageMap(Contig<AssembledRead> contig){
-		return new ContigCoverageMapBuilder<AssembledRead>(contig)
-							.build();
+		return contig.reads()
+						.collect(CoverageMapCollectors.toCoverageMap());
 	}
 	protected CoverageMap<AssembledRead> createCoverageMap(Contig<AssembledRead> contig, int maxAllowedCoverage){
-		return  new ContigCoverageMapBuilder<AssembledRead>(contig)
-				.maxAllowedCoverage(maxAllowedCoverage)
-				.build();
+		return contig.reads()
+				.collect(CoverageMapCollectors.toCoverageMap(maxAllowedCoverage));
 	}
 	
 }
