@@ -16,7 +16,7 @@ import org.jcvi.jillion.core.Rangeable;
  * @param <T>
  * @param <R>
  */
-public final class CoverageMapStatsCollector<T extends Rangeable, R extends CoverageRegion<T>> implements Collector<R, CoverageStatsCombiner, CoverageMapStats>{
+final class CoverageMapStatsCollector<T extends Rangeable, R extends CoverageRegion<T>> implements Collector<R, CoverageStatsCombiner, CoverageMapStats>{
 
 	
 	private static final Set<java.util.stream.Collector.Characteristics> UNORDERED_AND_CONCURRENT = EnumSet.of(Collector.Characteristics.UNORDERED,
