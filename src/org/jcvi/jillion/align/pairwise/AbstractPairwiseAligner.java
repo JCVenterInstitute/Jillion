@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.align.pairwise;
 
-import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -281,7 +280,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends ResidueSequ
 		}
 		
 	}
-
+/*
 	private void printTraceBack(PrintWriter out){
 		for(int i=0; i<traceback.getXLength(); i++){
 			
@@ -296,7 +295,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends ResidueSequ
 		out.println(Arrays.toString(scoreCache[PREVIOUS_ROW]));
 		out.println(Arrays.toString(scoreCache[CURRENT_ROW]));
 	}
-
+*/
 	/**
 	 * Return the updated value of CurrentStartPoint
 	 * if your implementation deems it necessary.

@@ -19,6 +19,10 @@ public class SingleNucleotideSlice implements VariableWidthSlice<Nucleotide, Nuc
 	 */
 	private static final Map<Nucleotide, NucleotideSequence> SEQ_MAP;
 	
+	private final List<VariableWidthSliceElement<Nucleotide>> list = new ArrayList<VariableWidthSliceElement<Nucleotide>>();
+	private final NucleotideSequence refSeq;
+	
+	
 	static{
 		SEQ_MAP = new EnumMap<>(Nucleotide.class);
 		
@@ -26,8 +30,6 @@ public class SingleNucleotideSlice implements VariableWidthSlice<Nucleotide, Nuc
 			SEQ_MAP.put(n, new NucleotideSequenceBuilder(1).append(n).build());
 		}
 	}
-	private final List<VariableWidthSliceElement<Nucleotide>> list = new ArrayList<VariableWidthSliceElement<Nucleotide>>();
-	private final NucleotideSequence refSeq;
 	
 	
 	
@@ -53,7 +55,7 @@ public class SingleNucleotideSlice implements VariableWidthSlice<Nucleotide, Nuc
 
 	@Override
 	public int getCountFor(List<Nucleotide> sliceElementSeq) {
-		if(sliceElementSeq.size() ==0){
+		if(sliceElementSeq.isEmpty()){
 			return 0;
 		}
 		for(VariableWidthSliceElement<Nucleotide> e : list){
@@ -140,10 +142,10 @@ public class SingleNucleotideSlice implements VariableWidthSlice<Nucleotide, Nuc
 			StringBuilder b = new StringBuilder("{");
 			for(int i=0; i<counts.length; i++){
 				if(counts[i] >0){
-					b.append(Nucleotide.VALUES.get(i)).append(":").append(counts[i]).append(" ");
+					b.append(Nucleotide.VALUES.get(i)).append(':').append(counts[i]).append(' ');
 				}
 			}
-			b.append("}");
+			b.append('}');
 			return b.toString();
 		}
 	}

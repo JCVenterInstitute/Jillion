@@ -164,8 +164,7 @@ class SimpleProfileWriter implements ProfileWriter {
 			//0x use reference ?
 			return reference.get(i);
 		}
-		Nucleotide mostFreq = getMostFrequentNonGapBase(a,c,g,t);
-		return mostFreq;
+		return getMostFrequentNonGapBase(a,c,g,t);
 	}
 
 	@Override

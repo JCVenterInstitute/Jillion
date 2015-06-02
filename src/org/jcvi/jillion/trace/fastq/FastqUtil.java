@@ -416,17 +416,15 @@ public final class FastqUtil {
 			if(numSanger >0){
 				return FastqQualityCodec.SANGER;
 			}
-			if(numIllumina==0){
-				//we could be either high quality sanger
-				//or low quality illumina.
-				//we have 0 def sanger and 0 def illumina
-				
-				if(overallMax <  FastqQualityCodec.SANGER.getOffset() + 41){
-					//we have QVs up to sanger 40
-					//or illumina qv 9
-					//assume sanger
-					return FastqQualityCodec.SANGER;
-				}
+			//we could be either high quality sanger
+			//or low quality illumina.
+			//we have 0 def sanger and 0 def illumina
+			//AND
+			//we have QVs up to sanger 40
+			//or illumina qv 9:
+			//assume sanger
+			if(numIllumina==0 && overallMax <  FastqQualityCodec.SANGER.getOffset() + 41){
+				return FastqQualityCodec.SANGER;				
 			}
 			
 			//if we get this far than we use a 64 offset

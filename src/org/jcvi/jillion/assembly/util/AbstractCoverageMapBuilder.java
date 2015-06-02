@@ -66,12 +66,12 @@ abstract class AbstractCoverageMapBuilder<P extends Rangeable> implements Builde
     
     private final Integer maxAllowedCoverage, minRequiredCoverage;
     
+    private final List<P> sortedOverMaxCoverageObjects = new LinkedList<P>();
+   
     
     protected abstract Iterator<P> createEnteringIterator();
     protected abstract Iterator<P> createLeavingIterator();
-    
-    private final List<P> sortedOverMaxCoverageObjects = new LinkedList<P>();
-    
+   
     protected abstract CoverageMap<P> build(List<CoverageRegionBuilder<P>> coverageRegionBuilders);
     
     public AbstractCoverageMapBuilder(){
