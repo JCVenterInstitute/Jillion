@@ -1,10 +1,9 @@
-package org.jcvi.jillion.assembly;
+package org.jcvi.jillion.assembly.clc.cas;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jcvi.jillion.assembly.clc.cas.CasAlignmentRegion;
-import org.jcvi.jillion.assembly.clc.cas.CasAlignmentRegionType;
+import org.jcvi.jillion.assembly.AssemblyUtil;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
@@ -12,7 +11,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
-public class ReAlignReads {
+class ReAlignReads {
 
 	private final NucleotideSequence gappedReference;
 	private final GrowableIntArray referenceGaps;

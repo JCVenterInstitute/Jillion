@@ -30,8 +30,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.jillion.assembly.ReAlignReads;
-import org.jcvi.jillion.assembly.ReAlignReads.ReAlignResult;
+import org.jcvi.jillion.assembly.clc.cas.ReAlignReads.ReAlignResult;
 import org.jcvi.jillion.assembly.clc.cas.read.CasPlacedRead;
 import org.jcvi.jillion.assembly.clc.cas.read.DefaultCasPlacedRead;
 import org.jcvi.jillion.core.Direction;
