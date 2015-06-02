@@ -135,7 +135,7 @@ public interface CoverageMap <T extends Rangeable> extends Iterable<CoverageRegi
      * @return a new Stream.
      * @since 5.0
      */
-    Stream<CoverageRegion<T>> stream();
+    Stream<CoverageRegion<T>> regions();
     /**
      * Create a {@link Stream} of all the {@link CoverageRegion}s
      * in this Coverage Map that intersect the given Range coordinates.
@@ -149,5 +149,5 @@ public interface CoverageMap <T extends Rangeable> extends Iterable<CoverageRegi
      * @throws NullPointerException if range is null.
      * @since 5.0
      */
-    Stream<CoverageRegion<T>> stream(Range range);
+    Stream<CoverageRegion<T>> regions(Range range);
 }
