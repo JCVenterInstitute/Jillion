@@ -197,7 +197,7 @@ public final class PaddedSamTransformationService implements AssemblyTransformat
 						}
 						validRange = AssemblyUtil.reverseComplementValidRange(cigar.getValidRange(), rawLength);
 					}
-					System.out.println(record.getQueryName());
+				//	System.out.println(record.getQueryName());
 					NucleotideSequence gappedReadSequence =removeHardClipsFrom(cigar).toGappedTrimmedSequence(record.getSequence());
 					
 					//if the read is mated SAM doesn't put the /1 or /2 ?
