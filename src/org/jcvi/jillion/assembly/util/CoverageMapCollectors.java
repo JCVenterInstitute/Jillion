@@ -8,8 +8,11 @@ import java.util.stream.Collector.Characteristics;
 import org.jcvi.jillion.core.Rangeable;
 /**
  * Utility class that contains helpful {@link Collector}s
+ * for {@link CoverageMap} related computations.
+ * 
  * @author dkatzel
  *
+ * @since 5.0
  */
 public final class CoverageMapCollectors {
 
@@ -23,7 +26,7 @@ public final class CoverageMapCollectors {
 	 * @apiNote
 	 * 
 	 * <pre>
-	 * {@code CoverageMapStats stats = coverageMap.stream()
+	 * {@code CoverageMapStats stats = coverageMap.regions()
 					.parallel()
 					.collect(CoverageMapCollectors.computeStats());
 				}

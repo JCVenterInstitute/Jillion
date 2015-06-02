@@ -408,11 +408,11 @@ final class CoverageMapFactory {
 	        return regions.length==0;
 	    }
 		@Override
-		public Stream<CoverageRegion<V>> stream() {
+		public Stream<CoverageRegion<V>> regions() {
 			return Arrays.stream(regions);
 		}
 		@Override
-		public Stream<CoverageRegion<V>> stream(Range range) {
+		public Stream<CoverageRegion<V>> regions(Range range) {
 			//TODO this beginning part of the code 
 			//is copy and pasted from #getRegionsWhichIntersect
 			
