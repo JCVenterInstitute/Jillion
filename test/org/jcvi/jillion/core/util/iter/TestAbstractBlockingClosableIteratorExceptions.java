@@ -132,7 +132,7 @@ public class TestAbstractBlockingClosableIteratorExceptions {
         iter.start();  
         
         iter.next(); //moe
-        iter.next(); //larry
+       // iter.next(); //larry
         IOUtil.closeAndIgnoreErrors(iter);
         assertFalse(iter.hasNext());
         
