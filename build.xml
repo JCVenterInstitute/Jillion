@@ -47,7 +47,7 @@
         </classpath>
     </taskdef>
 
-   
+	
 	        
 	<taskdef name="javancss"
             classname="javancss.JavancssAntTask">
@@ -65,7 +65,15 @@
 		<fileset dir="${analysis}" includes="**/*.jar"/>
 		<pathelement path= "${bin}"/>
 		</path>
-	
+	 <!-- classpath for pitest and any plugins -->
+		<path id="pitest.path">
+        <!-- must currently include the test library on the tool classpath. this will be fixed in a future version-->
+	   		<pathelement location="${test-lib}/junit-4.11.jar" />
+			<pathelement location="${test-lib}/pitest-1.1.5.jar" />
+			<pathelement location="${test-lib}/pitest-ant-1.1.5.jar" />
+		</path>
+	<taskdef name="pitest" classname="org.pitest.ant.PitestTask" classpathref="pitest.path" />
+	   
 	<path id="svnant.classpth">
 		<fileset dir="${analysis}/svn" includes="**/*.jar"/>
 	  </path>
@@ -211,7 +219,20 @@
 	        <fail if="unit.test.failed" message="Unit tests failed"/>
 	    </target>
 	
-	
+	<target name="pit" depends="unit.tests">
+		<path id="mutation.path">
+					<path refid="pitest.path"/>
+					<path refid="test.classpath"/>
+				</path>
+	    <pitest
+	    	threads="2"
+	        pitClasspath="pitest.path"
+	        classPath="mutation.path"
+	        targetClasses="org.jcvi.jillion.*"
+	        targetTests="org.jcvi.jillion*"
+	        reportDir="${reports}/PIT"
+	        sourceDir="${src}"/>
+	</target>
 	
 	<target name="report.jacoco"
 	            description="generates JaCoCo report for instrumented classes">
