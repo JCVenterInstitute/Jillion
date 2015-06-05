@@ -67,6 +67,9 @@ public enum Nucleotide implements Residue {
     private static final Map<Nucleotide,Set<Nucleotide>> AMBIGUITY_TO_CONSTIUENT;
     private static final Map<Nucleotide,Set<Nucleotide>> CONSTIUENT_TO_AMBIGUITY;
    
+    //42 - 121
+    private static Nucleotide[] CACHE = new Nucleotide[80];
+    
     private static final Nucleotide[] VALUES_ARRAY = values();
     public static final List<Nucleotide> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
     static{
@@ -107,8 +110,26 @@ public enum Nucleotide implements Residue {
                 }
             }
         }
+        for(Nucleotide value : VALUES_ARRAY){
+        	char uppercase = value.c.charValue();
+        	
+        	char lowercase = Character.toLowerCase(uppercase);
+        	
+        	CACHE[computeOffsetFor(uppercase)] = value;
+        	CACHE[computeOffsetFor(lowercase)] = value;
+        }
+        //add consed gap
+        CACHE[computeOffsetFor('*')] = Gap;
+        //treat X's as Ns
+        CACHE[computeOffsetFor('x')] = Unknown;
+        CACHE[computeOffsetFor('X')] = Unknown;
+        
     }
     
+  
+    private static int computeOffsetFor(char c){
+    	return c-42;
+    }
   
     
     private final Character c;
@@ -214,246 +235,20 @@ public enum Nucleotide implements Residue {
      * @param base
      * @return
      */
-    //ignore checkstyle method length check 
-    //since huge switch statement
-    //and explanatory comment
-    //were done on purpose
-    @SuppressWarnings("MethodLengthCheck")
 	protected static Nucleotide parseOrNull(char base) {
+		//if it's a whitespace character return null.
 		if(base == 32 || (base >=0 && base <=13)){
 			return null;
 		}
-		//dkatzel - 2013-03-21
-    	//profiling indicated that parsing to Nucleotides was slow.
-    	//changed auto-boxed Map lookup to switch statement.
-    	//This switch includes all characters upper and lowercase
-    	//that can be a Nucleotide 
-    	//AND ALL CHARACTERS IN BETWEEN.
-    	//This is an optimization to allow the 
-    	//compiler to use a tableswitch opcode
-    	//instead of the more general purpose
-    	//lookupswitch opcode.
-    	//tableswitch is an O(1) lookup
-    	//while lookupswitch is O(n) where n
-    	//is the number of case statements in the switch.
-    	//tableswitch requires consecutive case values.
-    	//DO NOT CHANGE THE ORDER OF THE CASE STATEMENTS
-    	//the cases have to be in ascii order
-    	//so the JVM can do offset arithmetic
-    	//to jump immediately to the correct case
-    	//for an O(1) lookup, changing the order
-    	//might not allow that. 
-    	//(not sure if compiler is smart enough to re-order)
-    	//
-    	//for more information:
-    	//The book Beautiful Code Chapter 6
-    	//or
-    	//http://www.artima.com/underthehood/flowP.html
-    	final Nucleotide ret;
-    	switch(base){
-    	//we support gap characters from both consed and TIGR
-    	//so we need to start with special characters
-    		case '*': ret = Gap;
-					break;
-    		case '+': ret = null;
-						break;
-    		case ',': ret = null;
-					break;
-    		case '-': ret = Gap;
-					break;		
-    		case '.': ret = null;
-						break;	
-    		case '/': ret = null;
-						break;	
-			//numbers
-    		case '0': ret = null;
-						break;	
-    		case '1': ret = null;
-						break;
-    		case '2': ret = null;
-						break;
-    		case '3': ret = null;
-						break;
-    		case '4': ret = null;
-						break;
-    		case '5': ret = null;
-						break;
-    		case '6': ret = null;
-						break;
-    		case '7': ret = null;
-						break;
-    		case '8': ret = null;
-						break;
-    		case '9': ret = null;
-						break;
-    		case ':': ret = null;
-						break;
-    		case ';': ret = null;
-						break;
-    		case '<': ret = null;
-						break;
-    		case '=': ret = null;
-						break;
-    		case '>': ret = null;
-						break;
-    		case '?': ret = null;
-						break;
-			//uppercase letters
-			case 'A':
-				ret = Adenine;
-				break;
-			case 'B':
-				ret = NotAdenine;
-				break;
-			case 'C':
-				ret = Cytosine;
-				break;
-			case 'D':
-				ret = NotCytosine;
-				break;
-			case 'E':
-				ret = null;
-				break;
-			case 'F':
-				ret = null;
-				break;
-			case 'G':
-				ret = Guanine;
-				break;
-			case 'H':
-				ret = NotGuanine;
-				break;
-			case 'I':
-				ret = null;
-				break;
-			case 'J':
-				ret = null;
-				break;
-			case 'K':
-				ret = Keto;
-				break;
-			case 'L':
-				ret = null;
-				break;
-			case 'M':
-				ret = Amino;
-				break;
-			case 'N':
-				ret = Unknown;
-				break;
-			case 'O':
-				ret = null;
-				break;
-			case 'P':
-				ret = null;
-				break;
-			case 'Q':
-				ret = null;
-				break;
-			case 'R':
-				ret = Purine;
-				break;
-			case 'S':
-				ret = Strong;
-				break;
-			case 'T':
-				ret = Thymine;
-				break;
-			case 'U':
-				ret = null;
-				break;
-			case 'V':
-				ret = NotThymine;
-				break;
-			case 'W':
-				ret = Weak;
-				break;
-			case 'X':
-				ret = Unknown;
-				break;
-			case 'Y':
-				ret = Pyrimidine;
-				break;
-			case 'Z':
-				ret = null;
-				break;
-			//have to include all special characters in between
-			case '[':
-				ret = null;
-				break;
-			case '\\':
-				ret = null;
-				break;
-			case ']':
-				ret = null;
-				break;
-			case '^':
-				ret = null;
-				break;
-			case '_':
-				ret = null;
-				break;
-			case '`':
-				ret = null;
-				break;
-    	//lowercase
-    		case 'a' : ret = Adenine;
-    					break;
-    		case 'b' : ret = NotAdenine;
-    					break;
-    		case 'c' : ret =Cytosine;
-    					break;
-    		case 'd' : ret = NotCytosine;
-    					break;
-    		case 'e' : ret = null;
-    					break;
-    		case 'f' : ret = null;
-						break;
-    		case 'g' : ret = Guanine;
-						break;	
-    		case 'h' : ret = NotGuanine;
-						break;
-    		case 'i' : ret = null;
-						break;
-    		case 'j' : ret = null;
-						break;	
-    		case 'k' : ret = Keto;
-						break;
-    		case 'l' : ret = null;
-						break;
-    		case 'm' : ret = Amino;
-						break;
-    		case 'n' : ret = Unknown;
-						break;
-    		case 'o' : ret = null;
-						break;
-    		case 'p' : ret = null;
-						break;
-    		case 'q' : ret = null;
-						break;
-    		case 'r' : ret = Purine;
-						break;
-    		case 's' : ret = Strong;
-						break;
-    		case 't' : ret = Thymine;
-						break;
-    		case 'u' : ret = null;
-						break;
-    		case 'v' : ret = NotThymine;
-						break;
-    		case 'w' : ret = Weak;
-						break;
-    		case 'x' : ret = Unknown;
-						break;
-    		case 'y' : ret = Pyrimidine;
-						break;
-			default : ret = null;
-						break;
-			
-    	}
+		int offset =computeOffsetFor(base);
+		Nucleotide ret=null;
+		if(offset >=0 && offset < CACHE.length){
+			ret = CACHE[offset];
+		}
+		//if we're still null then it's invalid character
     	if(ret==null){
             throw new IllegalArgumentException("invalid character " + base + " ascii value " + (int)base);
-            }
+        }
 		return ret;
 	}
     /**
