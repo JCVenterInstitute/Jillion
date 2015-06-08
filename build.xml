@@ -231,7 +231,8 @@
 	        targetClasses="org.jcvi.jillion.*"
 	        targetTests="org.jcvi.jillion*"
 	        reportDir="${reports}/PIT"
-	        sourceDir="${src}"/>
+	        sourceDir="${src}"	    	
+	    	outputFormats="HTML,XML" /> <!-- required for jenkins plugin--> 
 	</target>
 	
 	<target name="report.jacoco"
