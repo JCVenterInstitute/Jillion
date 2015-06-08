@@ -229,7 +229,7 @@
 	        pitClasspath="pitest.path"
 	        classPath="mutation.path"
 	        targetClasses="org.jcvi.jillion.*"
-	        targetTests="org.jcvi.jillion*"
+	        targetTests="org.jcvi.jillion.*"
 	        reportDir="${reports}/PIT"
 	        sourceDir="${src}"	    	
 	    	outputFormats="HTML,XML" /> <!-- required for jenkins plugin--> 
