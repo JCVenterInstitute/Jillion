@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.jcvi.jillion.assembly.consed.ConsedUtil;
 import org.jcvi.jillion.assembly.consed.phd.Phd;
@@ -152,7 +153,7 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
     private static final class FullLengthPhdParser2 extends AbstractAceFileVisitor{
 
     	private Map<String, Phd> phds=null;
-        private final DataStoreFilter contigFilter, readFilter;
+        private final Predicate<String> contigFilter, readFilter;
         private final byte lowQuality;
         private final byte highQuality;
         private final boolean oneContigOnly;
@@ -180,7 +181,7 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
 		public AceContigVisitor visitContig(final AceFileVisitorCallback callback,
 				String contigId, int numberOfBases, final int numberOfReads,
 				int numberOfBaseSegments, boolean reverseComplemented) {
-			if(contigFilter.accept(contigId)){				
+			if(contigFilter.test(contigId)){				
 				return new AbstractAceContigVisitor() {
 					int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(numberOfReads);
 					final Map<String, Direction> directions = new HashMap<String, Direction>(mapSize);
@@ -189,7 +190,7 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
 					@Override
 					public void visitAlignedReadInfo(String readId,
 							Direction dir, int gappedStartOffset) {
-						if(readFilter.accept(readId)){
+						if(readFilter.test(readId)){
 							directions.put(readId, dir);
 						}
 					}
@@ -205,7 +206,7 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
 
 					@Override
 					public AceContigReadVisitor visitBeginRead(String readId, int gappedLength) {
-						if(readFilter.accept(readId)){
+						if(readFilter.test(readId)){
 							return new IndividualReadPhdBuilderVisitor(readId, gappedLength, directions.get(readId));
 						}
 						return null;
@@ -280,8 +281,8 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
     	
     	
     	private final AceParser parser;
-    	private DataStoreFilter readFilter = DataStoreFilters.alwaysAccept();
-    	private DataStoreFilter contigFilter = DataStoreFilters.alwaysAccept();
+    	private Predicate<String> readFilter = DataStoreFilters.alwaysAccept();
+    	private Predicate<String> contigFilter = DataStoreFilters.alwaysAccept();
     	
     	private PhredQuality lowQuality = PhredQuality.valueOf(DEFAULT_LOW_QUALITY);
     	private PhredQuality highQuality = PhredQuality.valueOf(DEFAULT_HIGH_QUALITY);
@@ -364,6 +365,19 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
     	 * @throws NullPointerException if filter is null.
     	 */
     	public Builder contigFilter(DataStoreFilter filter){
+    		return contigFilter((Predicate<String>)filter);
+    	}
+    	
+    	/**
+    	 * Set the {@link DataStoreFilter} to use to only 
+    	 * consider contigs that pass the filter.  If this method
+    	 * is not called, then all contigs are included in the datastore.
+    	 * @param filter a {@link DataStoreFilter} to filter
+    	 * by <em>contigId</em>; can not be null.
+    	 * @return this.
+    	 * @throws NullPointerException if filter is null.
+    	 */
+    	public Builder contigFilter(Predicate<String> filter){
     		if(filter ==null){
     			throw new NullPointerException("contigFilter can not be null");
     		}
