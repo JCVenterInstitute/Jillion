@@ -48,6 +48,7 @@ import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -131,9 +132,9 @@ public final class IOUtil {
      * @see #deleteIgnoreError(File)
      */
     public static void delete(File file) throws IOException{
-        if(file !=null && file.exists() && !file.delete()){
-            throw new IOException("unable to delete "+ file);
-        }
+    	if(file !=null){
+    		Files.deleteIfExists(file.toPath());
+    	}
     }
     /**
      * Tries to delete the given File but doesn't

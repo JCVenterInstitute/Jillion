@@ -34,6 +34,9 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystem;
+import java.nio.file.Path;
+import java.nio.file.spi.FileSystemProvider;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,17 +52,58 @@ public class TestIOUtil_deleteDir {
         File singleFile= createMock(File.class);       
         return singleFile;
     }
-    private File createMockFile(){
+    
+    /*
+     *   private static FileSystemProvider provider(Path path) {
+        return path.getFileSystem().provider();
+    }
+     */
+    private void createDeleteSuccessfulPathMocks(File file) throws IOException{
+    	  Path mockPath = createMock(Path.class);
+          expect(file.toPath()).andReturn(mockPath);
+          
+          FileSystem fs = createMock(FileSystem.class);
+          
+          FileSystemProvider fsp = createMock(FileSystemProvider.class);
+          
+         expect(mockPath.getFileSystem()).andReturn(fs);
+         
+         expect(fs.provider()).andReturn(fsp);
+         
+         expect(fsp.deleteIfExists(mockPath)).andReturn(true);
+         
+         replay(mockPath, fs, fsp);
+    }
+    
+    private void createUnsuccessfulDeletePath(File file, IOException expectedException) throws IOException{
+    	Path mockPath = createMock(Path.class);
+        expect(file.toPath()).andReturn(mockPath);
+        
+        FileSystem fs = createMock(FileSystem.class);
+        
+        FileSystemProvider fsp = createMock(FileSystemProvider.class);
+        
+       expect(mockPath.getFileSystem()).andReturn(fs);
+       
+       expect(fs.provider()).andReturn(fsp);
+       
+       expect(fsp.deleteIfExists(mockPath)).andThrow(expectedException);
+       
+       replay(mockPath, fs, fsp);
+    }
+    
+    private File createMockFile() throws IOException{
         File singleFile= createMock(File.class);
         expect(singleFile.exists()).andStubReturn(true);
         expect(singleFile.isDirectory()).andReturn(false);
-        expect(singleFile.delete()).andReturn(true);
+        
+        createDeleteSuccessfulPathMocks(singleFile);
         return singleFile;
     }
-    private File createMockDir(File...subFiles){
+    private File createMockDir(File...subFiles) throws IOException{
         File dir=createMockDirThatIsNotDeleted(subFiles);
         
-        expect(dir.delete()).andReturn(true);
+        createDeleteSuccessfulPathMocks(dir);
         return dir;
     }
     private File createMockDirThatIsNotDeleted(File...subFiles){
@@ -70,11 +114,12 @@ public class TestIOUtil_deleteDir {
         return dir;
     }
     
-    private File createMockFileThatCantBeDeleted(){
+    private File createMockFileThatCantBeDeleted(IOException expectedException) throws IOException{
         File singleFile= createMock(File.class);
         expect(singleFile.exists()).andStubReturn(true);
         expect(singleFile.isDirectory()).andReturn(false);
-        expect(singleFile.delete()).andReturn(false);
+      //  expect(singleFile.delete()).andReturn(false);
+        createUnsuccessfulDeletePath(singleFile, expectedException);
         return singleFile;
     }
     private File createNonExistentMockFile(){
@@ -98,14 +143,17 @@ public class TestIOUtil_deleteDir {
     }
     
     @Test
-    public void errorOnDeleteShouldThrowIOException(){
-        File singleFile = createMockFileThatCantBeDeleted();
+    public void errorOnDeleteShouldThrowIOException() throws IOException{
+    	
+    	IOException expected = new IOException("expected");
+    	
+        File singleFile = createMockFileThatCantBeDeleted(expected);
         replay(singleFile);
         try {
             IOUtil.recursiveDelete(singleFile);
             fail("if can't be deleted should throw IOException");
         } catch (IOException e) {
-            assertEquals("unable to delete "+ singleFile, e.getMessage());
+           assertEquals(e, expected);
         }
         verify(singleFile);
     }
@@ -166,9 +214,13 @@ public class TestIOUtil_deleteDir {
     }
     
     @Test
-    public void nestedDeleteFailsShouldThrowIOExceptionAndStopDeleting(){
+    public void nestedDeleteFailsShouldThrowIOExceptionAndStopDeleting() throws IOException{
+    	IOException expected = new IOException("expected");
+    	
         File[] subSubFiles = new File[]{
-                createMockFile(),createMockFileThatCantBeDeleted(),createMockFileThatIsNeverAccessed()};
+                createMockFile(),
+                createMockFileThatCantBeDeleted(expected),
+                createMockFileThatIsNeverAccessed()};
         File subDir = createMockDirThatIsNotDeleted(subSubFiles);
         File[] subFiles = new File[]{
                 createMockFileThatIsNeverAccessed(),createMockFileThatIsNeverAccessed()};
@@ -186,6 +238,7 @@ public class TestIOUtil_deleteDir {
             IOUtil.recursiveDelete(dir);
             fail("failure to delete file should throw IOException");
         } catch (IOException e) {
+        	assertEquals(e, expected);
             verify(dir,subDir);
             verifyAll(subFiles);
             verifyAll(subSubFiles);
