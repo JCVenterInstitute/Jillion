@@ -7,7 +7,7 @@ import org.jcvi.jillion.core.Sequence;
 
 public interface VariableWidthSlice<T, S extends Sequence<T>> {
 
-	Stream<VariableWidthSliceElement<T>> elements();
+	Stream<? extends VariableWidthSliceElement<T>> elements();
 	
 	int getCoverageDepth();
 	

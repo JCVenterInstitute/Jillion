@@ -18,7 +18,7 @@ public class SingleNucleotideSliceMap implements VariableWidthSliceMap<Nucleotid
 	}
 	
 	@Override
-	public VariableWidthSlice<Nucleotide, NucleotideSequence> getSlice(int offset) {
+	public SingleNucleotideSlice getSlice(int offset) {
 		return slices[offset];
 	}
 

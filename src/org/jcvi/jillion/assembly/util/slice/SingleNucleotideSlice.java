@@ -1,9 +1,9 @@
 package org.jcvi.jillion.assembly.util.slice;
 
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -19,7 +19,7 @@ public class SingleNucleotideSlice implements VariableWidthSlice<Nucleotide, Nuc
 	 */
 	private static final Map<Nucleotide, NucleotideSequence> SEQ_MAP;
 	
-	private final List<VariableWidthSliceElement<Nucleotide>> list = new ArrayList<VariableWidthSliceElement<Nucleotide>>();
+	private final Map<Nucleotide, SingleNucleotideSliceElement> map = new EnumMap<Nucleotide, SingleNucleotideSliceElement>(Nucleotide.class);
 	private final NucleotideSequence refSeq;
 	
 	
@@ -38,7 +38,8 @@ public class SingleNucleotideSlice implements VariableWidthSlice<Nucleotide, Nuc
 		for(int i=0; i<numberOfNucleotideTypes; i++){
 			int count = builder.counts[i];
 			if(count>0){
-				list.add(new SingleNucleotideSliceElement(Nucleotide.getByOrdinal(i), count));
+				Nucleotide n = Nucleotide.getByOrdinal(i);
+				map.put(n, new SingleNucleotideSliceElement(n, count));
 			}
 		}
 		refSeq = SEQ_MAP.get(builder.ref);
@@ -51,19 +52,27 @@ public class SingleNucleotideSlice implements VariableWidthSlice<Nucleotide, Nuc
 		return refSeq;
 	}
 
-
+	public int getCountFor(Nucleotide n){
+		Objects.requireNonNull(n);
+		
+		SingleNucleotideSliceElement ret =map.get(n);
+		if(ret ==null){
+			return 0;
+		}
+		
+		return ret.getCount();
+		
+	}
 
 	@Override
 	public int getCountFor(List<Nucleotide> sliceElementSeq) {
-		if(sliceElementSeq.isEmpty()){
+		int seqLength = sliceElementSeq.size();
+		if(seqLength !=1){
 			return 0;
 		}
-		for(VariableWidthSliceElement<Nucleotide> e : list){
-			if(e.get().equals(sliceElementSeq)){
-				return e.getCount();
-			}
-		}
-		return 0;
+		Nucleotide n =sliceElementSeq.get(0);
+		return getCountFor(n);
+		
 	}
 
 
@@ -78,7 +87,7 @@ public class SingleNucleotideSlice implements VariableWidthSlice<Nucleotide, Nuc
 	@Override
 	public int getCoverageDepth() {
 		int coverage=0;
-		for(VariableWidthSliceElement<Nucleotide> e : list){
+		for(VariableWidthSliceElement<Nucleotide> e : map.values()){
 			coverage +=e.getCount();
 		}
 		return coverage;
@@ -87,15 +96,15 @@ public class SingleNucleotideSlice implements VariableWidthSlice<Nucleotide, Nuc
 
 
 	@Override
-	public Stream<VariableWidthSliceElement<Nucleotide>> elements() {
-		return list.stream();
+	public Stream<SingleNucleotideSliceElement> elements() {
+		return map.values().stream();
 	}
 	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + list.hashCode();
+		result = prime * result + map.hashCode();
 		return result;
 	}
 	@Override
@@ -111,13 +120,13 @@ public class SingleNucleotideSlice implements VariableWidthSlice<Nucleotide, Nuc
 		}
 		if (obj instanceof SingleNucleotideSlice) {
 			SingleNucleotideSlice other = (SingleNucleotideSlice) obj;
-			if (!list.equals(other.list)) {
+			if (!map.equals(other.map)) {
 				return false;
 			}
 			return true;
 		}
 		VariableWidthSlice<?,?> other = (VariableWidthSlice<?,?>) obj;
-		return list.equals(other.elements().collect(Collectors.toList()));
+		return map.equals(other.elements().collect(Collectors.toList()));
 	}
 
 	public static class Builder{
@@ -152,7 +161,7 @@ public class SingleNucleotideSlice implements VariableWidthSlice<Nucleotide, Nuc
 
 	@Override
 	public String toString() {
-		return "SingleNucleotideSlice [list=" + list + "]";
+		return "SingleNucleotideSlice [list=" + map + "]";
 	}
 
 }
