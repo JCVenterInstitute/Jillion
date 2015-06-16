@@ -73,7 +73,7 @@ public class VariableWidthNucleotideSlice implements VariableWidthSlice<Nucleoti
 	}
 
 	@Override
-	public Stream<VariableWidthSliceElement<Nucleotide>> elements() {
+	public Stream<? extends VariableWidthSliceElement<Nucleotide>> elements() {
 		return list.stream();
 	}
 	
