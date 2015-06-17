@@ -126,7 +126,9 @@ public class SingleNucleotideSlice implements VariableWidthSlice<Nucleotide, Nuc
 			return true;
 		}
 		VariableWidthSlice<?,?> other = (VariableWidthSlice<?,?>) obj;
-		return map.equals(other.elements().collect(Collectors.toList()));
+		return map.equals(other.elements()
+				.map(o-> (VariableWidthSlice<?,?>)o)
+				.collect(Collectors.toList()));
 	}
 
 	public static class Builder{
