@@ -46,6 +46,10 @@ public class TestAbstractBlockingClosableIteratorExceptions {
          */
         private static final long serialVersionUID = -7886752742909496815L;
         
+        public ExpectedException(String message){
+        	super(message);
+        }
+        
     }
     
     private List<String> names = Arrays.asList("moe","larry","curly", "shemp","curly joe", "joe");
@@ -75,12 +79,13 @@ public class TestAbstractBlockingClosableIteratorExceptions {
         */
         @Override
         protected void backgroundThreadRunMethod() {
-            for(int i=0; i<numberOfRecordsUntilThrowException && i<list.size(); i++){
+        	int i=0;
+            for(; i<numberOfRecordsUntilThrowException && i<list.size(); i++){
                 String obj = list.get(i);
 				this.blockingPut(obj);
             }
             if(numberOfRecordsUntilThrowException < list.size()){
-                throw new ExpectedException();
+                throw new ExpectedException(list.get(i));
             }
             
         }
@@ -89,52 +94,57 @@ public class TestAbstractBlockingClosableIteratorExceptions {
     
     @Test
     public void iterateOverAllNames(){
-        TestDouble iter = new TestDouble(names);
-        iter.start();        
-        Iterator<String> expectedIter = names.iterator();
-        while(expectedIter.hasNext()){
-            assertTrue(iter.hasNext());
-            assertEquals(expectedIter.next(), iter.next());
+        try(TestDouble iter = new TestDouble(names)){
+	        iter.start();        
+	        Iterator<String> expectedIter = names.iterator();
+	        while(expectedIter.hasNext()){
+	            assertTrue(iter.hasNext());
+	            assertEquals(expectedIter.next(), iter.next());
+	        }
+	        assertFalse(iter.hasNext());
         }
-        assertFalse(iter.hasNext());
     }
     
     @Test
-    public void backgroundThreadThrowsExceptionShouldCatchOnHasNextOrNext(){
-        TestDouble iter = new TestDouble(names, 2);
-        iter.start();  
+    public void backgroundThreadThrowsExceptionShouldCatchOnHasNextOrNext() throws InterruptedException{
+       try( TestDouble iter = new TestDouble(names, 2)){
+	        iter.start();  
+	        
+	        iter.next(); //moe
+	        //depending on thread scheduling
+	        //the throw can happen on either of the 
+	        //next 2 next() or hasNext() calls
+	        //the easiest way to test is to just wrap both 
+	        //in a try.
+	        try{
+	        	Thread.sleep(1000);
+	        	 iter.next(); 
+	        	 Thread.sleep(1000);
+	             iter.next();
+	            fail("should throw exception");
+	        }catch(ExpectedException e){
+	            //expected
+	        }
+	        
+	        try{
+	            iter.next();
+	            fail("should throw exception");
+	        }catch(ExpectedException e){
+	          //expected
+	        }
         
-        iter.next(); //moe
-        //depending on thread scheduling
-        //the throw can happen on either of the 
-        //next 2 next() or hasNext() calls
-        //the easiest way to test is to just wrap both 
-        //in a try.
-        try{
-        	 iter.next(); 
-             iter.next();
-            fail("should throw exception");
-        }catch(ExpectedException e){
-            //expected
-        }
-        
-        try{
-            iter.next();
-            fail("should throw exception");
-        }catch(ExpectedException e){
-          //expected
-        }
+	}
     }
     
     @Test
     public void closeBeforeExceptionShouldCloseWithoutProblems(){
-        TestDouble iter = new TestDouble(names, 3);
-        iter.start();  
-        
-        iter.next(); //moe
-       // iter.next(); //larry
-        IOUtil.closeAndIgnoreErrors(iter);
-        assertFalse(iter.hasNext());
-        
+        try(TestDouble iter = new TestDouble(names, 3)){
+	        iter.start();  
+	        
+	        iter.next(); //moe
+	       // iter.next(); //larry
+	        IOUtil.closeAndIgnoreErrors(iter);
+	        assertFalse(iter.hasNext());
+        }
     }
 }
