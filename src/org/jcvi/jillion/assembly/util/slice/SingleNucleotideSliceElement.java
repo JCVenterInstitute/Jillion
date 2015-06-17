@@ -2,19 +2,21 @@ package org.jcvi.jillion.assembly.util.slice;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 
 public class SingleNucleotideSliceElement implements VariableWidthSliceElement<Nucleotide>{
 
-	private int count;
-	private byte nucleotideOrdinal;
+	private final int count;
+	private final Nucleotide base;
 	
 	public SingleNucleotideSliceElement(Nucleotide base, int count){
 		if(count <0){
 			throw new IllegalArgumentException("count must be >=0");
 		}
-		nucleotideOrdinal = base.getOrdinalAsByte();
+		Objects.requireNonNull(base);
+		this.base = base;
 		this.count = count;
 	}
 	
@@ -28,7 +30,7 @@ public class SingleNucleotideSliceElement implements VariableWidthSliceElement<N
 	@Override
 	public List<Nucleotide> get() {
 
-		return Collections.singletonList(Nucleotide.getByOrdinal(nucleotideOrdinal));
+		return Collections.singletonList(base);
 	}
 
 	@Override
@@ -40,7 +42,7 @@ public class SingleNucleotideSliceElement implements VariableWidthSliceElement<N
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + count;
-		result = prime * result + nucleotideOrdinal;
+		result = prime * result + base.hashCode();
 		return result;
 	}
 	@Override
@@ -60,7 +62,7 @@ public class SingleNucleotideSliceElement implements VariableWidthSliceElement<N
 			if (count != other.count) {
 				return false;
 			}
-			if (nucleotideOrdinal != other.nucleotideOrdinal) {
+			if (base != other.base) {
 				return false;
 			}
 			return true;
@@ -79,7 +81,7 @@ public class SingleNucleotideSliceElement implements VariableWidthSliceElement<N
 	}
 	@Override
 	public String toString() {
-		return "SingleNucleotideSliceElement ["	+ Nucleotide.getByOrdinal(nucleotideOrdinal) + ", count=" + count + "]";
+		return "SingleNucleotideSliceElement ["	+ base + ", count=" + count + "]";
 	}
 	
 	
