@@ -103,7 +103,9 @@ public class VariableWidthNucleotideSlice implements VariableWidthSlice<Nucleoti
 			return true;
 		}
 		VariableWidthSlice<?,?> other = (VariableWidthSlice<?,?>) obj;
-		return list.equals(other.elements().collect(Collectors.toList()));
+		return list.equals(other.elements()
+								.map(o-> (VariableWidthSlice<?,?>)o)
+								.collect(Collectors.toList()));
 	}
 
 	public static class Builder{
