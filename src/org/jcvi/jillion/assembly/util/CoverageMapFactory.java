@@ -41,6 +41,7 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Rangeable;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.iter.ArrayIterator;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
@@ -396,7 +397,7 @@ final class CoverageMapFactory {
 	    
 	    @Override
 	    public Iterator<CoverageRegion<V>> iterator() {
-	        return Arrays.asList(regions).iterator();
+	        return new ArrayIterator<CoverageRegion<V>>(regions, false);
 	    }
 	
 	   

@@ -33,14 +33,38 @@ public class ArrayIterator<T> implements Iterator<T> {
 	 * Create a new ArrayInterator instance
 	 * that will iterate over a defensive copy
 	 * of the input array.
-	 * @param array
+	 * 
+	 * @param array the array to iterate over; can not be null.
+	 * 
 	 * @throws NullPointerException if array is null.
+	 * 
+	 * @apiNote this is the same as {@code new ArrayIterator<>(array, true) }
+	 * 
+	 * @see #ArrayIterator(Object[], boolean)
 	 */
 	public ArrayIterator(T[] array) {
+		this(array, true);
+	}
+	
+	/**
+	 * Create a new ArrayInterator instance
+	 * that will iterate over a defensive copy
+	 * of the input array.
+	 * @param array the array to iterate over; can not be null.
+	 * @param makeDefensiveCopy should a defensive copy of the input array
+	 * be used.
+	 * @throws NullPointerException if array is null.
+	 */
+	public ArrayIterator(T[] array, boolean makeDefensiveCopy) {
 		if(array==null){
 			throw new NullPointerException("array can not be null");
 		}
-		this.array = Arrays.copyOf(array, array.length);
+		if(makeDefensiveCopy){
+			this.array = Arrays.copyOf(array, array.length);
+		}else{
+			this.array = array;
+		}
+		
 	}
 
 	@Override

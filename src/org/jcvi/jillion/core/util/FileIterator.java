@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 
+import org.jcvi.jillion.core.util.iter.ArrayIterator;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 
 /**
@@ -156,7 +157,7 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
         //sort files by name this makes
         //iterating deterministic
         Arrays.sort(listFiles, FILE_NAME_SORTER);
-        return Arrays.asList(listFiles).iterator();
+        return new ArrayIterator<>(listFiles, false);
     }
     /**
      * Returns a new iterator with the same
