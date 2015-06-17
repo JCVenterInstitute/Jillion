@@ -253,7 +253,16 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 		if(range==null){
 			throw new NullPointerException("range can not be null");
 		}
+		//make sure begining of range is in bounds
+		if(range.getBegin() < 0){
+			throw new IndexOutOfBoundsException();
+		}
+		//make sure range is in bounds
+		if(range.getEnd()>= length){
+			throw new IndexOutOfBoundsException(range.getEnd() + " is beyond end of sequence (length = " + length + ")");
+		}
 		Nucleotide[] array = asNucleotideArray();
+		
 		return Arrays.copyOfRange(array, (int)range.getBegin(), (int)range.getEnd()+1);
 	}
 	private Nucleotide[] asNucleotideArray() {
