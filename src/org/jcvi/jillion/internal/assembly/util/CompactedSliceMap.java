@@ -37,6 +37,7 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.iter.ArrayIterator;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
 /**
@@ -153,7 +154,7 @@ public final class CompactedSliceMap implements SliceMap {
      */
     @Override
     public Iterator<Slice> iterator() {
-        return Arrays.<Slice>asList(slices).iterator();
+        return new ArrayIterator<Slice>(slices, false);
     }
 
     /**

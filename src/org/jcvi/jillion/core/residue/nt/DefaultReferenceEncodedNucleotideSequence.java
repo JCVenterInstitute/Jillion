@@ -35,6 +35,7 @@ import java.util.TreeMap;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.util.iter.ArrayIterator;
 import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
 import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
 import org.jcvi.jillion.internal.core.util.ArrayUtil;
@@ -227,13 +228,13 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
     @Override
 	public Iterator<Nucleotide> iterator() {
     	Nucleotide[] array = asNucleotideArray();
-    	return Arrays.asList(array).iterator();
+    	return new ArrayIterator<>(array);
 	}
 
 	@Override
 	public Iterator<Nucleotide> iterator(Range range) {		
 		Nucleotide[] array = asNucleotideArray(range);
-		return Arrays.asList(array).iterator();
+		return new ArrayIterator<>(array);
 	}
 
 

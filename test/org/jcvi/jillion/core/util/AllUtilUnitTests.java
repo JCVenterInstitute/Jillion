@@ -21,6 +21,7 @@
 package org.jcvi.jillion.core.util;
 
 import org.jcvi.jillion.core.util.iter.TestAbstractBlockingClosableIteratorExceptions;
+import org.jcvi.jillion.core.util.iter.TestArrayIterator;
 import org.jcvi.jillion.core.util.iter.TestByteArrayIterator;
 import org.jcvi.jillion.core.util.iter.TestChainedIterator;
 import org.jcvi.jillion.core.util.iter.TestCharArrayIterator;
@@ -30,6 +31,7 @@ import org.jcvi.jillion.core.util.iter.TestLongArrayIterator;
 import org.jcvi.jillion.core.util.iter.TestPeekableIterator;
 import org.jcvi.jillion.core.util.iter.TestPeekableStreamingIterator;
 import org.jcvi.jillion.core.util.iter.TestShortArrayIterator;
+import org.jcvi.jillion.core.util.iter.TestSingleElementIterator;
 import org.jcvi.jillion.core.util.iter.TestStreamingIterator;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -38,6 +40,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
+    	TestSingleElementIterator.class,
+    	
     	TestArrayUtil_IntArray.class,
     	
     	TestObjectsUtil.class,
@@ -77,6 +81,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestUnsignedByteArray.class,
         TestUnsignedShortArray.class,
         TestUnsignedIntArray.class,
+        
+        TestArrayIterator.class,
         
         TestGenomeStatistics.class,
         

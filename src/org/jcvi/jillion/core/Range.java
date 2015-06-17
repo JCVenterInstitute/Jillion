@@ -28,7 +28,6 @@ package org.jcvi.jillion.core;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -885,7 +884,7 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
         //anything in this that doesn't intersect with other
         Range intersection = intersection(other);
         if(intersection.isEmpty()){
-            return Arrays.asList(this);
+            return Collections.singletonList(this);
         }
         List<Range> complementedRanges = new ArrayList<Range>();
         if(intersection.getBegin()!=Long.MIN_VALUE){
@@ -932,7 +931,7 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
     		return Collections.singletonList(this);
     	}
     	
-    	List<Range> completeExonRange = Arrays.asList(this);
+    	List<Range> completeExonRange = Collections.singletonList(this);
 		List<Range> introns = completeExonRange;
 		for(Range exon : exons){
 			 introns = exon.complementFrom(introns);

@@ -21,13 +21,13 @@
 package org.jcvi.jillion.core.residue.nt;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.util.iter.SingleElementIterator;
 import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
 import org.jcvi.jillion.internal.core.util.ArrayUtil;
 
@@ -331,7 +331,7 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
         	}else{
         		gapOffsets = new int[0];
         	}
-            return encodeNucleotides(Arrays.asList(glyph).iterator(),gapOffsets, 1);
+            return encodeNucleotides(new SingleElementIterator<>(glyph), gapOffsets, 1);
             
         }
         
