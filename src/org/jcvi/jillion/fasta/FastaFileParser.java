@@ -25,6 +25,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,6 +40,18 @@ import org.jcvi.jillion.internal.core.io.TextLineParser;
  * {@code FastaFileParser} will parse a single 
  * fasta encoded file and call the appropriate
  * visitXXX methods on the given {@link FastaVisitor}.
+ * 
+ * As of Jillion 5.0, {@code FastaFileParser} supports
+ * non-redundant text fasta files like
+ * the ones described in
+ * <a href="ftp://ftp.ncbi.nih.gov/blast/db/README">ftp://ftp.ncbi.nih.gov/blast/db/README</a>.
+ * If non-redundant records are encountered, then the visitXXX methods will be called
+ * in a way such that it will appear as if they were redundantly listed.  The non-redundant
+ * defline will be split and each identical sequence will be visited separately with each
+ * of the many ids for it.  Creating {@link org.jcvi.jillion.fasta.FastaVisitorCallback.FastaVisitorMemento}s
+ * (if supported by the {@link FastaParser} implementation) are also non-redundant aware
+ * and will correctly only visit the subset of non-redundant records according to when
+ * the memento was created.
  * @author dkatzel
  *
  */
@@ -48,7 +62,10 @@ public abstract class FastaFileParser implements FastaParser{
 	 * comment which will return null if there is no comment. (Group 2 is not to be used)
 	 */
 	private static final Pattern DEFLINE_LINE_PATTERN = Pattern.compile("^>(\\S+)(\\s+(.*))?");
+	
+	private static final Pattern REDUNDANT_DEFLINE_LINE_PATTERN = Pattern.compile("^(\\S+)(\\s+(.*))?");
 
+	private static final char CONTROL_A = 1;
 	/**
 	 * Create a new {@link FastaFileParser} instance
 	 * that will parse the given fasta encoded
@@ -107,12 +124,16 @@ public abstract class FastaFileParser implements FastaParser{
 			throw new NullPointerException("visitor can not be null");
 		}
 	}
-	@SuppressWarnings("PMD.AvoidDeeplyNestedIfStmts")
 	protected final void parseFile(TextLineParser parser, FastaVisitor visitor) throws IOException {
+		parseFile(parser, visitor, 0);
+	}
+	@SuppressWarnings("PMD.AvoidDeeplyNestedIfStmts")
+	protected final void parseFile(TextLineParser parser, FastaVisitor visitor, int initialRedundantIndex) throws IOException {
 		AtomicBoolean keepParsing=new AtomicBoolean(true);
 		FastaRecordVisitor recordVisitor =null;
 		long currentOffset=parser.getPosition();
 		AbstractFastaVisitorCallback callback = createNewCallback(currentOffset, keepParsing);
+		int currentInitialRedundantStartIndex= initialRedundantIndex;
 		
 		while(keepParsing.get() && parser.hasNextLine()){
 			String line=parser.nextLine();
@@ -132,10 +153,21 @@ public abstract class FastaFileParser implements FastaParser{
 							continue;
 						}
 					}
-					String id = matcher.group(1);
-		            String comment = matcher.group(3);		            
-		            callback = createNewCallback(currentOffset, keepParsing);
-		            recordVisitor = visitor.visitDefline(callback, id, comment);
+					
+					//2015-07-09: check for control-A characters
+					//which is used in non-redundant fastas
+					if(line.indexOf(CONTROL_A) == -1){
+						//normal fasta record
+						String id = matcher.group(1);
+			            String comment = matcher.group(3);		            
+			            callback = createNewCallback(currentOffset, keepParsing);
+			            recordVisitor = visitor.visitDefline(callback, id, comment);
+					}else{
+						handleNonRedundantRecord(parser, trimmedLine, visitor, currentOffset, keepParsing, currentInitialRedundantStartIndex);
+						currentInitialRedundantStartIndex = 0;
+					}
+					
+				
 				}else{
 					//not a defline use current record visitor
 					if(recordVisitor !=null){
@@ -148,6 +180,57 @@ public abstract class FastaFileParser implements FastaParser{
 		
 		handleEndOfFile(visitor, keepParsing, recordVisitor);
 
+	}
+	private void handleNonRedundantRecord(TextLineParser parser, String defline, 
+			FastaVisitor visitor, long offsetOfBeginningOfDefline, 
+			AtomicBoolean keepParsing, int initialRedundantStartIndex) throws IOException {
+		//there are multiple redundant records included
+		//on this defline that each have the same sequence but different ids.
+		
+		//read the whole record body and then call the visit methods
+		//in case the visitor wants to skip some of the records
+		//split on control-A character (ASCII value of 1)
+		//substring(1) to remove '>' char
+		String[] redundantDeflines = defline.substring(1).split("[\u0001]");
+		List<String> bodyLines = new ArrayList<String>();
+		
+		while(parser.hasNextLine()){
+			String nextLine = parser.peekLine();
+			if(nextLine.charAt(0) == '>'){
+				//next defline found
+				break;
+			}
+			//consume next line we just peeked
+			bodyLines.add(parser.nextLine());
+		}
+		
+		for(int i=initialRedundantStartIndex; keepParsing.get() && i< redundantDeflines.length ; i++){
+			String redundantDefline = redundantDeflines[i];
+		
+			Matcher matcher = REDUNDANT_DEFLINE_LINE_PATTERN.matcher(redundantDefline);
+			if(!matcher.find()){
+				throw new IOException("error parsing redundant defline [" + i + "] from " + defline);
+			}
+			String id = matcher.group(1);
+            String comment = matcher.group(3);
+            //need to make a new type of callback that notes which of the redundant records we
+            //are parsing since the offset is the same!
+            AbstractFastaVisitorCallback redundantCallback = createNewRedundantCallback(offsetOfBeginningOfDefline, i , keepParsing);
+            
+            FastaRecordVisitor recordVisitor = visitor.visitDefline(redundantCallback, id, comment);
+            if(recordVisitor !=null){
+            	for(int j=0; keepParsing.get() && j< bodyLines.size(); j++){
+            		recordVisitor.visitBodyLine(bodyLines.get(j));
+            	}
+            	if(keepParsing.get()){
+            		recordVisitor.visitEnd();
+            	}else{
+            		recordVisitor.halted();
+            	}
+            }
+		}
+		
+		
 	}
 	protected void handleEndOfFile(FastaVisitor visitor,
 			AtomicBoolean keepParsing, FastaRecordVisitor recordVisitor) {
@@ -170,6 +253,7 @@ public abstract class FastaFileParser implements FastaParser{
 	}
 
 	protected abstract AbstractFastaVisitorCallback createNewCallback(long currentOffset, AtomicBoolean keepParsing);
+	protected abstract AbstractFastaVisitorCallback createNewRedundantCallback(long offsetOfBeginningOfDefline, int i, AtomicBoolean keepParsing);
 	
 	private abstract static class AbstractFastaVisitorCallback implements FastaVisitorCallback{
 		private final AtomicBoolean keepParsing;
@@ -227,6 +311,29 @@ public abstract class FastaFileParser implements FastaParser{
 		
 	}
 	
+	private static class RedundantMementoCallback extends AbstractFastaVisitorCallback{
+
+		private final long offset;
+		private final int redundantIndex;
+		
+		public RedundantMementoCallback(long offset, int redundantIndex, AtomicBoolean keepParsing){
+			super(keepParsing);
+			this.offset = offset;
+			this.redundantIndex = redundantIndex;
+		}
+
+		@Override
+		public boolean canCreateMemento() {
+			return true;
+		}
+
+		@Override
+		public FastaVisitorMemento createMemento() {
+			return new RedundantOffsetMemento(offset, redundantIndex);
+		}
+		
+	}
+	
 	private static class OffsetMemento implements FastaVisitorMemento{
 		private final long offset;
 
@@ -237,6 +344,21 @@ public abstract class FastaFileParser implements FastaParser{
 		public final long getOffset() {
 			return offset;
 		}
+		
+	}
+	
+	private static class RedundantOffsetMemento extends OffsetMemento{
+		private final int redundantIndex;
+
+		public RedundantOffsetMemento(long offset, int redundantIndex) {
+			super(offset);
+			this.redundantIndex = redundantIndex;
+		}
+
+		public int getRedundantIndex() {
+			return redundantIndex;
+		}
+
 		
 	}
 	
@@ -264,6 +386,9 @@ public abstract class FastaFileParser implements FastaParser{
 		protected AbstractFastaVisitorCallback createNewCallback(long currentOffset, AtomicBoolean keepParsing) {
 			return new MementoCallback(currentOffset, keepParsing);
 		}
+		
+		
+		
 		public void parse(FastaVisitor visitor, FastaVisitorMemento memento) throws IOException{
 			if(!(memento instanceof OffsetMemento)){
 				throw new IllegalStateException("unknown memento instance : "+memento);
@@ -275,7 +400,12 @@ public abstract class FastaFileParser implements FastaParser{
 			try{
 				inputStream = new BufferedInputStream(new RandomAccessFileInputStream(fastaFile, startOffset));
 				TextLineParser parser = new TextLineParser(inputStream, startOffset);
-				parseFile(parser, visitor);
+				if(memento instanceof RedundantOffsetMemento){
+					int redundantIndex = ((RedundantOffsetMemento)memento).getRedundantIndex();
+					parseFile(parser, visitor, redundantIndex);
+				}else{
+					parseFile(parser, visitor);
+				}
 			}finally{
 				IOUtil.closeAndIgnoreErrors(inputStream);
 			}
@@ -289,6 +419,14 @@ public abstract class FastaFileParser implements FastaParser{
 		public boolean canParse() {
 			return true;
 		}
+
+
+		@Override
+		protected AbstractFastaVisitorCallback createNewRedundantCallback(
+				long offsetOfBeginningOfDefline, int redundantIndex,
+				AtomicBoolean keepParsing) {
+			return new RedundantMementoCallback(offsetOfBeginningOfDefline, redundantIndex, keepParsing);
+		}
 		
 		
 	}
@@ -300,6 +438,11 @@ public abstract class FastaFileParser implements FastaParser{
 			this.inputStream = new OpenAwareInputStream(inputStream);
 		}
 		protected AbstractFastaVisitorCallback createNewCallback(long currentOffset, AtomicBoolean keepParsing) {
+			return new NoMementoCallback(keepParsing);
+		}
+		
+		@Override
+		protected AbstractFastaVisitorCallback createNewRedundantCallback(long offsetOfBeginningOfDefline, int i, AtomicBoolean keepParsing) {
 			return new NoMementoCallback(keepParsing);
 		}
 		
@@ -347,6 +490,7 @@ public abstract class FastaFileParser implements FastaParser{
 		public boolean canCreateMemento() {
 			return false;
 		}
+		
 		
 		
 	}

@@ -25,9 +25,16 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.JoinedStringBuilder;
+import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.internal.fasta.AbstractResidueSequenceFastaRecordWriter;
 /**
  * {@code NucleotideFastaRecordWriterBuilder} is a Builder
@@ -39,6 +46,9 @@ import org.jcvi.jillion.internal.fasta.AbstractResidueSequenceFastaRecordWriter;
  *
  */
 public final class NucleotideFastaRecordWriterBuilder extends AbstractResidueSequenceFastaRecordWriter.Builder<Nucleotide, NucleotideSequence, NucleotideFastaRecord,NucleotideFastaRecordWriter> {
+		private boolean nonRedundant;
+		private Integer expectedCapacity;
+		
 		
 		/**
 		 * Create a new Builder that will use
@@ -70,10 +80,113 @@ public final class NucleotideFastaRecordWriterBuilder extends AbstractResidueSeq
 		public NucleotideFastaRecordWriterBuilder(OutputStream out) {
 			super(out);
 		}
+		/**
+		 * Write out the Fasta as a
+		 * non-redundant database (like BLAST's nr).
+		 * Identical sequences will have their deflines merged
+		 * into a single defline where each record is separated by control-A characters
+		 * invisible to most programs.
+		 * <br/>
+		 * In the example below both entries gi|1469284 and gi|1477453 
+		 * have the same sequence, in every respect:
+		 * <pre>
+		 * >gi|3023276|sp|Q57293|AFUC_ACTPL   Ferric transport ATP-binding protein afuC
+		 * ^Agi|1469284|gb|AAB05030.1|   afuC gene product ^Agi|1477453|gb|AAB17216.1|
+		 * afuC [Actinobacillus pleuropneumoniae]
+		 * ATGAACAACGATTTTCTGGTGCTGAAAAACATTACCAAAAGCTTTGGCAAAGCGACCGTG
+		 * ATTGATAACCTGGATCTGGTGATTAAACGCGGCACCATGGTGACCCTGCTGGGCCCGAGC
+		 * GGCTGCGGCAAAACCACCGTGCTGCGCCTGGTGGCGGGCCTGGAAAACCCGACCAGCGGC
+		 * CAGATTTTTATTGATGGCGAAGATGTGACCAAAAGCAGCATTCAGAACCGCGATATTTGC
+		 * ATTGTGTTTCAGAGCTATGCGCTGTTTCCGCATATGAGCATTGGCGATAACGTGGGCTAT
+		 * GGCCTGCGCATGCAGGGCGTGAGCAACGAAGAACGCAAACAGCGCGTGAAAGAAGCGCTG
+		 * GAACTGGTGGATCTGGCGGGCTTTGCGGATCGCTTTGTGGATCAGATTAGCGGCGGCCAG
+		 * CAGCAGCGCGTGGCGCTGGCGCGCGCGCTGGTGCTGAAACCGAAAGTGCTGATTCTGGAT
+		 * GAACCGCTGAGCAACCTGGATGCGAACCTGCGCCGCAGCATGCGCGAAAAAATTCGCGAA
+		 * CTGCAGCAGCGCCTGGGCATTACCAGCCTGTATGTGACCCATGATCAGACCGAAGCGTTT
+		 * GCGGTGAGCGATGAAGTGATTGTGATGAACAAAGGCACCATTATGCAGAAAGCGCGCCAG
+		 * AAAATTTTTATTTATGATCGCATTCTGTATAGCCTGCGCAACTTTATGGGCGAAAGCACC
+		 * ATTTGCGATGGCAACCTGAACCAGGGCACCGTGAGCATTGGCGATTATCGCTTTCCGCTG
+		 * CATAACGCGGCGGATTTTAGCGTGGCGGATGGCGCGTGCCTGGTGGGCGTGCGCCCGGAA
+		 * GCGATTCGCCTGACCGCGACCGGCGAAACCAGCCAGCGCTGCCAGATTAAAAGCGCGGTG
+		 * TATATGGGCAACCATTGGGAAATTGTGGCGAACTGGAACGGCAAAGATGTGCTGATTAAC
+		 * GCGAACCCGGATCAGTTTGATCCGGATGCGACCAAAGCGTTTATTCATTTTACCGAACAG
+		 * GGCATTTTTCTGCTGAACAAAGAA
+		 * </pre>
+		 * 
+		 * @return this
+		 * 
+		 * @since 5.0
+		 */
+		public NucleotideFastaRecordWriterBuilder makeNonRedundant(){
+			this.nonRedundant = true;
+			this.expectedCapacity = null;
+			return this;
+		}
+		/**
+		 * Write out the Fasta as a
+		 * non-redundant database (like BLAST's nr).
+		 * Identical sequences will have their deflines merged
+		 * into a single defline where each record is separated by control-A characters
+		 * invisible to most programs.
+		 * <br/>
+		 * In the example below both entries gi|1469284 and gi|1477453 
+		 * have the same sequence, in every respect:
+		 * <pre>
+		 * >gi|3023276|sp|Q57293|AFUC_ACTPL   Ferric transport ATP-binding protein afuC
+		 * ^Agi|1469284|gb|AAB05030.1|   afuC gene product ^Agi|1477453|gb|AAB17216.1|
+		 * afuC [Actinobacillus pleuropneumoniae]
+		 * ATGAACAACGATTTTCTGGTGCTGAAAAACATTACCAAAAGCTTTGGCAAAGCGACCGTG
+		 * ATTGATAACCTGGATCTGGTGATTAAACGCGGCACCATGGTGACCCTGCTGGGCCCGAGC
+		 * GGCTGCGGCAAAACCACCGTGCTGCGCCTGGTGGCGGGCCTGGAAAACCCGACCAGCGGC
+		 * CAGATTTTTATTGATGGCGAAGATGTGACCAAAAGCAGCATTCAGAACCGCGATATTTGC
+		 * ATTGTGTTTCAGAGCTATGCGCTGTTTCCGCATATGAGCATTGGCGATAACGTGGGCTAT
+		 * GGCCTGCGCATGCAGGGCGTGAGCAACGAAGAACGCAAACAGCGCGTGAAAGAAGCGCTG
+		 * GAACTGGTGGATCTGGCGGGCTTTGCGGATCGCTTTGTGGATCAGATTAGCGGCGGCCAG
+		 * CAGCAGCGCGTGGCGCTGGCGCGCGCGCTGGTGCTGAAACCGAAAGTGCTGATTCTGGAT
+		 * GAACCGCTGAGCAACCTGGATGCGAACCTGCGCCGCAGCATGCGCGAAAAAATTCGCGAA
+		 * CTGCAGCAGCGCCTGGGCATTACCAGCCTGTATGTGACCCATGATCAGACCGAAGCGTTT
+		 * GCGGTGAGCGATGAAGTGATTGTGATGAACAAAGGCACCATTATGCAGAAAGCGCGCCAG
+		 * AAAATTTTTATTTATGATCGCATTCTGTATAGCCTGCGCAACTTTATGGGCGAAAGCACC
+		 * ATTTGCGATGGCAACCTGAACCAGGGCACCGTGAGCATTGGCGATTATCGCTTTCCGCTG
+		 * CATAACGCGGCGGATTTTAGCGTGGCGGATGGCGCGTGCCTGGTGGGCGTGCGCCCGGAA
+		 * GCGATTCGCCTGACCGCGACCGGCGAAACCAGCCAGCGCTGCCAGATTAAAAGCGCGGTG
+		 * TATATGGGCAACCATTGGGAAATTGTGGCGAACTGGAACGGCAAAGATGTGCTGATTAAC
+		 * GCGAACCCGGATCAGTTTGATCCGGATGCGACCAAAGCGTTTATTCATTTTACCGAACAG
+		 * GGCATTTTTCTGCTGAACAAAGAA
+		 * </pre>
+		 * If this method is called multiple times, then only the last
+		 * method call will be respected. (Last call wins)
+		 * 
+		 * @param expectedSize the expected number of non-redundant records.
+		 * This is only uses as a performance optimization to initialize
+		 * internal datastructures.  Must be >0.
+		 * 
+		 * @return this
+		 * 
+		 * @throws IllegalArgumentException if expectedSize < 1
+		 * 
+		 * @since 5.0
+		 */
+		public NucleotideFastaRecordWriterBuilder makeNonRedundant(int expectedSize){
+
+			if(expectedSize <1){
+				throw new IllegalArgumentException("expected size must be >= 1");					
+			}
+			this.expectedCapacity = expectedSize;			
+			this.nonRedundant = true;
+			return this;
+		}
 
 		@Override
 		protected NucleotideFastaRecordWriter create(
 				OutputStream out, int numberOfResiduesPerLine, Charset charSet, String eol) {
+			
+			if(nonRedundant){
+				if(expectedCapacity ==null){
+					return new NonRedundantNucleotideSequenceFastaWriter(out, numberOfResiduesPerLine, charSet, eol);
+				}
+				return new NonRedundantNucleotideSequenceFastaWriter(out, numberOfResiduesPerLine, charSet, eol, expectedCapacity);
+			}
 			return new NucleotideSequenceFastaRecordWriterImpl(out, numberOfResiduesPerLine, charSet,eol);
 		}
 		
@@ -83,5 +196,195 @@ public final class NucleotideFastaRecordWriterBuilder extends AbstractResidueSeq
 					int numberOfResiduesPerLine, Charset charSet, String eol) {
 				super(out, numberOfResiduesPerLine, charSet,eol);
 			}
+		}
+		
+		private static interface NonRedundantEntry{
+			String getId();
+			String getComment();
+			
+			default String getNonRedundantId(){
+				String id = getId();
+				String comment = getComment();
+				StringBuilder builder = new StringBuilder(id.length() + (comment ==null?0 : comment.length()+1));
+				builder.append(id);
+				if(comment !=null){
+					builder.append(' ').append(comment);
+				}
+				return builder.toString();
+			}
+			
+		}
+		
+		private static final class CommentedNonRedundantEntry implements NonRedundantEntry{
+			private final String id, comment;			
+			
+			public CommentedNonRedundantEntry(String id, String comment) {
+				this.id = id;
+				this.comment = comment;
+			}
+
+			@Override
+			public String getId() {
+				return id;
+			}
+
+			@Override
+			public String getComment() {
+				return comment;
+			}
+
+			@Override
+			public int hashCode() {
+				final int prime = 31;
+				int result = 1;
+				result = prime * result +  id.hashCode();
+				result = prime * result	+  comment.hashCode();
+				
+				return result;
+			}
+
+			@Override
+			public boolean equals(Object obj) {
+				if (this == obj) {
+					return true;
+				}
+				if (obj == null) {
+					return false;
+				}
+				if (!(obj instanceof CommentedNonRedundantEntry)) {
+					return false;
+				}
+				CommentedNonRedundantEntry other = (CommentedNonRedundantEntry) obj;
+				if (!getComment().equals(other.getComment())) {
+					return false;
+				}
+				if (!getId().equals(other.getId())) {
+					return false;
+				}
+				return true;
+			}
+			
+			
+			
+		}
+		
+		private static final class NoCommentedNonRedundantEntry implements NonRedundantEntry{
+			private final String id;			
+			
+			public NoCommentedNonRedundantEntry(String id) {
+				this.id = id;
+			}
+
+			@Override
+			public String getId() {
+				return id;
+			}
+
+			@Override
+			public String getComment() {
+				return null;
+			}
+
+			@Override
+			public int hashCode() {
+				final int prime = 31;
+				int result = 1;
+				result = prime * result +  id.hashCode();
+				result = prime * result	; //null comment 
+				return result;
+			}
+
+			@Override
+			public boolean equals(Object obj) {
+				if (this == obj) {
+					return true;
+				}
+				if (obj == null) {
+					return false;
+				}
+				if (!(obj instanceof CommentedNonRedundantEntry)) {
+					return false;
+				}
+				CommentedNonRedundantEntry other = (CommentedNonRedundantEntry) obj;
+				if (other.getComment() !=null) {
+					return false;
+				}
+				if (!getId().equals(other.getId())) {
+					return false;
+				}
+				return true;
+			}
+			
+			
+			
+		}
+		
+		private static final class NonRedundantNucleotideSequenceFastaWriter implements NucleotideFastaRecordWriter{
+
+			private static final char CONTROL_A = 0x1;
+			private final Map<NucleotideSequence, Set<NonRedundantEntry>> nonRedundantMap;
+			
+			private final NucleotideSequenceFastaRecordWriterImpl delegateWriter;
+			
+			public NonRedundantNucleotideSequenceFastaWriter(OutputStream out,
+					int numberOfResiduesPerLine, Charset charSet, String eol){
+				this(out, numberOfResiduesPerLine, charSet, eol, 1000);
+			}
+			public NonRedundantNucleotideSequenceFastaWriter(OutputStream out,
+					int numberOfResiduesPerLine, Charset charSet, String eol, int expectedSize){
+				nonRedundantMap = new LinkedHashMap<>(MapUtil.computeMinHashMapSizeWithoutRehashing(expectedSize));
+				
+				delegateWriter = new NucleotideSequenceFastaRecordWriterImpl(out, numberOfResiduesPerLine, charSet, eol);
+			}
+			
+			@Override
+			public void close() throws IOException {
+				try{
+					for(Entry<NucleotideSequence, Set<NonRedundantEntry>> entry : nonRedundantMap.entrySet()){
+						NucleotideSequence sequence = entry.getKey();
+						
+						String ids =JoinedStringBuilder.create(entry.getValue())
+											.glue(CONTROL_A)
+											.transform(NonRedundantEntry::getNonRedundantId)
+											.build();
+						
+						delegateWriter.write(ids, sequence);
+					}
+				}finally{
+					delegateWriter.close();
+				}
+				
+			}
+
+			@Override
+			public void write(NucleotideFastaRecord record) throws IOException {
+				write(record.getId(), record.getSequence(), record.getComment());
+				
+			}
+
+			@Override
+			public void write(String id, NucleotideSequence sequence)
+					throws IOException {
+				write(id, sequence, null);
+				
+			}
+
+			@Override
+			public void write(String id, NucleotideSequence sequence,
+					String optionalComment) throws IOException {
+				NonRedundantEntry entry;
+				if(optionalComment ==null){
+					entry = new NoCommentedNonRedundantEntry(id);
+				}else{
+					entry = new CommentedNonRedundantEntry(id, optionalComment);
+				}
+				
+				nonRedundantMap.computeIfAbsent(sequence, k-> new LinkedHashSet<>())
+									.add(entry);
+				
+				
+			}
+			
+			
 		}
 }
