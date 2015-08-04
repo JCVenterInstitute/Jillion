@@ -36,6 +36,7 @@ public enum SamAttributeType {
 /*
 	A [!-~] Printable character
 	i [-+]?[0-9]+ Singed 32-bit integer
+	I [-+]?[0-9]+ Unsinged 32-bit integer
 	f [-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)? Single-precision 
 	oating number
 	Z [ !-~]+ Printable string, including space
@@ -172,6 +173,92 @@ public enum SamAttributeType {
 				//check that it can be parsed into an int
 				try{
 					Integer.parseInt(value.toString());
+				}catch(NumberFormatException e){
+					throw new InvalidValueTypeException("not a valid int : '" + value + "'", e);
+				}
+			}
+			
+		}
+		
+	},
+	
+	
+	
+	UNSIGNED_INT('I'){
+
+		@Override
+		public boolean isUnsignedInt() {
+			return true;
+		}
+
+		@Override
+		public long getUnsignedInt(Object obj) {			
+			return Long.parseLong(obj.toString());
+		}
+
+		@Override
+		public String textEncode(Object o) {
+			//this ugliness to to type check
+			//that the object is a integer
+			//or a type that can be converted into an integer
+			//ex: "1" or Integer.valueOf(1) etc.
+			try{
+				return Long.toString(Long.parseLong(o.toString()));
+			}catch(Exception e){
+				throw new IllegalArgumentException("not an u_int", e);
+			}
+		}
+		
+		
+		@Override
+		public void encodeInBam(Object o, ByteBuffer b) throws IOException {
+			long i = getUnsignedInt(o);
+			//according to BAM spec
+			//we can choose to represent this int
+			//in a smaller number of bytes if it fits
+			//but we have to change the type accordingly
+			if(i >=Byte.MIN_VALUE && i <= Byte.MAX_VALUE){
+				b.put((byte)'c');
+				b.put((byte)i);
+			}else if(i >=0 && i <= 255){
+				b.put((byte)'C');
+				b.put((byte)i);
+			}else if(i >=Short.MIN_VALUE && i <= Short.MAX_VALUE){
+				b.put((byte)'s');
+				b.putShort((short)i);
+			}else if(i >=0 && i <= 65535){
+				b.put((byte)'S');
+				b.putShort((short)i);
+			}else if(i <= Integer.MAX_VALUE){
+				//the spec also mentions unsigned int
+				//but I don't think we can actually store
+				//that in this attribute type?
+				//since SAM only allows up to signed ints.
+				b.put((byte)'i');
+				b.putInt((int)i);
+			}else{
+				b.put((byte)'I');
+				b.putInt((int)i);
+			}
+		}
+
+		@Override
+		public void binaryEncode(Object o, ByteBuffer out) throws IOException {
+			//no-op since we override encoideInBam()
+			
+		}
+
+		@Override
+		public Object decode(String value) {
+			return Long.parseLong(value);
+		}
+
+		@Override
+		public void validate(Object value) throws InvalidValueTypeException {			
+			if(!(value instanceof Long)){
+				//check that it can be parsed into an int
+				try{
+					Long.parseLong(value.toString());
 				}catch(NumberFormatException e){
 					throw new InvalidValueTypeException("not a valid int : '" + value + "'", e);
 				}
@@ -756,6 +843,13 @@ public enum SamAttributeType {
 		return false;
 	}
 	public int getSignedInt(Object obj){
+		throw new UnsupportedOperationException();
+	}
+	
+	public boolean isUnsignedInt(){
+		return false;
+	}
+	public long getUnsignedInt(Object obj){
 		throw new UnsupportedOperationException();
 	}
 	

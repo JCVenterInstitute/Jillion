@@ -335,6 +335,12 @@ public class TestQualitySequenceBuilder {
 		QualitySequence seq =sut.build();
 		assertEquals(0,seq.getLength());
 	}
+	@Test
+	public void buildEmptySequenceInitializedtoLength0(){
+		QualitySequenceBuilder sut = new QualitySequenceBuilder(0);
+		QualitySequence seq =sut.build();
+		assertEquals(0,seq.getLength());
+	}
 	
 	@Test
 	public void insert(){

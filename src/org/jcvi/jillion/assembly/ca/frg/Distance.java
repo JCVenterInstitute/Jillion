@@ -49,6 +49,9 @@ public final class Distance {
     private final float stdDev;
     /**
      * Builds a new {@link Distance} using the given mean and standard deviation.
+     * 
+     * @param min the minimum distance.
+     * @param max the max distance.
      * @param mean the mean distance.
      * @param stdDev the standard deviation.
      * @return a new {@link Distance}.

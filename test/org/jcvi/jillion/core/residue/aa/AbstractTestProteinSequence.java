@@ -92,5 +92,13 @@ public abstract class AbstractTestProteinSequence {
 		assertEquals(sut, deserializedSequence);
 	}
 	
+	@Test
+	public void hasPyrrolysine(){
+		ProteinSequence seq = encode(
+				AminoAcidUtil.parse("GTOSDAKIPDNQAGHEKTMTCLLPALAGANTLYGAGMLELGMTFSMEQLVIDNDIIKMTKK").toArray(new AminoAcid[0])
+				);
+		assertEquals(AminoAcid.Pyrrolysine, seq.get(2));
+	}
+	
 	
 }

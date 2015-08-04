@@ -105,6 +105,20 @@ public class TestCigar {
 		assertEquals("3H5S1M3S6H", cigar.toCigarString());
 	}
 	
+	
+	@Test
+	public void splicedAlignment(){
+		NucleotideSequence read = new NucleotideSequenceBuilder("GTGTAACCCTCAGAATA").build();
+		Cigar cigar = Cigar.parse("9M32N8M");
+		
+		assertEquals(
+				"GTGTAACCC"+
+				"--------------------------------"
+				+ "TCAGAATA",
+				cigar.toGappedTrimmedSequence(read).toString()
+				);
+	}
+	
 	@Test
 	public void toGappedTrimmedSequence(){
 		String cigarString = "3H5S8M2I4M1D3M3S6H";

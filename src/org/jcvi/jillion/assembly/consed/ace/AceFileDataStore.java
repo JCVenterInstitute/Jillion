@@ -47,6 +47,9 @@ public interface AceFileDataStore extends ContigDataStore<AceAssembledRead,AceCo
 	 * </ol>
 	 * @return the total number of 
 	 * reads in all the contigs in this datastore, will always be >= 0.
+	 * 
+	 * @throws DataStoreException if there is a problem reading the 
+	 * data from this datastore.
 	 */
 	long getNumberOfTotalReads() throws DataStoreException;
 	 /**
@@ -55,6 +58,9 @@ public interface AceFileDataStore extends ContigDataStore<AceAssembledRead,AceCo
      * in the ace file in the order they are
      * declared in the file.
      * @return a new {@link StreamingIterator}; never null.
+     * 
+     * @throws DataStoreException if there is a problem reading the 
+	 * data from this datastore.
      */
 	StreamingIterator<WholeAssemblyAceTag> getWholeAssemblyTagIterator() throws DataStoreException;
 	/**
@@ -63,6 +69,9 @@ public interface AceFileDataStore extends ContigDataStore<AceAssembledRead,AceCo
      * in the ace file in the order they are
      * declared in the file.
      * @return a new {@link StreamingIterator}; never null.
+     * 
+     * @throws DataStoreException if there is a problem reading the 
+	 * data from this datastore.
      */
 	StreamingIterator<ReadAceTag> getReadTagIterator() throws DataStoreException;
 	/**
@@ -71,6 +80,9 @@ public interface AceFileDataStore extends ContigDataStore<AceAssembledRead,AceCo
      * in the ace file in the order they are
      * declared in the file.
      * @return a new {@link StreamingIterator}; never null.
+     * 
+     * @throws DataStoreException if there is a problem reading the 
+	 * data from this datastore.
      */
 	StreamingIterator<ConsensusAceTag> getConsensusTagIterator()  throws DataStoreException;
 }

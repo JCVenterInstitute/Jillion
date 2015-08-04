@@ -52,6 +52,11 @@ import org.junit.runners.Suite.SuiteClasses;
         
         TestSerializeDefaultNucleotideSequence.class,
         TestSerializeReferenceEncodedNucleotideSequence.class,
+        
+        
+        TestDefaultNucleotideSequenceIteratorSubRange.class,
+        TestReferenceEncodedSequenceIteratorSubRange.class,
+        
         TestNucleotideSequencePermuter.class
     }
 )

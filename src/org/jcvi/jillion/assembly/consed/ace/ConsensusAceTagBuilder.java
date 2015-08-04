@@ -53,12 +53,16 @@ public final class ConsensusAceTagBuilder implements Builder<ConsensusAceTag>{
         private final StringBuilder dataBuilder = new StringBuilder();
         
         /**
-         * @param id
-         * @param type
-         * @param creator
-         * @param creationDate
-         * @param location
-         * @param isTransient
+         * Create a new {@link ConsensusAceTagBuilder} instance.
+         * 
+         * @param id the id of this tag.
+         * @param type the type.
+         * @param creator who (or which program) created this tag.
+         * @param creationDate the date this tag was created.
+         * @param location the region on the consensus that this tag
+         * is tagging.
+         * @param isTransient should this tag be persisted to the next
+         * ace version if this ace file is updated.
          */
         public ConsensusAceTagBuilder(String id, String type, String creator,
                 Date creationDate, Rangeable location, boolean isTransient) {

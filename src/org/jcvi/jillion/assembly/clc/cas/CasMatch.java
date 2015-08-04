@@ -34,6 +34,14 @@ public interface CasMatch {
     boolean readHasMutlipleMatches();
     boolean hasMultipleAlignments();
     boolean readIsPartOfAPair();
+    /**
+     * Get the {@link CasAlignment} the assembler
+     * has chosen to use for this read.
+     * If no match reported then
+     * this will return {@code null}.
+     * @return a {@link CasAlignment} if a match
+     * is reported; or {@code null}.
+     */
     CasAlignment getChosenAlignment();
     long getNumberOfMatches();
     long getNumberOfReportedAlignments();

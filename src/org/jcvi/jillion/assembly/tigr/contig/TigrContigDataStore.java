@@ -20,8 +20,8 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.tigr.contig;
 
-import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.assembly.ContigDataStore;
 
-public interface TigrContigDataStore extends DataStore<TigrContig>{
+public interface TigrContigDataStore extends ContigDataStore<TigrContigRead,TigrContig>{
 
 }

@@ -232,13 +232,15 @@ public final class ConsedUtil {
      * Get the ace file from the given editDir
      * with the given ace file prefix and
      * the given version.
-     * @param editDir
+     * @param editDir the consed edit dir the ace file is in,
+     * if this parameter is null, then no editDir exists.
      * @param filenamePrefix prefix to ace file name
      * before the ".ace.$version"; can not be null.
      * @param version the ace version number;
      * must be >= 1
      * @return the {@link File} to that ace file;
-     * or {@code null} if the specified ace does not exist.
+     * or {@code null} if the specified ace does not exist
+     * or the editDir is {@code null} .
      * @throws IllegalArgumentException if version < 1.
      */
     public static File getAceFile(File editDir, String filenamePrefix, int version){

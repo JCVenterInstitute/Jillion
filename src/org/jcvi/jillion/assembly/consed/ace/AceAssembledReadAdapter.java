@@ -40,7 +40,16 @@ public class AceAssembledReadAdapter implements AceAssembledRead{
     private final AssembledRead placedRead;
     private final PhdInfo phdInfo;
     /**
-     * @param placedRead
+     * Create a new {@link AceAssembledReadAdapter}
+     * instance.
+     * 
+     * @param placedRead the {@link AssembledRead} to adapt; can not be null.
+     * 
+     * @param phdDate the faked {@link Date} to use as the phd date;
+     * can not be null.
+     * @param traceFile the {@link File} to point to as the source file
+     * that contained this trace data (sanger chromatogram, sff file etc).
+     * 
      */
     public AceAssembledReadAdapter(AssembledRead placedRead,Date phdDate, File traceFile) {
       this(placedRead,

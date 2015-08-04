@@ -389,10 +389,11 @@ public final class GrowableByteArray implements Iterable<Byte>{
 		int start = (int)range.getBegin();
 		int end = (int) range.getEnd() +1;
 		if(start <0){
-			throw new IllegalArgumentException("start must be >=0");
+			start=0;
 		}
 		if(end >currentLength){
-			end = currentLength-1;
+			//end is exclusive
+			end = currentLength;
 		}
 		
 		return new GrowableByteArray(Arrays.copyOfRange(data, start, end));
