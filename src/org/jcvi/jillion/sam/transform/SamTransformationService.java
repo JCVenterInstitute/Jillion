@@ -22,6 +22,7 @@ package org.jcvi.jillion.sam.transform;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -46,6 +47,7 @@ import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 import org.jcvi.jillion.sam.SamParser;
 import org.jcvi.jillion.sam.SamParserFactory;
 import org.jcvi.jillion.sam.SamRecord;
+import org.jcvi.jillion.sam.SamRecordFlags;
 import org.jcvi.jillion.sam.SamVisitor;
 import org.jcvi.jillion.sam.VirtualFileOffset;
 import org.jcvi.jillion.sam.cigar.Cigar;
@@ -196,8 +198,26 @@ public final class SamTransformationService implements AssemblyTransformationSer
 															.build();
 					
 				
+					//if the read is mated SAM doesn't put the /1 or /2 ?
+					//what happens in CASAVA 1.8 reads?
+					String readName = record.getQueryName();
+					EnumSet<SamRecordFlags> flags = record.getFlags();
+					//from the SAMv1 spec
+					//The leftmost segment has a plus sign and the rightmost has a
+					//minus sign. The sign of segments in the middle is undefined. 
+					//It is set as 0 for single-segment
+					//template or when the information is unavailable.
+					if(flags.contains(SamRecordFlags.HAS_MATE_PAIR)){
+						if(record.getObservedTemplateLength() >=0){
+							//first read
+							readName +="/1";
+						}else{
+							readName +="/2";
+						}
+						
+					}
 					//update valid range?
-					transformer.aligned(record.getQueryName(), rawSequence, quals, null, null, 
+					transformer.aligned(readName, rawSequence, quals, null, null, 
 							refName, 
 							gappedStartOffset, 
 							dir, 
@@ -257,8 +277,10 @@ public final class SamTransformationService implements AssemblyTransformationSer
 	}
 	
 	private int appendBases(NucleotideSequenceBuilder builder, Iterator<Nucleotide> ungappedReadBaseIterator, GrowableIntArray refGaps, int refOffset, CigarElement e){
+		
 		int ret = refOffset;
 		for(int i=0; i<e.getLength(); i++){
+			
 			if(e.getOp() != CigarOperation.INSERTION){
 				while(refGaps.binarySearch(ret) >=0){
 					//insert gap
@@ -266,7 +288,13 @@ public final class SamTransformationService implements AssemblyTransformationSer
 					ret++;
 				}
 			}
-			if(e.getOp() ==CigarOperation.DELETION || e.getOp() ==CigarOperation.PADDING){
+			if(e.getOp() == CigarOperation.PADDING){
+				//remove this many gaps
+				builder.delete(new Range.Builder(1)
+										.shift(builder.getLength()-1)
+										.build());
+			}
+			else if(e.getOp() ==CigarOperation.DELETION ||e.getOp() == CigarOperation.SKIPPED){
 				//insert gap
 				builder.append(Nucleotide.Gap);
 				

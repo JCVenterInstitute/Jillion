@@ -145,11 +145,24 @@ public abstract class FastqFileParser implements FastqParser{
         //(contains 0 bases) we still need to read a quality line
         do{    	
     		line = parser.nextLine();
+    		if(line ==null){
+    			//end of file before we got enough qualities
+    			throw new IOException(
+        				String.format("too few quality values for current record: "
+        						+ "expected %d but was %d", expectedQualities, qualityBuilder.length()));
+        	
+    		}
     		qualityBuilder.append(line.trim());
     	}while(qualityBuilder.length() < expectedQualities);
     	if(qualityBuilder.length()> expectedQualities){
+    		//we actually might have read too much and are somewhere inside the next 
+    		//record 
+    		//(reading the defline and possibly even the bases line of the next record)
+    		
     		throw new IOException(
-    				String.format("too many quality values for current record: expected %d but was %d", expectedQualities, qualityBuilder.length()));
+    				String.format("incorrect number of quality values for current record: expected %d "
+    						+ "but was %d if there are too few qualities the parser may have "
+    						+ "read into the next record", expectedQualities, qualityBuilder.length()));
     	}
     	recordVisitor.visitEncodedQualities(qualityBuilder.toString());
     	

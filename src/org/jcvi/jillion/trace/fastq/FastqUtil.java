@@ -228,6 +228,22 @@ public final class FastqUtil {
     			minQuality = asciiValue;
     		}
     	}
+    	//if we get this far, we don't have 
+    	//any QVs ascii values < 59
+    	//we could still be sanger
+    	//and only have high quality qvs
+    	//(possible but unlikely outside of testing)
+    	//or only low super low illumina/solexa qvs
+    	//most qvs are between 1-40 so check to see if we have
+    	//any values beyond that.
+    	
+		if(maxQuality <  74){
+			//we have QVs up to sanger 40
+			//or illumina qv 9
+			//assume sanger
+			return FastqQualityCodec.SANGER;
+		}
+    	
     	if(hasSolexaOnlyValues){
     		return FastqQualityCodec.SOLEXA;
     	}
@@ -296,6 +312,9 @@ public final class FastqUtil {
     	private long numIllumina=0;
     	private long numPossiblySolexa=0;
     	private long numEither=0;
+    	
+    	private int overAllMin= Integer.MAX_VALUE;
+    	private int overallMax = Integer.MIN_VALUE;
 		@Override
 		public void visitNucleotides(NucleotideSequence nucleotides) {
 			//no-op			
@@ -357,8 +376,13 @@ public final class FastqUtil {
 	    		//or low quality illumina read
 	    		numEither++;
 	    	}
-	    	
-	    	
+	    	//update overall min/max
+	    	if(minQuality < overAllMin){
+	    		overAllMin = minQuality;
+	    	}
+	    	if(maxQuality > overallMax){
+	    		overallMax = maxQuality;
+	    	}
 		}
 
 		
@@ -391,6 +415,17 @@ public final class FastqUtil {
 			if(numSanger >0){
 				return FastqQualityCodec.SANGER;
 			}
+			//we could be either high quality sanger
+			//or low quality illumina.
+			//we have 0 def sanger and 0 def illumina
+			//AND
+			//we have QVs up to sanger 40
+			//or illumina qv 9:
+			//assume sanger
+			if(numIllumina==0 && overallMax <  74){
+				return FastqQualityCodec.SANGER;				
+			}
+			
 			//if we get this far than we use a 64 offset
 			//but don't yet know if we are solexa or illumina
 			if(numPossiblySolexa>0){

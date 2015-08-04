@@ -273,9 +273,15 @@ public class TestNucleotideSequenceBuilder {
         sut.insert(2, (NucleotideSequenceBuilder)null);
     }
     @Test(expected = IllegalArgumentException.class)
-    public void insertContentsOfOtherBuilderBeyondLastOffsetShouldThrowException(){
+    public void insertContentsOfOtherBuilder2BeyondLastOffsetShouldThrowException(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+        sut.insert(5, new NucleotideSequenceBuilder("-N-"));
+    }
+    @Test
+    public void insertContentsOfOtherBuilderBeyondLastOffsetShouldActLikeAppend(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.insert(4, new NucleotideSequenceBuilder("-N-"));
+        assertBuiltSequenceEquals("ACGT-N-",sut);
     }
     @Test(expected = IllegalArgumentException.class)
     public void insertContentsOfOtherBuilderAtNegativeOffsetShouldThrowException(){

@@ -98,7 +98,7 @@ public final class AssemblyUtil {
     }
     
     /**
-     * Reverse Compliment the given validRange with regards to its fullLength.
+     * Reverse Complement the given validRange with regards to its fullLength.
      * @param validRange the valid Range to reverseCompliment.
      * @param fullLength the full length of the untrimmed basecalls.
      * @return a new Range that corresponds to the reverse complemented valid range.
@@ -194,12 +194,9 @@ public final class AssemblyUtil {
      * of the range are in ungapped coordinate space) for the given
      * gapped {@link NucleotideSequence} and gapped {@link Range}.
      * @param gappedSequence the gapped {@link NucleotideSequence} needed
-     * to compute the ungapped coordinates from.  The resulting
-     * ungapped range will be in the same coordinate system that the
-     * input gapped range is in.
+     * to compute the ungapped coordinates from.  
      * @param gappedRange the Range of gapped coordinates.
-     * @return a new Range in the same coordinate system as the input
-     * range; never null.
+     * @return a new Range never null.
      * @throws NullPointerException if either argument is null.
      */
     public static Range toUngappedRange(final NucleotideSequence gappedSequence,

@@ -67,6 +67,7 @@ public enum AminoAcid implements Residue{
     //Selenocysteine - inserted as a post-translational modification
     Selenocysteine("Selenocysteine", "Sec", 'U'),
     
+    Pyrrolysine("Pyrrolysine", "Ply",'O'),
     Gap("Gap", "Gap", '-'){
 
 		@Override

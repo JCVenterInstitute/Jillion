@@ -56,6 +56,7 @@ import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.joda.time.DateTimeUtils;
 /**
  * {@code ConsedAssemblyTransformerBuilder}
  * will build an {@link AssemblyTransformer}
@@ -152,8 +153,10 @@ public class ConsedAssemblyTransformerBuilder {
 	 * Set the default quality value to use if an aligned read
 	 * does not have associated quality data.  If not called,
 	 * then the default is {@value #DEFAULT_QUALITY_VALUE}
-	 * @param qualityValue
-	 * @return
+	 * @param qualityValue the quality value to use;
+	 * must be between 0 and {@link Byte#MAX_VALUE}.
+	 * @return this.
+	 * @throws IllegalArgumentException if if qualityScore < 0 or > {@link Byte#MAX_VALUE}.
 	 */
 	public ConsedAssemblyTransformerBuilder setDefaultQualityValue(int qualityValue){
 		//Phredquality object does all validation for us
@@ -217,7 +220,7 @@ public class ConsedAssemblyTransformerBuilder {
 			this.defaultQualityValue = builder.defaultQualityValue;
 			
 			//add default
-			Date currentDate = new Date();
+			Date currentDate = new Date(DateTimeUtils.currentTimeMillis());
 			uriDates.put(null, currentDate);
 			comments.put(null, computeRequiredCommentsFor(null, currentDate));
 			

@@ -63,9 +63,9 @@ public final class ConsedNavigationWriter implements Closeable{
      * Create a partial consed navigation file without a title.
      * This should only be used if the navigation file creation is being split up 
      * into multiple pieces to be combined downstream.
-     * @param out
-     * @return
-     * @throws IOException
+     * @param out the outputStream to write to; can not be null.
+     * @return a new ConsedNavigationWriter
+     * @throws NullPointerException if out is {@code null}.
      */
     public static ConsedNavigationWriter createPartial(OutputStream out) throws IOException{
         return new ConsedNavigationWriter(null, out);

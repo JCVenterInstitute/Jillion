@@ -41,10 +41,11 @@ public final class WholeAssemblyAceTag extends AbstractDefaultAceTag {
 
     
     /**
-     * @param type
-     * @param creator
-     * @param creationDate
-     * @param data
+     * Create a new {@link WholeAssemblyAceTag}.
+     * @param type the type of tag.
+     * @param creator who (or which program) created this tag.
+     * @param creationDate when this tag was created.
+     * @param data the data for this tag.
      */
     public WholeAssemblyAceTag(String type, String creator,
             Date creationDate, String data) {

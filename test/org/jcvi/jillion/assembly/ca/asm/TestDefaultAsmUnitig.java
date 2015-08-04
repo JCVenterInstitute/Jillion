@@ -91,7 +91,9 @@ public class TestDefaultAsmUnitig {
 			
 			while(expectedIter.hasNext()){
 				assertTrue(actual.hasNext());
-				assertEquals(expectedIter.next(), actual.next());
+				T next = expectedIter.next();
+				T actualNext = actual.next();
+				assertEquals(next, actualNext);
 			}
 			assertFalse(actual.hasNext());
 		}finally{

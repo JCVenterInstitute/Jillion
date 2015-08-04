@@ -21,7 +21,6 @@
 package org.jcvi.jillion.assembly.ca.asm;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -205,7 +204,7 @@ final class DefaultAsmContig implements AsmContig{
         private final NucleotideSequence fullConsensus;
         private final NucleotideSequenceBuilder mutableConsensus;
         private String contigId;
-        private final Map<String, AsmAssembledReadBuilder>asmReadBuilderMap = new HashMap<String, AsmAssembledReadBuilder>();
+        private final Map<String, AsmAssembledReadBuilder>asmReadBuilderMap = new LinkedHashMap<String, AsmAssembledReadBuilder>();
    
         boolean isDegenerate;
         DefaultAsmContigBuilder(String id, NucleotideSequence consensus,boolean isDegenerate){

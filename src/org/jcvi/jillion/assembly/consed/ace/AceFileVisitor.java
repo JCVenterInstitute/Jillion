@@ -95,6 +95,9 @@ public interface AceFileVisitor {
      * @param creationDate the date that this tag was created.
      * @param isTransient a transient tag should not be preserved if the assembly
      * is re-assembled; returns {@code true} if transient; {@code false} otherwise.
+     * 
+     * @return a {@link AceConsensusTagVisitor} to be visited;
+     * or {@code null} if this tag should be skipped.
      */
     AceConsensusTagVisitor visitConsensusTag(String id, String type, String creator, long gappedStart, long gappedEnd, Date creationDate, boolean isTransient);
     

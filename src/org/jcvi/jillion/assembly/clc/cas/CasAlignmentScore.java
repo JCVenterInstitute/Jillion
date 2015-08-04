@@ -37,13 +37,14 @@ public interface CasAlignmentScore {
     
     int getMatchScore();
     /**
+     * Get the score for transitions from
      * A <=> G or C <=> T.
-     * @return
+     * @return the transition score.
      */
     int getTransitionScore();
     /**
-     * score of other differences that aren't transitions.
-     * @return
+     * Get the score of other differences that aren't transitions.
+     * @return the transversion score.
      */
     int getTransversionScore();
     
