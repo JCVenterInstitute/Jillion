@@ -59,7 +59,8 @@ public abstract class AlnFileParser implements AlnParser{
      * Regular expression of string that contains
      * valid nucleotide or amino acids.
      */
-    private static final String REGEX = "^([^*\\s]+)\\s+([\\-ACGTNVHDBWMRSYKILFQPEX]+)(\\s+\\d+)?$";
+	//MAFFT uses lowercase bases in aln output
+    private static final String REGEX = "^([^*\\s]+)\\s+([\\-ACGTNVHDBWMRSYKILFQPEXacgtnvhdbwmrsykilfqpex]+)(\\s+\\d+)?$";
     private static final Pattern ALIGNMENT_PATTERN = Pattern.compile(REGEX);
     private static final Pattern CONSERVATION_PATTERN = Pattern.compile("\\s+([-:\\. \\*]+)$");
     

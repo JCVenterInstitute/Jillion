@@ -174,9 +174,11 @@ public final class BtabWriterBuilder {
 					
 					fields.add(hsp.getHspScore()==null?"0.0" : hsp.getHspScore().toString());
 					
-					//add extra tab separator to match vics output
-					fields.add(hsp.getBitScore().toString()+"\t");
-				
+					
+					fields.add(hsp.getBitScore().toString());
+					//VHTNGS-1125 - add alignment length to output.
+					//This differs from VICS.  VICS had blank column
+					fields.add(Integer.toString((int)alignmentLength));
 					//hit def?
 					fields.add(hsp.getSubjectDefinition() ==null?"":hsp.getSubjectDefinition());
 					//frame?
