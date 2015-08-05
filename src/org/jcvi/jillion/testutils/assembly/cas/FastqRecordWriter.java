@@ -30,6 +30,16 @@ public final class FastqRecordWriter implements RecordWriter{
 		
 	}
 	
+	public FastqRecordWriter(File workingDir, String filename, int maxRecordsToWrite) throws IOException{
+		if(maxRecordsToWrite <1){
+			throw new IllegalArgumentException("max records can not < 1");
+		}
+		fastqFile = new File(workingDir, filename);
+		writer = new FastqRecordWriterBuilder(fastqFile).build();
+		maxNumberOfRecordsToWrite = maxRecordsToWrite;
+		
+	}
+	
 	@Override
 	public void close() throws IOException {
 		writer.close();

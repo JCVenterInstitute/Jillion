@@ -191,6 +191,11 @@ public final class SffRecordWriter implements RecordWriter{
 			sffFile = File.createTempFile("reads", ".sff", workingDir);
 		}
 		
+		public Builder(File workingDir, String filename) throws IOException{
+			
+			sffFile = new File(workingDir, filename);
+		}
+		
 		public Builder flowLength(int flowLength){
 			if(flowLength %4 !=0){
 				throw new IllegalArgumentException("flow length must be divisible by 4");
