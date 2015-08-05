@@ -7,7 +7,79 @@ change the behavior in any public API classes.  The order of changes is mostly
 chronological so the most important changes may not always be ordered first.
 
 ================
-Jillion 4.0 RC 5 - Added support for indexed BAM files and improvemented SAM/BAM API.
+Jillion 4.2
+================
+
+New Features
+------------
+
+1.  AminoAcid - Added Pyrrolysine 'O' to AminoAcid class and AminoAcidSequence
+    as well as Blosum matrices. 
+    
+2.  FastaFileParser - now supports non-redundant fasta files (parsing only)
+
+Bug Fixes
+----------
+
+1.  AlnFileParser - added lowercase basecall support which is used in MAFFT output.
+                    Jillion can now successfully parse .aln files produced by MAFFT.
+    
+2.  XMLBlastParser - If accession in subject is "No definition line found" will
+                     use subjectDefline instead.
+                     
+3.  PrimerDetector - Added guard clause if input sequence is empty, 
+                     then empty collection of hits is returned.
+                    
+API Changes
+-----------
+
+1.  Blast- BlastHit now has subjectDefline field instead of
+           subjectDeflineComment which only used to have the comment.
+           
+2.  BtabWriter - now puts alignment length in previously skipped column
+
+================
+Jillion 4.1 - internal release only
+================
+
+New Features
+------------
+1.  Added support for AminoAcid ambiguity codes in AminoAcid class AminoAcidSequence
+    as well as Blosum matrices. 
+    
+2.  Added support for Amino Acid 'U' Selenocystenine.
+
+API Changes
+-----------
+
+1.  removed getNucleotideSequenceBuilder from AssembledReadBuilder since we want
+    to control all sequence manipulations directly to keep read ranges in sync.
+    
+2.  Added method CoverageRegion.getLength() to avoid having to chain region.asRange().getLength()
+ 
+3.  Moved Frame class to residue package.
+
+4.  Added new class NucleotideSequencePermuter
+
+5.  Improved Javadoc
+
+Bug Fixes
+---------
+1.  Changed alignment resource loading from loading file to loading inputStream.
+    Getting the resource as a file doesn't work once Jillion has been jarred up.
+    
+2.  Modified AceContigBuilder and AceReadBuilder to callback to it's parent
+    builder to update contig left and right if the read size changes.
+    
+3.  added code to (Hopefully) stop validating the DTD which was
+    DDOS'ing NCBI when this code was used on the grid.
+    
+4.  FastqFileParser - Bug fix for unindexed Casava 1.8 read ids.
+
+5.  AceContigBuilder - Bug fix for inserting bases in ace contig that extend beyond original consensus
+
+================
+Jillion 4.0 RC 5 - Added support for indexed BAM files and improvements SAM/BAM API.
                    Bug fixes and performance improvements.  Added more javadoc.
 ================
 
