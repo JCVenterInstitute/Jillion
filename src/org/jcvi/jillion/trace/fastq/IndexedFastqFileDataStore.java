@@ -116,7 +116,7 @@ final class IndexedFastqFileDataStore{
 	public static FastqDataStore create(FastqParser parser,
 			FastqQualityCodec qualityCodec, DataStoreFilter filter)
 			throws IOException {
-		IndexedFastqFileDataStoreBuilderVisitor2 visitor = new IndexedFastqFileDataStoreBuilderVisitor2(parser, qualityCodec, filter);
+		MementoedFastqDataStoreBuilderVisitor visitor = new MementoedFastqDataStoreBuilderVisitor(parser, qualityCodec, filter);
     	
     	parser.parse(visitor);
     	return visitor.build();
@@ -126,14 +126,14 @@ final class IndexedFastqFileDataStore{
     
     
     
-    private static final class IndexedFastqFileDataStoreBuilderVisitor2 implements FastqVisitor{
+    private static final class MementoedFastqDataStoreBuilderVisitor extends AbstractFastqVisitor{
     	private final Map<String, FastqVisitorMemento> mementos = new LinkedHashMap<String,FastqVisitorMemento>();
     	private final FastqQualityCodec qualityCodec;
     	 private final FastqParser parser;
     	 private final DataStoreFilter filter;
     	 
     	 
-		public IndexedFastqFileDataStoreBuilderVisitor2(FastqParser parser,
+		public MementoedFastqDataStoreBuilderVisitor(FastqParser parser,
 				FastqQualityCodec qualityCodec, DataStoreFilter filter) {
 			this.parser = parser;
 			this.qualityCodec = qualityCodec;
@@ -155,14 +155,7 @@ final class IndexedFastqFileDataStore{
 			//always skip record bodies
 			return null;
 		}
-		@Override
-		public void visitEnd() {
-			//no-op			
-		}
-		@Override
-		public void halted(){
-			//no-op
-    	}
+		
     }
     
     private static final class IndexedFastqFileDataStoreImpl implements FastqDataStore{
@@ -280,7 +273,7 @@ final class IndexedFastqFileDataStore{
             return closed;
         }
         
-        private class SingleFastqRecordVistior implements FastqVisitor{
+        private class SingleFastqRecordVistior extends AbstractFastqVisitor{
         	private FastqRecord record;
     		@Override
     		public FastqRecordVisitor visitDefline(final FastqVisitorCallback callback,
@@ -297,14 +290,7 @@ final class IndexedFastqFileDataStore{
     			};
     		}
 
-    		@Override
-    		public void visitEnd() {
-    			//no-op			
-    		}
-    		@Override
-    		public void halted(){
-    			//no-op
-    		}
+    		
 			public final FastqRecord getRecord() {
 				return record;
 			}
