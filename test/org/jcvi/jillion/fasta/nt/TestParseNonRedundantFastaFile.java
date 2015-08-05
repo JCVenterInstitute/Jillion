@@ -20,7 +20,7 @@ import org.junit.Test;
 
 public class TestParseNonRedundantFastaFile extends EasyMockSupport{
 
-	private ResourceHelper resources = new ResourceHelper(TestNonRedundantNucleotideFastaWriter.class);
+	private ResourceHelper resources = new ResourceHelper(TestParseNonRedundantFastaFile.class);
 	
 	private FastaParser parser;
 	
