@@ -51,7 +51,9 @@ import org.junit.runners.Suite.SuiteClasses;
      
      TestNucleotideFastaFileDataStoreBuilder.class,
      
-     TestDefaultNucleotideSequenceFastaRecordWriter.class
+     TestDefaultNucleotideSequenceFastaRecordWriter.class,
+     
+     TestParseNonRedundantFastaFile.class
     }
     )
 public class AllNucleotideSequenceFastaTests {
