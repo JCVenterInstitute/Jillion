@@ -63,15 +63,15 @@
 		<pathelement path= "${bin}"/>
 		</path>
 
-	
+	<path id="svnant.classpth">
+			<fileset dir="${analysis}/svn" includes="**/*.jar"/>
+		  </path>
+		
+		<taskdef name="svn" classname="com.googlecode.svntask.SvnTask" classpathref="svnant.classpth"/>
+		
 	<target name="revision" 
 		description = "sets the property 'revision' to the svn revision can be later used with ${revision}">
-		<!-- svntask.xml  now in root dir of svntask.dkatzel.svn1.7.jar --> 
-		<typedef resource="svntask.xml">
-		            <classpath>
-		                    <fileset dir="${analysis}/svn"/>
-		            </classpath>
-		    </typedef>	
+		
 		<svn>
 				<info path="." revisionProperty="revision" />
 			</svn>
