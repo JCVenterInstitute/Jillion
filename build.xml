@@ -2,7 +2,7 @@
 <project name="Jillion" default="unit.tests" basedir=".">
 	<!--Used to set the required version of Java that RUNS the jars -->
 	<property name="jdk.version" value="1.6" />
-	<property name="version" value="4.0" />
+	<property name="version" value="4.2" />
 	<property name="project-name" value="Jillion" />
 	<property name="bin" value ="bin_ant"/>
 	<property name="reports" value ="reports"/>
