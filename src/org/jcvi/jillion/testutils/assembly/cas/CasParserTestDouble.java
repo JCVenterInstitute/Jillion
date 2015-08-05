@@ -1,5 +1,6 @@
 package org.jcvi.jillion.testutils.assembly.cas;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -180,6 +181,80 @@ public final class CasParserTestDouble implements CasParser {
 	public File getWorkingDir() {
 		return workingDir;
 	}
+	
+	public interface ReadFileGenerator extends Closeable{
+		void write(NucleotideSequence readSequence) throws IOException;
+		
+		List<String> getPaths();
+	}
+	
+	private static final class DefaultReadIdGenerator implements ReadFileGenerator{
+		private int readCounter=0;
+		
+		private final List<RecordWriter> readWriters = new ArrayList<>();
+		private final Iterator<RecordWriter> recordWriterIterator;
+		private RecordWriter currentRecordWriter;
+
+		public DefaultReadIdGenerator(RecordWriter...recordWriters){
+			for(RecordWriter recordWriter : recordWriters){
+				if(recordWriter ==null){
+					throw new NullPointerException("record writer can not be null");
+				}
+				readWriters.add(recordWriter);
+			}
+			if(readWriters.isEmpty()){
+				throw new IllegalStateException("must have at least 1 RecordWriter");
+			}
+			
+			recordWriterIterator = readWriters.iterator();
+			currentRecordWriter = recordWriterIterator.next();
+		}
+		
+		
+		
+		private void updateCurrentRecordWriterIfNeeded() {
+			if(!currentRecordWriter.canWriteAnotherRecord()){				
+				if(!recordWriterIterator.hasNext()){
+					throw new IllegalStateException("no more record writers");
+				}
+				
+				currentRecordWriter = recordWriterIterator.next();
+			}
+		}
+		
+		
+		public String getNextId() {
+			updateCurrentRecordWriterIfNeeded();
+			return "read" + (readCounter++);
+		}
+
+		@Override
+		public void close() throws IOException {
+			List<String> paths = new ArrayList<>(readWriters.size());
+			for(RecordWriter writer : readWriters){
+				paths.add(writer.getFile().getName());
+				IOUtil.closeAndIgnoreErrors(writer);
+			}
+		}
+		@Override
+		public List<String> getPaths(){
+		
+			List<String> paths = new ArrayList<>(readWriters.size());
+			for(RecordWriter writer : readWriters){
+				paths.add(writer.getFile().getName());		
+			}
+			return paths;
+		}
+
+
+		@Override
+		public void write(NucleotideSequence readSequence) throws IOException {
+			String id = getNextId();
+			currentRecordWriter.write(id, readSequence);
+			
+		}
+		
+	}
 
 	/**
 	 * This class allows arbitrary cas data to be visited
@@ -201,12 +276,10 @@ public final class CasParserTestDouble implements CasParser {
 		
 		private final File workingDir,referenceFile;
 		
+		private final ReadFileGenerator readFileGenerator;
 		private int readCounter=0;
 		private long residueCounter=0;
 		private NucleotideFastaRecordWriter referenceWriter;
-		private final List<RecordWriter> readWriters = new ArrayList<>();
-		private final Iterator<RecordWriter> recordWriterIterator;
-		private RecordWriter currentRecordWriter;
 		
 		private CasFileInfo refFileInfo, readFileInfo;
 		/**
@@ -240,23 +313,52 @@ public final class CasParserTestDouble implements CasParser {
 		 */
 		public Builder(File workingDir, RecordWriter...recordWriters) throws IOException{
 			
-			for(RecordWriter recordWriter : recordWriters){
-				if(recordWriter ==null){
-					throw new NullPointerException("record writer can not be null");
-				}
-				readWriters.add(recordWriter);
-			}
-			if(readWriters.isEmpty()){
-				throw new IllegalStateException("must have at least 1 RecordWriter");
-			}
-			referenceFile =  new File(workingDir,"reference.fasta");
+			this(workingDir, new File(workingDir,"reference.fasta"),
+					new DefaultReadIdGenerator(recordWriters));
+			
+		}
+		
+		
+		/**
+		 * Create a new Builder instance which will
+		 * use the provided working directory to write all 
+		 * of its read and reference files.
+		 * 
+		 * @param workingDir the working directory to use 
+		 * which will not only be the root of the reference and read files
+		 * created but will also be returned by {@link CasParser#getWorkingDir()}.
+		 * 
+		 * @param referenceFile the {@link File} to write the reference sequence to; can not be null.
+		 * 
+		 * @param recordWriters {@link RecordWriter}s to use to write
+		 * the underlying read data.  The record writers will be used
+		 * in the provided order.  The Builder to keep using a RecordWriter
+		 * until it has reached its max records to be written as specified 
+		 * by {@link RecordWriter#canWriteAnotherRecord()}, then it will
+		 * move onto the next RecordWriter.  No {@link RecordWriter}s
+		 * can be null.
+		 * 
+		 * @throws NullPointerException if any recordWriters or referenceFile are null.
+		 * 
+		 * @throws IllegalStateException if no RecordWriters are provided.
+		 * 
+		 * @throws IOException if there is a problem creating the working directory
+		 * or opening a file for writing in that directory.
+		 */
+		public Builder(File workingDir, File referenceFile, ReadFileGenerator readIdGenerator) throws IOException{
+			Objects.requireNonNull(referenceFile);
+			Objects.requireNonNull(readIdGenerator);
+			this.readFileGenerator = readIdGenerator;
+			
+			
+			this.referenceFile = referenceFile;
 			referenceWriter = new NucleotideFastaRecordWriterBuilder(referenceFile)
 										.build();
 			this.workingDir = workingDir;
-			recordWriterIterator = readWriters.iterator();
-			currentRecordWriter = recordWriterIterator.next();
+		
 			
 		}
+		
 		/**
 		 * Add a reference with the given reference name
 		 * and the provided full sequence.  This reference
@@ -348,8 +450,8 @@ public final class CasParserTestDouble implements CasParser {
 		}
 		private Builder match(String refName, long ungappedStart, Direction dir, CasAlignmentRegionImpl[] alignmentRegions){
 			Integer index = refIndex.get(refName);
-			
-			updateCurrentRecordWriterIfNeeded();
+
+			readCounter++;
 			
 			boolean matchReported = matchReported(alignmentRegions);
 			CasAlignment alignment;
@@ -363,7 +465,7 @@ public final class CasParserTestDouble implements CasParser {
 				NucleotideSequence fullLengthReadSequence = computeFullRangeUngappedReadSequence2(refName, ungappedStart, dir, alignmentRegions);
 				residueCounter += fullLengthReadSequence.getLength();
 				try {
-					currentRecordWriter.write(getNextReadId(), fullLengthReadSequence);
+					readFileGenerator.write(fullLengthReadSequence);
 				} catch (IOException e) {
 					throw new IllegalStateException("error writing fasta read sequence", e);
 				}
@@ -373,7 +475,7 @@ public final class CasParserTestDouble implements CasParser {
 				alignment =null;
 				//need to write empty sequence
 				try {
-					currentRecordWriter.write(getNextReadId(), EMPTY_SEQ);
+					readFileGenerator.write(EMPTY_SEQ);
 				} catch (IOException e) {
 					throw new IllegalStateException("error writing fasta read sequence", e);
 				}
@@ -429,15 +531,7 @@ public final class CasParserTestDouble implements CasParser {
 			return this;
 		}
 
-		private void updateCurrentRecordWriterIfNeeded() {
-			if(!currentRecordWriter.canWriteAnotherRecord()){				
-				if(!recordWriterIterator.hasNext()){
-					throw new IllegalStateException("no more record writers");
-				}
-				
-				currentRecordWriter = recordWriterIterator.next();
-			}
-		}
+		
 
 		private NucleotideSequence computeFullRangeUngappedReadSequence2(
 				String refName, long ungappedStart, Direction dir,
@@ -516,9 +610,7 @@ public final class CasParserTestDouble implements CasParser {
 			return fullLengthBuilder.build();
 		}
 
-		private String getNextReadId() {
-			return "read" + (readCounter++);
-		}
+		
 		
 		private boolean matchReported(CasAlignmentRegion[] alignmentRegions) {
 			for(CasAlignmentRegion r : alignmentRegions){
@@ -549,11 +641,10 @@ public final class CasParserTestDouble implements CasParser {
 				//have to have some reads!
 				throw new IllegalStateException("must have at least one read");
 			}
-			List<String> paths = new ArrayList<>(readWriters.size());
-			for(RecordWriter writer : readWriters){
-				paths.add(writer.getFile().getName());
-				IOUtil.closeAndIgnoreErrors(writer);
-			}
+			List<String> paths = readFileGenerator.getPaths();
+			
+			IOUtil.closeAndIgnoreErrors(readFileGenerator);
+			
 			try {
 				referenceWriter.close();
 			} catch (IOException e) {
@@ -570,13 +661,13 @@ public final class CasParserTestDouble implements CasParser {
 		 * @return this
 		 */
 		public Builder unMatched() {
-			updateCurrentRecordWriterIfNeeded();
+			readCounter++;
 			//make a read of 10 Ns
 			char[] ns = new char[10];
 			Arrays.fill(ns ,'N');
 			NucleotideSequence seq = new NucleotideSequenceBuilder(ns).build();
 			try{
-				currentRecordWriter.write(getNextReadId(), seq);
+				readFileGenerator.write(seq);
 			} catch (IOException e) {
 				throw new IllegalStateException("error writing fasta read sequence", e);
 			}
