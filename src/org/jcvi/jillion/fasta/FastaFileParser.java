@@ -41,7 +41,7 @@ import org.jcvi.jillion.internal.core.io.TextLineParser;
  * fasta encoded file and call the appropriate
  * visitXXX methods on the given {@link FastaVisitor}.
  * 
- * As of Jillion 5.0, {@code FastaFileParser} supports
+ * As of Jillion 4.2, {@code FastaFileParser} supports
  * non-redundant text fasta files like
  * the ones described in
  * <a href="ftp://ftp.ncbi.nih.gov/blast/db/README">ftp://ftp.ncbi.nih.gov/blast/db/README</a>.
