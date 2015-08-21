@@ -42,7 +42,10 @@ import org.junit.runners.Suite.SuiteClasses;
         AllFastaQualityTests.class,
         AllNucleotideSequenceFastaTests.class,
         AllProteinFastaRecordUnitTests.class,
-        AllPositionFastaUnitTests.class
+        AllPositionFastaUnitTests.class,
+        
+        TestRolloverSplitFastaWriter.class,
+        TestRoundRobinSplitFastaWriter.class
    
     }
     )
