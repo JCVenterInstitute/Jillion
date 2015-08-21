@@ -316,7 +316,7 @@ public final class DataStoreUtil {
     @SuppressWarnings("unchecked")
     public static <D extends DataStore<?>> D createNewCachedDataStore(Class<D> c,D delegate, int cacheSize){
         return (D) Proxy.newProxyInstance(c.getClassLoader(), new Class<?>[]{c, CacheableDataStore.class}, 
-                new CachedDataStore<D>(delegate,cacheSize));
+                new CachedDataStoreInvocationHandler<D>(delegate,cacheSize));
     }
     
     
@@ -704,13 +704,13 @@ public final class DataStoreUtil {
 	 *
 	 *
 	 */
-	private static final class CachedDataStore <D extends DataStore<?>> implements InvocationHandler{
+	private static final class CachedDataStoreInvocationHandler <D extends DataStore<?>> implements InvocationHandler{
 
 	    private final D delegate;
 	    private final Map<String, Object> cache;
 	    private static final Class<?>[] GET_PARAMETERS = new Class<?>[]{String.class};
 	   
-	    private CachedDataStore(D delegate, int cacheSize){
+	    private CachedDataStoreInvocationHandler(D delegate, int cacheSize){
 	        this.delegate = delegate;
 	        cache= Caches.createSoftReferencedValueLRUCache(cacheSize);
 	    }
