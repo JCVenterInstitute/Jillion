@@ -237,7 +237,22 @@ public final class Sff454NameUtil {
         }
         
         private String encode(){
-            return _454Base36Encoder.INSTANCE.encode(BigInteger.valueOf(x * 4096L + y));
+            String encoded = _454Base36Encoder.INSTANCE.encode(BigInteger.valueOf(x * 4096L + y));
+            //make it 5 characters, sometimes we don't have enough digits
+            //so padd with leading A's?
+            if(encoded.length() ==5){
+            	return encoded;
+            }
+            if(encoded.length() > 5){
+            	return encoded.substring(encoded.length()-5);
+            }
+            int numToPadd = 5 - encoded.length();
+            StringBuilder builder = new StringBuilder(5);
+            for(int i=0; i<numToPadd; i++){
+            	builder.append('A');
+            }
+            builder.append(encoded);
+            return builder.toString();
         }
         
         private static Location decode(String encodedLocation){
