@@ -50,13 +50,11 @@ public final class SplitFastaWriter{
 	 * Creates a new {@link FastaRecordWriter} instance that will spread out
 	 * the {@link FastaRecord}s to be written to create several fasta files.  The
 	 * first fasta record written will be written to the first output fasta, the second
-	 * record written will be written to the second output fasta etc until a single record
-	 * has been written
-	 * that will each contain only the given number of records.  Once the first fasta file written has reached
-	 * the max number of records, a new output fasta file will be created to write out the next max number of records
-	 * (the additional written records will be rolled over to the new writer).
+	 * record written will be written to the second output fasta etc.  After all the output files
+	 * have written a record, the next {@link FastaRecord} to be written will write to the first
+	 * output file again.  This will continue until the SplitWriter is closed.
 	 * 
-	 * @param clazz The <strong>interface</strong> type the lambda function will be returning
+	 * @param interfaceClass The <strong>interface</strong> type the lambda function will be returning
 	 * which is also going to be the return type for this Fasta Writer.
 	 * 
 	 * @param recordsPerFile the max number of {@link FastaRecord}s to be written to a file
@@ -91,11 +89,11 @@ public final class SplitFastaWriter{
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	public static <S, T extends Sequence<S>, F extends FastaRecord<S, T>, W extends FastaRecordWriter<S,T,F>> W roundRobin(Class<W> clazz, int numberOfFiles,
+	public static <S, T extends Sequence<S>, F extends FastaRecord<S, T>, W extends FastaRecordWriter<S,T,F>> W roundRobin(Class<W> interfaceClass, int numberOfFiles,
 			FastaRecordWriterFactory<W> supplier){
 		RoundRobinSplitFastaWriter<S, T, F, W> writer = new RoundRobinSplitFastaWriter<S, T, F, W>(numberOfFiles, supplier);
 		
-		return (W) Proxy.newProxyInstance(writer.getClass().getClassLoader(), new Class[]{clazz}, new InvocationHandlerImpl<>(writer) );
+		return (W) Proxy.newProxyInstance(writer.getClass().getClassLoader(), new Class[]{interfaceClass}, new InvocationHandlerImpl<>(writer) );
 	}
 	
 	
@@ -106,7 +104,7 @@ public final class SplitFastaWriter{
 	 * (the additional written records will be rolled over to the new writer).
 	 * 
 	 * 
-	 * @param clazz The <strong>interface</strong> type the lambda function will be returning
+	 * @param interfaceClass The <strong>interface</strong> type the lambda function will be returning
 	 * which is also going to be the return type for this Fasta Writer.
 	 * 
 	 * @param recordsPerFile the max number of {@link FastaRecord}s to be written to a file
@@ -141,11 +139,11 @@ public final class SplitFastaWriter{
 	 * </pre>
 	 */
 	@SuppressWarnings("unchecked")
-	public static <S, T extends Sequence<S>, F extends FastaRecord<S, T>, W extends FastaRecordWriter<S,T,F>> W rollover(Class<W> clazz, int maxRecordsPerFile,
+	public static <S, T extends Sequence<S>, F extends FastaRecord<S, T>, W extends FastaRecordWriter<S,T,F>> W rollover(Class<W> interfaceClass, int maxRecordsPerFile,
 			FastaRecordWriterFactory<W> supplier){
 		RolloverSplitFastaWriter<S, T, F, W> writer = new RolloverSplitFastaWriter<S, T, F, W>(maxRecordsPerFile, supplier);
 		
-		return (W) Proxy.newProxyInstance(writer.getClass().getClassLoader(), new Class[]{clazz}, new InvocationHandlerImpl<>(writer) );
+		return (W) Proxy.newProxyInstance(writer.getClass().getClassLoader(), new Class[]{interfaceClass}, new InvocationHandlerImpl<>(writer) );
 	}
 	
 	
