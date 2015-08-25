@@ -33,6 +33,7 @@ import org.jcvi.jillion.profile.AllProfileUnitTests;
 import org.jcvi.jillion.sam.AllSamTests;
 import org.jcvi.jillion.testutils.AllTestUtilsTests;
 import org.jcvi.jillion.trace.AllTraceUnitTests;
+import org.jcvi.jillion.trim.AllTrimmerUnitTests;
 import org.jcvi.jillion_experimental.AllExperimentalTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -51,7 +52,7 @@ import org.junit.runners.Suite.SuiteClasses;
         AllMaqTests.class,
         AllProfileUnitTests.class,
         AllTestUtilsTests.class,
-        
+        AllTrimmerUnitTests.class,
         
         AllExperimentalTests.class
     }
