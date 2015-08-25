@@ -18,7 +18,7 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.core.qual.trim;
+package org.jcvi.jillion.trim.lucy;
 
 import static org.junit.Assert.assertEquals;
 
@@ -34,6 +34,8 @@ import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.jillion.fasta.qual.QualityFastaFileDataStoreBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
+import org.jcvi.jillion.trim.QualityTrimmer;
+import org.jcvi.jillion.trim.lucy.LucyQualityTrimmerBuilder;
 import org.junit.Before;
 import org.junit.Test;
 

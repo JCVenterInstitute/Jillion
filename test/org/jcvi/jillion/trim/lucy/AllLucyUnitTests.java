@@ -6,7 +6,8 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-	TestLucyLikeVectorSpliceTrimmer.class
+	TestLucyLikeVectorSpliceTrimmer.class,
+	TestLucyQualityTrimmer.class
 })
 public class AllLucyUnitTests {
 

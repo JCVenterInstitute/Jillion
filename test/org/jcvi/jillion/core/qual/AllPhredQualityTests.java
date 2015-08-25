@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.qual;
 
-import org.jcvi.jillion.core.qual.trim.AllQualityTrimmerTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -40,8 +39,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestDefaultQualitySequence.class,
         TestRunLengthEncodedQualitySequenceImpl.class,
         TestQualitySequenceBuilder.class,
-        TestReallyLongRunLength.class,
-        AllQualityTrimmerTests.class
+        TestReallyLongRunLength.class
     }
     )
 public class AllPhredQualityTests {
