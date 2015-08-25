@@ -18,7 +18,7 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.core.qual.trim;
+package org.jcvi.jillion.trim;
 
 import java.util.Iterator;
 

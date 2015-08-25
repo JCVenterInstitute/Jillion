@@ -18,7 +18,7 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.core.qual.trim;
+package org.jcvi.jillion.trim.lucy;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,6 +33,7 @@ import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.internal.core.util.JillionUtil;
+import org.jcvi.jillion.trim.QualityTrimmer;
 
 
 

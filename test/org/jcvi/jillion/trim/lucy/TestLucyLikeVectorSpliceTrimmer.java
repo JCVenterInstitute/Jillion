@@ -27,7 +27,7 @@ public class TestLucyLikeVectorSpliceTrimmer {
 	@BeforeClass
 	public static void getSequences() throws IOException, DataStoreException{
 		ResourceHelper helper = new ResourceHelper(TestLucyLikeVectorSpliceTrimmer.class);
-		try(NucleotideFastaDataStore datastore = new NucleotideFastaFileDataStoreBuilder(helper.getFile("race.fasta.untrimmed"))
+		try(NucleotideFastaDataStore datastore = new NucleotideFastaFileDataStoreBuilder(helper.getFile("files/race.fasta.untrimmed"))
 														.build()){
 			EBOFF01T00RACE5F = datastore.get("EBOFF01T00RACE5F").getSequence();
 			EBOFC01T00RACE3F = datastore.get("EBOFC01T00RACE3F").getSequence();
