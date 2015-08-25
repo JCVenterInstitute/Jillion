@@ -21,6 +21,8 @@
 package org.jcvi.jillion.align;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 /**
  * {@code NucleotideSubstitutionMatrices}
  * is a utility class containing 
@@ -78,5 +80,24 @@ public final class NucleotideSubstitutionMatrices {
 	 */
 	public static NucleotideSubstitutionMatrix getIdentityMatrix(){
 		return IDENTITY;
+	}
+	
+	/**
+	 * Parse an {@link InputStream} which is a text file
+	 * of a single nucleotide substitution matrix.
+	 * <p/>
+	 * Rules for parsing file:
+	 * <ol>
+	 * <li>Any lines that start with '#' are ignored</li>
+	 * <li>First line of data must be the order of the nucleotides in the matrix separated by white space</li>
+	 * <li>Each of the following lines must start with a nucleotide followed by the substitution scores.  Each element should be spearated by only whitespace</li>
+	 * </ol>
+	 * @param in the input stream to parse; can not be null.
+	 * @return a new {@link NucleotideSubstitutionMatrix} with the given scores.
+	 * 
+	 * @throws IOException if there is a problem parsing the file.
+	 */
+	public static NucleotideSubstitutionMatrix parsePropertyFile(InputStream in) throws IOException{
+		return NucleotidePropertyFileScoringMatrixParser.parse(in);
 	}
 }
