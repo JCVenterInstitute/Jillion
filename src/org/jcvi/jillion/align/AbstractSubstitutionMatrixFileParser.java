@@ -107,6 +107,9 @@ abstract class AbstractSubstitutionMatrixFileParser<R extends Residue> implement
 		String line;
 		do{
 			line = scanner.nextLine();
+			if(line.isEmpty()){
+				continue;
+			}
 			//skip comments
 			done = line.charAt(0) !='#';
 		}while(!done);
