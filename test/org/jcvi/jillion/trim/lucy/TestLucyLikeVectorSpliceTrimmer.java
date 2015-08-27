@@ -37,7 +37,7 @@ public class TestLucyLikeVectorSpliceTrimmer {
 	
 	@Before
 	public void setup(){
-		sut = new LucyLikeVectorSpliceTrimmerBuilder(
+		sut = new LucyVectorSpliceTrimmerBuilder(
 					NucleotideSequenceTestUtil.create("TATCGCTCGAGGGATCCGAATTCAGGAGGTAAAAACCATGAT"),
 					NucleotideSequenceTestUtil.create("CTGATAATAATGACGTCAGAATTCTCGAGTCGGGGAAATGTGCGCGG"))
 					.build();
@@ -60,7 +60,7 @@ public class TestLucyLikeVectorSpliceTrimmer {
 	
 	@Test
 	public void reverseSequenceWithoutCheckingBiDirectionallyWillNotFindVector(){
-		NucleotideTrimmer singleDirTrimmer = new LucyLikeVectorSpliceTrimmerBuilder(
+		NucleotideTrimmer singleDirTrimmer = new LucyVectorSpliceTrimmerBuilder(
 							NucleotideSequenceTestUtil.create("TATCGCTCGAGGGATCCGAATTCAGGAGGTAAAAACCATGAT"),
 							NucleotideSequenceTestUtil.create("CTGATAATAATGACGTCAGAATTCTCGAGTCGGGGAAATGTGCGCGG"))
 				
