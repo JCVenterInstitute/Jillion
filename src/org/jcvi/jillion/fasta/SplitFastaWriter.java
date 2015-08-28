@@ -9,7 +9,7 @@ import java.util.Objects;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.io.IOUtil;
 /**
- * Utility class that creates {@link FastaRecordWriter} instances
+ * Utility class that creates {@link FastaWriter} instances
  * that split the {@link FastaRecord} objects being written out
  * over several different output files.
  * <p/>
@@ -18,7 +18,7 @@ import org.jcvi.jillion.core.io.IOUtil;
  * </p>
  * Construction of the individual fasta writers used by the Split Writer
  * is delegated to a user supplied lambda function that is given the int i
- * for the ith file to be created and must return a non-null FastaRecordWriter of the correct type.
+ * for the ith file to be created and must return a non-null FastaWriter of the correct type.
  * 
  * 
  * 
@@ -28,7 +28,7 @@ import org.jcvi.jillion.core.io.IOUtil;
  */
 public final class SplitFastaWriter{
 	/**
-	 * Functional interface to create new FastaRecordWriter
+	 * Functional interface to create new FastaWriter
 	 * instances.
 	 * @author dkatzel
 	 *
@@ -37,17 +37,17 @@ public final class SplitFastaWriter{
 	@FunctionalInterface
 	public interface FastaRecordWriterFactory<T>{
 		/**
-		 * Create a new FastaRecordWriter for the ith
+		 * Create a new FastaWriter for the ith
 		 * fasta file.
 		 * @param i the ith file to create, will start at value 1
 		 * not zero.
-		 * @return a new FastaRecordWriter; can not be null.
+		 * @return a new FastaWriter; can not be null.
 		 * @throws IOException if there is a problem creating the writer.
 		 */
 		T create(int i) throws IOException;
 	}
 	/**
-	 * Creates a new {@link FastaRecordWriter} instance that will spread out
+	 * Creates a new {@link FastaWriter} instance that will spread out
 	 * the {@link FastaRecord}s to be written to create several fasta files.  The
 	 * first fasta record written will be written to the first output fasta, the second
 	 * record written will be written to the second output fasta etc.  After all the output files
@@ -60,11 +60,11 @@ public final class SplitFastaWriter{
 	 * @param recordsPerFile the max number of {@link FastaRecord}s to be written to a file
 	 * before it should be closed and the next file created. Must be >=1.
 	 * 
-	 * @param supplier a {@link FastaRecordWriterFactory} instance that will create a new FastaRecordWriter of type W for the
+	 * @param supplier a {@link FastaRecordWriterFactory} instance that will create a new FastaWriter of type W for the
 	 * ith file to be created.  The passed in value i will be in the range 1..N where N is the number of files
 	 * created (will start at 1 not 0).  If no records are written, then supplier will never be called. Can not be null.
 	 * 
-	 * @return a new {@link FastaRecordWriter} instance; will never be null.
+	 * @return a new {@link FastaWriter} instance; will never be null.
 	 * 
 	 * @throws NullPointerException if supplier lambda is null.
 	 * @throws IllegalArgumentException if max records per file is < 1.
@@ -76,9 +76,9 @@ public final class SplitFastaWriter{
 	 * File outputDir = ...
 	 * Iterator<NucleotideFastaRecord> iter = ...
 	 * 
-	 * try(NucleotideFastaRecordWriter writer = SplitFastaWriter.roundRobin(NucleotideFastaRecordWriter.class,
+	 * try(NucleotideFastaWriter writer = SplitFastaWriter.roundRobin(NucleotideFastaWriter.class,
 	 * 					10,
-	 * 					i -> new NucleotideFastaRecordWriterBuilder(new File(outputDir, i +".fasta"))
+	 * 					i -> new NucleotideFastaWriterBuilder(new File(outputDir, i +".fasta"))
 	 *										.build());
 	*){
 	*	while(iter.hasNext()){
@@ -89,7 +89,7 @@ public final class SplitFastaWriter{
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	public static <S, T extends Sequence<S>, F extends FastaRecord<S, T>, W extends FastaRecordWriter<S,T,F>> W roundRobin(Class<W> interfaceClass, int numberOfFiles,
+	public static <S, T extends Sequence<S>, F extends FastaRecord<S, T>, W extends FastaWriter<S,T,F>> W roundRobin(Class<W> interfaceClass, int numberOfFiles,
 			FastaRecordWriterFactory<W> supplier){
 		RoundRobinSplitFastaWriter<S, T, F, W> writer = new RoundRobinSplitFastaWriter<S, T, F, W>(numberOfFiles, supplier);
 		
@@ -98,7 +98,7 @@ public final class SplitFastaWriter{
 	
 	
 	/**
-	 * Creates a new {@link FastaRecordWriter} instance that will internally create several fasta files
+	 * Creates a new {@link FastaWriter} instance that will internally create several fasta files
 	 * that will each contain only the given number of records.  Once the first fasta file written has reached
 	 * the max number of records, a new output fasta file will be created to write out the next max number of records
 	 * (the additional written records will be rolled over to the new writer).
@@ -110,11 +110,11 @@ public final class SplitFastaWriter{
 	 * @param recordsPerFile the max number of {@link FastaRecord}s to be written to a file
 	 * before it should be closed and the next file created. Must be >=1.
 	 * 
-	 * @param supplier a {@link FastaRecordWriterFactory} instance that will create a new FastaRecordWriter of type W for the
+	 * @param supplier a {@link FastaRecordWriterFactory} instance that will create a new FastaWriter of type W for the
 	 * ith file to be created.  The passed in value i will be in the range 1..N where N is the number of files
 	 * created (will start at 1 not 0).  If no records are written, then supplier will never be called.  Can not be null.
 	 * 
-	 * @return a new {@link FastaRecordWriter} instance; will never be null.
+	 * @return a new {@link FastaWriter} instance; will never be null.
 	 * @throws NullPointerException if supplier lambda is null.
 	 * @throws IllegalArgumentException if max records per file is < 1.
 	 * 
@@ -127,9 +127,9 @@ public final class SplitFastaWriter{
 	 * File outputDir = ...
 	 * Iterator<NucleotideFastaRecord> iter = ...
 	 * 
-	 * try(NucleotideFastaRecordWriter writer = SplitFastaWriter.rollover(NucleotideFastaRecordWriter.class,
+	 * try(NucleotideFastaWriter writer = SplitFastaWriter.rollover(NucleotideFastaWriter.class,
 	 * 					1000,
-	 * 					i -> new NucleotideFastaRecordWriterBuilder(new File(outputDir, i +".fasta"))
+	 * 					i -> new NucleotideFastaWriterBuilder(new File(outputDir, i +".fasta"))
 	 *										.build());
 	*){
 	*	while(iter.hasNext()){
@@ -139,7 +139,7 @@ public final class SplitFastaWriter{
 	 * </pre>
 	 */
 	@SuppressWarnings("unchecked")
-	public static <S, T extends Sequence<S>, F extends FastaRecord<S, T>, W extends FastaRecordWriter<S,T,F>> W rollover(Class<W> interfaceClass, int maxRecordsPerFile,
+	public static <S, T extends Sequence<S>, F extends FastaRecord<S, T>, W extends FastaWriter<S,T,F>> W rollover(Class<W> interfaceClass, int maxRecordsPerFile,
 			FastaRecordWriterFactory<W> supplier){
 		RolloverSplitFastaWriter<S, T, F, W> writer = new RolloverSplitFastaWriter<S, T, F, W>(maxRecordsPerFile, supplier);
 		
@@ -151,9 +151,9 @@ public final class SplitFastaWriter{
 		//can not instantiate
 	}
 	
-	private static final class InvocationHandlerImpl<S, T extends Sequence<S>, F extends FastaRecord<S, T>, W extends FastaRecordWriter<S,T,F>> implements InvocationHandler{
+	private static final class InvocationHandlerImpl<S, T extends Sequence<S>, F extends FastaRecord<S, T>, W extends FastaWriter<S,T,F>> implements InvocationHandler{
 
-		private final FastaRecordWriter<S,T,F> delegate;
+		private final FastaWriter<S,T,F> delegate;
 		
 		@SuppressWarnings("unchecked")
 		@Override
@@ -182,14 +182,14 @@ public final class SplitFastaWriter{
 			
 		}
 
-		public InvocationHandlerImpl(FastaRecordWriter<S,T,F> delegate) {
+		public InvocationHandlerImpl(FastaWriter<S,T,F> delegate) {
 			this.delegate = delegate;
 		}
 		
 	}
 	
-	private static final class RolloverSplitFastaWriter<S, T extends Sequence<S>, F extends FastaRecord<S, T>, W extends FastaRecordWriter<S, T, F>>
-			implements FastaRecordWriter<S, T, F> {
+	private static final class RolloverSplitFastaWriter<S, T extends Sequence<S>, F extends FastaRecord<S, T>, W extends FastaWriter<S, T, F>>
+			implements FastaWriter<S, T, F> {
 
 		private final FastaRecordWriterFactory<W> supplier;
 
@@ -266,8 +266,8 @@ public final class SplitFastaWriter{
 		}
 	}
 	
-	private static final class RoundRobinSplitFastaWriter<S, T extends Sequence<S>, F extends FastaRecord<S, T>, W extends FastaRecordWriter<S, T, F>>
-			implements FastaRecordWriter<S, T, F> {
+	private static final class RoundRobinSplitFastaWriter<S, T extends Sequence<S>, F extends FastaRecord<S, T>, W extends FastaWriter<S, T, F>>
+			implements FastaWriter<S, T, F> {
 
 		private final FastaRecordWriterFactory<W> supplier;
 
@@ -277,7 +277,7 @@ public final class SplitFastaWriter{
 		private volatile boolean closed = false;
 
 		
-		private final FastaRecordWriter<S, T, F>[] writers;
+		private final FastaWriter<S, T, F>[] writers;
 		
 		@SuppressWarnings("unchecked")
 		private RoundRobinSplitFastaWriter(int numberOfFiles,
@@ -288,7 +288,7 @@ public final class SplitFastaWriter{
 				throw new IllegalArgumentException(
 						"records per File must be >=1");
 			}
-			writers = new FastaRecordWriter[numberOfFiles];
+			writers = new FastaWriter[numberOfFiles];
 			
 			this.supplier = supplier;
 			
@@ -317,7 +317,7 @@ public final class SplitFastaWriter{
 		@Override
 		public void close() throws IOException {
 			if (!closed) {
-				for(FastaRecordWriter<S, T, F> writer : writers){
+				for(FastaWriter<S, T, F> writer : writers){
 					IOUtil.closeAndIgnoreErrors(writer);
 				}
 			}

@@ -22,8 +22,8 @@ package org.jcvi.jillion.fasta.pos;
 
 import org.jcvi.jillion.core.pos.Position;
 import org.jcvi.jillion.core.pos.PositionSequence;
-import org.jcvi.jillion.fasta.FastaRecordWriter;
+import org.jcvi.jillion.fasta.FastaWriter;
 
-public interface PositionFastaRecordWriter extends FastaRecordWriter<Position, PositionSequence, PositionFastaRecord>{
+public interface PositionFastaWriter extends FastaWriter<Position, PositionSequence, PositionFastaRecord>{
 
 }

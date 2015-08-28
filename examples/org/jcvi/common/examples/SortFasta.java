@@ -31,8 +31,8 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriter;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriterBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaWriter;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaWriterBuilder;
 
 public class SortFasta {
 
@@ -58,7 +58,7 @@ public class SortFasta {
 		} finally{
 			IOUtil.closeAndIgnoreErrors(iter);
 		}
-		NucleotideFastaRecordWriter out = new NucleotideFastaRecordWriterBuilder(sortedOutputFasta)
+		NucleotideFastaWriter out = new NucleotideFastaWriterBuilder(sortedOutputFasta)
 												.build();
 		try{
 			for(String id : sortedIds){

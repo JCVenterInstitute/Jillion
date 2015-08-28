@@ -4,11 +4,11 @@ import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriter;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriterBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaWriter;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaWriterBuilder;
 
 public final class FastaRecordWriter implements RecordWriter{
-	private final NucleotideFastaRecordWriter writer;
+	private final NucleotideFastaWriter writer;
 	private final File fastaFile;
 	private final int maxNumberOfRecordsToWrite;
 	private int counter=0;
@@ -21,7 +21,7 @@ public final class FastaRecordWriter implements RecordWriter{
 			throw new IllegalArgumentException("max records can not < 1");
 		}
 		fastaFile = File.createTempFile("reads", ".fasta", workingDir);
-		writer = new NucleotideFastaRecordWriterBuilder(fastaFile).build();
+		writer = new NucleotideFastaWriterBuilder(fastaFile).build();
 		maxNumberOfRecordsToWrite = maxRecordsToWrite;
 		
 	}
@@ -31,7 +31,7 @@ public final class FastaRecordWriter implements RecordWriter{
 			throw new IllegalArgumentException("max records can not < 1");
 		}
 		fastaFile = new File(workingDir, filename);
-		writer = new NucleotideFastaRecordWriterBuilder(fastaFile).build();
+		writer = new NucleotideFastaWriterBuilder(fastaFile).build();
 		maxNumberOfRecordsToWrite = maxRecordsToWrite;
 		
 	}

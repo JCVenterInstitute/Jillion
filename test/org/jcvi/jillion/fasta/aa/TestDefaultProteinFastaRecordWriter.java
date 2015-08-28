@@ -42,28 +42,28 @@ public class TestDefaultProteinFastaRecordWriter {
 	
 	@Test(expected = NullPointerException.class)
 	public void nullOutputStreamShouldThrowNPE(){
-		new ProteinFastaRecordWriterBuilder((OutputStream)null);
+		new ProteinFastaWriterBuilder((OutputStream)null);
 	}
 	@Test(expected = NullPointerException.class)
 	public void nullFileShouldThrowNPE() throws IOException{
-		new ProteinFastaRecordWriterBuilder((File)null);
+		new ProteinFastaWriterBuilder((File)null);
 	}
 	@Test(expected = IllegalArgumentException.class)
 	public void negativeBasesPerLineShouldthrowIllegalArgumentException(){
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		new ProteinFastaRecordWriterBuilder(out)
+		new ProteinFastaWriterBuilder(out)
 			.numberPerLine(-1);
 	}
 	@Test(expected = IllegalArgumentException.class)
 	public void zeroBasesPerLineShouldthrowIllegalArgumentException(){
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		new ProteinFastaRecordWriterBuilder(out)
+		new ProteinFastaWriterBuilder(out)
 			.numberPerLine(0);
 	}
 	@Test
 	public void writeFastasWithDefaultOptions() throws IOException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ProteinFastaRecordWriter sut = new ProteinFastaRecordWriterBuilder(out)
+		ProteinFastaWriter sut = new ProteinFastaWriterBuilder(out)
 													.build();
 		sut.write(record1);		
 		sut.write(record2);
@@ -78,7 +78,7 @@ public class TestDefaultProteinFastaRecordWriter {
 	@Test
 	public void multiLineFastas() throws IOException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ProteinFastaRecordWriter sut = new ProteinFastaRecordWriterBuilder(out)
+		ProteinFastaWriter sut = new ProteinFastaWriterBuilder(out)
 								.numberPerLine(5)											
 								.build();
 		
@@ -97,7 +97,7 @@ public class TestDefaultProteinFastaRecordWriter {
 	@Test
 	public void nullEOLShouldUseDefault() throws IOException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ProteinFastaRecordWriter sut = new ProteinFastaRecordWriterBuilder(out)
+		ProteinFastaWriter sut = new ProteinFastaWriterBuilder(out)
 								.numberPerLine(5)	
 								.lineSeparator(null)
 								.build();
@@ -117,7 +117,7 @@ public class TestDefaultProteinFastaRecordWriter {
 	@Test
 	public void allOnOneLine() throws IOException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ProteinFastaRecordWriter sut = new ProteinFastaRecordWriterBuilder(out)
+		ProteinFastaWriter sut = new ProteinFastaWriterBuilder(out)
 								.allBasesOnOneLine()
 								.build();
 		
@@ -144,7 +144,7 @@ public class TestDefaultProteinFastaRecordWriter {
 	@Test
 	public void differentEOL() throws IOException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ProteinFastaRecordWriter sut = new ProteinFastaRecordWriterBuilder(out)
+		ProteinFastaWriter sut = new ProteinFastaWriterBuilder(out)
 								.numberPerLine(5)	
 								.lineSeparator("\r\n")
 								.build();
@@ -164,7 +164,7 @@ public class TestDefaultProteinFastaRecordWriter {
 	@Test
 	public void sequenceEndsAtEndOfLineExactly() throws IOException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ProteinFastaRecordWriter sut = new ProteinFastaRecordWriterBuilder(out)
+		ProteinFastaWriter sut = new ProteinFastaWriterBuilder(out)
 								.numberPerLine(4)											
 								.build();
 		
@@ -185,7 +185,7 @@ public class TestDefaultProteinFastaRecordWriter {
 	public void differentCharSet() throws IOException{
 		Charset charSet = Charset.forName("UTF-16");
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ProteinFastaRecordWriter sut = new ProteinFastaRecordWriterBuilder(out)
+		ProteinFastaWriter sut = new ProteinFastaWriterBuilder(out)
 								.numberPerLine(5)	
 								.charset(charSet)
 								.build();
