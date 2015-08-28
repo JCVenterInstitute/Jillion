@@ -108,7 +108,7 @@ public abstract class AbstractBlockingStreamingIterator<T> implements StreamingI
 
 	private final Object endOfFileToken = new Object();
     private final BlockingQueue<Object> queue = new LinkedBlockingQueue<Object>(1);
-    private Object nextRecord=null;
+    private volatile Object nextRecord=null;
     private volatile boolean isClosed=false;
     
     private volatile RuntimeException uncaughtException;
