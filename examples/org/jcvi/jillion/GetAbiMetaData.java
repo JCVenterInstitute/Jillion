@@ -32,12 +32,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriter;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriterBuilder;
-import org.jcvi.jillion.fasta.pos.PositionFastaRecordWriter;
-import org.jcvi.jillion.fasta.pos.PositionFastaRecordWriterBuilder;
-import org.jcvi.jillion.fasta.qual.QualityFastaRecordWriter;
-import org.jcvi.jillion.fasta.qual.QualityFastaRecordWriterBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaWriter;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaWriterBuilder;
+import org.jcvi.jillion.fasta.pos.PositionFastaWriter;
+import org.jcvi.jillion.fasta.pos.PositionFastaWriterBuilder;
+import org.jcvi.jillion.fasta.qual.QualityFastaWriter;
+import org.jcvi.jillion.fasta.qual.QualityFastaWriterBuilder;
 import org.jcvi.jillion.trace.chromat.Chromatogram;
 import org.jcvi.jillion.trace.chromat.ChromatogramFactory;
 import org.jcvi.jillion.trace.chromat.ChromatogramWriter;
@@ -102,14 +102,14 @@ public class GetAbiMetaData {
 		
 		PrintWriter metaDataWriter = new PrintWriter(new File(outputdir,prefix+".meta"));
 		//numbersPerLine call in builders is to match legacy io_lib output exactly
-		NucleotideFastaRecordWriter seqWriter = new NucleotideFastaRecordWriterBuilder(new File(outputdir,prefix+".seq"))
+		NucleotideFastaWriter seqWriter = new NucleotideFastaWriterBuilder(new File(outputdir,prefix+".seq"))
 															.numberPerLine(60)
 															.build();
-		QualityFastaRecordWriter qualWriter = new QualityFastaRecordWriterBuilder(new File(outputdir, prefix+".qual"))
+		QualityFastaWriter qualWriter = new QualityFastaWriterBuilder(new File(outputdir, prefix+".qual"))
 															.numberPerLine(20)
 															.build();
 		
-		PositionFastaRecordWriter posWriter = new PositionFastaRecordWriterBuilder(new File(outputdir, prefix+".pos"))
+		PositionFastaWriter posWriter = new PositionFastaWriterBuilder(new File(outputdir, prefix+".pos"))
 															.numberPerLine(20)
 															.build();
 		

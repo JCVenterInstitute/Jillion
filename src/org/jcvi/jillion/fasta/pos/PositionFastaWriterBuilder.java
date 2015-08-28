@@ -30,15 +30,15 @@ import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.internal.fasta.AbstractFastaRecordWriter;
 import org.jcvi.jillion.internal.fasta.AbstractFastaRecordWriter.AbstractBuilder;
 /**
- * {@code PositionFastaRecordWriterBuilder} will create
- * new {@link PositionFastaRecordWriter} instance
+ * {@code PositionFastaWriterBuilder} will create
+ * new {@link PositionFastaWriter} instance
  * that will write fasta encoded sanger 
  * position information to the given File
  * or OutputStream.
  * @author dkatzel
  *
  */
-public final class PositionFastaRecordWriterBuilder extends AbstractBuilder<Position, PositionSequence, PositionFastaRecord, PositionFastaRecordWriter> {
+public final class PositionFastaWriterBuilder extends AbstractBuilder<Position, PositionSequence, PositionFastaRecord, PositionFastaWriter> {
 		
 		/**
 		 * Create a new Builder that will use
@@ -56,7 +56,7 @@ public final class PositionFastaRecordWriterBuilder extends AbstractBuilder<Posi
 		 * does not exist but cannot be created, 
 		 * or cannot be opened for any other reason.
 		 */
-		public PositionFastaRecordWriterBuilder(File outputFile) throws IOException {
+		public PositionFastaWriterBuilder(File outputFile) throws IOException {
 			super(outputFile);
 		}
 		/**
@@ -67,12 +67,12 @@ public final class PositionFastaRecordWriterBuilder extends AbstractBuilder<Posi
 		 * can not be null.
 		 * @throws NullPointerException if out is null.
 		 */
-		public PositionFastaRecordWriterBuilder(OutputStream out) {
+		public PositionFastaWriterBuilder(OutputStream out) {
 			super(out);
 		}
 
 		@Override
-		protected PositionFastaRecordWriter create(
+		protected PositionFastaWriter create(
 				OutputStream out, int numberOfResiduesPerLine, Charset charSet, String eol) {
 			return new PositionSequenceFastaRecordWriterImpl(out, numberOfResiduesPerLine, charSet,eol);
 		}
@@ -81,7 +81,7 @@ public final class PositionFastaRecordWriterBuilder extends AbstractBuilder<Posi
 			return 12;
 		}
 	
-		private static final class PositionSequenceFastaRecordWriterImpl  extends AbstractFastaRecordWriter<Position, PositionSequence, PositionFastaRecord> implements PositionFastaRecordWriter{
+		private static final class PositionSequenceFastaRecordWriterImpl  extends AbstractFastaRecordWriter<Position, PositionSequence, PositionFastaRecord> implements PositionFastaWriter{
 
 			private PositionSequenceFastaRecordWriterImpl(OutputStream out,
 					int numberOfResiduesPerLine, Charset charSet, String eol) {

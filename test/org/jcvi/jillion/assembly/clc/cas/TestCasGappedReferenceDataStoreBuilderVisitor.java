@@ -40,8 +40,8 @@ import org.jcvi.jillion.assembly.clc.cas.CasFileVisitor.CasVisitorCallback;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriter;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriterBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaWriter;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaWriterBuilder;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -60,7 +60,7 @@ public class TestCasGappedReferenceDataStoreBuilderVisitor {
     @Before
     public void setup() throws DataStoreException, IOException{
     	File refFasta = folder.newFile("ref.fasta");
-    	NucleotideFastaRecordWriter fastaWriter = new NucleotideFastaRecordWriterBuilder(refFasta)
+    	NucleotideFastaWriter fastaWriter = new NucleotideFastaWriterBuilder(refFasta)
     															.build();
     	fastaWriter.write(referenceName, new NucleotideSequenceBuilder("GTTCAAATTG").build());
        fastaWriter.close();

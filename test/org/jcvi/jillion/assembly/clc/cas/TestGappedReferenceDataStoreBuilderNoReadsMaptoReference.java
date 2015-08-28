@@ -33,8 +33,8 @@ import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriter;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriterBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaWriter;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaWriterBuilder;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordBuilder;
 import org.junit.Before;
 import org.junit.Rule;
@@ -135,7 +135,7 @@ public class TestGappedReferenceDataStoreBuilderNoReadsMaptoReference extends Ea
 
 	private File createTempFastaFile(NucleotideFastaRecord...fastaRecords ) throws IOException {
 		File fasta = folder.newFile("ref.fasta");
-		NucleotideFastaRecordWriter writer = new NucleotideFastaRecordWriterBuilder(fasta).build();
+		NucleotideFastaWriter writer = new NucleotideFastaWriterBuilder(fasta).build();
 		for(NucleotideFastaRecord r : fastaRecords){
 			writer.write(r);
 		}

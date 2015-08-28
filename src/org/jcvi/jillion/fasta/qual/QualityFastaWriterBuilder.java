@@ -18,27 +18,28 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.fasta.aa;
+package org.jcvi.jillion.fasta.qual;
+
 
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
-import org.jcvi.jillion.core.residue.aa.AminoAcid;
-import org.jcvi.jillion.core.residue.aa.ProteinSequence;
-import org.jcvi.jillion.internal.fasta.AbstractResidueSequenceFastaRecordWriter;
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.internal.fasta.AbstractFastaRecordWriter;
+import org.jcvi.jillion.internal.fasta.AbstractFastaRecordWriter.AbstractBuilder;
 /**
- * {@code ProteinFastaRecordWriterBuilder} is a Builder
- * class that will create a new instance of 
- * {@link ProteinFastaRecordWriter}
- * that will write amino acid (protein)
- * data to the given File or OutputStream.
+ * {@code QualityFastaWriterBuilder}
+ * builds a new instance of {@link QualityFastaWriter}
+ * that will write fasta encoded quality data
+ * to the provided File or {@link OutputStream}. 
  * @author dkatzel
  *
  */
-public final class ProteinFastaRecordWriterBuilder extends AbstractResidueSequenceFastaRecordWriter.Builder<AminoAcid, ProteinSequence, ProteinFastaRecord,ProteinFastaRecordWriter> {
-	
+public final class QualityFastaWriterBuilder extends AbstractBuilder<PhredQuality, QualitySequence, QualityFastaRecord,QualityFastaWriter> {
+
 	/**
 	 * Create a new Builder that will use
 	 * the given File to write
@@ -55,7 +56,7 @@ public final class ProteinFastaRecordWriterBuilder extends AbstractResidueSequen
 	 * does not exist but cannot be created, 
 	 * or cannot be opened for any other reason.
 	 */
-	public ProteinFastaRecordWriterBuilder(File outputFile) throws IOException {
+	public QualityFastaWriterBuilder(File outputFile) throws IOException {
 		super(outputFile);
 	}
 	/**
@@ -66,21 +67,45 @@ public final class ProteinFastaRecordWriterBuilder extends AbstractResidueSequen
 	 * can not be null.
 	 * @throws NullPointerException if out is null.
 	 */
-	public ProteinFastaRecordWriterBuilder(OutputStream out) {
+	public QualityFastaWriterBuilder(OutputStream out) {
 		super(out);
 	}
 
 	@Override
-	protected ProteinFastaRecordWriter create(
+	protected QualityFastaWriter create(
 			OutputStream out, int numberOfResiduesPerLine, Charset charSet, String eol) {
-		return new ProteinFastaRecordWriterImpl(out, numberOfResiduesPerLine, charSet,eol);
+		return new QualitySequenceFastaRecordWriterImpl(out, numberOfResiduesPerLine, charSet, eol);
+	}
+	@Override
+	protected int getDefaultNumberOfSymbolsPerLine() {
+		return 17;
 	}
 	
-	private static final class ProteinFastaRecordWriterImpl extends AbstractResidueSequenceFastaRecordWriter<AminoAcid, ProteinSequence, ProteinFastaRecord> implements ProteinFastaRecordWriter{
+	private static final class QualitySequenceFastaRecordWriterImpl extends AbstractFastaRecordWriter<PhredQuality, QualitySequence, QualityFastaRecord> implements QualityFastaWriter{
 
-		private ProteinFastaRecordWriterImpl(OutputStream out,
+		private QualitySequenceFastaRecordWriterImpl(OutputStream out,
 				int numberOfResiduesPerLine, Charset charSet, String eol) {
-			super(out, numberOfResiduesPerLine, charSet,eol);
+			super(out, numberOfResiduesPerLine, charSet, eol);
+		}
+
+		@Override
+		protected String getStringRepresentationFor(PhredQuality symbol) {
+			return String.format("%02d", symbol.getQualityScore());
+		}
+
+		@Override
+		protected boolean hasSymbolSeparator() {
+			return true;
+		}
+
+		@Override
+		protected String getSymbolSeparator() {
+			return " ";
+		}
+
+		@Override
+		protected int numberOfCharsFor(int numberOfSymbols) {
+			return 3*numberOfSymbols;
 		}
 	}
 }

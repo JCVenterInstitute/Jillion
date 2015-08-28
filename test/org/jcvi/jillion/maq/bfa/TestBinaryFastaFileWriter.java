@@ -33,7 +33,7 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriter;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaWriter;
 import org.junit.Test;
 
 public class TestBinaryFastaFileWriter extends AbstractTestBinaryFastaFile{
@@ -43,7 +43,7 @@ public class TestBinaryFastaFileWriter extends AbstractTestBinaryFastaFile{
 	public void writeAllRecordsShouldMatchMaqByteForByte() throws IOException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		
-		NucleotideFastaRecordWriter writer = new BfaWriterBuilder(out)
+		NucleotideFastaWriter writer = new BfaWriterBuilder(out)
 													.endian(ByteOrder.LITTLE_ENDIAN)
 													.build();
 		
@@ -59,7 +59,7 @@ public class TestBinaryFastaFileWriter extends AbstractTestBinaryFastaFile{
 	public void encodeBigEndian() throws IOException, DataStoreException{
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		
-		NucleotideFastaRecordWriter writer = new BfaWriterBuilder(out)
+		NucleotideFastaWriter writer = new BfaWriterBuilder(out)
 													.endian(ByteOrder.BIG_ENDIAN)
 													.build();
 		writer.write(forward);

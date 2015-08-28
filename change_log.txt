@@ -22,6 +22,8 @@ API Changes
 
 1. Added Java 8 Lambda Support to many APIs.
 
+2. Renamed *FastaRecordWriter* to *FastaWriter* to make smaller class names
+
 2. Moved quality trimming classes that used to be in org.jcvi.jillion.core.qual.trim to new
    org.jcvi.jillion.trim package.  LucyQualityTrimmer moved to new org.jcvi.jillion.trim.lucy
 

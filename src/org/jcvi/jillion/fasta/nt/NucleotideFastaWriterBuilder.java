@@ -35,17 +35,17 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.JoinedStringBuilder;
 import org.jcvi.jillion.core.util.MapUtil;
-import org.jcvi.jillion.internal.fasta.AbstractResidueSequenceFastaRecordWriter;
+import org.jcvi.jillion.internal.fasta.AbstractResidueFastaWriter;
 /**
- * {@code NucleotideFastaRecordWriterBuilder} is a Builder
+ * {@code NucleotideFastaWriterBuilder} is a Builder
  * class that will create a new instance of 
- * {@link NucleotideFastaRecordWriter}
+ * {@link NucleotideFastaWriter}
  * that will write fasta encoded data
  * to the given File or {@link OutputStream}.
  * @author dkatzel
  *
  */
-public final class NucleotideFastaRecordWriterBuilder extends AbstractResidueSequenceFastaRecordWriter.Builder<Nucleotide, NucleotideSequence, NucleotideFastaRecord,NucleotideFastaRecordWriter> {
+public final class NucleotideFastaWriterBuilder extends AbstractResidueFastaWriter.Builder<Nucleotide, NucleotideSequence, NucleotideFastaRecord,NucleotideFastaWriter> {
 		private boolean nonRedundant;
 		private Integer expectedCapacity;
 		
@@ -66,7 +66,7 @@ public final class NucleotideFastaRecordWriterBuilder extends AbstractResidueSeq
 		 * does not exist but cannot be created, 
 		 * or cannot be opened for any other reason.
 		 */
-		public NucleotideFastaRecordWriterBuilder(File outputFile) throws IOException {
+		public NucleotideFastaWriterBuilder(File outputFile) throws IOException {
 			super(outputFile);
 		}
 		/**
@@ -77,7 +77,7 @@ public final class NucleotideFastaRecordWriterBuilder extends AbstractResidueSeq
 		 * can not be null.
 		 * @throws NullPointerException if out is null.
 		 */
-		public NucleotideFastaRecordWriterBuilder(OutputStream out) {
+		public NucleotideFastaWriterBuilder(OutputStream out) {
 			super(out);
 		}
 		/**
@@ -117,7 +117,7 @@ public final class NucleotideFastaRecordWriterBuilder extends AbstractResidueSeq
 		 * 
 		 * @since 5.0
 		 */
-		public NucleotideFastaRecordWriterBuilder makeNonRedundant(){
+		public NucleotideFastaWriterBuilder makeNonRedundant(){
 			this.nonRedundant = true;
 			this.expectedCapacity = null;
 			return this;
@@ -167,7 +167,7 @@ public final class NucleotideFastaRecordWriterBuilder extends AbstractResidueSeq
 		 * 
 		 * @since 5.0
 		 */
-		public NucleotideFastaRecordWriterBuilder makeNonRedundant(int expectedSize){
+		public NucleotideFastaWriterBuilder makeNonRedundant(int expectedSize){
 
 			if(expectedSize <1){
 				throw new IllegalArgumentException("expected size must be >= 1");					
@@ -178,7 +178,7 @@ public final class NucleotideFastaRecordWriterBuilder extends AbstractResidueSeq
 		}
 
 		@Override
-		protected NucleotideFastaRecordWriter create(
+		protected NucleotideFastaWriter create(
 				OutputStream out, int numberOfResiduesPerLine, Charset charSet, String eol) {
 			
 			if(nonRedundant){
@@ -190,7 +190,7 @@ public final class NucleotideFastaRecordWriterBuilder extends AbstractResidueSeq
 			return new NucleotideSequenceFastaRecordWriterImpl(out, numberOfResiduesPerLine, charSet,eol);
 		}
 		
-		private static final class NucleotideSequenceFastaRecordWriterImpl extends AbstractResidueSequenceFastaRecordWriter<Nucleotide, NucleotideSequence, NucleotideFastaRecord> implements NucleotideFastaRecordWriter{
+		private static final class NucleotideSequenceFastaRecordWriterImpl extends AbstractResidueFastaWriter<Nucleotide, NucleotideSequence, NucleotideFastaRecord> implements NucleotideFastaWriter{
 
 			private NucleotideSequenceFastaRecordWriterImpl(OutputStream out,
 					int numberOfResiduesPerLine, Charset charSet, String eol) {
@@ -319,7 +319,7 @@ public final class NucleotideFastaRecordWriterBuilder extends AbstractResidueSeq
 			
 		}
 		
-		private static final class NonRedundantNucleotideSequenceFastaWriter implements NucleotideFastaRecordWriter{
+		private static final class NonRedundantNucleotideSequenceFastaWriter implements NucleotideFastaWriter{
 
 			private static final char CONTROL_A = 0x1;
 			private final Map<NucleotideSequence, Set<NonRedundantEntry>> nonRedundantMap;

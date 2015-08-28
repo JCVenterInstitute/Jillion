@@ -40,7 +40,7 @@ public class TestNonRedundantNucleotideFastaWriter {
 		
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		
-		try(NucleotideFastaRecordWriter writer = new NucleotideFastaRecordWriterBuilder(out)
+		try(NucleotideFastaWriter writer = new NucleotideFastaWriterBuilder(out)
 														.makeNonRedundant()
 														.build()){
 			writer.write("gi|3023276|sp|Q57293|AFUC_ACTPL", seq,"Ferric transport ATP-binding protein afuC");

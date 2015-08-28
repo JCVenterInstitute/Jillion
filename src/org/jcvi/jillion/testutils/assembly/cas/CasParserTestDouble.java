@@ -31,8 +31,8 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.ArrayIterator;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriter;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriterBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaWriter;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaWriterBuilder;
 import org.jcvi.jillion.testutils.NucleotideSequenceTestUtil;
 
 /**
@@ -279,7 +279,7 @@ public final class CasParserTestDouble implements CasParser {
 		private final ReadFileGenerator readFileGenerator;
 		private int readCounter=0;
 		private long residueCounter=0;
-		private NucleotideFastaRecordWriter referenceWriter;
+		private NucleotideFastaWriter referenceWriter;
 		
 		private CasFileInfo refFileInfo, readFileInfo;
 		/**
@@ -352,7 +352,7 @@ public final class CasParserTestDouble implements CasParser {
 			
 			
 			this.referenceFile = referenceFile;
-			referenceWriter = new NucleotideFastaRecordWriterBuilder(referenceFile)
+			referenceWriter = new NucleotideFastaWriterBuilder(referenceFile)
 										.build();
 			this.workingDir = workingDir;
 		

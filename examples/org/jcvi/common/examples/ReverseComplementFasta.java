@@ -32,8 +32,8 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriter;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriterBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaWriter;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaWriterBuilder;
 
 public class ReverseComplementFasta {
 
@@ -44,7 +44,7 @@ public class ReverseComplementFasta {
 		NucleotideFastaDataStore dataStore = new NucleotideFastaFileDataStoreBuilder(inputFasta)
 														.hint(DataStoreProviderHint.ITERATION_ONLY)
 														.build();
-		NucleotideFastaRecordWriter out = new NucleotideFastaRecordWriterBuilder(reverseComplimentOutputFasta)
+		NucleotideFastaWriter out = new NucleotideFastaWriterBuilder(reverseComplimentOutputFasta)
 															.build();
 
 		StreamingIterator<NucleotideFastaRecord> iter=null;

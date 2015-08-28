@@ -43,12 +43,12 @@ import java.util.Set;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.DateUtil;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriter;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriterBuilder;
-import org.jcvi.jillion.fasta.pos.PositionFastaRecordWriter;
-import org.jcvi.jillion.fasta.pos.PositionFastaRecordWriterBuilder;
-import org.jcvi.jillion.fasta.qual.QualityFastaRecordWriter;
-import org.jcvi.jillion.fasta.qual.QualityFastaRecordWriterBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaWriter;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaWriterBuilder;
+import org.jcvi.jillion.fasta.pos.PositionFastaWriter;
+import org.jcvi.jillion.fasta.pos.PositionFastaWriterBuilder;
+import org.jcvi.jillion.fasta.qual.QualityFastaWriter;
+import org.jcvi.jillion.fasta.qual.QualityFastaWriterBuilder;
 import org.jcvi.jillion.trace.chromat.Chromatogram;
 import org.jcvi.jillion.trace.chromat.ChromatogramFactory;
 
@@ -290,7 +290,7 @@ public final class TraceArchiveWriter implements Closeable{
 	private void handleSeqFasta(TraceArchiveRecordBuilder recordBuilder, String traceName, Chromatogram chromo)
 			throws FileNotFoundException, IOException {
 		String fastaFilePath = String.format("./fasta/%s.fasta", traceName);
-		NucleotideFastaRecordWriter writer = new NucleotideFastaRecordWriterBuilder(new File(rootDir, fastaFilePath))
+		NucleotideFastaWriter writer = new NucleotideFastaWriterBuilder(new File(rootDir, fastaFilePath))
 														.build();
 		writer.write(traceName, chromo.getNucleotideSequence());
 		writer.close();
@@ -301,7 +301,7 @@ public final class TraceArchiveWriter implements Closeable{
 	private void handleQualFasta(TraceArchiveRecordBuilder recordBuilder, String traceName, Chromatogram chromo)
 			throws FileNotFoundException, IOException {
 		String qualFastaFilePath = String.format("./qual/%s.qual", traceName);
-		QualityFastaRecordWriter writer = new QualityFastaRecordWriterBuilder(new File(rootDir, qualFastaFilePath))
+		QualityFastaWriter writer = new QualityFastaWriterBuilder(new File(rootDir, qualFastaFilePath))
 														.build();
 		writer.write(traceName, chromo.getQualitySequence());
 		writer.close();
@@ -312,7 +312,7 @@ public final class TraceArchiveWriter implements Closeable{
 	private void handlePeakFasta(TraceArchiveRecordBuilder recordBuilder, String traceName, Chromatogram chromo)
 			throws FileNotFoundException, IOException {
 		String peakFastaFilePath = String.format("./peak/%s.peak", traceName);
-		PositionFastaRecordWriter writer = new PositionFastaRecordWriterBuilder(new File(rootDir, peakFastaFilePath))
+		PositionFastaWriter writer = new PositionFastaWriterBuilder(new File(rootDir, peakFastaFilePath))
 														.build();
 		writer.write(traceName, chromo.getPeakSequence());
 		writer.close();
