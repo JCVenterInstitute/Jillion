@@ -28,6 +28,7 @@ import static org.junit.Assert.fail;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.BrokenBarrierException;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
@@ -84,7 +85,11 @@ public class TestAbstractBlockingClosableIteratorExceptions {
                 String obj = list.get(i);
 				this.blockingPut(obj);
             }
+           
+            
+           
             if(numberOfRecordsUntilThrowException < list.size()){
+            	
                 throw new ExpectedException(list.get(i));
             }
             
@@ -106,25 +111,23 @@ public class TestAbstractBlockingClosableIteratorExceptions {
     }
     
     @Test
-    public void backgroundThreadThrowsExceptionShouldCatchOnHasNextOrNext() throws InterruptedException{
+    public void backgroundThreadThrowsExceptionShouldCatchOnHasNextOrNext() throws InterruptedException, BrokenBarrierException{
        try( TestDouble iter = new TestDouble(names, 2)){
 	        iter.start();  
-	        
-	        iter.next(); //moe
 	        //depending on thread scheduling
 	        //the throw can happen on either of the 
 	        //next 2 next() or hasNext() calls
-	        //the easiest way to test is to just wrap both 
+	        //the easiest way to test is to just wrap everything 
 	        //in a try.
 	        try{
-	        	Thread.sleep(1000);
-	        	 iter.next(); 
-	        	 Thread.sleep(1000);
-	             iter.next();
-	            fail("should throw exception");
+		       iter.next();
+		       iter.next();
+		       iter.next();
+		       fail("should throw exception");
 	        }catch(ExpectedException e){
 	            //expected
 	        }
+	      
 	        
 	        try{
 	            iter.next();
@@ -133,6 +136,8 @@ public class TestAbstractBlockingClosableIteratorExceptions {
 	          //expected
 	        }
         
+	}catch(ExpectedException e){
+		e.printStackTrace();
 	}
     }
     
