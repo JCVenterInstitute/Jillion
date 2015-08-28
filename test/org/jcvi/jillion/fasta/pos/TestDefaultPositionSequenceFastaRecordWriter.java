@@ -31,8 +31,8 @@ import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.fasta.pos.DefaultPositionFastaFileDataStore;
 import org.jcvi.jillion.fasta.pos.PositionFastaRecord;
-import org.jcvi.jillion.fasta.pos.PositionFastaRecordWriter;
-import org.jcvi.jillion.fasta.pos.PositionFastaRecordWriterBuilder;
+import org.jcvi.jillion.fasta.pos.PositionFastaWriter;
+import org.jcvi.jillion.fasta.pos.PositionFastaWriterBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -52,7 +52,7 @@ public class TestDefaultPositionSequenceFastaRecordWriter {
 		
 		String asString = asString(peakFile);
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		PositionFastaRecordWriter sut = new PositionFastaRecordWriterBuilder(out)
+		PositionFastaWriter sut = new PositionFastaWriterBuilder(out)
 												.build();
 		
 		sut.write(fasta);
@@ -65,7 +65,7 @@ public class TestDefaultPositionSequenceFastaRecordWriter {
 		String asString = asString(peakFile);
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		Charset charset = Charset.forName("UTF-16");
-		PositionFastaRecordWriter sut = new PositionFastaRecordWriterBuilder(out)
+		PositionFastaWriter sut = new PositionFastaWriterBuilder(out)
 												.charset(charset)
 												.build();
 		

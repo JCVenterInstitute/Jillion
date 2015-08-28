@@ -13,10 +13,12 @@ Jillion 4.2
 New Features
 ------------
 
-1.  AminoAcid - Added Pyrrolysine 'O' to AminoAcid class and AminoAcidSequence
+1.  Renamed *FastaRecordWriter* to *FastaWriter* to make smaller class names
+
+2.  AminoAcid - Added Pyrrolysine 'O' to AminoAcid class and AminoAcidSequence
     as well as Blosum matrices. 
     
-2.  FastaFileParser - now supports non-redundant fasta files (parsing only)
+3.  FastaFileParser - now supports non-redundant fasta files (parsing only)
 
 Bug Fixes
 ----------
