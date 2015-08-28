@@ -22,8 +22,6 @@ API Changes
 
 1. Added Java 8 Lambda Support to many APIs.
 
-2. Renamed *FastaRecordWriter* to *FastaWriter* to make smaller class names
-
 2. Moved quality trimming classes that used to be in org.jcvi.jillion.core.qual.trim to new
    org.jcvi.jillion.trim package.  LucyQualityTrimmer moved to new org.jcvi.jillion.trim.lucy
 
@@ -39,10 +37,12 @@ Jillion 4.2
 New Features
 ------------
 
-1.  AminoAcid - Added Pyrrolysine 'O' to AminoAcid class and AminoAcidSequence
+1.  Renamed *FastaRecordWriter* to *FastaWriter* to make smaller class names
+
+2.  AminoAcid - Added Pyrrolysine 'O' to AminoAcid class and AminoAcidSequence
     as well as Blosum matrices. 
     
-2.  FastaFileParser - now supports non-redundant fasta files (parsing only)
+3.  FastaFileParser - now supports non-redundant fasta files (parsing only)
 
 Bug Fixes
 ----------
@@ -70,6 +70,7 @@ Jillion 4.1 - internal release only
 
 New Features
 ------------
+
 1.  Added support for AminoAcid ambiguity codes in AminoAcid class AminoAcidSequence
     as well as Blosum matrices. 
     
