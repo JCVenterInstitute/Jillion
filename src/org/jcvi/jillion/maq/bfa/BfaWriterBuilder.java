@@ -34,12 +34,12 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordWriter;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaWriter;
 
 /**
  * {@code BfaWriterBuilder}
  * is a builder class that will create
- * a new {@link NucleotideFastaRecordWriter} instance
+ * a new {@link NucleotideFastaWriter} instance
  * that will write MAQ binary encoded fasta
  * files ({@literal .bfa} files).
  * 
@@ -69,7 +69,7 @@ public class BfaWriterBuilder {
 	
 	/**
 	 * Create a new {@link BfaWriterBuilder} instance
-	 * which will create a {@link NucleotideFastaRecordWriter}
+	 * which will create a {@link NucleotideFastaWriter}
 	 * that will write to the given output {@link File}.
 	 * @param outputBfaFile the output bfa file to write to; can not be null.
 	 * If this file already exists, then it will be overwritten.  If the file
@@ -87,7 +87,7 @@ public class BfaWriterBuilder {
 	}
 	/**
 	 * Create a new {@link BfaWriterBuilder} instance
-	 * which will create a {@link NucleotideFastaRecordWriter}
+	 * which will create a {@link NucleotideFastaWriter}
 	 * that will write to the given {@link OutputStream}.
 	 * @param out the {@link OutputStream} to encode bfq data to; can not be null.
 	 * @throws NullPointerException if out is null.
@@ -119,15 +119,15 @@ public class BfaWriterBuilder {
 		return this;
 	}
 	/**
-	 * Create a new {@link NucleotideFastaRecordWriter}
+	 * Create a new {@link NucleotideFastaWriter}
 	 * instance that will write Binary Fasta encoded data
 	 * to the given output file.
-	 * @return a new {@link NucleotideFastaRecordWriter}
+	 * @return a new {@link NucleotideFastaWriter}
 	 * instance will never be null.
 	 * @throws IOException if there is a problem creating the 
 	 * file or any parent directory or opening the file for writing.
 	 */
-	public NucleotideFastaRecordWriter build() throws IOException{
+	public NucleotideFastaWriter build() throws IOException{
 		if(outputBfaFile !=null){
 			IOUtil.mkdirs(outputBfaFile.getParentFile());
 			
@@ -138,7 +138,7 @@ public class BfaWriterBuilder {
 	}
 	
 	
-	private static class BinaryFastaFileWriter implements NucleotideFastaRecordWriter {
+	private static class BinaryFastaFileWriter implements NucleotideFastaWriter {
 		private final OutputStream out;
 		private final ByteOrder byteOrder;
 		

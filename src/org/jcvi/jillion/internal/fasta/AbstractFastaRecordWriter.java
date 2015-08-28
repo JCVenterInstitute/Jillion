@@ -34,11 +34,11 @@ import java.util.Iterator;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.fasta.FastaRecord;
-import org.jcvi.jillion.fasta.FastaRecordWriter;
+import org.jcvi.jillion.fasta.FastaWriter;
 import org.jcvi.jillion.fasta.FastaUtil;
 
 
-public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F extends FastaRecord<S,T>> implements FastaRecordWriter<S, T, F>{
+public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F extends FastaRecord<S,T>> implements FastaWriter<S, T, F>{
 
 	private final Writer writer;
 	private final int numberOfResiduesPerLine;
@@ -148,7 +148,7 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
    
     protected abstract int numberOfCharsFor(int numberOfSymbols);
     
-    public abstract static class AbstractBuilder<S, T extends Sequence<S>,F extends FastaRecord<S,T>, W extends FastaRecordWriter<S, T, F>> implements org.jcvi.jillion.core.util.Builder<W>{
+    public abstract static class AbstractBuilder<S, T extends Sequence<S>,F extends FastaRecord<S,T>, W extends FastaWriter<S, T, F>> implements org.jcvi.jillion.core.util.Builder<W>{
 		
     	public static final int ALL_ON_ONE_LINE =-1;
     	
@@ -277,16 +277,16 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		}
 		
 		/**
-		 * Create a new {@link FastaRecordWriter} instance
+		 * Create a new {@link FastaWriter} instance
 		 * which uses the parameters supplied to this builder.
-		 * @return a new instance of {@link FastaRecordWriter}. 
+		 * @return a new instance of {@link FastaWriter}. 
 		 */
 		@Override
 		public final W build() {
 			return create(out, numberOfSymbolsPerLine, charSet,eol);
 		}
 		/**
-		 * Create a new instance of a {@link FastaRecordWriter}
+		 * Create a new instance of a {@link FastaWriter}
 		 * with the given non-null parameters.
 		 * @param out the OutputStream that the new writer will use
 		 * to output the fasta data; will never be null.
@@ -296,7 +296,7 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		 * over several lines, each line never exceeding this value.
 		 * @param charSet the {@link Charset} to encode the output to,
 		 * usually UTF-8.
-		 * @return a new {@link FastaRecordWriter}; can not be null.
+		 * @return a new {@link FastaWriter}; can not be null.
 		 */
 		protected abstract W create(OutputStream out, int numberOfResiduesPerLine, Charset charSet, String eol);
 	}

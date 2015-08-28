@@ -18,12 +18,12 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.fasta.aa;
+package org.jcvi.jillion.fasta.qual;
 
-import org.jcvi.jillion.core.residue.aa.AminoAcid;
-import org.jcvi.jillion.core.residue.aa.ProteinSequence;
-import org.jcvi.jillion.fasta.FastaRecordWriter;
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.fasta.FastaWriter;
 
-public interface ProteinFastaRecordWriter extends FastaRecordWriter<AminoAcid, ProteinSequence, ProteinFastaRecord>{
+public interface QualityFastaWriter extends FastaWriter<PhredQuality, QualitySequence, QualityFastaRecord>{
 
 }

@@ -28,17 +28,17 @@ import java.nio.charset.Charset;
 
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.internal.fasta.AbstractResidueSequenceFastaRecordWriter;
+import org.jcvi.jillion.internal.fasta.AbstractResidueFastaWriter;
 /**
- * {@code NucleotideFastaRecordWriterBuilder} is a Builder
+ * {@code NucleotideFastaWriterBuilder} is a Builder
  * class that will create a new instance of 
- * {@link NucleotideFastaRecordWriter}
+ * {@link NucleotideFastaWriter}
  * that will write fasta encoded data
  * to the given File or {@link OutputStream}.
  * @author dkatzel
  *
  */
-public final class NucleotideFastaRecordWriterBuilder extends AbstractResidueSequenceFastaRecordWriter.Builder<Nucleotide, NucleotideSequence, NucleotideFastaRecord,NucleotideFastaRecordWriter> {
+public final class NucleotideFastaWriterBuilder extends AbstractResidueFastaWriter.Builder<Nucleotide, NucleotideSequence, NucleotideFastaRecord,NucleotideFastaWriter> {
 		
 		/**
 		 * Create a new Builder that will use
@@ -56,7 +56,7 @@ public final class NucleotideFastaRecordWriterBuilder extends AbstractResidueSeq
 		 * does not exist but cannot be created, 
 		 * or cannot be opened for any other reason.
 		 */
-		public NucleotideFastaRecordWriterBuilder(File outputFile) throws IOException {
+		public NucleotideFastaWriterBuilder(File outputFile) throws IOException {
 			super(outputFile);
 		}
 		/**
@@ -67,17 +67,17 @@ public final class NucleotideFastaRecordWriterBuilder extends AbstractResidueSeq
 		 * can not be null.
 		 * @throws NullPointerException if out is null.
 		 */
-		public NucleotideFastaRecordWriterBuilder(OutputStream out) {
+		public NucleotideFastaWriterBuilder(OutputStream out) {
 			super(out);
 		}
 
 		@Override
-		protected NucleotideFastaRecordWriter create(
+		protected NucleotideFastaWriter create(
 				OutputStream out, int numberOfResiduesPerLine, Charset charSet, String eol) {
 			return new NucleotideSequenceFastaRecordWriterImpl(out, numberOfResiduesPerLine, charSet,eol);
 		}
 		
-		private static final class NucleotideSequenceFastaRecordWriterImpl extends AbstractResidueSequenceFastaRecordWriter<Nucleotide, NucleotideSequence, NucleotideFastaRecord> implements NucleotideFastaRecordWriter{
+		private static final class NucleotideSequenceFastaRecordWriterImpl extends AbstractResidueFastaWriter<Nucleotide, NucleotideSequence, NucleotideFastaRecord> implements NucleotideFastaWriter{
 
 			private NucleotideSequenceFastaRecordWriterImpl(OutputStream out,
 					int numberOfResiduesPerLine, Charset charSet, String eol) {
