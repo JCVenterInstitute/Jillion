@@ -33,7 +33,7 @@ public class TestFastqQualityCodecGuesserAllEither {
 	private void assertAll30sCorrectlyGuessed(FastqQualityCodec codec)
 			throws IOException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		FastqRecordWriter writer = new FastqRecordWriterBuilder(out)
+		FastqWriter writer = new FastqWriterBuilder(out)
 											.qualityCodec(codec)
 											.build();
 		byte[] qvs = new byte[8];

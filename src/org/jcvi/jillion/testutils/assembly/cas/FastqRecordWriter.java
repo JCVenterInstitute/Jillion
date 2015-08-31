@@ -6,12 +6,12 @@ import java.io.IOException;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.trace.fastq.FastqRecordWriterBuilder;
+import org.jcvi.jillion.trace.fastq.FastqWriterBuilder;
 
 public final class FastqRecordWriter implements RecordWriter{
 	
 	
-	private final org.jcvi.jillion.trace.fastq.FastqRecordWriter writer;
+	private final org.jcvi.jillion.trace.fastq.FastqWriter writer;
 	private final File fastqFile;
 	private final int maxNumberOfRecordsToWrite;
 	private int counter=0;
@@ -25,7 +25,7 @@ public final class FastqRecordWriter implements RecordWriter{
 			throw new IllegalArgumentException("max records can not < 1");
 		}
 		fastqFile = File.createTempFile("reads", ".fastq", workingDir);
-		writer = new FastqRecordWriterBuilder(fastqFile).build();
+		writer = new FastqWriterBuilder(fastqFile).build();
 		maxNumberOfRecordsToWrite = maxRecordsToWrite;
 		
 	}
@@ -35,7 +35,7 @@ public final class FastqRecordWriter implements RecordWriter{
 			throw new IllegalArgumentException("max records can not < 1");
 		}
 		fastqFile = new File(workingDir, filename);
-		writer = new FastqRecordWriterBuilder(fastqFile).build();
+		writer = new FastqWriterBuilder(fastqFile).build();
 		maxNumberOfRecordsToWrite = maxRecordsToWrite;
 		
 	}

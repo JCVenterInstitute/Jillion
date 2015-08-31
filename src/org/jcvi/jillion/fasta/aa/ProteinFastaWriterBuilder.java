@@ -73,12 +73,12 @@ public final class ProteinFastaWriterBuilder extends AbstractResidueFastaWriter.
 	@Override
 	protected ProteinFastaWriter create(
 			OutputStream out, int numberOfResiduesPerLine, Charset charSet, String eol) {
-		return new ProteinFastaRecordWriterImpl(out, numberOfResiduesPerLine, charSet,eol);
+		return new ProteinFastaWriterImpl(out, numberOfResiduesPerLine, charSet,eol);
 	}
 	
-	private static final class ProteinFastaRecordWriterImpl extends AbstractResidueFastaWriter<AminoAcid, ProteinSequence, ProteinFastaRecord> implements ProteinFastaWriter{
+	private static final class ProteinFastaWriterImpl extends AbstractResidueFastaWriter<AminoAcid, ProteinSequence, ProteinFastaRecord> implements ProteinFastaWriter{
 
-		private ProteinFastaRecordWriterImpl(OutputStream out,
+		private ProteinFastaWriterImpl(OutputStream out,
 				int numberOfResiduesPerLine, Charset charSet, String eol) {
 			super(out, numberOfResiduesPerLine, charSet,eol);
 		}

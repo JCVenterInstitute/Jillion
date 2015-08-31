@@ -27,8 +27,8 @@ import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
-import org.jcvi.jillion.trace.fastq.FastqRecordWriter;
-import org.jcvi.jillion.trace.fastq.FastqRecordWriterBuilder;
+import org.jcvi.jillion.trace.fastq.FastqWriter;
+import org.jcvi.jillion.trace.fastq.FastqWriterBuilder;
 import org.jcvi.jillion.trace.sff.SffFileDataStore;
 import org.jcvi.jillion.trace.sff.SffFileDataStoreBuilder;
 import org.jcvi.jillion.trace.sff.SffFlowgram;
@@ -47,7 +47,7 @@ public class Sff2Fastq {
 												.hint(DataStoreProviderHint.ITERATION_ONLY)
 												.build();
 		
-		FastqRecordWriter writer = new FastqRecordWriterBuilder(fastqFile)
+		FastqWriter writer = new FastqWriterBuilder(fastqFile)
 										.qualityCodec(FastqQualityCodec.SOLEXA)
 										.build();
 		

@@ -35,8 +35,8 @@ import org.jcvi.jillion.trace.fastq.FastqDataStore;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
 import org.jcvi.jillion.trace.fastq.FastqRecord;
-import org.jcvi.jillion.trace.fastq.FastqRecordWriter;
-import org.jcvi.jillion.trace.fastq.FastqRecordWriterBuilder;
+import org.jcvi.jillion.trace.fastq.FastqWriter;
+import org.jcvi.jillion.trace.fastq.FastqWriterBuilder;
 
 public class ReEncodeFastq {
 
@@ -62,7 +62,7 @@ public class ReEncodeFastq {
 										.build();
 		
 		//note that we are re-encoding it in illumina format
-		FastqRecordWriter writer = new FastqRecordWriterBuilder(outFile)
+		FastqWriter writer = new FastqWriterBuilder(outFile)
 										.qualityCodec(FastqQualityCodec.ILLUMINA)
 										.build();
 		

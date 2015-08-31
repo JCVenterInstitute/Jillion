@@ -35,7 +35,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.trace.fastq.FastqDataStore;
 import org.jcvi.jillion.trace.fastq.FastqRecord;
 import org.jcvi.jillion.trace.fastq.FastqRecordBuilder;
-import org.jcvi.jillion.trace.fastq.FastqRecordWriter;
+import org.jcvi.jillion.trace.fastq.FastqWriter;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -53,7 +53,7 @@ public class TestBinaryFastqFileWriter {
 	public void writeOneRecordNativeByteOrder() throws IOException, DataStoreException{
 		File out =tmpDir.newFile();
 		
-		FastqRecordWriter writer = new BfqFileWriterBuilder(out)
+		FastqWriter writer = new BfqFileWriterBuilder(out)
 											.build();
 		
 		
@@ -68,7 +68,7 @@ public class TestBinaryFastqFileWriter {
 	public void capMaxQualityTo63() throws IOException, DataStoreException{
 		File out =tmpDir.newFile();
 		
-		FastqRecordWriter writer = new BfqFileWriterBuilder(out)
+		FastqWriter writer = new BfqFileWriterBuilder(out)
 											.build();
 		
 		FastqRecord input = new FastqRecordBuilder("id",
@@ -92,7 +92,7 @@ public class TestBinaryFastqFileWriter {
 	public void nsGetZeroQuality() throws IOException, DataStoreException{
 		File out =tmpDir.newFile();
 		
-		FastqRecordWriter writer = new BfqFileWriterBuilder(out)
+		FastqWriter writer = new BfqFileWriterBuilder(out)
 											.build();
 		
 		FastqRecord input = new FastqRecordBuilder("id",
@@ -115,7 +115,7 @@ public class TestBinaryFastqFileWriter {
 	public void gapGetsConvertedIntoNWithZeroQuality() throws IOException, DataStoreException{
 		File out =tmpDir.newFile();
 		
-		FastqRecordWriter writer = new BfqFileWriterBuilder(out)
+		FastqWriter writer = new BfqFileWriterBuilder(out)
 											.build();
 		
 		FastqRecord input = new FastqRecordBuilder("id",
@@ -138,7 +138,7 @@ public class TestBinaryFastqFileWriter {
 	public void ambiguityGetsConvertedIntoNWithZeroQuality() throws IOException, DataStoreException{
 		File out =tmpDir.newFile();
 		
-		FastqRecordWriter writer = new BfqFileWriterBuilder(out)
+		FastqWriter writer = new BfqFileWriterBuilder(out)
 											.build();
 		
 		FastqRecord input = new FastqRecordBuilder("id",
@@ -162,7 +162,7 @@ public class TestBinaryFastqFileWriter {
 	public void writeMultipleRecords() throws IOException, DataStoreException{
 		File out =tmpDir.newFile();
 		
-		FastqRecordWriter writer = new BfqFileWriterBuilder(out)
+		FastqWriter writer = new BfqFileWriterBuilder(out)
 											.build();
 		
 		
@@ -181,7 +181,7 @@ public class TestBinaryFastqFileWriter {
 	public void writeOneRecordBigEndian() throws IOException, DataStoreException{
 		File out =tmpDir.newFile();
 		
-		FastqRecordWriter writer = new BfqFileWriterBuilder(out)
+		FastqWriter writer = new BfqFileWriterBuilder(out)
 											.endian(ByteOrder.BIG_ENDIAN)
 											.build();
 		
@@ -197,7 +197,7 @@ public class TestBinaryFastqFileWriter {
 	public void writeOneRecordLittleEndian() throws IOException, DataStoreException{
 		File out =tmpDir.newFile();
 		
-		FastqRecordWriter writer = new BfqFileWriterBuilder(out)
+		FastqWriter writer = new BfqFileWriterBuilder(out)
 											.endian(ByteOrder.LITTLE_ENDIAN)
 											.build();
 		
