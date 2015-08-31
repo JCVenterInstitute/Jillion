@@ -51,7 +51,7 @@ import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterato
  *
  *
  */
-final class LargeFastqFileDataStore implements FastqDataStore {
+final class LargeFastqFileDataStore implements FastqFileDataStore {
     private final FastqQualityCodec qualityCodec;
     private final FastqParser parser;
     
@@ -73,12 +73,14 @@ final class LargeFastqFileDataStore implements FastqDataStore {
      * to decode the fastq file.  If this value is null, then 
      * the datastore implementation will try to guess the codec used which might
      * have a performance penalty associated with it.
-     * @return a new {@link FastqDataStore} instance, will never be null.
+     * 
+     * @return a new {@link FastqFileDataStore} instance, will never be null.
+     * 
      * @throws FileNotFoundException if the given Fastq file does not exist.
      * @throws NullPointerException if fastqFile is null.
      * @see #create(File, FastqQualityCodec, DataStoreFilter)
      */
-    public static FastqDataStore create(File fastqFile, FastqQualityCodec qualityCodec) throws IOException{
+    public static FastqFileDataStore create(File fastqFile, FastqQualityCodec qualityCodec) throws IOException{
     	return create(fastqFile, qualityCodec, DataStoreFilters.alwaysAccept());
     }
     /**
@@ -97,11 +99,11 @@ final class LargeFastqFileDataStore implements FastqDataStore {
      * to decode the fastq file.  If this value is null, then 
      * the datastore implementation will try to guess the codec used which might
      * have a performance penalty associated with it.
-     * @return a new {@link FastqDataStore} instance, will never be null.
+     * @return a new {@link FastqFileDataStore} instance, will never be null.
      * @throws FileNotFoundException if the given Fastq file does not exist.
      * @throws NullPointerException if fastqFile is null.
      */
-    public static FastqDataStore create(File fastqFile, FastqQualityCodec qualityCodec, DataStoreFilter filter) throws IOException{
+    public static FastqFileDataStore create(File fastqFile, FastqQualityCodec qualityCodec, DataStoreFilter filter) throws IOException{
     	if(fastqFile==null){
     		throw new NullPointerException("fastq file can not be null");
     	} 
@@ -127,7 +129,7 @@ final class LargeFastqFileDataStore implements FastqDataStore {
      * @throws NullPointerException if either parameter is null.
      * @see #create(FastqFileParser,FastqQualityCodec,  DataStoreFilter)
      */
-    public static FastqDataStore create(FastqParser parser, FastqQualityCodec qualityCodec) throws IOException{
+    public static FastqFileDataStore create(FastqParser parser, FastqQualityCodec qualityCodec) throws IOException{
     	return create(parser, qualityCodec, DataStoreFilters.alwaysAccept());
     }
     /**
@@ -150,7 +152,7 @@ final class LargeFastqFileDataStore implements FastqDataStore {
      * @return a new {@link FastqDataStore} instance, will never be null.
      * @throws NullPointerException if any parameter is null.
      */
-    public static FastqDataStore create(FastqParser parser, FastqQualityCodec qualityCodec, DataStoreFilter filter) throws IOException{
+    public static FastqFileDataStore create(FastqParser parser, FastqQualityCodec qualityCodec, DataStoreFilter filter) throws IOException{
     	
     	return new LargeFastqFileDataStore(parser, qualityCodec,filter);
     }
@@ -175,6 +177,10 @@ final class LargeFastqFileDataStore implements FastqDataStore {
         closed = true;        
     }
     
+    @Override
+    public FastqQualityCodec getQualityCodec() {
+        return qualityCodec;
+    }
     /**
      * {@inheritDoc}
      */

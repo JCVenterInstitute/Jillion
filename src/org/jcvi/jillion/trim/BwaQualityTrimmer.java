@@ -29,7 +29,10 @@ import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 /**
  * {@code BwaQualityTrimmer} is a {@link QualityTrimmer}
  * implementation that uses the algorithm 
- * from BWA in the file bwaseqio.c.
+ * from BWA '-q' option.
+ * @implNote This code is a java port of the quality trimming code
+ * in the file bwaseqio.c.
+ * 
  * @author dkatzel
  * @see <a href="http://bio-bwa.sourceforge.net/">Burrows Wheeler Aligner webpage</a>
  */
