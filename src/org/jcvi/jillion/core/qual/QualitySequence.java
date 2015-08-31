@@ -79,4 +79,16 @@ public interface QualitySequence extends Sequence<PhredQuality>{
      * if the sequence is empty.
      */
     PhredQuality getMaxQuality();
+    /**
+     *  /**
+     * Create a new Builder object that is initialized
+     * to the current sequence.  Any changes made to the returned Builder
+     * will <strong>NOT</strong> affect this immutable Sequence.
+     * 
+     * @return a new Builder instance, will never be null.
+     * @sincen 5.0
+     */
+    default QualitySequenceBuilder toBuilder(){
+        return new QualitySequenceBuilder(this);
+    }
 }

@@ -24,6 +24,10 @@ API Changes
 
 2. Moved quality trimming classes that used to be in org.jcvi.jillion.core.qual.trim to new
    org.jcvi.jillion.trim package.  LucyQualityTrimmer moved to new org.jcvi.jillion.trim.lucy
+   
+3. Added new FastqFileDataStore interface which is a sub-interface of FastqDataStore and adds one method getQualityCodec()
+   which returns the FastqQualityCodec object that was used to encode all the fastq records in the file.
+   FastqFileBuilder objects have changed to return this new interface.
 
 Bug Fixes
 ----------

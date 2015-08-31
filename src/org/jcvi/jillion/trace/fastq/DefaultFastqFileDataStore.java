@@ -61,13 +61,13 @@ final class DefaultFastqFileDataStore{
 	 *            decode the fastq file. If this value is null, then the
 	 *            datastore implementation will try to guess the codec used
 	 *            which might have a performance penalty associated with it.
-	 * @return a new {@link FastqDataStore} instance.
+	 * @return a new {@link FastqFileDataStore} instance.
 	 * @throws IOException
 	 *             if there is a problem parsing the fastq file.
 	 * @throws NullPointerException
 	 *             if fastqFile is null.
 	 */
-   public static FastqDataStore create(File fastqFile, FastqQualityCodec qualityCodec) throws IOException{
+   public static FastqFileDataStore create(File fastqFile, FastqQualityCodec qualityCodec) throws IOException{
 	  return create(fastqFile, DataStoreFilters.alwaysAccept(), qualityCodec);
    }
 
@@ -89,14 +89,14 @@ final class DefaultFastqFileDataStore{
 	 *            quality values in each record. If this value is null, then the
 	 *            datastore implementation will try to guess the codec used
 	 *            which might have a performance penalty associated with it.
-	 * @return a new {@link FastqDataStore} instance containing only those
+	 * @return a new {@link FastqFileDataStore} instance containing only those
 	 *         records that pass the filter.
 	 * @throws IOException
 	 *             if thre is a problem parsing the fastq file.
 	 * @throws NullPointerException
 	 *             if either fastqFile or filter is null.
 	 */
-   public static FastqDataStore create(File fastqFile, DataStoreFilter filter,FastqQualityCodec qualityCodec) throws IOException{
+   public static FastqFileDataStore create(File fastqFile, DataStoreFilter filter,FastqQualityCodec qualityCodec) throws IOException{
 	   FastqParser parser = FastqFileParser.create(fastqFile);
 	   return create(parser, qualityCodec, filter);
    }
@@ -119,14 +119,14 @@ final class DefaultFastqFileDataStore{
 	 *            quality values in each record. If this value is null, then the
 	 *            datastore implementation will try to guess the codec used
 	 *            which might have a performance penalty associated with it.
-	 * @return a new {@link FastqDataStore} instance containing only those
+	 * @return a new {@link FastqFileDataStore} instance containing only those
 	 *         records that pass the filter.
 	 * @throws IOException
 	 *             if thre is a problem parsing the fastq file.
 	 * @throws NullPointerException
 	 *             if either fastqFile or filter is null.
 	 */
-	public static FastqDataStore create(FastqParser parser,
+	public static FastqFileDataStore create(FastqParser parser,
 			FastqQualityCodec qualityCodec, DataStoreFilter filter)
 			throws IOException {
 		DefaultFastqFileDataStoreBuilderVisitor2 visitor = new DefaultFastqFileDataStoreBuilderVisitor2(qualityCodec,filter);
@@ -136,7 +136,7 @@ final class DefaultFastqFileDataStore{
 		   return visitor.build();
 	}
     
-	private static final class DefaultFastqFileDataStoreBuilderVisitor2 implements FastqVisitor, Builder<FastqDataStore> {
+	private static final class DefaultFastqFileDataStoreBuilderVisitor2 implements FastqVisitor, Builder<FastqFileDataStore> {
 		private final DataStoreFilter filter;
 		private final FastqQualityCodec qualityCodec;
 		private final DefaultFastqDataStoreBuilder builder =new DefaultFastqDataStoreBuilder();
@@ -177,8 +177,8 @@ final class DefaultFastqFileDataStore{
 			//no-op			
 		}
 		@Override
-		public FastqDataStore build() {
-			return builder.build();
+		public FastqFileDataStore build() {
+			return new FastqFileDataStoreImpl(builder.build(), qualityCodec);
 		}
 
 	}

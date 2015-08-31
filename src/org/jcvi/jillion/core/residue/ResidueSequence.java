@@ -174,7 +174,7 @@ public interface ResidueSequence<R extends Residue> extends Sequence<R> {
      * to the current sequence.  Any changes made to the returned Builder
      * will <strong>NOT</strong> affect this immutable Sequence.
      * @return a new Builder instance, will never be null.
-     * @see 5.0
+     * @since 5.0
      */
     ResidueSequenceBuilder<R, ? extends ResidueSequence<R>> toBuilder();
 

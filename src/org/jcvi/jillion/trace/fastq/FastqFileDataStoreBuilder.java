@@ -173,7 +173,7 @@ public final class FastqFileDataStoreBuilder{
 	 * if there is not enough memory available.
 	 * </li>
 	 * </ul>
-	 * @return a new {@link FastqDataStore} instance;
+	 * @return a new {@link FastqFileDataStore} instance;
 	 * never null.
 	 * @throws IOException if there is a problem parsing the 
 	 * fastq file.
@@ -188,7 +188,7 @@ public final class FastqFileDataStoreBuilder{
 	 * @see #hint(DataStoreProviderHint)
 	 * @see #filter(DataStoreFilter)
 	 */
-	public FastqDataStore build() throws IOException {
+	public FastqFileDataStore build() throws IOException {
 		if(codec ==null){
 			if(parser.isReadOnceOnly()){
 				//can't parse this twice

@@ -55,13 +55,13 @@ final class IndexedFastqFileDataStore{
 	 * for.
 	 * @param qualityCodec the {@link FastqQualityCodec} that should
 	 * be used to decode the encoded qualities of each record in the file.
-	 * @return a new instance of {@link FastqDataStore};
+	 * @return a new instance of {@link FastqFileDataStore};
 	 * never null.
 	 * @throws IOException if the input fastq file does not exist or 
 	 * if there is a problem parsing the file.
 	 * @throws NullPointerException if the input fastq file or the {@link FastqQualityCodec} is null.
 	 */
-    public static FastqDataStore create(File file,FastqQualityCodec qualityCodec) throws IOException{
+    public static FastqFileDataStore create(File file,FastqQualityCodec qualityCodec) throws IOException{
     	return create(file, qualityCodec, DataStoreFilters.alwaysAccept());
     }
     
@@ -80,13 +80,13 @@ final class IndexedFastqFileDataStore{
 	 * the fastq file so they will not be included in the {@link FastqDataStore}.
 	 * Only records which cause {@link DataStoreFilter#accept(String)}
 	 * to return {@code true} will be added to this datastore.
-   	 * @return a new instance of {@link FastqDataStore};
+   	 * @return a new instance of {@link FastqFileDataStore};
    	 * never null.
    	 * @throws IOException if the input fastq file does not exist or 
    	 * if there is a problem parsing the file.
    	 * @throws NullPointerException if the input fastq file or the {@link FastqQualityCodec} is null.
    	 */
-    public static FastqDataStore create(File file,FastqQualityCodec qualityCodec,DataStoreFilter filter) throws IOException{
+    public static FastqFileDataStore create(File file,FastqQualityCodec qualityCodec,DataStoreFilter filter) throws IOException{
     	
     	FastqParser parser = FastqFileParser.create(file);
     	
@@ -107,13 +107,13 @@ final class IndexedFastqFileDataStore{
 	 * the fastq file so they will not be included in the {@link FastqDataStore}.
 	 * Only records which cause {@link DataStoreFilter#accept(String)}
 	 * to return {@code true} will be added to this datastore.
-   	 * @return a new instance of {@link FastqDataStore};
+   	 * @return a new instance of {@link FastqFileDataStore};
    	 * never null.
    	 * @throws IOException if the input fastq file does not exist or 
    	 * if there is a problem parsing the file.
    	 * @throws NullPointerException if the input fastq file or the {@link FastqQualityCodec} is null.
    	 */
-	public static FastqDataStore create(FastqParser parser,
+	public static FastqFileDataStore create(FastqParser parser,
 			FastqQualityCodec qualityCodec, DataStoreFilter filter)
 			throws IOException {
 		MementoedFastqDataStoreBuilderVisitor visitor = new MementoedFastqDataStoreBuilderVisitor(parser, qualityCodec, filter);
@@ -158,7 +158,7 @@ final class IndexedFastqFileDataStore{
 		
     }
     
-    private static final class IndexedFastqFileDataStoreImpl implements FastqDataStore{
+    private static final class IndexedFastqFileDataStoreImpl implements FastqFileDataStore{
     	private final Map<String, FastqVisitorMemento> mementos;
     	private final FastqQualityCodec qualityCodec;
     	 private final FastqParser parser;
@@ -265,6 +265,10 @@ final class IndexedFastqFileDataStore{
     	}
         
         
+        @Override
+        public FastqQualityCodec getQualityCodec() {
+            return qualityCodec;
+        }
         /**
         * {@inheritDoc}
         */
