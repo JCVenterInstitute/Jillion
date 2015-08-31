@@ -43,10 +43,12 @@ New Features
 
 1.  Renamed *FastaRecordWriter* to *FastaWriter* to make smaller class names
 
-2.  AminoAcid - Added Pyrrolysine 'O' to AminoAcid class and AminoAcidSequence
+2.  Renamed *FastqRecordWriter* to *FastqWriter* to make smaller class names
+
+3.  AminoAcid - Added Pyrrolysine 'O' to AminoAcid class and AminoAcidSequence
     as well as Blosum matrices. 
     
-3.  FastaFileParser - now supports non-redundant fasta files (parsing only)
+4.  FastaFileParser - now supports non-redundant fasta files (parsing only)
 
 Bug Fixes
 ----------

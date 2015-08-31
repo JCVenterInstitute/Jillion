@@ -34,8 +34,8 @@ import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.fastq.DefaultFastqFileDataStore;
 import org.jcvi.jillion.trace.fastq.FastqDataStore;
 import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
-import org.jcvi.jillion.trace.fastq.FastqRecordWriter;
-import org.jcvi.jillion.trace.fastq.FastqRecordWriterBuilder;
+import org.jcvi.jillion.trace.fastq.FastqWriter;
+import org.jcvi.jillion.trace.fastq.FastqWriterBuilder;
 import org.junit.Test;
 
 public class TestDefaultFastqRecordWriter {
@@ -55,7 +55,7 @@ public class TestDefaultFastqRecordWriter {
                 "abaab]_]aaa`bbabB`Wb__aa\\_]W]a`^[`\\T`aZa_aa`WXa``]_`[`^a^^[`^][a^Raaa\\V\\OQ]aYQ^aa^\\`GRTDP`^T^Lb^aR`S\n";
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        FastqRecordWriter sut = new FastqRecordWriterBuilder(out)
+        FastqWriter sut = new FastqWriterBuilder(out)
         						.qualityCodec(FastqQualityCodec.ILLUMINA)
         						.build();
         sut.write(datastore.get("SOLEXA1:4:1:12:1489#0/1"));
@@ -73,7 +73,7 @@ public class TestDefaultFastqRecordWriter {
                 "BCBBC>@>BBBACCBC#A8C@@BB=@>8>BA?<A=5AB;B@BBA89BAA>@A<A?B??<A?><B?3BBB=7=02>B:2?BB?=A(35%1A?5?-C?B3A4\n";
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        FastqRecordWriter sut = new FastqRecordWriterBuilder(out)
+        FastqWriter sut = new FastqWriterBuilder(out)
         						.build();
         sut.write(datastore.get("SOLEXA1:4:1:12:1489#0/1"));
         sut.close();
@@ -89,7 +89,7 @@ public class TestDefaultFastqRecordWriter {
                 "BCBBC>@>BBBACCBC#A8C@@BB=@>8>BA?<A=5AB;B@BBA89BAA>@A<A?B??<A?><B?3BBB=7=02>B:2?BB?=A(35%1A?5?-C?B3A4\n";
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        FastqRecordWriter sut = new FastqRecordWriterBuilder(out)
+        FastqWriter sut = new FastqWriterBuilder(out)
         						.qualityCodec(FastqQualityCodec.SANGER)
         						.build();
         sut.write(datastore.get("SOLEXA1:4:1:12:1489#0/1"));
@@ -112,7 +112,7 @@ public class TestDefaultFastqRecordWriter {
                 "?5?-C?B3A4\n";
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        FastqRecordWriter sut = new FastqRecordWriterBuilder(out)
+        FastqWriter sut = new FastqWriterBuilder(out)
         						.qualityCodec(FastqQualityCodec.SANGER)
         						.basesPerLine(30)
         						.build();
@@ -132,7 +132,7 @@ public class TestDefaultFastqRecordWriter {
                 "@A<A?B??<A?><B?3BBB=7=02>B:2?BB?=A(35%1A?5?-C?B3A4\n";
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        FastqRecordWriter sut = new FastqRecordWriterBuilder(out)
+        FastqWriter sut = new FastqWriterBuilder(out)
         						.qualityCodec(FastqQualityCodec.SANGER)
         						.basesPerLine(50)
         						.build();
@@ -150,7 +150,7 @@ public class TestDefaultFastqRecordWriter {
                 "abaab]_]aaa`bbabB`Wb__aa\\_]W]a`^[`\\T`aZa_aa`WXa``]_`[`^a^^[`^][a^Raaa\\V\\OQ]aYQ^aa^\\`GRTDP`^T^Lb^aR`S\n";
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        FastqRecordWriter sut = new FastqRecordWriterBuilder(out)
+        FastqWriter sut = new FastqWriterBuilder(out)
         						.duplicateIdOnQualityDefLine()
         						.qualityCodec(FastqQualityCodec.ILLUMINA)
         						.build();
@@ -173,7 +173,7 @@ public class TestDefaultFastqRecordWriter {
 	                "`a\\a`^\\a^ZZa[]^WB_aaaa^^a`]^a`^`aaa`]``aXaaS^a^YaZaTW]a_aPY\\_UVY[P_ZHQY_NLZUR[^UZ\\TZWT_[_VWMWaRFW]BB\n";
 
 	        ByteArrayOutputStream out = new ByteArrayOutputStream();
-	        FastqRecordWriter sut = new FastqRecordWriterBuilder(out)
+	        FastqWriter sut = new FastqWriterBuilder(out)
 	        						.qualityCodec(FastqQualityCodec.ILLUMINA)
 	        						.build();
 	        sut.write(datastore.get("SOLEXA1:4:1:12:1489#0/1"));
@@ -196,7 +196,7 @@ public class TestDefaultFastqRecordWriter {
 
 	        ByteArrayOutputStream out = new ByteArrayOutputStream();
 	        Charset charset = Charset.forName("UTF-16");
-	        FastqRecordWriter sut = new FastqRecordWriterBuilder(out)
+	        FastqWriter sut = new FastqWriterBuilder(out)
 	        						.qualityCodec(FastqQualityCodec.ILLUMINA)
 	        						.charset(charset)
 	        						.build();
@@ -211,7 +211,7 @@ public class TestDefaultFastqRecordWriter {
 	@Test(expected = IllegalArgumentException.class)
 	public void differentNumberOfNucleotidesAndQualitiesShouldThrowIllegalArgumentException() throws IOException{
 		 ByteArrayOutputStream out = new ByteArrayOutputStream();
-		 FastqRecordWriter sut = new FastqRecordWriterBuilder(out).build();
+		 FastqWriter sut = new FastqWriterBuilder(out).build();
 		 sut.write("id", new NucleotideSequenceBuilder("ACGT").build(),
 				 new QualitySequenceBuilder(new byte[]{10,11,12,13,14}).build());
 		 
@@ -219,7 +219,7 @@ public class TestDefaultFastqRecordWriter {
 	@Test(expected = NullPointerException.class)
 	public void nullIdShouldThrowNullPointerException() throws IOException{
 		 ByteArrayOutputStream out = new ByteArrayOutputStream();
-		 FastqRecordWriter sut = new FastqRecordWriterBuilder(out).build();
+		 FastqWriter sut = new FastqWriterBuilder(out).build();
 		 sut.write(null, new NucleotideSequenceBuilder("ACGT").build(),
 				 new QualitySequenceBuilder(new byte[]{10,11,12,13}).build());
 		 
@@ -227,7 +227,7 @@ public class TestDefaultFastqRecordWriter {
 	@Test(expected = NullPointerException.class)
 	public void nullNucleotidesShouldThrowNullPointerException() throws IOException{
 		 ByteArrayOutputStream out = new ByteArrayOutputStream();
-		 FastqRecordWriter sut = new FastqRecordWriterBuilder(out).build();
+		 FastqWriter sut = new FastqWriterBuilder(out).build();
 		 sut.write("id", null,
 				 new QualitySequenceBuilder(new byte[]{10,11,12,13}).build());
 		 
@@ -235,7 +235,7 @@ public class TestDefaultFastqRecordWriter {
 	@Test(expected = NullPointerException.class)
 	public void nullQualitiesShouldThrowNullPointerException() throws IOException{
 		 ByteArrayOutputStream out = new ByteArrayOutputStream();
-		 FastqRecordWriter sut = new FastqRecordWriterBuilder(out).build();
+		 FastqWriter sut = new FastqWriterBuilder(out).build();
 		 sut.write("id", new NucleotideSequenceBuilder("ACGT").build(),
 				 null);
 		 
