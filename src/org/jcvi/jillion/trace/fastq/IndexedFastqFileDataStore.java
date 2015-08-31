@@ -139,7 +139,7 @@ final class IndexedFastqFileDataStore{
 			this.qualityCodec = qualityCodec;
 			this.filter = filter;
 		}
-		public FastqDataStore build() {
+		public FastqFileDataStore build() {
 			return new IndexedFastqFileDataStoreImpl(parser, qualityCodec, filter, mementos);
 		}
 		@Override
