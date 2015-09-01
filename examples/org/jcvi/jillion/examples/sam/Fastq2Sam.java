@@ -78,20 +78,20 @@ public class Fastq2Sam {
 			iter = datastore.iterator();
 			while(iter.hasNext()){
 				FastqRecord fastq = iter.next();
-				SamRecord samRecord =new SamRecord.Builder(header)
-											.setFlags(
-													EnumSet.of(SamRecordFlags.READ_UNMAPPED,
-															    SamRecordFlags.HAS_MATE_PAIR,
-															    SamRecordFlags.FIRST_MATE_OF_PAIR,
-															    SamRecordFlags.SECOND_MATE_OF_PAIR,
-																SamRecordFlags.MATE_UNMAPPED))
-											.setQueryName(fastq.getId())
-											.setQualities(fastq.getQualitySequence())
-											.setSequence(fastq.getNucleotideSequence())
-											.addAttribute(new SamAttribute(ReservedSamAttributeKeys.READ_GROUP, "A"))
-											.build();
-				
-				samWriter.writeRecord(samRecord);
+				SamRecord samRecord = new SamRecord.Builder(header)
+                                                .setFlags(
+                                                        EnumSet.of(SamRecordFlags.READ_UNMAPPED,
+                                                                SamRecordFlags.HAS_MATE_PAIR,
+                                                                SamRecordFlags.FIRST_MATE_OF_PAIR,
+                                                                SamRecordFlags.SECOND_MATE_OF_PAIR,
+                                                                SamRecordFlags.MATE_UNMAPPED))
+                                                .setQueryName(fastq.getId())
+                                                .setQualities(fastq.getQualitySequence())
+                                                .setSequence(fastq.getNucleotideSequence())
+                                                .addAttribute( new SamAttribute(ReservedSamAttributeKeys.READ_GROUP, "A"))
+                                                .build();
+                        
+                        				samWriter.writeRecord(samRecord);
 			}
 		}finally{
 			IOUtil.closeAndIgnoreErrors(iter, datastore, samWriter);

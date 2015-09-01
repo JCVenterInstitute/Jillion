@@ -37,13 +37,13 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.Builder;
 /**
- * {@code FastqRecordWriterBuilder}
+ * {@code FastqWriterBuilder}
  * is a {@link Builder} that 
- * builds an instance of {@link FastqRecordWriter}.
+ * builds an instance of {@link FastqWriter}.
  * @author dkatzel
  *
  */
-public final class FastqRecordWriterBuilder implements Builder<FastqRecordWriter>{
+public final class FastqWriterBuilder implements Builder<FastqWriter>{
 	
 	private static final String CR = "\n";
 	private static final int ALL_ON_ONE_LINE =-1;
@@ -56,14 +56,14 @@ public final class FastqRecordWriterBuilder implements Builder<FastqRecordWriter
 	private FastqQualityCodec codec = DEFAULT_CODEC;
 	private Charset charSet = DEFAULT_CHARSET;
 	/**
-	 * Create a new {@link FastqRecordWriterBuilder} that will use
+	 * Create a new {@link FastqWriterBuilder} that will use
 	 * the given {@link OutputStream} to write
 	 * out the fastq records.
 	 * @param out the {@link OutputStream} to use;
 	 * can not be null.
 	 * @throws NullPointerException if out is null.
 	 */
-	public FastqRecordWriterBuilder(OutputStream out){
+	public FastqWriterBuilder(OutputStream out){
 		if(out==null){
 			throw new NullPointerException("outputstream can not be null");
 		}
@@ -71,7 +71,7 @@ public final class FastqRecordWriterBuilder implements Builder<FastqRecordWriter
 	}
 	
 	/**
-	 * Create a new {@link FastqRecordWriterBuilder} that will use
+	 * Create a new {@link FastqWriterBuilder} that will use
 	 * the given File to write
 	 * out the fastq records.  Any contents
 	 * that previously existed in this file
@@ -83,7 +83,7 @@ public final class FastqRecordWriterBuilder implements Builder<FastqRecordWriter
 	 * @throws IOException if there is a problem creating the new file. 
 	 * or cannot be opened for any other reason.
 	 */
-	public FastqRecordWriterBuilder(File outputFile) throws IOException{
+	public FastqWriterBuilder(File outputFile) throws IOException{
 		IOUtil.mkdirs(outputFile.getParentFile());
 		this.out =new BufferedOutputStream(new FileOutputStream(outputFile));
 	}
@@ -98,7 +98,7 @@ public final class FastqRecordWriterBuilder implements Builder<FastqRecordWriter
 	 * @return this.
 	 * @throws NullPointerException if charset is null.
 	 */
-	public FastqRecordWriterBuilder charset(Charset charset){
+	public FastqWriterBuilder charset(Charset charset){
 		if(charset ==null){
 			throw new NullPointerException("charset can not be null");
 		}
@@ -116,7 +116,7 @@ public final class FastqRecordWriterBuilder implements Builder<FastqRecordWriter
 	 * @return this.
 	 * Throws {@link NullPointerException} if codec is null.
 	 */
-	public FastqRecordWriterBuilder qualityCodec(FastqQualityCodec codec){
+	public FastqWriterBuilder qualityCodec(FastqQualityCodec codec){
 		if(codec ==null){
 			throw new NullPointerException("codec can not be null");
 		}
@@ -133,7 +133,7 @@ public final class FastqRecordWriterBuilder implements Builder<FastqRecordWriter
 	 * will also be on the nucleotide sequence defline).
 	 * @return this.
 	 */
-	public FastqRecordWriterBuilder duplicateIdOnQualityDefLine(){
+	public FastqWriterBuilder duplicateIdOnQualityDefLine(){
 		this.writeIdOnQualityLine=true;
 		return this;
 	}
@@ -148,7 +148,7 @@ public final class FastqRecordWriterBuilder implements Builder<FastqRecordWriter
 	 * @return this.
 	 * @throws IllegalArgumentException if basesPerLine <1.
 	 */
-	public FastqRecordWriterBuilder basesPerLine(int basesPerLine){
+	public FastqWriterBuilder basesPerLine(int basesPerLine){
 		if(basesPerLine<1){
 			throw new IllegalArgumentException("number per line must be >=1");
 		}
@@ -156,14 +156,14 @@ public final class FastqRecordWriterBuilder implements Builder<FastqRecordWriter
 		return this;
 	}
 	@Override
-	public FastqRecordWriter build() {
+	public FastqWriter build() {
 		return new FastqRecordWriterImpl(out, charSet, 
 				codec, writeIdOnQualityLine, numberOfBasesPerLine);
 	}
 	
 	
 	
-	private static final class FastqRecordWriterImpl implements FastqRecordWriter{
+	private static final class FastqRecordWriterImpl implements FastqWriter{
 		
 		
 		private final Writer writer;

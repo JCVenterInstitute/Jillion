@@ -35,12 +35,12 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.trace.fastq.FastqRecord;
-import org.jcvi.jillion.trace.fastq.FastqRecordWriter;
+import org.jcvi.jillion.trace.fastq.FastqWriter;
 
 /**
  * {@code BfqFileWriterBuilder}
  * is a builder class that will create
- * a new {@link FastqRecordWriter} instance
+ * a new {@link FastqWriter} instance
  * that will write MAQ binary encoded fastq
  * files ({@literal .bfq} files).
  * 
@@ -70,7 +70,7 @@ public class BfqFileWriterBuilder {
 	
 	/**
 	 * Create a new {@link BfqFileWriterBuilder} instance
-	 * which will create a {@link FastqRecordWriter}
+	 * which will create a {@link FastqWriter}
 	 * that will write to the given output {@link File}.
 	 * @param outputBfqFile the output bfq file to write to; can not be null.
 	 * If this file already exists, then it will be overwritten.  If the file
@@ -106,22 +106,22 @@ public class BfqFileWriterBuilder {
 		return this;
 	}
 	/**
-	 * Create a new {@link FastqRecordWriter}
+	 * Create a new {@link FastqWriter}
 	 * instance that will write Binary Fastq encoded data
 	 * to the given output file.
-	 * @return a new {@link FastqRecordWriter}
+	 * @return a new {@link FastqWriter}
 	 * instance will never be null.
 	 * @throws IOException if there is a problem creating the 
 	 * file or any parent directory or opening the file for writing.
 	 */
-	public FastqRecordWriter build() throws IOException{
+	public FastqWriter build() throws IOException{
 		IOUtil.mkdirs(outputBfqFile.getParentFile());
 		
 		return new BinaryFastqFileWriter(outputBfqFile, endian);
 	}
 	
 	
-	private static class BinaryFastqFileWriter implements FastqRecordWriter {
+	private static class BinaryFastqFileWriter implements FastqWriter {
 		private final OutputStream out;
 		private final ByteOrder byteOrder;
 		
