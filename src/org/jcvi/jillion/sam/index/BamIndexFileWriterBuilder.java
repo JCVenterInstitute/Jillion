@@ -123,12 +123,15 @@ public final class BamIndexFileWriterBuilder {
 	/**
 	 * Actually parse the input BAM file and write out the corresponding
 	 * BAM index file to the given output file.
+	 * 
+	 * @return the output indexed {@link File}
+	 * (this is the same file as was passed into the constructor)
 	 * @throws IOException if there are any problems parsing the 
 	 * BAM file or writing out the index file.
 	 * @throws IllegalStateException if the BAM file is not in {@link SortOrder#COORDINATE}
 	 * order and {@link #assumeSorted(boolean)} is set to {@code false}.
 	 */
-	public void build() throws IOException{
+	public File build() throws IOException{
 		SamParser parser = SamParserFactory.create(inputBamFile);
 		BamIndexSamVisitor visitor = new BamIndexSamVisitor(assumeSorted);
 		parser.accept(visitor);
@@ -137,6 +140,7 @@ public final class BamIndexFileWriterBuilder {
 		try{
 			out = new BufferedOutputStream(new FileOutputStream(outputBaiFile));
 			IndexUtil.writeIndex(out, visitor.createBamIndex(), includeMetaData);
+			return outputBaiFile;
 		}finally{
 			IOUtil.closeAndIgnoreErrors(out);
 		}
