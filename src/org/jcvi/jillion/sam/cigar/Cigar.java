@@ -30,7 +30,13 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.ArrayIterator;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
-
+/**
+ * {@code Cigar} is an Object for a single
+ * read alignment encoded in the CIGAR format.
+ * 
+ * @author dkatzel
+ *
+ */
 public final class Cigar implements Iterable<CigarElement>{
 	/**
 	 * Singleton instance of an empty {@link Cigar}.
@@ -531,16 +537,47 @@ public final class Cigar implements Iterable<CigarElement>{
 	}
 
 
-
+	/**
+	 * Builder class to programmatically build
+	 * up a {@link Cigar} object.
+	 * 
+	 * @author dkatzel
+	 *
+	 */
 	public static class Builder{
 		private final List<CigarElement> elements;
-		
+		/**
+		 * Create a new Builder object
+		 * with the expected number of cigar elements.
+		 * This is only a memory optimization,
+		 * if it turns out there are more elements
+		 * then specified, then the builder will
+		 * grow the backing array automatically.
+		 * 
+		 * @param size the expected number of cigar elements
+		 * that will be in this builder; can not be negative.
+		 * 
+		 * @throws IllegalArgumentException if size is negative.
+		 */
 		public Builder(int size){
 			elements = new ArrayList<CigarElement>(size);
 		}
+		/**
+		 * Create a new Builder object.
+		 */
 		public Builder(){
 			elements = new ArrayList<CigarElement>();
 		}
+		/**
+		 * Create a new {@link Builder}
+		 * that is initialized to the contents
+		 * of the provided {@link Cigar} object;
+		 * 
+		 * @param cigar the cigar to copy into this Builder;
+		 * can not be null.
+		 * 
+		 * @throws NullPointerException if cigar is null.
+		 */
 		public Builder(Cigar cigar) {
 			elements = new ArrayList<>(cigar.getNumberOfElements());
 			for(CigarElement e : cigar){
@@ -550,6 +587,15 @@ public final class Cigar implements Iterable<CigarElement>{
 		public Builder addElement(CigarOperation op, int length){
 			return addElement(new CigarElement(op, length));
 		}
+		/**
+		 * Add the given {@link CigarElement} to this builder
+		 * as the next element.
+		 * @param e the {@link CigarElement} to add; can not be null.
+		 * 
+		 * @return this.
+		 * 
+		 * @throws NullPointerException if e is null.
+		 */
 		public Builder addElement(CigarElement e){
 			if(e ==null){
 				throw new NullPointerException("element can not be null");
@@ -557,7 +603,18 @@ public final class Cigar implements Iterable<CigarElement>{
 			elements.add(e);
 			return this;
 		}
-		
+		/**
+		 * Create a new {@link Cigar} object using
+		 * the current contents of the builder.
+		 * 
+		 * @return a new {@link Cigar}; will never be null.
+		 * 
+		 * @throws IllegalStateException if the builder built a cigar
+		 * with an illegal combination of {@link CigarElement}s.
+		 * For example, {@link CigarOperation#HARD_CLIP}s if present,
+		 * must be the first/and or last elements and {@link CigarOperation#SOFT_CLIP}
+		 * must be immediately inside a {@link CigarOperation#HARD_CLIP}s.
+		 */
 		public Cigar build(){
 			
 			CigarElement[] array = elements.toArray(new CigarElement[elements.size()]);
@@ -590,6 +647,15 @@ public final class Cigar implements Iterable<CigarElement>{
 			}
 			
 		}
+		/**
+		 * Remove the {@link CigarOperation#HARD_CLIP} at the
+		 * edges of this builder.  Will only remove the 
+		 * {@link CigarOperation#HARD_CLIP}s that are already present.
+		 * Calling this method will not affect any new {@link CigarOperation#HARD_CLIP}s
+		 * that are added later.
+		 * 
+		 * @return this.
+		 */
 		public Builder removeHardClips() {
 			//hard clips must be the first and/or last operations
 			int lastIndex = elements.size()-1;
