@@ -100,7 +100,22 @@ public enum CigarOperation {
 	 */
 	SEQUENCE_MISMATCH('X')
 	;
+	
+	
 	private static final CigarOperation[] VALUES = values();
+	
+	private static final CigarOperation[] SAM_CHARS;
+	
+	static{
+		//from '=' to 'X' is 28 elements
+		SAM_CHARS = new CigarOperation[28];
+		for(int i=0; i<VALUES.length; i++){
+			CigarOperation cigarOperation = VALUES[i];
+			char opCode = cigarOperation.opCode;
+			int offset = opCode - '=';
+			SAM_CHARS[offset] = cigarOperation;
+		}
+	}
 	private final char opCode;
 	
 	CigarOperation(char opCode){
@@ -162,61 +177,12 @@ public enum CigarOperation {
 	 * is an invalid opcode.
 	 */
 	public static CigarOperation parseOp(char op){
-		//This is an optimization to allow the 
-    	//compiler to use a tableswitch opcode
-    	//instead of the more general purpose
-    	//lookupswitch opcode.
-    	//tableswitch is an O(1) lookup
-    	//while lookupswitch is O(n) where n
-    	//is the number of case statements in the switch.
-    	//tableswitch requires consecutive case values.
-    	//DO NOT CHANGE THE ORDER OF THE CASE STATEMENTS
-    	//the cases have to be in ascii order
-    	//so the JVM can do offset arithmetic
-    	//to jump immediately to the correct case
-    	//for an O(1) lookup, changing the order
-    	//might not allow that. 
-    	//(not sure if compiler is smart enough to re-order)
-    	//
-    	//for more information:
-    	//The book Beautiful Code Chapter 6
-    	//or
-    	//http://www.artima.com/underthehood/flowP.html
-		switch(op){
-			
-			case '=': return SEQUENCE_MATCH;
-			case '>': break;
-			case '?': break;
-			case '@': break;
-			
-			case 'A': break;
-			case 'B': break;
-			case 'C': break;
-			case 'D': return DELETION;
-			case 'E': break;
-			case 'F': break;
-			case 'G': break;
-			case 'H': return HARD_CLIP;
-			case 'I': return INSERTION;
-			case 'J': break;
-			case 'K': break;
-			case 'L': break;
-			case 'M': return ALIGNMENT_MATCH;
-			case 'N': return SKIPPED;
-			case 'O': break;
-			case 'P': return PADDING;
-			case 'Q': break;
-			case 'R': break;
-			case 'S': return SOFT_CLIP;
-			case 'T': break;
-			case 'U': break;
-			case 'V': break;
-			case 'W': break;
-			case 'X': return SEQUENCE_MISMATCH;
-
-			
-			
-			default: break;
+		int offset = op - '=';
+		if(offset >=0 && offset < SAM_CHARS.length){
+			CigarOperation cigarOperation = SAM_CHARS[offset];
+			if(cigarOperation !=null){
+				return cigarOperation;
+			}
 		}
 		throw new IllegalArgumentException("invalid cigar opcode : " + op);
 	}
