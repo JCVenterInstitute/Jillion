@@ -20,7 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.sam.index;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -92,9 +92,10 @@ public class TestBamIndexWriter {
 		
 		File actualBaiFile = tmpDir.newFile("actual.bai");
 		
-		new BamIndexFileWriterBuilder(bamFile, actualBaiFile)
+		File out =new BamIndexFileWriterBuilder(bamFile, actualBaiFile)
 					.includeMetaData(true)
 					.build();
+		assertEquals(actualBaiFile, out);
 		
 		assertTrue(TestUtil.contentsAreEqual(expectedBaiFile, actualBaiFile));
 	}
@@ -190,12 +191,10 @@ public class TestBamIndexWriter {
 		baiName.append(".bai");
 		
 		File outputBai = tmpDir.newFile(baiName.toString());
-		new BamIndexFileWriterBuilder(inputBam, outputBai)
+		return new BamIndexFileWriterBuilder(inputBam, outputBai)
 						.assumeSorted(true)
 						.includeMetaData(true)
 						.build();
-		
-		return outputBai;
 	}
 
 	private void verifyIndexWriterThrowsException(File incorrectlySortedFile,
