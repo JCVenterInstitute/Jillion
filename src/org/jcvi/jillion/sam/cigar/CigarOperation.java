@@ -19,7 +19,14 @@
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
 package org.jcvi.jillion.sam.cigar;
-
+/**
+ * {@code CigarOperation} is an enumeration
+ * of all the different kinds of trimming and alignment
+ * operations that can be expressed in a CIGAR string.
+ * 
+ * @author dkatzel
+ *
+ */
 public enum CigarOperation {
 	/**
 	 * Alignment match
@@ -101,14 +108,32 @@ public enum CigarOperation {
 	}
 	
 	
-	
+	/**
+	 * Get this opCode for this operation
+	 * that is used in SAM files.
+	 * 
+	 * @return an opCode as a single character.
+	 */
 	public char getOpCode() {
 		return opCode;
 	}
+	/**
+	 * Get this opCode for this operation
+	 * that is used in BAM files.
+	 * 
+	 * @return an opCode as an int.
+	 */
 	public int getBinaryOpCode() {
 		return ordinal();
 	}
-
+	/**
+	 * Parse the binary op code from a BAM encoded
+	 * file into the {@link CigarOperation}.
+	 * @param bit the binary opcode;
+	 * @return the {@link CigarOperation}
+	 * 
+	 * @throws IndexOutOfBoundsException if the opcode is invalid.
+	 */
 	public static CigarOperation parseBinary(int bit){
 		return VALUES[bit];
 	}
