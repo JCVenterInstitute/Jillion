@@ -33,7 +33,16 @@ public final class CigarElement {
 	private final int length;
 	
 	private final CigarOperation op;
-
+	/**
+	 * Create a new {@link CigarElement} object.
+	 * 
+	 * @param op The {@link CigarOperation}; can not be null.
+	 * 
+	 * @param length the length of this operation; can not be < 1.
+	 * 
+	 * @throws NullPointerException if op is null.
+	 * @throws IllegalArgumentException if length < 1.
+	 */
 	public CigarElement(CigarOperation op, int length) {
 		if(op==null){
 			throw new NullPointerException("cigar op can not be null");
@@ -45,11 +54,17 @@ public final class CigarElement {
 		this.op = op;
 		this.length = length;
 	}
-
+	/**
+	 * Get the length of this operation.
+	 * @return the length as a positive int.
+	 */
 	public int getLength() {
 		return length;
 	}
-
+	/**
+	 * Get the {@link CigarOperation} of this element.
+	 * @return a {@link CigarOperation}; will never be null.
+	 */
 	public CigarOperation getOp() {
 		return op;
 	}
@@ -59,7 +74,7 @@ public final class CigarElement {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + length;
-		result = prime * result + ((op == null) ? 0 : op.hashCode());
+		result = prime * result + op.hashCode();
 		return result;
 	}
 
