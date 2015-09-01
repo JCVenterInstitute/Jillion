@@ -134,12 +134,12 @@ public abstract class FastqFileParser implements FastqParser{
         if(!parserState.keepParsing()){
         	return parserState;
         }
-        return parseRecordBody(parser,recordVisitor,parserState);		
+        return parseRecordBody(parser,recordVisitor,parserState, defline.getId());		
         
 	}
 	
 	private ParserState parseRecordBody(TextLineParser parser,
-			FastqRecordVisitor recordVisitor, ParserState parserState) throws IOException {
+			FastqRecordVisitor recordVisitor, ParserState parserState, String currentId) throws IOException {
 		//if we aren't visiting this read
 		//we shouldn't spend any time parsing the
 		//bases or qualities	
@@ -153,6 +153,11 @@ public abstract class FastqFileParser implements FastqParser{
         //builder will grow if we get too big
         
         String line = parser.nextLine();
+        if(line ==null){
+        	//end of file before we got enough sequence
+			throw new IOException(
+    				String.format("unexpected end of file. no sequence for current record '%s'",currentId));
+        }
     	sequenceBuilder.append(line);
         do{
         	line = parser.nextLine();
@@ -184,8 +189,8 @@ public abstract class FastqFileParser implements FastqParser{
     		if(line ==null){
     			//end of file before we got enough qualities
     			throw new IOException(
-        				String.format("too few quality values for current record: "
-        						+ "expected %d but was %d", expectedQualities, qualityBuilder.length()));
+        				String.format("too few quality values for current record '%s' : "
+        						+ "expected %d but was %d", currentId, expectedQualities, qualityBuilder.length()));
         	
     		}
     		qualityBuilder.append(line.trim());
