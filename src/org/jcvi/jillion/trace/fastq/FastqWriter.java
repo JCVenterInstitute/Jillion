@@ -26,12 +26,12 @@ import java.io.IOException;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
- * {@code FastqRecordWriter} is an interface
+ * {@code FastqWriter} is an interface
  * that handles writing out {@link FastqRecord}s.
  * @author dkatzel
  *
  */
-public interface FastqRecordWriter extends Closeable{
+public interface FastqWriter extends Closeable{
 	/**
 	 * Write the given {@link FastqRecord} out.
 	 * @param record the {@link FastqRecord} to write;
