@@ -24,11 +24,17 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.Comparator;
 
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.pos.Position;
 import org.jcvi.jillion.core.pos.PositionSequence;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.fasta.FastaWriter;
 import org.jcvi.jillion.internal.fasta.AbstractFastaRecordWriter;
 import org.jcvi.jillion.internal.fasta.AbstractFastaRecordWriter.AbstractBuilder;
+import org.jcvi.jillion.internal.fasta.InMemorySortedFastaWriter;
+import org.jcvi.jillion.internal.fasta.TmpDirSortedFastaWriter;
 /**
  * {@code PositionFastaWriterBuilder} will create
  * new {@link PositionFastaWriter} instance
@@ -81,6 +87,20 @@ public final class PositionFastaWriterBuilder extends AbstractBuilder<Position, 
 			return 12;
 		}
 	
+		@Override
+		protected PositionFastaWriter createTmpDirSortedWriterWriter(
+				FastaWriter<Position, PositionSequence, PositionFastaRecord> delegate,
+				Comparator<PositionFastaRecord> comparator, int cacheSize,
+				File tmpDir) {
+			return new TmpDirSortedPositionFastaWriter(delegate, comparator, cacheSize, tmpDir);
+		}
+		@Override
+		protected PositionFastaWriter createInMemorySortedWriterWriter(
+				FastaWriter<Position, PositionSequence, PositionFastaRecord> delegate,
+				Comparator<PositionFastaRecord> comparator) {
+			return new InMemorySortedPositionFastaWriter(delegate, comparator);
+		}
+
 		private static final class PositionSequenceFastaRecordWriterImpl  extends AbstractFastaRecordWriter<Position, PositionSequence, PositionFastaRecord> implements PositionFastaWriter{
 
 			private PositionSequenceFastaRecordWriterImpl(OutputStream out,
@@ -107,6 +127,56 @@ public final class PositionFastaWriterBuilder extends AbstractBuilder<Position, 
 			protected int numberOfCharsFor(int numberOfSymbols) {
 				return 5*numberOfSymbols;
 			}
+		}
+		
+		
+		private static final class InMemorySortedPositionFastaWriter extends InMemorySortedFastaWriter<Position, PositionSequence, PositionFastaRecord> implements PositionFastaWriter{
+
+			public InMemorySortedPositionFastaWriter(FastaWriter<Position, PositionSequence, PositionFastaRecord> writer,
+					Comparator<PositionFastaRecord> comparator) {
+				super(writer, comparator);
+			}
+
+			@Override
+			protected PositionFastaRecord createRecord(String id,
+					PositionSequence sequence, String optionalComment) {
+
+				return new PositionFastaRecord(id, optionalComment, sequence);
+			}
+			
+		}
+		
+		private static final class TmpDirSortedPositionFastaWriter extends TmpDirSortedFastaWriter<Position, PositionSequence, PositionFastaRecord> implements PositionFastaWriter{
+
+			
+
+			public TmpDirSortedPositionFastaWriter(
+					FastaWriter<Position, PositionSequence, PositionFastaRecord> finalWriter,
+					Comparator<PositionFastaRecord> comparator, int cacheSize,
+					File tmpDir) {
+				super(finalWriter, comparator, tmpDir, cacheSize);
+			}
+
+			@Override
+			protected StreamingIterator<PositionFastaRecord> createStreamingIteratorFor(
+					File tmpFastaFile) throws IOException, DataStoreException {
+				return DefaultPositionFastaFileDataStore.create(tmpFastaFile).iterator();
+			}
+
+			@Override
+			protected FastaWriter<Position, PositionSequence, PositionFastaRecord> createNewTmpWriter(
+					File tmpFile) throws IOException {
+				return new PositionFastaWriterBuilder(tmpFile)
+									.build();
+			}
+
+			@Override
+			protected PositionFastaRecord createFastaRecord(String id,
+					PositionSequence sequence, String optionalComment) {
+
+				return new PositionFastaRecord(id, optionalComment, sequence);
+			}
+			
 		}
 	}
 

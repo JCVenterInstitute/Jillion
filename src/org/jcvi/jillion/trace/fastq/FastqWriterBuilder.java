@@ -179,6 +179,8 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 	 * @return this
 	 * 
 	 * @throws NullPointerException if comparator is null.
+	 * 
+	 * @since 5.0
 	 */
 	public FastqWriterBuilder sortInMemoryOnly(Comparator<FastqRecord> comparator){
 	    Objects.requireNonNull(comparator);
@@ -206,6 +208,8 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 	 * @throws NullPointerException if comparator is null.
 	 * 
 	 * @throws IllegalArgumentException if inMemoryCacheSize < 1.
+	 * 
+	 * @since 5.0
 	 */
 	public FastqWriterBuilder sort(Comparator<FastqRecord> comparator, int inMemoryCacheSize){
 	    return sort(comparator, inMemoryCacheSize, null);
@@ -224,10 +228,17 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 	 * Once {@link FastqWriter#close()} has been called, the contents of the in memory cache,
 	 * and any temp files written out are merged and written sorted to the final output file.
 	 * 
+	 * <p>
+	 * If any files get written to temp files under {@code dir},
+	 * they will be deleted when the writer is closed.  However {@code dir}
+	 * itself will not be deleted so feel free to provide non-temp directories as well.
+	 * </p>
+	 * 
 	 * @param comparator the {@link Comparator} to use to sort the {@link FastqRecord}s;
 	 * can not be null.
 	 * @param inMemoryCacheSize the in memory cache size to use; must be positive.
-	 * @param tmpDir the temporary directory to write files to; if set to {@code null}
+	 * 
+	 * @param dir the directory to write files to; if set to {@code null}
 	 * then the default system temporary directory is used.  If the value is not null,
 	 * then it must be a directory that already exists.
 	 * 
@@ -236,25 +247,27 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 	 * @throws NullPointerException if comparator is null.
 	 * 
 	 * @throws IllegalArgumentException if inMemoryCacheSize < 1,
-	 * 			or if a non-null tmpDir does not exist or is not a directory.
+	 * 			or if a non-null dir does not exist or is not a directory.
+	 * 
+	 * @since 5.0
 	 */
-	public FastqWriterBuilder sort(Comparator<FastqRecord> comparator, int inMemoryCacheSize, File tmpDir){
+	public FastqWriterBuilder sort(Comparator<FastqRecord> comparator, int inMemoryCacheSize, File dir){
 	    Objects.requireNonNull(comparator);
 	    if(inMemoryCacheSize <1){
 	        throw new IllegalArgumentException("in memory cache size must be positive");
 	    }
 	    
-	    if(tmpDir !=null){
-	    	if(!tmpDir.exists()){	    
-	    		throw new IllegalArgumentException("tmpDir does not exist: " + tmpDir.getAbsolutePath());
+	    if(dir !=null){
+	    	if(!dir.exists()){	    
+	    		throw new IllegalArgumentException("tmpDir does not exist: " + dir.getAbsolutePath());
 	    	}
-	    	if(!tmpDir.isDirectory()){
-	    		throw new IllegalArgumentException("tmpDir is not a directory: " + tmpDir.getAbsolutePath());
+	    	if(!dir.isDirectory()){
+	    		throw new IllegalArgumentException("tmpDir is not a directory: " + dir.getAbsolutePath());
 	    	}
 	    }
             this.comparator = comparator;
             this.inMemoryCacheSize = inMemoryCacheSize;
-            this.tmpDir = tmpDir;
+            this.tmpDir = dir;
 	    return this;
 	}
 	
