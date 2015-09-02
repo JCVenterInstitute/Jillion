@@ -1,10 +1,13 @@
-package org.jcvi.jillion.core.util.iter;
+package org.jcvi.jillion.internal.core.util.iter;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+
+import org.jcvi.jillion.core.util.iter.IteratorUtil;
+import org.jcvi.jillion.core.util.iter.PeekableStreamingIterator;
 
 /**
  * Combine a list of pre-sorted Iterators into a single sorted iterator.
