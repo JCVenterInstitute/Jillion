@@ -41,7 +41,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestIlluminaFastQQualityCodec.class,
         TestSangerFastQQualityCodecActual.class,
         TestParseSangerEncodedFastQFile.class,        
-        TestDefaultFastqRecordWriter.class,
+        TestFastqWriter.class,
         
         TestFastqParser.class,
         TestFastqParserWithFunctionLambda.class,
@@ -63,8 +63,10 @@ import org.junit.runners.Suite.SuiteClasses;
         TestLargeFastqFileDataStoreGuessCodec.class,
         TestLargeMultilineFastqFileDataStoreGuessCodec.class,
         
-       
-        
+        TestInMemorySortedFastqWriter.class,
+        TestTmpDirStillOnlyUsedCacheNotEnoughToDumpToFileSortedFastqWriter.class,
+        TestTmpDirSingleFileSortedFastqWriter.class,
+        TestTmpDirOneFilePerReadSortedFastqWriter.class,
         
         
         AllIlluminaUnitTests.class,

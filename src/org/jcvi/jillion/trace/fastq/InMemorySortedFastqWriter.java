@@ -12,7 +12,6 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 class InMemorySortedFastqWriter implements FastqWriter{
 
 	private final FastqWriter writer;
-	private final Comparator<FastqRecord> comparator;
 	
 	private final Set<FastqRecord> sorted;
 	
@@ -20,7 +19,6 @@ class InMemorySortedFastqWriter implements FastqWriter{
 		Objects.requireNonNull(writer);
 		Objects.requireNonNull(comparator);
 		this.writer = writer;
-		this.comparator = comparator;
 		sorted = new TreeSet<FastqRecord>(comparator);
 	}
 	@Override
