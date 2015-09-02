@@ -33,7 +33,7 @@ import java.util.Arrays;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Test;
-public class TestDefaultNucleotideSequenceFastaRecordWriter {
+public class TestNucleotideFastaRecordWriter {
 	private final NucleotideFastaRecord record1 = 
 			new NucleotideFastaRecordBuilder("id_1", "ACGTACGT")
 						.comment("a comment")

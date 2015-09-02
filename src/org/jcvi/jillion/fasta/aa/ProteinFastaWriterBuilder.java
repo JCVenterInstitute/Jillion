@@ -24,10 +24,17 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.Comparator;
 
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.fasta.FastaWriter;
 import org.jcvi.jillion.internal.fasta.AbstractResidueFastaWriter;
+import org.jcvi.jillion.internal.fasta.InMemorySortedFastaWriter;
+import org.jcvi.jillion.internal.fasta.TmpDirSortedFastaWriter;
+import org.jcvi.jillion.internal.fasta.aa.LargeProteinFastaFileDataStore;
 /**
  * {@code ProteinFastaWriterBuilder} is a Builder
  * class that will create a new instance of 
@@ -70,6 +77,22 @@ public final class ProteinFastaWriterBuilder extends AbstractResidueFastaWriter.
 		super(out);
 	}
 
+	
+	
+	
+	@Override
+	protected ProteinFastaWriter createTmpDirSortedWriterWriter(
+			FastaWriter<AminoAcid, ProteinSequence, ProteinFastaRecord> delegate,
+			Comparator<ProteinFastaRecord> comparator, int cacheSize,
+			File tmpDir) {
+		return new TmpDirSortedProteinFastaWriter(delegate, comparator, cacheSize, tmpDir);
+	}
+	@Override
+	protected ProteinFastaWriter createInMemorySortedWriterWriter(
+			FastaWriter<AminoAcid, ProteinSequence, ProteinFastaRecord> delegate,
+			Comparator<ProteinFastaRecord> comparator) {
+		return new InMemorySortedProteinFastaWriter(delegate, comparator);
+	}
 	@Override
 	protected ProteinFastaWriter create(
 			OutputStream out, int numberOfResiduesPerLine, Charset charSet, String eol) {
@@ -82,5 +105,57 @@ public final class ProteinFastaWriterBuilder extends AbstractResidueFastaWriter.
 				int numberOfResiduesPerLine, Charset charSet, String eol) {
 			super(out, numberOfResiduesPerLine, charSet,eol);
 		}
+	}
+	
+	
+	private static final class InMemorySortedProteinFastaWriter extends InMemorySortedFastaWriter<AminoAcid, ProteinSequence, ProteinFastaRecord> implements ProteinFastaWriter{
+
+		public InMemorySortedProteinFastaWriter(FastaWriter<AminoAcid, ProteinSequence, ProteinFastaRecord> writer,
+				Comparator<ProteinFastaRecord> comparator) {
+			super(writer, comparator);
+		}
+
+		@Override
+		protected ProteinFastaRecord createRecord(String id, ProteinSequence sequence, String optionalComment) {
+			return new ProteinFastaRecordBuilder(id, sequence)
+							.comment(optionalComment)
+							.build();
+		}
+		
+	}
+	
+	private static final class TmpDirSortedProteinFastaWriter extends TmpDirSortedFastaWriter<AminoAcid, ProteinSequence, ProteinFastaRecord> implements ProteinFastaWriter{
+
+		
+
+		public TmpDirSortedProteinFastaWriter(
+				FastaWriter<AminoAcid, ProteinSequence, ProteinFastaRecord> finalWriter,
+				Comparator<ProteinFastaRecord> comparator, int cacheSize,
+				File tmpDir) {
+			super(finalWriter, comparator, tmpDir, cacheSize);
+		}
+
+		@Override
+		protected StreamingIterator<ProteinFastaRecord> createStreamingIteratorFor(
+				File tmpFastaFile) throws IOException, DataStoreException {
+			return LargeProteinFastaFileDataStore.create(tmpFastaFile).iterator();
+		}
+
+		@Override
+		protected FastaWriter<AminoAcid, ProteinSequence, ProteinFastaRecord> createNewTmpWriter(
+				File tmpFile) throws IOException {
+			return new ProteinFastaWriterBuilder(tmpFile)
+								.build();
+		}
+
+		@Override
+		protected ProteinFastaRecord createFastaRecord(String id,
+				ProteinSequence sequence, String optionalComment) {
+
+			return new ProteinFastaRecordBuilder(id, sequence)
+								.comment(optionalComment)
+								.build();
+		}
+		
 	}
 }

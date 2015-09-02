@@ -29,13 +29,15 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Objects;
 
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.fasta.FastaRecord;
-import org.jcvi.jillion.fasta.FastaWriter;
 import org.jcvi.jillion.fasta.FastaUtil;
+import org.jcvi.jillion.fasta.FastaWriter;
 
 
 public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F extends FastaRecord<S,T>> implements FastaWriter<S, T, F>{
@@ -158,6 +160,10 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		private final OutputStream out;
 		private int numberOfSymbolsPerLine;
 		private String eol = DEFAULT_LINE_SEPARATOR;
+		
+		private Comparator<F> comparator = null;
+		private Integer inMemoryCacheSize;
+		private File tmpDir;
 		
 		private Charset charSet = DEFAULT_CHARSET;
 		/**
@@ -283,8 +289,21 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		 */
 		@Override
 		public final W build() {
-			return create(out, numberOfSymbolsPerLine, charSet,eol);
+			W writer= create(out, numberOfSymbolsPerLine, charSet,eol);
+			
+			if(comparator ==null){
+				//no sorting
+				return writer;
+			}
+			if(inMemoryCacheSize ==null){
+				//use in memory cache only
+				return createInMemorySortedWriterWriter(writer, comparator);
+			}
+			return createTmpDirSortedWriterWriter(writer, comparator, inMemoryCacheSize, tmpDir);
 		}
+		
+		protected abstract W createTmpDirSortedWriterWriter(FastaWriter<S,T,F> delegate, Comparator<F> comparator, int cacheSize, File tmpDir);
+		protected abstract W createInMemorySortedWriterWriter(FastaWriter<S,T,F> delegate, Comparator<F> comparator);
 		/**
 		 * Create a new instance of a {@link FastaWriter}
 		 * with the given non-null parameters.
@@ -299,5 +318,112 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		 * @return a new {@link FastaWriter}; can not be null.
 		 */
 		protected abstract W create(OutputStream out, int numberOfResiduesPerLine, Charset charSet, String eol);
+		
+		
+		/**
+		 * Write out the {@link FastaRecord}s written by this writer
+		 * sorted by the specified {@link Comparator} but do all the sorting in memory.
+		 * All of the records will be cached in memory so the output can be written sorted
+		 * when the {@link FastaWriter#close()} method is called.  It is not recommended
+		 * to use this method if a large number of records will be written because
+		 * an {@link OutOfMemoryError} may occur.
+		 * 
+		 * @param comparator the {@link Comparator} to use to sort the {@link FastaRecord}s;
+		 * can not be null.
+		 * 
+		 * @return this
+		 * 
+		 * @throws NullPointerException if comparator is null.
+		 * 
+		 * @since 5.0
+		 */
+		public AbstractBuilder<S,T,F,W> sortInMemoryOnly(Comparator<F> comparator){
+		    Objects.requireNonNull(comparator);
+		    this.comparator = comparator;
+		    this.inMemoryCacheSize = null;
+		    this.tmpDir = null;
+		    
+		    return this;
+		}
+		/**
+		 * Write out the {@link FastaRecord}s written by this writer
+		 * sorted by the specified {@link Comparator} using a combination of 
+		 * in memory sorting and writing out sorted temporary files.
+		 * 
+		 * <p/>
+		 * This is the same as {@link #sort(Comparator, int, File) sort(comparator, inMemCacheSize, null)}
+		 * which uses the default temp area to make temp files.
+		 * 
+		 * @param comparator the {@link Comparator} to use to sort the {@link FastaRecord}s;
+		 * can not be null.
+		 * @param inMemoryCacheSize the in memory cache size to use; must be positive.
+		 * 
+		 * @return this.
+		 * 
+		 * @throws NullPointerException if comparator is null.
+		 * 
+		 * @throws IllegalArgumentException if inMemoryCacheSize < 1.
+		 * 
+		 * @since 5.0
+		 */
+		public AbstractBuilder<S,T,F,W> sort(Comparator<F> comparator, int inMemoryCacheSize){
+		    return sort(comparator, inMemoryCacheSize, null);
+		}
+		/**
+		 * Write out the {@link FastaRecord}s written by this writer
+		 * sorted by the specified {@link Comparator} using a combination of 
+		 * in memory sorting and writing out sorted temporary files.
+		 * 
+		 * An in memory cache similar of the specified size will be created
+		 * and whenever the cache fills, the sorted cache contents will be written to a temp file
+		 * in the specified tmpDir and the cache cleared out to make room for more records to write.
+		 * There may be multiple temp files written depending on how many {@link FastaRecord}s are 
+		 * passed to the Writer.
+		 * 
+		 * Once {@link FastaWriter#close()} has been called, the contents of the in memory cache,
+		 * and any temp files written out are merged and written sorted to the final output file.
+		 * 
+		 * <p>
+		 * If any files get written to temp files under {@code dir},
+		 * they will be deleted when the writer is closed.  However {@code dir}
+		 * itself will not be deleted so feel free to provide non-temp directories as well.
+		 * </p>
+		 * 
+		 * @param comparator the {@link Comparator} to use to sort the {@link FastqRecord}s;
+		 * can not be null.
+		 * @param inMemoryCacheSize the in memory cache size to use; must be positive.
+		 * 
+		 * @param dir the directory to write files to; if set to {@code null}
+		 * then the default system temporary directory is used.  If the value is not null,
+		 * then it must be a directory that already exists.
+		 * 
+		 * @return this.
+		 * 
+		 * @throws NullPointerException if comparator is null.
+		 * 
+		 * @throws IllegalArgumentException if inMemoryCacheSize < 1,
+		 * 			or if a non-null dir does not exist or is not a directory.
+		 * 
+		 * @since 5.0
+		 */
+		public AbstractBuilder<S,T,F,W> sort(Comparator<F> comparator, int inMemoryCacheSize, File dir){
+		    Objects.requireNonNull(comparator);
+		    if(inMemoryCacheSize <1){
+		        throw new IllegalArgumentException("in memory cache size must be positive");
+		    }
+		    
+		    if(dir !=null){
+		    	if(!dir.exists()){	    
+		    		throw new IllegalArgumentException("tmpDir does not exist: " + dir.getAbsolutePath());
+		    	}
+		    	if(!dir.isDirectory()){
+		    		throw new IllegalArgumentException("tmpDir is not a directory: " + dir.getAbsolutePath());
+		    	}
+		    }
+	            this.comparator = comparator;
+	            this.inMemoryCacheSize = inMemoryCacheSize;
+	            this.tmpDir = dir;
+		    return this;
+		}
 	}
 }

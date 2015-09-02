@@ -25,17 +25,24 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.JoinedStringBuilder;
 import org.jcvi.jillion.core.util.MapUtil;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.fasta.FastaWriter;
 import org.jcvi.jillion.internal.fasta.AbstractResidueFastaWriter;
+import org.jcvi.jillion.internal.fasta.InMemorySortedFastaWriter;
+import org.jcvi.jillion.internal.fasta.TmpDirSortedFastaWriter;
 /**
  * {@code NucleotideFastaWriterBuilder} is a Builder
  * class that will create a new instance of 
@@ -190,6 +197,26 @@ public final class NucleotideFastaWriterBuilder extends AbstractResidueFastaWrit
 			return new NucleotideSequenceFastaRecordWriterImpl(out, numberOfResiduesPerLine, charSet,eol);
 		}
 		
+		
+		
+		
+		@Override
+		protected NucleotideFastaWriter createTmpDirSortedWriterWriter(
+				FastaWriter<Nucleotide, NucleotideSequence, NucleotideFastaRecord> delegate,
+				Comparator<NucleotideFastaRecord> comparator, int cacheSize,
+				File tmpDir) {
+			return new TmpDirSortedNucleotideFastaWriter(delegate, comparator, cacheSize, tmpDir);
+		}
+		@Override
+		protected NucleotideFastaWriter createInMemorySortedWriterWriter(
+				FastaWriter<Nucleotide, NucleotideSequence, NucleotideFastaRecord> delegate,
+				Comparator<NucleotideFastaRecord> comparator) {
+			return new InMemorySortedNucleotideFastaWriter(delegate, comparator);
+		}
+
+
+
+
 		private static final class NucleotideSequenceFastaRecordWriterImpl extends AbstractResidueFastaWriter<Nucleotide, NucleotideSequence, NucleotideFastaRecord> implements NucleotideFastaWriter{
 
 			private NucleotideSequenceFastaRecordWriterImpl(OutputStream out,
@@ -385,6 +412,58 @@ public final class NucleotideFastaWriterBuilder extends AbstractResidueFastaWrit
 				
 			}
 			
+			
+		}
+		
+		
+		private static final class InMemorySortedNucleotideFastaWriter extends InMemorySortedFastaWriter<Nucleotide, NucleotideSequence, NucleotideFastaRecord> implements NucleotideFastaWriter{
+
+			public InMemorySortedNucleotideFastaWriter(FastaWriter<Nucleotide, NucleotideSequence, NucleotideFastaRecord> writer,
+					Comparator<NucleotideFastaRecord> comparator) {
+				super(writer, comparator);
+			}
+
+			@Override
+			protected NucleotideFastaRecord createRecord(String id, NucleotideSequence sequence, String optionalComment) {
+				return new NucleotideFastaRecordBuilder(id, sequence)
+								.comment(optionalComment)
+								.build();
+			}
+			
+		}
+		
+		private static final class TmpDirSortedNucleotideFastaWriter extends TmpDirSortedFastaWriter<Nucleotide, NucleotideSequence, NucleotideFastaRecord> implements NucleotideFastaWriter{
+
+			
+
+			public TmpDirSortedNucleotideFastaWriter(
+					FastaWriter<Nucleotide, NucleotideSequence, NucleotideFastaRecord> finalWriter,
+					Comparator<NucleotideFastaRecord> comparator, int cacheSize,
+					File tmpDir) {
+				super(finalWriter, comparator, tmpDir, cacheSize);
+			}
+
+			@Override
+			protected StreamingIterator<NucleotideFastaRecord> createStreamingIteratorFor(
+					File tmpFastaFile) throws IOException, DataStoreException {
+				return LargeNucleotideSequenceFastaIterator.createNewIteratorFor(tmpFastaFile, DataStoreFilters.alwaysAccept());
+			}
+
+			@Override
+			protected FastaWriter<Nucleotide, NucleotideSequence, NucleotideFastaRecord> createNewTmpWriter(
+					File tmpFile) throws IOException {
+				return new NucleotideFastaWriterBuilder(tmpFile)
+									.build();
+			}
+
+			@Override
+			protected NucleotideFastaRecord createFastaRecord(String id,
+					NucleotideSequence sequence, String optionalComment) {
+
+				return new NucleotideFastaRecordBuilder(id, sequence)
+									.comment(optionalComment)
+									.build();
+			}
 			
 		}
 }

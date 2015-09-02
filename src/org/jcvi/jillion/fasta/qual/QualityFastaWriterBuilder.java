@@ -25,11 +25,18 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.Comparator;
 
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.fasta.FastaWriter;
 import org.jcvi.jillion.internal.fasta.AbstractFastaRecordWriter;
 import org.jcvi.jillion.internal.fasta.AbstractFastaRecordWriter.AbstractBuilder;
+import org.jcvi.jillion.internal.fasta.InMemorySortedFastaWriter;
+import org.jcvi.jillion.internal.fasta.TmpDirSortedFastaWriter;
+import org.jcvi.jillion.internal.fasta.qual.LargeQualityFastaFileDataStore;
 /**
  * {@code QualityFastaWriterBuilder}
  * builds a new instance of {@link QualityFastaWriter}
@@ -81,6 +88,24 @@ public final class QualityFastaWriterBuilder extends AbstractBuilder<PhredQualit
 		return 17;
 	}
 	
+	
+	
+	@Override
+	protected QualityFastaWriter createTmpDirSortedWriterWriter(
+			FastaWriter<PhredQuality, QualitySequence, QualityFastaRecord> delegate,
+			Comparator<QualityFastaRecord> comparator, int cacheSize,
+			File tmpDir) {
+		return new TmpDirSortedPositionFastaWriter(delegate, comparator, cacheSize, tmpDir);
+	}
+	@Override
+	protected QualityFastaWriter createInMemorySortedWriterWriter(
+			FastaWriter<PhredQuality, QualitySequence, QualityFastaRecord> delegate,
+			Comparator<QualityFastaRecord> comparator) {
+		return new InMemorySortedPositionFastaWriter(delegate, comparator);
+	}
+
+
+
 	private static final class QualitySequenceFastaRecordWriterImpl extends AbstractFastaRecordWriter<PhredQuality, QualitySequence, QualityFastaRecord> implements QualityFastaWriter{
 
 		private QualitySequenceFastaRecordWriterImpl(OutputStream out,
@@ -107,5 +132,56 @@ public final class QualityFastaWriterBuilder extends AbstractBuilder<PhredQualit
 		protected int numberOfCharsFor(int numberOfSymbols) {
 			return 3*numberOfSymbols;
 		}
+	}
+	
+	private static final class InMemorySortedPositionFastaWriter extends InMemorySortedFastaWriter<PhredQuality, QualitySequence, QualityFastaRecord> implements QualityFastaWriter{
+
+		public InMemorySortedPositionFastaWriter(FastaWriter<PhredQuality, QualitySequence, QualityFastaRecord> writer,
+				Comparator<QualityFastaRecord> comparator) {
+			super(writer, comparator);
+		}
+
+		@Override
+		protected QualityFastaRecord createRecord(String id, QualitySequence sequence, String optionalComment) {
+			return new QualityFastaRecordBuilder(id, sequence)
+							.comment(optionalComment)
+							.build();
+		}
+		
+	}
+	
+	private static final class TmpDirSortedPositionFastaWriter extends TmpDirSortedFastaWriter<PhredQuality, QualitySequence, QualityFastaRecord> implements QualityFastaWriter{
+
+		
+
+		public TmpDirSortedPositionFastaWriter(
+				FastaWriter<PhredQuality, QualitySequence, QualityFastaRecord> finalWriter,
+				Comparator<QualityFastaRecord> comparator, int cacheSize,
+				File tmpDir) {
+			super(finalWriter, comparator, tmpDir, cacheSize);
+		}
+
+		@Override
+		protected StreamingIterator<QualityFastaRecord> createStreamingIteratorFor(
+				File tmpFastaFile) throws IOException, DataStoreException {
+			return LargeQualityFastaFileDataStore.create(tmpFastaFile).iterator();
+		}
+
+		@Override
+		protected FastaWriter<PhredQuality, QualitySequence, QualityFastaRecord> createNewTmpWriter(
+				File tmpFile) throws IOException {
+			return new QualityFastaWriterBuilder(tmpFile)
+								.build();
+		}
+
+		@Override
+		protected QualityFastaRecord createFastaRecord(String id,
+				QualitySequence sequence, String optionalComment) {
+
+			return new QualityFastaRecordBuilder(id, sequence)
+								.comment(optionalComment)
+								.build();
+		}
+		
 	}
 }
