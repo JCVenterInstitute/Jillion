@@ -1,5 +1,8 @@
 package org.jcvi.jillion.trace.fastq;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,9 +19,8 @@ import org.jcvi.jillion.testutils.NucleotideSequenceTestUtil;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
-
-import static org.junit.Assert.*;
 public abstract class AbstractTestSortedFastqWriter {
 
     @Rule
@@ -43,16 +45,55 @@ public abstract class AbstractTestSortedFastqWriter {
                                     new QualitySequenceBuilder(new byte[]{20,30,40,50,20,30,40,50}).build())
                         .build();
     
+    FastqRecord aWithComment = new FastqRecordBuilder("AA", NucleotideSequenceTestUtil.create("ACGTACGT"),
+    								new QualitySequenceBuilder(new byte[]{20,30,40,50,20,30,40,50})
+    												.build())
+    								.comment("this is a comment")
+    								.build();
+    
     FastqRecord bb = new FastqRecordBuilder("BB", NucleotideSequenceTestUtil.create("TTTTTTTT"),
             new QualitySequenceBuilder(new byte[]{20,20,20,20,20,20,20,20}).build())
                         .build();
+    
+    
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+    
+    @Test
+    public void tryingToWriteAfterCloseShouldThrowIOException() throws IOException{
+    	sut.write(a);
+    	sut.close();
+    	
+    	expectedException.expect(IOException.class);
+    	expectedException.expectMessage("closed");
+    	sut.write(bb);
+    }
+    
+    @Test
+    public void writeRecordAsFields() throws IOException, DataStoreException{
+    	sut.write(a.getId(), a.getNucleotideSequence(), a.getQualitySequence());
+    	 sut.close();
+         assertRecordOrder(a);
+    }
+    
+    @Test
+    public void writeRecordWithCommentAsField() throws IOException, DataStoreException{
+    	sut.write(a.getId(), a.getNucleotideSequence(), a.getQualitySequence(), aWithComment.getComment());
+    	 sut.close();
+         assertRecordOrder(aWithComment);
+    }
     
     @Test
     public void noRecordsToWrite() throws IOException{
         sut.close();
         assertEquals(0, outputFile.length());
     }
-    
+    @Test
+    public void oneRecordWithComment() throws IOException, DataStoreException{
+        sut.write(aWithComment);
+        sut.close();
+        assertRecordOrder(aWithComment);
+    }
     @Test
     public void oneRecord() throws IOException, DataStoreException{
         sut.write(a);

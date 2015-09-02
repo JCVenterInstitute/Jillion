@@ -15,8 +15,8 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
-import org.jcvi.jillion.core.util.iter.MergedSortedRecordIterator;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.internal.core.util.iter.MergedSortedRecordIterator;
 
 class TmpDirSortedFastqWriter implements FastqWriter{
 
@@ -30,7 +30,8 @@ class TmpDirSortedFastqWriter implements FastqWriter{
     
     private volatile boolean isClosed;
  
-    public TmpDirSortedFastqWriter(FastqWriter finalWriter, Comparator<FastqRecord> comparator, FastqQualityCodec codec, File tmpDir, int cacheSize) {
+    public TmpDirSortedFastqWriter(FastqWriter finalWriter, Comparator<FastqRecord> comparator, FastqQualityCodec codec,
+    		File tmpDir, int cacheSize) {
         this.tmpDir = tmpDir;
         this.cacheSize = cacheSize;
         this.comparator = comparator;

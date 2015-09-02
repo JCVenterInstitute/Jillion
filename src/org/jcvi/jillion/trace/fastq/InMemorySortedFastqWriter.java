@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
@@ -14,6 +15,7 @@ class InMemorySortedFastqWriter implements FastqWriter{
 	private final FastqWriter writer;
 	
 	private final Set<FastqRecord> sorted;
+	private volatile boolean closed;
 	
 	public InMemorySortedFastqWriter(FastqWriter writer, Comparator<FastqRecord> comparator){
 		Objects.requireNonNull(writer);
@@ -23,15 +25,29 @@ class InMemorySortedFastqWriter implements FastqWriter{
 	}
 	@Override
 	public void close() throws IOException {
-		for(FastqRecord record : sorted){
-			writer.write(record);
+		if(closed){
+			return;
 		}
-		sorted.clear();
-		writer.close();
+		closed=true;
+		try{
+			for(FastqRecord record : sorted){
+				writer.write(record);
+			}
+		}finally{
+			sorted.clear();
+			IOUtil.closeAndIgnoreErrors(writer);
+		}
+	}
+	
+	private void checkNotClosed() throws IOException{
+		if(closed){
+			throw new IOException("writer is closed");
+		}
 	}
 
 	@Override
 	public void write(FastqRecord record) throws IOException {
+		checkNotClosed();
 		sorted.add(record);
 		
 	}
