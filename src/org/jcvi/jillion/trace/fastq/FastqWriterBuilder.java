@@ -29,7 +29,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Objects;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
@@ -55,6 +57,12 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 	private boolean writeIdOnQualityLine=false;
 	private FastqQualityCodec codec = DEFAULT_CODEC;
 	private Charset charSet = DEFAULT_CHARSET;
+	
+	
+	private Comparator<FastqRecord> comparator=null;
+	private Integer inMemoryCacheSize;
+	private File tmpDir;
+	
 	/**
 	 * Create a new {@link FastqWriterBuilder} that will use
 	 * the given {@link OutputStream} to write
@@ -155,10 +163,43 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 		numberOfBasesPerLine = basesPerLine;
 		return this;
 	}
+	
+	
+	
+	public FastqWriterBuilder sortInMemoryOnly(Comparator<FastqRecord> comparator){
+	    Objects.requireNonNull(comparator);
+	    this.comparator = comparator;
+	    this.inMemoryCacheSize = null;
+	    this.tmpDir = null;
+	    
+	    return this;
+	}
+	public FastqWriterBuilder sort(Comparator<FastqRecord> comparator, int inMemoryCacheSize){
+	    return sort(comparator, inMemoryCacheSize, null);
+	}
+	public FastqWriterBuilder sort(Comparator<FastqRecord> comparator, int inMemoryCacheSize, File tmpDir){
+	    Objects.requireNonNull(comparator);
+	    if(inMemoryCacheSize <1){
+	        throw new IllegalArgumentException("in memory cache size must be positive");
+	    }
+            this.comparator = comparator;
+            this.inMemoryCacheSize = inMemoryCacheSize;
+            this.tmpDir = tmpDir;
+	    return this;
+	}
+	
+	
 	@Override
 	public FastqWriter build() {
-		return new FastqRecordWriterImpl(out, charSet, 
+	    FastqWriter writer = new FastqRecordWriterImpl(out, charSet, 
 				codec, writeIdOnQualityLine, numberOfBasesPerLine);
+	    if(comparator ==null){
+	        return writer;
+	    }
+	    if(inMemoryCacheSize ==null){
+	        return new InMemorySortedFastqWriter(writer, comparator);
+	    }
+	    return new TmpDirSortedFastqWriter(writer, comparator, codec, tmpDir,inMemoryCacheSize);
 	}
 	
 	

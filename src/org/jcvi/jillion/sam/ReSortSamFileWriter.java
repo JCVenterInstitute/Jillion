@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -32,7 +31,7 @@ import java.util.NoSuchElementException;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
-import org.jcvi.jillion.core.util.iter.PeekableStreamingIterator;
+import org.jcvi.jillion.core.util.iter.MergedSortedRecordIterator;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
 import org.jcvi.jillion.internal.sam.index.BamIndexer;
@@ -185,18 +184,18 @@ class ReSortSamFileWriter implements SamWriter {
 	
 	@Override
 	public void close() throws IOException {
-		List<PeekableStreamingIterator<SamRecord>> iterators =new ArrayList<PeekableStreamingIterator<SamRecord>>(1 + tempFiles.size());
+		List<StreamingIterator<SamRecord>> iterators =new ArrayList<StreamingIterator<SamRecord>>(1 + tempFiles.size());
 		SamWriter writer =null;
 		try{
 			sortInMemoryRecords();
 
-			iterators.add(IteratorUtil.createPeekableStreamingIterator(new InMemoryStreamingIterator(currentInMemSize)));
+			iterators.add(IteratorUtil.createStreamingIterator(new InMemoryStreamingIterator(currentInMemSize)));
 			
 			for(File tempFile : tempFiles){
-				iterators.add(IteratorUtil.createPeekableStreamingIterator(new StreamingSamRecordIterator(tempFile, encoding)));
+				iterators.add(new StreamingSamRecordIterator(tempFile, encoding));
 			}
 			
-			Iterator<SamRecord> sortedIterator = new MergedSortedRecordIterator(iterators, recordComparator);
+			Iterator<SamRecord> sortedIterator = new MergedSortedRecordIterator<SamRecord>(iterators, recordComparator);
 			writer = encoding.createPreSortedNoValidationOutputWriter(outputFile, header, indexer);
 			while(sortedIterator.hasNext()){
 				writer.writeRecord(sortedIterator.next());
@@ -253,110 +252,7 @@ class ReSortSamFileWriter implements SamWriter {
 		}
 		
 	}
-	/**
-	 * Combine a list of pre-sorted Iterators into a single sorted iterator.
-	 * Each call to {@link #next()} will peek at the next elements in the wrapped
-	 * iterators and return the value that has the lowest sort value as determined
-	 * by the comparator (and advance that iterator).
-	 * @author dkatzel
-	 *
-	 */
-	public static class MergedSortedRecordIterator implements Iterator<SamRecord> {
-			private final List<PeekableStreamingIterator<SamRecord>> iterators;
-			
-			private SamRecord next;
-			private final SortedSamRecordElementComparator comparator;
-			private final List<SortedSamRecordElement> elementList;
-			
-			
-			public MergedSortedRecordIterator(List<PeekableStreamingIterator<SamRecord>> iterators, Comparator<SamRecord> comparator) {
-				this.iterators = iterators;
-				this.comparator = new SortedSamRecordElementComparator(comparator);
-				elementList = new ArrayList<SortedSamRecordElement>(iterators.size());
-				
-				next= getNext();
-			}
-			
-			private SamRecord getNext(){
-				elementList.clear();
-				for(PeekableStreamingIterator<SamRecord> iter : iterators){
-					if(iter.hasNext()){
-						//we peek instead of next()
-						//incase we don't pick this record yet
-						elementList.add(new SortedSamRecordElement(iter.peek(), iter));
-					}
-				}
-				if(elementList.isEmpty()){
-					return null;
-				}
-				Collections.sort(elementList, comparator);
-				SortedSamRecordElement element= elementList.get(0);
-				//advance iterator
-				element.source.next();
-				return element.record;
-			}
 
-			@Override
-			public boolean hasNext() {
-				return next!=null;
-			}
-			
-			
-			@Override
-			public SamRecord next() {
-				//don't need to check has next
-				//since we can make sure we don't call it incorrectly
-				SamRecord ret= next;
-				next = getNext();
-				return ret;
-			}
-			
-			@Override
-			public void remove() {
-				throw new UnsupportedOperationException();				
-			}
-
-	}
-	/**
-	 * Struct that has a {@link SamRecord} and which
-	 * iterator that record belong to so we can advance
-	 * the iterator if selected.
-	 * @author dkatzel
-	 *
-	 */
-	private static class SortedSamRecordElement{
-		SamRecord record;
-		Iterator<SamRecord> source;
-		
-		public SortedSamRecordElement(SamRecord record,
-				Iterator<SamRecord> source) {
-			this.record = record;
-			this.source = source;
-		}
-
-		@Override
-		public String toString() {
-			return "SortedSamRecordElement [record=" + record + ", source="
-					+ source + "]";
-		}
-		
-	}
-	
-	private static class SortedSamRecordElementComparator implements Comparator<SortedSamRecordElement>{
-		private final Comparator<SamRecord> comparator;
-		
-
-		public SortedSamRecordElementComparator(Comparator<SamRecord> comparator) {
-			this.comparator = comparator;
-		}
-
-
-		@Override
-		public int compare(SortedSamRecordElement o1, SortedSamRecordElement o2) {
-			return comparator.compare(o1.record, o2.record);
-		}
-		
-	}
 	/**
 	 * Iterates over a sam (or bam) encoded file as a {@link StreamingIterator}.
 	 * @author dkatzel

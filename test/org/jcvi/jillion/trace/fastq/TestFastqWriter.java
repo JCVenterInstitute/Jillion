@@ -25,6 +25,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Comparator;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -38,12 +39,13 @@ import org.jcvi.jillion.trace.fastq.FastqWriter;
 import org.jcvi.jillion.trace.fastq.FastqWriterBuilder;
 import org.junit.Test;
 
-public class TestDefaultFastqRecordWriter {
+import static org.easymock.EasyMock.*;
+public class TestFastqWriter {
 
 	private final FastqDataStore datastore;
 	
-	public TestDefaultFastqRecordWriter() throws IOException{
-		ResourceHelper RESOURCES = new ResourceHelper(TestDefaultFastqRecordWriter.class);
+	public TestFastqWriter() throws IOException{
+		ResourceHelper RESOURCES = new ResourceHelper(TestFastqWriter.class);
 		datastore = DefaultFastqFileDataStore.create(RESOURCES.getFile("files/example.fastq"),FastqQualityCodec.ILLUMINA);
 	}
 	
@@ -240,4 +242,34 @@ public class TestDefaultFastqRecordWriter {
 				 null);
 		 
 	}
+	
+	
+    @Test(expected = NullPointerException.class)
+    public void nullInMemorySortComparatorShouldthrowNPE() {
+
+        new FastqWriterBuilder(new ByteArrayOutputStream())
+                        .sortInMemoryOnly(null);
+    }
+    
+    @Test(expected = NullPointerException.class)
+    public void nullTmpDirSortComparatorShouldthrowNPE() {
+
+        new FastqWriterBuilder(new ByteArrayOutputStream())
+                        .sort(null, 100);
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test(expected = IllegalArgumentException.class)
+    public void negativeCacheSizeTmpDirSortComparatorShouldthrowIllegalArgException() {
+
+        new FastqWriterBuilder(new ByteArrayOutputStream())
+                        .sort(createMock(Comparator.class), -1);
+    }
+    @SuppressWarnings("unchecked")
+    @Test(expected = IllegalArgumentException.class)
+    public void zeroCacheSizeTmpDirSortComparatorShouldthrowIllegalArgException() {
+
+        new FastqWriterBuilder(new ByteArrayOutputStream())
+                        .sort(createMock(Comparator.class), 0);
+    }
 }
