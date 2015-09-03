@@ -1,10 +1,14 @@
 package org.jcvi.jillion.fasta;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -27,6 +31,7 @@ import org.jcvi.jillion.core.io.IOUtil;
  * @since 5.0
  */
 public final class SplitFastaWriter{
+	
 	/**
 	 * Functional interface to create new FastaWriter
 	 * instances.
@@ -46,6 +51,27 @@ public final class SplitFastaWriter{
 		 */
 		T create(int i) throws IOException;
 	}
+	
+	/**
+	 * Functional interface to create new FastaWriter
+	 * instances.
+	 * @author dkatzel
+	 *
+	 * @param <K>
+	 * @param <T>
+	 */
+	@FunctionalInterface
+	public interface DeconvolveFastaRecordWriterFactory<K,T>{
+		/**
+		 * Create a new FastaWriter for the
+		 * fasta file for the given deconvolution key.
+		 * @param key the deconvolutionkey for the file to create, will never be null.
+		 * @return a new FastaWriter; can not be null.
+		 * @throws IOException if there is a problem creating the writer.
+		 */
+		T create(K key) throws IOException;
+	}
+	
 	/**
 	 * Creates a new {@link FastaWriter} instance that will spread out
 	 * the {@link FastaRecord}s to be written to create several fasta files.  The
@@ -147,9 +173,87 @@ public final class SplitFastaWriter{
 	}
 	
 	
+	/**
+	 * Write out many fasta files where a "deconvolution" function determines which file
+	 * each record is written to based on the contents of that record.  Deconvolution functions
+	 * typically use the actual read sequence to find sequencing barcodes or bin by characteristics 
+	 * in specially formatted record ids.  
+	 * 
+	 * @param interfaceClass The <strong>interface</strong> type the supplier function will be returning
+	 * which is also going to be the return type for this Fasta Writer.
+	 * @param deconvolutionFunction the lambda expression that given a FastaRecord will
+	 * determine the "key" that will be used to map to the output fasta writer to write the record to.
+	 * The returned key object must correctly implement equals and hashcode.  Think of the key
+	 * as the key in a {@code Map<Key, FastaWriter>}.  The returned Key can not be null.
+	 *  
+	 * @param supplier given the key returned by the deconvolutionFunction create a new FastaWriter of the
+	 * type W.  The supplier will only be called when a key from the deconvolutionFunction is seen for the 
+	 * first time (as determined by the key's equals() and hashcode() implementation)
+	 * 
+	 * @return a new FastaWriter.
+	 * 
+	 * @type <K> The deconvolution key type that is returned from the deconvolution function and passed 
+	 * to the supplier function.
+	 * 
+	 * @type <W> the {@link FastaWriter} interface  type returned by this method.
+	 * 
+	 * 
+	 * @apiNote For example to if there exists a method that given the read id, returns a Direction object
+	 * of that read then the following code:
+	 * 
+	 * <pre>
+	 * {@code NucleotideFastaWriter writer = SplitFastaWriter.deconvolve(NucleotideFastaWriter.class, 
+					record-> getSequenceDirectionFor(record.getId()),
+					dir -> new NucleotideFastaWriterBuilder(new File(outputDir, dir + ".fasta"))
+											.build());
+		}
+	 * </pre>
+	 * 
+	 * Will write out all the fastas to 2 files, "forward.fasta" and "reverse.fasta" where the reads
+	 * that were determined to be forward reads were written to "forward.fasta" and the reads that were
+	 * determined to be reversed where written to "reverse.fasta".
+	 */
+	@SuppressWarnings("unchecked")
+	public static <S, T extends Sequence<S>, F extends FastaRecord<S, T>, W extends FastaWriter<S,T,F>, K> W deconvolve(Class<W> interfaceClass, 
+			Function<FastaRecord<S, T>, K> deconvolutionFunction,
+			DeconvolveFastaRecordWriterFactory<K, W> supplier){
+		DeconvolutionFastaWriter<S, T, F, W, K> writer = new DeconvolutionFastaWriter<S, T, F, W, K>(deconvolutionFunction, supplier);
+		
+		return (W) Proxy.newProxyInstance(writer.getClass().getClassLoader(), new Class[]{interfaceClass}, new InvocationHandlerImpl<>(writer) );
+	} 
+	
 	private SplitFastaWriter(){
 		//can not instantiate
 	}
+	
+	private static final class FastaRecordImpl<S, T extends Sequence<S>> implements FastaRecord<S,T>{
+		private final String id, comment;
+		private final T sequence;
+		
+		
+		public FastaRecordImpl(String id, String comment, T sequence) {
+			this.id = id;
+			this.comment = comment;
+			this.sequence = sequence;
+		}
+
+		@Override
+		public String getId() {
+			return id;
+		}
+
+		@Override
+		public String getComment() {
+			return comment;
+		}
+
+		@Override
+		public T getSequence() {
+			return sequence;
+		}
+		
+	}
+	
 	
 	private static final class InvocationHandlerImpl<S, T extends Sequence<S>, F extends FastaRecord<S, T>, W extends FastaWriter<S,T,F>> implements InvocationHandler{
 
@@ -188,6 +292,83 @@ public final class SplitFastaWriter{
 		
 	}
 	
+	private static final class 	DeconvolutionFastaWriter<S, T extends Sequence<S>, F extends FastaRecord<S, T>, W extends FastaWriter<S, T, F>, K>
+	implements FastaWriter<S, T, F> {
+
+		private volatile boolean closed = false;
+		
+		private final Map<K, W> writers = new HashMap<>();
+		
+		private final Function<FastaRecord<S, T>, K> deconvolutionFunction;
+		private final DeconvolveFastaRecordWriterFactory<K, W> supplier;
+		
+		
+		public DeconvolutionFastaWriter(Function<FastaRecord<S, T>, K> deconvolutionFunction, DeconvolveFastaRecordWriterFactory<K, W> supplier) {
+			Objects.requireNonNull(deconvolutionFunction);
+			Objects.requireNonNull(supplier);
+			
+			this.deconvolutionFunction = deconvolutionFunction;
+			this.supplier = supplier;
+		}
+
+		@Override
+		public void close() throws IOException {
+			if(closed){
+				return;
+			}
+			closed=true;
+			for(W writer : writers.values()){
+				IOUtil.closeAndIgnoreErrors(writer);
+			}
+					
+			
+		}
+		private void checkNotClosed() throws IOException {
+			if (closed) {
+				throw new IOException("already closed");
+			}
+		}
+		
+		@Override
+		public void write(F record) throws IOException {
+			privateWrite(record);
+		}
+
+		private void privateWrite(FastaRecord<S,T> record) throws IOException {
+			checkNotClosed();
+			Objects.requireNonNull(record);
+			K key = deconvolutionFunction.apply(record);
+			Objects.requireNonNull(key, ()-> String.format("key can not be null for %s", record.getId())); 
+			
+			writers.computeIfAbsent(key, k-> {
+				try{
+						return supplier.create(k);
+				}catch(IOException e){
+					throw new UncheckedIOException("error creating deconvolution writer for " + k, e);
+				}})
+				.write(record.getId(), record.getSequence(), record.getComment());
+		}
+		
+	
+
+		@Override
+		public void write(String id, T sequence) throws IOException {
+			write(id, sequence, null);
+			
+		}
+
+		@Override
+		public void write(String id, T sequence, String optionalComment)
+				throws IOException {
+			Objects.requireNonNull(id, "id can not be null");
+			Objects.requireNonNull(sequence, "sequence can not be null");
+			
+			FastaRecordImpl<S, T> record = new FastaRecordImpl<>(id, optionalComment, sequence);
+			
+			privateWrite(record);
+		}
+		
+	}
 	private static final class RolloverSplitFastaWriter<S, T extends Sequence<S>, F extends FastaRecord<S, T>, W extends FastaWriter<S, T, F>>
 			implements FastaWriter<S, T, F> {
 
