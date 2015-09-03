@@ -23,6 +23,7 @@ package org.jcvi.jillion.fasta.nt;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -30,8 +31,10 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.junit.Test;
 public class TestNucleotideFastaRecordWriter {
 	private final NucleotideFastaRecord record1 = 
@@ -206,4 +209,71 @@ public class TestNucleotideFastaRecordWriter {
 		byte[] expectedBytes = expected.getBytes(charSet);
 		assertArrayEquals(expectedBytes, out.toByteArray());
 	}
+	
+	@Test
+	public void testInMemorySortedFasta() throws IOException, DataStoreException{
+	    ByteArrayOutputStream out = new ByteArrayOutputStream();
+            try(NucleotideFastaWriter sut = new NucleotideFastaWriterBuilder(out)
+                                                    .sortInMemoryOnly((a,b)-> b.getId().compareTo(a.getId()))
+                                                    .build();
+                    
+                    ){
+                sut.write(record1);
+                sut.write(record2);
+            }
+            
+            try(NucleotideFastaDataStore datastore = new NucleotideFastaFileDataStoreBuilder(new ByteArrayInputStream(out.toByteArray()))
+                                                                .build();
+            
+                    StreamingIterator<NucleotideFastaRecord> iter = datastore.iterator();
+            ){
+                assertEquals(record2, iter.next());
+                assertEquals(record1, iter.next());
+            }
+	}
+	
+	
+	@Test
+	public void testSortedFastaButDontWriteToTempFile() throws IOException, DataStoreException{
+	    ByteArrayOutputStream out = new ByteArrayOutputStream();
+            try(NucleotideFastaWriter sut = new NucleotideFastaWriterBuilder(out)
+                                                    .sort((a,b)-> b.getId().compareTo(a.getId()), 3)
+                                                    .build();
+                    
+                    ){
+                sut.write(record1);
+                sut.write(record2);
+            }
+            
+            try(NucleotideFastaDataStore datastore = new NucleotideFastaFileDataStoreBuilder(new ByteArrayInputStream(out.toByteArray()))
+                                                                .build();
+            
+                    StreamingIterator<NucleotideFastaRecord> iter = datastore.iterator();
+            ){
+                assertEquals(record2, iter.next());
+                assertEquals(record1, iter.next());
+            }
+	}
+	
+	@Test
+        public void testSortedFastaButWriteToTempFile() throws IOException, DataStoreException{
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            try(NucleotideFastaWriter sut = new NucleotideFastaWriterBuilder(out)
+                                                    .sort((a,b)-> b.getId().compareTo(a.getId()), 1)
+                                                    .build();
+                    
+                    ){
+                sut.write(record1);
+                sut.write(record2);
+            }
+            
+            try(NucleotideFastaDataStore datastore = new NucleotideFastaFileDataStoreBuilder(new ByteArrayInputStream(out.toByteArray()))
+                                                                .build();
+            
+                    StreamingIterator<NucleotideFastaRecord> iter = datastore.iterator();
+            ){
+                assertEquals(record2, iter.next());
+                assertEquals(record1, iter.next());
+            }
+        }
 }
