@@ -1,7 +1,6 @@
 package org.jcvi.jillion.internal.core.util.iter;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -21,8 +20,7 @@ public class MergedSortedRecordIterator<T> implements Iterator<T> {
 		private final List<PeekableStreamingIterator<T>> iterators;
 		
 		private T next;
-		private final SortedElementComparator<T> comparator;
-		private final List<SortedRecordElement<T>> elementList;
+		private final Comparator<T> comparator;
 		
 		
 		public MergedSortedRecordIterator(List<? extends Iterator<T>> iterators, Comparator<T> comparator) {
@@ -34,29 +32,46 @@ public class MergedSortedRecordIterator<T> implements Iterator<T> {
 			    }
 			    this.iterators.add(IteratorUtil.createPeekableStreamingIterator(iter));
 			}
-			this.comparator = new SortedElementComparator<T>(comparator);
-			elementList = new ArrayList<SortedRecordElement<T>>(iterators.size());
+			this.comparator =comparator;
 			
 			next= getNext();
 		}
 		
 		private T getNext(){
-			elementList.clear();
-			for(PeekableStreamingIterator<T> iter : iterators){
-				if(iter.hasNext()){
-					//we peek instead of next()
-					//incase we don't pick this record yet
-					elementList.add(new SortedRecordElement<T>(iter.peek(), iter));
-				}
-			}
-			if(elementList.isEmpty()){
+			T bestElement = null;
+			PeekableStreamingIterator<T> bestIter =null;
+			
+			Iterator<PeekableStreamingIterator<T>> iter = iterators.iterator();
+			if(!iter.hasNext()){
 				return null;
 			}
-			Collections.sort(elementList, comparator);
-			SortedRecordElement<T> element= elementList.get(0);
-			//advance iterator
-			element.source.next();
-			return element.record;
+			do{
+				PeekableStreamingIterator<T> currentIter = iter.next();
+				if(currentIter.hasNext()){
+					bestElement = currentIter.peek();
+					bestIter = currentIter;
+				}
+			}while(iter.hasNext() && bestElement ==null);
+			
+			while(iter.hasNext()){
+				PeekableStreamingIterator<T> currentIter = iter.next();
+				if(currentIter.hasNext()){
+					T currentElement = currentIter.peek();
+					if(comparator.compare(currentElement, bestElement) < 0){
+						//found new best
+						bestIter = currentIter;
+						bestElement = currentElement;
+					}
+					
+				}
+			}
+			if(bestIter ==null){
+				return null;
+			}
+			//advance best iterator
+			return bestIter.next();
+
+			
 		}
 
 		@Override
@@ -79,45 +94,7 @@ public class MergedSortedRecordIterator<T> implements Iterator<T> {
 			throw new UnsupportedOperationException();				
 		}
 		
-		/**
-	         * Struct that has a record and which parent
-	         * iterator that record belongs to so we can advance
-	         * the iterator if selected.
-	         * @author dkatzel
-	         *
-	         */
-	        private static class SortedRecordElement<T>{
-	                T record;
-	                Iterator<T> source;
-	                
-	                public SortedRecordElement(T record,
-	                                Iterator<T> source) {
-	                        this.record = record;
-	                        this.source = source;
-	                }
-
-	                @Override
-	                public String toString() {
-	                        return "SortedRecordElement [record=" + record + ", source="
-	                                        + source + "]";
-	                }
-	                
-	        }
-	        
-	        private static class SortedElementComparator<T> implements Comparator<SortedRecordElement<T>>{
-	                private final Comparator<T> comparator;
-	                
-
-	                public SortedElementComparator(Comparator<T> comparator) {
-	                        this.comparator = comparator;
-	                }
-
-
-	                @Override
-	                public int compare(SortedRecordElement<T> o1, SortedRecordElement<T> o2) {
-	                        return comparator.compare(o1.record, o2.record);
-	                }
-	        }
+		
 	                
 	        
 
