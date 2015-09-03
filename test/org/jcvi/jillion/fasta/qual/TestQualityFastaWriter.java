@@ -23,6 +23,7 @@ package org.jcvi.jillion.fasta.qual;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,6 +31,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -39,7 +46,7 @@ import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.internal.fasta.qual.LargeQualityFastaFileDataStore;
 import org.junit.Test;
 
-public class TestDefaultQualitySequenceFastaRecordWriter {
+public class TestQualityFastaWriter {
 	private final QualityFastaRecord record1 = new QualityFastaRecordBuilder("id_1", 
 						new QualitySequenceBuilder(new byte[]{8,9,10,11,12,13,14,15}).build())
 						.comment("a comment")
@@ -149,7 +156,7 @@ public class TestDefaultQualitySequenceFastaRecordWriter {
 	
 	@Test
 	public void parseAndWriteShouldMatch() throws IOException, DataStoreException{
-		ResourceHelper resources = new ResourceHelper(TestDefaultQualitySequenceFastaRecordWriter.class);
+		ResourceHelper resources = new ResourceHelper(TestQualityFastaWriter.class);
 		File expectedFasta = resources.getFile("files/19150.qual");
 		QualityFastaDataStore datastore = LargeQualityFastaFileDataStore.create(expectedFasta);
 		
@@ -177,4 +184,60 @@ public class TestDefaultQualitySequenceFastaRecordWriter {
 		
 		assertArrayEquals(expectedBytes, out.toByteArray());
 	}
+	@Test
+        public void testInMemorySorting() throws IOException, DataStoreException{
+	    testSorting((builder, comparator)-> builder.sortInMemoryOnly(comparator));
+	}
+	
+	@Test
+        public void testTmpDirSortingAllInMemory() throws IOException, DataStoreException{
+            testSorting((builder, comparator)-> builder.sort(comparator, 1_000_000));
+        }
+	@Test
+        public void testTmpDirSorting() throws IOException, DataStoreException{
+            testSorting((builder, comparator)-> builder.sort(comparator, 5));
+        }
+
+    private void testSorting(BiConsumer<QualityFastaWriterBuilder, Comparator<QualityFastaRecord>> consumer)
+            throws IOException, DataStoreException {
+
+        ResourceHelper resources = new ResourceHelper(
+                TestQualityFastaWriter.class);
+        File expectedFasta = resources.getFile("files/19150.qual");
+        Comparator<QualityFastaRecord> comparator = (a, b) -> b.getId()
+                .compareTo(a.getId());
+
+        List<QualityFastaRecord> list = new ArrayList<QualityFastaRecord>();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        QualityFastaWriterBuilder builder = new QualityFastaWriterBuilder(out);
+        consumer.accept(builder, comparator);
+        try (
+
+        QualityFastaDataStore datastore = new QualityFastaFileDataStoreBuilder(
+                expectedFasta).build();
+                StreamingIterator<QualityFastaRecord> iter = datastore
+                        .iterator();
+
+                QualityFastaWriter sut = builder.build()) {
+            while (iter.hasNext()) {
+                QualityFastaRecord record = iter.next();
+                list.add(record);
+                sut.write(record);
+            }
+
+        }
+        Collections.sort(list, comparator);
+        try (QualityFastaDataStore actual = new QualityFastaFileDataStoreBuilder(
+                new ByteArrayInputStream(out.toByteArray())).build();
+                StreamingIterator<QualityFastaRecord> actualIter = actual
+                        .iterator();) {
+            List<QualityFastaRecord> actualList = new ArrayList<>();
+            while (actualIter.hasNext()) {
+
+                actualList.add(actualIter.next());
+            }
+
+            assertEquals(list, actualList);
+        }
+    }
 }

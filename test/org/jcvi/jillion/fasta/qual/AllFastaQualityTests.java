@@ -42,7 +42,7 @@ import org.junit.runners.Suite.SuiteClasses;
         
         TestQualityFastaFileDataStoreBuilder.class,
         
-        TestDefaultQualitySequenceFastaRecordWriter.class
+        TestQualityFastaWriter.class
     }
     )
 public class AllFastaQualityTests {
