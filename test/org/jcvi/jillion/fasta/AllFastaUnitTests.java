@@ -45,8 +45,8 @@ import org.junit.runners.Suite.SuiteClasses;
         AllPositionFastaUnitTests.class,
         
         TestRolloverSplitFastaWriter.class,
-        TestRoundRobinSplitFastaWriter.class
-   
+        TestRoundRobinSplitFastaWriter.class,
+        TestDeconvolveSplitFastaWriter.class
     }
     )
 public class AllFastaUnitTests {
