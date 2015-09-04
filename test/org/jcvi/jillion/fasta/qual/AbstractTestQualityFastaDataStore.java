@@ -366,4 +366,6 @@ public abstract class AbstractTestQualityFastaDataStore {
 		}
 		return ids.iterator();
 	}
+	
+
 }
