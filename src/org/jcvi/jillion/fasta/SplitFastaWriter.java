@@ -37,7 +37,7 @@ public final class SplitFastaWriter{
 	 * instances.
 	 * @author dkatzel
 	 *
-	 * @param <T>
+	 * @param <T> the type of {@link FastaRecord} that is to be created.
 	 */
 	@FunctionalInterface
 	public interface FastaRecordWriterFactory<T>{
@@ -57,8 +57,10 @@ public final class SplitFastaWriter{
 	 * instances.
 	 * @author dkatzel
 	 *
-	 * @param <K>
-	 * @param <T>
+	 * @param <K> the type of object that will be used as a "key"
+	 * to determine which of the output writers to write this record to.
+	 * 
+	 * @param <T> the type of {@link FastaRecord} that is to be created
 	 */
 	@FunctionalInterface
 	public interface DeconvolveFastaRecordWriterFactory<K,T>{
@@ -86,7 +88,7 @@ public final class SplitFastaWriter{
 	 * @param recordsPerFile the max number of {@link FastaRecord}s to be written to a file
 	 * before it should be closed and the next file created. Must be >=1.
 	 * 
-	 * @param supplier a {@link FastaRecordWriterFactory} instance that will create a new FastaWriter of type W for the
+	 * @param supplier a {@link FastqWriterFactory} instance that will create a new FastaWriter of type W for the
 	 * ith file to be created.  The passed in value i will be in the range 1..N where N is the number of files
 	 * created (will start at 1 not 0).  If no records are written, then supplier will never be called. Can not be null.
 	 * 
@@ -136,7 +138,7 @@ public final class SplitFastaWriter{
 	 * @param recordsPerFile the max number of {@link FastaRecord}s to be written to a file
 	 * before it should be closed and the next file created. Must be >=1.
 	 * 
-	 * @param supplier a {@link FastaRecordWriterFactory} instance that will create a new FastaWriter of type W for the
+	 * @param supplier a {@link FastqWriterFactory} instance that will create a new FastaWriter of type W for the
 	 * ith file to be created.  The passed in value i will be in the range 1..N where N is the number of files
 	 * created (will start at 1 not 0).  If no records are written, then supplier will never be called.  Can not be null.
 	 * 
@@ -192,10 +194,11 @@ public final class SplitFastaWriter{
 	 * 
 	 * @return a new FastaWriter.
 	 * 
-	 * @type <K> The deconvolution key type that is returned from the deconvolution function and passed 
+	 * @param <K> The deconvolution key type that is returned from the deconvolution function and passed 
 	 * to the supplier function.
+	 * @param <F> The {@link FastaRecord} type that is being written out.
 	 * 
-	 * @type <W> the {@link FastaWriter} interface  type returned by this method.
+	 * @param <W> the {@link FastaWriter} interface  type returned by this method.
 	 * 
 	 * 
 	 * @apiNote For example to if there exists a method that given the read id, returns a Direction object
