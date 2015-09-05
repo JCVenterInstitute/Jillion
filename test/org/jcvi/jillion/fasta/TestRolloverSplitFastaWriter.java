@@ -98,7 +98,13 @@ public class TestRolloverSplitFastaWriter {
 		sut.write("foo", NucleotideSequenceTestUtil.create("ACGT"));
 		
 	}
-	
+	@Test
+        public void callingCloseAgainIsNoOp() throws IOException{
+                NucleotideFastaWriter sut = createRolloverWriter(1, IGNORE);
+                sut.close();
+                sut.close();
+                
+        }
 	@Test
 	public void createOneFilePerRecord() throws IOException, DataStoreException{
 		File actualDir = tmpDir.newFolder("actual");
@@ -160,6 +166,78 @@ public class TestRolloverSplitFastaWriter {
 		
 		
 	}
+	
+	@Test
+        public void allOneFile() throws IOException, DataStoreException{
+                File actualDir = tmpDir.newFolder("actual");
+                File expectedDir = tmpDir.newFolder("expected");
+                
+                
+                try(NucleotideFastaWriter sut = createRolloverWriter(10, i -> new NucleotideFastaWriterBuilder(new File(actualDir, i +".fasta"))
+                                                                                                                                                        .build());
+                        StreamingIterator<NucleotideFastaRecord> iter = datastore.iterator();   
+                        ){
+                        try(NucleotideFastaWriter expected = new NucleotideFastaWriterBuilder(new File(expectedDir, "1.fasta"))
+                                                                                                                        .build()){
+                                for(int i=1; i<= 9;i++){
+                                        NucleotideFastaRecord fastaRecord = iter.next();
+                                        sut.write(fastaRecord);                         
+                                
+                                        expected.write(fastaRecord);
+                                }
+                        }
+                       
+                }
+                fastaFilesMatch(expectedDir, actualDir); 
+        }
+	
+	@Test
+        public void writeIdSequenceAndComment() throws IOException, DataStoreException{
+                File actualDir = tmpDir.newFolder("actual");
+                File expectedDir = tmpDir.newFolder("expected");
+                
+                
+                try(NucleotideFastaWriter sut = createRolloverWriter(10, i -> new NucleotideFastaWriterBuilder(new File(actualDir, i +".fasta"))
+                                                                                                                                                        .build());
+                        StreamingIterator<NucleotideFastaRecord> iter = datastore.iterator();   
+                        ){
+                        try(NucleotideFastaWriter expected = new NucleotideFastaWriterBuilder(new File(expectedDir, "1.fasta"))
+                                                                                                                        .build()){
+                                for(int i=1; i<= 9;i++){
+                                        NucleotideFastaRecord fastaRecord = iter.next();
+                                        sut.write(fastaRecord.getId(), fastaRecord.getSequence(), "comment");                         
+                                
+                                        expected.write(fastaRecord.getId(), fastaRecord.getSequence(), "comment");
+                                }
+                        }
+                       
+                }
+                fastaFilesMatch(expectedDir, actualDir); 
+        }
+	
+	@Test
+        public void writeIdAndSequenceOnlyShouldMakeNullComment() throws IOException, DataStoreException{
+                File actualDir = tmpDir.newFolder("actual");
+                File expectedDir = tmpDir.newFolder("expected");
+                
+                
+                try(NucleotideFastaWriter sut = createRolloverWriter(10, i -> new NucleotideFastaWriterBuilder(new File(actualDir, i +".fasta"))
+                                                                                                                                                        .build());
+                        StreamingIterator<NucleotideFastaRecord> iter = datastore.iterator();   
+                        ){
+                        try(NucleotideFastaWriter expected = new NucleotideFastaWriterBuilder(new File(expectedDir, "1.fasta"))
+                                                                                                                        .build()){
+                                for(int i=1; i<= 9;i++){
+                                        NucleotideFastaRecord fastaRecord = iter.next();
+                                        sut.write(fastaRecord.getId(), fastaRecord.getSequence());                         
+                                
+                                        expected.write(fastaRecord.getId(), fastaRecord.getSequence(), null);
+                                }
+                        }
+                       
+                }
+                fastaFilesMatch(expectedDir, actualDir); 
+        }
 	
 	private static void fastaFilesMatch(File expectedDir, File actualDir) throws IOException{
 		File[] expectedFiles = expectedDir.listFiles(FASTA_FILE_FILTER);

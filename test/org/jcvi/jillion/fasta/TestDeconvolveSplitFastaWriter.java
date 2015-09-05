@@ -11,9 +11,11 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordBuilder;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaWriter;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaWriterBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
+import org.jcvi.jillion.testutils.NucleotideSequenceTestUtil;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -74,7 +76,12 @@ public class TestDeconvolveSplitFastaWriter {
 	   assertEquals(0, tmpDir.getRoot().listFiles().length);
 	   
 	}
-	
+	@Test
+        public void callingCloseAgainIsNoOp() throws IOException{
+               NucleotideFastaWriter writer= create();
+               writer.close();
+               writer.close();
+        }
 	@Test
 	public void donotCreateFilesIfNothingToWrite() throws IOException{
 		create()
@@ -114,5 +121,29 @@ public class TestDeconvolveSplitFastaWriter {
 		
 		assertEquals(datastore.get("IWKNA01T07A01PB2A1F"), expectedForward.get("IWKNA01T07A01PB2A1F"));
 		assertEquals(datastore.get("IWKNA01T07A01PB2A1101R"), expectedReverse.get("IWKNA01T07A01PB2A1101R"));
+	}
+	
+	@Test
+	public void gettingSameDeconvoleKeyBackShouldNotMakeNewFile() throws IOException, DataStoreException{
+	    
+	    NucleotideFastaWriter writer = create();
+            NucleotideFastaRecord record1 = new NucleotideFastaRecordBuilder("id_F", NucleotideSequenceTestUtil.create("ACGT"))
+                                                    .comment("a comment")
+                                                    .build();
+            NucleotideFastaRecord record2 = new NucleotideFastaRecordBuilder("id2_F", NucleotideSequenceTestUtil.create("ACGT")).build();
+            
+            
+            writer.write(record1.getId(), record1.getSequence(), record1.getComment());
+            writer.write(record2.getId(), record2.getSequence());
+            
+            writer.close();
+            
+            
+            assertFalse(getReverseFile().exists());
+            NucleotideFastaDataStore expectedForward = new NucleotideFastaFileDataStoreBuilder(getForwardFile()).build();
+            
+            assertEquals(record1, expectedForward.get(record1.getId()));
+            assertEquals(record2, expectedForward.get(record2.getId()));
+            
 	}
 }
