@@ -71,7 +71,7 @@ public class TestDeconvolveSplitFastaWriter {
                    }
            }
 	   //since we told it to skip everything no files should be written
-	   assertEquals(0, tmpDir.getRoot().listFiles());
+	   assertEquals(0, tmpDir.getRoot().listFiles().length);
 	   
 	}
 	
