@@ -58,6 +58,24 @@ public class TestDeconvolveSplitFastaWriter {
 	}
 	
 	@Test
+	public void nullDeconvolveReturnValueShouldNotWriteRecord() throws DataStoreException, IOException{
+	   
+	   try(NucleotideFastaWriter writer = SplitFastaWriter.deconvolve(NucleotideFastaWriter.class, 
+                   record-> null,
+                   dir -> new NucleotideFastaWriterBuilder(new File(tmpDir.getRoot(), dir + ".fasta"))
+                                                                   .build());
+                   StreamingIterator<NucleotideFastaRecord> iter = datastore.iterator();
+           ){
+                   while(iter.hasNext()){
+                           writer.write(iter.next());
+                   }
+           }
+	   //since we told it to skip everything no files should be written
+	   assertEquals(0, tmpDir.getRoot().listFiles());
+	   
+	}
+	
+	@Test
 	public void donotCreateFilesIfNothingToWrite() throws IOException{
 		create()
 		.close();
