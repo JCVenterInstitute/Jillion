@@ -69,6 +69,10 @@ import org.junit.runners.Suite.SuiteClasses;
         TestTmpDirOneFilePerReadSortedFastqWriter.class,
         
         
+        TestSplitFastqRoundRobin.class,
+        TestSplitFastqRollover.class,
+        TestSplitFastqDeconvolver.class,
+        
         AllIlluminaUnitTests.class,
         AllSolexaUnitTests.class,
         AllFastqUtilUnitTests.class
