@@ -16,6 +16,18 @@ New Features
 
 1. Added LucyVectorSpliceTrimmer that performs vector splice trimming using 
    a simplified version of the algorithm that the TIGR program Lucy used.
+   
+2. Added new SplitFastaWriter and SplitFastqWriter classes which have 3 factory methods to make 
+   different Writer implementations that split up writing records to different files using different
+   strategies.  roundRobin(), rollover() and deconvolve() each method takes a lambda function
+   to create the new individual writers and deconvolve() takes a second lambda which determines which
+   "bin" the record will go to.
+   
+3. FastaWriterBuilder and FastqWriterBuilder can now sort records using a Comparator.  Both in-memory only 
+   and using temp files to sort all the records are supported.  An additional overloaded
+   sort() method takes a File object that is the directory to create the temp files in 
+   (default directory is System temp).  Using the temp files to help with sorting
+   allows the writing very large sorted output files that would not have been able to all fit in memory.
 
 API Changes
 -----------
@@ -28,6 +40,8 @@ API Changes
 3. Added new FastqFileDataStore interface which is a sub-interface of FastqDataStore and adds one method getQualityCodec()
    which returns the FastqQualityCodec object that was used to encode all the fastq records in the file.
    FastqFileBuilder objects have changed to return this new interface.
+   
+
 
 Bug Fixes
 ----------
@@ -40,10 +54,15 @@ Jillion 4.2
 
 New Features
 ------------
-
-1.  Renamed *FastaRecordWriter* to *FastaWriter* to make smaller class names
-
-2.  Renamed *FastqRecordWriter* to *FastqWriter* to make smaller class names
+1.  FastaFileParser and all Fasta Datastore implementations
+    supports non-redundant text fasta files like the ones described in
+    ftp://ftp.ncbi.nih.gov/blast/db/README</a>.
+    If non-redundant records are encountered, then the visitXXX methods will be called
+    in a way such that it will appear as if they were redundantly listed.  The non-redundant
+    defline will be split and each identical sequence will be visited separately with each
+    of the many ids for it.  Creating org.jcvi.jillion.fasta.FastaVisitorCallback.FastaVisitorMemento
+    are also non-redundant aware and will correctly only visit the subset of non-redundant records according to when
+    the memento was created.
 
 3.  AminoAcid - Added Pyrrolysine 'O' to AminoAcid class and AminoAcidSequence
     as well as Blosum matrices. 
@@ -65,10 +84,14 @@ Bug Fixes
 API Changes
 -----------
 
-1.  Blast- BlastHit now has subjectDefline field instead of
+1.  Renamed *FastaRecordWriter* to *FastaWriter* to make smaller class names
+
+2.  Renamed *FastqRecordWriter* to *FastqWriter* to make smaller class names
+
+3.  Blast- BlastHit now has subjectDefline field instead of
            subjectDeflineComment which only used to have the comment.
            
-2.  BtabWriter - now puts alignment length in previously skipped column
+4.  BtabWriter - now puts alignment length in previously skipped column
 
 ================
 Jillion 4.1 - internal release only
