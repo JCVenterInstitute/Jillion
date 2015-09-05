@@ -168,7 +168,8 @@ public final class SplitFastqWriter{
 	 * @param deconvolutionFunction the lambda function that given a {@link FastqRecord} will
 	 * determine the "key" that will be used to map to the output fastq writer to write the record to.
 	 * The returned key object must correctly implement equals and hashcode.  Think of the key
-	 * as the key in a {@code Map<Key, FastqWriter>}.  The returned Key can not be null.
+	 * as the key in a {@code Map<Key, FastqWriter>}.  If the returned Key can not be null.is {@code null}
+	 * then the record will not be written out to any of the output files.
 	 *  
 	 * @param supplier  a lambda function  that given the key returned
 	 *  by the deconvolutionFunction, create a new {@link FastqWriter} for
@@ -181,6 +182,7 @@ public final class SplitFastqWriter{
 	 * @param <K> The deconvolution key type that is returned from the deconvolution function and passed 
 	 * to the supplier function.
 	 * 
+	 * @throws NullPointerException if any parameter is null.
 	 * 
 	 * @apiNote For example to if there exists a method that given the read, figures
 	 * out which "barcode" was used in that read, then to the code to bin the reads
@@ -260,8 +262,11 @@ public final class SplitFastqWriter{
 			checkNotClosed();
 			Objects.requireNonNull(record);
 			K key = deconvolutionFunction.apply(record);
-			Objects.requireNonNull(key, ()-> String.format("key can not be null for %s", record.getId())); 
 			
+			if(key ==null){
+			    //skip
+			    return;
+			}
 			writers.computeIfAbsent(key, k-> {
 				try{
 						return supplier.create(k);

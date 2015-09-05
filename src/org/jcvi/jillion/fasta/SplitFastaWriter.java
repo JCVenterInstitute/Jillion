@@ -183,10 +183,14 @@ public final class SplitFastaWriter{
 	 * 
 	 * @param interfaceClass The <strong>interface</strong> type the supplier function will be returning
 	 * which is also going to be the return type for this Fasta Writer.
+	 * 
+	 * 
 	 * @param deconvolutionFunction the lambda expression that given a FastaRecord will
 	 * determine the "key" that will be used to map to the output fasta writer to write the record to.
 	 * The returned key object must correctly implement equals and hashcode.  Think of the key
-	 * as the key in a {@code Map<Key, FastaWriter>}.  The returned Key can not be null.
+	 * as the key in a {@code Map<Key, FastaWriter>}.  If the returned Key
+	 * is {@code null} then the record should be skipped and not written out to any of the
+	 * output files.  The lambda function itself can not be null.
 	 *  
 	 * @param supplier given the key returned by the deconvolutionFunction create a new FastaWriter of the
 	 * type W.  The supplier will only be called when a key from the deconvolutionFunction is seen for the 
@@ -200,6 +204,8 @@ public final class SplitFastaWriter{
 	 * 
 	 * @param <W> the {@link FastaWriter} interface  type returned by this method.
 	 * 
+	 * @throw NullPointerException if any parameter is null (but the deconvolution function
+	 * may return null values).
 	 * 
 	 * @apiNote For example to if there exists a method that given the read id, returns a Direction object
 	 * of that read then the following code:
@@ -341,11 +347,14 @@ public final class SplitFastaWriter{
 			checkNotClosed();
 			Objects.requireNonNull(record);
 			K key = deconvolutionFunction.apply(record);
-			Objects.requireNonNull(key, ()-> String.format("key can not be null for %s", record.getId())); 
+			if(key ==null){
+			    //skip record
+			    return;
+			}
 			
 			writers.computeIfAbsent(key, k-> {
 				try{
-						return supplier.create(k);
+				    return supplier.create(k);
 				}catch(IOException e){
 					throw new UncheckedIOException("error creating deconvolution writer for " + k, e);
 				}})

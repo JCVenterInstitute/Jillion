@@ -65,6 +65,13 @@ public class TestSplitFastqDeconvolver {
 		return null;
 	}
 	
+	@Test
+	public void nullDeconvolveReturnShouldNotBeWrittenToFiles() throws IOException{
+	    FastqWriter writer = createWriter( record-> null);
+            writer.close();
+            assertTrue(getOutputFiles().isEmpty());
+	}
+	
 	@AfterClass
 	public static void closeDataStore() throws IOException{
 		datastore.close();
