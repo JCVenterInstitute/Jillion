@@ -27,11 +27,13 @@ package org.jcvi.jillion.trace.fastq;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
+import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.util.Builder;
-import org.jcvi.jillion.internal.trace.fastq.DefaultFastqDataStoreBuilder;
 /**
  * {@code DefaultFastqFileDataStore} is the default implementation
  * of {@link FastqDataStore} which stores
@@ -139,7 +141,7 @@ final class DefaultFastqFileDataStore{
 	private static final class DefaultFastqFileDataStoreBuilderVisitor2 implements FastqVisitor, Builder<FastqFileDataStore> {
 		private final DataStoreFilter filter;
 		private final FastqQualityCodec qualityCodec;
-		private final DefaultFastqDataStoreBuilder builder =new DefaultFastqDataStoreBuilder();
+		private final Map<String, FastqRecord> map = new LinkedHashMap<>();
 
 		public DefaultFastqFileDataStoreBuilderVisitor2(
 				FastqQualityCodec qualityCodec, DataStoreFilter filter) {
@@ -163,7 +165,7 @@ final class DefaultFastqFileDataStore{
 				
 				@Override
 				protected void visitRecord(FastqRecord record) {
-					builder.put(record);					
+					map.put(record.getId(), record);					
 				}
 			};
 		}
@@ -178,7 +180,8 @@ final class DefaultFastqFileDataStore{
 		}
 		@Override
 		public FastqFileDataStore build() {
-			return new FastqFileDataStoreImpl(builder.build(), qualityCodec);
+			return new FastqFileDataStoreImpl(DataStoreUtil.adapt(FastqDataStore.class, map),
+			                                    qualityCodec);
 		}
 
 	}
