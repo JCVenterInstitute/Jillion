@@ -1,7 +1,6 @@
 package org.jcvi.jillion.trace.fastq;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -22,7 +21,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
  * Construction of the individual fastq writers used by the Split Writer
  * is delegated to a user supplied lambda function must return a non-null {@link FastqWriter} of the correct type.
  * </p>
- * 
+ * The returned FastqWriter implementations are not thread-safe.
  * 
  * @author dkatzel
  *
@@ -87,7 +86,8 @@ public final class SplitFastqWriter{
 	 * ith file to be created.  The passed in value i will be in the range 1..N where N is the number of files
 	 * created (will start at 1 not 0).  If no records are written, then supplier will never be called. Can not be null.
 	 * 
-	 * @return a new {@link FastqWriter} instance; should never be null.
+	 * @return a new {@link FastqWriter} instance; should never be null. 
+	 * The returned writer is not thread-safe.
 	 * 
 	 * @throws NullPointerException if supplier lambda is null.
 	 * @throws IllegalArgumentException if max records per file is < 1.
@@ -130,6 +130,8 @@ public final class SplitFastqWriter{
 	 * created (will start at 1 not 0).  If no records are written, then supplier will never be called.  Can not be null.
 	 * 
 	 * @return a new {@link FastqWriter} instance; will never be null.
+	 * The returned writer is not thread-safe.
+	 * 
 	 * @throws NullPointerException if supplier lambda is null.
 	 * @throws IllegalArgumentException if max records per file is < 1.
 	 * 
@@ -177,7 +179,7 @@ public final class SplitFastqWriter{
 	 *   The supplier will only be called when a key from the deconvolutionFunction is seen for the 
 	 * first time (as determined by the key's equals() and hashcode() implementation).
 	 * 
-	 * @return a new {@link FastqWriter}.
+	 * @return a new {@link FastqWriter}; will never be null.  The returned writer is not thread-safe.
 	 * 
 	 * @param <K> The deconvolution key type that is returned from the deconvolution function and passed 
 	 * to the supplier function.
@@ -267,13 +269,21 @@ public final class SplitFastqWriter{
 			    //skip
 			    return;
 			}
-			writers.computeIfAbsent(key, k-> {
-				try{
-						return supplier.create(k);
-				}catch(IOException e){
-					throw new UncheckedIOException("error creating deconvolution writer for " + k, e);
-				}})
-				.write(record);
+			//since we might throw an IOException
+                        //if we call the supplier
+                        //we do a check then act
+                        //which is not threadsafe
+                        //but this writer isn't threadsafe anyway
+                        //so I don't think it matters.
+                        //if we used computIfAbsent(key, supplier)
+                        //we would have to wrap any exception thrown by supplier
+                        //in a runtime exception
+                        FastqWriter writer = writers.get(key);
+                        if(writer==null){
+                            writer = supplier.create(key);
+                            writers.put(key, writer);
+                        }
+			writer.write(record);
 		}
 		
 	

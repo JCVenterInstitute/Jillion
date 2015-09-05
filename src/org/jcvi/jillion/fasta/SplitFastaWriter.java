@@ -1,7 +1,6 @@
 package org.jcvi.jillion.fasta;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -16,14 +15,16 @@ import org.jcvi.jillion.core.io.IOUtil;
  * Utility class that creates {@link FastaWriter} instances
  * that split the {@link FastaRecord} objects being written out
  * over several different output files.
- * <p/>
+ * <p>
  * The rules for how the records are split are determined
  * by the writer implementation chosen in each factory method.
  * </p>
+ * <p>
  * Construction of the individual fasta writers used by the Split Writer
  * is delegated to a user supplied lambda function that is given the int i
  * for the ith file to be created and must return a non-null FastaWriter of the correct type.
- * 
+ * </p>
+ * The returned FastaWriter implementations are not thread-safe.
  * 
  * 
  * @author dkatzel
@@ -92,7 +93,8 @@ public final class SplitFastaWriter{
 	 * ith file to be created.  The passed in value i will be in the range 1..N where N is the number of files
 	 * created (will start at 1 not 0).  If no records are written, then supplier will never be called. Can not be null.
 	 * 
-	 * @return a new {@link FastaWriter} instance; will never be null.
+	 * @return a new {@link FastaWriter} instance; will never be null. 
+	 * The returned writer is not thread-safe.
 	 * 
 	 * @throws NullPointerException if supplier lambda is null.
 	 * @throws IllegalArgumentException if max records per file is < 1.
@@ -143,6 +145,8 @@ public final class SplitFastaWriter{
 	 * created (will start at 1 not 0).  If no records are written, then supplier will never be called.  Can not be null.
 	 * 
 	 * @return a new {@link FastaWriter} instance; will never be null.
+	 * The returned writer is not thread-safe.
+	 * 
 	 * @throws NullPointerException if supplier lambda is null.
 	 * @throws IllegalArgumentException if max records per file is < 1.
 	 * 
@@ -196,7 +200,7 @@ public final class SplitFastaWriter{
 	 * type W.  The supplier will only be called when a key from the deconvolutionFunction is seen for the 
 	 * first time (as determined by the key's equals() and hashcode() implementation)
 	 * 
-	 * @return a new FastaWriter.
+	 * @return a new FastaWriter; will never be null.  The returned writer is not thread-safe.
 	 * 
 	 * @param <K> The deconvolution key type that is returned from the deconvolution function and passed 
 	 * to the supplier function.
@@ -351,14 +355,26 @@ public final class SplitFastaWriter{
 			    //skip record
 			    return;
 			}
-			
-			writers.computeIfAbsent(key, k-> {
-				try{
-				    return supplier.create(k);
-				}catch(IOException e){
-					throw new UncheckedIOException("error creating deconvolution writer for " + k, e);
-				}})
-				.write(record.getId(), record.getSequence(), record.getComment());
+			//since we might throw an IOException
+			//if we call the supplier
+			//we do a check then act
+			//which is not threadsafe
+			//but this writer isn't threadsafe anyway
+			//so I don't think it matters.
+			//if we used computIfAbsent(key, supplier)
+			//we would have to wrap any exception thrown by supplier
+			//in a runtime exception
+			W writer = writers.get(key);
+			if(writer==null){
+			    writer = supplier.create(key);
+			    writers.put(key, writer);
+			}
+			//use this version of write()
+			//so we don't have to create a mock
+			//implementation of fastaRecord type F
+			//which adds a lot of  by requiring
+			//Proxy classes and reflection calls
+			writer.write(record.getId(), record.getSequence(), record.getComment());
 		}
 		
 	
