@@ -215,11 +215,20 @@ public final class SplitFastaWriter{
 	 * of that read then the following code:
 	 * 
 	 * <pre>
-	 * {@code NucleotideFastaWriter writer = SplitFastaWriter.deconvolve(NucleotideFastaWriter.class, 
+	 * {@code 
+	 * File outputDir = ...
+         * Iterator<NucleotideFastaRecord> iter = ...
+         * 
+         * try(NucleotideFastaWriter writer = SplitFastaWriter.deconvolve(NucleotideFastaWriter.class, 
 					record-> getSequenceDirectionFor(record.getId()),
 					dir -> new NucleotideFastaWriterBuilder(new File(outputDir, dir + ".fasta"))
 											.build());
-		}
+	){
+        *       while(iter.hasNext()){
+        *               writer.write(iter.next());
+        *       }
+        *}
+        *}
 	 * </pre>
 	 * 
 	 * Will write out all the fastas to 2 files, "forward.fasta" and "reverse.fasta" where the reads
