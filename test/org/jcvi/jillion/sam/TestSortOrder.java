@@ -32,8 +32,9 @@ import static org.junit.Assert.assertThat;
 
 import java.util.Comparator;
 
-import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.sam.header.SamHeaderBuilder;
+import org.jcvi.jillion.sam.header.SamReferenceSequenceBuilder;
 import org.junit.Test;
 public class TestSortOrder {
 
@@ -66,9 +67,9 @@ public class TestSortOrder {
 		return createHeaderWithReferences();
 	}
 	private SamHeader createHeaderWithReferences(String...references){
-		SamHeader.Builder builder = new SamHeader.Builder();
+		SamHeaderBuilder builder = new SamHeaderBuilder();
 		for(String ref : references){
-			builder.addReferenceSequence(new ReferenceSequence.Builder(ref, Integer.MAX_VALUE).build());
+			builder.addReferenceSequence(new SamReferenceSequenceBuilder(ref, Integer.MAX_VALUE).build());
 			
 		}
 		return builder.build();

@@ -20,7 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.sam.attribute;
 
-import org.jcvi.jillion.sam.header.ReadGroup;
+import org.jcvi.jillion.sam.header.SamReadGroup;
 import org.jcvi.jillion.sam.header.SamHeader;
 
 /**
@@ -120,7 +120,7 @@ round(value * 100.0).
 		public void validate(SamHeader header, Object value) throws InvalidAttributeException {
 			String libId = getType().getString(value);
 			boolean found=false;
-			for(ReadGroup readGroup : header.getReadGroups()){
+			for(SamReadGroup readGroup : header.getReadGroups()){
 				//equals order allows for readGroup's getLibrary() to return null
 				if(libId.equals(readGroup.getLibrary())){
 					found = true;
@@ -250,7 +250,7 @@ round(value * 100.0).
 			//read uses a platform unit from
 			//a different read group.
 			boolean found=false;
-			for(ReadGroup group : header.getReadGroups()){
+			for(SamReadGroup group : header.getReadGroups()){
 				String platformUnit = group.getPlatformUnit();
 				//equals order is to handle null platformUnits
 				if(actualPlatformUnit.equals(platformUnit)){

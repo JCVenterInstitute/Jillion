@@ -29,8 +29,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.sam.header.SamReferenceSequence;
 
 /**
  * Sorting Order of alignments in a SAM/BAM file.
@@ -184,9 +184,9 @@ public enum SortOrder{
 		private final List<String> referenceNames;
 		
 		public CoordinateComparator(SamHeader header){
-			Collection<ReferenceSequence> refs = header.getReferenceSequences();
+			Collection<SamReferenceSequence> refs = header.getReferenceSequences();
 			referenceNames = new ArrayList<String>(refs.size());
-			for(ReferenceSequence ref : refs){
+			for(SamReferenceSequence ref : refs){
 				referenceNames.add(ref.getName());
 			}
 		}

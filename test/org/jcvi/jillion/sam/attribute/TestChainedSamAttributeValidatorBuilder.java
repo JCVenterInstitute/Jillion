@@ -40,7 +40,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({SamHeader.class, SamAttribute.class})
+@PrepareForTest(SamAttribute.class)
 public class TestChainedSamAttributeValidatorBuilder {
 
 	@Test(expected = NullPointerException.class)

@@ -54,8 +54,8 @@ import org.jcvi.jillion.sam.cigar.Cigar;
 import org.jcvi.jillion.sam.cigar.Cigar.ClipType;
 import org.jcvi.jillion.sam.cigar.CigarElement;
 import org.jcvi.jillion.sam.cigar.CigarOperation;
-import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.sam.header.SamReferenceSequence;
 /**
  * {@code SamTransformationService}
  * is a class that can parse a SAM file
@@ -130,7 +130,7 @@ public final class SamTransformationService implements AssemblyTransformationSer
 		@Override
 		public void visitHeader(SamVisitorCallback callback, SamHeader header) {
 			
-			for(ReferenceSequence refSeq : header.getReferenceSequences()){
+			for(SamReferenceSequence refSeq : header.getReferenceSequences()){
 				String id = refSeq.getName();
 				try {
 					NucleotideSequence ref = referenceDataStore.get(id);

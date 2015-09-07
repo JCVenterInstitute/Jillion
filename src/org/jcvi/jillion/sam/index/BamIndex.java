@@ -38,8 +38,8 @@ import org.jcvi.jillion.sam.SamParserFactory;
 import org.jcvi.jillion.sam.SamRecord;
 import org.jcvi.jillion.sam.SamVisitor;
 import org.jcvi.jillion.sam.VirtualFileOffset;
-import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.sam.header.SamReferenceSequence;
 /**
  * {@code BamIndex} is an object representation 
  * of an entire BAM index ({@literal .bai}) file.
@@ -155,10 +155,10 @@ public final class BamIndex {
 	 */
 	public BamIndex(SamHeader header, List<ReferenceIndex> indexes, Long totalNumberOfUnmappedReads){
 		int refIndex=0;
-		Collection<ReferenceSequence> referenceSequences = header.getReferenceSequences();
+		Collection<SamReferenceSequence> referenceSequences = header.getReferenceSequences();
 		indexOfRefNames = new HashMap<String, Integer>(MapUtil.computeMinHashMapSizeWithoutRehashing(referenceSequences.size()));
 		
-		for(ReferenceSequence ref :referenceSequences){
+		for(SamReferenceSequence ref :referenceSequences){
 			indexOfRefNames.put(ref.getName(), refIndex);
 			refIndex++;
 		}
