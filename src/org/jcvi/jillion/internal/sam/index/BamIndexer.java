@@ -28,7 +28,7 @@ import org.jcvi.jillion.internal.sam.IndexerCallback;
 import org.jcvi.jillion.sam.SamRecord;
 import org.jcvi.jillion.sam.VirtualFileOffset;
 import org.jcvi.jillion.sam.cigar.Cigar.ClipType;
-import org.jcvi.jillion.sam.header.ReferenceSequence;
+import org.jcvi.jillion.sam.header.SamReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
 import org.jcvi.jillion.sam.index.BamIndex;
 import org.jcvi.jillion.sam.index.ReferenceIndex;
@@ -46,10 +46,10 @@ public class BamIndexer implements IndexerCallback{
 	public BamIndexer(SamHeader header) {
 		
 		this.header = header;
-		Collection<ReferenceSequence> referenceSequences = header.getReferenceSequences();
+		Collection<SamReferenceSequence> referenceSequences = header.getReferenceSequences();
 		this.indexBuilders = new ArrayList<ReferenceIndexBuilder>(referenceSequences.size());
 
-		for(ReferenceSequence refSeq : referenceSequences){
+		for(SamReferenceSequence refSeq : referenceSequences){
 			indexBuilders.add(new ReferenceIndexBuilder(refSeq.getLength()));
 		}
 	}

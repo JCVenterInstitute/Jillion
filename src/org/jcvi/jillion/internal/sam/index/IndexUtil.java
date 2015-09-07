@@ -35,7 +35,7 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.core.util.JillionUtil;
 import org.jcvi.jillion.internal.sam.SamUtil;
 import org.jcvi.jillion.sam.VirtualFileOffset;
-import org.jcvi.jillion.sam.header.ReferenceSequence;
+import org.jcvi.jillion.sam.header.SamReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
 import org.jcvi.jillion.sam.index.BamIndex;
 import org.jcvi.jillion.sam.index.Bin;
@@ -74,7 +74,7 @@ public final class IndexUtil {
 			//since the file has everything
 			//"prebuilt" for us.
 			int numBins = IOUtil.readSignedInt(in, ByteOrder.LITTLE_ENDIAN);
-			ReferenceSequence refSeq = header.getReferenceSequence(i);
+			SamReferenceSequence refSeq = header.getReferenceSequence(i);
 			if(refSeq ==null){
 				throw new NullPointerException("no ref " + i);
 			}

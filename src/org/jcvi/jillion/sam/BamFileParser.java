@@ -49,8 +49,9 @@ import org.jcvi.jillion.sam.attribute.SamAttributeType;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 import org.jcvi.jillion.sam.cigar.Cigar;
 import org.jcvi.jillion.sam.cigar.CigarOperation;
-import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.sam.header.SamHeaderBuilder;
+import org.jcvi.jillion.sam.header.SamReferenceSequenceBuilder;
 /**
  * {@code BamFileParser} is a {@link SamParser}
  * that can parse BAM encoded files.
@@ -105,7 +106,7 @@ final class BamFileParser extends AbstractSamFileParser {
 			
 			verifyMagicNumber(in);
 			
-			SamHeader.Builder headerBuilder = parseHeader(new TextLineParser(IOUtil.toInputStream(readPascalString(in))));
+			SamHeaderBuilder headerBuilder = parseHeader(new TextLineParser(IOUtil.toInputStream(readPascalString(in))));
 			String[] refNames = parseReferenceNamesAndAddToHeader(in, headerBuilder);
 			SamHeader header = headerBuilder.build();
 			AtomicBoolean keepParsing = new AtomicBoolean(true);
@@ -231,7 +232,7 @@ final class BamFileParser extends AbstractSamFileParser {
 		}
 	}
 	private String[] parseReferenceNamesAndAddToHeader(InputStream in,
-			SamHeader.Builder headerBuilder) throws IOException {
+			SamHeaderBuilder headerBuilder) throws IOException {
 		int referenceCount = getSignedInt(in);
 		//The reference names
 		//are only given by 
@@ -249,7 +250,7 @@ final class BamFileParser extends AbstractSamFileParser {
 			int length = getSignedInt(in);
 			//add ref to header if not yet present
 			if(!headerBuilder.hasReferenceSequence(name)){
-				headerBuilder.addReferenceSequence(new ReferenceSequence.Builder(name,length)
+				headerBuilder.addReferenceSequence(new SamReferenceSequenceBuilder(name,length)
 													.build());
 			}
 		

@@ -49,10 +49,10 @@ import org.jcvi.jillion.sam.attribute.SamAttributeType;
 import org.jcvi.jillion.sam.cigar.Cigar;
 import org.jcvi.jillion.sam.cigar.Cigar.ClipType;
 import org.jcvi.jillion.sam.cigar.CigarElement;
-import org.jcvi.jillion.sam.header.ReadGroup;
-import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
 import org.jcvi.jillion.sam.header.SamProgram;
+import org.jcvi.jillion.sam.header.SamReadGroup;
+import org.jcvi.jillion.sam.header.SamReferenceSequence;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
@@ -533,7 +533,7 @@ public final class SamUtil {
 					header.getVersion(), 
 					header.getSortOrder().getEncodedName()));
 		}
-		for(ReferenceSequence seq : header.getReferenceSequences()){
+		for(SamReferenceSequence seq : header.getReferenceSequences()){
 			StringBuilder builder = new StringBuilder(300);
 			
 			builder.append("@SQ\tSN:").append(seq.getName())
@@ -546,7 +546,7 @@ public final class SamUtil {
 			out.append(String.format("%s\n",builder.toString()));
 		}
 		
-		for(ReadGroup readGroup : header.getReadGroups()){
+		for(SamReadGroup readGroup : header.getReadGroups()){
 			StringBuilder builder = new StringBuilder(1024);
 			
 			builder.append("@RG\tID:").append(readGroup.getId());

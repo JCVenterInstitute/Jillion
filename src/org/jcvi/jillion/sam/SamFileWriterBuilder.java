@@ -28,6 +28,7 @@ import org.jcvi.jillion.internal.sam.index.BamIndexer;
 import org.jcvi.jillion.sam.attribute.ReservedAttributeValidator;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.sam.header.SamHeaderBuilder;
 /**
  * {@code SamFileWriterBuilder}
  * is a Builder object that will create
@@ -46,7 +47,7 @@ public final class SamFileWriterBuilder {
 	private static final int DEFAULT_RECORDS_IN_MEMORY = 2000000; //2 million
 	
 	private final File outputFile;
-	private final SamHeader.Builder headerBuilder;
+	private final SamHeaderBuilder headerBuilder;
 	private SamAttributeValidator attributeValidator = ReservedAttributeValidator.INSTANCE;
 	
 	private File tmpDirRoot = null; //default to systemp temp
@@ -89,7 +90,7 @@ public final class SamFileWriterBuilder {
 		}
 		
 		this.outputFile = outputFile;
-		this.headerBuilder = new SamHeader.Builder(header);
+		this.headerBuilder = new SamHeaderBuilder(header);
 	}
 	/**
 	 * Change the temp directory to write

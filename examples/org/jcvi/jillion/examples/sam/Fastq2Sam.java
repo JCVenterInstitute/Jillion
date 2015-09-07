@@ -36,8 +36,9 @@ import org.jcvi.jillion.sam.SortOrder;
 import org.jcvi.jillion.sam.attribute.InvalidAttributeException;
 import org.jcvi.jillion.sam.attribute.ReservedSamAttributeKeys;
 import org.jcvi.jillion.sam.attribute.SamAttribute;
-import org.jcvi.jillion.sam.header.ReadGroup;
 import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.sam.header.SamHeaderBuilder;
+import org.jcvi.jillion.sam.header.SamReadGroupBuilder;
 import org.jcvi.jillion.sam.header.SamVersion;
 import org.jcvi.jillion.trace.fastq.FastqDataStore;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
@@ -51,14 +52,14 @@ public class Fastq2Sam {
 		File fastqFile = new File("/usr/local/scratch/dkatzel/fastq2sam/entero_RVENT_49161_final.fastq");
 		File outputFile = new File("/usr/local/scratch/dkatzel/fastq2sam/entero_RVENT_49161_final.jillion.sorted.bam");
 		
-		SamHeader header = new SamHeader.Builder()
+		SamHeader header = new SamHeaderBuilder()
 							.setVersion(new SamVersion(1, 5))
 							/*.addComment("created by Jillion")
 							.addProgram(new SamProgram.Builder("Fastq2Sam")
 											.setVersion("1.0")
 											.build())
 											*/
-							.addReadGroup(new ReadGroup.Builder("A")
+							.addReadGroup(new SamReadGroupBuilder("A")
 												.setSampleOrPoolName("entero,RVENT,49161")
 												.build())
 							.build();
