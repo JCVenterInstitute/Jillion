@@ -29,7 +29,7 @@ import java.util.Date;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.testUtil.TestUtil;
-import org.jcvi.jillion.sam.header.ReadGroup.PlatformTechnology;
+import org.jcvi.jillion.sam.header.SamReadGroup.PlatformTechnology;
 import org.junit.Test;
 
 public class TestReadGroup {
@@ -51,7 +51,7 @@ public class TestReadGroup {
 	private final NucleotideSequence flowOrder =new NucleotideSequenceBuilder("ACGTACGTACGTACGTACGTACGT").build();
 
 
-	ReadGroup sut = new ReadGroup.Builder(id)
+	SamReadGroup sut = new SamReadGroupBuilder(id)
 						.setSequencingCenter(sequencingCenter)
 						.setDescription(description)
 						.setLibrary(library)
@@ -83,12 +83,12 @@ public class TestReadGroup {
 	
 	@Test(expected = NullPointerException.class)
 	public void nullIdShouldThrowNPE(){
-		new ReadGroup.Builder((String)null);
+		new SamReadGroupBuilder((String)null);
 	}
 	
 	@Test
 	public void setIdOnlyOtherFieldsAreNull(){
-		ReadGroup readGroup = new ReadGroup.Builder(id).build();
+		SamReadGroup readGroup = new SamReadGroupBuilder(id).build();
 		assertEquals(id, readGroup.getId());
 		
 		assertNull(readGroup.getSequencingCenter());
@@ -121,14 +121,14 @@ public class TestReadGroup {
 	}
 	@Test
 	public void equalsSameValues(){
-		ReadGroup other = new ReadGroup.Builder(sut)
+		SamReadGroup other = new SamReadGroupBuilder(sut)
 								.build();
 		TestUtil.assertEqualAndHashcodeSame(sut, other);
 	}
 	
 	@Test
 	public void differentIdIsNotEqual(){
-		ReadGroup other = new ReadGroup.Builder(sut)
+		SamReadGroup other = new SamReadGroupBuilder(sut)
 								.setId("different")
 								.build();
 		TestUtil.assertNotEqualAndHashcodeDifferent(sut, other);
@@ -136,14 +136,14 @@ public class TestReadGroup {
 	
 	@Test(expected = NullPointerException.class)
 	public void settingIdToNullShouldThrowNPE(){
-		new ReadGroup.Builder(sut)
+		new SamReadGroupBuilder(sut)
 								.setId(null)
 								;
 	}
 	
 	@Test
 	public void differentSeqCenterIsNotEqual(){
-		ReadGroup other = new ReadGroup.Builder(sut)
+		SamReadGroup other = new SamReadGroupBuilder(sut)
 								.setSequencingCenter("different")
 								.build();
 		TestUtil.assertNotEqualAndHashcodeDifferent(sut, other);
@@ -153,14 +153,14 @@ public class TestReadGroup {
 	
 	@Test
 	public void differentDescriptionIsNotEqual(){
-		ReadGroup other = new ReadGroup.Builder(sut)
+		SamReadGroup other = new SamReadGroupBuilder(sut)
 								.setDescription("different")
 								.build();
 		TestUtil.assertNotEqualAndHashcodeDifferent(sut, other);
 	}
 	@Test
 	public void differentLibraryIsNotEqual(){
-		ReadGroup other = new ReadGroup.Builder(sut)
+		SamReadGroup other = new SamReadGroupBuilder(sut)
 								.setLibrary("different")
 								.build();
 		TestUtil.assertNotEqualAndHashcodeDifferent(sut, other);
@@ -168,49 +168,49 @@ public class TestReadGroup {
 	
 	@Test
 	public void differentProgramsIsNotEqual(){
-		ReadGroup other = new ReadGroup.Builder(sut)
+		SamReadGroup other = new SamReadGroupBuilder(sut)
 								.setPrograms("different")
 								.build();
 		TestUtil.assertNotEqualAndHashcodeDifferent(sut, other);
 	}
 	@Test
 	public void differentPlatformUnitIsNotEqual(){
-		ReadGroup other = new ReadGroup.Builder(sut)
+		SamReadGroup other = new SamReadGroupBuilder(sut)
 								.setPlatformUnit("different")
 								.build();
 		TestUtil.assertNotEqualAndHashcodeDifferent(sut, other);
 	}
 	@Test
 	public void differentPlatformIsNotEqual(){
-		ReadGroup other = new ReadGroup.Builder(sut)
+		SamReadGroup other = new SamReadGroupBuilder(sut)
 								.setPlatform(PlatformTechnology.CAPILLARY)
 								.build();
 		TestUtil.assertNotEqualAndHashcodeDifferent(sut, other);
 	}
 	@Test
 	public void differentSampleNameIsNotEqual(){
-		ReadGroup other = new ReadGroup.Builder(sut)
+		SamReadGroup other = new SamReadGroupBuilder(sut)
 								.setSampleOrPoolName("different")
 								.build();
 		TestUtil.assertNotEqualAndHashcodeDifferent(sut, other);
 	}
 	@Test
 	public void differentInsertSizeIsNotEqual(){
-		ReadGroup other = new ReadGroup.Builder(sut)
+		SamReadGroup other = new SamReadGroupBuilder(sut)
 								.setPredictedInsertSize(predictedMedianInsertSize +1000)
 								.build();
 		TestUtil.assertNotEqualAndHashcodeDifferent(sut, other);
 	}
 	@Test
 	public void differentRunDateIsNotEqual(){
-		ReadGroup other = new ReadGroup.Builder(sut)
+		SamReadGroup other = new SamReadGroupBuilder(sut)
 								.setRunDate(new Date(datetime +10000))
 								.build();
 		TestUtil.assertNotEqualAndHashcodeDifferent(sut, other);
 	}
 	@Test
 	public void differentKeySequenceIsNotEqual(){
-		ReadGroup other = new ReadGroup.Builder(sut)
+		SamReadGroup other = new SamReadGroupBuilder(sut)
 								.setKeySequence(new NucleotideSequenceBuilder(keySequence)
 													.append("G")
 													.build())
@@ -219,7 +219,7 @@ public class TestReadGroup {
 	}
 	@Test
 	public void differentFlowOrderIsNotEqual(){
-		ReadGroup other = new ReadGroup.Builder(sut)
+		SamReadGroup other = new SamReadGroupBuilder(sut)
 								.setFlowOrder(new NucleotideSequenceBuilder(flowOrder)
 													.append("G")
 													.build())
@@ -230,14 +230,14 @@ public class TestReadGroup {
 	////////////////////
 	@Test
 	public void nullDescriptionIsNotEqual(){
-		ReadGroup other = new ReadGroup.Builder(sut)
+		SamReadGroup other = new SamReadGroupBuilder(sut)
 								.setDescription(null)
 								.build();
 		TestUtil.assertNotEqualAndHashcodeDifferent(sut, other);
 	}
 	@Test
 	public void nullLibraryIsNotEqual(){
-		ReadGroup other = new ReadGroup.Builder(sut)
+		SamReadGroup other = new SamReadGroupBuilder(sut)
 								.setLibrary(null)
 								.build();
 		TestUtil.assertNotEqualAndHashcodeDifferent(sut, other);
@@ -245,56 +245,56 @@ public class TestReadGroup {
 	
 	@Test
 	public void nullProgramsIsNotEqual(){
-		ReadGroup other = new ReadGroup.Builder(sut)
+		SamReadGroup other = new SamReadGroupBuilder(sut)
 								.setPrograms(null)
 								.build();
 		TestUtil.assertNotEqualAndHashcodeDifferent(sut, other);
 	}
 	@Test
 	public void nullPlatformUnitIsNotEqual(){
-		ReadGroup other = new ReadGroup.Builder(sut)
+		SamReadGroup other = new SamReadGroupBuilder(sut)
 								.setPlatformUnit(null)
 								.build();
 		TestUtil.assertNotEqualAndHashcodeDifferent(sut, other);
 	}
 	@Test
 	public void nullPlatformIsNotEqual(){
-		ReadGroup other = new ReadGroup.Builder(sut)
+		SamReadGroup other = new SamReadGroupBuilder(sut)
 								.setPlatform(null)
 								.build();
 		TestUtil.assertNotEqualAndHashcodeDifferent(sut, other);
 	}
 	@Test
 	public void nullSampleNameIsNotEqual(){
-		ReadGroup other = new ReadGroup.Builder(sut)
+		SamReadGroup other = new SamReadGroupBuilder(sut)
 								.setSampleOrPoolName(null)
 								.build();
 		TestUtil.assertNotEqualAndHashcodeDifferent(sut, other);
 	}
 	@Test
 	public void nullInsertSizeIsNotEqual(){
-		ReadGroup other = new ReadGroup.Builder(sut)
+		SamReadGroup other = new SamReadGroupBuilder(sut)
 								.setPredictedInsertSize(null)
 								.build();
 		TestUtil.assertNotEqualAndHashcodeDifferent(sut, other);
 	}
 	@Test
 	public void nullRunDateIsNotEqual(){
-		ReadGroup other = new ReadGroup.Builder(sut)
+		SamReadGroup other = new SamReadGroupBuilder(sut)
 								.setRunDate(null)
 								.build();
 		TestUtil.assertNotEqualAndHashcodeDifferent(sut, other);
 	}
 	@Test
 	public void nullKeySequenceIsNotEqual(){
-		ReadGroup other = new ReadGroup.Builder(sut)
+		SamReadGroup other = new SamReadGroupBuilder(sut)
 								.setKeySequence(null)
 								.build();
 		TestUtil.assertNotEqualAndHashcodeDifferent(sut, other);
 	}
 	@Test
 	public void nullFlowOrderIsNotEqual(){
-		ReadGroup other = new ReadGroup.Builder(sut)
+		SamReadGroup other = new SamReadGroupBuilder(sut)
 								.setFlowOrder(null)
 								.build();
 		TestUtil.assertNotEqualAndHashcodeDifferent(sut, other);

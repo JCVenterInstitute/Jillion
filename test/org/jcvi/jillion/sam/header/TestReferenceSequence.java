@@ -39,7 +39,7 @@ public class TestReferenceSequence {
 	private final String md5 = "md5checkSum";
 	
 	
-	private ReferenceSequence sut = new ReferenceSequence.Builder(name, length)
+	private SamReferenceSequence sut = new SamReferenceSequenceBuilder(name, length)
 											.setGenomeAssemblyId(genomeAssemblyId)
 											.setSpecies(species)
 											.setUri(uri)
@@ -48,20 +48,20 @@ public class TestReferenceSequence {
 	
 	@Test(expected = NullPointerException.class)
 	public void nameCanNotBeNull(){
-		new ReferenceSequence.Builder(null, length);
+		new SamReferenceSequenceBuilder(null, length);
 	}
 	@Test(expected = NullPointerException.class)
 	public void copyConstructorCanNotHaveNullArg(){
-		new ReferenceSequence.Builder(null);
+		new SamReferenceSequenceBuilder(null);
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void negativeLengthShouldThrowException(){
-		new ReferenceSequence.Builder(name, -1);
+		new SamReferenceSequenceBuilder(name, -1);
 	}
 	@Test(expected = IllegalArgumentException.class)
 	public void zeroLengthShouldThrowException(){
-		new ReferenceSequence.Builder(name, 0);
+		new SamReferenceSequenceBuilder(name, 0);
 	}
 	
 	@Test
@@ -84,12 +84,12 @@ public class TestReferenceSequence {
 	}
 	@Test
 	public void equalSameValues(){
-		TestUtil.assertEqualAndHashcodeSame(sut, new ReferenceSequence.Builder(sut).build());
+		TestUtil.assertEqualAndHashcodeSame(sut, new SamReferenceSequenceBuilder(sut).build());
 	}
 	
 	@Test
 	public void notEqualDifferentName(){
-		TestUtil.assertNotEqualAndHashcodeDifferent(sut, new ReferenceSequence.Builder(sut)
+		TestUtil.assertNotEqualAndHashcodeDifferent(sut, new SamReferenceSequenceBuilder(sut)
 																.setName("different"+name)
 																.build());
 				
@@ -97,31 +97,31 @@ public class TestReferenceSequence {
 	
 	@Test
 	public void notEqualDifferentLength(){
-		TestUtil.assertNotEqualAndHashcodeDifferent(sut, new ReferenceSequence.Builder(sut)
+		TestUtil.assertNotEqualAndHashcodeDifferent(sut, new SamReferenceSequenceBuilder(sut)
 																.setLength(length+100)
 																.build());				
 	}
 	@Test
 	public void notEqualDifferentMd5(){
-		TestUtil.assertNotEqualAndHashcodeDifferent(sut, new ReferenceSequence.Builder(sut)
+		TestUtil.assertNotEqualAndHashcodeDifferent(sut, new SamReferenceSequenceBuilder(sut)
 																.setMd5("different")
 																.build());				
 	}
 	@Test
 	public void notEqualDifferentSpecies(){
-		TestUtil.assertNotEqualAndHashcodeDifferent(sut, new ReferenceSequence.Builder(sut)
+		TestUtil.assertNotEqualAndHashcodeDifferent(sut, new SamReferenceSequenceBuilder(sut)
 																.setSpecies("different")
 																.build());				
 	}
 	@Test
 	public void notEqualDifferentUri(){
-		TestUtil.assertNotEqualAndHashcodeDifferent(sut, new ReferenceSequence.Builder(sut)
+		TestUtil.assertNotEqualAndHashcodeDifferent(sut, new SamReferenceSequenceBuilder(sut)
 																.setUri("different")
 																.build());				
 	}
 	@Test
 	public void notEqualDifferentGenomeAssemblyId(){
-		TestUtil.assertNotEqualAndHashcodeDifferent(sut, new ReferenceSequence.Builder(sut)
+		TestUtil.assertNotEqualAndHashcodeDifferent(sut, new SamReferenceSequenceBuilder(sut)
 																.setGenomeAssemblyId("different")
 																.build());				
 	}

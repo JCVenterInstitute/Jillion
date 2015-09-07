@@ -36,8 +36,8 @@ import org.jcvi.jillion.internal.sam.index.BamIndexer;
 import org.jcvi.jillion.internal.sam.index.IndexUtil;
 import org.jcvi.jillion.sam.attribute.ReservedAttributeValidator;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
-import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.sam.header.SamReferenceSequence;
 import org.jcvi.jillion.sam.index.BamIndex;
 /**
  * {@code PresortedBamFileWriter} is a {@link SamWriter}
@@ -79,7 +79,7 @@ class PresortedBamFileWriter implements SamWriter{
 	private void writeHeader() throws IOException {
 		StringBuilder headerAsStringBuilder = SamUtil.encodeHeader(header);
 		int bytesOfReferences =4;
-		for(ReferenceSequence ref: header.getReferenceSequences()){
+		for(SamReferenceSequence ref: header.getReferenceSequences()){
 			bytesOfReferences += ref.getName().length() +1 +8;
 		}
 		ByteBuffer buf = ByteBuffer.allocate(8 + headerAsStringBuilder.length() + bytesOfReferences );
@@ -93,9 +93,9 @@ class PresortedBamFileWriter implements SamWriter{
 		for(int i=0; i< chars.length; i++){
 			buf.put((byte)chars[i]);
 		}
-		Collection<ReferenceSequence> refs =header.getReferenceSequences();
+		Collection<SamReferenceSequence> refs =header.getReferenceSequences();
 		buf.putInt(refs.size());
-		for(ReferenceSequence ref : refs){
+		for(SamReferenceSequence ref : refs){
 			//length of ref name + null terminal
 			buf.putInt(ref.getName().length() +1);
 			buf.put(ref.getName().getBytes(IOUtil.UTF_8));

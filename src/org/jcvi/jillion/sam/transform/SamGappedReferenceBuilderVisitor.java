@@ -44,8 +44,8 @@ import org.jcvi.jillion.sam.VirtualFileOffset;
 import org.jcvi.jillion.sam.cigar.Cigar;
 import org.jcvi.jillion.sam.cigar.CigarElement;
 import org.jcvi.jillion.sam.cigar.CigarOperation;
-import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.sam.header.SamReferenceSequence;
 
 final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 
@@ -81,7 +81,7 @@ final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 	public void visitHeader(SamVisitorCallback callback, SamHeader header) {
 		//remove anything not mentioned?
 		Set<String> namesUsed = new HashSet<String>();
-		for(ReferenceSequence ref : header.getReferenceSequences()){
+		for(SamReferenceSequence ref : header.getReferenceSequences()){
 			namesUsed.add(ref.getName());
 		}
 		Iterator<Entry<String, GappedReferenceBuilder>> entryIter = builders.entrySet().iterator();
