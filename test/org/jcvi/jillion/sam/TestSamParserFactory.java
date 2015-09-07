@@ -38,8 +38,9 @@ import org.jcvi.jillion.sam.attribute.ReservedAttributeValidator;
 import org.jcvi.jillion.sam.attribute.ReservedSamAttributeKeys;
 import org.jcvi.jillion.sam.attribute.SamAttribute;
 import org.jcvi.jillion.sam.cigar.Cigar;
-import org.jcvi.jillion.sam.header.ReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.sam.header.SamHeaderBuilder;
+import org.jcvi.jillion.sam.header.SamReferenceSequenceBuilder;
 import org.jcvi.jillion.sam.header.SamVersion;
 import org.junit.Test;
 
@@ -137,10 +138,10 @@ public class TestSamParserFactory {
 		
 		String ref = "ref";
 		
-		SamHeader expectedHeader = new SamHeader.Builder()
+		SamHeader expectedHeader = new SamHeaderBuilder()
 											.setVersion(new SamVersion(1, 5))
 											.setSortOrder(SortOrder.COORDINATE)
-											.addReferenceSequence(new ReferenceSequence.Builder(ref, 45).build())
+											.addReferenceSequence(new SamReferenceSequenceBuilder(ref, 45).build())
 											.build();
 		
 		visitor.visitHeader(isA(SamVisitorCallback.class), eq(expectedHeader));
@@ -157,10 +158,10 @@ public class TestSamParserFactory {
 		
 		String ref = "ref";
 		
-		SamHeader expectedHeader = new SamHeader.Builder()
+		SamHeader expectedHeader = new SamHeaderBuilder()
 											.setVersion(new SamVersion(1, 5))
 											.setSortOrder(SortOrder.COORDINATE)
-											.addReferenceSequence(new ReferenceSequence.Builder(ref, 45).build())
+											.addReferenceSequence(new SamReferenceSequenceBuilder(ref, 45).build())
 											.build();
 		
 		visitor.visitHeader(isA(SamVisitorCallback.class), eq(expectedHeader));
@@ -245,10 +246,10 @@ public class TestSamParserFactory {
 		
 		String ref = "ref";
 		
-		SamHeader expectedHeader = new SamHeader.Builder()
+		SamHeader expectedHeader = new SamHeaderBuilder()
 											.setVersion(new SamVersion(1, 5))
 											.setSortOrder(SortOrder.COORDINATE)
-											.addReferenceSequence(new ReferenceSequence.Builder(ref, 45).build())
+											.addReferenceSequence(new SamReferenceSequenceBuilder(ref, 45).build())
 											.build();
 		
 		visitor.visitHeader(isA(SamVisitorCallback.class), eq(expectedHeader));

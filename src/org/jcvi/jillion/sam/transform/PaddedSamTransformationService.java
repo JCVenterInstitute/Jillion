@@ -50,7 +50,7 @@ import org.jcvi.jillion.sam.SamVisitor;
 import org.jcvi.jillion.sam.VirtualFileOffset;
 import org.jcvi.jillion.sam.cigar.Cigar;
 import org.jcvi.jillion.sam.cigar.Cigar.ClipType;
-import org.jcvi.jillion.sam.header.ReferenceSequence;
+import org.jcvi.jillion.sam.header.SamReferenceSequence;
 import org.jcvi.jillion.sam.header.SamHeader;
 /**
  * {@code PaddedSamTransformationService}
@@ -130,12 +130,12 @@ public final class PaddedSamTransformationService implements AssemblyTransformat
 		@Override
 		public void visitHeader(SamVisitorCallback callback, SamHeader header) {
 			
-			Collection<ReferenceSequence> referenceSequences = header.getReferenceSequences();
+			Collection<SamReferenceSequence> referenceSequences = header.getReferenceSequences();
 			int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(referenceSequences.size());
 			referenceNames = new HashSet<>(capacity);
 			paddedReferenceSequences = new HashMap<>(capacity);
 			gapOffsetMap = new HashMap<>(capacity);
-			for(ReferenceSequence refSeq : referenceSequences){
+			for(SamReferenceSequence refSeq : referenceSequences){
 				referenceNames.add(refSeq.getName());
 			}
 			

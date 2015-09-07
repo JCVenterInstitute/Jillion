@@ -21,7 +21,6 @@
 package org.jcvi.jillion.sam.index;
 
 import static org.junit.Assert.*;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -39,6 +38,7 @@ import org.jcvi.jillion.sam.SamFileWriterBuilder;
 import org.jcvi.jillion.sam.SortOrder;
 import org.jcvi.jillion.sam.VirtualFileOffset;
 import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.sam.header.SamHeaderBuilder;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -146,7 +146,7 @@ public class TestBamIndexWriter {
 	}
 
 	private SamHeader createHeader(SamHeader originalHeader, SortOrder order){
-		SamHeader.Builder builder = new SamHeader.Builder(originalHeader);
+		SamHeaderBuilder builder = new SamHeaderBuilder(originalHeader);
 		//because the index uses byte offsets,
 		//the different sort orders will cause the header to be different
 		//byte lengths which will throw off the index offsets by a few bytes.

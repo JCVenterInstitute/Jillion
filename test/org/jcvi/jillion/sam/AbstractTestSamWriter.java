@@ -29,6 +29,7 @@ import java.util.List;
 
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.sam.header.SamHeaderBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
@@ -123,7 +124,7 @@ public class AbstractTestSamWriter {
 		
 		assertEquals(expectedRecords, collector.getRecords());
 		if(expectedSortOrderInHeader !=null){
-			SamHeader alteredHeader = new SamHeader.Builder(getHeader())
+			SamHeader alteredHeader = new SamHeaderBuilder(getHeader())
 											.setSortOrder(expectedSortOrderInHeader)
 											.build();
 			assertEquals(alteredHeader, actualHeader);

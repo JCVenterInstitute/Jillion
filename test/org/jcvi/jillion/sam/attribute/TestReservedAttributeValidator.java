@@ -23,9 +23,12 @@ package org.jcvi.jillion.sam.attribute;
 import org.jcvi.jillion.core.util.UnsignedByteArray;
 import org.jcvi.jillion.core.util.UnsignedIntArray;
 import org.jcvi.jillion.core.util.UnsignedShortArray;
-import org.jcvi.jillion.sam.header.ReadGroup;
+import org.jcvi.jillion.sam.header.SamProgramBuilder;
+import org.jcvi.jillion.sam.header.SamReadGroup;
 import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.sam.header.SamHeaderBuilder;
 import org.jcvi.jillion.sam.header.SamProgram;
+import org.jcvi.jillion.sam.header.SamReadGroupBuilder;
 import org.junit.Test;
 
 public class TestReservedAttributeValidator {
@@ -38,7 +41,7 @@ public class TestReservedAttributeValidator {
 	
 	@Test
 	public void defaultValidatorShouldDoNothing() throws InvalidAttributeException{
-		SamHeader header = new SamHeader.Builder().build();
+		SamHeader header = new SamHeaderBuilder().build();
 		
 		for(ReservedSamAttributeKeys k : ReservedSamAttributeKeys.values()){
 			if(k != ReservedSamAttributeKeys.LIBRARY 
@@ -54,10 +57,10 @@ public class TestReservedAttributeValidator {
 	
 	@Test
 	public void libraryShouldBeInHeader() throws InvalidAttributeException{
-		ReadGroup group = new ReadGroup.Builder(readGroupId)
+		SamReadGroup group = new SamReadGroupBuilder(readGroupId)
 										.setLibrary(libId)
 										.build();
-		SamHeader header = new SamHeader.Builder()
+		SamHeader header = new SamHeaderBuilder()
 								.addReadGroup(group)
 								.build();
 		
@@ -66,13 +69,13 @@ public class TestReservedAttributeValidator {
 	}
 	@Test
 	public void libraryShouldBeInHeaderWithMultipleLibraries() throws InvalidAttributeException{
-		ReadGroup group1 = new ReadGroup.Builder(readGroupId)
+		SamReadGroup group1 = new SamReadGroupBuilder(readGroupId)
 										.setLibrary(libId)
 										.build();
-		ReadGroup group2 = new ReadGroup.Builder(readGroupId + 2)
+		SamReadGroup group2 = new SamReadGroupBuilder(readGroupId + 2)
 											.setLibrary("not"+libId)
 											.build();
-		SamHeader header = new SamHeader.Builder()
+		SamHeader header = new SamHeaderBuilder()
 								.addReadGroup(group2)
 								.addReadGroup(group1)
 								.build();
@@ -83,13 +86,13 @@ public class TestReservedAttributeValidator {
 	@Test(expected = InvalidAttributeException.class)
 	public void libraryNotInHeaderWithMultipleLibrariesShouldThrowException() throws InvalidAttributeException{
 		
-		ReadGroup group1 = new ReadGroup.Builder(readGroupId)
+		SamReadGroup group1 = new SamReadGroupBuilder(readGroupId)
 										//null library id
 										.build();
-		ReadGroup group2 = new ReadGroup.Builder(readGroupId+2)
+		SamReadGroup group2 = new SamReadGroupBuilder(readGroupId+2)
 											.setLibrary("not"+libId)
 											.build();
-		SamHeader header = new SamHeader.Builder()
+		SamHeader header = new SamHeaderBuilder()
 								.addReadGroup(group2)
 								.addReadGroup(group1)
 								.build();
@@ -100,7 +103,7 @@ public class TestReservedAttributeValidator {
 	@Test(expected = InvalidAttributeException.class)
 	public void libraryNotInHeaderShouldThrowException() throws InvalidAttributeException{
 
-		SamHeader header = new SamHeader.Builder()
+		SamHeader header = new SamHeaderBuilder()
 								.build();
 		
 		SamAttribute attr = new SamAttribute(ReservedSamAttributeKeys.LIBRARY, libId);
@@ -110,7 +113,7 @@ public class TestReservedAttributeValidator {
 	@Test(expected = InvalidAttributeException.class)
 	public void readGroupNotInHeaderShouldThrowException() throws InvalidAttributeException{
 
-		SamHeader header = new SamHeader.Builder()
+		SamHeader header = new SamHeaderBuilder()
 								.build();
 		
 		SamAttribute attr = new SamAttribute(ReservedSamAttributeKeys.READ_GROUP, readGroupId);
@@ -119,9 +122,9 @@ public class TestReservedAttributeValidator {
 	
 	@Test
 	public void readGroupIdShouldBeInHeader() throws InvalidAttributeException{
-		ReadGroup group = new ReadGroup.Builder(readGroupId)
+		SamReadGroup group = new SamReadGroupBuilder(readGroupId)
 										.build();
-		SamHeader header = new SamHeader.Builder()
+		SamHeader header = new SamHeaderBuilder()
 								.addReadGroup(group)
 								.build();
 		
@@ -130,11 +133,11 @@ public class TestReservedAttributeValidator {
 	}
 	@Test
 	public void readGroupIdShouldBeInHeaderWithMultipleReadGroups() throws InvalidAttributeException{
-		ReadGroup group = new ReadGroup.Builder("not" +readGroupId)
+		SamReadGroup group = new SamReadGroupBuilder("not" +readGroupId)
 												.build();
-		ReadGroup group2 = new ReadGroup.Builder(readGroupId)
+		SamReadGroup group2 = new SamReadGroupBuilder(readGroupId)
 										.build();
-		SamHeader header = new SamHeader.Builder()
+		SamHeader header = new SamHeaderBuilder()
 								.addReadGroup(group)
 								.addReadGroup(group2)
 								.build();
@@ -144,11 +147,11 @@ public class TestReservedAttributeValidator {
 	}
 	@Test(expected = InvalidAttributeException.class)
 	public void readGroupNotInHeaderWithMultipleReadGroupsShouldThrowException() throws InvalidAttributeException{
-		ReadGroup group = new ReadGroup.Builder("not" +readGroupId)
+		SamReadGroup group = new SamReadGroupBuilder("not" +readGroupId)
 												.build();
-		ReadGroup group2 = new ReadGroup.Builder("not"+ readGroupId +"either")
+		SamReadGroup group2 = new SamReadGroupBuilder("not"+ readGroupId +"either")
 										.build();
-		SamHeader header = new SamHeader.Builder()
+		SamHeader header = new SamHeaderBuilder()
 								.addReadGroup(group)
 								.addReadGroup(group2)
 								.build();
@@ -160,10 +163,10 @@ public class TestReservedAttributeValidator {
 	
 	@Test
 	public void platformUnitShouldBeInHeader() throws InvalidAttributeException{
-		ReadGroup group = new ReadGroup.Builder(readGroupId)
+		SamReadGroup group = new SamReadGroupBuilder(readGroupId)
 										.setPlatformUnit(platformUnit)
 										.build();
-		SamHeader header = new SamHeader.Builder()
+		SamHeader header = new SamHeaderBuilder()
 								.addReadGroup(group)
 								.build();
 		
@@ -172,13 +175,13 @@ public class TestReservedAttributeValidator {
 	}
 	@Test
 	public void platformUnitShouldBeInHeaderWithMultipleLibraries() throws InvalidAttributeException{
-		ReadGroup group1 = new ReadGroup.Builder(readGroupId)
+		SamReadGroup group1 = new SamReadGroupBuilder(readGroupId)
 												.setPlatformUnit(platformUnit)
 												.build();
-		ReadGroup group2 = new ReadGroup.Builder(readGroupId + 2)
+		SamReadGroup group2 = new SamReadGroupBuilder(readGroupId + 2)
 											//null platformUnit
 											.build();
-		SamHeader header = new SamHeader.Builder()
+		SamHeader header = new SamHeaderBuilder()
 								.addReadGroup(group2)
 								.addReadGroup(group1)
 								.build();
@@ -189,13 +192,13 @@ public class TestReservedAttributeValidator {
 	@Test(expected = InvalidAttributeException.class)
 	public void platformUnitNotInHeaderWithMultipleLibrariesShouldThrowException() throws InvalidAttributeException{
 		
-		ReadGroup group1 = new ReadGroup.Builder(readGroupId)
+		SamReadGroup group1 = new SamReadGroupBuilder(readGroupId)
 										//null library id
 										.build();
-		ReadGroup group2 = new ReadGroup.Builder(readGroupId+2)
+		SamReadGroup group2 = new SamReadGroupBuilder(readGroupId+2)
 											.setPlatformUnit("not"+platformUnit)
 											.build();
-		SamHeader header = new SamHeader.Builder()
+		SamHeader header = new SamHeaderBuilder()
 								.addReadGroup(group2)
 								.addReadGroup(group1)
 								.build();
@@ -206,7 +209,7 @@ public class TestReservedAttributeValidator {
 	@Test(expected = InvalidAttributeException.class)
 	public void platformNotInHeaderShouldThrowException() throws InvalidAttributeException{
 
-		SamHeader header = new SamHeader.Builder()
+		SamHeader header = new SamHeaderBuilder()
 								.build();
 		
 		SamAttribute attr = new SamAttribute(ReservedSamAttributeKeys.PLATFORMT_UNIT, platformUnit);
@@ -215,10 +218,10 @@ public class TestReservedAttributeValidator {
 	
 	@Test
 	public void programShouldBeInHeader() throws InvalidAttributeException{
-		SamProgram program = new SamProgram.Builder(programId)
+		SamProgram program = new SamProgramBuilder(programId)
 									.build();
 		
-		SamHeader header = new SamHeader.Builder()
+		SamHeader header = new SamHeaderBuilder()
 								.addProgram(program)
 								.build();
 		
@@ -227,11 +230,11 @@ public class TestReservedAttributeValidator {
 	}
 	@Test
 	public void programShouldBeInHeaderWithMultiplePrograms() throws InvalidAttributeException{
-		SamProgram program = new SamProgram.Builder(programId)
+		SamProgram program = new SamProgramBuilder(programId)
 								.build();
-		SamProgram otherProgram = new SamProgram.Builder("other"+programId)
+		SamProgram otherProgram = new SamProgramBuilder("other"+programId)
 										.build();
-		SamHeader header = new SamHeader.Builder()
+		SamHeader header = new SamHeaderBuilder()
 								.addProgram(otherProgram)
 								.addProgram(program)
 								.build();
@@ -242,11 +245,11 @@ public class TestReservedAttributeValidator {
 	@Test(expected = InvalidAttributeException.class)
 	public void programNotInHeaderWithMultipleProgramsShouldThrowException() throws InvalidAttributeException{
 		
-		SamProgram diffProgram = new SamProgram.Builder("diff"+programId)
+		SamProgram diffProgram = new SamProgramBuilder("diff"+programId)
 									.build();
-		SamProgram otherProgram = new SamProgram.Builder("other"+programId)
+		SamProgram otherProgram = new SamProgramBuilder("other"+programId)
 									.build();
-		SamHeader header = new SamHeader.Builder()
+		SamHeader header = new SamHeaderBuilder()
 				.addProgram(otherProgram)
 				.addProgram(diffProgram)
 				.build();
@@ -257,7 +260,7 @@ public class TestReservedAttributeValidator {
 	@Test(expected = InvalidAttributeException.class)
 	public void programNotInHeaderShouldThrowException() throws InvalidAttributeException{
 
-		SamHeader header = new SamHeader.Builder()
+		SamHeader header = new SamHeaderBuilder()
 								.build();
 		
 		SamAttribute attr = new SamAttribute(ReservedSamAttributeKeys.PROGRAM, programId);

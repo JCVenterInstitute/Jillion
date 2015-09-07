@@ -35,7 +35,7 @@ public class TestSamProgram {
 	private final String name = "name";
 	private final String previousProgramId = "otherProgramId";
 	
-	private final SamProgram sut = new SamProgram.Builder(id)
+	private final SamProgram sut = new SamProgramBuilder(id)
 												.setDescription(description)
 												.setCommandLine(commandLine)
 												.setVersion(version)
@@ -45,7 +45,7 @@ public class TestSamProgram {
 					
 	@Test
 	public void onlyIdSetEverythingElseIsNull(){
-		SamProgram prog = new SamProgram.Builder(id).build();
+		SamProgram prog = new SamProgramBuilder(id).build();
 		assertEquals(id, prog.getId());
 		assertNull(prog.getDescription());
 		assertNull(prog.getCommandLine());
@@ -66,11 +66,11 @@ public class TestSamProgram {
 	
 	@Test(expected = NullPointerException.class)
 	public void nullIdShouldThrowNPE(){
-		new SamProgram.Builder((String)null);
+		new SamProgramBuilder((String)null);
 	}
 	@Test(expected = NullPointerException.class)
 	public void nullCopyProgramShouldThrowNPE(){
-		new SamProgram.Builder((SamProgram)null);
+		new SamProgramBuilder((SamProgram)null);
 	}
 	
 	@Test
@@ -87,18 +87,18 @@ public class TestSamProgram {
 	}
 	@Test
 	public void equalsSameValues(){
-		SamProgram other = new SamProgram.Builder(sut)
+		SamProgram other = new SamProgramBuilder(sut)
 								.build();
 		TestUtil.assertEqualAndHashcodeSame(sut, other);
 	}
 	@Test(expected = NullPointerException.class)
 	public void changingIdToNullShouldThrowNPE(){
-		new SamProgram.Builder(id)
+		new SamProgramBuilder(id)
 						.setId(null);
 	}
 	@Test
 	public void differentIdShouldNotBeEqual(){
-		SamProgram other = new SamProgram.Builder(sut)
+		SamProgram other = new SamProgramBuilder(sut)
 									.setId("different" + id)
 									.build();
 		
@@ -106,7 +106,7 @@ public class TestSamProgram {
 	}
 	@Test
 	public void differentCommandLineShouldNotBeEqual(){
-		SamProgram other = new SamProgram.Builder(sut)
+		SamProgram other = new SamProgramBuilder(sut)
 									.setCommandLine("different")
 									.build();
 		
@@ -114,7 +114,7 @@ public class TestSamProgram {
 	}
 	@Test
 	public void differentDescriptionShouldNotBeEqual(){
-		SamProgram other = new SamProgram.Builder(sut)
+		SamProgram other = new SamProgramBuilder(sut)
 									.setDescription("different")
 									.build();
 		
@@ -122,7 +122,7 @@ public class TestSamProgram {
 	}
 	@Test
 	public void differentNameShouldNotBeEqual(){
-		SamProgram other = new SamProgram.Builder(sut)
+		SamProgram other = new SamProgramBuilder(sut)
 									.setName("different")
 									.build();
 		
@@ -130,7 +130,7 @@ public class TestSamProgram {
 	}
 	@Test
 	public void differentVersionShouldNotBeEqual(){
-		SamProgram other = new SamProgram.Builder(sut)
+		SamProgram other = new SamProgramBuilder(sut)
 									.setVersion("different")
 									.build();
 		
@@ -138,7 +138,7 @@ public class TestSamProgram {
 	}
 	@Test
 	public void differentPreviousProgShouldNotBeEqual(){
-		SamProgram other = new SamProgram.Builder(sut)
+		SamProgram other = new SamProgramBuilder(sut)
 									.setPrevousProgramId("different")
 									.build();
 		
@@ -147,7 +147,7 @@ public class TestSamProgram {
 	///////////////////////
 	@Test
 	public void nullCommandLineShouldNotBeEqual(){
-		SamProgram other = new SamProgram.Builder(sut)
+		SamProgram other = new SamProgramBuilder(sut)
 									.setCommandLine(null)
 									.build();
 		
@@ -155,7 +155,7 @@ public class TestSamProgram {
 	}
 	@Test
 	public void nullDescriptionShouldNotBeEqual(){
-		SamProgram other = new SamProgram.Builder(sut)
+		SamProgram other = new SamProgramBuilder(sut)
 									.setDescription(null)
 									.build();
 		
@@ -163,7 +163,7 @@ public class TestSamProgram {
 	}
 	@Test
 	public void nullNameShouldNotBeEqual(){
-		SamProgram other = new SamProgram.Builder(sut)
+		SamProgram other = new SamProgramBuilder(sut)
 									.setName(null)
 									.build();
 		
@@ -171,7 +171,7 @@ public class TestSamProgram {
 	}
 	@Test
 	public void nullVersionShouldNotBeEqual(){
-		SamProgram other = new SamProgram.Builder(sut)
+		SamProgram other = new SamProgramBuilder(sut)
 									.setVersion(null)
 									.build();
 		
@@ -179,7 +179,7 @@ public class TestSamProgram {
 	}
 	@Test
 	public void nullPreviousProgShouldNotBeEqual(){
-		SamProgram other = new SamProgram.Builder(sut)
+		SamProgram other = new SamProgramBuilder(sut)
 									.setPrevousProgramId(null)
 									.build();
 		

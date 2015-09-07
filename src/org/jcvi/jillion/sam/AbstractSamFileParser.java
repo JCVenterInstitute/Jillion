@@ -34,12 +34,12 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
 import org.jcvi.jillion.internal.sam.SamUtil;
 import org.jcvi.jillion.sam.SamVisitor.SamVisitorCallback;
-import org.jcvi.jillion.sam.header.ReadGroup;
-import org.jcvi.jillion.sam.header.ReadGroup.PlatformTechnology;
-import org.jcvi.jillion.sam.header.ReferenceSequence;
+import org.jcvi.jillion.sam.header.SamReadGroup.PlatformTechnology;
+import org.jcvi.jillion.sam.header.SamReadGroupBuilder;
 import org.jcvi.jillion.sam.header.SamHeader;
-import org.jcvi.jillion.sam.header.SamHeader.Builder;
-import org.jcvi.jillion.sam.header.SamProgram;
+import org.jcvi.jillion.sam.header.SamHeaderBuilder;
+import org.jcvi.jillion.sam.header.SamProgramBuilder;
+import org.jcvi.jillion.sam.header.SamReferenceSequenceBuilder;
 import org.jcvi.jillion.sam.header.SamVersion;
 
 abstract class AbstractSamFileParser implements SamParser{
@@ -65,9 +65,9 @@ abstract class AbstractSamFileParser implements SamParser{
 		super();
 	}
 
-	protected SamHeader.Builder parseHeader(TextLineParser parser) throws IOException {
+	protected SamHeaderBuilder parseHeader(TextLineParser parser) throws IOException {
 		
-		SamHeader.Builder headerBuilder = new SamHeader.Builder();
+		SamHeaderBuilder headerBuilder = new SamHeaderBuilder();
 		String currentLine = parser.peekLine();
 		if(currentLine.startsWith(HEADER_KEY)){
 			handleHeaderLine(currentLine, headerBuilder);
@@ -105,7 +105,7 @@ abstract class AbstractSamFileParser implements SamParser{
 	}
 
 	private void handleHeaderLine(String firstLine,
-			SamHeader.Builder headerBuilder) {
+			SamHeaderBuilder headerBuilder) {
 		Map<String,String> tags = parseTags(firstLine);
 		//version required
 		SamVersion version = SamVersion.parseVersion(tags.get(HEADER_VERSION_TAG));
@@ -126,16 +126,16 @@ abstract class AbstractSamFileParser implements SamParser{
 		return map;
 	}
 	
-	void handleComment(String line, Builder headerBuilder) {
+	void handleComment(String line, SamHeaderBuilder headerBuilder) {
 		//trim off first 3 characters to get rid of @CO
 		headerBuilder.addComment(line.substring(3).trim());
 		
 	}
 
-	void handleProgram(String line, Builder headerBuilder) {
+	void handleProgram(String line, SamHeaderBuilder headerBuilder) {
 		Map<String,String> tags = parseTags(line);
 		String id = tags.get("ID");
-		SamProgram.Builder builder = new SamProgram.Builder(id);
+		SamProgramBuilder builder = new SamProgramBuilder(id);
 		if(tags.containsKey("PN")){
 			builder.setName(tags.get("PN"));
 		}
@@ -155,10 +155,10 @@ abstract class AbstractSamFileParser implements SamParser{
 		
 	}
 
-	void handleReadGroup(String line, Builder headerBuilder) {
+	void handleReadGroup(String line, SamHeaderBuilder headerBuilder) {
 		Map<String,String> tags = parseTags(line);
 		String id = tags.get("ID");
-		ReadGroup.Builder builder = new ReadGroup.Builder(id);
+		SamReadGroupBuilder builder = new SamReadGroupBuilder(id);
 		
 		if(tags.containsKey("CN")){
 			builder.setSequencingCenter(tags.get("CN"));
@@ -209,12 +209,12 @@ abstract class AbstractSamFileParser implements SamParser{
 	}
 
 	void handleSequenceDictionary(String line,
-			Builder headerBuilder) {
+			SamHeaderBuilder headerBuilder) {
 		Map<String,String> tags = parseTags(line);
 		
 		String name = tags.get("SN");
 		int length = Integer.parseInt(tags.get("LN"));
-		ReferenceSequence.Builder builder = new ReferenceSequence.Builder(name, length);
+		SamReferenceSequenceBuilder builder = new SamReferenceSequenceBuilder(name, length);
 		if(tags.containsKey("AS")){
 			builder.setGenomeAssemblyId(tags.get("AS"));
 		}
