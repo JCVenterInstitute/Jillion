@@ -27,11 +27,14 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Predicate;
 
 import org.jcvi.jillion.assembly.GappedReferenceBuilder;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -84,12 +87,38 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
 	private volatile CasGappedReferenceDataStore builtDataStore=null;
 	
 	private final File casDir;
-	
-	
-	
+	private final Predicate<String> refIdFilter;
+	private int refCounter=0;
+	/**
+	 * Create a new Visitor that only makes a gapped
+	 * reference DataStore for all references.
+	 * This is the same as using a refIdFilter that accepts
+	 * all references.
+	 * 
+	 * @param casDir he parent directory that the cas file to be parsed is located in;
+	 * if this value is {@code null} then the cas is located in the current.
+	 */
 	public CasGappedReferenceDataStoreBuilderVisitor(File casDir) {
-		this.casDir = casDir;
+		this(casDir, DataStoreFilters.alwaysAccept());
 	}
+	/**
+	 * Create a new Visitor that only makes a gapped
+	 * reference DataStore for the references that pass the given {@link Predicate}.
+	 * 
+	 * @param casDir the parent directory that the cas file to be parsed is located in;
+	 * if this value is {@code null} then the cas is located in the current 
+	 * @param refIdFilter the filter to use to determine if some alignments should be skipped;
+	 * can not be null.
+	 * 
+	 * @throws NullPointerException if refIdFilter is null.
+	 * @since 5.0
+	 */
+	public CasGappedReferenceDataStoreBuilderVisitor(File casDir, Predicate<String> refIdFilter) {
+		Objects.requireNonNull(refIdFilter);
+		this.casDir = casDir;
+		this.refIdFilter = refIdFilter;
+	}
+	
 
 	@Override
 	public void visitAssemblyProgramInfo(String name, String version,
@@ -98,8 +127,7 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
 	}
 
 	@Override
-	public void visitMetaData(long numberOfReferenceSequences,
-			long numberOfReads) {
+	public void visitMetaData(long numberOfReferenceSequences,	long numberOfReads) {
 		checkNotYetBuilt();
 		gappedReferenceBuilders = new GappedReferenceBuilder[(int)numberOfReferenceSequences];
 		refIndexToIdMap = new String[(int)numberOfReferenceSequences];
@@ -118,7 +146,7 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
 	@Override
 	public void visitReferenceFileInfo(CasFileInfo referenceFileInfo) {
 		checkNotYetBuilt();
-		int refCounter=0;
+		
 		for(String filePath: referenceFileInfo.getFileNames()){
             try {
             	File refFile = CasUtil.getFileFor(casDir, filePath);
@@ -134,7 +162,9 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
             			String id = next.getId();
             			
             			refIndexToIdMap[refCounter]= id;
-            			gappedReferenceBuilders[refCounter]= new GappedReferenceBuilder(next.getSequence());
+            			if(refIdFilter.test(id)){
+	            			gappedReferenceBuilders[refCounter]= new GappedReferenceBuilder(next.getSequence());
+            			}
             			refCounter++;
             		}
             	}finally{
@@ -175,7 +205,10 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
 		Map<String, NucleotideSequence> gappedSequenceMap = new LinkedHashMap<String, NucleotideSequence>(capacity);
 	    for(int j = 0; j< gappedReferenceBuilders.length; j++){
         	
-        	gappedSequenceMap.put(refIndexToIdMap[j], gappedReferenceBuilders[j].build());
+        	String refId = refIndexToIdMap[j];
+        	if(refIdFilter.test(refId)){
+        		gappedSequenceMap.put(refId, gappedReferenceBuilders[j].build());
+        	}
         }
         
         builtDataStore = new CasGappedReferenceDataStoreImpl(DataStoreUtil.adapt(gappedSequenceMap), 
@@ -233,19 +266,24 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
 
 		private void handleMatch(CasMatch match) {
 			CasAlignment alignment =match.getChosenAlignment();
-			Long referenceIndex = alignment.getReferenceIndex();		            
+			long referenceIndex = alignment.getReferenceIndex();		            
 			
-			assertValidReferenceIndex(referenceIndex);
+			if(includeReadsFromThisReference(referenceIndex)){
 			
-			addInsertionsToReference(alignment, referenceIndex);
+				addInsertionsToReference(alignment, referenceIndex);
+			}
 		}
 
-		private void addInsertionsToReference(CasAlignment alignment,
-				Long referenceIndex) {
+		private void addInsertionsToReference(CasAlignment alignment, Long referenceIndex) {
+			
+			GappedReferenceBuilder builder = gappedReferenceBuilders[referenceIndex.intValue()];
+			if(builder ==null){
+				//skip read
+				return;
+			}
 			List<CasAlignmentRegion> regionsToConsider = getAlignmentRegionsToConsider(alignment);
 			boolean outsideValidRange=true;
 			int currentOffset = (int)alignment.getStartOfMatch();
-			GappedReferenceBuilder builder = gappedReferenceBuilders[referenceIndex.intValue()];
 			for(CasAlignmentRegion region: regionsToConsider){
 				//1st non insertion type is beginning of where we map
 			    if(outsideValidRange && region.getType() != CasAlignmentRegionType.INSERT){
@@ -263,13 +301,14 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
 		}
 
 		
-
-		private void assertValidReferenceIndex(Long referenceIndex) {
-			int i =referenceIndex.intValue();
-			if(i >= refIndexToIdMap.length || refIndexToIdMap[i] ==null){
+		private boolean includeReadsFromThisReference(long referenceIndex){
+			int i = (int)referenceIndex;
+			if( i< 0 || i >= gappedReferenceBuilders.length){
 				throw new IllegalStateException("reference file does not contain a reference with index "+ referenceIndex);
 			}
+			return gappedReferenceBuilders[i] !=null;
 		}
+		
 
 		@Override
 		public void visitEnd() {

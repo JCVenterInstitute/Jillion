@@ -39,6 +39,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestCasGappedReferenceDataStoreBuilderVisitor.class,
 
         TestGappedReferenceDataStoreBuilderNoReadsMaptoReference.class,
+        TestFilteredCasGappedReferenceDataStoreBuilderVisitor.class,
         
         AllCas2ConsedTests.class,
         AllCasTransformationServiceUnitTests.class,
