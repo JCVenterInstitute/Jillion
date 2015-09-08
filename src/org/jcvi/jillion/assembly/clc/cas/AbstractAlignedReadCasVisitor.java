@@ -89,7 +89,14 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 	
 	private Map<String, ReAlignReads> reAligners = new HashMap<String, ReAlignReads>();
 	/**
-	 * Create a new AbstractAlignedReadCasVisitor instance.
+	 * Create a new AbstractAlignedReadCasVisitor instance that will
+	 * modify the Cas Match alignments to add extra insertions into the reads (gaps)
+	 * that will make it correctly align to the gapped reference in the provided
+	 * {@link CasGappedReferenceDataStore}.  The gapped datastore must have
+	 * indexes for all the references in the cas file being visited
+	 * but can only have some gapped reference sequences available by ID.
+	 * If the {@link CasGappedReferenceDataStore#contains(String)} returns {@code false}
+	 * for any cas match, then that match will be skipped.
 	 * 
 	 * @param workingDir the working directory of the cas file;
 	 * may be null (means current directory).
@@ -290,12 +297,18 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractCasFileVisit
 				CasAlignment alignment = match.getChosenAlignment();
 				long refIndex = alignment.getReferenceIndex();
 				String refId = gappedReferenceDataStore.getIdByIndex(refIndex);
+				
+				
 				String readId = currentTrace.getId();
 				try {
+					
 					if(refId ==null){
 						closeIterator();
 						throw new IllegalStateException("could not get get gapped reference for index "+ refIndex);
 					
+					}
+					if(!gappedReferenceDataStore.contains(refId)){
+						return;
 					}
 					ReAlignReads reAligner =reAligners.get(refId);
 					if(reAligner ==null){

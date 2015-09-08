@@ -22,6 +22,7 @@ package org.jcvi.jillion.assembly.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
@@ -49,7 +50,7 @@ public final class ContigCoverageMapBuilder<R extends AssembledRead> {
 	private static final int NOT_SET = -1;
 	private final Contig<R> contig;
 	
-	private ReadFilter<? super R> filter = null;
+	private Predicate<? super R> filter = null;
 	
 	private int maxCoverage=NOT_SET;
 	private int minCoverage = NOT_SET;
@@ -80,7 +81,7 @@ public final class ContigCoverageMapBuilder<R extends AssembledRead> {
 	 * the specified max will not be included in the CoverageMap. 
 	 * This exclusion is performed AFTER any read filtering
 	 * performed by the filter specified by
-	 * {@link #filter(ReadFilter)}.  So it is possible for 
+	 * {@link #filter(Predicate)}.  So it is possible for 
 	 * a {@link ReadFilter} to accept a read and still have that
 	 * read excluded due to the maxCoverage threshold.
 	 * <p/>
@@ -167,7 +168,7 @@ public final class ContigCoverageMapBuilder<R extends AssembledRead> {
 		return this;
 	}
 	/**
-	 * Apply the given {@link ReadFilter} to each {@link AssembledRead}
+	 * Apply the given {@link Predicate} to each {@link AssembledRead}
 	 * in the contig, only reads that are accepted by the filter
 	 * will be considered when building the {@link CoverageMap}.
 	 * The filter will be called by the {@link #build()}
@@ -178,7 +179,7 @@ public final class ContigCoverageMapBuilder<R extends AssembledRead> {
 	 * @see #maxAllowedCoverage(int)
 	 * @throws NullPointerException if filter is null.
 	 */
-	public ContigCoverageMapBuilder<R> filter(ReadFilter<? super R> filter){
+	public ContigCoverageMapBuilder<R> filter(Predicate<? super R> filter){
 		if(filter==null){
 			throw new IllegalArgumentException("filter can not be null");
 		}
@@ -212,7 +213,7 @@ public final class ContigCoverageMapBuilder<R extends AssembledRead> {
 			iter = contig.getReadIterator();
 			while(iter.hasNext()){
 				R read = iter.next();
-				if(filter==null || filter.accept(read)){
+				if(filter==null || filter.test(read)){
 					readsToInclude.add(read);
 				}
 			}

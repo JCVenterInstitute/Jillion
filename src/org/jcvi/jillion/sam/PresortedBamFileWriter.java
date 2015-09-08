@@ -37,7 +37,6 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.sam.SamUtil;
 import org.jcvi.jillion.internal.sam.index.BamIndexer;
 import org.jcvi.jillion.internal.sam.index.IndexUtil;
-import org.jcvi.jillion.internal.sam.index.ReferenceIndexBuilder;
 import org.jcvi.jillion.sam.attribute.ReservedAttributeValidator;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 import org.jcvi.jillion.sam.header.SamHeader;
