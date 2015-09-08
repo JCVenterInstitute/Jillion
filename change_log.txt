@@ -13,12 +13,18 @@ Jillion 4.2
 New Features
 ------------
 
-1.  Renamed *FastaRecordWriter* to *FastaWriter* to make smaller class names
+1.  FastaFileParser and all Fasta Datastore implementations
+    supports non-redundant text fasta files like the ones described in
+    ftp://ftp.ncbi.nih.gov/blast/db/README</a>.
+    If non-redundant records are encountered, then the visitXXX methods will be called
+    in a way such that it will appear as if they were redundantly listed.  The non-redundant
+    defline will be split and each identical sequence will be visited separately with each
+    of the many ids for it.  Creating org.jcvi.jillion.fasta.FastaVisitorCallback.FastaVisitorMemento
+    are also non-redundant aware and will correctly only visit the subset of non-redundant records according to when
+    the memento was created.
 
 2.  AminoAcid - Added Pyrrolysine 'O' to AminoAcid class and AminoAcidSequence
     as well as Blosum matrices. 
-    
-3.  FastaFileParser - now supports non-redundant fasta files (parsing only)
 
 Bug Fixes
 ----------
@@ -35,10 +41,18 @@ Bug Fixes
 API Changes
 -----------
 
-1.  Blast- BlastHit now has subjectDefline field instead of
+1.  Renamed *FastaRecordWriter* to *FastaWriter* to make smaller class names
+
+2.  Renamed FastqRecordWriter and FastqRecordWriterBuilder to FastqWriter 
+	and FastqWriterBuilder to make smaller class names
+	
+3. 	BamIndexFileWriterBuilder build() now returns a File object of the written bai
+	encoded file instead of return void.
+	
+4.  Blast- BlastHit now has subjectDefline field instead of
            subjectDeflineComment which only used to have the comment.
            
-2.  BtabWriter - now puts alignment length in previously skipped column
+5.  BtabWriter - now puts alignment length in previously skipped column
 
 ================
 Jillion 4.1 - internal release only
