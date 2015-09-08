@@ -26,7 +26,7 @@ import java.util.Locale;
 
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
- * {@code ReadGroup} is a way
+ * {@code SamReadGroup} is a way
  * to group reads as belonging to a particular
  * set.  Often Read Groups are used to note
  * which reads came from which sequencing run

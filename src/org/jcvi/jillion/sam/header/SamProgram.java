@@ -20,7 +20,14 @@
  *         Danny Katzel - initial API and implementation
  ******************************************************************************/
 package org.jcvi.jillion.sam.header;
-
+/**
+ * {@code SamProgram} contains information about
+ * a specific program and its invocation used in the pipeline
+ * that generated this SAM File.
+ * 
+ * @author dkatzel
+ *
+ */
 public interface SamProgram {
 
     /**
