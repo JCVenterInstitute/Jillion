@@ -22,8 +22,6 @@
 package org.jcvi.jillion.sam.header;
 
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.jillion.sam.SamRecord;
@@ -38,39 +36,75 @@ import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
  *
  */
 public interface SamHeader {
-
-    String toString();
-
+    /**
+     * Get the {@link SortOrder} for the
+     * {@link SamRecord}s in the SAM File with
+     * this header.
+     * @return a {@link SortOrder}; will never be null.
+     */
     SortOrder getSortOrder();
-
+    /**
+     * Get the {@link SamVersion} of this SAM File
+     * with this header if known.
+     * @return the {@link SamVersion} if known
+     * or {@code null} if unknown.
+     */
     SamVersion getVersion();
-
-    boolean hasReferenceSequence(String name);
-
+    /**
+     * Get the {@link SamReferenceSequence}
+     * object with the given name.
+     * @param name the name to look up.
+     * @return a {@link SamReferenceSequence}
+     * which will be non-null if the reference is known to the header;
+     * and {@code null} if the reference is not present.
+     */
     SamReferenceSequence getReferenceSequence(String name);
-
-    Iterator<SamReferenceSequence> getReferenceSequencesIterator();
-
-    boolean hasSamProgram(String id);
-
+    /**
+     * Get the {@link SamProgram} with the given id
+     * if known.
+     * @param id the id of the {@link SamProgram}.
+     * @return a {@link SamProgram} or {@code null}
+     * if unknown.
+     */
     SamProgram getSamProgram(String id);
-
-    boolean hasReadGroup(String id);
-
+    /**
+     * Get the {@link SamReadGroup} with the given id
+     * if known.
+     * @param id the id of the {@link SamReadGroup}.
+     * @return a {@link SamReadGroup} or {@code null}
+     * if unknown.
+     */
     SamReadGroup getReadGroup(String id);
-
+    /**
+     * Get the {@link SamReadGroup}s used in this SAM File.
+     * 
+     * @return a Collection of {@link SamReadGroup}s
+     * will never be null but may be empty if there are no read groups are mentioned.
+     */
     Collection<SamReadGroup> getReadGroups();
-
+    /**
+     * Get the {@link SamProgram}s used in this SAM File.
+     * 
+     * @return a Collection of {@link SamProgram}s
+     * will never be null but may be empty if there are no programs are mentioned.
+     */
     Collection<SamProgram> getPrograms();
-
+    /**
+     * Get the {@link SamReferenceSequence}s used in this SAM File
+     * in the order they were encountered.  This will be the index 
+     * order if the SAM file is an indexed BAM.
+     * 
+     * @return a Collection of {@link SamReferenceSequence}s
+     * will never be null but may be empty if there are no references used.
+     */
     Collection<SamReferenceSequence> getReferenceSequences();
-
+    /**
+     * Get the String comments if any.  Each Comment line
+     * is usually a single element in the returned list.
+     * @return a List of Strings; will never be null.
+     * If there are no comments, then an empty list will be returned.
+     */
     List<String> getComments();
-
-    int getReferenceIndexFor(String referenceName);
-
-    SamReferenceSequence getReferenceSequence(int i);
-
     /**
      * Validate the given {@link SamRecord} using the given
      * {@link SamAttributeValidator}.
@@ -96,7 +130,5 @@ public interface SamHeader {
     void validateRecord(SamRecord record,
             SamAttributeValidator attributeValidator)
             throws SamValidationException;
-
-    Comparator<SamRecord> createRecordComparator();
 
 }

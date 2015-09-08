@@ -105,7 +105,7 @@ class ReSortSamFileWriter implements SamWriter {
 		this.maxRecordsToKeepInMemory = maxRecordsToKeepInMemory;
 		
 		this.header = header;
-		recordComparator = header.createRecordComparator();
+		recordComparator = createRecordComparatorFor(header);
 		if(recordComparator ==null){
 			throw new NullPointerException("SortOrder must create a non-null comparator " + header.getSortOrder());
 		}
@@ -121,6 +121,14 @@ class ReSortSamFileWriter implements SamWriter {
 	}
 
 
+	 private static Comparator<SamRecord> createRecordComparatorFor(SamHeader header){
+	     SortOrder sortOrder = header.getSortOrder();
+             if(sortOrder ==null){
+                     return null;
+             }
+             return sortOrder.createComparator(header);
+     }
+	
 	@Override
 	public void writeRecord(SamRecord record) throws IOException {
 		if(record==null){

@@ -206,7 +206,7 @@ round(value * 100.0).
 		@Override
 		void validate(SamHeader header, Object value)
 				throws InvalidAttributeException {
-			if(!header.hasSamProgram(getType().getString(value))){
+			if(header.getSamProgram(getType().getString(value)) ==null){
 				throw new InvalidAttributeException("header does not contain program " + value);
 			}
 		}
@@ -286,7 +286,7 @@ round(value * 100.0).
 		@Override
 		void validate(SamHeader header, Object value)
 				throws InvalidAttributeException {
-			if(!header.hasReadGroup(getType().getString(value))){
+			if(header.getReadGroup(getType().getString(value)) ==null){
 				throw new InvalidAttributeException("header does not contain program " + value);
 			}
 		}

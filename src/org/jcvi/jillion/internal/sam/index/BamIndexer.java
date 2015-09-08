@@ -23,7 +23,9 @@ package org.jcvi.jillion.internal.sam.index;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jcvi.jillion.internal.sam.IndexerCallback;
 import org.jcvi.jillion.sam.SamRecord;
@@ -43,15 +45,17 @@ public class BamIndexer implements IndexerCallback{
 	private final List<ReferenceIndexBuilder> indexBuilders;
 	private ReferenceIndexBuilder currentBuilder;
 	private String currentRefName;
-	
+	private Map<String, Integer> refSeqIndexMap = new HashMap<String, Integer>();
 	public BamIndexer(SamHeader header) {
 		
 		this.header = header;
 		Collection<SamReferenceSequence> referenceSequences = header.getReferenceSequences();
 		this.indexBuilders = new ArrayList<ReferenceIndexBuilder>(referenceSequences.size());
-
+		int i=0;
 		for(SamReferenceSequence refSeq : referenceSequences){
 			indexBuilders.add(new ReferenceIndexBuilder(refSeq.getLength()));
+			refSeqIndexMap.put(refSeq.getName(), Integer.valueOf(i));
+			i++;
 		}
 	}
 	
@@ -66,7 +70,7 @@ public class BamIndexer implements IndexerCallback{
 		if(record.mapped()){
 			String ref = record.getReferenceName();
 			if(!ref.equals(currentRefName)){				
-				int refIndex = header.getReferenceIndexFor(ref);
+				int refIndex = refSeqIndexMap.get(ref);
 				currentBuilder = indexBuilders.get(refIndex);
 				currentRefName = ref;				
 			}

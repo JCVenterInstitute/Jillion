@@ -406,8 +406,7 @@ public final class SamUtil {
 	}
 	
 	
-	public static void writeAsBamRecord(OutputStream out, SamHeader header, SamRecord record) throws IOException{
-		String referenceName =record.getReferenceName();
+	public static void writeAsBamRecord(OutputStream out, SamHeader header, SamRecord record, int refIndex, int nextNameIndex) throws IOException{
 		//TODO compute buffer size first?
 		//it would be hard because
 		//we would have to know how many bytes
@@ -418,7 +417,7 @@ public final class SamUtil {
 		buf.order(ByteOrder.LITTLE_ENDIAN);
 		//skip first 4 bytes so we can write the length of record last
 		buf.position(4);
-		buf.putInt(header.getReferenceIndexFor(referenceName));
+		buf.putInt(refIndex); //header.getReferenceIndexFor(referenceName));
 		int startOffset = record.getStartPosition() -1;
 		buf.putInt(startOffset);
 		long binMapNameLength;
@@ -445,7 +444,7 @@ public final class SamUtil {
 		int seqLength = seq ==null ? 0 :(int)seq.getLength();			
 		
 		buf.putInt(seqLength);
-		buf.putInt(header.getReferenceIndexFor(record.getNextName()));
+		buf.putInt(nextNameIndex);
 		buf.putInt(record.getNextOffset() -1);
 		buf.putInt(record.getObservedTemplateLength());
 		buf.put(writeNullTerminatedStringAsBytes(record.getQueryName()));
