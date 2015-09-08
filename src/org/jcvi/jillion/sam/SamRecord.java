@@ -425,7 +425,7 @@ public class SamRecord {
 		}
 		private void assertHeaderKnowsAboutReference(String referenceName) {
 			//RNAME must be present in a SQ-SN tag
-			if(!header.hasReferenceSequence(referenceName)){
+			if(header.getReferenceSequence(referenceName)==null){
 				throw new IllegalArgumentException("reference name is not in sam header '"+ referenceName+"'");
 			}
 		}

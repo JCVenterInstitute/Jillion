@@ -29,6 +29,7 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.jillion.core.Range;
@@ -69,16 +70,17 @@ public final class IndexUtil {
 		}
 		int numRefs = IOUtil.readSignedInt(in, ByteOrder.LITTLE_ENDIAN);
 		List<ReferenceIndex> refIndexes = new ArrayList<ReferenceIndex>(numRefs);
-		
+		Iterator<SamReferenceSequence> refSeqIer = header.getReferenceSequences().iterator();
 		for(int i=0; i<numRefs; i++){
 			//don't need to use builders
 			//since the file has everything
 			//"prebuilt" for us.
 			int numBins = IOUtil.readSignedInt(in, ByteOrder.LITTLE_ENDIAN);
-			SamReferenceSequence refSeq = header.getReferenceSequence(i);
-			if(refSeq ==null){
+			if(!refSeqIer.hasNext()){
 				throw new NullPointerException("no ref " + i);
 			}
+			SamReferenceSequence refSeq = refSeqIer.next();
+                        
 			int maxBin = SamUtil.computeBinFor(new Range.Builder(1)
 											.shift(refSeq.getLength())
 											.build());

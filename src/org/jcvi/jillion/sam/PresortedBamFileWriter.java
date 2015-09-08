@@ -29,12 +29,15 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jcvi.jillion.core.io.FileUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.sam.SamUtil;
 import org.jcvi.jillion.internal.sam.index.BamIndexer;
 import org.jcvi.jillion.internal.sam.index.IndexUtil;
+import org.jcvi.jillion.internal.sam.index.ReferenceIndexBuilder;
 import org.jcvi.jillion.sam.attribute.ReservedAttributeValidator;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 import org.jcvi.jillion.sam.header.SamHeader;
@@ -63,19 +66,27 @@ class PresortedBamFileWriter implements SamWriter{
 	private final BamIndexer optionalIndexer;
 	private boolean closed =false;
 	
+	private Map<String, Integer> refSeqIndexMap = new HashMap<String, Integer>();
+	
 	public PresortedBamFileWriter(SamHeader header, File outputFile, BamIndexer optionalIndexer) throws IOException{
 		this(header, outputFile, optionalIndexer, ReservedAttributeValidator.INSTANCE);
 	}
 	
-	public PresortedBamFileWriter(SamHeader header, File outputFile, BamIndexer optionalIndexer, SamAttributeValidator attributeValidator) throws IOException {
-		this.header = header;
-		this.bamFile = outputFile;
-		this.attributeValidator = attributeValidator;
-		this.optionalIndexer = optionalIndexer;
-		out = new BgzfOutputStream(bamFile,optionalIndexer);
-		
-		writeHeader();
-	}
+    public PresortedBamFileWriter(SamHeader header, File outputFile,
+            BamIndexer optionalIndexer, SamAttributeValidator attributeValidator)
+            throws IOException {
+        this.header = header;
+        this.bamFile = outputFile;
+        this.attributeValidator = attributeValidator;
+        this.optionalIndexer = optionalIndexer;
+        out = new BgzfOutputStream(bamFile, optionalIndexer);
+        int i = 0;
+        for (SamReferenceSequence refSeq : header.getReferenceSequences()) {
+            refSeqIndexMap.put(refSeq.getName(), Integer.valueOf(i));
+            i++;
+        }
+        writeHeader();
+    }
 
 	private void writeHeader() throws IOException {
 		StringBuilder headerAsStringBuilder = SamUtil.encodeHeader(header);
@@ -140,8 +151,20 @@ class PresortedBamFileWriter implements SamWriter{
 			optionalIndexer.setCurrentRecord(record);
 		}
 		
-		SamUtil.writeAsBamRecord(out, header, record);
+		SamUtil.writeAsBamRecord(out, header, record, 
+		        getRefIndexFor(record.getReferenceName()),
+		        getRefIndexFor(record.getNextName())
+		        );
 		
+		
+	}
+	
+	private int getRefIndexFor(String refName){
+	    Integer refIndex = refSeqIndexMap.get(refName);
+	    if(refIndex ==null){
+	        return -1;
+	    }
+	    return refIndex;
 	}
 
 }

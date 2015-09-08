@@ -24,7 +24,6 @@ package org.jcvi.jillion.sam.header;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -221,7 +220,7 @@ public final class SamHeaderBuilder{
 	        private final Map<String, SamReferenceSequence> referenceSequences;
 	        private final Map<String, Integer> referenceIndexMap;
 	        
-	        private final Map<Integer, SamReferenceSequence> indexReferenceMap;
+	        private final SamReferenceSequence[] indexedReferenceSequences;
 	        
 	        private final Map<String, SamReadGroup> readGroups;
 	        
@@ -240,14 +239,15 @@ public final class SamHeaderBuilder{
 	                
 	                this.comments = Collections.unmodifiableList(new ArrayList<String>(builder.comments));
 	                referenceIndexMap = new LinkedHashMap<String, Integer>();
-	                indexReferenceMap = new LinkedHashMap<Integer, SamReferenceSequence>();
-	                
+	               
 	                int i=0;
-	                for(SamReferenceSequence refSeq : referenceSequences.values()){
-	                        Integer index = Integer.valueOf(i);
-	                        referenceIndexMap.put(refSeq.getName(), index);
-	                        indexReferenceMap.put(index, refSeq);
-	                        i++;
+	                Collection<SamReferenceSequence> refSeqs = referenceSequences.values();
+	                this.indexedReferenceSequences = new SamReferenceSequence[refSeqs.size()];
+	                        
+                        for(SamReferenceSequence refSeq : refSeqs){
+                            indexedReferenceSequences[i] = refSeq;
+	                    referenceIndexMap.put(refSeq.getName(), Integer.valueOf(i));	                       
+	                    i++;
 	                }
 	        }
 	        
@@ -274,36 +274,19 @@ public final class SamHeaderBuilder{
 	                return version;
 	        }
 
-	        @Override
-	    public boolean hasReferenceSequence(String name){
-	                return referenceSequences.containsKey(name);
-	        }
+	     
 
 	        @Override
 	    public SamReferenceSequence getReferenceSequence(String name){
 	                return referenceSequences.get(name);
 	        }
-	        
-	        @Override
-	    public Iterator<SamReferenceSequence> getReferenceSequencesIterator(){
-	                return referenceSequences.values().iterator();
-	        }
-	        
-
-	        @Override
-	    public boolean hasSamProgram(String id){
-	                return programs.containsKey(id);
-	        }
+	     
 
 	        @Override
 	    public SamProgram getSamProgram(String id){
 	                return programs.get(id);
 	        }
 
-	        @Override
-	    public boolean hasReadGroup(String id){
-	                return readGroups.containsKey(id);
-	        }
 
 	        @Override
 	    public SamReadGroup getReadGroup(String id){
@@ -411,22 +394,6 @@ public final class SamHeaderBuilder{
 	        }
 
 
-	        @Override
-	    public int getReferenceIndexFor(String referenceName) {
-	                Integer ret= referenceIndexMap.get(referenceName);
-	                if(ret==null){
-	                        return -1;
-	                }
-	                return ret.intValue();
-	                
-	        }
-	        
-
-	        @Override
-	    public SamReferenceSequence getReferenceSequence(int i) {
-	                return indexReferenceMap.get(Integer.valueOf(i));
-	                
-	        }
 	        /**
 	         * Validate the given {@link SamRecord} using the given
 	         * {@link SamAttributeValidator}.
@@ -453,11 +420,11 @@ public final class SamHeaderBuilder{
 	    public void validateRecord(SamRecord record, SamAttributeValidator attributeValidator) throws SamValidationException{
 	                //reference names must be present in a SQ-SN tag
 	                String refName =record.getReferenceName();
-	                if(refName !=null && !this.hasReferenceSequence(refName)){
+	                if(refName !=null && this.getReferenceSequence(refName) ==null){
 	                        throw new SamValidationException("unknown reference "+ refName);
 	                }
 	                String nextRefName = record.getNextName();
-	                if(nextRefName !=null &&  !"=".equals(nextRefName) && !this.hasReferenceSequence(nextRefName)){
+	                if(nextRefName !=null &&  !"=".equals(nextRefName) && this.getReferenceSequence(nextRefName)==null){
 	                        throw new SamValidationException("unknown next reference "+ nextRefName);
 	                }
 	                for(SamAttribute attribute : record.getAttributes()){                   
@@ -466,16 +433,7 @@ public final class SamHeaderBuilder{
 	                }
 	                
 	        }
-	        
-	        @Override
-	    public Comparator<SamRecord> createRecordComparator(){
-	                if(sortOrder ==null){
-	                        return null;
-	                }
-	                return sortOrder.createComparator(this);
-	        }
-
-
+	    
 
 	}
 }
