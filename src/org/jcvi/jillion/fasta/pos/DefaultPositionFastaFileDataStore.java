@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
@@ -62,15 +63,15 @@ public final class DefaultPositionFastaFileDataStore {
 
 		private final Map<String, PositionFastaRecord> fastaRecords = new LinkedHashMap<String, PositionFastaRecord>();
 		
-		private final DataStoreFilter filter;
+		private final Predicate<String> filter;
 		
-		public DefaultQualityFastaFileDataStoreBuilder(DataStoreFilter filter){
+		public DefaultQualityFastaFileDataStoreBuilder(Predicate<String> filter){
 			this.filter = filter;
 		}
 		@Override
 		public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
 				final String id, String optionalComment) {
-			if(!filter.accept(id)){
+			if(!filter.test(id)){
 				return null;
 			}
 			return new AbstractPositionSequenceFastaRecordVisitor(id,optionalComment){

@@ -23,6 +23,7 @@ package org.jcvi.jillion.fasta.aa;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
@@ -78,7 +79,7 @@ public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDat
 	 * @throws IOException if there is a problem creating the datastore from the file.
 	 */
 	@Override
-	protected ProteinFastaDataStore createNewInstance(FastaParser parser, DataStoreProviderHint hint, DataStoreFilter filter)
+	protected ProteinFastaDataStore createNewInstance(FastaParser parser, DataStoreProviderHint hint, Predicate<String> filter)
 			throws IOException {
 		if(parser.isReadOnceOnly()){
 			return DefaultProteinFastaDataStore.create(parser,filter);
@@ -99,8 +100,7 @@ public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDat
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ProteinFastaFileDataStoreBuilder filter(
-			DataStoreFilter filter) {
+	public ProteinFastaFileDataStoreBuilder filter(Predicate<String> filter) {
 		super.filter(filter);
 		return this;
 	}
@@ -109,8 +109,7 @@ public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDat
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ProteinFastaFileDataStoreBuilder hint(
-			DataStoreProviderHint hint) {
+	public ProteinFastaFileDataStoreBuilder hint(DataStoreProviderHint hint) {
 		super.hint(hint);
 		return this;
 	}

@@ -21,8 +21,8 @@
 package org.jcvi.jillion.internal.fasta.qual;
 
 import java.io.IOException;
+import java.util.function.Predicate;
 
-import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
@@ -36,17 +36,17 @@ import org.jcvi.jillion.internal.fasta.AbstractResuseableFastaRecordVisitor;
 public class QualitySequenceFastaDataStoreIteratorImpl extends AbstractBlockingStreamingIterator<QualityFastaRecord>{
 	
 	private final FastaParser parser;
-	private final DataStoreFilter filter;
+	private final Predicate<String> filter;
 	
 	
-	public static StreamingIterator<QualityFastaRecord> createIteratorFor(FastaParser parser, DataStoreFilter filter){
+	public static StreamingIterator<QualityFastaRecord> createIteratorFor(FastaParser parser, Predicate<String> filter){
 		
 		QualitySequenceFastaDataStoreIteratorImpl iter = new QualitySequenceFastaDataStoreIteratorImpl(parser, filter);
 		iter.start();
 		return iter;
 	}
 	
-	public QualitySequenceFastaDataStoreIteratorImpl( FastaParser parser, DataStoreFilter filter) {
+	public QualitySequenceFastaDataStoreIteratorImpl( FastaParser parser, Predicate<String> filter) {
 		if(parser ==null){
 			throw new NullPointerException("parser can not be null");
 		}
@@ -90,7 +90,7 @@ public class QualitySequenceFastaDataStoreIteratorImpl extends AbstractBlockingS
 			@Override
 			public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
 					String id, String optionalComment) {
-				if(!filter.accept(id)){
+				if(!filter.test(id)){
 					return null;
 				}
 				recordVisitor.prepareNewRecord(id, optionalComment);

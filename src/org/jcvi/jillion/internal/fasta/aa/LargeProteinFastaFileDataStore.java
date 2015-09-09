@@ -23,8 +23,8 @@ package org.jcvi.jillion.internal.fasta.aa;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.function.Predicate;
 
-import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
@@ -66,7 +66,7 @@ public final class LargeProteinFastaFileDataStore extends AbstractLargeFastaFile
      * @param fastaFile the Fasta File to use, can not be null.
      * @throws NullPointerException if fastaFile is null.
      */
-	public static ProteinFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
+	public static ProteinFastaDataStore create(File fastaFile, Predicate<String> filter) throws IOException{
 		FastaParser parser = FastaFileParser.create(fastaFile);
 		return new LargeProteinFastaFileDataStore(parser,filter);
 	}
@@ -85,19 +85,18 @@ public final class LargeProteinFastaFileDataStore extends AbstractLargeFastaFile
      * @param fastaFile the Fasta File to use, can not be null.
      * @throws NullPointerException if fastaFile is null.
      */
-	public static ProteinFastaDataStore create(FastaParser parser, DataStoreFilter filter){
+	public static ProteinFastaDataStore create(FastaParser parser, Predicate<String> filter){
 		return new LargeProteinFastaFileDataStore(parser,filter);
 	}
    
-    protected LargeProteinFastaFileDataStore(FastaParser parser,
-			DataStoreFilter filter) {
+    protected LargeProteinFastaFileDataStore(FastaParser parser, Predicate<String> filter) {
 		super(parser, filter);
 	}
 
 
 	@Override
 	protected StreamingIterator<ProteinFastaRecord> createNewIterator(
-			FastaParser parser, DataStoreFilter filter) {
+			FastaParser parser, Predicate<String> filter) {
 		return DataStoreStreamingIterator.create(this,LargeProteinFastaIterator.createNewIteratorFor(parser, filter));
 	       
 	}

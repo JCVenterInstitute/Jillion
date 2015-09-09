@@ -28,8 +28,8 @@ package org.jcvi.jillion.fasta.qual;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.function.Predicate;
 
-import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.fasta.FastaFileParser;
 import org.jcvi.jillion.fasta.FastaParser;
@@ -52,27 +52,26 @@ final class DefaultQualityFastaFileDataStore {
     	return create(fastaFile,DataStoreFilters.alwaysAccept());
     }
     
-    public static QualityFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
+    public static QualityFastaDataStore create(File fastaFile, Predicate<String> filter) throws IOException{
     	return create(FastaFileParser.create(fastaFile), filter);
     }
     
     public static QualityFastaDataStore create(InputStream fastaStream) throws IOException{
     	return create(fastaStream,DataStoreFilters.alwaysAccept());
     }
-    public static QualityFastaDataStore create(InputStream fastaStream, DataStoreFilter filter) throws IOException{
+    public static QualityFastaDataStore create(InputStream fastaStream, Predicate<String> filter) throws IOException{
     	
     	FastaParser parser = FastaFileParser.create(fastaStream);
     	
     	return create(parser, filter);
     }
-	public static QualityFastaDataStore create(FastaParser parser,
-			DataStoreFilter filter) throws IOException {
+	public static QualityFastaDataStore create(FastaParser parser, Predicate<String> filter) throws IOException {
 		DefaultQualityFastaFileDataStoreBuilder builder = createBuilder(filter);
 		parser.parse(builder);
     	return builder.build();
 	}
 
-    private static DefaultQualityFastaFileDataStoreBuilder createBuilder(DataStoreFilter filter){
+    private static DefaultQualityFastaFileDataStoreBuilder createBuilder(Predicate<String> filter){
     	return new DefaultQualityFastaFileDataStoreBuilder(filter);
     }
 

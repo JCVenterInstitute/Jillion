@@ -21,8 +21,8 @@
 package org.jcvi.jillion.internal.fasta;
 
 import java.io.IOException;
+import java.util.function.Predicate;
 
-import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
@@ -38,8 +38,8 @@ import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterato
 public final class LargeFastaIdIterator extends AbstractBlockingStreamingIterator<String>{
 
     private final FastaParser parser;
-    private final DataStoreFilter filter;
-    public static LargeFastaIdIterator createNewIteratorFor(FastaParser parser, DataStoreFilter filter){
+    private final Predicate<String> filter;
+    public static LargeFastaIdIterator createNewIteratorFor(FastaParser parser, Predicate<String> filter){
     	if(parser ==null){
     		throw new NullPointerException("fasta file can not be null");
     	}
@@ -58,7 +58,7 @@ public final class LargeFastaIdIterator extends AbstractBlockingStreamingIterato
     /**
      * @param fastaFile
      */
-    private LargeFastaIdIterator(FastaParser parser, DataStoreFilter filter) {
+    private LargeFastaIdIterator(FastaParser parser, Predicate<String> filter) {
     	
         this.parser = parser;
         this.filter = filter;
@@ -72,15 +72,15 @@ public final class LargeFastaIdIterator extends AbstractBlockingStreamingIterato
     protected void backgroundThreadRunMethod() {
     	FastaVisitor visitor = new FastaVisitor() {
 
-			@Override
-			public FastaRecordVisitor visitDefline(
-					FastaVisitorCallback callback, String id,
-					String optionalComment) {
-				if(filter.accept(id)){
-    				LargeFastaIdIterator.this.blockingPut(id);
-    			}
-				return null;
-			}
+                        @Override
+                        public FastaRecordVisitor visitDefline(
+                                FastaVisitorCallback callback, String id,
+                                String optionalComment) {
+                            if (filter.test(id)) {
+                                LargeFastaIdIterator.this.blockingPut(id);
+                            }
+                            return null;
+                        }
 
 			@Override
 			public void visitEnd() {

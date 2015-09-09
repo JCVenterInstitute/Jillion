@@ -22,8 +22,8 @@ package org.jcvi.jillion.internal.fasta.qual;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
-import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
@@ -37,15 +37,15 @@ public class DefaultQualityFastaFileDataStoreBuilder implements FastaVisitor, Bu
 
 	private final Map<String, QualityFastaRecord> fastaRecords = new LinkedHashMap<String, QualityFastaRecord>();
 	
-	private final DataStoreFilter filter;
+	private final Predicate<String> filter;
 	
-	public DefaultQualityFastaFileDataStoreBuilder(DataStoreFilter filter){
+	public DefaultQualityFastaFileDataStoreBuilder(Predicate<String> filter){
 		this.filter = filter;
 	}
 	@Override
 	public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
 			final String id, String optionalComment) {
-		if(!filter.accept(id)){
+		if(!filter.test(id)){
 			return null;
 		}
 		return new AbstractQualityFastaRecordVisitor(id,optionalComment){

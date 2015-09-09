@@ -23,10 +23,9 @@ package org.jcvi.jillion.internal.fasta;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.Sequence;
-import org.jcvi.jillion.core.datastore.DataStoreFilter;
-import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.fasta.FastaDataStore;
 import org.jcvi.jillion.fasta.FastaFileParser;
@@ -36,7 +35,7 @@ import org.jcvi.jillion.fasta.FastaRecord;
 public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>, F extends FastaRecord<T,S>, D extends FastaDataStore<T,S, F>> {
 
 	private final FastaParser parser;
-	private DataStoreFilter filter = DataStoreFilters.alwaysAccept();
+	private Predicate<String> filter = id->true;
 	private DataStoreProviderHint hint = DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_SPEED;
 	/**
 	 * Create a new Builder instance of 
@@ -77,17 +76,17 @@ public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>
 	
 	
 	/**
-	 * Only include the {@link FastaRecord}s which pass
-	 * the given {@link DataStoreFilter}.  If a filter
+	 * Only include the {@link FastaRecord}s with IDs that pass
+	 * the given {@link Predicate}.  If a filter
 	 * is not given to this builder, then all records
 	 * in the fastq file will be included in the built
 	 * {@link FastaDataStore}.
-	 * @param filter a {@link DataStoreFilter} instance that can be
-	 * used to filter out specified fasta records; can not be null. 
+	 * @param filter a {@link Predicate} instance that can be
+	 * used to filter out specified fasta records by ID; can not be null. 
 	 * @return this.
 	 * @throws NullPointerException if filter is null.
 	 */
-	protected AbstractFastaFileDataStoreBuilder<T, S, F, D> filter(DataStoreFilter filter) {
+	protected AbstractFastaFileDataStoreBuilder<T, S, F, D> filter(Predicate<String> filter) {
 		if(filter==null){
 			throw new NullPointerException("filter can not be null");
 		}
@@ -155,11 +154,11 @@ public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>
 	 * @param parser the {@link FastaParser} to use to make the datastore for;
 	 * can not be null.
 	 * @param hint a {@link DataStoreProviderHint}; will never be null.
-	 * @param filter a {@link DataStoreFilter}; will never be null.
+	 * @param filter a {@link Predicate}; will never be null.
 	 * @return a new {@link FastaDataStore} instance; should never be null.
 	 * @throws IOException if there is a problem creating the datastore from the file.
 	 */
-	protected abstract D createNewInstance(FastaParser parser, DataStoreProviderHint hint, DataStoreFilter filter) throws IOException;
+	protected abstract D createNewInstance(FastaParser parser, DataStoreProviderHint hint, Predicate<String> filter) throws IOException;
 			
 
 

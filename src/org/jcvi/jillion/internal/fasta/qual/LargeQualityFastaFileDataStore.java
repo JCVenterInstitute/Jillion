@@ -27,8 +27,8 @@ package org.jcvi.jillion.internal.fasta.qual;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.function.Predicate;
 
-import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
@@ -58,7 +58,7 @@ public final class LargeQualityFastaFileDataStore extends AbstractLargeFastaFile
     public static QualityFastaDataStore create(File fastaFile) throws IOException{
     	return create(fastaFile, DataStoreFilters.alwaysAccept());
     }
-    public static QualityFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
+    public static QualityFastaDataStore create(File fastaFile, Predicate<String> filter) throws IOException{
     	FastaParser parser = FastaFileParser.create(fastaFile);
     	return new LargeQualityFastaFileDataStore(parser,filter);
     }
@@ -66,16 +66,16 @@ public final class LargeQualityFastaFileDataStore extends AbstractLargeFastaFile
     public static QualityFastaDataStore create(FastaParser parser){
     	return create(parser, DataStoreFilters.alwaysAccept());
     }
-    public static QualityFastaDataStore create(FastaParser parser, DataStoreFilter filter){
+    public static QualityFastaDataStore create(FastaParser parser, Predicate<String> filter){
     	return new LargeQualityFastaFileDataStore(parser,filter);
     }
-	protected LargeQualityFastaFileDataStore(FastaParser parser, DataStoreFilter filter) {
+	protected LargeQualityFastaFileDataStore(FastaParser parser, Predicate<String> filter) {
 		super(parser, filter);
 	}
 
 	@Override
 	protected StreamingIterator<QualityFastaRecord> createNewIterator(
-			FastaParser parser, DataStoreFilter filter) {
+			FastaParser parser, Predicate<String> filter) {
 		StreamingIterator<QualityFastaRecord> iter = QualitySequenceFastaDataStoreIteratorImpl.createIteratorFor(parser, filter);
         
         return DataStoreStreamingIterator.create(this,iter);
