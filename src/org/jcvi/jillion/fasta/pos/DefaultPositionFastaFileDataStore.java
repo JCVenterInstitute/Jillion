@@ -20,43 +20,29 @@
  ******************************************************************************/
 package org.jcvi.jillion.fasta.pos;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import org.jcvi.jillion.core.datastore.DataStoreFilter;
-import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.util.Builder;
-import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 
-public final class DefaultPositionFastaFileDataStore {
+final class DefaultPositionFastaFileDataStore {
 	
 	private DefaultPositionFastaFileDataStore(){
 		//can not instantiate
 	}
-	public static PositionFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
-		DefaultPositionFastaFileDataStoreBuilder builder = new DefaultPositionFastaFileDataStoreBuilder(filter);
-		FastaFileParser.create(fastaFile).parse(builder);
+	public static PositionFastaDataStore create(FastaParser parser, Predicate<String> filter, Predicate<PositionFastaRecord> recordFilter) throws IOException{
+		DefaultPositionFastaFileDataStoreBuilder builder = new DefaultPositionFastaFileDataStoreBuilder(filter, recordFilter);
+		parser.parse(builder);
     	return builder.build();
 	}
-	public static PositionFastaDataStore create(InputStream positionFastaInputStream, DataStoreFilter filter) throws IOException{
-		DefaultPositionFastaFileDataStoreBuilder builder = new DefaultPositionFastaFileDataStoreBuilder(filter);
-		FastaFileParser.create(positionFastaInputStream).parse(builder);
-    	return builder.build();
-	}
-	public static PositionFastaDataStore create(File positionFastaFile) throws IOException{
-		return create(positionFastaFile, DataStoreFilters.alwaysAccept());
-	}
-	public static PositionFastaDataStore create(InputStream positionFastaInputStream) throws IOException{
-		return create(positionFastaInputStream, DataStoreFilters.alwaysAccept());
-	}
+	
 
 	
 	private static class DefaultPositionFastaFileDataStoreBuilder implements FastaVisitor, Builder<PositionFastaDataStore>{
@@ -64,9 +50,11 @@ public final class DefaultPositionFastaFileDataStore {
 		private final Map<String, PositionFastaRecord> fastaRecords = new LinkedHashMap<String, PositionFastaRecord>();
 		
 		private final Predicate<String> filter;
+		private final Predicate<PositionFastaRecord> recordFilter;
 		
-		public DefaultPositionFastaFileDataStoreBuilder(Predicate<String> filter){
+		public DefaultPositionFastaFileDataStoreBuilder(Predicate<String> filter, Predicate<PositionFastaRecord> recordFilter){
 			this.filter = filter;
+			this.recordFilter = recordFilter;
 		}
 		@Override
 		public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
@@ -79,7 +67,9 @@ public final class DefaultPositionFastaFileDataStore {
 				@Override
 				protected void visitRecord(
 						PositionFastaRecord fastaRecord) {
-					fastaRecords.put(id, fastaRecord);
+					if(recordFilter ==null || recordFilter.test(fastaRecord)){
+						fastaRecords.put(id, fastaRecord);
+					}
 					
 				}
 				
