@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
@@ -64,7 +65,7 @@ public class TestNucleotideFastaFileDataStoreBuilder extends AbstractTestFastaFi
 
 	@Override
 	protected NucleotideFastaDataStore createDataStoreFromFile(File fasta,
-			DataStoreFilter filter) throws IOException {
+			Predicate<String> filter) throws IOException {
 		return new NucleotideFastaFileDataStoreBuilder(fasta)
 		.filter(filter)
 		.build();
@@ -72,7 +73,7 @@ public class TestNucleotideFastaFileDataStoreBuilder extends AbstractTestFastaFi
 
 	@Override
 	protected NucleotideFastaDataStore createDataStoreFromFile(File fasta,
-			DataStoreProviderHint hint, DataStoreFilter filter)
+			DataStoreProviderHint hint, Predicate<String> filter)
 			throws IOException {
 		return new NucleotideFastaFileDataStoreBuilder(fasta)
 		.filter(filter)

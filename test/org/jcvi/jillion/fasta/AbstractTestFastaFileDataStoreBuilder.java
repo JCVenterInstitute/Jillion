@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.datastore.DataStore;
@@ -66,7 +67,7 @@ public abstract class AbstractTestFastaFileDataStoreBuilder<T, S extends Sequenc
 	
 	
 	@Test
-	public void filteredFile() throws IOException, DataStoreException{
+	public void idFilteredFile() throws IOException, DataStoreException{
 		D datastore =createDataStoreFromFile(fasta,DataStoreFilters.neverAccept());
 
 		
@@ -74,11 +75,32 @@ public abstract class AbstractTestFastaFileDataStoreBuilder<T, S extends Sequenc
 	}
 	
 	@Test
-	public void filteredStream() throws IOException, DataStoreException{
+	public void idFilteredFileUsingLambda() throws IOException, DataStoreException{
+		D datastore =createDataStoreFromFile(fasta,id->false);
+
+		
+		assertEquals(0, datastore.getNumberOfRecords());
+	}
+	
+	@Test
+	public void idFilteredStream() throws IOException, DataStoreException{
 		InputStream in = new BufferedInputStream(new FileInputStream(fasta));
 		try{
 		D datastore =createDataStoreFromStream(DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_SPEED,
 											DataStoreFilters.neverAccept());
+		
+		assertEquals(0, datastore.getNumberOfRecords());
+		}finally{
+			IOUtil.closeAndIgnoreErrors(in);
+		}
+	}
+	
+	@Test
+	public void idFilteredStreamUsingLambda() throws IOException, DataStoreException{
+		InputStream in = new BufferedInputStream(new FileInputStream(fasta));
+		try{
+		D datastore =createDataStoreFromStream(DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_SPEED,
+											id->false);
 		
 		assertEquals(0, datastore.getNumberOfRecords());
 		}finally{
@@ -99,9 +121,9 @@ public abstract class AbstractTestFastaFileDataStoreBuilder<T, S extends Sequenc
 	
 	protected abstract D createDataStoreFromFile(File fasta) throws IOException;
 	protected abstract D createDataStoreFromFile(File fasta, DataStoreProviderHint hint) throws IOException;
-	protected abstract D createDataStoreFromFile(File fasta, DataStoreFilter filter) throws IOException;
+	protected abstract D createDataStoreFromFile(File fasta, Predicate<String> filter) throws IOException;
 	
-	protected abstract D createDataStoreFromFile(File fasta, DataStoreProviderHint hint, DataStoreFilter filter) throws IOException;
+	protected abstract D createDataStoreFromFile(File fasta, DataStoreProviderHint hint, Predicate<String> filter) throws IOException;
 	
 	
 	private D createDataStoreFromStream()
