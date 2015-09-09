@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.function.Predicate;
 
-import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 /**
  * {@code FastqFileDataStoreBuilder}
@@ -116,18 +115,26 @@ public final class FastqFileDataStoreBuilder{
 	 * in the fastq file will be included in the built
 	 * {@link FastqDataStore}.
 	 * <p>
-         * If both this method and {@link #filter(Predicate)}
-         * are used, then the ID filter is applied first
-         * and then any remaining records are filtered with this
-         * filter.
-         * <p>
-         * If this method is called multiple times, then the previous
-         * filters are overwritten and only the last filter is used.
-         * 
+     * If both this method and {@link #filter(Predicate)}
+     * are used, then the ID filter is applied first
+     * and then any remaining records are filtered with this
+     * filter.
+     * <p>
+     * If this method is called multiple times, then the previous
+     * filters are overwritten and only the last filter is used.
+     * 
 	 * @param filter a {@link Predicate} instance that can be
 	 * used to filter out specified fastq records BY ID; can not be null. 
 	 * @return this.
+	 * 
 	 * @throws NullPointerException if filter is null.
+	 * 
+	 * @apiNote This is different than {@link #filterRecords(Predicate)}
+     * because the latter needs to parse the entire record before
+     * filtering can be determined while this filter only needs the ID. If you are only filtering
+     * by ID, use this method which may have better
+     * performance since the nucleotide and quality values don't have to be parsed
+     * on reads that aren't accepted by the id filter.
 	 * 
 	 * @see #filterRecord(Predicate)
 	 */
@@ -140,40 +147,45 @@ public final class FastqFileDataStoreBuilder{
 	}
 	
 	/**
-         * Only include the {@link FastqRecord}s which pass
-         * the given {@link Predicate}.  If no predicates
-         * are given to this builder, then all records
-         * in the fastq file will be included in the built
-         * {@link FastqDataStore}.
-         * <p>
-         * If both this method and {@link #filter(Predicate)} to filter by ID
-         * are used, then the ID filter is applied first
-         * and then any remaining records are filtered with this
-         * filter.
-         * <p>
-         * If this method is called multiple times, then the previous
-         * filters are overwritten and only the last filter is used.
-         * 
-         * @param filter a {@link Predicate} instance that can be
-         * used to filter out specified fastq records; can not be null. 
-         * 
-         * @return this.
-         * @throws NullPointerException if filter is null.
-         * 
-         * @apiNote This is different than {@link #filter(Predicate)}
-         * because the latter can only filter by ID. We had to keep the
-         * old version to maintain compatibility with old versions of Jillion
-         * 
-         * @since 5.0
-         * @see #filter(Predicate)
-         */
-        public FastqFileDataStoreBuilder filterRecords(Predicate<FastqRecord> filter){
-                if(filter==null){
-                        throw new NullPointerException("filter can not be null");
-                }
-                this.recordFilter = filter;
-                return this;
-        }
+     * Only include the {@link FastqRecord}s which pass
+     * the given {@link Predicate}.  If no predicates
+     * are given to this builder, then all records
+     * in the fastq file will be included in the built
+     * {@link FastqDataStore}.
+     * <p>
+     * If both this method and {@link #filter(Predicate)} to filter by ID
+     * are used, then the ID filter is applied first
+     * and then any remaining records are filtered with this
+     * filter.
+     * <p>
+     * If this method is called multiple times, then the previous
+     * filters are overwritten and only the last filter is used.
+     * 
+     * @param filter a {@link Predicate} instance that can be
+     * used to filter out specified fastq records; can not be null. 
+     * 
+     * @return this.
+     * @throws NullPointerException if filter is null.
+     * 
+     * @apiNote This is different than {@link #filter(Predicate)}
+     * because the latter can only filter by ID. If you are only filtering
+     * by ID, use {@link #filter(Predicate)} which may have better
+     * performance since the nucleotide and quality values don't have to be parsed
+     * on reads that aren't accepted by the id filter.
+     * <p>
+     * Also, we had to keep the
+     * old filter method to maintain compatibility with old versions of Jillion
+     * 
+     * @since 5.0
+     * @see #filter(Predicate)
+     */
+    public FastqFileDataStoreBuilder filterRecords(Predicate<FastqRecord> filter){
+            if(filter==null){
+                    throw new NullPointerException("filter can not be null");
+            }
+            this.recordFilter = filter;
+            return this;
+    }
 	/**
 	 * Provide a {@link DataStoreProviderHint} to this builder
 	 * to let it know the implementation preferences of the client.
