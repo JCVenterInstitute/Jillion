@@ -23,8 +23,8 @@ package org.jcvi.jillion.fasta.qual;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.function.Predicate;
 
-import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
@@ -72,7 +72,7 @@ public final class QualityFastaFileDataStoreBuilder extends AbstractFastaFileDat
 	
 	@Override
 	protected QualityFastaDataStore createNewInstance(FastaParser parser,
-			DataStoreProviderHint hint, DataStoreFilter filter)
+			DataStoreProviderHint hint,Predicate<String> filter)
 			throws IOException {
 		if(parser.isReadOnceOnly()){
 			return DefaultQualityFastaFileDataStore.create(parser,filter); 
@@ -95,8 +95,7 @@ public final class QualityFastaFileDataStoreBuilder extends AbstractFastaFileDat
 	 * {@inheritDoc}
 	 */
 	@Override
-	public QualityFastaFileDataStoreBuilder filter(
-			DataStoreFilter filter) {
+	public QualityFastaFileDataStoreBuilder filter(Predicate<String> filter) {
 		super.filter(filter);
 		return this;
 	}
@@ -106,8 +105,7 @@ public final class QualityFastaFileDataStoreBuilder extends AbstractFastaFileDat
 	 * {@inheritDoc}
 	 */
 	@Override
-	public QualityFastaFileDataStoreBuilder hint(
-			DataStoreProviderHint hint) {
+	public QualityFastaFileDataStoreBuilder hint(DataStoreProviderHint hint) {
 		super.hint(hint);
 		return this;
 	}

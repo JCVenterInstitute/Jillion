@@ -23,6 +23,7 @@ package org.jcvi.jillion.fasta.nt;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
@@ -71,7 +72,7 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	}
 	@Override
 	protected NucleotideFastaDataStore createNewInstance(
-			FastaParser parser, DataStoreProviderHint providerHint, DataStoreFilter filter)
+			FastaParser parser, DataStoreProviderHint providerHint, Predicate<String> filter)
 			throws IOException {
 		if(parser.isReadOnceOnly()){
 			return DefaultNucleotideFastaFileDataStore.create(parser,filter);	
@@ -95,8 +96,7 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	 * {@inheritDoc}
 	 */
 	@Override
-	public NucleotideFastaFileDataStoreBuilder filter(
-			DataStoreFilter filter) {
+	public NucleotideFastaFileDataStoreBuilder filter( Predicate<String> filter) {
 		super.filter(filter);
 		return this;
 	}
@@ -106,8 +106,7 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	 * {@inheritDoc}
 	 */
 	@Override
-	public NucleotideFastaFileDataStoreBuilder hint(
-			DataStoreProviderHint hint) {
+	public NucleotideFastaFileDataStoreBuilder hint(DataStoreProviderHint hint) {
 		super.hint(hint);
 		return this;
 	}

@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
@@ -57,22 +58,21 @@ final class DefaultNucleotideFastaFileDataStore{
 		//can not instantiate.
 	}
 
-	private static NucleotideFastaDataStoreBuilderVisitorImpl2 createBuilder(DataStoreFilter filter){
+	private static NucleotideFastaDataStoreBuilderVisitorImpl2 createBuilder(Predicate<String> filter){
 		return new NucleotideFastaDataStoreBuilderVisitorImpl2(filter);
 	}
 	
 	public static NucleotideFastaDataStore create(File fastaFile) throws IOException{
 		return create(fastaFile,DataStoreFilters.alwaysAccept());
 	}
-	public static NucleotideFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
+	public static NucleotideFastaDataStore create(File fastaFile, Predicate<String> filter) throws IOException{
 		
 		FastaParser parser = FastaFileParser.create(fastaFile);
 		
 		return create(parser, filter);
 	}
 
-	public static NucleotideFastaDataStore create(FastaParser parser,
-			DataStoreFilter filter) throws IOException {
+	public static NucleotideFastaDataStore create(FastaParser parser,Predicate<String> filter) throws IOException {
 		NucleotideFastaDataStoreBuilderVisitorImpl2 builder = createBuilder(filter);
 		parser.parse(builder);
 		return builder.build();
@@ -97,15 +97,15 @@ final class DefaultNucleotideFastaFileDataStore{
 
 		private final Map<String, NucleotideFastaRecord> fastaRecords = new LinkedHashMap<String, NucleotideFastaRecord>();
 		
-		private final DataStoreFilter filter;
+		private final Predicate<String> filter;
 		private final ReusableNucleotideFastaRecordVisitor currentVisitor = new ReusableNucleotideFastaRecordVisitor();
-		public NucleotideFastaDataStoreBuilderVisitorImpl2(DataStoreFilter filter){
+		public NucleotideFastaDataStoreBuilderVisitorImpl2(Predicate<String> filter){
 			this.filter = filter;
 		}
 		@Override
 		public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
 				final String id, String optionalComment) {
-			if(!filter.accept(id)){
+			if(!filter.test(id)){
 				return null;
 			}
 			currentVisitor.initialize(id, optionalComment);

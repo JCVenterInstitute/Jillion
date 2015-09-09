@@ -21,8 +21,8 @@
 package org.jcvi.jillion.internal.fasta.aa;
 
 import java.io.IOException;
+import java.util.function.Predicate;
 
-import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
@@ -35,19 +35,19 @@ import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterato
 final class LargeProteinFastaIterator extends AbstractBlockingStreamingIterator<ProteinFastaRecord>{
 
 	private final FastaParser parser;
-	private final DataStoreFilter filter;
+	private final Predicate<String> filter;
 	
 	public static LargeProteinFastaIterator createNewIteratorFor(FastaParser parser){
 		return createNewIteratorFor(parser, DataStoreFilters.alwaysAccept());
 	}
-	 public static LargeProteinFastaIterator createNewIteratorFor(FastaParser parser, DataStoreFilter filter){
+	 public static LargeProteinFastaIterator createNewIteratorFor(FastaParser parser, Predicate<String> filter){
 		 LargeProteinFastaIterator iter = new LargeProteinFastaIterator(parser, filter);
 				                                iter.start();			
 	    	
 	    	return iter;
 	    }
 	 
-	 private LargeProteinFastaIterator(FastaParser parser,DataStoreFilter filter){
+	 private LargeProteinFastaIterator(FastaParser parser,Predicate<String> filter){
 		 this.parser = parser;
 		 this.filter = filter;
 	 }
@@ -62,7 +62,7 @@ final class LargeProteinFastaIterator extends AbstractBlockingStreamingIterator<
 				public FastaRecordVisitor visitDefline(
 						final FastaVisitorCallback callback, String id,
 						String optionalComment) {
-					if(!filter.accept(id)){
+					if(!filter.test(id)){
 						return null;
 					}
 					

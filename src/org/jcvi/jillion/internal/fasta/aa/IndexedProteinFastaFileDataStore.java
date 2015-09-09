@@ -24,11 +24,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
@@ -84,7 +84,7 @@ public final class IndexedProteinFastaFileDataStore{
 	 * @throws FileNotFoundException if the input fasta file does not exist.
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
-	public static ProteinFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
+	public static ProteinFastaDataStore create(File fastaFile, Predicate<String> filter) throws IOException{
 		FastaParser parser = FastaFileParser.create(fastaFile);
 		return create(parser, filter);
 	}
@@ -101,7 +101,7 @@ public final class IndexedProteinFastaFileDataStore{
 	 * @throws FileNotFoundException if the input fasta file does not exist.
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
-	public static ProteinFastaDataStore create(FastaParser parser, DataStoreFilter filter) throws IOException{
+	public static ProteinFastaDataStore create(FastaParser parser, Predicate<String> filter) throws IOException{
 
 		IndexedProteinFastaDataStoreBuilderVisitor builder = new IndexedProteinFastaDataStoreBuilderVisitor(parser, filter);
 		builder.initialize();
@@ -114,12 +114,12 @@ public final class IndexedProteinFastaFileDataStore{
 	
 	private static final class IndexedProteinFastaDataStoreBuilderVisitor implements FastaVisitor, Builder<ProteinFastaDataStore> {
 	
-		private final DataStoreFilter filter;
+		private final Predicate<String> filter;
 		private final FastaParser parser;
 		
 		private final Map<String, FastaVisitorCallback.FastaVisitorMemento> mementos = new LinkedHashMap<String, FastaVisitorCallback.FastaVisitorMemento>();
 		
-		private IndexedProteinFastaDataStoreBuilderVisitor(FastaParser parser, DataStoreFilter filter) throws IOException {
+		private IndexedProteinFastaDataStoreBuilderVisitor(FastaParser parser, Predicate<String> filter) throws IOException {
 			this.filter = filter;
 			this.parser = parser;
 
@@ -133,7 +133,7 @@ public final class IndexedProteinFastaFileDataStore{
 		@Override
 		public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
 				String id, String optionalComment) {
-			if(filter.accept(id)){
+			if(filter.test(id)){
 				if(!callback.canCreateMemento()){
 					throw new IllegalStateException("must be able to create memento");
 				}
@@ -164,11 +164,11 @@ public final class IndexedProteinFastaFileDataStore{
 	public static final class Impl implements ProteinFastaDataStore {
 		private volatile boolean closed =false;
 		private final FastaParser parser;
-		private final DataStoreFilter filter;
+		private final Predicate<String> filter;
 		private final Map<String, FastaVisitorCallback.FastaVisitorMemento> mementos;
 		
 		
-		public Impl(FastaParser parser, DataStoreFilter filter, Map<String, FastaVisitorMemento> mementos) {
+		public Impl(FastaParser parser, Predicate<String> filter, Map<String, FastaVisitorMemento> mementos) {
 			this.parser = parser;
 			this.mementos = mementos;
 			this.filter = filter;

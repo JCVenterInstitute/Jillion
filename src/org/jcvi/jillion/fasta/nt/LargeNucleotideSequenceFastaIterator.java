@@ -22,8 +22,8 @@ package org.jcvi.jillion.fasta.nt;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.function.Predicate;
 
-import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.fasta.FastaFileParser;
 import org.jcvi.jillion.fasta.FastaParser;
@@ -40,20 +40,20 @@ import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterato
 final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreamingIterator<NucleotideFastaRecord>{
 
 	private final FastaParser parser;
-	private final DataStoreFilter filter;
+	private final Predicate<String> filter;
 	
-	 public static LargeNucleotideSequenceFastaIterator createNewIteratorFor(File fastaFile, DataStoreFilter filter) throws IOException{
+	 public static LargeNucleotideSequenceFastaIterator createNewIteratorFor(File fastaFile, Predicate<String> filter) throws IOException{
 		 return createNewIteratorFor(FastaFileParser.create(fastaFile), filter);				                               
 	    }
 	 
-	 public static LargeNucleotideSequenceFastaIterator createNewIteratorFor(FastaParser parser, DataStoreFilter filter) throws IOException{
+	 public static LargeNucleotideSequenceFastaIterator createNewIteratorFor(FastaParser parser, Predicate<String> filter) throws IOException{
 		 LargeNucleotideSequenceFastaIterator iter = new LargeNucleotideSequenceFastaIterator(parser, filter);
 				                                iter.start();			
 	    	
 	    	return iter;
 	    }
 	 
-	 private LargeNucleotideSequenceFastaIterator(FastaParser parser, DataStoreFilter filter){
+	 private LargeNucleotideSequenceFastaIterator(FastaParser parser, Predicate<String> filter){
 		 if(!parser.canParse()){
 			 throw new IllegalStateException("parser must still be able to parse fasta");
 		 }
@@ -72,7 +72,7 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 				public FastaRecordVisitor visitDefline(
 						final FastaVisitorCallback callback, String id,
 						String optionalComment) {
-					if(!filter.accept(id)){
+					if(!filter.test(id)){
 						return null;
 					}
 					recordVisitor.prepareNewRecord(callback, id, optionalComment);

@@ -21,12 +21,12 @@
 package org.jcvi.jillion.internal.fasta;
 
 import java.io.IOException;
+import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaDataStore;
@@ -40,7 +40,7 @@ import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F extends FastaRecord<T, S>> implements FastaDataStore<T,S,F>{
 
     private final FastaParser parser;
-    private final DataStoreFilter filter;
+    private final Predicate<String> filter;
     private Long size;
     private volatile boolean closed=false;
     
@@ -50,7 +50,7 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
      * @param fastaFile the Fasta File to use, can not be null.
      * @throws NullPointerException if fastaFile is null.
      */
-    protected AbstractLargeFastaFileDataStore(FastaParser parser, DataStoreFilter filter) {
+    protected AbstractLargeFastaFileDataStore(FastaParser parser, Predicate<String> filter) {
         if(parser ==null){
             throw new NullPointerException("fasta parser can not be null");
         }
@@ -121,7 +121,7 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
         			public FastaRecordVisitor visitDefline(
         					FastaVisitorCallback callback, String id,
         					String optionalComment) {
-        				if(filter.accept(id)){
+        				if(filter.test(id)){
         					numDeflines++;
         				}
         				//always skip since we only count deflines
@@ -160,7 +160,7 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
        
     }
 
-	protected abstract StreamingIterator<F> createNewIterator(FastaParser parser ,DataStoreFilter filter) throws DataStoreException;
+	protected abstract StreamingIterator<F> createNewIterator(FastaParser parser ,Predicate<String> filter) throws DataStoreException;
    
 
 	@Override

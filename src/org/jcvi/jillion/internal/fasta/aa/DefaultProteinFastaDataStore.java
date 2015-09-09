@@ -25,8 +25,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
-import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.util.Builder;
@@ -53,11 +53,11 @@ public final class DefaultProteinFastaDataStore{
 		DefaultProteinFastaDataStoreBuilder builder = createBuilder();
 		return parseFile(in, builder);
 	}
-	public static ProteinFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
+	public static ProteinFastaDataStore create(File fastaFile, Predicate<String> filter) throws IOException{
 		DefaultProteinFastaDataStoreBuilder builder = createBuilder(filter);
 		return parseFile(fastaFile, builder);
 	}
-	public static ProteinFastaDataStore create(FastaParser parser, DataStoreFilter filter) throws IOException{
+	public static ProteinFastaDataStore create(FastaParser parser, Predicate<String> filter) throws IOException{
 		DefaultProteinFastaDataStoreBuilder builder = createBuilder(filter);
 		return create(parser, builder);
 	}
@@ -65,7 +65,7 @@ public final class DefaultProteinFastaDataStore{
 		DefaultProteinFastaDataStoreBuilder builder = createBuilder();
 		return create(parser, builder);
 	}
-	public static ProteinFastaDataStore create(InputStream in, DataStoreFilter filter) throws IOException{
+	public static ProteinFastaDataStore create(InputStream in, Predicate<String> filter) throws IOException{
 		DefaultProteinFastaDataStoreBuilder builder = createBuilder(filter);
 		return parseFile(in, builder);
 	}
@@ -85,7 +85,7 @@ public final class DefaultProteinFastaDataStore{
 	private static DefaultProteinFastaDataStoreBuilder createBuilder(){
 		return createBuilder(DataStoreFilters.alwaysAccept());
 	}
-	private static DefaultProteinFastaDataStoreBuilder createBuilder(DataStoreFilter filter){
+	private static DefaultProteinFastaDataStoreBuilder createBuilder(Predicate<String> filter){
 		//return new DefaultAminoAcidSequenceFastaDataStoreBuilder(filter);
 		return new DefaultProteinFastaDataStoreBuilder(filter);
 	}
@@ -93,15 +93,15 @@ public final class DefaultProteinFastaDataStore{
 
 		private final Map<String, ProteinFastaRecord> fastaRecords = new LinkedHashMap<String, ProteinFastaRecord>();
 		
-		private final DataStoreFilter filter;
+		private final Predicate<String> filter;
 		
-		public DefaultProteinFastaDataStoreBuilder(DataStoreFilter filter){
+		public DefaultProteinFastaDataStoreBuilder(Predicate<String> filter){
 			this.filter = filter;
 		}
 		@Override
 		public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
 				final String id, String optionalComment) {
-			if(!filter.accept(id)){
+			if(!filter.test(id)){
 				return null;
 			}
 			return new AbstractProteinFastaRecordVisitor(id,optionalComment){
