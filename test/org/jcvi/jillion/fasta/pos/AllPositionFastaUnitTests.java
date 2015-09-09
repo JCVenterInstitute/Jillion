@@ -29,6 +29,7 @@ import org.junit.runners.Suite.SuiteClasses;
     {
     	
     	TestDefaultPositionFastaFileDataStore.class,
+    	TestLargePositionFastaFileDataStore.class,
     	TestDefaultPositionSequenceFastaRecordWriter.class
         
     }

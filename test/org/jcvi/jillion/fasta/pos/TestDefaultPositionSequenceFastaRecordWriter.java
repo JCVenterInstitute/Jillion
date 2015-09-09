@@ -20,6 +20,8 @@
  ******************************************************************************/
 package org.jcvi.jillion.fasta.pos;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,13 +31,9 @@ import java.nio.charset.Charset;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.fasta.pos.DefaultPositionFastaFileDataStore;
-import org.jcvi.jillion.fasta.pos.PositionFastaRecord;
-import org.jcvi.jillion.fasta.pos.PositionFastaWriter;
-import org.jcvi.jillion.fasta.pos.PositionFastaWriterBuilder;
+import org.jcvi.jillion.fasta.FastaFileParser;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestDefaultPositionSequenceFastaRecordWriter {
 
 	private final File peakFile;
@@ -44,7 +42,7 @@ public class TestDefaultPositionSequenceFastaRecordWriter {
 		ResourceHelper resources = new ResourceHelper(TestDefaultPositionSequenceFastaRecordWriter.class);
 		peakFile = resources.getFile("1119369023656.peak");
 		
-		fasta = DefaultPositionFastaFileDataStore.create(peakFile).get("1119369023656");
+		fasta = DefaultPositionFastaFileDataStore.create(FastaFileParser.create(peakFile), id->true, null).get("1119369023656");
 	}
 	
 	@Test

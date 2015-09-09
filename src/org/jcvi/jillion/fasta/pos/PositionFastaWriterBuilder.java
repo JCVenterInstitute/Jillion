@@ -26,7 +26,6 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.Comparator;
 
-import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.pos.Position;
 import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
@@ -159,8 +158,8 @@ public final class PositionFastaWriterBuilder extends AbstractBuilder<Position, 
 
 			@Override
 			protected StreamingIterator<PositionFastaRecord> createStreamingIteratorFor(
-					File tmpFastaFile) throws IOException, DataStoreException {
-				return DefaultPositionFastaFileDataStore.create(tmpFastaFile).iterator();
+					File tmpFastaFile) throws IOException {
+				return LargePositionFastaIterator.createNewIteratorFor(tmpFastaFile);
 			}
 
 			@Override
