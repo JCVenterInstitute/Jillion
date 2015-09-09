@@ -23,11 +23,69 @@ New Features
    to create the new individual writers and deconvolve() takes a second lambda which determines which
    "bin" the record will go to.
    
-3. FastaWriterBuilder and FastqWriterBuilder can now sort records using a Comparator.  Both in-memory only 
+3. FastqWriterBuilder and FastaWriterBuilders for Nucleotide, Protein, Quality and Position files 
+   can now sort records using a Comparator.  Both in-memory only 
    and using temp files to sort all the records are supported.  An additional overloaded
    sort() method takes a File object that is the directory to create the temp files in 
    (default directory is System temp).  Using the temp files to help with sorting
    allows the writing very large sorted output files that would not have been able to all fit in memory.
+   
+4. FastqFileDataStoreBuilder and FastaFileDataStoreBuilders for Nucleotide, Protein, Quality and Position files
+   can now filter ids by Predicate<String>.  Previously you had to implement the DataStoreFilter interface.
+
+5. FastqFileDataStoreBuilder and FastaFileDataStoreBuilders for Nucleotide, Protein, Quality and Position files
+   can now filter records by Predicate<FastqRecord> and Predicate<FastaRecord> respectively.
+   This allows you to very easily include/exclude records from the DataStore using criteria
+   other than the record id.  This also removes a lot of boilerplate code of iterating through the file
+   multiple times to make a second datastore of only the data you wanted.  
+   For example, to make a NucleotideFastaDatastore where the sequences are all > 1000bp:
+   
+   new NucleotideFastaFileDataStoreBuilder(fastaFile)
+						.filterRecords(record-> record.getSequence().getLength() >1000)
+						.build();
+						
+6. Changed DataStoreFilter, ReadFilter and SliceElementFilter to now have the parent interface Predicate<T> and changed
+   All the APIs that use these classes to take a Predicate instead.  
+   This lets you use lambda expressions anywhere a filter was used before which is much easier to read,
+   is fewer characters to write and allows filters to be more reusable.  For example:
+   
+   new ContigCoverageMapBuilder<>(contig)
+        			.filter(read -> read.getDirection() == Direction.FORWARD)
+        			.build()
+        			
+   will make a CoverageMap object that only contains forward reads.
+
+7. Created new GenomeStatistics class is a utility class for computing different
+    statistical measurements about genomes (for example N50).  It uses the new Java 8
+    Collector interface.  For example to compute the N50 of all the records in a Fasta file:
+    
+    try(NucleotideFastaDataStore datastore = new NucleotideFastaFileDataStoreBuilder(fastaFile)
+														.hint(DataStoreProviderHint.ITERATION_ONLY)
+														.build();
+			
+		Stream<NucleotideFastaRecord> stream = datastore.iterator().toStream();
+		){
+			OptionalInt n50Value = stream
+										.map(fasta -> fasta.getSequence().getLength())
+										.collect(GenomeStatistics.n50Collector());
+			
+			//return value is optional because there might not be any records!
+			if(n50Value.isPresent()){
+				System.out.println("N50 = " + n50Value.getAsInt());
+			}
+		}
+    
+8.  Created new CoverageMapCollectors class which is a utility class for creating
+    Java 8 Collector objects that create CoverageMap objects.  For example, 
+    if you had a contig and wanted a coverage map of the alignment locations of 
+    just the forward reads capped  to a max of 200x coverage the code would look like this:
+    
+    CoverageMap<Range> forwardCoverageMap200x = contig.reads()
+	 										         .filter(read -> read.getDirection() == Direction.FORWARD)
+	 										         .map(AssembledRead::asRange)
+	 										         .collect(CoverageMapCollectors.toCoverageMap(200));
+    
+   
 
 API Changes
 -----------
@@ -41,12 +99,25 @@ API Changes
    which returns the FastqQualityCodec object that was used to encode all the fastq records in the file.
    FastqFileBuilder objects have changed to return this new interface.
    
+4.  Added new method to Stream<T> Contig.reads() which returns a new Java 8 Stream of read of the appropriate type.
+    The Stream can then be used in any normal Java 8 Stream chain or as input to one of the new Jillion
+    Collectors described below.
+    
+5.  Added StreamingIterator.toStream() method which returns a Java 8 Stream<T> to easily
+    convert from Jillion StreamingIterators to the new Java 8 API.  The Stream still needs to be closed
+    so putting it inside a try-with-resource is still recommended.
+   
+6.  Changed Position Fasta package to conform to the same API as the other Fasta packages for 
+    nucleotides, proteins and qualities. There is now a PositionFastaFileDataStoreBuilder 
+    to make the datastores with the same filter and hint methods as the other similar builders.
+    All the previous DataStore implementation classes that used to be public are 
+    now package private.  Please use the PositionFastaFileDataStoreBuilder only.
 
 
 Bug Fixes
 ----------
 1. Generate 454 Universal Accession number did not
-   generate valid id if the location x,y coordinate was very small.
+   generate valid id if the location x,y coordinates were very small.
 
 ================
 Jillion 4.2
@@ -64,10 +135,8 @@ New Features
     are also non-redundant aware and will correctly only visit the subset of non-redundant records according to when
     the memento was created.
 
-3.  AminoAcid - Added Pyrrolysine 'O' to AminoAcid class and AminoAcidSequence
+2.  AminoAcid - Added Pyrrolysine 'O' to AminoAcid class and AminoAcidSequence
     as well as Blosum matrices. 
-    
-4.  FastaFileParser - now supports non-redundant fasta files (parsing only)
 
 Bug Fixes
 ----------
