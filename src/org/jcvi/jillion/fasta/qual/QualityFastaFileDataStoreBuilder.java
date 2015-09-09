@@ -109,6 +109,16 @@ public final class QualityFastaFileDataStoreBuilder extends AbstractFastaFileDat
 		super.hint(hint);
 		return this;
 	}
+	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public QualityFastaFileDataStoreBuilder filterRecords(Predicate<QualityFastaRecord> filter) {
+		super.filterRecords(filter);
+		return this;
+	}
 
 	/**
 	 * 
