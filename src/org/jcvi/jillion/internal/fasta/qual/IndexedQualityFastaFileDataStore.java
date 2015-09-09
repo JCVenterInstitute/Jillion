@@ -142,7 +142,21 @@ public final class IndexedQualityFastaFileDataStore{
 				if(!callback.canCreateMemento()){
 					throw new IllegalStateException("must be able to create memento");
 				}
-				mementos.put(id, callback.createMemento());
+				FastaVisitorMemento memento = callback.createMemento();
+				if(recordFilter==null){
+					mementos.put(id, memento);
+				}else{
+					return new AbstractQualityFastaRecordVisitor(id, optionalComment) {
+						
+						@Override
+						protected void visitRecord(QualityFastaRecord fastaRecord) {
+							if(recordFilter.test(fastaRecord)){
+								mementos.put(id, memento);
+							}
+							
+						}
+					};
+				}
 			}
 			//always skip records since we don't care about the details of any records
 			//during the initial parse

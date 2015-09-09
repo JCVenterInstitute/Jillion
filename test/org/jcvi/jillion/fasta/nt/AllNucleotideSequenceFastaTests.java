@@ -50,6 +50,7 @@ import org.junit.runners.Suite.SuiteClasses;
      
      
      TestNucleotideFastaFileDataStoreBuilder.class,
+     TestNucleotideFastaDataStoreBuilderWithLambdaRecordFilter.class,
      
      TestNucleotideFastaRecordWriter.class,
      

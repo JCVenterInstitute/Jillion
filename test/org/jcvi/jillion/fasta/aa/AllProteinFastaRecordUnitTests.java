@@ -35,6 +35,7 @@ import org.junit.runners.Suite.SuiteClasses;
     	TestIndexedProteinFastaFileDataStore.class,
     	
     	TestProteinFastaFileDataStoreBuilder.class,
+    	TestProteinFastaDataStoreBuilderWithLambdaRecordFilter.class,
     	
     	TestDefaultProteinFastaRecordWriter.class
     }

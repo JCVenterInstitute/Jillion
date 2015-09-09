@@ -41,6 +41,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestQualityFastaFileDataStoreBuilder.class,
         
         TestQualityFastaFileDataStoreBuilder.class,
+        TestQualityFastaDataStoreUsingLambdas.class,
         
         TestQualityFastaWriter.class
     }
