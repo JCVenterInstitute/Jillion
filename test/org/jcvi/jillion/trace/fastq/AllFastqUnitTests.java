@@ -68,6 +68,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestTmpDirSingleFileSortedFastqWriter.class,
         TestTmpDirOneFilePerReadSortedFastqWriter.class,
         
+        TestFastqFileBuilderWithLambdaFilter.class,
         
         TestSplitFastqRoundRobin.class,
         TestSplitFastqRollover.class,

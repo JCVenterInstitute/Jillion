@@ -22,8 +22,8 @@ package org.jcvi.jillion.trace.fastq;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.function.Predicate;
 
-import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 /**
@@ -37,7 +37,13 @@ import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 public final class FastqFileDataStoreBuilder{
 	private final FastqParser parser;
 	
-	private DataStoreFilter filter = DataStoreFilters.alwaysAccept();
+	private Predicate<String> idFilter = (id)-> true;
+	//default to null which we can use
+	//in the datastore implementations as a short circuit
+	//to skip building records if we don't need to 
+	//(for example for id  iterator or memento only filtering)
+	private Predicate<FastqRecord> recordFilter = null;
+	
 	//by default store everything in memory
 	private DataStoreProviderHint hint = DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_SPEED;
 	
@@ -105,22 +111,69 @@ public final class FastqFileDataStoreBuilder{
 	}
 	/**
 	 * Only include the {@link FastqRecord}s which pass
-	 * the given {@link DataStoreFilter}.  If a filter
+	 * the given {@link Predicate} for the ID.  If a filter
 	 * is not given to this builder, then all records
 	 * in the fastq file will be included in the built
 	 * {@link FastqDataStore}.
-	 * @param filter a {@link DataStoreFilter} instance that can be
-	 * used to filter out specified fastq records; can not be null. 
+	 * <p>
+         * If both this method and {@link #filter(Predicate)}
+         * are used, then the ID filter is applied first
+         * and then any remaining records are filtered with this
+         * filter.
+         * <p>
+         * If this method is called multiple times, then the previous
+         * filters are overwritten and only the last filter is used.
+         * 
+	 * @param filter a {@link Predicate} instance that can be
+	 * used to filter out specified fastq records BY ID; can not be null. 
 	 * @return this.
 	 * @throws NullPointerException if filter is null.
+	 * 
+	 * @see #filterRecord(Predicate)
 	 */
-	public FastqFileDataStoreBuilder filter(DataStoreFilter filter){
+	public FastqFileDataStoreBuilder filter(Predicate<String> filter){
 		if(filter==null){
 			throw new NullPointerException("filter can not be null");
 		}
-		this.filter = filter;
+		this.idFilter = filter;
 		return this;
 	}
+	
+	/**
+         * Only include the {@link FastqRecord}s which pass
+         * the given {@link Predicate}.  If no predicates
+         * are given to this builder, then all records
+         * in the fastq file will be included in the built
+         * {@link FastqDataStore}.
+         * <p>
+         * If both this method and {@link #filter(Predicate)} to filter by ID
+         * are used, then the ID filter is applied first
+         * and then any remaining records are filtered with this
+         * filter.
+         * <p>
+         * If this method is called multiple times, then the previous
+         * filters are overwritten and only the last filter is used.
+         * 
+         * @param filter a {@link Predicate} instance that can be
+         * used to filter out specified fastq records; can not be null. 
+         * 
+         * @return this.
+         * @throws NullPointerException if filter is null.
+         * 
+         * @apiNote This is different than {@link #filter(Predicate)}
+         * because the latter can only filter by ID. We had to keep the
+         * old version to maintain compatibility with old versions of Jillion
+         * 
+         * @since 5.0
+         * @see #filter(Predicate)
+         */
+        public FastqFileDataStoreBuilder filterRecords(Predicate<FastqRecord> filter){
+                if(filter==null){
+                        throw new NullPointerException("filter can not be null");
+                }
+                this.recordFilter = filter;
+                return this;
+        }
 	/**
 	 * Provide a {@link DataStoreProviderHint} to this builder
 	 * to let it know the implementation preferences of the client.
@@ -200,11 +253,11 @@ public final class FastqFileDataStoreBuilder{
 		}
 		switch(hint){
 			case RANDOM_ACCESS_OPTIMIZE_SPEED:
-				return DefaultFastqFileDataStore.create(parser, codec, filter);
+				return DefaultFastqFileDataStore.create(parser, codec, idFilter, recordFilter);
 			case RANDOM_ACCESS_OPTIMIZE_MEMORY:
-				return IndexedFastqFileDataStore.create(parser,  codec, filter);
+				return IndexedFastqFileDataStore.create(parser,  codec, idFilter, recordFilter);
 			case ITERATION_ONLY:
-				return LargeFastqFileDataStore.create(parser, codec, filter);
+				return LargeFastqFileDataStore.create(parser, codec, idFilter, recordFilter);
 			default:
 				//can not happen
 				throw new IllegalArgumentException("unknown provider hint : "+ hint);

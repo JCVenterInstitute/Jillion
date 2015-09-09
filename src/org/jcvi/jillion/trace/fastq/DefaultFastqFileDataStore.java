@@ -29,8 +29,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
-import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.util.Builder;
@@ -84,8 +84,8 @@ final class DefaultFastqFileDataStore{
 	 * @param fastqFile
 	 *            the fastq file to parse, must exist and can not be null.
 	 * @param filter
-	 *            an instance of {@link DataStoreFilter} that can be used to filter
-	 *            out some {@link FastqRecord}s from the datastore.
+	 *            an instance of {@link Predicate}  that can be used to filter
+	 *            out some {@link FastqRecord}s from the datastore by their ID.
 	 * @param qualityCodec
 	 *            the {@link FastqQualityCodec} needed to parse the encoded
 	 *            quality values in each record. If this value is null, then the
@@ -98,9 +98,9 @@ final class DefaultFastqFileDataStore{
 	 * @throws NullPointerException
 	 *             if either fastqFile or filter is null.
 	 */
-   public static FastqFileDataStore create(File fastqFile, DataStoreFilter filter,FastqQualityCodec qualityCodec) throws IOException{
+   public static FastqFileDataStore create(File fastqFile, Predicate<String> filter,FastqQualityCodec qualityCodec) throws IOException{
 	   FastqParser parser = FastqFileParser.create(fastqFile);
-	   return create(parser, qualityCodec, filter);
+	   return create(parser, qualityCodec, filter, null);
    }
 
    /**
@@ -129,9 +129,9 @@ final class DefaultFastqFileDataStore{
 	 *             if either fastqFile or filter is null.
 	 */
 	public static FastqFileDataStore create(FastqParser parser,
-			FastqQualityCodec qualityCodec, DataStoreFilter filter)
+			FastqQualityCodec qualityCodec, Predicate<String> filter, Predicate<FastqRecord> recordFilter)
 			throws IOException {
-		DefaultFastqFileDataStoreBuilderVisitor2 visitor = new DefaultFastqFileDataStoreBuilderVisitor2(qualityCodec,filter);
+		DefaultFastqFileDataStoreBuilderVisitor2 visitor = new DefaultFastqFileDataStoreBuilderVisitor2(qualityCodec,filter, recordFilter);
 		   
 		   parser.parse(visitor);
 
@@ -139,33 +139,38 @@ final class DefaultFastqFileDataStore{
 	}
     
 	private static final class DefaultFastqFileDataStoreBuilderVisitor2 implements FastqVisitor, Builder<FastqFileDataStore> {
-		private final DataStoreFilter filter;
+		private final Predicate<String> filter;
+		private final Predicate<FastqRecord> recordFilter;
 		private final FastqQualityCodec qualityCodec;
 		private final Map<String, FastqRecord> map = new LinkedHashMap<>();
 
 		public DefaultFastqFileDataStoreBuilderVisitor2(
-				FastqQualityCodec qualityCodec, DataStoreFilter filter) {
+				FastqQualityCodec qualityCodec, Predicate<String> filter, Predicate<FastqRecord> recordFilter) {
 			if(qualityCodec==null){
 				throw new NullPointerException("quality codec can not be null");
 			}
 			if(filter==null){
 				throw new NullPointerException("filter can not be null");
 			}
+			
 			this.qualityCodec = qualityCodec;
 			this.filter = filter;
+			this.recordFilter = recordFilter;
 		}
 
 		@Override
 		public FastqRecordVisitor visitDefline(FastqVisitorCallback callback,
 				String id, String optionalComment) {
-			if(!filter.accept(id)){
+			if(!filter.test(id)){
 				return null;
 			}
 			return new AbstractFastqRecordVisitor(id,optionalComment, qualityCodec) {
 				
 				@Override
 				protected void visitRecord(FastqRecord record) {
-					map.put(record.getId(), record);					
+				    if(recordFilter==null || recordFilter.test(record)){
+					map.put(record.getId(), record);	
+				    }
 				}
 			};
 		}
