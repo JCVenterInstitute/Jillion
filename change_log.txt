@@ -21,7 +21,7 @@ New Features
    different Writer implementations that split up writing records to different files using different
    strategies.  roundRobin(), rollover() and deconvolve() each method takes a lambda function
    to create the new individual writers and deconvolve() takes a second lambda which determines which
-   "bin" the record will go to.
+   output file the record will go to.
    
 3. FastqWriterBuilder and FastaWriterBuilders for Nucleotide, Protein, Quality and Position files 
    can now sort records using a Comparator.  Both in-memory only 
