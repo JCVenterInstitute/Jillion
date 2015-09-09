@@ -39,8 +39,12 @@ import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 
 public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F extends FastaRecord<T, S>> implements FastaDataStore<T,S,F>{
 
+    
+
+
     private final FastaParser parser;
     private final Predicate<String> filter;
+    private final Predicate<F> recordFilter;
     private Long size;
     private volatile boolean closed=false;
     
@@ -50,7 +54,7 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
      * @param fastaFile the Fasta File to use, can not be null.
      * @throws NullPointerException if fastaFile is null.
      */
-    protected AbstractLargeFastaFileDataStore(FastaParser parser, Predicate<String> filter) {
+    protected AbstractLargeFastaFileDataStore(FastaParser parser, Predicate<String> filter, Predicate<F> recordFilter) {
         if(parser ==null){
             throw new NullPointerException("fasta parser can not be null");
         }
@@ -59,6 +63,7 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
         }
         this.filter =filter;
         this.parser = parser;
+        this.recordFilter = recordFilter;
     }
     
     private void checkNotYetClosed(){
@@ -106,46 +111,33 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
     @Override
     public StreamingIterator<String> idIterator() throws DataStoreException {
         checkNotYetClosed();
-        return DataStoreStreamingIterator.create(this,LargeFastaIdIterator.createNewIteratorFor(parser,filter));
+        if(recordFilter==null){
+            return DataStoreStreamingIterator.create(this,LargeFastaIdIterator.createNewIteratorFor(parser,filter));
+        }
         
+        return new AdditionalRecordFilteringIdIterator(iterator());
     }
 
     @Override
     public synchronized long getNumberOfRecords() throws DataStoreException {
         checkNotYetClosed();
         if(size ==null){
-            try {
-            	FastaVisitor visitor = new FastaVisitor(){
-        			long numDeflines=0L;
-        			@Override
-        			public FastaRecordVisitor visitDefline(
-        					FastaVisitorCallback callback, String id,
-        					String optionalComment) {
-        				if(filter.test(id)){
-        					numDeflines++;
-        				}
-        				//always skip since we only count deflines
-        				return null;
-        			}
-
-        			@Override
-        			public void visitEnd() {
-        				//no-op
-        				size = Long.valueOf(numDeflines);
-        			}
-        			@Override
-        			public void halted() {
-        				//this shouldn't happen
-        				//throw an exception so we don't
-        				//return a null value or try 
-        				//to reparse the size 
-        				//next time it's asked 
-        				throw new IllegalStateException("parser was halted when trying to compute size");		
-        			}
-        		};      
-        		parser.parse(visitor);
-            } catch (IOException e) {
-                throw new IllegalStateException("could not get record count",e);
+            if(recordFilter ==null){
+                try {
+                	FastaVisitor visitor = new NoAdditionalRecordFilteringSizeCounter();      
+            		parser.parse(visitor);
+                } catch (IOException e) {
+                    throw new IllegalStateException("could not get record count",e);
+                }
+            }else{
+                long temp=0;
+                try(StreamingIterator<F> iter = iterator()){
+                    while(iter.hasNext()){
+                        iter.next();
+                        temp++;
+                    }
+                }
+                size= temp;
             }
         }   
         return size;
@@ -156,11 +148,11 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
     @Override
     public final StreamingIterator<F> iterator() throws DataStoreException {
         checkNotYetClosed();
-        return createNewIterator(parser,filter);
+        return createNewIterator(parser,filter, recordFilter);
        
     }
 
-	protected abstract StreamingIterator<F> createNewIterator(FastaParser parser ,Predicate<String> filter) throws DataStoreException;
+	protected abstract StreamingIterator<F> createNewIterator(FastaParser parser ,Predicate<String> filter, Predicate<F> recordIterator) throws DataStoreException;
    
 
 	@Override
@@ -193,5 +185,60 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
 		};
 	}
 
+	private final class NoAdditionalRecordFilteringSizeCounter implements FastaVisitor {
+	        long numDeflines=0L;
+
+	        @Override
+	        public FastaRecordVisitor visitDefline(
+	                        FastaVisitorCallback callback, String id,
+	                        String optionalComment) {
+	                if(filter.test(id)){                                       
+	                        numDeflines++;
+	                }
+	                
+	                return null;
+	                
+	        }
+
+	        @Override
+	        public void visitEnd() {
+	                //no-op
+	                size = Long.valueOf(numDeflines);
+	        }
+
+	        @Override
+	        public void halted() {
+	                //this shouldn't happen
+	                //throw an exception so we don't
+	                //return a null value or try 
+	                //to reparse the size 
+	                //next time it's asked 
+	                throw new IllegalStateException("parser was halted when trying to compute size");               
+	        }
+	    }
+	
+	private final class AdditionalRecordFilteringIdIterator implements StreamingIterator<String> {
+	        private final StreamingIterator<F> iter;
+
+            @Override
+            public boolean hasNext() {
+                return iter.hasNext();
+            }
+
+            @Override
+            public void close() {
+               iter.close();
+            }
+
+            @Override
+            public String next() {
+                return iter.next().getId();
+            }
+
+            public AdditionalRecordFilteringIdIterator(StreamingIterator<F> iter) {
+                this.iter = iter;
+            }
+	        
+	    }
    
 }

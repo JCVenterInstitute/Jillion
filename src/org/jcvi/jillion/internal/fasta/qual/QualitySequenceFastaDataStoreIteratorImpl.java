@@ -37,16 +37,16 @@ public class QualitySequenceFastaDataStoreIteratorImpl extends AbstractBlockingS
 	
 	private final FastaParser parser;
 	private final Predicate<String> filter;
+	private final Predicate<QualityFastaRecord> recordFilter;
 	
-	
-	public static StreamingIterator<QualityFastaRecord> createIteratorFor(FastaParser parser, Predicate<String> filter){
+	public static StreamingIterator<QualityFastaRecord> createIteratorFor(FastaParser parser, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter){
 		
-		QualitySequenceFastaDataStoreIteratorImpl iter = new QualitySequenceFastaDataStoreIteratorImpl(parser, filter);
+		QualitySequenceFastaDataStoreIteratorImpl iter = new QualitySequenceFastaDataStoreIteratorImpl(parser, filter, recordFilter);
 		iter.start();
 		return iter;
 	}
 	
-	public QualitySequenceFastaDataStoreIteratorImpl( FastaParser parser, Predicate<String> filter) {
+	public QualitySequenceFastaDataStoreIteratorImpl( FastaParser parser, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter) {
 		if(parser ==null){
 			throw new NullPointerException("parser can not be null");
 		}
@@ -55,6 +55,7 @@ public class QualitySequenceFastaDataStoreIteratorImpl extends AbstractBlockingS
 		}
 		this.parser = parser;
 		this.filter =filter;
+		this.recordFilter = recordFilter;
 	}
 	/**
     * {@inheritDoc}
@@ -70,7 +71,9 @@ public class QualitySequenceFastaDataStoreIteratorImpl extends AbstractBlockingS
 				QualityFastaRecord record = new QualityFastaRecordBuilder(id,fullBody)
 														.comment(optionalComment)
 														.build();
-				blockingPut(record);
+				if(recordFilter ==null || recordFilter.test(record)){
+				    blockingPut(record);
+				}
 				
 			}
 

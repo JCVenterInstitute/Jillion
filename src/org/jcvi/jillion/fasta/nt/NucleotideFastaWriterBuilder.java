@@ -446,7 +446,7 @@ public final class NucleotideFastaWriterBuilder extends AbstractResidueFastaWrit
 			@Override
 			protected StreamingIterator<NucleotideFastaRecord> createStreamingIteratorFor(
 					File tmpFastaFile) throws IOException, DataStoreException {
-				return LargeNucleotideSequenceFastaIterator.createNewIteratorFor(tmpFastaFile, DataStoreFilters.alwaysAccept());
+				return LargeNucleotideSequenceFastaIterator.createNewIteratorFor(tmpFastaFile, DataStoreFilters.alwaysAccept(),null);
 			}
 
 			@Override

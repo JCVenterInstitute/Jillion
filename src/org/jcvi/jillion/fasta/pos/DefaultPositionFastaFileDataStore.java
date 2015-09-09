@@ -42,12 +42,12 @@ public final class DefaultPositionFastaFileDataStore {
 		//can not instantiate
 	}
 	public static PositionFastaDataStore create(File fastaFile, DataStoreFilter filter) throws IOException{
-		DefaultQualityFastaFileDataStoreBuilder builder = new DefaultQualityFastaFileDataStoreBuilder(filter);
+		DefaultPositionFastaFileDataStoreBuilder builder = new DefaultPositionFastaFileDataStoreBuilder(filter);
 		FastaFileParser.create(fastaFile).parse(builder);
     	return builder.build();
 	}
 	public static PositionFastaDataStore create(InputStream positionFastaInputStream, DataStoreFilter filter) throws IOException{
-		DefaultQualityFastaFileDataStoreBuilder builder = new DefaultQualityFastaFileDataStoreBuilder(filter);
+		DefaultPositionFastaFileDataStoreBuilder builder = new DefaultPositionFastaFileDataStoreBuilder(filter);
 		FastaFileParser.create(positionFastaInputStream).parse(builder);
     	return builder.build();
 	}
@@ -59,13 +59,13 @@ public final class DefaultPositionFastaFileDataStore {
 	}
 
 	
-	private static class DefaultQualityFastaFileDataStoreBuilder implements FastaVisitor, Builder<PositionFastaDataStore>{
+	private static class DefaultPositionFastaFileDataStoreBuilder implements FastaVisitor, Builder<PositionFastaDataStore>{
 
 		private final Map<String, PositionFastaRecord> fastaRecords = new LinkedHashMap<String, PositionFastaRecord>();
 		
 		private final Predicate<String> filter;
 		
-		public DefaultQualityFastaFileDataStoreBuilder(Predicate<String> filter){
+		public DefaultPositionFastaFileDataStoreBuilder(Predicate<String> filter){
 			this.filter = filter;
 		}
 		@Override

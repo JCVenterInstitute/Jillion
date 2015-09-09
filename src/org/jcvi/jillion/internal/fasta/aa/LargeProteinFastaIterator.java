@@ -36,20 +36,22 @@ final class LargeProteinFastaIterator extends AbstractBlockingStreamingIterator<
 
 	private final FastaParser parser;
 	private final Predicate<String> filter;
+	private final  Predicate<ProteinFastaRecord> recordFilter;
 	
 	public static LargeProteinFastaIterator createNewIteratorFor(FastaParser parser){
-		return createNewIteratorFor(parser, DataStoreFilters.alwaysAccept());
+		return createNewIteratorFor(parser, DataStoreFilters.alwaysAccept(),null);
 	}
-	 public static LargeProteinFastaIterator createNewIteratorFor(FastaParser parser, Predicate<String> filter){
-		 LargeProteinFastaIterator iter = new LargeProteinFastaIterator(parser, filter);
+	 public static LargeProteinFastaIterator createNewIteratorFor(FastaParser parser, Predicate<String> filter,  Predicate<ProteinFastaRecord> recordFilter){
+		 LargeProteinFastaIterator iter = new LargeProteinFastaIterator(parser, filter, recordFilter);
 				                                iter.start();			
 	    	
 	    	return iter;
 	    }
 	 
-	 private LargeProteinFastaIterator(FastaParser parser,Predicate<String> filter){
+	 private LargeProteinFastaIterator(FastaParser parser,Predicate<String> filter,  Predicate<ProteinFastaRecord> recordFilter){
 		 this.parser = parser;
 		 this.filter = filter;
+		 this.recordFilter = recordFilter;
 	 }
 	 /**
 	    * {@inheritDoc}
@@ -70,11 +72,12 @@ final class LargeProteinFastaIterator extends AbstractBlockingStreamingIterator<
 						
 						@Override
 						protected void visitRecord(ProteinFastaRecord fastaRecord) {
+						    if(recordFilter ==null || recordFilter.test(fastaRecord)){
 							blockingPut(fastaRecord);
 							if(LargeProteinFastaIterator.this.isClosed()){
 								callback.haltParsing();
 							}
-							
+						    }
 						}
 					};
 				}

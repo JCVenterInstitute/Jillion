@@ -41,24 +41,26 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 
 	private final FastaParser parser;
 	private final Predicate<String> filter;
+	private final Predicate<NucleotideFastaRecord> recordFilter;
 	
-	 public static LargeNucleotideSequenceFastaIterator createNewIteratorFor(File fastaFile, Predicate<String> filter) throws IOException{
-		 return createNewIteratorFor(FastaFileParser.create(fastaFile), filter);				                               
+	 public static LargeNucleotideSequenceFastaIterator createNewIteratorFor(File fastaFile, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter) throws IOException{
+		 return createNewIteratorFor(FastaFileParser.create(fastaFile), filter, recordFilter);				                               
 	    }
 	 
-	 public static LargeNucleotideSequenceFastaIterator createNewIteratorFor(FastaParser parser, Predicate<String> filter) throws IOException{
-		 LargeNucleotideSequenceFastaIterator iter = new LargeNucleotideSequenceFastaIterator(parser, filter);
+	 public static LargeNucleotideSequenceFastaIterator createNewIteratorFor(FastaParser parser, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter) throws IOException{
+		 LargeNucleotideSequenceFastaIterator iter = new LargeNucleotideSequenceFastaIterator(parser, filter, recordFilter);
 				                                iter.start();			
 	    	
 	    	return iter;
 	    }
 	 
-	 private LargeNucleotideSequenceFastaIterator(FastaParser parser, Predicate<String> filter){
+	 private LargeNucleotideSequenceFastaIterator(FastaParser parser, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter){
 		 if(!parser.canParse()){
 			 throw new IllegalStateException("parser must still be able to parse fasta");
 		 }
 		 this.parser = parser;
 		 this.filter = filter;
+		 this.recordFilter = recordFilter;
 	 }
 	 /**
 	    * {@inheritDoc}
@@ -66,7 +68,7 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 	    @Override
 	    protected void backgroundThreadRunMethod() {
 	    	FastaVisitor visitor = new FastaVisitor(){
-	    		NucleotideFastaRecordVisitor recordVisitor = new NucleotideFastaRecordVisitor();
+	    		NucleotideFastaRecordVisitor recordVisitor = new NucleotideFastaRecordVisitor(recordFilter);
 		    	
 				@Override
 				public FastaRecordVisitor visitDefline(
@@ -101,6 +103,11 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 			private String currentComment;
 			private NucleotideSequenceBuilder builder;
 			private FastaVisitorCallback callback;
+			private final Predicate<NucleotideFastaRecord> recordFilter;
+			
+			public NucleotideFastaRecordVisitor(Predicate<NucleotideFastaRecord> recordFilter){
+			    this.recordFilter = recordFilter;
+			}
 			public void prepareNewRecord(FastaVisitorCallback callback, String id, String optionalComment){
 				this.currentId = id;
 				this.currentComment = optionalComment;
@@ -118,10 +125,13 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 				NucleotideFastaRecord fastaRecord = new NucleotideFastaRecordBuilder(currentId,builder.build())
 														.comment(currentComment)
 														.build();
-				blockingPut(fastaRecord);
-				if(LargeNucleotideSequenceFastaIterator.this.isClosed()){
-					callback.haltParsing();
-				}
+                                if (recordFilter == null || recordFilter.test(fastaRecord)) {
+                                    blockingPut(fastaRecord);
+                                    if (LargeNucleotideSequenceFastaIterator.this.isClosed()) {
+                                        callback.haltParsing();
+                                    }
+                                }
+				
 				
 			}
 			@Override
