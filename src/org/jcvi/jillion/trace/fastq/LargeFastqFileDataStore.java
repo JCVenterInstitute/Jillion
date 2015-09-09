@@ -27,6 +27,7 @@ package org.jcvi.jillion.trace.fastq;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreEntry;
@@ -57,7 +58,8 @@ final class LargeFastqFileDataStore implements FastqFileDataStore {
     
     private Long size=null;
     private volatile boolean closed;
-    private final DataStoreFilter filter;
+    private final Predicate<String> filter;
+    private final Predicate<FastqRecord> recordFilter;
     
     /**
      * Create a new {@link FastqDataStore} instance for the given
@@ -92,8 +94,8 @@ final class LargeFastqFileDataStore implements FastqFileDataStore {
      * (if provided)
      * @param fastqFile the fastq file to create a {@link FastqDataStore}
      * for (can not be null, and must exist).
-     * @param filter the {@link DataStoreFilter} used to filter out records
-     * from the datastore. If this value is null,
+     * @param filter the {@link Predicate} used to filter out records
+     * from the datastore by ID. If this value is null,
      * then all records in the file will be included in the datastore.
      * @param qualityCodec the {@link FastqQualityCodec} that should be used
      * to decode the fastq file.  If this value is null, then 
@@ -103,35 +105,13 @@ final class LargeFastqFileDataStore implements FastqFileDataStore {
      * @throws FileNotFoundException if the given Fastq file does not exist.
      * @throws NullPointerException if fastqFile is null.
      */
-    public static FastqFileDataStore create(File fastqFile, FastqQualityCodec qualityCodec, DataStoreFilter filter) throws IOException{
+    public static FastqFileDataStore create(File fastqFile, FastqQualityCodec qualityCodec, Predicate<String> filter) throws IOException{
     	if(fastqFile==null){
     		throw new NullPointerException("fastq file can not be null");
     	} 
-    	return new LargeFastqFileDataStore(FastqFileParser.create(fastqFile), qualityCodec,filter);
+    	return new LargeFastqFileDataStore(FastqFileParser.create(fastqFile), qualityCodec,filter, record->true);
     }
-    
-    /**
-     * Create a new {@link FastqDataStore} instance for the given
-     * fastqFile which will contain all the
-     * records in the file.  This implementation will use the given
-     * {@link FastqQualityCodec} to decode the qualities of the fastq record
-     * (if provided)This should return
-     * the same data store implementation as
-     * {@link #create(File, DataStoreFilter, FastqQualityCodec) create(fastqFile, qualityCodec, DataStoreFilters.alwaysAccept())}
-     * @param parser the {@link FastqParser} instance
-     * that will parse some fastq data source that will be parsed
-     * to create a {@link FastqDataStore}; (can not be null, and must exist).
-     * @param qualityCodec the {@link FastqQualityCodec} that should be used
-     * to decode the fastq file.  If this value is null, then 
-     * the datastore implementation will try to guess the codec used which might
-     * have a performance penalty associated with it.
-     * @return a new {@link FastqDataStore} instance, will never be null.
-     * @throws NullPointerException if either parameter is null.
-     * @see #create(FastqFileParser,FastqQualityCodec,  DataStoreFilter)
-     */
-    public static FastqFileDataStore create(FastqParser parser, FastqQualityCodec qualityCodec) throws IOException{
-    	return create(parser, qualityCodec, DataStoreFilters.alwaysAccept());
-    }
+  
     /**
      * Create a new {@link FastqDataStore} instance for the given
      * {@link FastqParser} which will only contain all the
@@ -142,7 +122,7 @@ final class LargeFastqFileDataStore implements FastqFileDataStore {
      * @param parser the {@link FastqParser} instance
      * that will parse some fastq data source that will be parsed
      * to create a {@link FastqDataStore}; (can not be null, and must exist).
-     * @param filter the {@link DataStoreFilter} used to filter out records
+     * @param filter the {@link Predicate} used to filter out records
      * from the datastore. If this value is null,
      * then all records in the file will be included in the datastore.
      * @param qualityCodec the {@link FastqQualityCodec} that should be used
@@ -152,24 +132,26 @@ final class LargeFastqFileDataStore implements FastqFileDataStore {
      * @return a new {@link FastqDataStore} instance, will never be null.
      * @throws NullPointerException if any parameter is null.
      */
-    public static FastqFileDataStore create(FastqParser parser, FastqQualityCodec qualityCodec, DataStoreFilter filter) throws IOException{
+    public static FastqFileDataStore create(FastqParser parser, FastqQualityCodec qualityCodec, Predicate<String> filter, Predicate<FastqRecord> recordFilter) throws IOException{
     	
-    	return new LargeFastqFileDataStore(parser, qualityCodec,filter);
+    	return new LargeFastqFileDataStore(parser, qualityCodec,filter, recordFilter);
     }
     /**
      * @param qualityCodec
      * @throws FileNotFoundException 
      */
-    private LargeFastqFileDataStore(FastqParser parser, FastqQualityCodec qualityCodec,DataStoreFilter filter) throws IOException {
+    private LargeFastqFileDataStore(FastqParser parser, FastqQualityCodec qualityCodec,Predicate<String> filter, Predicate<FastqRecord> recordFilter) throws IOException {
     	if(parser==null){
     		throw new NullPointerException("parser can not be null");
     	}    	
     	if(filter==null){
     		throw new NullPointerException("filter can not be null");
     	}
+    	
     	this.parser = parser;
     	this.filter = filter;
-        this.qualityCodec = qualityCodec;    
+        this.qualityCodec = qualityCodec;   
+        this.recordFilter = recordFilter;
     }
 
     @Override
@@ -192,7 +174,7 @@ final class LargeFastqFileDataStore implements FastqFileDataStore {
     @Override
     public synchronized boolean contains(String id) throws DataStoreException {
         throwExceptionIfClosed();
-        if(!filter.accept(id)){
+        if(!filter.test(id)){
         	return false;
         }
         StreamingIterator<FastqRecord> iter =null;        
@@ -218,7 +200,7 @@ final class LargeFastqFileDataStore implements FastqFileDataStore {
     @Override
     public synchronized FastqRecord get(String id) throws DataStoreException {
     	 throwExceptionIfClosed();
-        if(!filter.accept(id)){
+        if(!filter.test(id)){
         	return null;
         }
         StreamingIterator<FastqRecord> iter =null;
@@ -240,9 +222,9 @@ final class LargeFastqFileDataStore implements FastqFileDataStore {
     @Override
     public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
         throwExceptionIfClosed();
-        FastqIdIterator iterator = new FastqIdIterator(filter);
+        FastqIdIterator iterator = new FastqIdIterator();
         iterator.start();
-		return DataStoreStreamingIterator.create(this,iterator);        
+	return DataStoreStreamingIterator.create(this,iterator);        
     }
 
     @Override
@@ -263,7 +245,7 @@ final class LargeFastqFileDataStore implements FastqFileDataStore {
     @Override
     public synchronized StreamingIterator<FastqRecord> iterator() {
         throwExceptionIfClosed();
-        LargeFastqFileIterator iter = new LargeFastqFileIterator(filter);
+        LargeFastqFileIterator iter = new LargeFastqFileIterator();
     	iter.start();
     	
     	return DataStoreStreamingIterator.create(this,iter);
@@ -306,12 +288,7 @@ final class LargeFastqFileDataStore implements FastqFileDataStore {
 
 	private final class FastqIdIterator extends AbstractBlockingStreamingIterator<String> implements StreamingIterator<String>{
 
-    	private final DataStoreFilter filter;
     	
-
-    	public FastqIdIterator(DataStoreFilter filter) {
-			this.filter = filter;
-		}
 
 
 		@Override
@@ -334,12 +311,31 @@ final class LargeFastqFileDataStore implements FastqFileDataStore {
 						if(FastqIdIterator.this.isClosed()){
 							callback.haltParsing();							
 						}
-						if (filter.accept(id)) {
-							blockingPut(id);
+						if (filter.test(id)) {
+						    //our record filter can still filter it out..
+						    if(recordFilter ==null){
+						        blockingPut(id);
+                                                        if(FastqIdIterator.this.isClosed()){
+                                                            callback.haltParsing();                                                 
+                                                        }
+                                                        return null;
+						    }
+						    return new AbstractFastqRecordVisitor(id, optionalComment, qualityCodec) {
+                                                        
+                                                        @Override
+                                                        protected void visitRecord(FastqRecord record) {
+                                                            if(recordFilter.test(record)){
+                                                                blockingPut(id);
+                                                                if(FastqIdIterator.this.isClosed()){
+                                                                    callback.haltParsing();                                                 
+                                                                }
+                                                            }
+                                                            
+                                                        }
+                                                    };
+							
 						}
-						if(FastqIdIterator.this.isClosed()){
-							callback.haltParsing();							
-						}
+						
 						return null;
 					}
 				};
@@ -363,12 +359,7 @@ final class LargeFastqFileDataStore implements FastqFileDataStore {
      */
     private final class LargeFastqFileIterator extends AbstractBlockingStreamingIterator<FastqRecord> implements StreamingIterator<FastqRecord>{
 
-    	private final DataStoreFilter filter;
     	
-
-    	public LargeFastqFileIterator(DataStoreFilter filter) {
-			this.filter = filter;
-		}
 
 
 		@Override
@@ -392,7 +383,7 @@ final class LargeFastqFileDataStore implements FastqFileDataStore {
 							callback.haltParsing();
 							return null;
 						}
-						if (filter.accept(id)) {
+						if (filter.test(id)) {
 							//don't waste CPU time saving a few bytes of memory
 							//since we are only iterating through
 							//and will probably throw the read away after reading it once.
@@ -401,10 +392,12 @@ final class LargeFastqFileDataStore implements FastqFileDataStore {
 								
 								@Override
 								protected void visitRecord(FastqRecord record) {
-									blockingPut(record);
-									if(LargeFastqFileIterator.this.isClosed()){
-										callback.haltParsing();
-									}
+								        if(recordFilter ==null || recordFilter.test(record)){
+        									blockingPut(record);
+        									if(LargeFastqFileIterator.this.isClosed()){
+        										callback.haltParsing();
+        									}
+								        }
 								}
 							};
 						}

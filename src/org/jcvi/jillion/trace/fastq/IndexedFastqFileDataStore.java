@@ -24,11 +24,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
@@ -75,9 +75,9 @@ final class IndexedFastqFileDataStore{
    	 * for.
    	 * @param qualityCodec the {@link FastqQualityCodec} that should
 	 * be used to decode the encoded qualities of each record in the file.
-	 * @param filter a {@link DataStoreFilter} that will be used
+	 * @param filter a {@link Predicate} that will be used
 	 * to filter out some (possibly all or none) of the records from
-	 * the fastq file so they will not be included in the {@link FastqDataStore}.
+	 * the fastq file by ID so they will not be included in the {@link FastqDataStore}.
 	 * Only records which cause {@link DataStoreFilter#accept(String)}
 	 * to return {@code true} will be added to this datastore.
    	 * @return a new instance of {@link FastqFileDataStore};
@@ -86,11 +86,11 @@ final class IndexedFastqFileDataStore{
    	 * if there is a problem parsing the file.
    	 * @throws NullPointerException if the input fastq file or the {@link FastqQualityCodec} is null.
    	 */
-    public static FastqFileDataStore create(File file,FastqQualityCodec qualityCodec,DataStoreFilter filter) throws IOException{
+    public static FastqFileDataStore create(File file,FastqQualityCodec qualityCodec,Predicate<String> filter) throws IOException{
     	
     	FastqParser parser = FastqFileParser.create(file);
     	
-    	return create(parser, qualityCodec, filter);
+    	return create(parser, qualityCodec, filter, null);
     }
     /**
    	 * Creates a new {@link IndexedFastqFileDataStore}
@@ -102,7 +102,7 @@ final class IndexedFastqFileDataStore{
    	 * to create an {@link IndexedFastqFileDataStore}.
    	 * @param qualityCodec the {@link FastqQualityCodec} that should
 	 * be used to decode the encoded qualities of each record in the file.
-	 * @param filter a {@link DataStoreFilter} that will be used
+	 * @param filter a {@link Predicate} that will be used
 	 * to filter out some (possibly all or none) of the records from
 	 * the fastq file so they will not be included in the {@link FastqDataStore}.
 	 * Only records which cause {@link DataStoreFilter#accept(String)}
@@ -114,9 +114,10 @@ final class IndexedFastqFileDataStore{
    	 * @throws NullPointerException if the input fastq file or the {@link FastqQualityCodec} is null.
    	 */
 	public static FastqFileDataStore create(FastqParser parser,
-			FastqQualityCodec qualityCodec, DataStoreFilter filter)
+			FastqQualityCodec qualityCodec, Predicate<String> filter, Predicate<FastqRecord> recordFilter)
 			throws IOException {
-		MementoedFastqDataStoreBuilderVisitor visitor = new MementoedFastqDataStoreBuilderVisitor(parser, qualityCodec, filter);
+		MementoedFastqDataStoreBuilderVisitor visitor = new MementoedFastqDataStoreBuilderVisitor(parser, qualityCodec,
+		        filter, recordFilter);
     	
     	parser.parse(visitor);
     	return visitor.build();
@@ -130,27 +131,45 @@ final class IndexedFastqFileDataStore{
     	private final Map<String, FastqVisitorMemento> mementos = new LinkedHashMap<String,FastqVisitorMemento>();
     	private final FastqQualityCodec qualityCodec;
     	 private final FastqParser parser;
-    	 private final DataStoreFilter filter;
+    	 private final Predicate<String> filter;
+    	 private final Predicate<FastqRecord> recordFilter;
     	 
     	 
 		public MementoedFastqDataStoreBuilderVisitor(FastqParser parser,
-				FastqQualityCodec qualityCodec, DataStoreFilter filter) {
+				FastqQualityCodec qualityCodec, Predicate<String> filter, Predicate<FastqRecord> recordFilter) {
 			this.parser = parser;
 			this.qualityCodec = qualityCodec;
 			this.filter = filter;
+			this.recordFilter = recordFilter;
 		}
 		public FastqFileDataStore build() {
-			return new IndexedFastqFileDataStoreImpl(parser, qualityCodec, filter, mementos);
+			return new IndexedFastqFileDataStoreImpl(parser, qualityCodec, filter, recordFilter,mementos);
 		}
 		@Override
 		public FastqRecordVisitor visitDefline(FastqVisitorCallback callback,
 				String id, String optionalComment) {
-			if(filter.accept(id)){
+			if(filter.test(id)){
 				if(!callback.canCreateMemento()){
 					throw new IllegalStateException("can not create memento for " + id);
 				}
 				FastqVisitorMemento createMemento = callback.createMemento();
-				mementos.put(id, createMemento);
+				if(recordFilter ==null){
+				    //no additional filtering
+				   mementos.put(id, createMemento);
+                                    
+				    return null;
+				}
+				return new AbstractFastqRecordVisitor(id, optionalComment, qualityCodec) {
+                                    
+                                    @Override
+                                    protected void visitRecord(FastqRecord record) {
+                                        if(recordFilter.test(record)){
+                                            mementos.put(id, createMemento);
+                                        }
+                                        
+                                    }
+                                };
+				
 			}
 			//always skip record bodies
 			return null;
@@ -162,18 +181,21 @@ final class IndexedFastqFileDataStore{
     	private final Map<String, FastqVisitorMemento> mementos;
     	private final FastqQualityCodec qualityCodec;
     	 private final FastqParser parser;
-    	 private final DataStoreFilter filter;
+    	 private final Predicate<String> filter;
+    	 private final Predicate<FastqRecord> recordFilter;
     	 private volatile boolean closed;
     	 
     	 
     	public IndexedFastqFileDataStoreImpl(FastqParser parser,
 				FastqQualityCodec qualityCodec,
-				DataStoreFilter filter,
+				Predicate<String> filter,
+				Predicate<FastqRecord> recordFilter,
 				Map<String, FastqVisitorMemento> mementos) {
 			this.qualityCodec = qualityCodec;
 			this.parser = parser;
 			this.mementos = mementos;
 			this.filter=filter;
+			this.recordFilter = recordFilter;
 		}
 		@Override
         public StreamingIterator<String> idIterator() throws DataStoreException {
@@ -222,7 +244,7 @@ final class IndexedFastqFileDataStore{
         public StreamingIterator<FastqRecord> iterator() throws DataStoreException {
         	throwExceptionIfClosed();
         	try {
-        		StreamingIterator<FastqRecord> iter = LargeFastqFileDataStore.create(parser, qualityCodec, filter)
+        		StreamingIterator<FastqRecord> iter = LargeFastqFileDataStore.create(parser, qualityCodec, filter, recordFilter)
     					.iterator();
         		//iter has a different lifecylce than this datastore
         		//so wrap it
