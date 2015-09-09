@@ -69,7 +69,7 @@ public final class IndexedQualityFastaFileDataStore{
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
 	public static QualityFastaDataStore create(File fastaFile) throws IOException{
-		return create(fastaFile, DataStoreFilters.alwaysAccept());
+		return create(fastaFile, DataStoreFilters.alwaysAccept(),null);
 	}
 	
 	/**
@@ -84,9 +84,9 @@ public final class IndexedQualityFastaFileDataStore{
 	 * @throws FileNotFoundException if the input fasta file does not exist.
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
-	public static QualityFastaDataStore create(File fastaFile, Predicate<String> filter) throws IOException{
+	public static QualityFastaDataStore create(File fastaFile, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter) throws IOException{
 		FastaParser parser =FastaFileParser.create(fastaFile);
-		return create(parser, filter);
+		return create(parser, filter, recordFilter);
 	}
 	
 	/**
@@ -101,11 +101,11 @@ public final class IndexedQualityFastaFileDataStore{
 	 * @throws FileNotFoundException if the input fasta file does not exist.
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
-	public static QualityFastaDataStore create(FastaParser parser, Predicate<String> filter) throws IOException{
+	public static QualityFastaDataStore create(FastaParser parser, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter) throws IOException{
 		if(parser ==null){
 			throw new NullPointerException("parser can not be null");
 		}
-		IndexedQualitySequenceFastaDataStoreBuilderVisitor2 builder = new IndexedQualitySequenceFastaDataStoreBuilderVisitor2(parser, filter);
+		IndexedQualitySequenceFastaDataStoreBuilderVisitor2 builder = new IndexedQualitySequenceFastaDataStoreBuilderVisitor2(parser, filter, recordFilter);
 		builder.initialize();
 		return builder.build();
 	}
@@ -118,13 +118,15 @@ public final class IndexedQualityFastaFileDataStore{
 	private static final class IndexedQualitySequenceFastaDataStoreBuilderVisitor2 implements FastaVisitor, Builder<QualityFastaDataStore> {
 	
 		private final Predicate<String> filter;
+		private final Predicate<QualityFastaRecord> recordFilter;
 		private final FastaParser parser;
 		
 		private final Map<String, FastaVisitorCallback.FastaVisitorMemento> mementos = new LinkedHashMap<String, FastaVisitorCallback.FastaVisitorMemento>();
 		
-		private IndexedQualitySequenceFastaDataStoreBuilderVisitor2(FastaParser parser, Predicate<String> filter) throws IOException {
+		private IndexedQualitySequenceFastaDataStoreBuilderVisitor2(FastaParser parser, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter) throws IOException {
 			this.filter = filter;
 			this.parser = parser;
+			this.recordFilter = recordFilter;
 
 		}
 
@@ -159,7 +161,7 @@ public final class IndexedQualityFastaFileDataStore{
 
 		@Override
 		public QualityFastaDataStore build() {
-			return new Impl(parser,filter, mementos);
+			return new Impl(parser,filter, recordFilter, mementos);
 		}
 	
 	}
@@ -168,13 +170,16 @@ public final class IndexedQualityFastaFileDataStore{
 		private volatile boolean closed =false;
 		private final FastaParser parser;
 		private final Predicate<String> filter;
+		private final Predicate<QualityFastaRecord> recordFilter;
+		
 		private final Map<String, FastaVisitorCallback.FastaVisitorMemento> mementos;
 		
 		
-		public Impl(FastaParser parser, Predicate<String> filter, Map<String, FastaVisitorMemento> mementos) {
+		public Impl(FastaParser parser, Predicate<String> filter,Predicate<QualityFastaRecord> recordFilter,  Map<String, FastaVisitorMemento> mementos) {
 			this.parser = parser;
 			this.mementos = mementos;
 			this.filter = filter;
+			this.recordFilter = recordFilter;
 		}
 
 		@Override
@@ -202,7 +207,7 @@ public final class IndexedQualityFastaFileDataStore{
 		@Override
 		public StreamingIterator<QualityFastaRecord> iterator() throws DataStoreException {
 			throwExceptionIfClosed();
-			StreamingIterator<QualityFastaRecord> iter = QualitySequenceFastaDataStoreIteratorImpl.createIteratorFor(parser, filter);
+			StreamingIterator<QualityFastaRecord> iter = QualitySequenceFastaDataStoreIteratorImpl.createIteratorFor(parser, filter, recordFilter);
 	        
 			return DataStoreStreamingIterator.create(this, iter);
 		}
@@ -213,7 +218,7 @@ public final class IndexedQualityFastaFileDataStore{
 				throws DataStoreException {
 			throwExceptionIfClosed();
 			StreamingIterator<DataStoreEntry<QualityFastaRecord>> entryIter = new StreamingIterator<DataStoreEntry<QualityFastaRecord>>(){
-				StreamingIterator<QualityFastaRecord> iter = QualitySequenceFastaDataStoreIteratorImpl.createIteratorFor(parser, filter);
+				StreamingIterator<QualityFastaRecord> iter = QualitySequenceFastaDataStoreIteratorImpl.createIteratorFor(parser, filter, recordFilter);
 
 				@Override
 				public boolean hasNext() {

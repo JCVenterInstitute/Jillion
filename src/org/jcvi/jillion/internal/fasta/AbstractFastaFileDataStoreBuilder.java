@@ -36,6 +36,7 @@ public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>
 
 	private final FastaParser parser;
 	private Predicate<String> filter = id->true;
+	private Predicate<F> recordFilter = null;
 	private DataStoreProviderHint hint = DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_SPEED;
 	/**
 	 * Create a new Builder instance of 
@@ -70,7 +71,7 @@ public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>
 		if(parser==null){
 			throw new NullPointerException("fasta parser can not be null");
 		}
-		this.parser = parser;;
+		this.parser = parser;
 		
 	}
 	
@@ -79,7 +80,7 @@ public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>
 	 * Only include the {@link FastaRecord}s with IDs that pass
 	 * the given {@link Predicate}.  If a filter
 	 * is not given to this builder, then all records
-	 * in the fastq file will be included in the built
+	 * in the fasta file will be included in the built
 	 * {@link FastaDataStore}.
 	 * @param filter a {@link Predicate} instance that can be
 	 * used to filter out specified fasta records by ID; can not be null. 
@@ -93,6 +94,25 @@ public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>
 		this.filter = filter;
 		return this;
 	}
+	
+	/**
+         * Only include the {@link FastaRecord}s with that pass
+         * the given {@link Predicate}.  If a filter
+         * is not given to this builder, then all records
+         * in the fasta file will be included in the built
+         * {@link FastaDataStore}.
+         * @param filter a {@link Predicate} instance that can be
+         * used to filter out specified fasta records by ID; can not be null. 
+         * @return this.
+         * @throws NullPointerException if filter is null.
+         */
+        protected AbstractFastaFileDataStoreBuilder<T, S, F, D> filterRecords(Predicate<F> filter) {
+                if(filter==null){
+                        throw new NullPointerException("filter can not be null");
+                }
+                this.recordFilter = filter;
+                return this;
+        }
 
 	/**
 	 * Provide a {@link DataStoreProviderHint} to this builder
@@ -146,7 +166,7 @@ public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>
 	 * @see #hint(DataStoreProviderHint)
 	 */
 	protected D build() throws IOException {
-		return createNewInstance(parser, hint, filter);
+		return createNewInstance(parser, hint, filter, recordFilter);
 	}
 
 	/**
@@ -155,10 +175,11 @@ public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>
 	 * can not be null.
 	 * @param hint a {@link DataStoreProviderHint}; will never be null.
 	 * @param filter a {@link Predicate}; will never be null.
+	 * @param recordFilter a {@link Predicate}; can be null if no additional filtering is used.
 	 * @return a new {@link FastaDataStore} instance; should never be null.
 	 * @throws IOException if there is a problem creating the datastore from the file.
 	 */
-	protected abstract D createNewInstance(FastaParser parser, DataStoreProviderHint hint, Predicate<String> filter) throws IOException;
+	protected abstract D createNewInstance(FastaParser parser, DataStoreProviderHint hint, Predicate<String> filter, Predicate<F> recordFilter) throws IOException;
 			
 
 

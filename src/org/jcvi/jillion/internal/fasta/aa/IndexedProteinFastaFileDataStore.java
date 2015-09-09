@@ -69,7 +69,7 @@ public final class IndexedProteinFastaFileDataStore{
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
 	public static ProteinFastaDataStore create(File fastaFile) throws IOException{
-		return create(fastaFile, DataStoreFilters.alwaysAccept());
+		return create(fastaFile, DataStoreFilters.alwaysAccept(), null);
 	}
 	
 	/**
@@ -84,9 +84,9 @@ public final class IndexedProteinFastaFileDataStore{
 	 * @throws FileNotFoundException if the input fasta file does not exist.
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
-	public static ProteinFastaDataStore create(File fastaFile, Predicate<String> filter) throws IOException{
+	public static ProteinFastaDataStore create(File fastaFile, Predicate<String> filter,  Predicate<ProteinFastaRecord> recordFilter) throws IOException{
 		FastaParser parser = FastaFileParser.create(fastaFile);
-		return create(parser, filter);
+		return create(parser, filter, recordFilter);
 	}
 	
 	/**
@@ -101,9 +101,9 @@ public final class IndexedProteinFastaFileDataStore{
 	 * @throws FileNotFoundException if the input fasta file does not exist.
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
-	public static ProteinFastaDataStore create(FastaParser parser, Predicate<String> filter) throws IOException{
+	public static ProteinFastaDataStore create(FastaParser parser, Predicate<String> filter,  Predicate<ProteinFastaRecord> recordFilter) throws IOException{
 
-		IndexedProteinFastaDataStoreBuilderVisitor builder = new IndexedProteinFastaDataStoreBuilderVisitor(parser, filter);
+		IndexedProteinFastaDataStoreBuilderVisitor builder = new IndexedProteinFastaDataStoreBuilderVisitor(parser, filter, recordFilter);
 		builder.initialize();
 		return builder.build();
 	}
@@ -115,13 +115,15 @@ public final class IndexedProteinFastaFileDataStore{
 	private static final class IndexedProteinFastaDataStoreBuilderVisitor implements FastaVisitor, Builder<ProteinFastaDataStore> {
 	
 		private final Predicate<String> filter;
+		private final  Predicate<ProteinFastaRecord> recordFilter;
 		private final FastaParser parser;
 		
 		private final Map<String, FastaVisitorCallback.FastaVisitorMemento> mementos = new LinkedHashMap<String, FastaVisitorCallback.FastaVisitorMemento>();
 		
-		private IndexedProteinFastaDataStoreBuilderVisitor(FastaParser parser, Predicate<String> filter) throws IOException {
+		private IndexedProteinFastaDataStoreBuilderVisitor(FastaParser parser, Predicate<String> filter,  Predicate<ProteinFastaRecord> recordFilter) throws IOException {
 			this.filter = filter;
 			this.parser = parser;
+			this.recordFilter = recordFilter;
 
 		}
 
@@ -156,7 +158,7 @@ public final class IndexedProteinFastaFileDataStore{
 
 		@Override
 		public ProteinFastaDataStore build() {
-			return new Impl(parser, filter,mementos);
+			return new Impl(parser, filter, recordFilter, mementos);
 		}
 	
 	}
@@ -165,13 +167,16 @@ public final class IndexedProteinFastaFileDataStore{
 		private volatile boolean closed =false;
 		private final FastaParser parser;
 		private final Predicate<String> filter;
+		private final  Predicate<ProteinFastaRecord> recordFilter;
+		
 		private final Map<String, FastaVisitorCallback.FastaVisitorMemento> mementos;
 		
 		
-		public Impl(FastaParser parser, Predicate<String> filter, Map<String, FastaVisitorMemento> mementos) {
+		public Impl(FastaParser parser, Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter,  Map<String, FastaVisitorMemento> mementos) {
 			this.parser = parser;
 			this.mementos = mementos;
 			this.filter = filter;
+			this.recordFilter = recordFilter;
 		}
 
 		@Override
@@ -200,7 +205,7 @@ public final class IndexedProteinFastaFileDataStore{
 		public StreamingIterator<ProteinFastaRecord> iterator() throws DataStoreException {
 			throwExceptionIfClosed();
 			return DataStoreStreamingIterator.create(this,
-					LargeProteinFastaIterator.createNewIteratorFor(parser,filter));
+					LargeProteinFastaIterator.createNewIteratorFor(parser,filter, recordFilter));
 		}
 		
 		
@@ -209,7 +214,7 @@ public final class IndexedProteinFastaFileDataStore{
 				throws DataStoreException {
 			throwExceptionIfClosed();
 			StreamingIterator<DataStoreEntry<ProteinFastaRecord>> entryIter = new StreamingIterator<DataStoreEntry<ProteinFastaRecord>>(){
-				StreamingIterator<ProteinFastaRecord> iter = LargeProteinFastaIterator.createNewIteratorFor(parser,filter);
+				StreamingIterator<ProteinFastaRecord> iter = LargeProteinFastaIterator.createNewIteratorFor(parser,filter, recordFilter);
 
 				@Override
 				public boolean hasNext() {

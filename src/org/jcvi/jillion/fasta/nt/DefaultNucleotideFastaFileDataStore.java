@@ -58,32 +58,32 @@ final class DefaultNucleotideFastaFileDataStore{
 		//can not instantiate.
 	}
 
-	private static NucleotideFastaDataStoreBuilderVisitorImpl2 createBuilder(Predicate<String> filter){
-		return new NucleotideFastaDataStoreBuilderVisitorImpl2(filter);
+	private static NucleotideFastaDataStoreBuilderVisitorImpl2 createBuilder(Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter){
+		return new NucleotideFastaDataStoreBuilderVisitorImpl2(filter, recordFilter);
 	}
 	
 	public static NucleotideFastaDataStore create(File fastaFile) throws IOException{
-		return create(fastaFile,DataStoreFilters.alwaysAccept());
+		return create(fastaFile,DataStoreFilters.alwaysAccept(), null);
 	}
-	public static NucleotideFastaDataStore create(File fastaFile, Predicate<String> filter) throws IOException{
+	public static NucleotideFastaDataStore create(File fastaFile, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter) throws IOException{
 		
 		FastaParser parser = FastaFileParser.create(fastaFile);
 		
-		return create(parser, filter);
+		return create(parser, filter, recordFilter);
 	}
 
-	public static NucleotideFastaDataStore create(FastaParser parser,Predicate<String> filter) throws IOException {
-		NucleotideFastaDataStoreBuilderVisitorImpl2 builder = createBuilder(filter);
+	public static NucleotideFastaDataStore create(FastaParser parser,Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter) throws IOException {
+		NucleotideFastaDataStoreBuilderVisitorImpl2 builder = createBuilder(filter, recordFilter);
 		parser.parse(builder);
 		return builder.build();
 	}
 	
 	public static NucleotideFastaDataStore create(InputStream in) throws IOException{
-		return create(in,DataStoreFilters.alwaysAccept());
+		return create(in,DataStoreFilters.alwaysAccept(), null);
 	}
-	public static NucleotideFastaDataStore create(InputStream in, DataStoreFilter filter) throws IOException{
+	public static NucleotideFastaDataStore create(InputStream in, DataStoreFilter filter, Predicate<NucleotideFastaRecord> recordFilter) throws IOException{
 		try{
-			NucleotideFastaDataStoreBuilderVisitorImpl2 builder = createBuilder(filter);
+			NucleotideFastaDataStoreBuilderVisitorImpl2 builder = createBuilder(filter, recordFilter);
 			FastaFileParser.create(in).parse(builder);
 			return builder.build();
 		}finally{
@@ -97,10 +97,12 @@ final class DefaultNucleotideFastaFileDataStore{
 
 		private final Map<String, NucleotideFastaRecord> fastaRecords = new LinkedHashMap<String, NucleotideFastaRecord>();
 		
-		private final Predicate<String> filter;
-		private final ReusableNucleotideFastaRecordVisitor currentVisitor = new ReusableNucleotideFastaRecordVisitor();
-		public NucleotideFastaDataStoreBuilderVisitorImpl2(Predicate<String> filter){
+		private final Predicate<String> filter;		
+		private final ReusableNucleotideFastaRecordVisitor currentVisitor;
+		
+		public NucleotideFastaDataStoreBuilderVisitorImpl2(Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter){
 			this.filter = filter;
+			this.currentVisitor = new ReusableNucleotideFastaRecordVisitor(recordFilter);
 		}
 		@Override
 		public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
@@ -141,13 +143,14 @@ final class DefaultNucleotideFastaFileDataStore{
 			private String currentId;
 			private String currentComment;
 			private NucleotideSequenceBuilder builder;
+			
+			private final Predicate<NucleotideFastaRecord> recordFilter;
 			/**
 			 * Default constructor needs to have it's data
 			 * initialized.
 			 */
-			public ReusableNucleotideFastaRecordVisitor(){
-				//need to explicitly declare default constructor
-				//to add javadoc comment
+			public ReusableNucleotideFastaRecordVisitor(Predicate<NucleotideFastaRecord> recordFilter){
+				this.recordFilter = recordFilter;
 			}
 			/**
 			 * Prepare this visitor to visit a new record.
@@ -171,7 +174,10 @@ final class DefaultNucleotideFastaFileDataStore{
 				NucleotideFastaRecord record = new NucleotideFastaRecordBuilder(currentId,builder.build())
 														.comment(currentComment)
 														.build();
-				fastaRecords.put(currentId, record);
+				
+				if(recordFilter==null || recordFilter.test(record)){
+				    fastaRecords.put(currentId, record);
+				}
 				
 			}
 			@Override

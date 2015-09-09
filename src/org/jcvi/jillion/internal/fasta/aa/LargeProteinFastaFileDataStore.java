@@ -58,7 +58,7 @@ public final class LargeProteinFastaFileDataStore extends AbstractLargeFastaFile
      * @throws NullPointerException if fastaFile is null.
      */
 	public static ProteinFastaDataStore create(File fastaFile) throws IOException{
-		return create(fastaFile, DataStoreFilters.alwaysAccept());
+		return create(fastaFile, DataStoreFilters.alwaysAccept(),null);
 	}
 	/**
      * Construct a {@link LargeProteinFastaFileDataStore}
@@ -66,9 +66,9 @@ public final class LargeProteinFastaFileDataStore extends AbstractLargeFastaFile
      * @param fastaFile the Fasta File to use, can not be null.
      * @throws NullPointerException if fastaFile is null.
      */
-	public static ProteinFastaDataStore create(File fastaFile, Predicate<String> filter) throws IOException{
+	public static ProteinFastaDataStore create(File fastaFile, Predicate<String> filter,  Predicate<ProteinFastaRecord> recordFilter) throws IOException{
 		FastaParser parser = FastaFileParser.create(fastaFile);
-		return new LargeProteinFastaFileDataStore(parser,filter);
+		return new LargeProteinFastaFileDataStore(parser,filter, recordFilter);
 	}
 	/**
      * Construct a {@link LargeProteinFastaFileDataStore}
@@ -77,7 +77,7 @@ public final class LargeProteinFastaFileDataStore extends AbstractLargeFastaFile
      * @throws NullPointerException if fastaFile is null.
      */
 	public static ProteinFastaDataStore create(FastaParser parser){
-		return create(parser, DataStoreFilters.alwaysAccept());
+		return create(parser, DataStoreFilters.alwaysAccept(),null);
 	}
 	/**
      * Construct a {@link LargeProteinFastaFileDataStore}
@@ -85,19 +85,19 @@ public final class LargeProteinFastaFileDataStore extends AbstractLargeFastaFile
      * @param fastaFile the Fasta File to use, can not be null.
      * @throws NullPointerException if fastaFile is null.
      */
-	public static ProteinFastaDataStore create(FastaParser parser, Predicate<String> filter){
-		return new LargeProteinFastaFileDataStore(parser,filter);
+	public static ProteinFastaDataStore create(FastaParser parser, Predicate<String> filter,  Predicate<ProteinFastaRecord> recordFilter){
+		return new LargeProteinFastaFileDataStore(parser,filter, recordFilter);
 	}
    
-    protected LargeProteinFastaFileDataStore(FastaParser parser, Predicate<String> filter) {
-		super(parser, filter);
+    protected LargeProteinFastaFileDataStore(FastaParser parser, Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter) {
+		super(parser, filter, recordFilter);
 	}
 
 
 	@Override
 	protected StreamingIterator<ProteinFastaRecord> createNewIterator(
-			FastaParser parser, Predicate<String> filter) {
-		return DataStoreStreamingIterator.create(this,LargeProteinFastaIterator.createNewIteratorFor(parser, filter));
+			FastaParser parser, Predicate<String> filter,  Predicate<ProteinFastaRecord> recordFilter) {
+		return DataStoreStreamingIterator.create(this,LargeProteinFastaIterator.createNewIteratorFor(parser, filter, recordFilter));
 	       
 	}
    

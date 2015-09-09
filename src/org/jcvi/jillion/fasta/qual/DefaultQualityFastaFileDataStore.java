@@ -49,30 +49,30 @@ final class DefaultQualityFastaFileDataStore {
 		//can not instantiate
 	}
     public static QualityFastaDataStore create(File fastaFile) throws IOException{
-    	return create(fastaFile,DataStoreFilters.alwaysAccept());
+    	return create(fastaFile,DataStoreFilters.alwaysAccept(), null);
     }
     
-    public static QualityFastaDataStore create(File fastaFile, Predicate<String> filter) throws IOException{
-    	return create(FastaFileParser.create(fastaFile), filter);
+    public static QualityFastaDataStore create(File fastaFile, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter) throws IOException{
+    	return create(FastaFileParser.create(fastaFile), filter, recordFilter);
     }
     
     public static QualityFastaDataStore create(InputStream fastaStream) throws IOException{
-    	return create(fastaStream,DataStoreFilters.alwaysAccept());
+    	return create(fastaStream,DataStoreFilters.alwaysAccept(), null);
     }
-    public static QualityFastaDataStore create(InputStream fastaStream, Predicate<String> filter) throws IOException{
+    public static QualityFastaDataStore create(InputStream fastaStream, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter) throws IOException{
     	
     	FastaParser parser = FastaFileParser.create(fastaStream);
     	
-    	return create(parser, filter);
+    	return create(parser, filter, recordFilter);
     }
-	public static QualityFastaDataStore create(FastaParser parser, Predicate<String> filter) throws IOException {
-		DefaultQualityFastaFileDataStoreBuilder builder = createBuilder(filter);
+	public static QualityFastaDataStore create(FastaParser parser, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter) throws IOException {
+		DefaultQualityFastaFileDataStoreBuilder builder = createBuilder(filter, recordFilter);
 		parser.parse(builder);
     	return builder.build();
 	}
 
-    private static DefaultQualityFastaFileDataStoreBuilder createBuilder(Predicate<String> filter){
-    	return new DefaultQualityFastaFileDataStoreBuilder(filter);
+    private static DefaultQualityFastaFileDataStoreBuilder createBuilder(Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter){
+    	return new DefaultQualityFastaFileDataStoreBuilder(filter, recordFilter);
     }
 
 }

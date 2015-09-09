@@ -55,7 +55,7 @@ final class LargeNucleotideSequenceFastaFileDataStore extends AbstractLargeFasta
      * @throws NullPointerException if fastaFile is null.
      */
 	public static NucleotideFastaDataStore create(FastaParser parser){
-		return create(parser, DataStoreFilters.alwaysAccept());
+		return create(parser, DataStoreFilters.alwaysAccept(), null);
 	}
 	 /**
      * Construct a {@link LargeNucleotideSequenceFastaFileDataStore}
@@ -63,22 +63,22 @@ final class LargeNucleotideSequenceFastaFileDataStore extends AbstractLargeFasta
      * @param parser the FastaParser to use, can not be null.
      * @throws NullPointerException if fastaFile is null.
      */
-	public static NucleotideFastaDataStore create(FastaParser parser, Predicate<String> filter){
-		return new LargeNucleotideSequenceFastaFileDataStore(parser, filter);
+	public static NucleotideFastaDataStore create(FastaParser parser, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter){
+		return new LargeNucleotideSequenceFastaFileDataStore(parser, filter, recordFilter);
 	}
    
     
     public LargeNucleotideSequenceFastaFileDataStore(FastaParser parser,
-            Predicate<String> filter) {
-		super(parser, filter);
+            Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter) {
+		super(parser, filter, recordFilter);
 	}
 	
 	@Override
 	protected StreamingIterator<NucleotideFastaRecord> createNewIterator(
-			FastaParser parser, Predicate<String> filter) throws DataStoreException {
+			FastaParser parser, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordIterator) throws DataStoreException {
 		 try {
 			return DataStoreStreamingIterator.create(this,
-			    		LargeNucleotideSequenceFastaIterator.createNewIteratorFor(parser,filter));
+			    		LargeNucleotideSequenceFastaIterator.createNewIteratorFor(parser,filter,recordIterator));
 		} catch (IOException e) {
 			throw new DataStoreException("error iterating over fasta file", e);
 		}

@@ -72,19 +72,19 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	}
 	@Override
 	protected NucleotideFastaDataStore createNewInstance(
-			FastaParser parser, DataStoreProviderHint providerHint, Predicate<String> filter)
+			FastaParser parser, DataStoreProviderHint providerHint, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter)
 			throws IOException {
 		if(parser.isReadOnceOnly()){
-			return DefaultNucleotideFastaFileDataStore.create(parser,filter);	
+			return DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter);	
 		}else{
 			switch(providerHint){
-				case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultNucleotideFastaFileDataStore.create(parser,filter);
+				case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter);
 				case RANDOM_ACCESS_OPTIMIZE_MEMORY: 
 							return parser.canCreateMemento()?
-										IndexedNucleotideSequenceFastaFileDataStore.create(parser,filter)
+										IndexedNucleotideSequenceFastaFileDataStore.create(parser,filter, recordFilter)
 										:
-										DefaultNucleotideFastaFileDataStore.create(parser,filter);
-				case ITERATION_ONLY: return LargeNucleotideSequenceFastaFileDataStore.create(parser,filter);
+										DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter);
+				case ITERATION_ONLY: return LargeNucleotideSequenceFastaFileDataStore.create(parser,filter, recordFilter);
 				default:
 					throw new IllegalArgumentException("unknown provider hint : "+ providerHint);
 			}
@@ -111,7 +111,13 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 		return this;
 	}
 
-	/**
+	@Override
+    public NucleotideFastaFileDataStoreBuilder filterRecords(Predicate<NucleotideFastaRecord> filter) {
+        super.filterRecords(filter);
+        return this;
+    }
+
+    /**
 	 * 
 	 * {@inheritDoc}
 	 */

@@ -38,9 +38,11 @@ public class DefaultQualityFastaFileDataStoreBuilder implements FastaVisitor, Bu
 	private final Map<String, QualityFastaRecord> fastaRecords = new LinkedHashMap<String, QualityFastaRecord>();
 	
 	private final Predicate<String> filter;
+	private final Predicate<QualityFastaRecord> recordFilter;
 	
-	public DefaultQualityFastaFileDataStoreBuilder(Predicate<String> filter){
+	public DefaultQualityFastaFileDataStoreBuilder(Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter){
 		this.filter = filter;
+		this.recordFilter = recordFilter;
 	}
 	@Override
 	public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
@@ -53,7 +55,9 @@ public class DefaultQualityFastaFileDataStoreBuilder implements FastaVisitor, Bu
 			@Override
 			protected void visitRecord(
 					QualityFastaRecord fastaRecord) {
+			    if(recordFilter==null || recordFilter.test(fastaRecord)){
 				fastaRecords.put(id, fastaRecord);
+			    }
 				
 			}
 			

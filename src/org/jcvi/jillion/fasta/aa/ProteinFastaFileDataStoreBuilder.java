@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.function.Predicate;
 
-import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
@@ -79,18 +78,18 @@ public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDat
 	 * @throws IOException if there is a problem creating the datastore from the file.
 	 */
 	@Override
-	protected ProteinFastaDataStore createNewInstance(FastaParser parser, DataStoreProviderHint hint, Predicate<String> filter)
+	protected ProteinFastaDataStore createNewInstance(FastaParser parser, DataStoreProviderHint hint, Predicate<String> filter,  Predicate<ProteinFastaRecord> recordFilter)
 			throws IOException {
 		if(parser.isReadOnceOnly()){
-			return DefaultProteinFastaDataStore.create(parser,filter);
+			return DefaultProteinFastaDataStore.create(parser,filter, recordFilter);
 		}
 		switch(hint){
-			case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultProteinFastaDataStore.create(parser,filter);
+			case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultProteinFastaDataStore.create(parser,filter, recordFilter);
 			case RANDOM_ACCESS_OPTIMIZE_MEMORY:
 				return parser.canCreateMemento() ?						
-						IndexedProteinFastaFileDataStore.create(parser,filter)
-					:	DefaultProteinFastaDataStore.create(parser,filter);
-			case ITERATION_ONLY: return LargeProteinFastaFileDataStore.create(parser,filter);
+						IndexedProteinFastaFileDataStore.create(parser,filter, recordFilter)
+					:	DefaultProteinFastaDataStore.create(parser,filter, recordFilter);
+			case ITERATION_ONLY: return LargeProteinFastaFileDataStore.create(parser,filter, recordFilter);
 			default:
 				throw new IllegalArgumentException("unknown provider hint :"+ hint);
 		}
@@ -113,7 +112,16 @@ public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDat
 		super.hint(hint);
 		return this;
 	}
-	/**
+	
+	
+	@Override
+    public ProteinFastaFileDataStoreBuilder filterRecords(
+            Predicate<ProteinFastaRecord> filter) {
+       
+        super.filterRecords(filter);
+        return this;
+    }
+    /**
 	 * 
 	 * {@inheritDoc}
 	 */

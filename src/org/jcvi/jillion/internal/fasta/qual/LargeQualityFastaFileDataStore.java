@@ -56,27 +56,27 @@ public final class LargeQualityFastaFileDataStore extends AbstractLargeFastaFile
 
     
     public static QualityFastaDataStore create(File fastaFile) throws IOException{
-    	return create(fastaFile, DataStoreFilters.alwaysAccept());
+    	return create(fastaFile, DataStoreFilters.alwaysAccept(), null);
     }
-    public static QualityFastaDataStore create(File fastaFile, Predicate<String> filter) throws IOException{
+    public static QualityFastaDataStore create(File fastaFile, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter) throws IOException{
     	FastaParser parser = FastaFileParser.create(fastaFile);
-    	return new LargeQualityFastaFileDataStore(parser,filter);
+    	return new LargeQualityFastaFileDataStore(parser,filter, recordFilter);
     }
     
     public static QualityFastaDataStore create(FastaParser parser){
-    	return create(parser, DataStoreFilters.alwaysAccept());
+    	return create(parser, DataStoreFilters.alwaysAccept(), null);
     }
-    public static QualityFastaDataStore create(FastaParser parser, Predicate<String> filter){
-    	return new LargeQualityFastaFileDataStore(parser,filter);
+    public static QualityFastaDataStore create(FastaParser parser, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter){
+    	return new LargeQualityFastaFileDataStore(parser,filter, recordFilter);
     }
-	protected LargeQualityFastaFileDataStore(FastaParser parser, Predicate<String> filter) {
-		super(parser, filter);
+	protected LargeQualityFastaFileDataStore(FastaParser parser, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter) {
+		super(parser, filter, recordFilter);
 	}
 
 	@Override
 	protected StreamingIterator<QualityFastaRecord> createNewIterator(
-			FastaParser parser, Predicate<String> filter) {
-		StreamingIterator<QualityFastaRecord> iter = QualitySequenceFastaDataStoreIteratorImpl.createIteratorFor(parser, filter);
+			FastaParser parser, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter) {
+		StreamingIterator<QualityFastaRecord> iter = QualitySequenceFastaDataStoreIteratorImpl.createIteratorFor(parser, filter, recordFilter);
         
         return DataStoreStreamingIterator.create(this,iter);
 	}

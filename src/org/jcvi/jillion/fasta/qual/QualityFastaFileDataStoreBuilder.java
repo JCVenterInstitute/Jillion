@@ -72,19 +72,19 @@ public final class QualityFastaFileDataStoreBuilder extends AbstractFastaFileDat
 	
 	@Override
 	protected QualityFastaDataStore createNewInstance(FastaParser parser,
-			DataStoreProviderHint hint,Predicate<String> filter)
+			DataStoreProviderHint hint,Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter)
 			throws IOException {
 		if(parser.isReadOnceOnly()){
-			return DefaultQualityFastaFileDataStore.create(parser,filter); 
+			return DefaultQualityFastaFileDataStore.create(parser,filter, recordFilter); 
 		}
 		switch(hint){
-			case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultQualityFastaFileDataStore.create(parser,filter);
+			case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultQualityFastaFileDataStore.create(parser,filter, recordFilter);
 			case RANDOM_ACCESS_OPTIMIZE_MEMORY: 
 				return parser.canCreateMemento() ?
-						IndexedQualityFastaFileDataStore.create(parser,filter)
-						: DefaultQualityFastaFileDataStore.create(parser,filter);
+						IndexedQualityFastaFileDataStore.create(parser,filter, recordFilter)
+						: DefaultQualityFastaFileDataStore.create(parser,filter, recordFilter);
 						
-			case ITERATION_ONLY: return LargeQualityFastaFileDataStore.create(parser,filter);
+			case ITERATION_ONLY: return LargeQualityFastaFileDataStore.create(parser,filter, recordFilter);
 			default:
 				throw new IllegalArgumentException("unknown hint : "+ hint);
 		}
