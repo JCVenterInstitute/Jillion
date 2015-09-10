@@ -26,7 +26,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.function.Predicate;
 
-import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -103,7 +102,7 @@ public class TestNucleotideFastaFileDataStoreBuilder extends AbstractTestFastaFi
 	
 	@Override
 	protected NucleotideFastaDataStore createDataStoreFromStream(DataStoreProviderHint hint,
-			DataStoreFilter filter, InputStream in) throws IOException {
+			Predicate<String> filter, InputStream in) throws IOException {
 		return new NucleotideFastaFileDataStoreBuilder(in)
 										.hint(hint)
 										.filter(filter)

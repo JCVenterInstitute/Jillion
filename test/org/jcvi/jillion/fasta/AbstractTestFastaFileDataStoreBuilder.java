@@ -33,7 +33,6 @@ import java.util.function.Predicate;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -152,7 +151,7 @@ public abstract class AbstractTestFastaFileDataStoreBuilder<T, S extends Sequenc
 		}
 	}
 	
-	private D createDataStoreFromStream(DataStoreProviderHint hint, DataStoreFilter filter)
+	private D createDataStoreFromStream(DataStoreProviderHint hint, Predicate<String> filter)
 			throws FileNotFoundException, IOException {
 		InputStream in = new BufferedInputStream(new FileInputStream(fasta));
 		try{
@@ -163,7 +162,7 @@ public abstract class AbstractTestFastaFileDataStoreBuilder<T, S extends Sequenc
 	}
 
 	protected abstract D createDataStoreFromStream(DataStoreProviderHint hint,
-			DataStoreFilter filter, InputStream in) throws IOException ;
+			Predicate<String> filter, InputStream in) throws IOException ;
 	
 	@Test
 	public void streamImplementationSameNoMatterWhatHintProvided() throws FileNotFoundException, IOException{
