@@ -125,15 +125,6 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 	
 	private static final long serialVersionUID = -4383105989868994198L;
 	/**
-	 * {@value} should be large enough for 
-	 * any Ranges commonly used in genomics.
-	 * This will save any time having to grow and copy
-	 * the backing array.
-	 * If a Range requires more, then buffer will grow
-	 * but that should be rare if ever.
-	 */
-	private static final int SIZE_OF_CACHE_STRING_BUFFER = 64;
-	/**
 	 * 2^8 -1.
 	 */
 	private static final int UNSIGNED_BYTE_MAX = 255;
@@ -167,7 +158,7 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
      * This cache uses  {@link SoftReference}s
      * so memory can be reclaimed if needed.
      */
-    private static final Map<String, Range> CACHE;
+    private static final Map<CacheKey, Range> CACHE;
     
     
     /**
@@ -422,7 +413,7 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
      * Initialize cache with a soft reference cache that will grow as needed.
      */
     static{
-         CACHE = Caches.<String, Range>createSoftReferencedValueCache(INITIAL_CACHE_SIZE);
+         CACHE = Caches.createSoftReferencedValueCache(INITIAL_CACHE_SIZE);
     }
     /**
      * Factory method to get a {@link Range} object in
@@ -601,41 +592,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 	 * @throws NullPointerException if range is null.
 	 */
 	static synchronized Range removeFromCache(Range range){
-		String hashcode = createCacheKeyFor(range);
-		return CACHE.remove(hashcode);
+	    CacheKey key = CacheKey.createCacheKeyFor(range);
+	    if(key !=null){
+		return CACHE.remove(key);
+	    }
+	    return null;
 	}
-	
-    private static synchronized Range getFromCache(Range range) {
-        String hashcode = createCacheKeyFor(range);
-       
-        //contains() followed by get() is not atomic;
-        //we could gc in between - so only do a get
-        //and check if null.
-        Range cachedRange= CACHE.get(hashcode);
-        if(cachedRange !=null){
-        	return cachedRange;
-        }
-        //not in cache so put it in
-        CACHE.put(hashcode,range);
-        return range;
 
-    }
-    private static String createCacheKeyFor(Range r){
-        //We want a String that is unique for
-    	//each different Range
-    	//and Ranges with same values should
-    	//return the same String   	
-        //to ensure uniqueness in our cache.
-    	
-    	//performance optimization use StringBuilder
-    	//instead of String.format()
-    	
-        return new StringBuilder(SIZE_OF_CACHE_STRING_BUFFER)
-        				.append(r.getBegin())
-        				.append("..")
-        				.append(r.getEnd())
-        				.toString();
-    }
 
     /**
      * Create a non-empty Range object in the Zero based coordinate
@@ -2878,13 +2841,23 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
         		}
         	}
     		
-    		final Range range;
+    		
+    		CacheKey cacheKey = CacheKey.createCacheKeyFor(begin, end);
+    		
+    		if(cacheKey!=null){
+    		    return CACHE.computeIfAbsent(cacheKey, k->{ 
+    		        if(k.end >= k.begin) {
+    		            return buildNewRange(k.begin,k.end); 
+    		        }
+    		        return buildNewEmptyRange(k.begin);
+    		    });
+    		}
+    		
             if(end >= begin) {
-                range= buildNewRange(begin,end);            
-            } else{
-                range = buildNewEmptyRange(begin);
+                return buildNewRange(begin,end);            
             }
-            return getFromCache(range);
+            return buildNewEmptyRange(begin);
+            
     	}
 		@Override
 		public String toString() {
@@ -2894,6 +2867,60 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
     	
     	
     	
+    }
+    
+    private static final class CacheKey{
+        private final int begin,end;
+        
+        public CacheKey(int begin, int end) {
+            this.begin = begin;
+            this.end = end;
+        }
+        
+        public static CacheKey createCacheKeyFor(Range range){
+           return createCacheKeyFor(range.getBegin(), range.getEnd());
+        }
+        
+        public static CacheKey createCacheKeyFor(long begin, long end){
+           if(begin <0 || begin > Integer.MAX_VALUE || end <0 || end > Integer.MAX_VALUE){
+               return null;
+           }
+           return new CacheKey( (int)begin, (int)end);
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + begin;
+            result = prime * result + end;
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (!(obj instanceof CacheKey)) {
+                return false;
+            }
+            CacheKey other = (CacheKey) obj;
+            if (begin != other.begin) {
+                return false;
+            }
+            if (end != other.end) {
+                return false;
+            }
+            return true;
+        }
+        
+        
+        
+        
     }
     
 }
