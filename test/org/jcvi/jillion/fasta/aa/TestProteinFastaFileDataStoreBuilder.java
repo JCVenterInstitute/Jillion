@@ -105,7 +105,7 @@ public class TestProteinFastaFileDataStoreBuilder extends AbstractTestFastaFileD
 	
 	@Override
 	protected ProteinFastaDataStore createDataStoreFromStream(DataStoreProviderHint hint,
-			DataStoreFilter filter, InputStream in) throws IOException {
+			Predicate<String> filter, InputStream in) throws IOException {
 		return new ProteinFastaFileDataStoreBuilder(in)
 										.hint(hint)
 										.filter(filter)

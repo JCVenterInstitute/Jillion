@@ -105,7 +105,7 @@ public class TestQualityFastaFileDataStoreBuilder extends AbstractTestFastaFileD
 	
 	@Override
 	protected QualityFastaDataStore createDataStoreFromStream(DataStoreProviderHint hint,
-			DataStoreFilter filter, InputStream in) throws IOException {
+			Predicate<String> filter, InputStream in) throws IOException {
 		return new QualityFastaFileDataStoreBuilder(in)
 										.hint(hint)
 										.filter(filter)
