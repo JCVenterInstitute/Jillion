@@ -29,11 +29,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.time.Clock;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Map.Entry;
 
 import org.jcvi.jillion.assembly.AssemblyTransformer;
@@ -56,7 +58,6 @@ import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.joda.time.DateTimeUtils;
 /**
  * {@code ConsedAssemblyTransformerBuilder}
  * will build an {@link AssemblyTransformer}
@@ -68,7 +69,7 @@ import org.joda.time.DateTimeUtils;
  */
 public class ConsedAssemblyTransformerBuilder {
 	/**
-	 * The default qualiyt value to use if qualities not provided: 26.
+	 * The default quality value to use if qualities not provided: 26.
 	 */
 	public static final PhredQuality DEFAULT_QUALITY_VALUE = PhredQuality.valueOf(26);
 	private final File rootDir;
@@ -78,6 +79,9 @@ public class ConsedAssemblyTransformerBuilder {
 	
 	private File chromatInputDir = null;
 	private byte defaultQualityValue = DEFAULT_QUALITY_VALUE.getQualityScore();
+	
+	
+	private Clock clock = Clock.systemDefaultZone();
 	
 	private AceAssemblyTransformerPostProcessor postProcessor =null;
 	/**
@@ -105,6 +109,19 @@ public class ConsedAssemblyTransformerBuilder {
 		this.rootDir = consedRootDir;
 		this.filePrefix = filePrefix;
 		
+	}
+	/**
+	 * Set the {@link Clock} to use for the timestamps
+	 * for various assembly metadata.
+	 * @param clock a {@link Clock} instance; can not be null.
+	 * @return this
+	 * 
+	 * @throws NullPointerException if clock is null.
+	 */
+	public ConsedAssemblyTransformerBuilder setClock(Clock clock){
+	    Objects.requireNonNull(clock);
+	    this.clock=clock;
+	    return this;
 	}
 	/**
 	 * Should individual phd files in the "phd_dir" directory be created instead of using one giant
@@ -193,6 +210,7 @@ public class ConsedAssemblyTransformerBuilder {
 		
 		private final Map<URI,Map<String,String>> comments = new HashMap<URI, Map<String,String>>();
 		
+		
 		public ConsedAssemblyTransformer(ConsedAssemblyTransformerBuilder builder) throws IOException{
 			
 			
@@ -220,7 +238,7 @@ public class ConsedAssemblyTransformerBuilder {
 			this.defaultQualityValue = builder.defaultQualityValue;
 			
 			//add default
-			Date currentDate = new Date(DateTimeUtils.currentTimeMillis());
+			Date currentDate = new Date(builder.clock.millis());
 			uriDates.put(null, currentDate);
 			comments.put(null, computeRequiredCommentsFor(null, currentDate));
 			
