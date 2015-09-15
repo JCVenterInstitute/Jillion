@@ -22,6 +22,7 @@ package org.jcvi.jillion.trace.fastq;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
@@ -60,6 +61,25 @@ public final class FastqFileDataStoreBuilder{
 		
 		this.parser = FastqFileParser.create(fastqFile);
 	}
+	
+	/**
+         * Create a new instance of {@code FastqFileDataStoreBuilder}
+         * which will build a {@link FastqDataStore} for the given
+         * fastq encoded {@link InputStream}.
+         * 
+         * If using this constructor, a {@link FastqQualityCodec}
+         * must be provided using {@link #qualityCodec(FastqQualityCodec)}
+         * since the inputStream can not be parsed multiple times
+         * to determine the qualiy encoding.
+         * 
+         * @param inputStream the {@link InputStream} of the fastq file make a {@link FastqDataStore} with. 
+         * @throws IOException if the fastq file does not exist, or can not be read.
+         * @throws NullPointerException if inputstream is null.
+         */
+        public FastqFileDataStoreBuilder(InputStream inputStream) throws IOException{
+                
+                this.parser = FastqFileParser.create(inputStream);
+        }
 	
 	/**
 	 * Create a new instance of {@code FastqFileDataStoreBuilder}
