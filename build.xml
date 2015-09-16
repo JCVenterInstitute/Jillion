@@ -15,8 +15,6 @@
 	<property name="jacoco.report.dir" location="${reports}/jacoco"/>
 	<property name="jacoco.output.file" location="${reports}/jacoco.exec"/>
 	
-	<property name="experimental" value ="experimental"/>
-		<property name ="experimental-test" value="experimental-test"/>
 	
 	<property name ="analysis" value="build-lib"/>
   
@@ -110,16 +108,13 @@
 			source="${jdk.version}" target="${jdk.version}"
 			destdir="${bin}"  classpathref="test.classpath" includeantruntime="false">
 					<src path="${test}"/>
-			<src path="${experimental}"/>
-			<src path="${experimental-test}"/>
+		
 			
 			
 	  	</javac>
 		
 		<copy todir="${bin}">
 			<fileset dir="${test}" excludes="**/*.java"/>
-			<fileset dir="${experimental}" excludes="**/*.java"/>
-			<fileset dir="${experimental-test}" excludes="**/*.java"/>
 		</copy>
 
 	 </target>
@@ -191,7 +186,7 @@
 					fork="true">
 	                <formatter type="xml"/>
 
-	                <test name="org.jcvi.AllUnitTests"/>
+	                <test name="org.jcvi.jillion.AllUnitTests"/>
 	                <classpath refid="test.classpath"/>
 	            </junit>
 	        </jacoco:coverage>
@@ -208,7 +203,7 @@
 				failureproperty="unit.test.failed"
 				fork="true">
 	            <formatter type="xml"/>
-	            <test name="org.jcvi.AllUnitTests"/>
+	            <test name="org.jcvi.jillion.AllUnitTests"/>
 	            <classpath refid="test.classpath"/>
 	        </junit>
 	    </target>
@@ -323,9 +318,7 @@
 	<target name="release" description="jar of all source files" depends= "source.only.bin">
 			
 			    <jar jarfile="${project-name}-${version}.jar">
-			        <fileset dir="${bin}">
-			        	<exclude name="**/*jillion_experimental*/*.java"/>
-			        	</fileset>
+			        <fileset dir="${bin}"/>
 			    	<manifest>
 			    		<attribute name ="Sealed" value ="true"/>
 			    	</manifest>
