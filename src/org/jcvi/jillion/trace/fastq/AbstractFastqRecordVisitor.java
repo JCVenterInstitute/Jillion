@@ -22,6 +22,8 @@ package org.jcvi.jillion.trace.fastq;
 
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.internal.trace.fastq.CommentedParsedFastqRecord;
+import org.jcvi.jillion.internal.trace.fastq.ParsedFastqRecord;
 
 public abstract class AbstractFastqRecordVisitor implements FastqRecordVisitor{
 
@@ -31,6 +33,7 @@ public abstract class AbstractFastqRecordVisitor implements FastqRecordVisitor{
 	
 	private NucleotideSequence currentBasecalls;
 	private QualitySequence currentQualities;
+	private String encodedQualities;
 	private boolean turnOffCompression;
 	
 	public AbstractFastqRecordVisitor(String id, String optionalComment,
@@ -53,7 +56,7 @@ public abstract class AbstractFastqRecordVisitor implements FastqRecordVisitor{
 
 	@Override
 	public final void visitEncodedQualities(String encodedQualities) {
-		currentQualities = qualityCodec.decode(encodedQualities, turnOffCompression);
+		this.encodedQualities = encodedQualities;
 		
 	}
 	
@@ -67,9 +70,21 @@ public abstract class AbstractFastqRecordVisitor implements FastqRecordVisitor{
 
 	@Override
 	public final void visitEnd() {
-		visitRecord(new FastqRecordBuilder(id, currentBasecalls, currentQualities)
-									.comment(optionalComment)
-									.build());		
+	    FastqRecord fastqRecord;
+	    if(currentQualities !=null){
+	        fastqRecord = new FastqRecordBuilder(id, currentBasecalls, currentQualities)
+            							.comment(optionalComment)
+            							.build();
+       	
+	    }else{
+	        if(optionalComment ==null){
+	            fastqRecord = new ParsedFastqRecord(id, currentBasecalls , encodedQualities, qualityCodec, turnOffCompression);
+	        }else{
+	            fastqRecord = new CommentedParsedFastqRecord(id, currentBasecalls , encodedQualities, qualityCodec, turnOffCompression, optionalComment);
+	        }
+	    }
+	    
+	    visitRecord(fastqRecord);
 	}
 	
 	@Override
@@ -78,5 +93,7 @@ public abstract class AbstractFastqRecordVisitor implements FastqRecordVisitor{
 	}
 
 	protected abstract void visitRecord(FastqRecord record);
+	
+	
 
 }

@@ -168,17 +168,17 @@ public abstract class FastqFileParser implements FastqParser{
         }while(inBasecallBlock);
         
         NucleotideSequence sequence = sequenceBuilder
-							        		.turnOffDataCompression(parserState.turnOffDataCompression())
-							        		.build();
+						.turnOffDataCompression(parserState.turnOffDataCompression())
+						.build();
         	recordVisitor.visitNucleotides(sequence);
         
         if(!parserState.keepParsing()){
             recordVisitor.halted();
-        	return parserState.setOffset(parser.getPosition());
+            return parserState.setOffset(parser.getPosition());
         }
         //now parse the qualities
         int expectedQualities =  (int)sequence.getLength();
-		sequenceBuilder.clear();
+        sequenceBuilder.clear();
         
         qualityBuilder.setLength(0);
         //needs to be a do-while loop

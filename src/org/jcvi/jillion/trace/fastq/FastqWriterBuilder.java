@@ -38,6 +38,7 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.Builder;
+import org.jcvi.jillion.internal.trace.fastq.ParsedFastqRecord;
 /**
  * {@code FastqWriterBuilder}
  * is a {@link Builder} that 
@@ -324,7 +325,29 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 	
 		@Override
 		public void write(FastqRecord record) throws IOException {
+		    if(record instanceof ParsedFastqRecord){
+		        ParsedFastqRecord parsedRecord = (ParsedFastqRecord) record;
+		        FastqQualityCodec recordCodec = parsedRecord.getQualityCodec();
+		        String formattedString;
+		        if(codec.equals(recordCodec)){
+		            //same quality encoding can use encoded qualities as is
+		            formattedString=  toFormattedString(parsedRecord.getId(), parsedRecord.getNucleotideSequence(),
+		                    formatEncodedQualities(parsedRecord.getEncodedQualities()), parsedRecord.getComment());
+		        }else{
+		            //not same quality encoding		            
+		            int offsetCorrection = codec.getOffset() - recordCodec.getOffset();
+		            char[] chars =parsedRecord.getEncodedQualities().toCharArray();
+		            for(int i=0; i< chars.length; i++){
+		                chars[i] = (char)(chars[i] + offsetCorrection);
+		            }
+		            formattedString = toFormattedString(parsedRecord.getId(), parsedRecord.getNucleotideSequence(),
+		                    formatEncodedQualities( new String(chars)), parsedRecord.getComment());
+		        }
+		        
+		        writer.write(formattedString);
+		    }else{
 			write(record.getId(), record.getNucleotideSequence(), record.getQualitySequence(), record.getComment());
+		    }
 			
 		}
 	
@@ -354,7 +377,7 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 				throw new IllegalArgumentException(
 						String.format("nucleotide and quality sequences must be same length: %d vs %d",nucLength, qualLength));
 			}
-			final String formattedString =toFormattedString(id, sequence, qualities, optionalComment);
+			final String formattedString =toFormattedString(id, sequence, encodeQualities(qualities), optionalComment);
 			
 			writer.write(formattedString);
 	
@@ -384,7 +407,12 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 		}
 		private CharSequence encodeQualities(QualitySequence qualities){
 			String encodedQualities = codec.encode(qualities);
-			if(numberOfBasesPerLine==ALL_ON_ONE_LINE){
+			return formatEncodedQualities(encodedQualities);
+		}
+
+
+        private CharSequence formatEncodedQualities(String encodedQualities) {
+            if(numberOfBasesPerLine==ALL_ON_ONE_LINE){
 				return encodedQualities;
 			}
 			int numberOfLines = encodedQualities.length()/numberOfBasesPerLine +1;
@@ -397,9 +425,9 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 			}
 			
 			return builder;
-		}
+        }
 		private String toFormattedString(String id, NucleotideSequence sequence,
-				QualitySequence qualities, String optionalComment) {
+				CharSequence encodedQualities, String optionalComment) {
 			boolean hasComment = optionalComment != null;
 	
 			StringBuilder builder = new StringBuilder("@").append(id);
@@ -410,7 +438,7 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 			if (writeIdOnQualityLine) {
 				builder.append(id);
 			}
-			builder.append(CR).append(encodeQualities(qualities)).append(CR);
+			builder.append(CR).append(encodedQualities).append(CR);
 			return builder.toString();
 		}
 	}
