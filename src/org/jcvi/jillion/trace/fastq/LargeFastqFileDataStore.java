@@ -32,9 +32,7 @@ import java.util.function.Predicate;
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
-import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
@@ -177,18 +175,16 @@ final class LargeFastqFileDataStore implements FastqFileDataStore {
         if(!filter.test(id)){
         	return false;
         }
-        StreamingIterator<FastqRecord> iter =null;        
-        try{
-        	iter= iterator();
-        	while(iter.hasNext()){
-                FastqRecord fastQ = iter.next();
-                if(fastQ.getId().equals(id)){                    
+              
+        try(StreamingIterator<String> iter = idIterator()){
+        	
+            while(iter.hasNext()){
+
+                if(iter.next().equals(id)){                    
                     return true;
                 }
             }
             return false;
-        }finally{
-        	IOUtil.closeAndIgnoreErrors(iter);
         }
         
     }
@@ -203,17 +199,14 @@ final class LargeFastqFileDataStore implements FastqFileDataStore {
         if(!filter.test(id)){
         	return null;
         }
-        StreamingIterator<FastqRecord> iter =null;
-        try{
-        	iter= iterator();
-        	while(iter.hasNext()){
+        try(StreamingIterator<FastqRecord> iter = iterator()){
+        	
+            while(iter.hasNext()){
                 FastqRecord fastQ = iter.next();
                 if(fastQ.getId().equals(id)){                    
                     return fastQ;
                 }
             }
-        }finally{
-        	IOUtil.closeAndIgnoreErrors(iter);
         }
         //not found
        return null;
@@ -222,9 +215,12 @@ final class LargeFastqFileDataStore implements FastqFileDataStore {
     @Override
     public synchronized StreamingIterator<String> idIterator() throws DataStoreException {
         throwExceptionIfClosed();
-        FastqIdIterator iterator = new FastqIdIterator();
-        iterator.start();
-	return DataStoreStreamingIterator.create(this,iterator);        
+        if (recordFilter == null) {
+            NoLambdaFastqIdIterator iterator = new NoLambdaFastqIdIterator();
+            iterator.start();
+            return DataStoreStreamingIterator.create(this, iterator);
+        }
+        return new LambdaFilteredFastqIdIterator(iterator());
     }
 
     @Override
@@ -285,8 +281,30 @@ final class LargeFastqFileDataStore implements FastqFileDataStore {
 		return DataStoreStreamingIterator.create(this,iter);
 	}
 
+    private final class LambdaFilteredFastqIdIterator implements StreamingIterator<String>{
+        private final StreamingIterator<FastqRecord> iter;
+        
+        public LambdaFilteredFastqIdIterator(StreamingIterator<FastqRecord> iter) {
+            this.iter = iter;
+        }
 
-	private final class FastqIdIterator extends AbstractBlockingStreamingIterator<String> implements StreamingIterator<String>{
+        @Override
+        public boolean hasNext() {
+            return iter.hasNext();
+        }
+
+        @Override
+        public void close() {
+            iter.close();
+        }
+
+        @Override
+        public String next() {
+           return iter.next().getId();
+        }
+        
+    }
+	private final class NoLambdaFastqIdIterator extends AbstractBlockingStreamingIterator<String> implements StreamingIterator<String>{
 
     	
 
@@ -308,31 +326,17 @@ final class LargeFastqFileDataStore implements FastqFileDataStore {
 					@Override
 					public FastqRecordVisitor visitDefline(final FastqVisitorCallback callback,
 							String id, String optionalComment) {
-						if(FastqIdIterator.this.isClosed()){
+						if(NoLambdaFastqIdIterator.this.isClosed()){
 							callback.haltParsing();							
 						}
-						if (filter.test(id)) {
-						    //our record filter can still filter it out..
-						    if(recordFilter ==null){
+						if (filter.test(id)) {						   
 						        blockingPut(id);
-                                                        if(FastqIdIterator.this.isClosed()){
+                                                        if(NoLambdaFastqIdIterator.this.isClosed()){
                                                             callback.haltParsing();                                                 
                                                         }
                                                         return null;
-						    }
-						    return new AbstractFastqRecordVisitor(id, optionalComment, qualityCodec) {
-                                                        
-                                                        @Override
-                                                        protected void visitRecord(FastqRecord record) {
-                                                            if(recordFilter.test(record)){
-                                                                blockingPut(id);
-                                                                if(FastqIdIterator.this.isClosed()){
-                                                                    callback.haltParsing();                                                 
-                                                                }
-                                                            }
-                                                            
-                                                        }
-                                                    };
+						    
+						   
 							
 						}
 						
