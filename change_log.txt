@@ -87,6 +87,9 @@ New Features
     
    
 
+10.  Added new DataStores factory method: containedInDataStore(DataStore datastore) which will only accept ids that are
+     also contained in the given datastore.
+
 API Changes
 -----------
 
