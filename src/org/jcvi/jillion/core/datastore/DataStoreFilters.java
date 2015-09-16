@@ -21,6 +21,7 @@
 package org.jcvi.jillion.core.datastore;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 /**
@@ -142,6 +143,49 @@ public final class DataStoreFilters {
 		return new PatternDataStoreFilter(pattern);
 	}
 	
+	/**
+	 * Create a new {@link DataStoreFilter}
+	 * that will only accept any ids that are contained
+	 * in the given DataStore. 
+	 * The DataStore must remain open for the entire lifetime
+	 * of this DataStoreFilter; otherwise it will be
+	 * kept
+	 * @param datastore the DataStore to check to see if the ids are
+	 * contained in; can not be null.
+	 * 
+	 * @implNote internally the accept test is done using {@link DataStore#contains(String)}.
+	 * 
+	 * @return a new DataStoreFilter object; will never be null.
+	 * 
+	 * @throws NullPointerException if datastore is null.
+	 * @since 5.0
+	 */
+	public static DataStoreFilter containedInDataStore(DataStore<?> datastore){
+		Objects.requireNonNull(datastore);
+		return new ContainedInDataStoreFilter(datastore);
+	}
+	
+	
+	private static final class ContainedInDataStoreFilter implements DataStoreFilter{
+		private final DataStore<?> delegate;
+
+		
+		@Override
+		public boolean accept(String id) {
+			try {
+				return delegate.contains(id);
+			} catch (DataStoreException e) {
+				throw new IllegalStateException("error accessing datastore", e);
+			}
+		}
+
+
+		public ContainedInDataStoreFilter(DataStore<?> delegate) {
+			this.delegate = delegate;
+		}
+		
+		
+	}
 	private static final class IncludeDataStoreFilter implements DataStoreFilter{
 
 	    private final Collection<String> ids;
