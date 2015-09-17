@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.util.regex.Pattern;
 
 import org.jcvi.jillion.core.qual.QualitySequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 /**
  * {@code FastqUtil} is a utility class for working with 
@@ -317,7 +316,7 @@ public final class FastqUtil {
     	private int overAllMin= Integer.MAX_VALUE;
     	private int overallMax = Integer.MIN_VALUE;
 		@Override
-		public void visitNucleotides(NucleotideSequence nucleotides) {
+		public void visitNucleotides(String nucleotides) {
 			//no-op			
 		}
 

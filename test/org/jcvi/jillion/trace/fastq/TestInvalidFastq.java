@@ -1,19 +1,12 @@
 package org.jcvi.jillion.trace.fastq;
 
-import static org.easymock.EasyMock.anyObject;
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.easymock.EasyMock.*;
 import static org.hamcrest.core.StringStartsWith.startsWith;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -39,7 +32,7 @@ public class TestInvalidFastq {
 		expect(visitor.visitDefline(anyObject(), eq("SRR001666.1"), eq("071112_SLXA-EAS1_s_7:5:1:817:345 length=36"))
 				).andReturn(recordVisitor);
 		
-		recordVisitor.visitNucleotides(seq("GGGTGATGGCCGCTGCCGATGGCGTCAAATCCCACC"));
+		recordVisitor.visitNucleotides("GGGTGATGGCCGCTGCCGATGGCGTCAAATCCCACC");
 		recordVisitor.visitEncodedQualities("IIIIIIIIIIIIIIIIIIIIIIIIIIIIII9IG9IC");
 		recordVisitor.visitEnd();
 		
@@ -72,7 +65,7 @@ public class TestInvalidFastq {
 		expect(visitor.visitDefline(anyObject(), eq("SRR001666.1"), eq("071112_SLXA-EAS1_s_7:5:1:817:345 length=36"))
 				).andReturn(recordVisitor);
 		
-		recordVisitor.visitNucleotides(seq("GGGTGATGGCCGCTGCCGATGGCGTCAAATCCCACC"));
+		recordVisitor.visitNucleotides("GGGTGATGGCCGCTGCCGATGGCGTCAAATCCCACC");
 		
 		
 		replay(recordVisitor, visitor);
@@ -106,7 +99,7 @@ public class TestInvalidFastq {
 		expect(visitor.visitDefline(anyObject(), eq("SRR001666.1"), eq("071112_SLXA-EAS1_s_7:5:1:817:345 length=36"))
 				).andReturn(recordVisitor);
 		
-		recordVisitor.visitNucleotides(seq("GGGTGATGGCCGCTGCCGATGGCGTCAAATCCCACC"));
+		recordVisitor.visitNucleotides("GGGTGATGGCCGCTGCCGATGGCGTCAAATCCCACC");
 		
 		
 		replay(recordVisitor, visitor);
@@ -145,7 +138,7 @@ public class TestInvalidFastq {
 		expect(visitor.visitDefline(anyObject(), eq("SRR001666.1"), eq("071112_SLXA-EAS1_s_7:5:1:817:345 length=36"))
 				).andReturn(recordVisitor);
 		
-		recordVisitor.visitNucleotides(seq("GGGTGATGGCCGCTGCCGATGGCGTCAAATCCCACC"));
+		recordVisitor.visitNucleotides("GGGTGATGGCCGCTGCCGATGGCGTCAAATCCCACC");
 		
 		
 		replay(recordVisitor, visitor);
@@ -163,9 +156,6 @@ public class TestInvalidFastq {
 	}
 	
 	
-	private NucleotideSequence seq(String s){
-		return new NucleotideSequenceBuilder(s).build();
-	}
 	private InputStream stream(String s){
 		return IOUtil.toInputStream(s);
 	}

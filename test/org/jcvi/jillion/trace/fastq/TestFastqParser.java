@@ -1,12 +1,6 @@
 package org.jcvi.jillion.trace.fastq;
 
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.getCurrentArguments;
-import static org.easymock.EasyMock.isA;
-import static org.easymock.EasyMock.isNull;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -15,8 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.easymock.EasyMockSupport;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback;
 import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback.FastqVisitorMemento;
@@ -132,7 +124,7 @@ public class TestFastqParser extends EasyMockSupport{
 	private FastqRecordVisitor createSecondRecordVisitor() {
 		FastqRecordVisitor secondRecordVisitor = createMock(FastqRecordVisitor.class);
 		
-		secondRecordVisitor.visitNucleotides(seq("CGTAGTACGATATACGCGCGTGTACTGCTACGTCTCACTTTCGCAAGATTGCTCAGCTCATTGATGCTCAATGCTGGGCCATATCTCTTTTCTTTTTTTC"));
+		secondRecordVisitor.visitNucleotides("CGTAGTACGATATACGCGCGTGTACTGCTACGTCTCACTTTCGCAAGATTGCTCAGCTCATTGATGCTCAATGCTGGGCCATATCTCTTTTCTTTTTTTC");
 		secondRecordVisitor.visitEncodedQualities("HHHHGHHEHHHHHE=HAHCEGEGHAG>CHH>EG5@>5*ECE+>AEEECGG72B&A*)569B+03B72>5.A>+*A>E+7A@G<CAD?@############");
 		secondRecordVisitor.visitEnd();
 		return secondRecordVisitor;
@@ -141,14 +133,12 @@ public class TestFastqParser extends EasyMockSupport{
 	private FastqRecordVisitor firstRecordVisitor() {
 		FastqRecordVisitor firstRecordVisitor = createMock(FastqRecordVisitor.class);
 		
-		firstRecordVisitor.visitNucleotides(seq("CGTAGTACGATATACGCGCGTGTGTACTGCTACGTCTCACTTCTTTTTCCCCACGGGATGTTATTTCCCTTTTAAGCTTCCTGTACAGTTTTGCCGGGCT"));
+		firstRecordVisitor.visitNucleotides("CGTAGTACGATATACGCGCGTGTGTACTGCTACGTCTCACTTCTTTTTCCCCACGGGATGTTATTTCCCTTTTAAGCTTCCTGTACAGTTTTGCCGGGCT");
 		firstRecordVisitor.visitEncodedQualities("@;7C9;A)565A;4..9;2;45,?@###########################################################################");
 		
 		firstRecordVisitor.visitEnd();
 		return firstRecordVisitor;
 	}
 	
-	private NucleotideSequence seq(String s){
-		return new NucleotideSequenceBuilder(s).build();
-	}
+	
 }

@@ -32,7 +32,6 @@ import java.util.zip.GZIPInputStream;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
 import org.jcvi.jillion.trace.fastq.FastqParser;
 import org.jcvi.jillion.trace.fastq.FastqRecordVisitor;
@@ -176,12 +175,10 @@ public abstract class BfqFileParser implements FastqParser{
 				IOUtil.blockingSkip(in, numBases);
 			}else{				
 				byte[] basesAndQualities= IOUtil.readByteArray(in, numBases);
-				boolean turnOffCompression = callback.turnOffCompression;
 				
-				NucleotideSequenceBuilder basesBuilder = new NucleotideSequenceBuilder(numBases)
-																.turnOffDataCompression(turnOffCompression);
+				StringBuilder basesBuilder = new StringBuilder(numBases);
 				QualitySequenceBuilder qualitiesBuilder = new QualitySequenceBuilder(numBases)
-																.turnOffDataCompression(turnOffCompression);
+																.turnOffDataCompression(true);
 				for(int i=0; i<basesAndQualities.length; i++){
 					int value = basesAndQualities[i];
 					if(value ==0){
@@ -199,7 +196,7 @@ public abstract class BfqFileParser implements FastqParser{
 					}
 				}
 				
-				recordVisitor.visitNucleotides(basesBuilder.build());
+				recordVisitor.visitNucleotides(basesBuilder.toString());
 				if(callback.keepParsing()){
 					recordVisitor.visitQualities(qualitiesBuilder.build());
 				}
@@ -273,7 +270,6 @@ public abstract class BfqFileParser implements FastqParser{
 	private class Callback implements FastqVisitorCallback{
 		private final AtomicBoolean keepParsing;
 		private long currentOffset;
-		private volatile boolean turnOffCompression;
 		
 		
 		private Callback(long startOffset){
@@ -302,11 +298,7 @@ public abstract class BfqFileParser implements FastqParser{
 		public void updateCurrentOffset(long offset){
 			this.currentOffset = offset;
 		}
-		@Override
-		public void turnOffDataCompression(boolean turnOffDataCompression) {
-			this.turnOffCompression = turnOffDataCompression;
-			
-		}
+		
 		
 		
 	}
