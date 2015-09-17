@@ -102,4 +102,8 @@ public class ParsedFastqRecord implements FastqRecord {
         return true;
     }
 
+	public String getNucleotideString() {
+		return nucleotideSequenceString;
+	}
+
 }
