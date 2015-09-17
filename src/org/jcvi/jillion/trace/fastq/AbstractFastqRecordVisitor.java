@@ -21,7 +21,7 @@
 package org.jcvi.jillion.trace.fastq;
 
 import org.jcvi.jillion.core.qual.QualitySequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.trace.fastq.CommentedParsedFastqRecord;
 import org.jcvi.jillion.internal.trace.fastq.ParsedFastqRecord;
 
@@ -31,7 +31,7 @@ public abstract class AbstractFastqRecordVisitor implements FastqRecordVisitor{
 	private final String optionalComment;
 	private final FastqQualityCodec qualityCodec;
 	
-	private NucleotideSequence currentBasecalls;
+	private String currentBasecalls;
 	private QualitySequence currentQualities;
 	private String encodedQualities;
 	private boolean turnOffCompression;
@@ -49,7 +49,7 @@ public abstract class AbstractFastqRecordVisitor implements FastqRecordVisitor{
 	}
 
 	@Override
-	public final void visitNucleotides(NucleotideSequence nucleotides) {
+	public final void visitNucleotides(String nucleotides) {
 		currentBasecalls = nucleotides;
 		
 	}
@@ -72,7 +72,9 @@ public abstract class AbstractFastqRecordVisitor implements FastqRecordVisitor{
 	public final void visitEnd() {
 	    FastqRecord fastqRecord;
 	    if(currentQualities !=null){
-	        fastqRecord = new FastqRecordBuilder(id, currentBasecalls, currentQualities)
+	        fastqRecord = new FastqRecordBuilder(id, new NucleotideSequenceBuilder(currentBasecalls)
+	        												.turnOffDataCompression(turnOffCompression)
+	        												.build(), currentQualities)
             							.comment(optionalComment)
             							.build();
        	

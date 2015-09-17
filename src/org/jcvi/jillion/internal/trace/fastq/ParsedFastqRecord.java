@@ -12,17 +12,18 @@ public class ParsedFastqRecord implements FastqRecord {
     private final String encodedQualities;
     private final FastqQualityCodec qualityCodec;
     
-    private final NucleotideSequence nucleotideSequence;
+    private final String nucleotideSequenceString;
+    private NucleotideSequence nucleotideSequence;
     private QualitySequence qualitySequence;
     
     private final boolean turnOffCompression;
     
     
-    public ParsedFastqRecord(String id, NucleotideSequence nucleotideSequence,
+    public ParsedFastqRecord(String id, String nucleotideSequence,
             String encodedQualities, FastqQualityCodec qualityCodec,
             boolean turnOffCompression) {
         this.id = id;
-        this.nucleotideSequence = nucleotideSequence;
+        this.nucleotideSequenceString = nucleotideSequence;
         this.encodedQualities = encodedQualities;
         this.qualityCodec = qualityCodec;
         this.turnOffCompression = turnOffCompression;
@@ -35,6 +36,11 @@ public class ParsedFastqRecord implements FastqRecord {
 
     @Override
     public NucleotideSequence getNucleotideSequence() {
+    	if(nucleotideSequence==null){
+    		nucleotideSequence = new NucleotideSequenceBuilder(nucleotideSequenceString)
+    									.turnOffDataCompression(turnOffCompression)
+    									.build();
+    	}
         return nucleotideSequence;
     }
 
@@ -67,7 +73,7 @@ public class ParsedFastqRecord implements FastqRecord {
         int result = 1;         
         result = prime * result + id.hashCode();
         result = prime * result
-                + nucleotideSequence.hashCode();
+                + getNucleotideSequence().hashCode();
         result = prime * result
                 + getQualitySequence().hashCode();
         return result;
@@ -87,7 +93,7 @@ public class ParsedFastqRecord implements FastqRecord {
         if (!id.equals(other.getId())) {
             return false;
         }
-        if (!nucleotideSequence.equals(other.getNucleotideSequence())) {
+        if (!getNucleotideSequence().equals(other.getNucleotideSequence())) {
             return false;
         }
         if (!getQualitySequence().equals(other.getQualitySequence())) {

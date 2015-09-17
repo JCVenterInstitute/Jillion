@@ -32,8 +32,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
 import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
@@ -50,7 +48,7 @@ public abstract class FastqFileParser implements FastqParser{
 
 	private static final Pattern CASAVA_1_8_DEFLINE_PATTERN = Pattern.compile("^@(\\S+\\s+\\d:[N|Y]:\\d+:(\\S+)?)\\s*$");
 	
-	private final NucleotideSequenceBuilder sequenceBuilder = new NucleotideSequenceBuilder(2000);
+	private final StringBuilder sequenceBuilder = new StringBuilder(2000);
 	private final StringBuilder qualityBuilder = new StringBuilder(2000);
 	/**
 	 * Create a new {@link FastqFileParser} instance
@@ -158,27 +156,27 @@ public abstract class FastqFileParser implements FastqParser{
 			throw new IOException(
     				String.format("unexpected end of file. no sequence for current record '%s'",currentId));
         }
-    	sequenceBuilder.append(line);
+    	sequenceBuilder.append(line.trim());
         do{
         	line = parser.nextLine();
         	inBasecallBlock = notQualityDefLine(line);
         	if(inBasecallBlock){
-        		sequenceBuilder.append(line);
+        		sequenceBuilder.append(line.trim());
         	}
         }while(inBasecallBlock);
         
-        NucleotideSequence sequence = sequenceBuilder
-						.turnOffDataCompression(parserState.turnOffDataCompression())
-						.build();
-        	recordVisitor.visitNucleotides(sequence);
+       
+        	recordVisitor.visitNucleotides(sequenceBuilder.toString());
         
         if(!parserState.keepParsing()){
             recordVisitor.halted();
             return parserState.setOffset(parser.getPosition());
         }
         //now parse the qualities
-        int expectedQualities =  (int)sequence.getLength();
-        sequenceBuilder.clear();
+        int expectedQualities =  (int)sequenceBuilder.length();
+        
+        //clear builders
+        sequenceBuilder.setLength(0);
         
         qualityBuilder.setLength(0);
         //needs to be a do-while loop
@@ -304,12 +302,6 @@ public abstract class FastqFileParser implements FastqParser{
 			return parserState;
 		}
 
-		@Override
-		public void turnOffDataCompression(boolean turnOffDataCompression) {
-			parserState.turnOffDataCompression(turnOffDataCompression);
-			
-		}
-		
 		
 		
 	}
@@ -358,25 +350,12 @@ public abstract class FastqFileParser implements FastqParser{
 	private static class ParserState{
 		private final long currentOffset;
 		private final AtomicBoolean keepParsing;
-		//we probably don't care 
-		//about concurrency here.
-		//if the client ever turns off compression
-		//it will probably be only once or twice over the lifetime
-		//of the parser.
-		private volatile boolean turnOffDataCompression = false;
+		
 		
 		ParserState(long startOffset){
 			this(startOffset, new AtomicBoolean(true));
 		}
 		
-		public void turnOffDataCompression(boolean turnOffDataCompression) {
-			this.turnOffDataCompression = turnOffDataCompression;
-			
-		}
-		
-		public boolean turnOffDataCompression(){
-			return turnOffDataCompression;
-		}
 
 		public final long getCurrentOffset() {
 			return currentOffset;
