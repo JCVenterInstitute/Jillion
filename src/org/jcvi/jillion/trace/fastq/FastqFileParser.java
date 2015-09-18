@@ -43,7 +43,7 @@ import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback.FastqVisit
  * @author dkatzel
  *
  */
-public abstract class FastqFileParser implements FastqParser{
+abstract class FastqFileParser implements FastqParser{
 
 	private static final Pattern CASAVA_1_8_DEFLINE_PATTERN = Pattern.compile("^@(\\S+\\s+\\d:[N|Y]:\\d+:(\\S+)?)\\s*$");
 	

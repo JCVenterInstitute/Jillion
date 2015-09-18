@@ -341,10 +341,12 @@ public final class FastqFileDataStoreBuilder{
 	    
 	    
 	        if(parser ==null){
-	            parser = new FastqFileParserBuilder(inputFile, toInputStream)
-	                                                    .hasComments(hasComments)
-	                                                    .hasMultilineSequences(isMultiLine)
-	                                                    .build();
+	        	FastqFileParserBuilder builder = toInputStream==null? new FastqFileParserBuilder(inputFile) : 
+	        															new FastqFileParserBuilder(inputFile, toInputStream);
+	        	parser = builder
+                        .hasComments(hasComments)
+                        .hasMultilineSequences(isMultiLine)
+                        .build();
 	                                                    
 	        }
 		if(codec ==null){
