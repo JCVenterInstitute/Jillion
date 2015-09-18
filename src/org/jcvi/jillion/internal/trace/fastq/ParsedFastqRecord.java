@@ -105,5 +105,12 @@ public class ParsedFastqRecord implements FastqRecord {
 	public String getNucleotideString() {
 		return nucleotideSequenceString;
 	}
+	
+	
+	@Override
+        public String toString() {
+                return "UncommentedFastqRecord [id=" + id + ", nucleotides="
+                                + nucleotideSequenceString + ", qualities=" + getQualitySequence() + "]";
+        }
 
 }

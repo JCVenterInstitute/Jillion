@@ -64,7 +64,7 @@ public abstract class AbstractTestFastQFileDataStore {
             new NucleotideSequenceBuilder("ACGCCTGCGTTATGGTNTAACAGGCATTCCGCCCCAGACAAACTCCCCCCCTAACCATGTCTTTCGCAAAAATCAGTCAATAAATGACCTTAACTTTAGA").build(),
             QUALITY_CODEC
                     .decode("`a\\a`^\\a^ZZa[]^WB_aaaa^^a`]^a`^`aaa`]``aXaaS^a^YaZaTW]a_aPY\\_UVY[P_ZHQY_NLZUR[^UZ\\TZWT_[_VWMWaRFW]BB"))
-            .comment("example comment")
+           // .comment("example comment")
             .build();
 
     protected abstract DataStore<FastqRecord> createFastQFileDataStore(File file,FastqQualityCodec qualityCodec) throws IOException;

@@ -23,6 +23,8 @@ package org.jcvi.jillion.trace.fastq;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
@@ -35,7 +37,9 @@ import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
  *
  */
 public final class FastqFileDataStoreBuilder{
-	private final FastqParser parser;
+	private FastqParser parser;
+	private File inputFile;
+	private Function<File, InputStream> toInputStream;
 	
 	private Predicate<String> idFilter = (id)-> true;
 	//default to null which we can use
@@ -49,6 +53,9 @@ public final class FastqFileDataStoreBuilder{
 	
 	private FastqQualityCodec codec=null;
 	
+	private boolean hasComments;
+	private boolean isMultiLine;
+	
 	/**
 	 * Create a new instance of {@code FastqFileDataStoreBuilder}
 	 * which will build a {@link FastqDataStore} for the given
@@ -58,9 +65,28 @@ public final class FastqFileDataStoreBuilder{
 	 * @throws NullPointerException if fastqFile is null.
 	 */
 	public FastqFileDataStoreBuilder(File fastqFile) throws IOException{
-		
-		this.parser = FastqFileParser.create(fastqFile);
+		Objects.requireNonNull(fastqFile);
+		this.inputFile = fastqFile;
+		this.toInputStream = null;
+		this.parser = null;
 	}
+	
+	/**
+         * Create a new instance of {@code FastqFileDataStoreBuilder}
+         * which will build a {@link FastqDataStore} for the given
+         * fastq file.
+         * @param fastqFile the fastq file make a {@link FastqDataStore} with. 
+         * @throws IOException if the fastq file does not exist, or can not be read.
+         * @throws NullPointerException if fastqFile is null.
+         */
+        public FastqFileDataStoreBuilder(File fastqFile, Function<File, InputStream> toInputStreamFunction) throws IOException{
+                Objects.requireNonNull(fastqFile);
+                Objects.requireNonNull(toInputStreamFunction);
+                
+                this.inputFile = fastqFile;
+                this.toInputStream = toInputStreamFunction;
+                this.parser = null;
+        }
 	
 	/**
          * Create a new instance of {@code FastqFileDataStoreBuilder}
@@ -128,6 +154,44 @@ public final class FastqFileDataStoreBuilder{
 		this.codec = codec;
 		return this;
 	}
+	
+	/**
+	 * The deflines of the sequences contain comments. 
+	 * Parsing comments is more computationally intensive to 
+         *              try to distinguish the id from the comment. Remember some Fastq id's can
+         *              have spaces which makes comment detection difficult and complex.
+	 * @return this
+	 */
+	public FastqFileDataStoreBuilder hasComments(){
+	    this.hasComments = true;
+	    return this;
+	}
+	
+	/**
+         * Notes that records may have multiple lines for the sequence
+         * and qualities sequences.
+         * Most fastq files define each record in 4 lines:
+         * <ol>
+         * <li>The defline</li>
+         * <li>nucleotide sequence</li>
+         * <li>The quality defline</li>
+         * <li>quality sequence</li>
+         * </ol>
+         * 
+         * However, some fastq files split the nucleotide and quality sequences
+         * over multiple lines.  For performance reasons,
+         * checking for multi-lines has been turned off by default.
+         * 
+         * Calling this method turns it back on for this datastore.
+         * 
+         * @return this
+         */
+        public FastqFileDataStoreBuilder isMultiLine(){
+            this.isMultiLine = true;
+            return this;
+        }
+        
+	
 	/**
 	 * Only include the {@link FastqRecord}s which pass
 	 * the given {@link Predicate} for the ID.  If a filter
@@ -274,6 +338,15 @@ public final class FastqFileDataStoreBuilder{
 	 * @see #filter(DataStoreFilter)
 	 */
 	public FastqFileDataStore build() throws IOException {
+	    
+	    
+	        if(parser ==null){
+	            parser = new FastqFileParserBuilder(inputFile, toInputStream)
+	                                                    .hasComments(hasComments)
+	                                                    .hasMultilineSequences(isMultiLine)
+	                                                    .build();
+	                                                    
+	        }
 		if(codec ==null){
 			if(parser.isReadOnceOnly()){
 				//can't parse this twice

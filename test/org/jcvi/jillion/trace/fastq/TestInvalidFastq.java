@@ -40,7 +40,7 @@ public class TestInvalidFastq {
 		
 		replay(recordVisitor, visitor);
 		
-		FastqFileParser.create(stream(input))
+		FastqFileParser.create(stream(input), true,false)
 							.parse(visitor);
 		
 		verify(recordVisitor, visitor);
@@ -74,7 +74,7 @@ public class TestInvalidFastq {
 		thrown.expectMessage(startsWith("incorrect number of quality values"));
 		
 		
-		FastqFileParser.create(stream(input))
+		FastqFileParser.create(stream(input), true, false)
 							.parse(visitor);
 		
 		
@@ -108,7 +108,7 @@ public class TestInvalidFastq {
 		thrown.expectMessage(startsWith("too few quality values"));
 		
 		
-		FastqFileParser.create(stream(input))
+		FastqFileParser.create(stream(input), true, false)
 							.parse(visitor);
 		
 		
@@ -147,7 +147,7 @@ public class TestInvalidFastq {
 		thrown.expectMessage(startsWith("incorrect number of quality values"));
 		
 		
-		FastqFileParser.create(stream(input))
+		FastqFileParser.create(stream(input),true, false)
 							.parse(visitor);
 		
 		
