@@ -30,6 +30,13 @@ public class ParsedFastqRecord implements FastqRecord {
     }
 
     @Override
+	public long getLength() {
+    	//get the string length which will be faster
+    	//than parsing the length from most NucleotideSequence implementations.
+		return nucleotideSequenceString.length();
+	}
+
+	@Override
     public String getId() {
         return id;
     }

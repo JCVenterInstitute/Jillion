@@ -30,8 +30,6 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 
 import org.jcvi.jillion.core.pos.PositionSequenceBuilder;
-import org.jcvi.jillion.fasta.pos.PositionFastaDataStore;
-import org.jcvi.jillion.fasta.pos.PositionFastaRecord;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
 
@@ -161,7 +159,11 @@ public abstract class AbstractTestPositionFastaFileDataStore {
 		PositionFastaDataStore sut = createPositionFastaMap(RESOURCES
 				.getFile(QUAL_FILE_PATH));
 		assertEquals(1, sut.getNumberOfRecords());
-		assertEquals(expected, sut.get("1119369023656"));
+		PositionFastaRecord actual = sut.get("1119369023656");
+		assertEquals(expected, actual);
+
+		assertEquals(expected.getSequence().getLength(), actual.getLength());
+		
 	}
 
 	protected abstract PositionFastaDataStore createPositionFastaMap(

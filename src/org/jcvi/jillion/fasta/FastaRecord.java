@@ -54,6 +54,21 @@ public interface FastaRecord<S,T extends Sequence<S>>
      * @return a Sequence, never null.
      */
     T getSequence();
+    
+    /**
+     * Get the sequence length.
+     * 
+     * @implSpec the default implementation
+     * of this method calls
+     * {@code getSequence().getLength()} but some {@link FastaRecord}
+     * implementations may optimize this return value.
+     * 
+     * @return the length of this record sequence,
+     * usually the number of residues or qualities.
+     */
+    default long getLength(){
+    	return getSequence().getLength();
+    }
     /**
      * Two FastaRecords are equal
      * if they both have the same id

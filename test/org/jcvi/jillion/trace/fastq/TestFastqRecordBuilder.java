@@ -50,6 +50,16 @@ public class TestFastqRecordBuilder {
 	}
 	
 	@Test
+	public void length(){
+		NucleotideSequence seq = new NucleotideSequenceBuilder("ACGT").build();
+		QualitySequence qual = new QualitySequenceBuilder(new byte[]{20,20,20,20}).build();
+		FastqRecord sut = new FastqRecordBuilder("id",seq, qual)
+							.build();
+		
+		assertEquals(4, sut.getLength());
+	}
+	
+	@Test
 	public void noComment(){
 		NucleotideSequence seq = new NucleotideSequenceBuilder("ACGT").build();
 		QualitySequence qual = new QualitySequenceBuilder(new byte[]{20,20,20,20}).build();
