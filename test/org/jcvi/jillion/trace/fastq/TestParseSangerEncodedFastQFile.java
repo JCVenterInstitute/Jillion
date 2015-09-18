@@ -20,17 +20,15 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace.fastq;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.internal.ResourceHelper;
-import org.jcvi.jillion.trace.fastq.DefaultFastqFileDataStore;
-import org.jcvi.jillion.trace.fastq.FastqDataStore;
-import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
-import org.jcvi.jillion.trace.fastq.FastqRecord;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 /**
  * @author dkatzel
  *
@@ -45,7 +43,13 @@ public class TestParseSangerEncodedFastQFile {
     FastqDataStore sut;
     @Before
     public void setup() throws IOException{
-        sut = DefaultFastqFileDataStore.create(resources.getFile(file),QUALITY_CODEC);
+    	FastqParser parser = new FastqFileParserBuilder(resources.getFile(file))
+									.hasComments(true)
+									.build();
+
+
+    	sut= DefaultFastqFileDataStore.create(parser,QUALITY_CODEC,DataStoreFilters.alwaysAccept(), null);
+        
     }
     
     @Test

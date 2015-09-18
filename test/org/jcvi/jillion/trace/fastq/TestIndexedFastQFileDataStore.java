@@ -23,9 +23,7 @@ package org.jcvi.jillion.trace.fastq;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.jillion.trace.fastq.FastqDataStore;
-import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
-import org.jcvi.jillion.trace.fastq.IndexedFastqFileDataStore;
+import org.jcvi.jillion.core.datastore.DataStoreFilters;
 
 /**
  * @author dkatzel
@@ -34,10 +32,16 @@ import org.jcvi.jillion.trace.fastq.IndexedFastqFileDataStore;
  */
 public class TestIndexedFastQFileDataStore extends AbstractTestFastQFileDataStore{
 
-    @Override
-    protected FastqDataStore createFastQFileDataStore(File file,
-            FastqQualityCodec qualityCodec) throws IOException {
-        return IndexedFastqFileDataStore.create(file, qualityCodec);
-    }
+	@Override
+	protected FastqDataStore createFastQFileDataStore(File file,
+			FastqQualityCodec qualityCodec) throws IOException {
+		FastqParser parser = new FastqFileParserBuilder(file)
+										.hasComments(true)
+										.hasMultilineSequences(true)
+										.build();
+		return IndexedFastqFileDataStore.create(parser, qualityCodec,
+				DataStoreFilters.alwaysAccept(), null);
+
+	}
 
 }

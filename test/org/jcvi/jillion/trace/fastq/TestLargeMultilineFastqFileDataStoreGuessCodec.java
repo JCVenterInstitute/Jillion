@@ -20,33 +20,36 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace.fastq;
 
+import static org.junit.Assert.assertSame;
+
 import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
-import org.jcvi.jillion.trace.fastq.FastqDataStore;
-import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
-import org.jcvi.jillion.trace.fastq.FastqUtil;
-import org.jcvi.jillion.trace.fastq.LargeFastqFileDataStore;
-
-import static org.junit.Assert.*;
+import org.jcvi.jillion.core.datastore.DataStoreFilters;
 public class TestLargeMultilineFastqFileDataStoreGuessCodec extends TestAbstractMultiLineFastqRecordsInDataStore{
 
 	@Override
 	protected FastqDataStore createFastqDataStoreFor(File fastq,
 			FastqQualityCodec qualityCodec) throws IOException {
-		FastqQualityCodec codec = FastqUtil.guessQualityCodecUsed(fastq);
-		assertSame(codec,qualityCodec);
-		return LargeFastqFileDataStore.create(fastq, codec);
+
+		return createFastqDataStoreFor(fastq, qualityCodec, DataStoreFilters.alwaysAccept());
 	}
 
 	@Override
 	protected FastqDataStore createFastqDataStoreFor(File fastq,
 			FastqQualityCodec qualityCodec, DataStoreFilter filter)
 			throws IOException {
-		FastqQualityCodec codec = FastqUtil.guessQualityCodecUsed(fastq);
+		
+		
+		FastqParser parser = new FastqFileParserBuilder(fastq)
+										.hasComments(true)
+										.hasMultilineSequences(true)
+										.build();
+		FastqQualityCodec codec = FastqUtil.guessQualityCodecUsed(parser);
 		assertSame(codec,qualityCodec);
-		return LargeFastqFileDataStore.create(fastq, codec,filter);
+		return LargeFastqFileDataStore.create(parser, qualityCodec, filter, null);
+
 	}
 
 }
