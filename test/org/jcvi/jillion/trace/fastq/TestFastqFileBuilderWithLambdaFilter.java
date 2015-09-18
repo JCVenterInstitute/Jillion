@@ -68,6 +68,7 @@ public class TestFastqFileBuilderWithLambdaFilter {
         hint.accept(builder);
         
         try(FastqFileDataStore datastore = builder
+                                                    .hasComments()
                                                     .filter(id-> id.endsWith("F"))
                                                     .build();
                 

@@ -40,13 +40,14 @@ import org.jcvi.jillion.trace.fastq.FastqWriterBuilder;
 import org.junit.Test;
 
 import static org.easymock.EasyMock.*;
-public class TestFastqWriter {
+public class TestFastqWriterWithComment {
 
 	private final FastqDataStore datastore;
 	
-	public TestFastqWriter() throws IOException{
+	public TestFastqWriterWithComment() throws IOException{
 		ResourceHelper RESOURCES = new ResourceHelper(TestFastqWriter.class);
-		datastore = new FastqFileDataStoreBuilder(RESOURCES.getFile("files/example.fastq"))
+		datastore = new FastqFileDataStoreBuilder(RESOURCES.getFile("files/exampleWithComments.fastq"))
+		                                .hasComments()
 		                                .qualityCodec(FastqQualityCodec.ILLUMINA)
 		                                .build();
 	}
@@ -171,7 +172,7 @@ public class TestFastqWriter {
 	                "TATTTAAAATCTAATANGTCTTGATTTGAAATTGAAAGAGCAAAAATCTGATTGATTTTATTGAAGAATAATTTGATTTAATATATTCTTAAGTCTGTTT\n"+
 	                "+\n"+
 	                "abaab]_]aaa`bbabB`Wb__aa\\_]W]a`^[`\\T`aZa_aa`WXa``]_`[`^a^^[`^][a^Raaa\\V\\OQ]aYQ^aa^\\`GRTDP`^T^Lb^aR`S\n"+
-	                "@SOLEXA1:4:1:12:1692#0/1\n"+
+	                "@SOLEXA1:4:1:12:1692#0/1 example comment\n"+
 	                "ACGCCTGCGTTATGGTNTAACAGGCATTCCGCCCCAGACAAACTCCCCCCCTAACCATGTCTTTCGCAAAAATCAGTCAATAAATGACCTTAACTTTAGA\n"+
 	                "+\n"+
 	                "`a\\a`^\\a^ZZa[]^WB_aaaa^^a`]^a`^`aaa`]``aXaaS^a^YaZaTW]a_aPY\\_UVY[P_ZHQY_NLZUR[^UZ\\TZWT_[_VWMWaRFW]BB\n";
@@ -193,7 +194,7 @@ public class TestFastqWriter {
 	                "TATTTAAAATCTAATANGTCTTGATTTGAAATTGAAAGAGCAAAAATCTGATTGATTTTATTGAAGAATAATTTGATTTAATATATTCTTAAGTCTGTTT\n"+
 	                "+\n"+
 	                "abaab]_]aaa`bbabB`Wb__aa\\_]W]a`^[`\\T`aZa_aa`WXa``]_`[`^a^^[`^][a^Raaa\\V\\OQ]aYQ^aa^\\`GRTDP`^T^Lb^aR`S\n"+
-	                "@SOLEXA1:4:1:12:1692#0/1\n"+
+	                "@SOLEXA1:4:1:12:1692#0/1 example comment\n"+
 	                "ACGCCTGCGTTATGGTNTAACAGGCATTCCGCCCCAGACAAACTCCCCCCCTAACCATGTCTTTCGCAAAAATCAGTCAATAAATGACCTTAACTTTAGA\n"+
 	                "+\n"+
 	                "`a\\a`^\\a^ZZa[]^WB_aaaa^^a`]^a`^`aaa`]``aXaaS^a^YaZaTW]a_aPY\\_UVY[P_ZHQY_NLZUR[^UZ\\TZWT_[_VWMWaRFW]BB\n";

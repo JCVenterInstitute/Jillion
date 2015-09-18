@@ -50,22 +50,45 @@ public abstract class FastqFileParser implements FastqParser{
 	
 	private final StringBuilder sequenceBuilder = new StringBuilder(2000);
 	private final StringBuilder qualityBuilder = new StringBuilder(2000);
+	
+	private final boolean hasComments;
+	
+	private final  boolean multiLine;
 	/**
 	 * Create a new {@link FastqFileParser} instance
 	 * that will parse the given fastq encoded
-	 * file.
+	 * file without comments.
 	 * @param fastqFile the file to parse.
 	 * @throws IOException  if the file does not exist or can not be read.
 	 * @throws NullPointerException if fastqFile is null.
+	 * 
+	 * @return a new {@link FastqParser} instance; will never be null.
 	 */
 	public static FastqParser create(File fastqFile) throws IOException{
-		return new FileBasedFastqFileParser(fastqFile);
+		return create(fastqFile, false);
 	}
+	
+	/**
+         * Create a new {@link FastqFileParser} instance
+         * that will parse the given fastq encoded
+         * file without comments.
+         * @param fastqFile the file to parse.
+         * @throws IOException  if the file does not exist or can not be read.
+         * @throws NullPointerException if fastqFile is null.
+         * 
+         * @return a new {@link FastqParser} instance; will never be null.
+         */
+        public static FastqParser create(File fastqFile, boolean hasComments) throws IOException{
+                return new FileBasedFastqFileParser(fastqFile, hasComments, true);
+        }
 	/**
 	 * Create a new {@link FastqFileParser} instance
-	 * that will parse the given a compressed fastq file. This factory method should be used in preference
+	 * that will parse the given a compressed fastq file without comments. This factory method should be used in preference
 	 * to {@link #create(InputStream)} if the file needs to be parsed
 	 * multiple times.  
+	 * 
+	 * This is the same as {@link #create(File, boolean, Function) create(fastqFile, false, toInputStream)}.
+	 * 
 	 * @param fastqFile the file to parse.
 	 * @param toInputStream {@link Function} to convert the given {@link File}
 	 * into a <strong>new</strong> raw {@link InputStream}.  This allows the parser to handle compressed
@@ -91,25 +114,104 @@ public abstract class FastqFileParser implements FastqParser{
 	 * 
 	 * @throws IOException  if the file does not exist or can not be read.
 	 * @throws NullPointerException if any parameters are null or if the function returns null.
+	 * 
+	 * @return a new {@link FastqParser} instance; will never be null.
 	 */
 	public static FastqParser create(File fastqFile, Function<File, InputStream> toInputStream) throws IOException{
-		return new FileBasedFastqFileParser(fastqFile, toInputStream);
+		return create(fastqFile, false, toInputStream);
 	}
+	
+	
+	/**
+         * Create a new {@link FastqFileParser} instance
+         * that will parse the given a compressed fastq file. This factory method should be used in preference
+         * to {@link #create(InputStream)} if the file needs to be parsed
+         * multiple times.  
+         * @param fastqFile the file to parse.
+         * 
+         * @param hasComments do the deflines of the sequences contain comments.  If 
+         * set to {@code true} then a more computationally intensive parsing is performed
+         * to try to distinguish the id from the comment.  Remember some Fastq id's can have spaces
+         * which makes comment detection difficult and complex.
+         * 
+         * @param toInputStream {@link Function} to convert the given {@link File}
+         * into a <strong>new</strong> raw {@link InputStream}.  This allows the parser to handle compressed
+         * files.  A new InputStream should be created each time the function is called.  Can not be null.
+         * 
+         * @apiNote 
+         * For example if you wanted to parse a gzipped fastq file:
+         * <pre>
+         * {@code
+         * Function &lt;File, InputStream&gt; toGzipInputStream = f -&gt; {
+         *      try {
+         *              return new GZIPInputStream(new FileInputStream(f));
+         *      } catch (IOException e) {
+         *              throw new UncheckedIOException(e);
+         *      }
+         * };
+         * 
+         * FastqFileParser parser = FastqFileParser.create(gzippedFfastqFile, false, toGzipInputStream);
+         * </pre>
+         * 
+         * @implNote The performance of random accessing records in this fastq file
+         * is dependent on {@link InputStream#skip(long)} implementation returned by the function.
+         * 
+         * @throws IOException  if the file does not exist or can not be read.
+         * @throws NullPointerException if any parameters are null or if the function returns null.
+         * 
+         * @return a new {@link FastqParser} instance; will never be null.
+         */
+        public static FastqParser create(File fastqFile, boolean hasComments, Function<File, InputStream> toInputStream) throws IOException{
+                return new FileBasedFastqFileParser(fastqFile,hasComments, toInputStream, true);
+        }
 	/**
 	 * Create a new {@link FastqFileParser} instance
 	 * that will parse the given fastq encoded
-	 * inputStream.  Please Note that inputStream implementations
+	 * inputStream that does not contain defline comments.  Please Note that inputStream implementations
 	 * of the FastqFileParser can not create {@link FastqVisitorMemento}s
 	 * or use {@link #accept(FastqVisitor, FastqVisitorMemento)}
 	 * method.
+	 * 
+	 * @apiNote this is the same as {@link #create(InputStream, boolean) create(in, false)}
+	 * 
 	 * @param in the fastq encoded inputstream to parse.
 	 * @throws NullPointerException if inputstream is null.
+	 * 
+	 * @return a new {@link FastqParser} instance; will never be null.
 	 */
 	public static FastqParser create(InputStream in){
-		return new InputStreamFastqFileParser(in);
+		return create(in, false, true);
 	}
-	private FastqFileParser(){
-		//can not instantiate outside of this class file.
+	
+	/**
+         * Create a new {@link FastqFileParser} instance
+         * that will parse the given fastq encoded
+         * inputStream.  Please Note that inputStream implementations
+         * of the FastqFileParser can not create {@link FastqVisitorMemento}s
+         * or use {@link #accept(FastqVisitor, FastqVisitorMemento)}
+         * method.
+         * @param in the fastq encoded inputstream to parse.
+         * @param hasComments do the deflines of the sequences contain comments.  If 
+         * set to {@code true} then a more computationally intensive parsing is performed
+         * to try to distinguish the id from the comment.  Remember some Fastq id's can have spaces
+         * which makes comment detection difficult and complex.
+         * 
+         * @throws NullPointerException if inputstream is null.
+         * 
+         * @return a new {@link FastqParser} instance; will never be null.
+         */
+        static FastqParser create(InputStream in, boolean hasComments, boolean multiLine){
+                return new InputStreamFastqFileParser(in, hasComments, multiLine);
+        }
+        
+        
+        static FastqFileParser create(File fastqFile, Function<File, InputStream> inputStreamFunction, boolean hasComments, boolean multiLine) throws IOException{
+            return new FileBasedFastqFileParser(fastqFile,hasComments, inputStreamFunction, multiLine);
+        }
+        
+	private FastqFileParser(boolean hasComments, boolean multiLine){
+		this.hasComments = hasComments;
+		this.multiLine = multiLine;
 	}
 	
 	protected void parseFastqFile(FastqVisitor visitor, TextLineParser parser) throws IOException{
@@ -126,13 +228,26 @@ public abstract class FastqFileParser implements FastqParser{
 	
 	private ParserState parseNextRecord(FastqVisitor visitor, TextLineParser parser, ParserState parserState) throws IOException{
 		String deflineText = parser.nextLine();
-		Defline defline = Defline.parse(deflineText);
-		AbstractFastqVisitorCallback callback = createCallback(parserState);
-        FastqRecordVisitor recordVisitor= visitor.visitDefline(callback, defline.getId(), defline.getComment());
-        if(!parserState.keepParsing()){
-        	return parserState;
-        }
-        return parseRecordBody(parser,recordVisitor,parserState, defline.getId());		
+		 AbstractFastqVisitorCallback callback = createCallback(parserState);
+		 FastqRecordVisitor recordVisitor;
+		 String id;
+		if(hasComments){
+    		    Defline defline = Defline.parse(deflineText);
+    		    id = defline.getId();
+    		
+                   recordVisitor= visitor.visitDefline(callback, id, defline.getComment());
+		}else{
+		    if(deflineText.charAt(0) != '@'){
+		        throw new IllegalStateException(String.format("invalid fastq file, could not parse seq id from '%s'",deflineText));
+		            
+		    }
+		    id = deflineText.substring(1).trim();
+		    recordVisitor= visitor.visitDefline(callback, id, null);
+		}
+            if(!parserState.keepParsing()){
+            	return parserState;
+            }
+            return parseRecordBody(parser,recordVisitor,parserState, id);		
         
 	}
 	
@@ -146,7 +261,7 @@ public abstract class FastqFileParser implements FastqParser{
 			//set new end position for mementos to work
 			return parserState.setOffset(parser.getPosition());
 		}
-		boolean inBasecallBlock;
+		
 		//default to 2000 bp since most sequences are only that much anyway
         //builder will grow if we get too big
         
@@ -157,20 +272,29 @@ public abstract class FastqFileParser implements FastqParser{
     				String.format("unexpected end of file. no sequence for current record '%s'",currentId));
         }
     	sequenceBuilder.append(line.trim());
-        do{
+    	boolean inBasecallBlock = multiLine;
+        while(inBasecallBlock){
         	line = parser.nextLine();
         	inBasecallBlock = notQualityDefLine(line);
         	if(inBasecallBlock){
         		sequenceBuilder.append(line.trim());
         	}
-        }while(inBasecallBlock);
+        }
         
        
-        	recordVisitor.visitNucleotides(sequenceBuilder.toString());
+        recordVisitor.visitNucleotides(sequenceBuilder.toString());
         
         if(!parserState.keepParsing()){
             recordVisitor.halted();
             return parserState.setOffset(parser.getPosition());
+        }
+        if(!multiLine){
+            //read qual defline
+            String qualDefline=parser.nextLine();
+            //should start with +
+            if(qualDefline ==null || qualDefline.charAt(0) != '+'){
+                throw new IOException("invalid quality defline. should start with '+' but was " + qualDefline);
+            }
         }
         //now parse the qualities
         int expectedQualities =  (int)sequenceBuilder.length();
@@ -193,6 +317,8 @@ public abstract class FastqFileParser implements FastqParser{
     		}
     		qualityBuilder.append(line.trim());
     	}while(qualityBuilder.length() < expectedQualities);
+        
+        
     	if(qualityBuilder.length()> expectedQualities){
     		//we actually might have read too much and are somewhere inside the next 
     		//record 
@@ -216,6 +342,7 @@ public abstract class FastqFileParser implements FastqParser{
 	}
 	private void skipCurrentRecord(TextLineParser parser) throws IOException {
         
+	    if(multiLine){
 		String line = parser.nextLine();
 		int numberOfBasesSeen=0;
      	
@@ -239,11 +366,16 @@ public abstract class FastqFileParser implements FastqParser{
 		//be consistent with errors if too many 
 		//qualities
 		if(numberOfQualitiesLeft< 0 ){
-    		throw new IOException(
+    		    throw new IOException(
     				String.format("too many quality values for current record: expected %d but was %d", 
     						numberOfBasesSeen, 
     						numberOfBasesSeen - numberOfQualitiesLeft));
-    	}
+    	        }
+	    }else{
+	        parser.nextLine(); //bases
+	        parser.nextLine(); //qual defline
+	        parser.nextLine(); // qualities
+	    }
 		
 	}
 	private boolean notQualityDefLine(String line) {
@@ -382,14 +514,16 @@ public abstract class FastqFileParser implements FastqParser{
 		private final File fastqFile;
 		private final Function<File, InputStream> toInputStream;
 		
-		public FileBasedFastqFileParser(File fastqFile) throws IOException {
-			IOUtil.verifyIsReadable(fastqFile);
-			
-			this.fastqFile = fastqFile;
-			toInputStream =null;
+		public FileBasedFastqFileParser(File fastqFile, boolean hasComments, boolean multiLine) throws IOException {
+                    super(hasComments, multiLine);
+                    IOUtil.verifyIsReadable(fastqFile);
+        
+                    this.fastqFile = fastqFile;
+                    toInputStream = null;
 		}
-		public FileBasedFastqFileParser(File fastqFile, Function<File, InputStream> toInputStream) throws IOException {
-			Objects.requireNonNull(toInputStream);
+		public FileBasedFastqFileParser(File fastqFile, boolean hasComments, Function<File, InputStream> toInputStream, boolean multiLine) throws IOException {
+		    super(hasComments, multiLine);
+		 //   Objects.requireNonNull(toInputStream);
 			IOUtil.verifyIsReadable(fastqFile);
 			
 			this.fastqFile = fastqFile;
@@ -467,7 +601,8 @@ public abstract class FastqFileParser implements FastqParser{
 	private static class InputStreamFastqFileParser extends FastqFileParser{
 		private final OpenAwareInputStream in;
 		
-		public InputStreamFastqFileParser(InputStream in) {
+		public InputStreamFastqFileParser(InputStream in,boolean hasComments, boolean multiLine) {
+		        super(hasComments, multiLine);
 			if(in==null){
 				throw new NullPointerException("inputstream can not be null");
 			}

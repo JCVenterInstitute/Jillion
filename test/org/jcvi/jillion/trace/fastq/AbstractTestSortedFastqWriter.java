@@ -34,6 +34,7 @@ public abstract class AbstractTestSortedFastqWriter {
     public void setup() throws IOException{
         outputFile = tmpDir.newFile("output.fastq");
         FastqWriterBuilder builder = new FastqWriterBuilder(outputFile)
+                                    
                                         .qualityCodec(FastqQualityCodec.SANGER);
         addSortStrategy(builder, comparator);
         sut = builder.build();
@@ -151,6 +152,7 @@ public abstract class AbstractTestSortedFastqWriter {
     
     private void assertRecordOrder(List<FastqRecord> expectedOrder) throws IOException, DataStoreException {
         try(FastqDataStore datastore = new FastqFileDataStoreBuilder(outputFile)
+                                                   .hasComments()
                                                 .hint(DataStoreProviderHint.ITERATION_ONLY)
                                                 .qualityCodec(FastqQualityCodec.SANGER)
                                                 .build();

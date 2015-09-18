@@ -46,7 +46,8 @@ public class TestSplitFastqDeconvolver {
 		ResourceHelper resources = new ResourceHelper(TestSplitFastqDeconvolver.class);
 		
 		datastore = new FastqFileDataStoreBuilder(resources.getFile("files/giv_XX_15050.fastq"))
-						.build();
+                                            		.hasComments()
+                                            		.build();
 	}
 	
 	private static String getDirection(FastqRecord record){
@@ -162,7 +163,9 @@ public class TestSplitFastqDeconvolver {
 	
 	private void outputMatchesExpected(Map<String, List<FastqRecord>> deconvolveMap, List<File> sortedFiles) throws IOException, DataStoreException{
 		for(File actualFile : sortedFiles){
-			try(FastqFileDataStore actual = new FastqFileDataStoreBuilder(actualFile).qualityCodec(datastore.getQualityCodec()).build();
+			try(FastqFileDataStore actual = new FastqFileDataStoreBuilder(actualFile)
+                                                			.hasComments()
+                                                			.qualityCodec(datastore.getQualityCodec()).build();
 					
 					StreamingIterator<FastqRecord> actualIter = actual.iterator();
 					){

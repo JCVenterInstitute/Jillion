@@ -326,7 +326,7 @@ public final class FastqUtil {
 			
 	    	boolean hasSolexaOnlyValues=false;
 	    	int maxQuality=Integer.MIN_VALUE;
-	    	int minQuality = Integer.MAX_VALUE;
+
 	    	//convert to char[] as optimization
 	    	//so we don't have to do 2x the boundary checks
 	    	//in String.charAt(i) 
@@ -343,6 +343,15 @@ public final class FastqUtil {
 	    							asciiValue,
 	    							encodedQualities));
 	    		}
+	    		if(asciiValue > maxQuality){
+	    		    maxQuality = asciiValue;
+	    		}
+    	    		if(asciiValue > overallMax){
+    	    		    overallMax = asciiValue;
+                        }
+                        if(asciiValue < overAllMin){
+                            overAllMin = asciiValue;
+                        }
 	    		//sanger uses 33 as an offset so any ascii values around there will 
 		    	//automatically be sanger
 	    		if(asciiValue <59){
@@ -355,12 +364,7 @@ public final class FastqUtil {
 	    		if(asciiValue < 64){
 	    			hasSolexaOnlyValues=true;
 	    		}
-	    		if(asciiValue > maxQuality){
-	    			maxQuality = asciiValue;
-	    		}
-	    		if(asciiValue < minQuality){
-	    			minQuality = asciiValue;
-	    		}
+	    		
 	    	}
 	    	//a quality more than this is highly improbable
 	    	//for sanger encoding so assume illumina or solexa
@@ -376,13 +380,7 @@ public final class FastqUtil {
 	    		//or low quality illumina read
 	    		numEither++;
 	    	}
-	    	//update overall min/max
-	    	if(minQuality < overAllMin){
-	    		overAllMin = minQuality;
-	    	}
-	    	if(maxQuality > overallMax){
-	    		overallMax = maxQuality;
-	    	}
+	    	
 		}
 
 		
