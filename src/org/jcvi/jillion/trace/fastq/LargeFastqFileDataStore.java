@@ -25,14 +25,12 @@
  */
 package org.jcvi.jillion.trace.fastq;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
@@ -59,56 +57,8 @@ final class LargeFastqFileDataStore implements FastqFileDataStore {
     private final Predicate<String> filter;
     private final Predicate<FastqRecord> recordFilter;
     
-    /**
-     * Create a new {@link FastqDataStore} instance for the given
-     * fastqFile which will contain all the
-     * records in the file.  This implementation will use the given
-     * {@link FastqQualityCodec} to decode the qualities of the fastq record
-     * (if provided)This should return
-     * the same data store implementation as
-     * {@link #create(File, DataStoreFilter, FastqQualityCodec) create(fastqFile, qualityCodec, DataStoreFilters.alwaysAccept())}
-     * @param fastqFile the fastq file to create a {@link FastqDataStore}
-     * for (can not be null, and must exist).
-     * @param qualityCodec the {@link FastqQualityCodec} that should be used
-     * to decode the fastq file.  If this value is null, then 
-     * the datastore implementation will try to guess the codec used which might
-     * have a performance penalty associated with it.
-     * 
-     * @return a new {@link FastqFileDataStore} instance, will never be null.
-     * 
-     * @throws FileNotFoundException if the given Fastq file does not exist.
-     * @throws NullPointerException if fastqFile is null.
-     * @see #create(File, FastqQualityCodec, DataStoreFilter)
-     */
-    public static FastqFileDataStore create(File fastqFile, FastqQualityCodec qualityCodec) throws IOException{
-    	return create(fastqFile, qualityCodec, DataStoreFilters.alwaysAccept());
-    }
-    /**
-     * Create a new {@link FastqDataStore} instance for the given
-     * fastqFile which will only contain all the
-     * records in the file that are accepted by the given filter.  
-     * This implementation will use the given
-     * {@link FastqQualityCodec} to decode the qualities of the fastq record
-     * (if provided)
-     * @param fastqFile the fastq file to create a {@link FastqDataStore}
-     * for (can not be null, and must exist).
-     * @param filter the {@link Predicate} used to filter out records
-     * from the datastore by ID. If this value is null,
-     * then all records in the file will be included in the datastore.
-     * @param qualityCodec the {@link FastqQualityCodec} that should be used
-     * to decode the fastq file.  If this value is null, then 
-     * the datastore implementation will try to guess the codec used which might
-     * have a performance penalty associated with it.
-     * @return a new {@link FastqFileDataStore} instance, will never be null.
-     * @throws FileNotFoundException if the given Fastq file does not exist.
-     * @throws NullPointerException if fastqFile is null.
-     */
-    public static FastqFileDataStore create(File fastqFile, FastqQualityCodec qualityCodec, Predicate<String> filter) throws IOException{
-    	if(fastqFile==null){
-    		throw new NullPointerException("fastq file can not be null");
-    	} 
-    	return new LargeFastqFileDataStore(FastqFileParser.create(fastqFile), qualityCodec,filter, record->true);
-    }
+   
+    
   
     /**
      * Create a new {@link FastqDataStore} instance for the given
@@ -130,7 +80,7 @@ final class LargeFastqFileDataStore implements FastqFileDataStore {
      * @return a new {@link FastqDataStore} instance, will never be null.
      * @throws NullPointerException if any parameter is null.
      */
-    public static FastqFileDataStore create(FastqParser parser, FastqQualityCodec qualityCodec, Predicate<String> filter, Predicate<FastqRecord> recordFilter) throws IOException{
+    static FastqFileDataStore create(FastqParser parser, FastqQualityCodec qualityCodec, Predicate<String> filter, Predicate<FastqRecord> recordFilter) throws IOException{
     	
     	return new LargeFastqFileDataStore(parser, qualityCodec,filter, recordFilter);
     }

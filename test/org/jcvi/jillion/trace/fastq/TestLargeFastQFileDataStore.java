@@ -28,12 +28,21 @@ package org.jcvi.jillion.trace.fastq;
 import java.io.File;
 import java.io.IOException;
 
+import org.jcvi.jillion.core.datastore.DataStoreFilters;
+
 public class TestLargeFastQFileDataStore extends AbstractTestFastQFileDataStore{
 
     @Override
     protected FastqDataStore createFastQFileDataStore(File file,
             FastqQualityCodec qualityCodec) throws IOException {
-        return LargeFastqFileDataStore.create(file, qualityCodec);
+    	
+    	
+    	FastqParser parser = new FastqFileParserBuilder(file)
+									.hasComments(true)
+									.hasMultilineSequences(true)
+									.build();
+		
+		return LargeFastqFileDataStore.create(parser, qualityCodec, DataStoreFilters.alwaysAccept(), null);
     }
 
 }

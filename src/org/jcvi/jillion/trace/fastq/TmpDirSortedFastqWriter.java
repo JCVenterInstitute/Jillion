@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -55,7 +56,11 @@ class TmpDirSortedFastqWriter implements FastqWriter{
             for(File tmpFile : tmpFiles){
                 
                 try {
-                    iters.add(LargeFastqFileDataStore.create(tmpFile, codec).iterator());
+                	FastqParser parser = new FastqFileParserBuilder(tmpFile)
+													.hasComments(true)
+													.build();
+
+                    iters.add(LargeFastqFileDataStore.create(parser, codec, DataStoreFilters.alwaysAccept(), null).iterator());
                 } catch (DataStoreException e) {
                    throw new IOException("error re-parsing temp file "  + tmpFile.getAbsolutePath(), e);
                 }

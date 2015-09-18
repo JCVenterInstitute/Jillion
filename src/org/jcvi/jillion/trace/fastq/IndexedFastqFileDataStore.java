@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace.fastq;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -29,7 +28,6 @@ import java.util.function.Predicate;
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback.FastqVisitorMemento;
@@ -46,52 +44,7 @@ import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback.FastqVisit
  */
 final class IndexedFastqFileDataStore{
 
-    /**
-	 * Creates a new {@link IndexedFastqFileDataStore}
-	 * instance using the given fastqFile which uses has its quality
-	 * values encoded in a manner that can be decoded by the given
-	 * {@link FastqQualityCodec}.
-	 * @param file the fastq file to create an {@link IndexedFastqFileDataStore}
-	 * for.
-	 * @param qualityCodec the {@link FastqQualityCodec} that should
-	 * be used to decode the encoded qualities of each record in the file.
-	 * @return a new instance of {@link FastqFileDataStore};
-	 * never null.
-	 * @throws IOException if the input fastq file does not exist or 
-	 * if there is a problem parsing the file.
-	 * @throws NullPointerException if the input fastq file or the {@link FastqQualityCodec} is null.
-	 */
-    public static FastqFileDataStore create(File file,FastqQualityCodec qualityCodec) throws IOException{
-    	return create(file, qualityCodec, DataStoreFilters.alwaysAccept());
-    }
-    
-    /**
-   	 * Creates a new {@link IndexedFastqFileDataStore}
-   	 * instance using the given fastqFile which uses has its quality
-   	 * values encoded in a manner that can be decoded by the given
-   	 * {@link FastqQualityCodec} which only contains the records
-   	 * in the file that are accepted by the given filter.
-   	 * @param file the fastq file to create an {@link IndexedFastqFileDataStore}
-   	 * for.
-   	 * @param qualityCodec the {@link FastqQualityCodec} that should
-	 * be used to decode the encoded qualities of each record in the file.
-	 * @param filter a {@link Predicate} that will be used
-	 * to filter out some (possibly all or none) of the records from
-	 * the fastq file by ID so they will not be included in the {@link FastqDataStore}.
-	 * Only records which cause {@link DataStoreFilter#accept(String)}
-	 * to return {@code true} will be added to this datastore.
-   	 * @return a new instance of {@link FastqFileDataStore};
-   	 * never null.
-   	 * @throws IOException if the input fastq file does not exist or 
-   	 * if there is a problem parsing the file.
-   	 * @throws NullPointerException if the input fastq file or the {@link FastqQualityCodec} is null.
-   	 */
-    public static FastqFileDataStore create(File file,FastqQualityCodec qualityCodec,Predicate<String> filter) throws IOException{
-    	
-    	FastqParser parser = FastqFileParser.create(file);
-    	
-    	return create(parser, qualityCodec, filter, null);
-    }
+   
     /**
    	 * Creates a new {@link IndexedFastqFileDataStore}
    	 * instance using the given {@link FastqParser} which uses has its quality
@@ -113,7 +66,7 @@ final class IndexedFastqFileDataStore{
    	 * if there is a problem parsing the file.
    	 * @throws NullPointerException if the input fastq file or the {@link FastqQualityCodec} is null.
    	 */
-	public static FastqFileDataStore create(FastqParser parser,
+	static FastqFileDataStore create(FastqParser parser,
 			FastqQualityCodec qualityCodec, Predicate<String> filter, Predicate<FastqRecord> recordFilter)
 			throws IOException {
 		MementoedFastqDataStoreBuilderVisitor visitor = new MementoedFastqDataStoreBuilderVisitor(parser, qualityCodec,

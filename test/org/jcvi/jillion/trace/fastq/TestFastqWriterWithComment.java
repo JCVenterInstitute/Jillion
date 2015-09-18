@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace.fastq;
 
+import static org.easymock.EasyMock.createMock;
 import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayOutputStream;
@@ -32,14 +33,7 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
-import org.jcvi.jillion.trace.fastq.DefaultFastqFileDataStore;
-import org.jcvi.jillion.trace.fastq.FastqDataStore;
-import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
-import org.jcvi.jillion.trace.fastq.FastqWriter;
-import org.jcvi.jillion.trace.fastq.FastqWriterBuilder;
 import org.junit.Test;
-
-import static org.easymock.EasyMock.*;
 public class TestFastqWriterWithComment {
 
 	private final FastqDataStore datastore;
