@@ -55,13 +55,17 @@ public final class FastqFileParserBuilder {
     /**
      * Create a Builder that will parse the given
      * fastq encoded File.
-     * @param file the fastq file to be parsed; can not be null.
+     * @param fastqFile the fastq file to be parsed; can not be null.
      * 
      * @throws IOException if the file is not readable
      * @throws NullPointerException if file is null.
      */
-    public FastqFileParserBuilder(File file) throws IOException{
-        this(file, null);
+    public FastqFileParserBuilder(File fastqFile) throws IOException{
+    	 IOUtil.verifyIsReadable(fastqFile);
+         
+         this.file = fastqFile;
+         this.toInputStreamFunction = null;
+         this.in = null;
     }
     /**
 	 * Create a new Builder instance
