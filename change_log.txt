@@ -115,6 +115,19 @@ API Changes
     to make the datastores with the same filter and hint methods as the other similar builders.
     All the previous DataStore implementation classes that used to be public are 
     now package private.  Please use the PositionFastaFileDataStoreBuilder only.
+    
+7.  Made FastqFileParser class package private.  Please use the new FastqFileParserBuilder object
+    instead which has more configuration methods to more easily create FastqParser objects.
+    This was to avoid the explosion of factory methods for FastqParser to handle all the
+    possible combinations of inputstreams, Files, compressed Files, comments on defline,
+    and multiline sequences. 
+    
+8.  Added new method FastqRecord.getLength() which is convenience method for FastqRecord.getNucleotideSequence().getLength()
+    but some implementations may use more optimized implementation.  Added as default method.
+    
+9.  Added new method FastaRecord.getLength() which is convenience method for FastaRecord.getSequence().getLength()
+    but some implementations may use more optimized implementation.  Added as default method.
+ 
 
 
 Bug Fixes

@@ -56,7 +56,7 @@ public final class PositionFastaRecord implements FastaRecord<Position, Position
         return this.identifier;
     }
 
-    /**
+	/**
      * @return A <code>String</code>.
      */
     public String getComment()

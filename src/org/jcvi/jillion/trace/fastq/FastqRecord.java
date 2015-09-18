@@ -96,4 +96,19 @@ public interface FastqRecord extends Trace{
      */
     @Override
     boolean equals(Object obj);
+    
+    /**
+     * Get the length of the nucleotide and quality sequences.  
+     * Both should be the same length.
+     * 
+     * @implSpec the default implementation
+     * of this method calls
+     * {@code getNucleotideSequence().getLength()} but some {@link FastqRecord}
+     * implementations may optimize this return value.
+     * 
+     * @return the length of this record sequence..
+     */
+    default long getLength(){
+    	return getNucleotideSequence().getLength();
+    }
 }

@@ -26,15 +26,16 @@
 package org.jcvi.jillion.fasta.nt;
 
 
+import static org.easymock.EasyMock.createMock;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.testUtil.TestUtil;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecordBuilder;
 import org.jcvi.jillion.fasta.qual.QualityFastaRecord;
 import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.easymock.EasyMock.*;
 public class TestNucleotideSequenceFastaRecordFactory {
 
     private final String id = "1234";
@@ -50,7 +51,10 @@ public class TestNucleotideSequenceFastaRecordFactory {
         			.comment(comment)
         			.build();
     }
-    
+    @Test
+	public void length(){
+		assertEquals(sut.getSequence().getLength(), sut.getLength());
+	}
     @Test
     public void withComment(){
         assertEquals(id, sut.getId());

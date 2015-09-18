@@ -1,5 +1,8 @@
 package org.jcvi.jillion.trace.fastq;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -16,8 +19,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
-import static org.junit.Assert.*;
 
 @RunWith(Parameterized.class)
 public class TestFastqFileBuilderWithLambdaFilter {
@@ -90,6 +91,26 @@ public class TestFastqFileBuilderWithLambdaFilter {
         
         try(FastqFileDataStore datastore = builder
                                                 .filterRecords(record-> record.getNucleotideSequence().getLength() > 1000)
+                                                .build();
+                
+            StreamingIterator<FastqRecord> actualIter = datastore.iterator();
+            ){
+            assertEquals(33, datastore.getNumberOfRecords());
+            assertTrue(actualIter.hasNext());
+            while(actualIter.hasNext()){
+                assertTrue(actualIter.next().getNucleotideSequence().getLength() > 1000);
+            }
+        }
+    }
+    
+    @Test
+    public void onlyIncludeLongSequenceLengthsUsingNewLengthMethod() throws IOException, DataStoreException{
+        FastqFileDataStoreBuilder builder = new FastqFileDataStoreBuilder(inputFastq);
+        
+        hint.accept(builder);
+        
+        try(FastqFileDataStore datastore = builder
+                                                .filterRecords(record-> record.getLength() > 1000)
                                                 .build();
                 
             StreamingIterator<FastqRecord> actualIter = datastore.iterator();
