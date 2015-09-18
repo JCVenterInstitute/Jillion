@@ -30,7 +30,7 @@ import org.jcvi.jillion.core.Sequence;
 /**
  * {@code FastaRecord} is an interface for interacting
  * with a single FASTA record.
- * @param <T> the type used as the value of the record
+ * @param <T> the type of sequence the record uses.
  * @author jsitz
  * @author dkatzel
  */
@@ -65,6 +65,8 @@ public interface FastaRecord<S,T extends Sequence<S>>
      * 
      * @return the length of this record sequence,
      * usually the number of residues or qualities.
+     * 
+     * @since 5.0
      */
     default long getLength(){
     	return getSequence().getLength();

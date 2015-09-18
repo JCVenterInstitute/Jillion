@@ -85,7 +85,13 @@ New Features
 	 										         .map(AssembledRead::asRange)
 	 										         .collect(CoverageMapCollectors.toCoverageMap(200));
     
-   
+9.  Performance improvements of FastqFileParser and built in FastqWriter implementation for the most common
+    use-case of parsing a fastq file and writing out the FastqRecord instances as is to a different writer.
+    New internal classes are now used which don't convert the encoded quality strings into QualitySequence
+    objects unless getQualitySequence() is called.  This takes up slightly more memory per record
+    which usually isn't an issue because most of the time the files are streamed as ITERATION_ONLY
+    and so the records will be GC'ed as soon as they are out of scope in the iterator.  
+    When tested on large 25 million read fastq files from 1000genomes project, throughput improved by 25%.
 
 10.  Added new DataStores factory method: containedInDataStore(DataStore datastore) which will only accept ids that are
      also contained in the given datastore.
@@ -129,6 +135,19 @@ API Changes
     but some implementations may use more optimized implementation.  Added as default method.
  
 
+10.  Moved experimental code from its own "experimental" and "experimental-test" folders to the
+    normal src and test folders.
+    
+11.  Changed package names of the experimental code from org.jcvi.jillion_experimental.*
+    to org.jcvi.jillion.experimental.*
+  
+12.  SWITCHED BUILD TOOL FROM ANT TO MAVEN. Use custom configuration to keep original
+    folder structure.
+    
+13. removed jodatime dependency from ConsedAssemblyTransformerBuilder which was accidentally
+    put in during testing to allow unit tests to use a fixed phred_date.  This caused the jillion
+    jar to depend on jodatime when it should not have any dependencies other than JDK 8. 
+    Replace jodatime code with equivalent Java 8 Clock object.
 
 Bug Fixes
 ----------
