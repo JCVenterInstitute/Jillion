@@ -106,7 +106,9 @@ public interface FastqRecord extends Trace{
      * {@code getNucleotideSequence().getLength()} but some {@link FastqRecord}
      * implementations may optimize this return value.
      * 
-     * @return the length of this record sequence..
+     * @return the length of this record sequence.
+     * 
+     * @since 5.0
      */
     default long getLength(){
     	return getNucleotideSequence().getLength();
