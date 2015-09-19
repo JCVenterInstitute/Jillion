@@ -24,6 +24,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.jcvi.jillion.core.io.InputStreamSupplier;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
 
@@ -63,7 +64,7 @@ public class TestCasava18 {
 		};
 
         ResourceHelper resources = new ResourceHelper(TestCasava18.class);
-        FastqFileParser.create(resources.getFile("files/casava1.8.fastq")).parse(visitor);
+        FastqFileParser.create(InputStreamSupplier.forFile(resources.getFile("files/casava1.8.fastq")), false, false).parse(visitor);
     }
     
     @Test
@@ -89,6 +90,6 @@ public class TestCasava18 {
 		};
 
         ResourceHelper resources = new ResourceHelper(TestCasava18.class);
-        FastqFileParser.create(resources.getFile("files/casava1.8.miseq.fastq")).parse(visitor);
+        FastqFileParser.create(InputStreamSupplier.forFile(resources.getFile("files/casava1.8.miseq.fastq")), false, false).parse(visitor);
     }
 }

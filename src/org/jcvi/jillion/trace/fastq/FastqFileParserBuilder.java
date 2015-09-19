@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.io.InputStreamSupplier;
 /**
  * Creates a {@link FastqParser}
  * that parses the given fastq encoded file
@@ -19,8 +20,7 @@ import org.jcvi.jillion.core.io.IOUtil;
  */
 public final class FastqFileParserBuilder {
 
-    private final File file;
-    private final Function<File, InputStream> toInputStreamFunction;
+    private final InputStreamSupplier inputStreamSupplier;
     private final InputStream in;
     
     private boolean hasComments;
@@ -49,8 +49,7 @@ public final class FastqFileParserBuilder {
         Objects.requireNonNull(in, "Inputstream can not be null");
         
         this.in = in;
-        this.file = null;
-        this.toInputStreamFunction = null;
+        this.inputStreamSupplier = null;
     }
     /**
      * Create a Builder that will parse the given
@@ -61,60 +60,15 @@ public final class FastqFileParserBuilder {
      * @throws NullPointerException if file is null.
      */
     public FastqFileParserBuilder(File fastqFile) throws IOException{
-    	 IOUtil.verifyIsReadable(fastqFile);
-         
-         this.file = fastqFile;
-         this.toInputStreamFunction = null;
-         this.in = null;
-    }
-    /**
-	 * Create a new Builder instance
-	 * that will parse the given a compressed fastq file.
-	 * Each time the file should be parsed, the provided Function will be 
-	 * called to get the appropriate {@link InputStream} for it.
-	 * This constructor should be used in preference
-	 * to {@link #FastqFileParserBuilder(InputStream)} if the file needs to be parsed
-	 * multiple times.  
-	 * 
-	 * @param fastqFile the file to parse; can not be null.
-	 * @param toInputStream {@link Function} to convert the given {@link File}
-	 * into a <strong>new</strong> raw {@link InputStream}.  This allows the parser to handle compressed
-	 * files.  A new InputStream should be created each time the function is called.  Can not be null.
-	 * 
-	 * @apiNote 
-	 * For example if you wanted to parse a gzipped fastq file:
-	 * <pre>
-	 * {@code
-	 * Function &lt;File, InputStream&gt; toGzipInputStream = f -&gt; {
-	 * 	try {
-	 * 		return new GZIPInputStream(new FileInputStream(f));
-	 * 	} catch (IOException e) {
-	 * 		throw new UncheckedIOException(e);
-	 * 	}
-	 * };
-	 * 
-	 * FastqParser parser = new FastqFileParserBuilder(gzippedFfastqFile, toGzipInputStream)
-	 *                           .build();
-	 * </pre>
-	 * 
-	 * @implNote The performance of random accessing records in this fastq file
-	 * is dependent on {@link InputStream#skip(long)} implementation returned by the function.
-	 * 
-	 * @throws IOException  if the file does not exist or can not be read.
-	 * @throws NullPointerException if any parameters are null or if the function returns null.
-	 * 
-	 */
-    public FastqFileParserBuilder(File fastqFile,
-            Function<File, InputStream> toInputStreamFunction) throws IOException {
-        IOUtil.verifyIsReadable(fastqFile);
-        Objects.requireNonNull(toInputStreamFunction);
-        
-        this.file = fastqFile;
-        this.toInputStreamFunction = toInputStreamFunction;
-        this.in = null;
+    	 this(InputStreamSupplier.forFile(fastqFile));
     }
 
-	/**
+    public FastqFileParserBuilder(InputStreamSupplier inputStreamSupplier) {
+	Objects.requireNonNull(inputStreamSupplier);
+        this.in = null;
+        this.inputStreamSupplier = inputStreamSupplier;
+    }
+    /**
 	 * Does this fastq file contain comments on the deflines.
 	 * If not called, then by default this builder uses hasComments = false.
 	 * 
@@ -165,7 +119,7 @@ public final class FastqFileParserBuilder {
      */
     public FastqParser build() throws IOException{
         if(in ==null){
-            return FastqFileParser.create(file, toInputStreamFunction, hasComments, multiline);
+            return FastqFileParser.create(inputStreamSupplier, hasComments, multiline);
         }
         return FastqFileParser.create(in, hasComments, multiline);
     }
