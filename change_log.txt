@@ -95,6 +95,11 @@ New Features
 
 10.  Added new DataStores factory method: containedInDataStore(DataStore datastore) which will only accept ids that are
      also contained in the given datastore.
+     
+11. Created InputStreamSupplier with support for normal files, zipped and gzipped files.
+	This lets users reparse with compressed files multiple times.  Previously
+	compressed files either could only be parsed a single time via
+	InputStream constructors.
 
 API Changes
 -----------
@@ -148,6 +153,10 @@ API Changes
     put in during testing to allow unit tests to use a fixed phred_date.  This caused the jillion
     jar to depend on jodatime when it should not have any dependencies other than JDK 8. 
     Replace jodatime code with equivalent Java 8 Clock object.
+    
+14. Changed FastqFileParser and FastqFileDataStoreBuilder to use those 
+	InputStreamProvider objects instead of Function<File, InputStream> which was not only repetitive
+	but forced users to handle IOException themselves.
 
 Bug Fixes
 ----------
