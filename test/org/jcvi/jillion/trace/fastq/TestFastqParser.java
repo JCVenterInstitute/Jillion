@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.easymock.EasyMockSupport;
+import org.jcvi.jillion.core.io.InputStreamSupplier;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback;
 import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback.FastqVisitorMemento;
@@ -70,7 +71,7 @@ public class TestFastqParser extends EasyMockSupport{
 	}
 
 	protected FastqParser createSut(File fastqFile) throws IOException{
-		return FastqFileParser.create(fastqFile);
+		return FastqFileParser.create(InputStreamSupplier.forFile(fastqFile), true,true);
 	}
 	
 	

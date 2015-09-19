@@ -8,12 +8,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.UncheckedIOException;
-import java.util.function.Function;
-import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.io.InputStreamSupplier;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 /**
@@ -29,13 +27,7 @@ public class TestFastqParserWithFunctionLambda extends TestFastqParser{
 	public TemporaryFolder tmp = new TemporaryFolder();
 	
 	
-	Function<File, InputStream> toGzipInputStream = f -> {
-		try {
-			return new GZIPInputStream(new FileInputStream(f));
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
-	};
+	
 	
 	private File gzip(File f) throws IOException{
 		File out = tmp.newFile();
@@ -51,7 +43,8 @@ public class TestFastqParserWithFunctionLambda extends TestFastqParser{
 
 	@Override
 	protected FastqParser createSut(File fastqFile) throws IOException {
-		return FastqFileParser.create(gzip(fastqFile),toGzipInputStream);
+	    File gzipped = gzip(fastqFile);
+	    return FastqFileParser.create(InputStreamSupplier.forFile(gzipped), false, false);
 	}
 	
 	

@@ -20,19 +20,16 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace.fastq;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.io.InputStreamSupplier;
 import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
-import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
 import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback;
 import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback.FastqVisitorMemento;
@@ -53,116 +50,8 @@ abstract class FastqFileParser implements FastqParser{
 	private final boolean hasComments;
 	
 	private final  boolean multiLine;
-	/**
-	 * Create a new {@link FastqFileParser} instance
-	 * that will parse the given fastq encoded
-	 * file without comments.
-	 * @param fastqFile the file to parse.
-	 * @throws IOException  if the file does not exist or can not be read.
-	 * @throws NullPointerException if fastqFile is null.
-	 * 
-	 * @return a new {@link FastqParser} instance; will never be null.
-	 */
-	public static FastqParser create(File fastqFile) throws IOException{
-		return create(fastqFile, false);
-	}
-	
-	/**
-         * Create a new {@link FastqFileParser} instance
-         * that will parse the given fastq encoded
-         * file without comments.
-         * @param fastqFile the file to parse.
-         * @throws IOException  if the file does not exist or can not be read.
-         * @throws NullPointerException if fastqFile is null.
-         * 
-         * @return a new {@link FastqParser} instance; will never be null.
-         */
-        public static FastqParser create(File fastqFile, boolean hasComments) throws IOException{
-                return new FileBasedFastqFileParser(fastqFile, hasComments, true);
-        }
-	/**
-	 * Create a new {@link FastqFileParser} instance
-	 * that will parse the given a compressed fastq file without comments. This factory method should be used in preference
-	 * to {@link #create(InputStream)} if the file needs to be parsed
-	 * multiple times.  
-	 * 
-	 * This is the same as {@link #create(File, boolean, Function) create(fastqFile, false, toInputStream)}.
-	 * 
-	 * @param fastqFile the file to parse.
-	 * @param toInputStream {@link Function} to convert the given {@link File}
-	 * into a <strong>new</strong> raw {@link InputStream}.  This allows the parser to handle compressed
-	 * files.  A new InputStream should be created each time the function is called.  Can not be null.
-	 * 
-	 * @apiNote 
-	 * For example if you wanted to parse a gzipped fastq file:
-	 * <pre>
-	 * {@code
-	 * Function &lt;File, InputStream&gt; toGzipInputStream = f -&gt; {
-	 * 	try {
-	 * 		return new GZIPInputStream(new FileInputStream(f));
-	 * 	} catch (IOException e) {
-	 * 		throw new UncheckedIOException(e);
-	 * 	}
-	 * };
-	 * 
-	 * FastqFileParser parser = FastqFileParser.create(gzippedFfastqFile,toGzipInputStream);
-	 * </pre>
-	 * 
-	 * @implNote The performance of random accessing records in this fastq file
-	 * is dependent on {@link InputStream#skip(long)} implementation returned by the function.
-	 * 
-	 * @throws IOException  if the file does not exist or can not be read.
-	 * @throws NullPointerException if any parameters are null or if the function returns null.
-	 * 
-	 * @return a new {@link FastqParser} instance; will never be null.
-	 */
-	public static FastqParser create(File fastqFile, Function<File, InputStream> toInputStream) throws IOException{
-		return create(fastqFile, false, toInputStream);
-	}
 	
 	
-	/**
-         * Create a new {@link FastqFileParser} instance
-         * that will parse the given a compressed fastq file. This factory method should be used in preference
-         * to {@link #create(InputStream)} if the file needs to be parsed
-         * multiple times.  
-         * @param fastqFile the file to parse.
-         * 
-         * @param hasComments do the deflines of the sequences contain comments.  If 
-         * set to {@code true} then a more computationally intensive parsing is performed
-         * to try to distinguish the id from the comment.  Remember some Fastq id's can have spaces
-         * which makes comment detection difficult and complex.
-         * 
-         * @param toInputStream {@link Function} to convert the given {@link File}
-         * into a <strong>new</strong> raw {@link InputStream}.  This allows the parser to handle compressed
-         * files.  A new InputStream should be created each time the function is called.  Can not be null.
-         * 
-         * @apiNote 
-         * For example if you wanted to parse a gzipped fastq file:
-         * <pre>
-         * {@code
-         * Function &lt;File, InputStream&gt; toGzipInputStream = f -&gt; {
-         *      try {
-         *              return new GZIPInputStream(new FileInputStream(f));
-         *      } catch (IOException e) {
-         *              throw new UncheckedIOException(e);
-         *      }
-         * };
-         * 
-         * FastqFileParser parser = FastqFileParser.create(gzippedFfastqFile, false, toGzipInputStream);
-         * </pre>
-         * 
-         * @implNote The performance of random accessing records in this fastq file
-         * is dependent on {@link InputStream#skip(long)} implementation returned by the function.
-         * 
-         * @throws IOException  if the file does not exist or can not be read.
-         * @throws NullPointerException if any parameters are null or if the function returns null.
-         * 
-         * @return a new {@link FastqParser} instance; will never be null.
-         */
-        public static FastqParser create(File fastqFile, boolean hasComments, Function<File, InputStream> toInputStream) throws IOException{
-                return new FileBasedFastqFileParser(fastqFile,hasComments, toInputStream, true);
-        }
 	/**
 	 * Create a new {@link FastqFileParser} instance
 	 * that will parse the given fastq encoded
@@ -204,8 +93,8 @@ abstract class FastqFileParser implements FastqParser{
         }
         
         
-        static FastqFileParser create(File fastqFile, Function<File, InputStream> inputStreamFunction, boolean hasComments, boolean multiLine) throws IOException{
-            return new FileBasedFastqFileParser(fastqFile,hasComments, inputStreamFunction, multiLine);
+        static FastqFileParser create(InputStreamSupplier supplier, boolean hasComments, boolean multiLine) throws IOException{
+            return new FileBasedFastqFileParser(supplier,hasComments, multiLine);
         }
         
 	private FastqFileParser(boolean hasComments, boolean multiLine){
@@ -510,23 +399,14 @@ abstract class FastqFileParser implements FastqParser{
 	}
 	
 	private static class FileBasedFastqFileParser extends FastqFileParser{
-		private final File fastqFile;
-		private final Function<File, InputStream> toInputStream;
+		private final InputStreamSupplier supplier;
 		
-		public FileBasedFastqFileParser(File fastqFile, boolean hasComments, boolean multiLine) throws IOException {
-                    super(hasComments, multiLine);
-                    IOUtil.verifyIsReadable(fastqFile);
-        
-                    this.fastqFile = fastqFile;
-                    toInputStream = null;
-		}
-		public FileBasedFastqFileParser(File fastqFile, boolean hasComments, Function<File, InputStream> toInputStream, boolean multiLine) throws IOException {
+		
+		public FileBasedFastqFileParser(InputStreamSupplier supplier, boolean hasComments, boolean multiLine) throws IOException {
 		    super(hasComments, multiLine);
-		 //   Objects.requireNonNull(toInputStream);
-			IOUtil.verifyIsReadable(fastqFile);
+		    Objects.requireNonNull(supplier);
 			
-			this.fastqFile = fastqFile;
-			this.toInputStream =toInputStream;
+			this.supplier=supplier;
 		}
 
 
@@ -561,10 +441,7 @@ abstract class FastqFileParser implements FastqParser{
 				throw new NullPointerException("visitor can not be null");
 			}
 			
-			try(InputStream in = toInputStream ==null ?
-											new BufferedInputStream(new FileInputStream(fastqFile))
-									:	toInputStream.apply(fastqFile);
-				){
+			try(InputStream in = supplier.get()){
 				TextLineParser parser = new TextLineParser(in);
 				parseFastqFile(visitor, parser);			
 			}
@@ -581,19 +458,13 @@ abstract class FastqFileParser implements FastqParser{
 				throw new NullPointerException("visitor can not be null");
 			}
 			long startOffset = ((OffsetMemento)memento).getValue();
-			if(toInputStream ==null){
-				try(InputStream in = new RandomAccessFileInputStream(fastqFile, startOffset)){
-					TextLineParser parser = new TextLineParser(in, startOffset);
-					parseFastqFile(visitor, parser);	
-				}
-			}else{
-				try(InputStream in = toInputStream.apply(fastqFile)){
-					//skip to offset
-					IOUtil.blockingSkip(in, startOffset);
-					TextLineParser parser = new TextLineParser(in, startOffset);
-					parseFastqFile(visitor, parser);
-				}
-			}
+			
+                        try (InputStream in = supplier.get(startOffset)) {
+                           
+                            TextLineParser parser = new TextLineParser(in, startOffset);
+                            parseFastqFile(visitor, parser);
+                        }
+			
 		}		
 	}
 	

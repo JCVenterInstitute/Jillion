@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
+import org.jcvi.jillion.core.io.InputStreamSupplier;
 import org.jcvi.jillion.core.qual.QualitySequence;
 
 /**
@@ -108,7 +109,7 @@ public final class FastqUtil {
     		throw new IllegalArgumentException("number of reads to inspect must be >=1");
     	}
     	FastqQualityCodecDetectorVisitor detectorVisitor =new FastqQualityCodecDetectorVisitor(numberOfReadsToInspect);
-    	FastqFileParser.create(fastqFile).parse(detectorVisitor);
+    	FastqFileParser.create(InputStreamSupplier.forFile(fastqFile), false,true).parse(detectorVisitor);
     	return detectorVisitor.getDetectedCodec();
     }
     /**

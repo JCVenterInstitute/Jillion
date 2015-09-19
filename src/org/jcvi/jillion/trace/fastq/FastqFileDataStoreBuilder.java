@@ -24,10 +24,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
+import org.jcvi.jillion.core.io.InputStreamSupplier;
 /**
  * {@code FastqFileDataStoreBuilder}
  * is a {@link Builder} that can create new instances
@@ -38,8 +38,7 @@ import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
  */
 public final class FastqFileDataStoreBuilder{
 	private FastqParser parser;
-	private File inputFile;
-	private Function<File, InputStream> toInputStream;
+	private InputStreamSupplier inputStreamSupplier;
 	
 	private Predicate<String> idFilter = (id)-> true;
 	//default to null which we can use
@@ -60,33 +59,38 @@ public final class FastqFileDataStoreBuilder{
 	 * Create a new instance of {@code FastqFileDataStoreBuilder}
 	 * which will build a {@link FastqDataStore} for the given
 	 * fastq file.
+	 * 
+	 * <p>
+	 * Since Jillion 5, the file may be any file encoding that is supported 
+	 * by {@link InputStreamSupplier#forFile(File)} so files may be 
+	 * compressed.
+	 * </p>
+	 * 
+	 * @implNote As of Jillion 5, this is the same as
+	 * {@code new FastqFileDataStoreBuilder( InputStreamSupplier.forFile(fastqFile) );}
+	 * 
 	 * @param fastqFile the fastq file make a {@link FastqDataStore} with. 
 	 * @throws IOException if the fastq file does not exist, or can not be read.
 	 * @throws NullPointerException if fastqFile is null.
 	 */
 	public FastqFileDataStoreBuilder(File fastqFile) throws IOException{
-		Objects.requireNonNull(fastqFile);
-		this.inputFile = fastqFile;
-		this.toInputStream = null;
-		this.parser = null;
+		this( InputStreamSupplier.forFile(fastqFile));
 	}
 	
 	/**
          * Create a new instance of {@code FastqFileDataStoreBuilder}
          * which will build a {@link FastqDataStore} for the given
-         * fastq file.
+         * {@link InputStreamSupplier}.
          * @param fastqFile the fastq file make a {@link FastqDataStore} with. 
-         * @throws IOException if the fastq file does not exist, or can not be read.
-         * @throws NullPointerException if fastqFile is null.
+         * @throws NullPointerException if inputStreamSupplier is null.
          */
-        public FastqFileDataStoreBuilder(File fastqFile, Function<File, InputStream> toInputStreamFunction) throws IOException{
-                Objects.requireNonNull(fastqFile);
-                Objects.requireNonNull(toInputStreamFunction);
-                
-                this.inputFile = fastqFile;
-                this.toInputStream = toInputStreamFunction;
+        public FastqFileDataStoreBuilder(InputStreamSupplier inputStreamSupplier){
+                Objects.requireNonNull(inputStreamSupplier);
+                this.inputStreamSupplier = inputStreamSupplier;
                 this.parser = null;
         }
+	
+	
 	
 	/**
          * Create a new instance of {@code FastqFileDataStoreBuilder}
@@ -341,9 +345,8 @@ public final class FastqFileDataStoreBuilder{
 	    
 	    
 	        if(parser ==null){
-	        	FastqFileParserBuilder builder = toInputStream==null? new FastqFileParserBuilder(inputFile) : 
-	        															new FastqFileParserBuilder(inputFile, toInputStream);
-	        	parser = builder
+	        	parser = new FastqFileParserBuilder(inputStreamSupplier)
+	        	
                         .hasComments(hasComments)
                         .hasMultilineSequences(isMultiLine)
                         .build();

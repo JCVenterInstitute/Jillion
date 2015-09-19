@@ -49,38 +49,6 @@ final class DefaultFastqFileDataStore{
 	}
 
 
-	
-
-	/**
-	 * Create a new {@link FastqDataStore} instance for the {@link FastqRecord}s
-	 * that are accepted by the given {@link DataStoreFilter} that are contained in
-	 * the given fastq file. Any records that are not accepted by the filter
-	 * will not be included in the returned {@link FastqDataStore}. All of those
-	 * records must have their qualities encoded a manner that can be parsed by
-	 * the given {@link FastqQualityCodec} (if provided).
-	 * 
-	 * @param fastqFile
-	 *            the fastq file to parse, must exist and can not be null.
-	 * @param filter
-	 *            an instance of {@link Predicate}  that can be used to filter
-	 *            out some {@link FastqRecord}s from the datastore by their ID.
-	 * @param qualityCodec
-	 *            the {@link FastqQualityCodec} needed to parse the encoded
-	 *            quality values in each record. If this value is null, then the
-	 *            datastore implementation will try to guess the codec used
-	 *            which might have a performance penalty associated with it.
-	 * @return a new {@link FastqFileDataStore} instance containing only those
-	 *         records that pass the filter.
-	 * @throws IOException
-	 *             if there is a problem parsing the fastq file.
-	 * @throws NullPointerException
-	 *             if either fastqFile or filter is null.
-	 */
-   static FastqFileDataStore create(File fastqFile, Predicate<String> filter,FastqQualityCodec qualityCodec) throws IOException{
-	   FastqParser parser = FastqFileParser.create(fastqFile);
-	   return create(parser, qualityCodec, filter, null);
-   }
-
    /**
 	 * Create a new {@link FastqDataStore} instance for the {@link FastqRecord}s
 	 * that are accepted by the given {@link DataStoreFilter} that are contained in
