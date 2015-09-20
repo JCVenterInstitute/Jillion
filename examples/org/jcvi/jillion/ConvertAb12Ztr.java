@@ -1,19 +1,19 @@
 /*******************************************************************************
- * Copyright (c) 2009 - 2014 J. Craig Venter Institute.
- * 	This file is part of Jillion
+ * Jillion development code
  * 
- * 	 Jillion is free software: you can redistribute it and/or modify
- * 	it under the terms of the GNU General Public License as published by
- * 	the Free Software Foundation, either version 3 of the License, or
- * 	(at your option) any later version.
- * 	
- * 	 Jillion is distributed in the hope that it will be useful,
- * 	but WITHOUT ANY WARRANTY; without even the implied warranty of
- * 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * 	GNU General Public License for more details.
- * 	
- * 	You should have received a copy of the GNU General Public License
- * 	along with  Jillion.  If not, see <http://www.gnu.org/licenses/>.
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
  * 
  * Contributors:
  *     Danny Katzel - initial API and implementation
@@ -57,28 +57,20 @@ public class ConvertAb12Ztr {
 		
 		System.out.println(chromo.getNucleotideSequence());
 		
-		File outputScf = new File(chromo.getId() + ".scf");
 		
-		 ChromatogramWriter scfWriter = new ScfChromatogramWriterBuilder(outputScf)		 									
- 														.build();
+		 try(ChromatogramWriter scfWriter = new ScfChromatogramWriterBuilder(new File(chromo.getId() + ".scf"))		 									
+ 										.build();
+		     ChromatogramWriter ztrWriter = new ZtrChromatogramWriterBuilder(new File("out.ztr"))
+                         .build();
 		 
-		 
-		 try{
-			 scfWriter.write(chromo);
-		 }finally{
-			 //required to close
-			 scfWriter.close();
+		 ){
+		     //write out object that has extra comments
+			 scfWriter.write(chromo2);
+			 ztrWriter.write(chromo2);
 		 }
 		 
-		 ChromatogramWriter ztrWriter = new ZtrChromatogramWriterBuilder(new File("out.ztr"))
-		 										.build();
-		 
-		 try{
-			 ztrWriter.write(chromo);
-		 }finally{
-			 //required to close
-			 ztrWriter.close();
-		 }
+		
+		
 		 
 		 Chromatogram reparsed = ChromatogramFactory.create(new File("out.ztr"));
 		 if(!(reparsed instanceof ZtrChromatogram)){
