@@ -64,7 +64,7 @@ public class TestFastqParserWithFunctionLambda extends TestFastqParser{
 	@Override
 	protected FastqParser createSut(File fastqFile) throws IOException {
 	    File gzipped = gzip(fastqFile);
-	    return FastqFileParser.create(InputStreamSupplier.forFile(gzipped), false, false);
+	    return FastqFileParser.create(InputStreamSupplier.forFile(gzipped), false, false, true);
 	}
 	
 	

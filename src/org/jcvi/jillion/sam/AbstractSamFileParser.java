@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.internal.core.io.TextLineParser;
+import org.jcvi.jillion.internal.core.io.LineParser;
 import org.jcvi.jillion.internal.sam.SamUtil;
 import org.jcvi.jillion.sam.SamVisitor.SamVisitorCallback;
 import org.jcvi.jillion.sam.header.SamReadGroup.PlatformTechnology;
@@ -65,7 +65,7 @@ abstract class AbstractSamFileParser implements SamParser{
 		super();
 	}
 
-	protected SamHeaderBuilder parseHeader(TextLineParser parser) throws IOException {
+	protected SamHeaderBuilder parseHeader(LineParser parser) throws IOException {
 		
 		SamHeaderBuilder headerBuilder = new SamHeaderBuilder();
 		String currentLine = parser.peekLine();

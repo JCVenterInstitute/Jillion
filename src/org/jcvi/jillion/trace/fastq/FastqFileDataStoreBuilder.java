@@ -345,7 +345,7 @@ public final class FastqFileDataStoreBuilder{
 	    
 	    
 	        if(parser ==null){
-	        	parser = new FastqFileParserBuilder(inputStreamSupplier)
+	        	parser = new FastqFileParserBuilder(inputStreamSupplier,hint ==DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_MEMORY)
 	        	
                         .hasComments(hasComments)
                         .hasMultilineSequences(isMultiLine)
@@ -365,7 +365,10 @@ public final class FastqFileDataStoreBuilder{
 			case RANDOM_ACCESS_OPTIMIZE_SPEED:
 				return DefaultFastqFileDataStore.create(parser, codec, idFilter, recordFilter);
 			case RANDOM_ACCESS_OPTIMIZE_MEMORY:
-				return IndexedFastqFileDataStore.create(parser,  codec, idFilter, recordFilter);
+			        
+				return parser.canCreateMemento()?
+				        IndexedFastqFileDataStore.create(parser,  codec, idFilter, recordFilter)
+				        : DefaultFastqFileDataStore.create(parser, codec, idFilter, recordFilter);
 			case ITERATION_ONLY:
 				return LargeFastqFileDataStore.create(parser, codec, idFilter, recordFilter);
 			default:

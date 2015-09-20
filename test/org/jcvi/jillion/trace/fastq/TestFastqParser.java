@@ -91,7 +91,7 @@ public class TestFastqParser extends EasyMockSupport{
 	}
 
 	protected FastqParser createSut(File fastqFile) throws IOException{
-		return FastqFileParser.create(InputStreamSupplier.forFile(fastqFile), true,true);
+		return FastqFileParser.create(InputStreamSupplier.forFile(fastqFile), true,true, true);
 	}
 	
 	

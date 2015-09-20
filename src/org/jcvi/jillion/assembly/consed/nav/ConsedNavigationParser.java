@@ -31,6 +31,7 @@ import org.jcvi.jillion.assembly.consed.nav.NavigationElement.Type;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.internal.core.io.LineParser;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
 
 /**
@@ -64,7 +65,7 @@ public final class ConsedNavigationParser {
         }
     }
     public static void parse(InputStream in, ConsedNavigationVisitor visitor) throws IOException{
-        TextLineParser parser = new TextLineParser(in);
+        LineParser parser = new TextLineParser(in);
         boolean inRegion=false;
         Type regionType=null;
         String id=null;

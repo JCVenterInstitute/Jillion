@@ -31,7 +31,7 @@ public class TestIndexedFastqFileDataStoreGuessCodec extends AbstractTestFastQFi
     @Override
     protected FastqDataStore createFastQFileDataStore(File file,
             FastqQualityCodec qualityCodec) throws IOException {
-    	FastqParser parser = new FastqFileParserBuilder(file)
+    	FastqParser parser = new FastqFileParserBuilder(file, true)
 									.hasComments(true)
 									.hasMultilineSequences(true)
 									.build();

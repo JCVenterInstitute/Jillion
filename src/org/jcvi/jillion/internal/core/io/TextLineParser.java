@@ -44,7 +44,7 @@ import org.jcvi.jillion.internal.core.util.GrowableCharArray;
  *
  *
  */
-public final class TextLineParser implements Closeable{
+public final class TextLineParser implements LineParser{
 	/**
 	 * {@value} chars, is the initial
 	 * capacity since this is probably
@@ -182,6 +182,7 @@ public final class TextLineParser implements Closeable{
 	 * underlying input stream.
 	 * @return a number >=0.
 	 */
+	@Override
 	public long getPosition() {
 		return position;
 	}
@@ -194,7 +195,8 @@ public final class TextLineParser implements Closeable{
 	 * {@code false} otherwise.
 	 * @see #nextLine()
 	 */
-	@SuppressWarnings("PMD.CompareObjectsWithEquals")
+	@Override
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")
 	public boolean hasNextLine(){
 		Object next = nextQueue.peek();
 		
@@ -211,7 +213,8 @@ public final class TextLineParser implements Closeable{
 	 * to the next line.
 	 * 
 	 */
-	@SuppressWarnings("PMD.CompareObjectsWithEquals")
+	@Override
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")
 	public String peekLine(){
 		Object next= nextQueue.peek();
 		if(next == endOfFile){
@@ -227,7 +230,8 @@ public final class TextLineParser implements Closeable{
 	 * @throws IOException if there is a problem reading the next
 	 * line.
 	 */
-	@SuppressWarnings("PMD.CompareObjectsWithEquals")
+	@Override
+    @SuppressWarnings("PMD.CompareObjectsWithEquals")
 	public String nextLine() throws IOException{
 		Object next= nextQueue.poll();
 		if(next == endOfFile){
@@ -241,11 +245,15 @@ public final class TextLineParser implements Closeable{
 	 * 
 	 * {@inheritDoc}
 	 */
-	@Override
+        @Override
 	public void close() throws IOException {
 		IOUtil.closeAndIgnoreErrors(in);
 		nextQueue.clear();
 		
 	}
+    @Override
+    public boolean tracksPosition() {
+        return true;
+    }
 	
 }
