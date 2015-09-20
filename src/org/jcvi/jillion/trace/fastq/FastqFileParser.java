@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace.fastq;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
@@ -36,13 +37,34 @@ import org.jcvi.jillion.internal.core.io.TextLineParser;
 import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback;
 import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback.FastqVisitorMemento;
 /**
- * {@code FastqFileParser}  will parse a single 
- * fastq encoded file and call the appropriate
+ * Contains factory methods to create
+ * new {@link FastqParser} objects that will parse a single 
+ * fastq encoded file or {@link InputStream} and call the appropriate
  * visitXXX methods on the given {@link FastqVisitor}.
+ * The implementations of the public factory methods only
+ * support the simplest most common usecases of fastq files
+ * and parsing fastq files.
+ * 
+ * <ol>
+
+ * <li>Each fastq record is assumed to be only 4 lines long</li>
+ * <li>No records have comments on the defline</li>
+ * <li> {@link FastqVisitorMemento}s are not
+ * supported </li>
+ * </ol>
+ * 
+ * If these restrictions do not properly describe your fastq file
+ * to be parsed or you want to use  {@link FastqVisitorMemento}s,
+ * then please use the {@link FastqFileParserBuilder}
+ * object instead which has additional configuration options to 
+ * support all of these features but comes with a performance penality.
+ * 
  * @author dkatzel
+ * 
+ * @see FastqFileParserBuilder
  *
  */
-abstract class FastqFileParser implements FastqParser{
+public abstract class FastqFileParser implements FastqParser{
 
 	private static final Pattern CASAVA_1_8_DEFLINE_PATTERN = Pattern.compile("^@(\\S+\\s+\\d:[N|Y]:\\d+:(\\S+)?)\\s*$");
 	
@@ -57,21 +79,56 @@ abstract class FastqFileParser implements FastqParser{
 	/**
 	 * Create a new {@link FastqFileParser} instance
 	 * that will parse the given fastq encoded
-	 * inputStream that does not contain defline comments.  Please Note that inputStream implementations
+	 * inputStream that does not contain defline comments and is
+	 * only 4 lines per fastq record.  Please Note that inputStream implementations
 	 * of the FastqFileParser can not create {@link FastqVisitorMemento}s
 	 * or use {@link #accept(FastqVisitor, FastqVisitorMemento)}
 	 * method.
-	 * 
-	 * @apiNote this is the same as {@link #create(InputStream, boolean) create(in, false)}
-	 * 
+	 * <p>
+	 * If you need to parse Fastq files that have
+	 * comments or have more than 4 lines per record
+	 * please use {@link FastqFileParserBuilder}
+	 * which has additional configuration options.
+	 *
 	 * @param in the fastq encoded inputstream to parse.
 	 * @throws NullPointerException if inputstream is null.
 	 * 
 	 * @return a new {@link FastqParser} instance; will never be null.
+	 * 
+	 * @see FastqFileParserBuilder#FastqFileParserBuilder(InputStream)
 	 */
 	public static FastqParser create(InputStream in){
-		return create(in, false, true);
+		return create(in, false, false);
 	}
+	
+	/**
+         * Create a new {@link FastqFileParser} instance
+         * that will parse the given fastq encoded
+         * File which may be zipped or gzipped, but does not contain defline comments and is
+         * only 4 lines per fastq record.  Please Note the returned implementations
+         * of the FastqFileParser can not create {@link FastqVisitorMemento}s
+         * or use {@link #accept(FastqVisitor, FastqVisitorMemento)}
+         * method.
+         * <p>
+         * If you need to parse Fastq files that have
+         * comments or have more than 4 lines per record
+         * or you want to use {@link FastqVisitorMemento}s
+         * please use {@link FastqFileParserBuilder}
+         * which has additional configuration options.
+         *
+         * @param in the fastq encoded file to parse; must
+         * exist and be readable.
+         * 
+         * @throws NullPointerException if fastq is null.
+         * @throws IOException if fastq does not exist or is not readable.
+         * 
+         * @return a new {@link FastqParser} instance; will never be null.
+         * 
+         * @see FastqFileParserBuilder#FastqFileParserBuilder(File)
+         */
+        public static FastqParser create(File fastq) throws IOException{
+                return create(InputStreamSupplier.forFile(fastq), false, false, false);
+        }
 	
 	/**
          * Create a new {@link FastqFileParser} instance
