@@ -117,7 +117,7 @@ public abstract class FastqFileParser implements FastqParser{
          * which has additional configuration options.
          *
          * @param in the fastq encoded file to parse; must
-         * exist and be readable.
+         * exist and be readable; may be a "normal" fastq file, or zipped or gzipped.
          * 
          * @throws NullPointerException if fastq is null.
          * @throws IOException if fastq does not exist or is not readable.

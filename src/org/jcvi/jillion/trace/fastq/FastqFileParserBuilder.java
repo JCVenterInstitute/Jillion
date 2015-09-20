@@ -77,7 +77,8 @@ public final class FastqFileParserBuilder {
      * Create a Builder that will parse the given
      * fastq encoded File without memento support.
      * 
-     * @param fastqFile the fastq file to be parsed; can not be null.
+     * @param fastqFile the fastq file to be parsed; can not be null
+     * but may be a "normal" fastq file, or zipped or gzipped.
      * 
      * @apiNote this is the same as {@link #FastqFileParserBuilder(File, boolean) new FastqFileParserBuider(fastqFile, false);}
      * 
@@ -91,7 +92,9 @@ public final class FastqFileParserBuilder {
      * Create a Builder that will parse the given
      * fastq encoded File.
      * 
-     * @param fastqFile the fastq file to be parsed; can not be null.
+     * @param fastqFile the fastq file to be parsed; can not be null
+     * but may be a "normal" fastq file, or zipped or gzipped.
+     * 
      * @param mementoSupport the {@link FastqFileParser} that will be built
      *                  by this builder should be able to make mementos.
      *                  Adding memento support requires extra processing time
