@@ -45,6 +45,8 @@ public final class FastqFileParserBuilder {
     
     private boolean hasComments;
     private boolean multiline;
+    private final boolean mementoSupport;
+    
     /**
 	 * Create a new Builder instance
 	 * that will parse the given fastq encoded
@@ -67,26 +69,68 @@ public final class FastqFileParserBuilder {
 	 */
     public FastqFileParserBuilder(InputStream in){
         Objects.requireNonNull(in, "Inputstream can not be null");
-        
+        mementoSupport = false;
         this.in = in;
         this.inputStreamSupplier = null;
     }
     /**
      * Create a Builder that will parse the given
-     * fastq encoded File.
+     * fastq encoded File without memento support.
+     * 
      * @param fastqFile the fastq file to be parsed; can not be null.
+     * 
+     * @apiNote this is the same as {@link #FastqFileParserBuilder(File, boolean) new FastqFileParserBuider(fastqFile, false);}
      * 
      * @throws IOException if the file is not readable
      * @throws NullPointerException if file is null.
      */
     public FastqFileParserBuilder(File fastqFile) throws IOException{
-    	 this(InputStreamSupplier.forFile(fastqFile));
+         this(InputStreamSupplier.forFile(fastqFile), false);
     }
-
-    public FastqFileParserBuilder(InputStreamSupplier inputStreamSupplier) {
+    /**
+     * Create a Builder that will parse the given
+     * fastq encoded File.
+     * 
+     * @param fastqFile the fastq file to be parsed; can not be null.
+     * @param mementoSupport the {@link FastqFileParser} that will be built
+     *                  by this builder should be able to make mementos.
+     *                  Adding memento support requires extra processing time
+     *                  so it is usually {@code false} by default.
+     * 
+     * @throws IOException if the file is not readable
+     * @throws NullPointerException if file is null.
+     * 
+     * @see FastqParser#canCreateMemento()
+     * 
+     * @since 5.0
+     */
+    public FastqFileParserBuilder(File fastqFile, boolean mementoSupport) throws IOException{
+    	 this(InputStreamSupplier.forFile(fastqFile), mementoSupport);
+    }
+    /**
+     * Create a Builder that will parse the given
+     * fastq encoded data provided by the {@link InputStreamSupplier}.
+     * 
+     * @param inputStreamSupplier the fastq encoded data to be parsed that is in the {@link InputStream}
+     * returned by the given {@link InputStreamSupplier} can not be null.
+     * 
+     * @param mementoSupport the {@link FastqFileParser} that will be built
+     *                  by this builder should be able to make mementos.
+     *                  Adding memento support requires extra processing time
+     *                  so it is usually {@code false} by default.
+     * 
+     * @throws IOException if the file is not readable
+     * @throws NullPointerException if file is null.
+     * 
+     * @see FastqParser#canCreateMemento()
+     * 
+     * @since 5.0
+     */
+    public FastqFileParserBuilder(InputStreamSupplier inputStreamSupplier, boolean mementoSupport) {
 	Objects.requireNonNull(inputStreamSupplier);
         this.in = null;
         this.inputStreamSupplier = inputStreamSupplier;
+        this.mementoSupport = mementoSupport;
     }
     /**
 	 * Does this fastq file contain comments on the deflines.
@@ -139,7 +183,7 @@ public final class FastqFileParserBuilder {
      */
     public FastqParser build() throws IOException{
         if(in ==null){
-            return FastqFileParser.create(inputStreamSupplier, hasComments, multiline);
+            return FastqFileParser.create(inputStreamSupplier, hasComments, multiline, mementoSupport);
         }
         return FastqFileParser.create(in, hasComments, multiline);
     }

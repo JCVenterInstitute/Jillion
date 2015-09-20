@@ -41,6 +41,7 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.internal.core.io.LineParser;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
 
 public class Frg2Parser {
@@ -71,7 +72,7 @@ public class Frg2Parser {
        }
     }
     public static void parse2(InputStream frgStream, Frg2Visitor visitor) throws IOException{
-        TextLineParser parser = new TextLineParser(new BufferedInputStream(frgStream));
+        LineParser parser = new TextLineParser(new BufferedInputStream(frgStream));
         while(parser.hasNextLine()){
             String line = parser.nextLine();
             visitor.visitLine(line);
@@ -93,7 +94,7 @@ public class Frg2Parser {
      * @param visitor
      * @throws IOException 
      */
-    private static void handleLink(TextLineParser parser, Frg2Visitor visitor) throws IOException {
+    private static void handleLink(LineParser parser, Frg2Visitor visitor) throws IOException {
         String actionLine = parser.nextLine();
         visitor.visitLine(actionLine);
         FrgAction action = parseAction(actionLine);
@@ -104,14 +105,14 @@ public class Frg2Parser {
         visitor.visitLink(action, ids);
         
     }
-    private static void parseEndOfBlock(TextLineParser parser, Frg2Visitor visitor) throws IOException{
+    private static void parseEndOfBlock(LineParser parser, Frg2Visitor visitor) throws IOException{
         String line = parser.nextLine();
         visitor.visitLine(line);
         if(!line.startsWith("}")){
             throw new IOException("error reading end of block");
         }
     }
-    private static String parseFrgUid(TextLineParser parser, Frg2Visitor visitor) throws IOException{
+    private static String parseFrgUid(LineParser parser, Frg2Visitor visitor) throws IOException{
         String line = parser.nextLine();
         visitor.visitLine(line);
         Matcher matcher = LKG_FRG_ID_PATTERN.matcher(line);
@@ -124,7 +125,7 @@ public class Frg2Parser {
      * @param parser
      * @param visitor
      */
-    private static void handleFragment(TextLineParser parser,
+    private static void handleFragment(LineParser parser,
             Frg2Visitor visitor) {
         // TODO Auto-generated method stub
         
@@ -133,7 +134,7 @@ public class Frg2Parser {
      * @param parser
      * @param visitor
      */
-    private static void handleLibrary(TextLineParser parser, Frg2Visitor visitor) {
+    private static void handleLibrary(LineParser parser, Frg2Visitor visitor) {
     	
     	// TODO Auto-generated method stub
         /*

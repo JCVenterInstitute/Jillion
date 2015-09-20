@@ -29,7 +29,9 @@ import java.util.regex.Pattern;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.io.InputStreamSupplier;
+import org.jcvi.jillion.internal.core.io.LineParser;
 import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
+import org.jcvi.jillion.internal.core.io.PositionlessLineParser;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
 import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback;
 import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback.FastqVisitorMemento;
@@ -93,8 +95,8 @@ abstract class FastqFileParser implements FastqParser{
         }
         
         
-        static FastqFileParser create(InputStreamSupplier supplier, boolean hasComments, boolean multiLine) throws IOException{
-            return new FileBasedFastqFileParser(supplier,hasComments, multiLine);
+        static FastqFileParser create(InputStreamSupplier supplier, boolean hasComments, boolean multiLine, boolean trackPosition) throws IOException{
+            return new FileBasedFastqFileParser(supplier,hasComments, multiLine, trackPosition);
         }
         
 	private FastqFileParser(boolean hasComments, boolean multiLine){
@@ -102,8 +104,8 @@ abstract class FastqFileParser implements FastqParser{
 		this.multiLine = multiLine;
 	}
 	
-	protected void parseFastqFile(FastqVisitor visitor, TextLineParser parser) throws IOException{
-		ParserState parserState = new ParserState(parser.getPosition());
+	protected void parseFastqFile(FastqVisitor visitor, LineParser parser) throws IOException{
+		ParserState parserState = parser.tracksPosition() ? new ParserState(parser.getPosition()) : new ParserState(0);
 		while(parserState.keepParsing() && parser.hasNextLine()){
 			parserState=parseNextRecord(visitor, parser, parserState);
 		}
@@ -114,7 +116,7 @@ abstract class FastqFileParser implements FastqParser{
 		}
 	}
 	
-	private ParserState parseNextRecord(FastqVisitor visitor, TextLineParser parser, ParserState parserState) throws IOException{
+	private ParserState parseNextRecord(FastqVisitor visitor, LineParser parser, ParserState parserState) throws IOException{
 		String deflineText = parser.nextLine();
 		 AbstractFastqVisitorCallback callback = createCallback(parserState);
 		 FastqRecordVisitor recordVisitor;
@@ -138,8 +140,9 @@ abstract class FastqFileParser implements FastqParser{
             return parseRecordBody(parser,recordVisitor,parserState, id);		
         
 	}
+
 	
-	private ParserState parseRecordBody(TextLineParser parser,
+	private ParserState parseRecordBody(LineParser parser,
 			FastqRecordVisitor recordVisitor, ParserState parserState, String currentId) throws IOException {
 		//if we aren't visiting this read
 		//we shouldn't spend any time parsing the
@@ -147,7 +150,7 @@ abstract class FastqFileParser implements FastqParser{
 		if(recordVisitor ==null){
 			skipCurrentRecord(parser);
 			//set new end position for mementos to work
-			return parserState.setOffset(parser.getPosition());
+			return parserState.updatePosition(parser);
 		}
 		
 		//default to 2000 bp since most sequences are only that much anyway
@@ -174,7 +177,7 @@ abstract class FastqFileParser implements FastqParser{
         
         if(!parserState.keepParsing()){
             recordVisitor.halted();
-            return parserState.setOffset(parser.getPosition());
+            return parserState.updatePosition(parser);
         }
         if(!multiLine){
             //read qual defline
@@ -219,7 +222,7 @@ abstract class FastqFileParser implements FastqParser{
     	}
     	recordVisitor.visitEncodedQualities(qualityBuilder.toString());
     	
-		ParserState endParserState = parserState.setOffset(parser.getPosition());
+		ParserState endParserState = parserState.updatePosition(parser);
 		if (endParserState.keepParsing()){
 			recordVisitor.visitEnd();
 		}else{
@@ -228,7 +231,7 @@ abstract class FastqFileParser implements FastqParser{
 
 		return endParserState;
 	}
-	private void skipCurrentRecord(TextLineParser parser) throws IOException {
+	private void skipCurrentRecord(LineParser parser) throws IOException {
         
 	    if(multiLine){
 		String line = parser.nextLine();
@@ -396,16 +399,25 @@ abstract class FastqFileParser implements FastqParser{
 		ParserState setOffset(long newOffset){
 			return new ParserState(newOffset, keepParsing);
 		}
+		
+		ParserState updatePosition(LineParser parser){
+		    if(parser.tracksPosition()){
+		        return setOffset(parser.getPosition());
+		    }
+		    return this;
+		}
 	}
 	
 	private static class FileBasedFastqFileParser extends FastqFileParser{
 		private final InputStreamSupplier supplier;
+		private final boolean trackPosition;
 		
-		
-		public FileBasedFastqFileParser(InputStreamSupplier supplier, boolean hasComments, boolean multiLine) throws IOException {
+		public FileBasedFastqFileParser(InputStreamSupplier supplier, 
+		        boolean hasComments, boolean multiLine,
+		        boolean trackPosition) throws IOException {
 		    super(hasComments, multiLine);
 		    Objects.requireNonNull(supplier);
-			
+			this.trackPosition = trackPosition;
 			this.supplier=supplier;
 		}
 
@@ -442,7 +454,7 @@ abstract class FastqFileParser implements FastqParser{
 			}
 			
 			try(InputStream in = supplier.get()){
-				TextLineParser parser = new TextLineParser(in);
+				LineParser parser = trackPosition? new TextLineParser(in) :new PositionlessLineParser(in);
 				parseFastqFile(visitor, parser);			
 			}
 		}
@@ -503,7 +515,7 @@ abstract class FastqFileParser implements FastqParser{
 				throw new NullPointerException("visitor can not be null");
 			}
 			try{
-				TextLineParser parser = new TextLineParser(in);
+				LineParser parser = new PositionlessLineParser(in);
 				parseFastqFile(visitor, parser);
 			}finally{
 				IOUtil.closeAndIgnoreErrors(in);

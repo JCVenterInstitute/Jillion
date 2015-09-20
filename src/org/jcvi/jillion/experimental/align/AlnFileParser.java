@@ -39,6 +39,7 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.experimental.align.AlnGroupVisitor.ConservationInfo;
 import org.jcvi.jillion.experimental.align.AlnVisitor.AlnVisitorCallback;
 import org.jcvi.jillion.experimental.align.AlnVisitor.AlnVisitorCallback.AlnVisitorMemento;
+import org.jcvi.jillion.internal.core.io.LineParser;
 import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
 import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
@@ -191,7 +192,7 @@ public abstract class AlnFileParser implements AlnParser{
 
 
 
-		static Group getNextGroup(TextLineParser parser) throws IOException{
+		static Group getNextGroup(LineParser parser) throws IOException{
     		Map<String,String> lines = new LinkedHashMap<String, String>();
     		boolean done=false;
     		boolean foundGroup=false;

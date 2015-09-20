@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.fasta.FastaVisitorCallback.FastaVisitorMemento;
+import org.jcvi.jillion.internal.core.io.LineParser;
 import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
 import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
@@ -181,7 +182,7 @@ public abstract class FastaFileParser implements FastaParser{
 		handleEndOfFile(visitor, keepParsing, recordVisitor);
 
 	}
-	private void handleNonRedundantRecord(TextLineParser parser, String defline, 
+	private void handleNonRedundantRecord(LineParser parser, String defline, 
 			FastaVisitor visitor, long offsetOfBeginningOfDefline, 
 			AtomicBoolean keepParsing, int initialRedundantStartIndex) throws IOException {
 		//there are multiple redundant records included

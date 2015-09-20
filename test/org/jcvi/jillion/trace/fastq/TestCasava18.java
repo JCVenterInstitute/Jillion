@@ -64,7 +64,8 @@ public class TestCasava18 {
 		};
 
         ResourceHelper resources = new ResourceHelper(TestCasava18.class);
-        FastqFileParser.create(InputStreamSupplier.forFile(resources.getFile("files/casava1.8.fastq")), false, false).parse(visitor);
+        FastqFileParser.create(
+                InputStreamSupplier.forFile(resources.getFile("files/casava1.8.fastq")), false, false, false).parse(visitor);
     }
     
     @Test
@@ -90,6 +91,6 @@ public class TestCasava18 {
 		};
 
         ResourceHelper resources = new ResourceHelper(TestCasava18.class);
-        FastqFileParser.create(InputStreamSupplier.forFile(resources.getFile("files/casava1.8.miseq.fastq")), false, false).parse(visitor);
+        FastqFileParser.create(InputStreamSupplier.forFile(resources.getFile("files/casava1.8.miseq.fastq")), false, false, false).parse(visitor);
     }
 }

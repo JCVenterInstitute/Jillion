@@ -11,6 +11,13 @@ chronological so the most important changes may not always be ordered first.
 Jillion 5.0
 ================
 
+LICENSE CHANGE
+
+Jillion 5 is now LGPL 2.1.  Previous versions of Jillion are GPL 3 and will remain that way.
+
+Jillion 5 now uses the same license as Bio* projects and commercial software may now
+use Jillion's jar file in their software.
+
 New Features
 ------------
 
@@ -84,8 +91,12 @@ New Features
 	 										         .filter(read -> read.getDirection() == Direction.FORWARD)
 	 										         .map(AssembledRead::asRange)
 	 										         .collect(CoverageMapCollectors.toCoverageMap(200));
-    
-9.  Performance improvements of FastqFileParser and built in FastqWriter implementation for the most common
+
+9.  Performance improvements to Fastq file parsing.  When not using Mementos
+	or DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_MEMORY (which uses mementos)
+	parsing time is now improved by 400%!
+
+10.  Performance improvements of FastqFileParser and built in FastqWriter implementation for the most common
     use-case of parsing a fastq file and writing out the FastqRecord instances as is to a different writer.
     New internal classes are now used which don't convert the encoded quality strings into QualitySequence
     objects unless getQualitySequence() is called.  This takes up slightly more memory per record
@@ -93,10 +104,10 @@ New Features
     and so the records will be GC'ed as soon as they are out of scope in the iterator.  
     When tested on large 25 million read fastq files from 1000genomes project, throughput improved by 25%.
 
-10.  Added new DataStores factory method: containedInDataStore(DataStore datastore) which will only accept ids that are
+11.  Added new DataStores factory method: containedInDataStore(DataStore datastore) which will only accept ids that are
      also contained in the given datastore.
      
-11. Created InputStreamSupplier with support for normal files, zipped and gzipped files.
+12. Created InputStreamSupplier with support for normal files, zipped and gzipped files.
 	This lets users reparse with compressed files multiple times.  Previously
 	compressed files either could only be parsed a single time via
 	InputStream constructors.

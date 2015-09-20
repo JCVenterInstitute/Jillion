@@ -39,6 +39,7 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.internal.core.io.LineParser;
 import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
 import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
@@ -149,7 +150,7 @@ public abstract class PhdBallFileParser implements PhdBallParser{
 		}
 	}
 	
-	private void skipSequence(TextLineParser parser) throws IOException {
+	private void skipSequence(LineParser parser) throws IOException {
 		boolean entireSequenceBlockRead=false;
 		while(entireSequenceBlockRead && parser.hasNextLine()){
 			String line = parser.nextLine();
@@ -162,7 +163,7 @@ public abstract class PhdBallFileParser implements PhdBallParser{
 	protected abstract  PhdBallVisitorCallback createCallback(ParserState parserState, long offset);
 
 	private void handleWholeReadTag(ParserState parserState,
-			TextLineParser parser, PhdVisitor visitor) throws IOException {
+			LineParser parser, PhdVisitor visitor) throws IOException {
 		final PhdWholeReadItemVisitor itemVisitor;
 		if(visitor ==null){
 			itemVisitor=null;
@@ -193,7 +194,7 @@ public abstract class PhdBallFileParser implements PhdBallParser{
 		return matcher.group(1);
 	}
 
-	private void handleSequence(ParserState parserState, TextLineParser parser,
+	private void handleSequence(ParserState parserState, LineParser parser,
 			PhdVisitor visitor) throws IOException {
 		//format of each sequence is:
 		//BEGIN_COMMENT
@@ -230,7 +231,7 @@ public abstract class PhdBallFileParser implements PhdBallParser{
 		
 	}
 
-	private void parseTags(ParserState parserState, TextLineParser parser,
+	private void parseTags(ParserState parserState, LineParser parser,
 			PhdVisitor visitor) throws IOException {
 		while(parser.hasNextLine() && parserState.keepParsing()){
 			String peekedLine = parser.peekLine();
@@ -253,7 +254,7 @@ public abstract class PhdBallFileParser implements PhdBallParser{
 	}
 
 
-	private void parseSingleTag(ParserState parserState, TextLineParser parser,
+	private void parseSingleTag(ParserState parserState, LineParser parser,
 			PhdReadTagVisitor visitor) throws IOException {
 		boolean inTag=true;
 		do{
@@ -306,7 +307,7 @@ public abstract class PhdBallFileParser implements PhdBallParser{
 		}
 	}
 
-	private String parseReadTagComment(TextLineParser parser) throws IOException{
+	private String parseReadTagComment(LineParser parser) throws IOException{
 		boolean inCommentBlock=true;
 		StringBuilder comment = new StringBuilder();
 		do{
@@ -322,7 +323,7 @@ public abstract class PhdBallFileParser implements PhdBallParser{
 		return rightTrim(comment.toString());
 	}
 
-	private void parseReadData(ParserState parserState, TextLineParser parser, PhdVisitor visitor) throws IOException {
+	private void parseReadData(ParserState parserState, LineParser parser, PhdVisitor visitor) throws IOException {
 		boolean inDnaBlock =false;
 		while(!inDnaBlock && parser.hasNextLine()){
 			String line = parser.nextLine();
@@ -347,7 +348,7 @@ public abstract class PhdBallFileParser implements PhdBallParser{
 	}
 
 
-	private void parseCommentBlock(TextLineParser parser, PhdVisitor visitor) throws IOException {
+	private void parseCommentBlock(LineParser parser, PhdVisitor visitor) throws IOException {
 		boolean inCommentBlock =false;
 		while(!inCommentBlock && parser.hasNextLine()){
 			String line = parser.nextLine();
@@ -359,7 +360,7 @@ public abstract class PhdBallFileParser implements PhdBallParser{
 	}
 
 
-	private Map<String, String> parseComments(TextLineParser parser) throws IOException {
+	private Map<String, String> parseComments(LineParser parser) throws IOException {
 		boolean inCommentBlock=true;
 		Map<String, String> comments = new LinkedHashMap<String, String>();
 		do{
