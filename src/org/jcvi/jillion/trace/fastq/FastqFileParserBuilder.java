@@ -24,14 +24,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
-import java.util.function.Function;
-
-import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.io.InputStreamSupplier;
 /**
  * Creates a {@link FastqParser}
  * that parses the given fastq encoded file
- * along with additional configuration options.
+ * along with additional configuration options
+ * to support {@link org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback.FastqVisitorMemento}s
+ * , multiline fastq records that take more than 4 lines each
+ * and also allows parsing comments on the deflines of fastq records.
  * 
  * 
  * @author dkatzel
