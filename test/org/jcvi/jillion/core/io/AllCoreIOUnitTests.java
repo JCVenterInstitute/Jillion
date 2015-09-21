@@ -51,7 +51,9 @@ import org.junit.runners.Suite.SuiteClasses;
         TestMagicNumberInputStream.class,
         TestOpenAwareInputStream.class,
         TestRandomAccessFileInputStream.class,
+        
         TestInputStreamSupplierForFile.class,
+        TestInputStreamSupplierWithEmptyFile.class,
         
         TestTextLineParser.class
     }
