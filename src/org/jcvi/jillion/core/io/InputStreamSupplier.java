@@ -20,13 +20,14 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.io;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.zip.ZipInputStream;
-import java.io.FileInputStream;
-import java.io.BufferedInputStream;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipInputStream;
+
 import org.jcvi.jillion.internal.core.io.MagicNumberInputStream;
 
 /**
@@ -111,6 +112,12 @@ public interface InputStreamSupplier {
      */
     public static InputStreamSupplier forFile(File f) throws IOException{
        IOUtil.verifyIsReadable(f);
+       
+       //check that file isn't empty
+       //if the file is emtpy then there's no magic number
+       if(f.length() ==0){
+    	   return new RawFileInputStreamSupplier(f);
+       }
        
        byte[] magicNumber;
        try(MagicNumberInputStream magicNumInputStream = new MagicNumberInputStream(f)){
