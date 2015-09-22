@@ -41,7 +41,7 @@ public class TestFastqWriterWithComment {
 	public TestFastqWriterWithComment() throws IOException{
 		ResourceHelper RESOURCES = new ResourceHelper(TestFastqWriter.class);
 		datastore = new FastqFileDataStoreBuilder(RESOURCES.getFile("files/exampleWithComments.fastq"))
-		                                .hasComments()
+		                                .hasComments(true)
 		                                .qualityCodec(FastqQualityCodec.ILLUMINA)
 		                                .build();
 	}

@@ -42,6 +42,7 @@ import org.junit.runners.Parameterized.Parameters;
 public class TestNucleotideFastaDataStoreBuilderWithLambdaRecordFilter {
 
 	private static File fastaFile;
+	private static File gzippedFile;
 	
 	private final Consumer<NucleotideFastaFileDataStoreBuilder> hinter;
 	
@@ -49,6 +50,7 @@ public class TestNucleotideFastaDataStoreBuilderWithLambdaRecordFilter {
 	public static void setup() throws IOException{
 		ResourceHelper helper = new ResourceHelper(TestNucleotideFastaDataStoreBuilderWithLambdaRecordFilter.class);
 		fastaFile = helper.getFile("files/giv_XX_15050.seq");
+		gzippedFile = new File(fastaFile.getParentFile(), fastaFile.getName() +".gz");
 	}
 	
 	@Parameters
@@ -69,21 +71,48 @@ public class TestNucleotideFastaDataStoreBuilderWithLambdaRecordFilter {
 	
 	@Test
 	public void noFilter() throws IOException, DataStoreException{
-		NucleotideFastaFileDataStoreBuilder builder = new NucleotideFastaFileDataStoreBuilder(fastaFile);
+		noFilter(fastaFile);
+	}
+	
+	@Test
+        public void noFilterGzipped() throws IOException, DataStoreException{
+                noFilter(gzippedFile);
+        }
+
+    private void noFilter(File file) throws IOException, DataStoreException {
+        NucleotideFastaFileDataStoreBuilder builder = new NucleotideFastaFileDataStoreBuilder(file);
 		hinter.accept(builder);
 		try(NucleotideFastaDataStore sut = builder.build()){
 			assertEquals(274, sut.getNumberOfRecords());
 		}
-	}
+    }
 	
 	@Test
-	public void onlyKeepLongReads() throws IOException, DataStoreException{
-		NucleotideFastaFileDataStoreBuilder builder = new NucleotideFastaFileDataStoreBuilder(fastaFile);
+	public void onlyKeepLongReadsNormalFile() throws IOException, DataStoreException{
+		keepOnlyLongReads(fastaFile);
+	}
+	@Test
+        public void onlyKeepLongReadsGZippedFile() throws IOException, DataStoreException{
+                keepOnlyLongReads(gzippedFile);
+        }
+	
+	@Test
+        public void onlyKeepLongReadsNewLengthMethodNormalFile() throws IOException, DataStoreException{
+	    keepOnlyLongReadsNewLengthMethod(fastaFile);
+        }
+        @Test
+        public void onlyKeepLongReadsNewLengthMethodGZippedFile() throws IOException, DataStoreException{
+            keepOnlyLongReadsNewLengthMethod(gzippedFile);
+        }
+
+    private void keepOnlyLongReads(File file) throws IOException,
+            DataStoreException {
+        NucleotideFastaFileDataStoreBuilder builder = new NucleotideFastaFileDataStoreBuilder(file);
 		hinter.accept(builder);
 		
 		try(NucleotideFastaDataStore sut =builder
-													.filterRecords(record-> record.getSequence().getLength() >1000)
-													.build();
+							.filterRecords(record-> record.getSequence().getLength() >1000)
+							.build();
 			StreamingIterator<NucleotideFastaRecord> iter = sut.iterator();
 			){
 			assertEquals(33, sut.getNumberOfRecords());
@@ -91,6 +120,23 @@ public class TestNucleotideFastaDataStoreBuilderWithLambdaRecordFilter {
 				assertTrue(iter.next().getSequence().getLength() > 1000);
 			}
 		}
-	}
+    }
+    
+    private void keepOnlyLongReadsNewLengthMethod(File file) throws IOException,
+    DataStoreException {
+NucleotideFastaFileDataStoreBuilder builder = new NucleotideFastaFileDataStoreBuilder(file);
+        hinter.accept(builder);
+        
+        try(NucleotideFastaDataStore sut =builder
+                                                .filterRecords(record-> record.getLength() >1000)
+                                                .build();
+                StreamingIterator<NucleotideFastaRecord> iter = sut.iterator();
+                ){
+                assertEquals(33, sut.getNumberOfRecords());
+                while(iter.hasNext()){
+                        assertTrue(iter.next().getSequence().getLength() > 1000);
+                }
+        }
+}
 	
 }

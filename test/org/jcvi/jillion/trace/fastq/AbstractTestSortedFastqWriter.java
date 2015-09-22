@@ -172,7 +172,7 @@ public abstract class AbstractTestSortedFastqWriter {
     
     private void assertRecordOrder(List<FastqRecord> expectedOrder) throws IOException, DataStoreException {
         try(FastqDataStore datastore = new FastqFileDataStoreBuilder(outputFile)
-                                                   .hasComments()
+                                                .hasComments(true)
                                                 .hint(DataStoreProviderHint.ITERATION_ONLY)
                                                 .qualityCodec(FastqQualityCodec.SANGER)
                                                 .build();

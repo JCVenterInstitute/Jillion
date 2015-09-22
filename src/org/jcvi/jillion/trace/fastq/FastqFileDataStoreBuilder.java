@@ -159,41 +159,47 @@ public final class FastqFileDataStoreBuilder{
 		return this;
 	}
 	
-	/**
-	 * The deflines of the sequences contain comments. 
-	 * Parsing comments is more computationally intensive to 
-         *              try to distinguish the id from the comment. Remember some Fastq id's can
-         *              have spaces which makes comment detection difficult and complex.
-	 * @return this
-	 */
-	public FastqFileDataStoreBuilder hasComments(){
-	    this.hasComments = true;
-	    return this;
-	}
-	
-	/**
-         * Notes that records may have multiple lines for the sequence
-         * and qualities sequences.
-         * Most fastq files define each record in 4 lines:
-         * <ol>
-         * <li>The defline</li>
-         * <li>nucleotide sequence</li>
-         * <li>The quality defline</li>
-         * <li>quality sequence</li>
-         * </ol>
+	 /**
+         * Does this fastq file contain comments on the deflines.
+         * If not called, then by default this builder uses hasComments = false.
          * 
-         * However, some fastq files split the nucleotide and quality sequences
-         * over multiple lines.  For performance reasons,
-         * checking for multi-lines has been turned off by default.
-         * 
-         * Calling this method turns it back on for this datastore.
-         * 
+         * @param hasComments
+         *            do the deflines of the sequences contain comments. If set to
+         *            {@code true} then a more computationally intensive parsing is
+         *            performed to try to distinguish the id from the comment.
+         *            Remember some Fastq id's can have spaces which makes comment
+         *            detection difficult and complex.
          * @return this
          */
-        public FastqFileDataStoreBuilder isMultiLine(){
-            this.isMultiLine = true;
-            return this;
-        }
+    public FastqFileDataStoreBuilder hasComments(boolean hasComments){
+        this.hasComments = hasComments;
+        return this;
+    }
+    /**
+     * Does this fastq file contain records that may have multiple lines for the sequence
+     * and qualities sequences.
+     * Most fastq files define each record in 4 lines:
+     * <ol>
+     * <li>The defline</li>
+     * <li>nucleotide sequence</li>
+     * <li>The quality defline</li>
+     * <li>quality sequence</li>
+     * </ol>
+     * 
+     * However, some fastq files split the nucleotide and quality sequences
+     * over multiple lines.  For performance reasons,
+     * checking for multi-lines has been turned off by default
+     * and must be explicitly turned on by calling this method.
+     * 
+     * @param multiline {@code true} if this file may contain multilines;
+     * {@code false} otherwise (defaults to {@code false}.
+     * 
+     * @return this
+     */
+    public FastqFileDataStoreBuilder hasMultilineSequences(boolean multiline){
+        this.isMultiLine = multiline;
+        return this;
+    }
         
 	
 	/**

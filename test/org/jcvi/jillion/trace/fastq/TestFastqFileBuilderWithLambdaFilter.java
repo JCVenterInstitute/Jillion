@@ -89,7 +89,7 @@ public class TestFastqFileBuilderWithLambdaFilter {
         hint.accept(builder);
         
         try(FastqFileDataStore datastore = builder
-                                                    .hasComments()
+                                                    .hasComments(true)
                                                     .filter(id-> id.endsWith("F"))
                                                     .build();
                 
@@ -105,7 +105,8 @@ public class TestFastqFileBuilderWithLambdaFilter {
     
     @Test
     public void onlyIncludeLongSequenceLengths() throws IOException, DataStoreException{
-        FastqFileDataStoreBuilder builder = new FastqFileDataStoreBuilder(inputFastq);
+        FastqFileDataStoreBuilder builder = new FastqFileDataStoreBuilder(inputFastq)
+                                                    .hasComments(true);
         
         hint.accept(builder);
         
