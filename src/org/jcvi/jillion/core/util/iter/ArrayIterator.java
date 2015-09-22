@@ -24,6 +24,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 public class ArrayIterator<T> implements Iterator<T> {
 
 	private final T[] array;
@@ -55,7 +57,7 @@ public class ArrayIterator<T> implements Iterator<T> {
 	 * be used.
 	 * @throws NullPointerException if array is null.
 	 */
-	@SuppressWarnings("EI_EXPOSE_REP2") //FindBugs expose array reference which we want to sometimes for speed
+	@SuppressFBWarnings("EI_EXPOSE_REP2") //FindBugs expose array reference which we want to sometimes for speed
 	public ArrayIterator(T[] array, boolean makeDefensiveCopy) {
 		if(array==null){
 			throw new NullPointerException("array can not be null");
