@@ -278,10 +278,10 @@ public final class NucleotideFastaWriterBuilder extends AbstractResidueFastaWrit
 				if (obj == null) {
 					return false;
 				}
-				if (!(obj instanceof CommentedNonRedundantEntry)) {
+				if (!(obj instanceof NonRedundantEntry)) {
 					return false;
 				}
-				CommentedNonRedundantEntry other = (CommentedNonRedundantEntry) obj;
+				NonRedundantEntry other = (NonRedundantEntry) obj;
 				if (!getComment().equals(other.getComment())) {
 					return false;
 				}
@@ -329,10 +329,10 @@ public final class NucleotideFastaWriterBuilder extends AbstractResidueFastaWrit
 				if (obj == null) {
 					return false;
 				}
-				if (!(obj instanceof CommentedNonRedundantEntry)) {
+				if (!(obj instanceof NonRedundantEntry)) {
 					return false;
 				}
-				CommentedNonRedundantEntry other = (CommentedNonRedundantEntry) obj;
+				NonRedundantEntry other = (NonRedundantEntry) obj;
 				if (other.getComment() !=null) {
 					return false;
 				}

@@ -97,7 +97,8 @@ public abstract class TmpDirSortedFastaWriter<S, T extends Sequence<S>, F extend
            cache.clear();
            for(File tmpDir : tmpFiles){
                //ignore deletion error
-               tmpDir.delete();
+        	   IOUtil.deleteIgnoreError(tmpDir);
+             
            }
            tmpFiles.clear();
         }

@@ -1256,8 +1256,23 @@ public final class IOUtil {
 	 * @throws NullPointerException if either parameter is null.
 	 */
 	public static BufferedWriter createNewBufferedWriter(File file, String charset) throws IOException{
+		 return createNewBufferedWriter(new FileOutputStream(file), charset);
+	}
+	
+	/**
+	 * Create a new {@link BufferedWriter} instance
+	 * that reads the given file in the given {@link Charset}.
+	 * 
+	 * @param file the file to write to, will be overwritten.
+	 * @param charset the name of the {@link Charset} to use.
+	 * @return a new {@link BufferedWriter}.
+	 * @throws IOException if there is a problem creating the file or translating the
+	 * charset name into a {@link Charset}.
+	 * @throws NullPointerException if either parameter is null.
+	 */
+	public static BufferedWriter createNewBufferedWriter(OutputStream out, String charset) throws IOException{
 		 return new BufferedWriter(
-					new OutputStreamWriter(new FileOutputStream(file), charset));
+					new OutputStreamWriter(out, charset));
 	}
 	
 }

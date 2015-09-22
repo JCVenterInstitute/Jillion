@@ -20,9 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.experimental.align;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -107,7 +105,8 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 	
 	private AlnFileWriter(File outputFile, int residuesPerGroup, String eol, boolean includeCounts) throws IOException {
 		IOUtil.mkdirs(outputFile.getParentFile());
-		this.out = new PrintWriter(new BufferedOutputStream(new FileOutputStream(outputFile)));
+		
+		this.out = new PrintWriter(IOUtil.createNewBufferedWriter(outputFile, IOUtil.UTF_8_NAME));
 		this.residuesPerGroup = residuesPerGroup;
 		this.eol = eol;
 		this.includeCumulativeCounts = includeCounts;

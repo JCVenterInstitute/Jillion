@@ -40,8 +40,6 @@ import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F extends FastaRecord<T, S>> implements FastaDataStore<T,S,F>{
 
     
-
-
     private final FastaParser parser;
     private final Predicate<String> filter;
     private final Predicate<F> recordFilter;
@@ -121,11 +119,13 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
     @Override
     public synchronized long getNumberOfRecords() throws DataStoreException {
         checkNotYetClosed();
+        
         if(size ==null){
             if(recordFilter ==null){
                 try {
-                	FastaVisitor visitor = new NoAdditionalRecordFilteringSizeCounter();      
+                	NoAdditionalRecordFilteringSizeCounter visitor = new NoAdditionalRecordFilteringSizeCounter();      
             		parser.parse(visitor);
+            		size = visitor.getSize();
                 } catch (IOException e) {
                     throw new IllegalStateException("could not get record count",e);
                 }
@@ -200,10 +200,12 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
 	                
 	        }
 
+	        public long getSize(){
+	        	return numDeflines;
+	        }
 	        @Override
 	        public void visitEnd() {
-	                //no-op
-	                size = Long.valueOf(numDeflines);
+	        	//no-op
 	        }
 
 	        @Override

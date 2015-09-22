@@ -65,6 +65,7 @@ public abstract class TabularBlastParser implements BlastParser{
         String type=null;
         try{
         	 BlastHitImpl.Builder blastHitBuilder=null;
+        	 String prevQuery=null, prevSubject=null;
 	           
 	        while(parser.hasNextLine()){
 	            String line = parser.nextLine();
@@ -76,7 +77,6 @@ public abstract class TabularBlastParser implements BlastParser{
 	            	}
 	            }
 	            Matcher matcher = HIT_PATTERN.matcher(line);
-	            String prevQuery=null, prevSubject=null;
 	            
 	            if(matcher.find()){
 	            	parsedHeader=true;
@@ -146,8 +146,9 @@ public abstract class TabularBlastParser implements BlastParser{
 
 		@Override
 		public void parse(BlastVisitor visitor) throws IOException {
-			InputStream in = new FileInputStream(file);
-			parse(in, visitor);
+			try(InputStream in = new FileInputStream(file)){
+				parse(in, visitor);
+			}
 		}
     	
     }

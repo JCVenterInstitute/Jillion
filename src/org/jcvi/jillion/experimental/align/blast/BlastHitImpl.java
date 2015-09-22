@@ -204,7 +204,26 @@ class BlastHitImpl implements BlastHit{
 			if(bitScoreCmp !=0){
 				return bitScoreCmp;
 			}
-			return o2.getHspScore().compareTo(o1.getHspScore());
+			
+			//some blast parsers don't have hsps so they are null!
+			Float hsp1 = o1.getHspScore();
+			Float hsp2 = o2.getHspScore();
+			if(hsp1 !=null && hsp2 !=null){
+				return Float.compare(hsp2, hsp1);
+			}
+			if(hsp1 ==null && hsp2 ==null){
+				//same
+				return 0;
+			}
+			//I guess the ordering from here doesn't matter
+			//but must be consistent
+			//treat null as greater? 
+			if(hsp1 ==null){
+				//hsp2 is not null so hsp1 is better?
+				return 1;
+			}
+			return -1;
+			
 		}
 	}
 
