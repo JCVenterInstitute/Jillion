@@ -21,12 +21,10 @@
 package org.jcvi.jillion.experimental.ncbi.submit.assemblyArchive;
 
 import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -162,7 +160,7 @@ public class AssemblyArchiveWriterBuilder {
 			IOUtil.mkdirs(outputDirectory);
 			
 			tempFile = File.createTempFile("asmArchive", null, outputDirectory);
-			tempOut = new BufferedWriter(new FileWriter(tempFile));
+			tempOut = IOUtil.createNewBufferedWriter(tempFile, IOUtil.UTF_8_NAME);
 		}
 
 
@@ -180,7 +178,7 @@ public class AssemblyArchiveWriterBuilder {
 
 		private File writeManifestFile(File xmlFile) throws IOException {
 			File manifestFile = new File(outputDirectory, "MANIFEST");
-			PrintWriter writer = new PrintWriter(manifestFile);
+			PrintWriter writer = new PrintWriter(IOUtil.createNewBufferedWriter(manifestFile, IOUtil.UTF_8_NAME));
 			try{
 				for(File f : extraFilesCreated){
 					writer.printf("%s: %s%n", f.getName(), computeMd5(f));
@@ -472,8 +470,8 @@ public class AssemblyArchiveWriterBuilder {
 
 
 		private void writeSourceFile(File file,
-				String data) throws FileNotFoundException {
-			PrintWriter pw = new PrintWriter(file);
+				String data) throws IOException {
+			PrintWriter pw = new PrintWriter(IOUtil.createNewBufferedWriter(file, IOUtil.UTF_8_NAME));
 			//legacy Perl code didn't put new line at end of file
 			//so we won't either
 			pw.print(data);

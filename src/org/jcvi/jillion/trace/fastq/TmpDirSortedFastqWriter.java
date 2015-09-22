@@ -102,7 +102,7 @@ class TmpDirSortedFastqWriter implements FastqWriter{
            cache.clear();
            for(File tmpDir : tmpFiles){
                //ignore deletion error
-               tmpDir.delete();
+        	   IOUtil.deleteIgnoreError(tmpDir);
            }
            tmpFiles.clear();
         }

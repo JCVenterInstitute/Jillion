@@ -20,9 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.experimental.align.blast.btab;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
@@ -38,6 +36,7 @@ import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.JoinedStringBuilder;
 import org.jcvi.jillion.experimental.align.blast.BlastHit;
 import org.jcvi.jillion.experimental.align.blast.Hsp;
@@ -143,9 +142,9 @@ public final class BtabWriterBuilder {
 		
 		private BtabWriterImpl(BtabWriterBuilder builder) throws IOException{
 			if(builder.outputFile ==null){
-				out = new PrintWriter(builder.outStream);
+				out = new PrintWriter(IOUtil.createNewBufferedWriter(builder.outStream, IOUtil.UTF_8_NAME));
 			}else{
-				out = new PrintWriter(new BufferedOutputStream(new FileOutputStream(builder.outputFile)));
+				out = new PrintWriter(IOUtil.createNewBufferedWriter(builder.outputFile, IOUtil.UTF_8_NAME));
 			}
 			//create new date formatter each time to avoid
 			//thread related problems.  
