@@ -231,7 +231,7 @@ final class LargeFastqFileDataStore implements FastqFileDataStore {
 		return DataStoreStreamingIterator.create(this,iter);
 	}
 
-    private final class LambdaFilteredFastqIdIterator implements StreamingIterator<String>{
+    private static final class LambdaFilteredFastqIdIterator implements StreamingIterator<String>{
         private final StreamingIterator<FastqRecord> iter;
         
         public LambdaFilteredFastqIdIterator(StreamingIterator<FastqRecord> iter) {

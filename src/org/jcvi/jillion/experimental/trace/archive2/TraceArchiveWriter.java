@@ -136,7 +136,7 @@ public final class TraceArchiveWriter implements Closeable{
 			throw new NullPointerException("common fields Map can not be null");
 		}
 		
-		this.volumeDate = volumeDate;
+		this.volumeDate = volumeDate == null? null : new Date(volumeDate.getTime());
 		this.volumeName = volumeName;
 		this.volumeVersion = volumeVersion;
 		

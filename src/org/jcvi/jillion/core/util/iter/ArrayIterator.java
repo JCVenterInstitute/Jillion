@@ -55,6 +55,7 @@ public class ArrayIterator<T> implements Iterator<T> {
 	 * be used.
 	 * @throws NullPointerException if array is null.
 	 */
+	@SuppressWarnings("EI_EXPOSE_REP2") //FindBugs expose array reference which we want to sometimes for speed
 	public ArrayIterator(T[] array, boolean makeDefensiveCopy) {
 		if(array==null){
 			throw new NullPointerException("array can not be null");
@@ -62,6 +63,7 @@ public class ArrayIterator<T> implements Iterator<T> {
 		if(makeDefensiveCopy){
 			this.array = Arrays.copyOf(array, array.length);
 		}else{
+			
 			this.array = array;
 		}
 		

@@ -171,7 +171,7 @@ public class AssemblyArchiveWriterBuilder {
 			//close temp
 			tempOut.close();
 			File xmlFile = writeAssemblyFile();
-			File manifestFile =writeManifestFile(xmlFile);	
+			writeManifestFile(xmlFile);	
 			
 		}
 

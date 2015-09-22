@@ -99,7 +99,7 @@ public final class BtabWriterBuilder {
 		if(date ==null){
 			throw new NullPointerException();
 		}
-		this.runDate = date;
+		this.runDate = new Date(date.getTime());
 		return this;
 	}
 	/**

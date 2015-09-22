@@ -37,6 +37,20 @@ public class CommentedParsedFastqRecord extends ParsedFastqRecord {
     public String getComment() {
         return comment;
     }
+
+	@Override
+	public int hashCode() {
+		//delegates to parent class ParsedFastqRecord
+		//which does all the checks we need
+		return super.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		//delegates to parent class ParsedFastqRecord
+		//which does all the checks we need		
+		return super.equals(obj);
+	}
     
 
 }
