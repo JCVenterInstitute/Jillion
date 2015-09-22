@@ -344,7 +344,7 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
         /**
          * Should the iterator include the actual subdirectory directory files
          * during iteration.  Defaults to {@code false} if this method is not set.
-         * <p/>For Example:<p/>
+         * <p>For Example:</p>
          * If the File Directory structure looks like this:
          * <pre>
          * +root
