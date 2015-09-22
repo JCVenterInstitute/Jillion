@@ -30,6 +30,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
+import java.util.stream.Stream;
 
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 /**
@@ -49,7 +50,7 @@ public final class GenomeStatistics {
 	 * that will compute the Nx value of the elements in the given stream.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #nXBuilder(double)}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link java.util.stream.Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -66,7 +67,7 @@ public final class GenomeStatistics {
 	 * 
 	 * @throws NullPointerException if either stream or mapper are null.
 	 * 
-	 * @throws IllegalArgumentException if percentage >= 1 or <= 0.
+	 * @throws IllegalArgumentException if percentage &ge; 1 or &le; 0.
 	 * 
 	 * @apiNote the reason this method exists is because Java 8 collectors
 	 * on primitives doesn't have a catch all collect(Collector) method
@@ -104,7 +105,7 @@ public final class GenomeStatistics {
 	 * 
 	 * @throws NullPointerException if either stream or mapper are null.
 	 * 
-	 * @throws IllegalArgumentException if percentage >= 1 or <= 0.
+	 * @throws IllegalArgumentException if percentage &ge; 1 or &le; 0.
 	 * 
 	 * @apiNote the reason this method exists is because Java 8 collectors
 	 * on primitives doesn't have a catch all collect(Collector) method
@@ -322,7 +323,7 @@ public final class GenomeStatistics {
 	 * 
 	 * @throws NullPointerException if either stream is null.
 	 * 
-	 * @throws IllegalArgumentException if genomeLength < 1 or percentage >= 1 or <= 0.
+	 * @throws IllegalArgumentException if genomeLength &lt; 1 or percentage &ge; 1 or &le; 0.
 	 * 
 	 * @apiNote the reason this method exists is because Java 8 collectors
 	 * on primitives doesn't have a catch all collect(Collector) method
@@ -361,7 +362,7 @@ public final class GenomeStatistics {
 	 * 
 	 * @throws NullPointerException if either stream is null.
 	 * 
-	 * @throws IllegalArgumentException if genomeLength < 1 or percentage >= 1 or <= 0.
+	 * @throws IllegalArgumentException if genomeLength &lt; 1 or percentage &ge; 1 or &le; 0.
 	 * 
 	 * @apiNote the reason this method exists is because Java 8 collectors
 	 * on primitives doesn't have a catch all collect(Collector) method
@@ -399,7 +400,7 @@ public final class GenomeStatistics {
 	 * a value, or is empty if there was an error computing it.
 	 * 
 	 * @throws NullPointerException if stream is null.
-	 * @throws IllegalArgumentException if genomeLength < 1.
+	 * @throws IllegalArgumentException if genomeLength &lt; 1.
 	 * 
 	 * @apiNote the reason this method exists is because Java 8 collectors
 	 * on primitives doesn't have a catch all collect(Collector) method
@@ -429,7 +430,7 @@ public final class GenomeStatistics {
 	 * a value, or is empty if there was an error computing it.
 	 * 
 	 * @throws NullPointerException if stream is null.
-	 * @throws IllegalArgumentException if genomeLength < 1.
+	 * @throws IllegalArgumentException if genomeLength &lt; 1.
 	 * 
 	 * @apiNote the reason this method exists is because Java 8 collectors
 	 * on primitives doesn't have a catch all collect(Collector) method

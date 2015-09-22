@@ -86,7 +86,7 @@ public final class DateUtil {
 	 * will return a string with the value of
 	 * {@code P21H5M52S}.
 	 * @param numberOfMillis the number of milliseconds elapsed;
-	 * must be >=0
+	 * must be &ge; 0
 	 * @return a String 
 	 */
 	public static String getElapsedTimeAsString(long numberOfMillis){
