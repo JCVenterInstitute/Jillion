@@ -34,6 +34,19 @@ import org.jcvi.jillion.core.io.InputStreamSupplier;
  * and also allows parsing comments on the deflines of fastq records.
  * 
  * 
+ * @apiNote
+ * Example usage for creating a FastqParser for a gzipped file that has more than 4 lines
+ * per record would look like this:
+ * 
+ * <pre>
+ * {@code 
+ * File fastqFile = new File("my.fastq.gz");
+ * FastqParser parser = new FastqFileParserBuilder(fastqFile)
+ *                                   .hasMultilineSequences(true)
+ *                                   .build();
+ *                            }
+ * </pre>
+ * 
  * @author dkatzel
  * 
  * @since 5.0

@@ -27,11 +27,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.io.InputStreamSupplier;
 import org.jcvi.jillion.fasta.FastaVisitorCallback.FastaVisitorMemento;
 import org.jcvi.jillion.internal.core.io.LineParser;
 import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
@@ -79,6 +81,20 @@ public abstract class FastaFileParser implements FastaParser{
 	public static FastaParser create(File fastaFile) throws IOException{
 		return new FileFastaParser(fastaFile);
 	}
+	/**
+         * Create a new {@link FastaFileParser} instance
+         * that will parse the fasta encoded
+         * data from the given {@link InputStreamSupplier}.
+         * 
+         * @param inputStreamSupplier the {@link InputStreamSupplier} to use
+         * to get the inputStreams of fasta encoded data.
+         * @throws NullPointerException if the inputStreamSupplier is null.
+         * 
+         * @since 5.0
+         */
+        public static FastaParser create(InputStreamSupplier inputStreamSupplier) throws IOException{
+                return new FileFastaParser(inputStreamSupplier);
+        }
 	/**
 	 * Create a new {@link FastaFileParser} instance
 	 * that will parse the given fasta encoded
@@ -364,15 +380,24 @@ public abstract class FastaFileParser implements FastaParser{
 	}
 	
 	private static class FileFastaParser extends FastaFileParser{
-		private final File fastaFile;
+		private final InputStreamSupplier fileSupplier;
 		
 		public FileFastaParser(File fastaFile) throws IOException{
-			IOUtil.verifyIsReadable(fastaFile);
-			this.fastaFile = fastaFile;
+			this.fileSupplier = InputStreamSupplier.forFile(fastaFile);
 		}
 		
 		
-		@Override
+		
+		
+		public FileFastaParser(InputStreamSupplier fileSupplier) {
+		    Objects.requireNonNull(fileSupplier);
+                    this.fileSupplier = fileSupplier;
+                }
+
+
+
+
+        @Override
 		public boolean isReadOnceOnly() {
 			return false;
 		}
@@ -396,25 +421,24 @@ public abstract class FastaFileParser implements FastaParser{
 			}
 			
 			long startOffset = ((OffsetMemento)memento).getOffset();
-			InputStream inputStream=null;
 			
-			try{
-				inputStream = new BufferedInputStream(new RandomAccessFileInputStream(fastaFile, startOffset));
-				TextLineParser parser = new TextLineParser(inputStream, startOffset);
-				if(memento instanceof RedundantOffsetMemento){
-					int redundantIndex = ((RedundantOffsetMemento)memento).getRedundantIndex();
-					parseFile(parser, visitor, redundantIndex);
-				}else{
-					parseFile(parser, visitor);
-				}
-			}finally{
-				IOUtil.closeAndIgnoreErrors(inputStream);
-			}
+                    try (InputStream inputStream = fileSupplier.get(startOffset)) {
+        
+                        TextLineParser parser = new TextLineParser(inputStream,
+                                startOffset);
+                        if (memento instanceof RedundantOffsetMemento) {
+                            int redundantIndex = ((RedundantOffsetMemento) memento)
+                                    .getRedundantIndex();
+                            parseFile(parser, visitor, redundantIndex);
+                        } else {
+                            parseFile(parser, visitor);
+                        }
+                    }
 		}
 		@Override
 		protected InputStream getInputStream() throws IOException {
 			//start parsing from beginning of file.
-			return new BufferedInputStream(new FileInputStream(fastaFile));
+			return fileSupplier.get();
 		}
 		@Override
 		public boolean canParse() {

@@ -95,7 +95,9 @@ public final class SamFileWriterBuilder {
 	/**
 	 * Change the temp directory to write
 	 * re-sorted temp data to when writing out the 
-	 * SAM or BAM file.
+	 * SAM or BAM file.  If this method is not called,
+	 * then the default system temp directory is used.
+	 * 
 	 * @param tmpDir the temp directory to use;
 	 * if null, then use the default system temp directory.
 	 * If this temp directory does not exist, it will be created

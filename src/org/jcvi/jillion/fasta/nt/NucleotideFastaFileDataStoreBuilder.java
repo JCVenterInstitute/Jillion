@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
+import org.jcvi.jillion.core.io.InputStreamSupplier;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.fasta.FastaParser;
@@ -42,7 +43,7 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 
 	/**
 	 * Create a new Builder instance of 
-	 * which will build a {@link FastaDataStore} for the given
+	 * which will build a {@link NucleotideFastaDataStore} for the given
 	 * fasta file.
 	 * @param fastaFile the fasta file make a {@link FastaDataStore} with. 
 	 * @throws IOException if the fasta file does not exist, or can not be read.
@@ -52,10 +53,34 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 			throws IOException {
 		super(fastaFile);
 	}
-	
+	/**
+         * Create a new Builder instance
+         * that will build a {@link NucleotideFastaDataStore} using
+         * the {@link FastaParser} object that will be parsing 
+         * nucleotide fasta encoded data.
+         * 
+         * @param parser the {@link FastaParser} to use
+         * to visit the fasta encoded data.
+         * @throws NullPointerException if the inputStreamSupplier is null.
+         */
 	public NucleotideFastaFileDataStoreBuilder(FastaParser parser) {
 		super(parser);
 	}
+	
+	/**
+         * Create a new Builder instance
+         * that will build a {@link NucleotideFastaDataStore} from the
+         * nucleotide fasta encoded data from the given {@link InputStreamSupplier}.
+         * 
+         * @param inputStreamSupplier the {@link InputStreamSupplier} to use
+         * to get the inputStreams of fasta encoded data.
+         * @throws NullPointerException if the inputStreamSupplier is null.
+         * 
+         * @since 5.0
+         */
+	public NucleotideFastaFileDataStoreBuilder(InputStreamSupplier supplier) throws IOException {
+            super(supplier);
+        }
 
 	/**
 	 * Create a new Builder instance of 

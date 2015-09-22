@@ -27,11 +27,21 @@ import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
+import org.jcvi.jillion.core.io.InputStreamSupplier;
 import org.jcvi.jillion.fasta.FastaDataStore;
 import org.jcvi.jillion.fasta.FastaFileParser;
 import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.FastaRecord;
-
+/**
+ * Abstract class that creates a Builder to make a {@link FastaDataStore} instance.
+ * Subclasses should override the abstract methods to make the correct type of datastore.
+ * @author dkatzel
+ *
+ * @param <T> the type of element in the sequence.
+ * @param <S> the {@link Sequence} type.
+ * @param <F> the {@link FastaRecord} type.
+ * @param <D> the {@link FastaDataStore} type.
+ */
 public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>, F extends FastaRecord<T,S>, D extends FastaDataStore<T,S, F>> {
 
 	private final FastaParser parser;
@@ -50,6 +60,22 @@ public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>
 
 		this.parser = FastaFileParser.create(fastaFile);
 	}
+	
+	/**
+         * Create a new Builder instance
+         * that will build a {@link FastaDataStore} from the
+         * data from the given {@link InputStreamSupplier}.
+         * 
+         * @param inputStreamSupplier the {@link InputStreamSupplier} to use
+         * to get the inputStreams of fasta encoded data.
+         * @throws NullPointerException if the inputStreamSupplier is null.
+         * 
+         * @since 5.0
+         */
+        protected AbstractFastaFileDataStoreBuilder(InputStreamSupplier inputStreamSupplier) throws IOException{
+
+                this.parser = FastaFileParser.create(inputStreamSupplier);
+        }
 
 	
 	
