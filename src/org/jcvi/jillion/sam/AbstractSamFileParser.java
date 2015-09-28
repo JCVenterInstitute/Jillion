@@ -34,10 +34,10 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.core.io.LineParser;
 import org.jcvi.jillion.internal.sam.SamUtil;
 import org.jcvi.jillion.sam.SamVisitor.SamVisitorCallback;
-import org.jcvi.jillion.sam.header.SamReadGroup.PlatformTechnology;
 import org.jcvi.jillion.sam.header.SamHeader;
 import org.jcvi.jillion.sam.header.SamHeaderBuilder;
 import org.jcvi.jillion.sam.header.SamProgramBuilder;
+import org.jcvi.jillion.sam.header.SamReadGroup.PlatformTechnology;
 import org.jcvi.jillion.sam.header.SamReadGroupBuilder;
 import org.jcvi.jillion.sam.header.SamReferenceSequenceBuilder;
 import org.jcvi.jillion.sam.header.SamVersion;
@@ -219,7 +219,7 @@ abstract class AbstractSamFileParser implements SamParser{
 			builder.setGenomeAssemblyId(tags.get("AS"));
 		}
 		if(tags.containsKey("M5")){
-			builder.setMd5("M5");
+			builder.setMd5(tags.get("M5"));
 		}
 		if(tags.containsKey("SP")){
 			builder.setSpecies(tags.get("SP"));

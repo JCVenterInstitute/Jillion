@@ -128,6 +128,9 @@ public final class SamReferenceSequenceBuilder{
 
 
 	public SamReferenceSequenceBuilder setUri(String uri) {
+		if(!uri.startsWith("file")){
+			System.out.println("here");
+		}
 		this.uri = uri;
 		return this;
 	}

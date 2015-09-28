@@ -58,6 +58,8 @@ public final class SamFileWriterBuilder {
 	
 	private boolean makeBamIndex=false;
 	
+	private boolean includeIndexMetadata=false;
+	
 	/**
 	 * Get the max number of {@link SamRecord}s
 	 * to keep in memory at any one time if
@@ -126,9 +128,77 @@ public final class SamFileWriterBuilder {
 		this.attributeValidator = validator;
 		return this;
 	}
-	
+	/**
+	 * Should a corresponding BAM Index file also be created ({@code false} by default). 
+	 * Convenience method for {@link #createBamIndex(boolean, boolean) createBamIndex(createBamIndex, false)}.
+	 *  <p>
+	 * <strong>
+	 * If the Bam file should make an index and the {@link SortOrder} is not set to
+	 * {@link SortOrder#COORDINATE} by the time {@link #build()} is called,
+	 * then {@link #build()} will throw an {@link IllegalStateException}.
+	 * </strong>
+	 * The exception throw is delayed until as late as possible so that you can
+	 * later call either {@link #reSortBy(SortOrder)} or {@link #forceHeaderSortOrder(SortOrder)}
+	 * to specify {@link SortOrder#COORDINATE} sorting after calling this method.
+	 * </p>
+	 * 
+	 * <p>
+	 * If {@code createBamIndex} is true,
+	 * AND the file to be written is a BAM file AND the sort order is {@link SortOrder#COORDINATE},
+	 * then an additional file named "$outputFile#getName.bam.bai" will also be created in the same directory
+	 * as the outputFile.
+	 * </p>  
+	 * <p>
+	 * So for example, if the outputFile was <code>myOutput.bam</code>
+	 * then the index file to be written will be named <code>myOutput.bam.bai</code>.
+	 *  If this method is not called, then by default, the metadata is not included.
+	 *</p>
+	 *@param createBamIndex should a BAM index be created? {@code true} if it should; {@code false}
+	 *otherwise.
+	 * @return this.
+	 * 
+	 * @see #createBamIndex(boolean, boolean)
+	 */
 	public SamFileWriterBuilder createBamIndex(boolean createBamIndex){
+		return createBamIndex(createBamIndex, false);
+	}
+	/**
+	 * Should a corresponding BAM Index file also be created ({@code false} by default).  If {@code createBamIndex} is true,
+	 * AND the file to be written is a BAM file AND the sort order is {@link SortOrder#COORDINATE},
+	 * then an additional file named "$outputFile#getName.bam.bai" will also be created in the same directory
+	 * as the outputFile.  
+	 * 
+	 * <p>
+	 * <strong>
+	 * If the Bam file should make an index and the {@link SortOrder} is not set to
+	 * {@link SortOrder#COORDINATE} by the time {@link #build()} is called,
+	 * then {@link #build()} will throw an {@link IllegalStateException}.
+	 * </strong>
+	 * The exception throw is delayed until as late as possible so that you can
+	 * later call either {@link #reSortBy(SortOrder)} or {@link #forceHeaderSortOrder(SortOrder)}
+	 * to specify {@link SortOrder#COORDINATE} sorting after calling this method.
+	 * </p>
+	 * <p>
+	 * So for example, if the outputFile was <code>myOutput.bam</code>
+	 * then the index file to be written will be named <code>myOutput.bam.bai</code>.
+	 *  If this method is not called, then by default, the metadata is not included.
+	 *</p>
+	 *@param createBamIndex should a BAM index be created? {@code true} if it should; {@code false}
+	 *otherwise.
+	 *
+	 *
+	 * @param includeMetaData Some BAM indexes created by some other SAM libraries such as samtools and picard
+	 * add additional
+	 * metadata to the index such as the number of unaligned reads. This metadata
+	 * is not specified in the BAM Index specification so some SAM parsers might not be able to correctly
+	 * handle them. If this parameter is set to {@code true} if metadata should be included;
+	 * {@code false} otherwise (the default).
+	 * 
+	 * @return this.
+	 */
+	public SamFileWriterBuilder createBamIndex(boolean createBamIndex, boolean includeMetadata){
 		this.makeBamIndex = createBamIndex;
+		this.includeIndexMetadata = includeMetadata;
 		return this;
 	}
 	/**
@@ -196,6 +266,11 @@ public final class SamFileWriterBuilder {
 	 * @return a new {@link SamWriter} will never be null.
 	 * @throws IOException if there is a problem creating
 	 * the output directories or temp areas.
+	 * 
+	 * @throws IllegalStateException if the bam file to be written
+	 * should also make an index file, but the sort order
+	 * is not {@link SortOrder#COORDINATE} which is required
+	 * by index files.
 	 */
 	public SamWriter build() throws IOException{
 		SamHeader header = headerBuilder.build();
@@ -216,9 +291,9 @@ public final class SamFileWriterBuilder {
 			indexer =null;
 		}
 		if(writeUnSortedRecords()){
-			return encoding.createPreSortedNoValidationOutputWriter(outputFile, header, indexer);
+			return encoding.createPreSortedNoValidationOutputWriter(outputFile, header, indexer,includeIndexMetadata);
 		}
-		return encoding.createReSortedOutputWriter(outputFile, tmpDirRoot, header, maxRecordsToKeepInMemory, attributeValidator, indexer);
+		return encoding.createReSortedOutputWriter(outputFile, tmpDirRoot, header, maxRecordsToKeepInMemory, attributeValidator, indexer, includeIndexMetadata);
 		
 	}
 

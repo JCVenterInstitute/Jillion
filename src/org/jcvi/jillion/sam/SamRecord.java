@@ -267,7 +267,11 @@ public class SamRecord {
 		} else if (!queryName.equals(other.queryName)) {
 			return false;
 		}
-		if (!referenceName.equals(other.referenceName)) {
+		if(referenceName ==null){
+			if(other.referenceName !=null){
+				return false;
+			}
+		}else if (!referenceName.equals(other.referenceName)) {
 			return false;
 		}
 		if (sequence == null) {

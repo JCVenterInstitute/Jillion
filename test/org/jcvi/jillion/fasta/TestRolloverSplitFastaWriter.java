@@ -274,7 +274,7 @@ public class TestRolloverSplitFastaWriter {
 			File expected = expectedFiles[i];
 			File actual = actualFiles[i];
 			assertEquals(expected.getName(), actual.getName());
-			TestUtil.contentsAreEqual(expected, actual);
+			TestUtil.assertContentsAreEqual(expected, actual);
 		}
 	}
 	

@@ -32,9 +32,7 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-
-import static org.junit.Assert.*;
-public class TestTestUtil_FilesAreEqual {
+public class TestTestUtil_assertFileContentsAreEqual {
 
 	@Rule
 	public TemporaryFolder tmpDir = new TemporaryFolder();
@@ -42,7 +40,7 @@ public class TestTestUtil_FilesAreEqual {
 	public void twoEmptyFilesAreEqual() throws IOException{
 		File tmp1 = tmpDir.newFile();
 		File tmp2 = tmpDir.newFile();
-		assertTrue(TestUtil.contentsAreEqual(tmp1, tmp2));
+		TestUtil.assertContentsAreEqual(tmp1, tmp2);
 	}
 	
 	@Test
@@ -51,7 +49,7 @@ public class TestTestUtil_FilesAreEqual {
 		PrintWriter writer = new PrintWriter(tmp);
 		writer.println("this is a test...");
 		writer.close();
-		assertTrue(TestUtil.contentsAreEqual(tmp, tmp));
+		TestUtil.assertContentsAreEqual(tmp, tmp);
 	}
 	
 	@Test
@@ -71,6 +69,6 @@ public class TestTestUtil_FilesAreEqual {
 		}finally{
 			IOUtil.closeAndIgnoreErrors(in, out);
 		}
-		assertTrue(TestUtil.contentsAreEqual(tmp, tmp));
+		TestUtil.assertContentsAreEqual(tmp, tmp);
 	}
 }

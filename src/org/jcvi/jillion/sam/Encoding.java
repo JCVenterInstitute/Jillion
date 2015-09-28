@@ -41,7 +41,7 @@ enum Encoding{
 	 */
 	SAM(".sam"){
 		@Override
-		SamWriter createPreSortedOutputWriter(File out, SamHeader header, SamAttributeValidator validator, BamIndexer indexer)
+		SamWriter createPreSortedOutputWriter(File out, SamHeader header, SamAttributeValidator validator, BamIndexer indexer, boolean includeIndexMetaData)
 				throws IOException {
 			//indexer parameter ignored
 			//since it is only used in BAM files.
@@ -57,9 +57,9 @@ enum Encoding{
 	 */
 	BAM(".bam"){
 		@Override
-		SamWriter createPreSortedOutputWriter(File out, SamHeader header, SamAttributeValidator validator, BamIndexer indexer)
+		SamWriter createPreSortedOutputWriter(File out, SamHeader header, SamAttributeValidator validator, BamIndexer indexer, boolean includeIndexMetaData)
 				throws IOException {
-			return new PresortedBamFileWriter(header, out, indexer, validator);
+			return new PresortedBamFileWriter(header, out, indexer, validator,includeIndexMetaData);
 		}
 
 		@Override
@@ -97,10 +97,10 @@ enum Encoding{
 	 * @return a new {@link SamWriter} will never be null.
 	 * @throws IOException if there is a problem creating the new output file.
 	 */
-	SamWriter createPreSortedNoValidationOutputWriter(File out, SamHeader header, BamIndexer indexer) throws IOException{
+	SamWriter createPreSortedNoValidationOutputWriter(File out, SamHeader header, BamIndexer indexer, boolean includeIndexMetaData) throws IOException{
 		//no validation since we have already validated
 		//the reads when we added them to our in memcheck
-		return createPreSortedOutputWriter(out, header, NullSamAttributeValidator.INSTANCE, indexer);
+		return createPreSortedOutputWriter(out, header, NullSamAttributeValidator.INSTANCE, indexer, includeIndexMetaData);
 	}
 	
 	
@@ -121,7 +121,7 @@ enum Encoding{
 	 * @return a new {@link SamWriter} will never be null.
 	 * @throws IOException if there is a problem creating the new output file.
 	 */
-	abstract SamWriter createPreSortedOutputWriter(File out, SamHeader header, SamAttributeValidator validator, BamIndexer indexer)throws IOException;
+	abstract SamWriter createPreSortedOutputWriter(File out, SamHeader header, SamAttributeValidator validator, BamIndexer indexer, boolean includeIndexMetaData)throws IOException;
 
 	/**
 	 * Create a new {@link SamWriter} implementation
@@ -138,13 +138,16 @@ enum Encoding{
 	 * the records are persisted to a temp file under the given tempDirRoot.
 	 * @param validator  the {@link SamAttributeValidator} to use;
 	 * can not be null. 
+	 * @param includeIndexMetaData if the provided {@link BamIndexer} is not null,
+	 * should the samtools/picard specific additional metadata be included also.
+	 * 
 	 * @return a new {@link SamWriter} will never be null.
 	 * @throws IOException if there is a problem creating the new output file.
 	 */
 	SamWriter createReSortedOutputWriter(File out, File tmpDirRoot,
-			SamHeader header, int maxRecordsToKeepInMemory, SamAttributeValidator validator, BamIndexer indexer)
+			SamHeader header, int maxRecordsToKeepInMemory, SamAttributeValidator validator, BamIndexer indexer, boolean includeIndexMetaData)
 			throws IOException {
-		return new ReSortSamFileWriter(out, tmpDirRoot,header, maxRecordsToKeepInMemory, validator, this, indexer);
+		return new ReSortSamFileWriter(out, tmpDirRoot,header, maxRecordsToKeepInMemory, validator, this, indexer, includeIndexMetaData);
 	}
 	
 	

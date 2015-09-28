@@ -79,6 +79,8 @@ class ReSortSamFileWriter implements SamWriter {
 	
 	private final Encoding encoding;
 	private final BamIndexer indexer;
+	private final boolean includeIndexMetaData;
+	
 	
 	/**
 	 * 
@@ -90,7 +92,7 @@ class ReSortSamFileWriter implements SamWriter {
 	 * @param tmpFileSuffix
 	 * @throws IOException
 	 */
-	public ReSortSamFileWriter(File outputFile, File tmpDirRoot, SamHeader header, int maxRecordsToKeepInMemory, SamAttributeValidator attributeValidator, Encoding encodingToUse, BamIndexer indexer) throws IOException {
+	public ReSortSamFileWriter(File outputFile, File tmpDirRoot, SamHeader header, int maxRecordsToKeepInMemory, SamAttributeValidator attributeValidator, Encoding encodingToUse, BamIndexer indexer, boolean includeIndexMetaData) throws IOException {
 		
 		if(maxRecordsToKeepInMemory <0){
 			throw new IllegalArgumentException("max records to keep in memory must be >=1");
@@ -117,6 +119,8 @@ class ReSortSamFileWriter implements SamWriter {
         this.attributeValidator = attributeValidator;
         this.encoding = encodingToUse;
         this.indexer = indexer;
+        
+        this.includeIndexMetaData = includeIndexMetaData;
 	}
 
 
@@ -157,7 +161,7 @@ class ReSortSamFileWriter implements SamWriter {
 			tempFiles.add(tempFile);
 			//never pass indexer to temp files
 			//only use in final if at all.
-			SamWriter writer = encoding.createPreSortedNoValidationOutputWriter(tempFile, header,null);
+			SamWriter writer = encoding.createPreSortedNoValidationOutputWriter(tempFile, header,null, false);
 			try{
 				for(int i=0; i<currentInMemSize; i++){
 					writer.writeRecord(inMemoryArray[i]);
@@ -205,7 +209,7 @@ class ReSortSamFileWriter implements SamWriter {
 			}
 			
 			Iterator<SamRecord> sortedIterator = new MergedSortedRecordIterator(iterators, recordComparator);
-			writer = encoding.createPreSortedNoValidationOutputWriter(outputFile, header, indexer);
+			writer = encoding.createPreSortedNoValidationOutputWriter(outputFile, header, indexer, includeIndexMetaData);
 			while(sortedIterator.hasNext()){
 				writer.writeRecord(sortedIterator.next());
 			}

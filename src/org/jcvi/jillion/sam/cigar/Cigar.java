@@ -790,4 +790,55 @@ public final class Cigar implements Iterable<CigarElement>{
 		}
 		return builder;
 	}
+
+
+
+	public int getNumberOfReferenceBasesAligned() {
+		int length=0;
+		for(CigarElement element : elements){
+			//This is an optimization to allow the 
+	    	//compiler to use a tableswitch opcode
+	    	//instead of the more general purpose
+	    	//lookupswitch opcode.
+	    	//tableswitch is an O(1) lookup
+	    	//while lookupswitch is O(n) where n
+	    	//is the number of case statements in the switch.
+	    	//tableswitch requires consecutive case values.
+	    	//DO NOT CHANGE THE ORDER OF THE CASE STATEMENTS
+			switch (element.getOp()) {
+				case ALIGNMENT_MATCH:
+					length += element.getLength();
+					break;
+				case INSERTION:
+					//don't count insertions
+					break;
+				case DELETION:
+					length += element.getLength();
+					break;
+				case SKIPPED:
+					//skip does get counted!
+					length += element.getLength();
+					break;
+				case SOFT_CLIP:
+					//don't count clip points
+					break;
+				case HARD_CLIP:
+					//don't count clip points
+					break;
+				case PADDING:
+					//don't count padding
+					break;
+				case SEQUENCE_MATCH:
+					length += element.getLength();
+					break;
+				case SEQUENCE_MISMATCH:
+					length += element.getLength();
+					break;
+	
+				default:
+					// do not increase length
+			}		
+		}
+		return length;
+	}
 }
