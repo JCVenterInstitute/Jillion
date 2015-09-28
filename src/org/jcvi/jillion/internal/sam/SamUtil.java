@@ -47,11 +47,10 @@ import org.jcvi.jillion.sam.attribute.SamAttribute;
 import org.jcvi.jillion.sam.attribute.SamAttributeKey;
 import org.jcvi.jillion.sam.attribute.SamAttributeType;
 import org.jcvi.jillion.sam.cigar.Cigar;
-import org.jcvi.jillion.sam.cigar.Cigar.ClipType;
 import org.jcvi.jillion.sam.cigar.CigarElement;
-import org.jcvi.jillion.sam.header.SamReadGroup;
 import org.jcvi.jillion.sam.header.SamHeader;
 import org.jcvi.jillion.sam.header.SamProgram;
+import org.jcvi.jillion.sam.header.SamReadGroup;
 import org.jcvi.jillion.sam.header.SamReferenceSequence;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -419,25 +418,27 @@ public final class SamUtil {
 		buf.putInt(refIndex); //header.getReferenceIndexFor(referenceName));
 		int startOffset = record.getStartPosition() -1;
 		buf.putInt(startOffset);
-		long binMapNameLength;
+		long bin;
 		final Cigar cigar;
 		if(record.mapped()){
 			cigar = record.getCigar();
-			binMapNameLength =computeBinFor(startOffset, startOffset + cigar.getPaddedReadLength(ClipType.SOFT_CLIPPED) -1);
+			//binMapNameLength =computeBinFor(startOffset, startOffset + cigar.getPaddedReadLength(ClipType.SOFT_CLIPPED) -1);
+			int refAlignLength = cigar.getNumberOfReferenceBasesAligned();
+			bin =computeBinFor(startOffset, startOffset + refAlignLength);
 		}else{
-			binMapNameLength =0;
+			bin =0;
 			cigar = Cigar.EMPTY_CIGAR;
 		}
-		binMapNameLength<<=16;
-		binMapNameLength |= (record.getMappingQuality() <<8);
+		bin<<=16;
+		bin |= (record.getMappingQuality() <<8);
 		//name length is null terminated
-		binMapNameLength |= record.getQueryName().length() +1;
+		bin |= (record.getQueryName().length() +1);
 		
 		long flagsAndNumCigarOps = SamRecordFlags.asBits(record.getFlags()) <<16;
 		flagsAndNumCigarOps |= cigar.getNumberOfElements();
 		//cast should be fine since our masks
 		//makes sure we only have lower 4 bytes of data
-		buf.putInt((int) (binMapNameLength & 0x00000000FFFFFFFFL ));
+		buf.putInt((int) (bin & 0x00000000FFFFFFFFL ));
 		buf.putInt((int) (flagsAndNumCigarOps & 0x00000000FFFFFFFFL ));
 		NucleotideSequence seq =record.getSequence();
 		int seqLength = seq ==null ? 0 :(int)seq.getLength();			
@@ -541,7 +542,7 @@ public final class SamUtil {
 			appendIfNotNull(builder, "AS", seq.getGenomeAssemblyId());
 			appendIfNotNull(builder, "M5", seq.getMd5());
 			appendIfNotNull(builder, "SP", seq.getSpecies());
-			appendIfNotNull(builder, "UR", seq.getMd5());
+			appendIfNotNull(builder, "UR", seq.getUri());
 			out.append(String.format("%s\n",builder.toString()));
 		}
 		

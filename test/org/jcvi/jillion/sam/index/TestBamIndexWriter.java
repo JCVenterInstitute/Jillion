@@ -20,21 +20,28 @@
  ******************************************************************************/
 package org.jcvi.jillion.sam.index;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.jcvi.jillion.internal.ResourceHelper;
+import org.jcvi.jillion.sam.SamFileWriterBuilder;
+import org.jcvi.jillion.sam.SamParser;
 import org.jcvi.jillion.sam.SamParserFactory;
 import org.jcvi.jillion.sam.SamRecord;
 import org.jcvi.jillion.sam.SamVisitor;
 import org.jcvi.jillion.sam.SamWriter;
-import org.jcvi.jillion.sam.SamFileWriterBuilder;
 import org.jcvi.jillion.sam.SortOrder;
 import org.jcvi.jillion.sam.VirtualFileOffset;
 import org.jcvi.jillion.sam.header.SamHeader;
@@ -98,7 +105,45 @@ public class TestBamIndexWriter {
 		
 		assertEquals(actualBaiFile, out);
 		
-		assertTrue(TestUtil.contentsAreEqual(expectedBaiFile, actualBaiFile));
+		TestUtil.assertContentsAreEqual(expectedBaiFile, actualBaiFile);
+	}
+	
+	@Test
+	public void SamBuilderWithBaiWriterAndMetaDataShouldMatchPicardData() throws IOException{
+		
+		
+		SamHeader originalHeader = parseSamHeaderFrom(bamFile);
+		File outputFile = tmpDir.newFile("copy.bam");
+		try(SamWriter writer = new SamFileWriterBuilder(outputFile, originalHeader)
+				.createBamIndex(true, true)
+				.build();
+				){
+			writeAllRecords(bamFile, writer);
+		}
+		
+		File actualBaiFile = new File(tmpDir.getRoot(),"copy.bai");
+		File expectedCopyBaiFile = resources.getFile("expected.copy.bam.bai");
+		
+		assertSamFilesMatch(bamFile, outputFile);
+		/*
+	//	TestUtil.assertContentsAreEqual(bamFile, outputFile);
+		byte[] actualData = IOUtil.toByteArray(actualBaiFile);
+		byte[] expectedData = IOUtil.toByteArray(expectedCopyBaiFile);
+	//	assertTrue(TestUtil.contentsAreEqual(bamFile, outputFile));
+		TestUtil.assertContentsAreEqual(expectedCopyBaiFile, actualBaiFile);
+		
+		*/
+	}
+	
+	
+	private void assertSamFilesMatch(File expected, File actual) throws IOException{
+		SamParser expectedParser = SamParserFactory.create(expected);
+		SamParser actualParser = SamParserFactory.create(actual);
+		
+		SamFileMatcher matcher = new SamFileMatcher();
+		expectedParser.accept(matcher);
+		actualParser.accept(matcher);
+		
 	}
 	
 	@Test
@@ -141,7 +186,7 @@ public class TestBamIndexWriter {
 			
 			writeAllRecords(newBam, writer);
 			File actualBai = createIndex(incorrectlySortedFile, incorrectSortOrder);
-			assertTrue(TestUtil.contentsAreEqual(expectedBai, actualBai));
+			TestUtil.assertContentsAreEqual(expectedBai, actualBai);
 		}
 	}
 
@@ -291,5 +336,72 @@ public class TestBamIndexWriter {
 						});
 		
 		return singleHeaderBuilder[0];
+	}
+	
+	
+	private static class SamFileMatcher implements SamVisitor{
+		private boolean expectationMode=true;
+		private Iterator<SamRecord> expectedIterator;
+		
+		private final List<SamRecord> expected = new ArrayList<SamRecord>();
+
+		private SamHeader expectedHeader;
+		
+		@Override
+		public void visitHeader(SamVisitorCallback callback, SamHeader header) {
+			if(expectationMode){
+				expectedHeader = header;
+			}else{
+				assertEquals(expectedHeader, header);
+			}
+			
+		}
+
+		@Override
+		public void visitRecord(SamVisitorCallback callback, SamRecord record) {
+			if(expectationMode){
+				expected.add(record);
+			}else{
+				assertTrue(expectedIterator.hasNext());
+				assertEquals(expectedIterator.next(), record);
+			}
+			
+		}
+
+		@Override
+		public void visitRecord(SamVisitorCallback callback, SamRecord record,
+				VirtualFileOffset start, VirtualFileOffset end) {
+			if(expectationMode){
+				expected.add(record);
+			}else{
+				assertTrue(expectedIterator.hasNext());
+				assertEquals(expectedIterator.next(), record);
+			}
+		}
+
+		@Override
+		public void visitEnd() {
+			if(expectationMode){
+				changeToReplayMode();
+			}else{
+				assertFalse(expectedIterator.hasNext());
+			}
+		}
+
+		private void changeToReplayMode() {
+			expectationMode=false;
+			expectedIterator = expected.iterator();
+		}
+
+		@Override
+		public void halted() {
+			if(expectationMode){
+				changeToReplayMode();
+			}else{
+				assertFalse(expectedIterator.hasNext());
+			}
+		}
+		
+		
 	}
 }

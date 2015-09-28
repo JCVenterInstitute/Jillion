@@ -111,9 +111,9 @@ public final class TestUtil {
     	}
  
     }
-    public static boolean contentsAreEqual(File file1, File file2) throws IOException{
+    public static void assertContentsAreEqual(File file1, File file2) throws IOException{
 		if(file1.length() != file2.length()){
-			return false;
+			throw new AssertionError("file lengths differ : " + file1.length() + " vs " + file2.length());
 		}
 		
 
@@ -122,14 +122,16 @@ public final class TestUtil {
 				InputStream in2= new BufferedInputStream(new FileInputStream(file2));
 			){
 			int value1,value2;
+			long offset=0;
 			do{
 				value1 = in1.read();
 				value2 = in2.read();
 				if(value1 !=value2){
-					return false;
+					throw new AssertionError("byte at offset " + offset + " differs : " + value1 + " vs " + value2);
 				}
+				offset++;
 			}while(value1 >=0);
-			return true;
+			
 		}
 		
 	}

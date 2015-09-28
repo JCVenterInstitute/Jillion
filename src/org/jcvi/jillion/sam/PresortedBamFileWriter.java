@@ -63,20 +63,23 @@ class PresortedBamFileWriter implements SamWriter{
 	
 	private final BamIndexer optionalIndexer;
 	private boolean closed =false;
+	private final boolean includeIndexMetaData;
 	
 	private Map<String, Integer> refSeqIndexMap = new HashMap<String, Integer>();
 	
-	public PresortedBamFileWriter(SamHeader header, File outputFile, BamIndexer optionalIndexer) throws IOException{
-		this(header, outputFile, optionalIndexer, ReservedAttributeValidator.INSTANCE);
+	public PresortedBamFileWriter(SamHeader header, File outputFile, BamIndexer optionalIndexer, boolean includeIndexMetaData) throws IOException{
+		this(header, outputFile, optionalIndexer, ReservedAttributeValidator.INSTANCE, includeIndexMetaData);
 	}
 	
     public PresortedBamFileWriter(SamHeader header, File outputFile,
-            BamIndexer optionalIndexer, SamAttributeValidator attributeValidator)
+            BamIndexer optionalIndexer, SamAttributeValidator attributeValidator, boolean includeIndexMetaData)
             throws IOException {
         this.header = header;
         this.bamFile = outputFile;
         this.attributeValidator = attributeValidator;
         this.optionalIndexer = optionalIndexer;
+        this.includeIndexMetaData = includeIndexMetaData;
+        
         out = new BgzfOutputStream(bamFile, optionalIndexer);
         int i = 0;
         for (SamReferenceSequence refSeq : header.getReferenceSequences()) {
@@ -131,7 +134,7 @@ class PresortedBamFileWriter implements SamWriter{
 			OutputStream indexOutStream =null;
 			try{
 				indexOutStream = new BufferedOutputStream(new FileOutputStream(indexFileOutFile));
-				IndexUtil.writeIndex(indexOutStream, bamIndex);
+				IndexUtil.writeIndex(indexOutStream, bamIndex, includeIndexMetaData);
 			}finally{
 				IOUtil.closeAndIgnoreErrors(indexOutStream);
 			}
