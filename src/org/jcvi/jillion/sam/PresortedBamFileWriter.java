@@ -31,7 +31,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jcvi.jillion.core.io.FileUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.sam.SamUtil;
 import org.jcvi.jillion.internal.sam.index.BamIndexer;
@@ -129,8 +128,8 @@ class PresortedBamFileWriter implements SamWriter{
 		out.close();
 		if(optionalIndexer !=null){
 			BamIndex bamIndex =optionalIndexer.createBamIndex();
-			String baseName =FileUtil.getBaseName(bamFile);
-			File indexFileOutFile = new File(bamFile.getParentFile(), baseName + ".bai");
+			
+			File indexFileOutFile = new File(bamFile.getParentFile(), bamFile.getName() + ".bai");
 			OutputStream indexOutStream =null;
 			try{
 				indexOutStream = new BufferedOutputStream(new FileOutputStream(indexFileOutFile));
