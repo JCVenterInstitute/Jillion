@@ -117,7 +117,11 @@ public class BamIndexTestUtil {
 		List<Bin> actualBins = actual.getBins();
 		
 		assertEquals("bin size " +refCount, expectedBins.size(), actualBins.size());
-		assertEquals(expectedBins, actualBins);
+		//for better error reporting check each bin 
+		for(int i =0; i< expectedBins.size(); i++){
+			assertEquals("refCount = " + refCount + " bin # " + i, expectedBins.get(i), actualBins.get(i));
+		}
+	
 		
 	}
 }

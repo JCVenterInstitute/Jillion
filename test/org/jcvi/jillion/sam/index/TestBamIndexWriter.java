@@ -125,6 +125,8 @@ public class TestBamIndexWriter {
 		File expectedCopyBaiFile = resources.getFile("expected.copy.bam.bai");
 		
 		assertSamFilesMatch(bamFile, outputFile);
+		
+		
 		/*
 	//	TestUtil.assertContentsAreEqual(bamFile, outputFile);
 		byte[] actualData = IOUtil.toByteArray(actualBaiFile);
@@ -135,12 +137,14 @@ public class TestBamIndexWriter {
 		*/
 	}
 	
-	
 	private void assertSamFilesMatch(File expected, File actual) throws IOException{
+		assertSamFilesMatch(true,  expected, actual);
+	}
+	private void assertSamFilesMatch(boolean checkHeader, File expected, File actual) throws IOException{
 		SamParser expectedParser = SamParserFactory.create(expected);
 		SamParser actualParser = SamParserFactory.create(actual);
 		
-		SamFileMatcher matcher = new SamFileMatcher();
+		SamFileMatcher matcher = new SamFileMatcher(checkHeader);
 		expectedParser.accept(matcher);
 		actualParser.accept(matcher);
 		
@@ -169,25 +173,35 @@ public class TestBamIndexWriter {
 		
 		File incorrectlySortedFile = tmpDir.newFile("wrongSort.bam");
 
-		//the input bam file is from an old version of picard
-		//which didn't compress as well (at all?)
-		//so since we are writing out bams using compression,
-		//also the different header sort order cause the header
-		//length to be different so we have to compensate for that as well.
-		//(see createHeader() method for more details)
-		//Therefore, we need to write out a new file so that our
-		//indexes will match.		
-		File newBam = reWriteBam(bamFile, createHeader(originalHeader, SortOrder.COORDINATE));
-		File expectedBai = createIndex(newBam);
-		for(SortOrder incorrectSortOrder : Arrays.asList(SortOrder.QUERY_NAME, SortOrder.UNKNOWN, SortOrder.UNSORTED)){
-			SamWriter writer = new SamFileWriterBuilder(incorrectlySortedFile, createHeader(originalHeader, incorrectSortOrder))
-														.forceHeaderSortOrder(incorrectSortOrder)
-														.build();
+		
 			
-			writeAllRecords(newBam, writer);
-			File actualBai = createIndex(incorrectlySortedFile, incorrectSortOrder);
-			TestUtil.assertContentsAreEqual(expectedBai, actualBai);
-		}
+			//the input bam file is from an old version of picard
+			//which didn't compress as well (at all?)
+			//so since we are writing out bams using compression,
+			//also the different header sort order cause the header
+			//length to be different so we have to compensate for that as well.
+			//(see createHeader() method for more details)
+			//Therefore, we need to write out a new file so that our
+			//indexes will match.		
+			//File newBam = reWriteBam(bamFile, createHeader(originalHeader, SortOrder.COORDINATE));
+			//File expectedBai = createIndex(newBam);
+			
+			SamWriter writer = new SamFileWriterBuilder(incorrectlySortedFile, createHeader(originalHeader, SortOrder.QUERY_NAME))
+														.forceHeaderSortOrder(SortOrder.COORDINATE)
+														.build();
+
+			
+			writeAllRecords(bamFile, writer);
+			/*
+			File actualBai = createIndex(incorrectlySortedFile, SortOrder.COORDINATE);
+			
+			BamIndex expectedIndex = BamIndex.createFromFiles(bamFile, expectedBai);
+			
+			BamIndex actualIndex = BamIndex.createFromFiles(newBam, actualBai);
+			BamIndexTestUtil.assertIndexesEqual(expectedIndex, actualIndex, true);
+		*/
+			assertSamFilesMatch(false, bamFile, incorrectlySortedFile);
+		
 	}
 
 	private SamHeader createHeader(SamHeader originalHeader, SortOrder order){
@@ -347,12 +361,24 @@ public class TestBamIndexWriter {
 
 		private SamHeader expectedHeader;
 		
+		
+		private final boolean checkHeaderMatches;
+		
+		public SamFileMatcher(){
+			this(true);
+		}
+		public SamFileMatcher(boolean checkHeaderMatches){
+			this.checkHeaderMatches = checkHeaderMatches;
+		}
+		
 		@Override
 		public void visitHeader(SamVisitorCallback callback, SamHeader header) {
-			if(expectationMode){
-				expectedHeader = header;
-			}else{
-				assertEquals(expectedHeader, header);
+			if(checkHeaderMatches){
+				if(expectationMode){
+					expectedHeader = header;
+				}else{
+					assertEquals(expectedHeader, header);
+				}
 			}
 			
 		}

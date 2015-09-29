@@ -113,13 +113,17 @@ final class BamFileParser extends AbstractSamFileParser {
 
 			visitor.visitHeader(new BamCallback(keepParsing), header);
 			try{
+				VirtualFileOffset start = in.getCurrentVirutalFileOffset();
 				while(keepParsing.get() && in.hasMoreData()){	
-					VirtualFileOffset start = in.getVirutalFileOffset();
+					
 					SamRecord record = parseNextSamRecord(in, refNames, header);
 					
-					VirtualFileOffset end = in.getVirutalFileOffset();
+					VirtualFileOffset end = in.getCurrentVirutalFileOffset();
+					
 					visitor.visitRecord(new BamCallback(keepParsing, start), 
 										record, start,end);
+					//update start to be old end
+					start = end;
 				}
 			}catch(EOFException e){
 				//ignore, we can't tell if we've hit

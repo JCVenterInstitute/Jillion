@@ -253,7 +253,7 @@ class BgzfInputStream extends InflaterInputStream {
      * will return equal file offsets (but
      * may not be the same instance).
      */
-    public VirtualFileOffset getVirutalFileOffset(){    	
+    public VirtualFileOffset getCurrentVirutalFileOffset(){    	
     	int uncompressedBytesReadInCurrentBlock = (int)this.inf.getBytesWritten();
     	if(uncompressedBytesReadInCurrentBlock > BUFFER_SIZE){
     		//this will cause an overflow in the encoded virtual file offset
