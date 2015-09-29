@@ -315,29 +315,33 @@ public final class SamUtil {
 		int end = endExclusive-1;
 		int beg = begin;
 		//taken directly from C source example in SAMv1 file spec
-		//with some slight re-formatting
-		//and moving all magic numbers to either
-		//constants or arrays with intent revealing
-		//names and comments.
-		//TODO this refactoring
-		//may make the actual computation slower
-		//than hardcoding magic numbers
-		//if it becomes a bottleneck
-		//replace with C code from spec.
-		
-		//iterate backwards to find the largest bin values
-		//(and therefore the smallest lenghts) first		
-		int numberOfLevels = BIN_TREE_LEVEL_SHIFTS.length;
-		for(int level = numberOfLevels -1; level >=0; level--){
-			final int shiftAmount = BIN_TREE_LEVEL_SHIFTS[level];
-			if (beg>>shiftAmount == end>>shiftAmount){
-				return ((1 << (3 * (level +1))) - 1)/7 + (beg>>shiftAmount);
-			}
-		}
+		  if (beg>>14 == end>>14) return ((1<<15)-1)/7 + (beg>>14);
+	        if (beg>>17 == end>>17) return ((1<<12)-1)/7 + (beg>>17);
+	        if (beg>>20 == end>>20) return  ((1<<9)-1)/7 + (beg>>20);
+	        if (beg>>23 == end>>23) return  ((1<<6)-1)/7 + (beg>>23);
+	        if (beg>>26 == end>>26) return  ((1<<3)-1)/7 + (beg>>26);
 		//if we've gotten this far
 		//then we must be in bin 0
 		return 0;
-		
+		/*
+		 *  
+     * calculate the bin given an alignment in [beg,end)
+     * Copied from SAM spec.
+     * @param beg 0-based start of read (inclusive)
+     * @param end 0-based end of read (exclusive)
+     *
+    static int reg2bin(final int beg, int end)
+    {
+        --end;
+
+        if (beg>>14 == end>>14) return ((1<<15)-1)/7 + (beg>>14);
+        if (beg>>17 == end>>17) return ((1<<12)-1)/7 + (beg>>17);
+        if (beg>>20 == end>>20) return  ((1<<9)-1)/7 + (beg>>20);
+        if (beg>>23 == end>>23) return  ((1<<6)-1)/7 + (beg>>23);
+        if (beg>>26 == end>>26) return  ((1<<3)-1)/7 + (beg>>26);
+        return 0;
+    }
+		 */
 		
 	}
 	/**
