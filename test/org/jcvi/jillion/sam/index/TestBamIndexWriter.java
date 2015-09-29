@@ -28,6 +28,7 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -36,6 +37,7 @@ import java.util.List;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.jcvi.jillion.internal.ResourceHelper;
+import org.jcvi.jillion.sam.AbstractSamVisitor;
 import org.jcvi.jillion.sam.SamFileWriterBuilder;
 import org.jcvi.jillion.sam.SamParser;
 import org.jcvi.jillion.sam.SamParserFactory;
@@ -271,7 +273,7 @@ public class TestBamIndexWriter {
 	private void writeAllRecords(File bamFile, final SamWriter writer) throws IOException {
 		try{
 			SamParserFactory.create(bamFile)
-			.accept(new SamVisitor() {
+			.accept(new AbstractSamVisitor() {
 				
 				@Override
 				public void visitRecord(SamVisitorCallback callback, SamRecord record,
@@ -279,34 +281,12 @@ public class TestBamIndexWriter {
 					try {
 						writer.writeRecord(record);
 					} catch (IOException e) {
-						throw new IllegalStateException("error writing out record",e);
+						throw new UncheckedIOException("error writing out record",e);
 					}
 					
 				}
 				
-				@Override
-				public void visitRecord(SamVisitorCallback callback, SamRecord record) {
-					try {
-						writer.writeRecord(record);
-					} catch (IOException e) {
-						throw new IllegalStateException("error writing out record",e);
-					}
-				}
-				
-				@Override
-				public void visitHeader(SamVisitorCallback callback, SamHeader header) {
-					//no-op
-				}
-				
-				@Override
-				public void visitEnd() {
-					//no-op
-				}
-				
-				@Override
-				public void halted() {
-					//no-op
-				}
+			
 			});
 		}finally{
 			IOUtil.closeAndIgnoreErrors(writer);
@@ -319,18 +299,8 @@ public class TestBamIndexWriter {
 		//anonymous class
 		final SamHeader[] singleHeaderBuilder = new SamHeader[1];
 		SamParserFactory.create(samOrBam)
-						.accept(new SamVisitor() {
+						.accept(new AbstractSamVisitor() {
 							
-							@Override
-							public void visitRecord(SamVisitorCallback callback, SamRecord record,
-									VirtualFileOffset start, VirtualFileOffset end) {
-								//no-op								
-							}
-							
-							@Override
-							public void visitRecord(SamVisitorCallback callback, SamRecord record) {
-								//no-op
-							}
 							
 							@Override
 							public void visitHeader(SamVisitorCallback callback, SamHeader header) {
@@ -338,15 +308,6 @@ public class TestBamIndexWriter {
 								callback.haltParsing();
 							}
 							
-							@Override
-							public void visitEnd() {
-								//no-op
-							}
-							
-							@Override
-							public void halted() {
-								//no-op
-							}
 						});
 		
 		return singleHeaderBuilder[0];
@@ -383,16 +344,7 @@ public class TestBamIndexWriter {
 			
 		}
 
-		@Override
-		public void visitRecord(SamVisitorCallback callback, SamRecord record) {
-			if(expectationMode){
-				expected.add(record);
-			}else{
-				assertTrue(expectedIterator.hasNext());
-				assertEquals(expectedIterator.next(), record);
-			}
-			
-		}
+		
 
 		@Override
 		public void visitRecord(SamVisitorCallback callback, SamRecord record,

@@ -34,10 +34,8 @@ import java.util.Map;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.internal.sam.index.IndexUtil;
+import org.jcvi.jillion.sam.AbstractSamVisitor;
 import org.jcvi.jillion.sam.SamParserFactory;
-import org.jcvi.jillion.sam.SamRecord;
-import org.jcvi.jillion.sam.SamVisitor;
-import org.jcvi.jillion.sam.VirtualFileOffset;
 import org.jcvi.jillion.sam.header.SamHeader;
 import org.jcvi.jillion.sam.header.SamReferenceSequence;
 /**
@@ -85,7 +83,7 @@ public final class BamIndex {
 	 * @author dkatzel
 	 *
 	 */
-	private static class SamHeaderParser implements SamVisitor{
+	private static class SamHeaderParser extends AbstractSamVisitor{
 		private SamHeader header;
 		
 		@Override
@@ -98,32 +96,9 @@ public final class BamIndex {
 			
 		}
 
-		@Override
-		public void visitRecord(SamVisitorCallback callback, SamRecord record) {
-			//no-op
-		}
-
-		@Override
-		public void visitRecord(SamVisitorCallback callback, SamRecord record,
-				VirtualFileOffset start, VirtualFileOffset end) {
-			//no-op
-		}
-
-		@Override
-		public void visitEnd() {
-			//no-op
-		}
-
-		@Override
-		public void halted() {
-			//no-op
-		}
-
 		public SamHeader getHeader() {
 			return header;
 		}
-		
-		
 		
 	}
 	/**

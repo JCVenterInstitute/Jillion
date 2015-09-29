@@ -146,17 +146,11 @@ public final class SamTransformationService implements AssemblyTransformationSer
 				
 			}
 		}
-			
-		
+	
 
 		@Override
 		public void visitRecord(SamVisitorCallback callback, SamRecord record, VirtualFileOffset start,
 				VirtualFileOffset end) {
-			visitRecord(callback, record);
-		}
-
-		@Override
-		public void visitRecord(SamVisitorCallback callback, SamRecord record) {
 			if(record.isPrimary()){
 				
 				if(record.mapped()){

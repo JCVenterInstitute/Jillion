@@ -93,15 +93,11 @@ final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 		}
 	}
 
+	
+
 	@Override
 	public void visitRecord(SamVisitorCallback callback, SamRecord record, VirtualFileOffset start,
 			VirtualFileOffset end) {
-		visitRecord(callback, record);
-		
-	}
-
-	@Override
-	public void visitRecord(SamVisitorCallback callback, SamRecord record) {
 		if(record.isPrimary() && record.mapped()){
 			
 			String refName = record.getReferenceName();

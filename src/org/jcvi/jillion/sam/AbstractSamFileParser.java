@@ -255,20 +255,7 @@ abstract class AbstractSamFileParser implements SamParser{
 	
 	public SamHeader getHeader() throws IOException {
 		final SamHeader[] headerArray = new SamHeader[1];
-		this.accept(new SamVisitor() {
-			
-			@Override
-			public void visitRecord(SamVisitorCallback callback, SamRecord record,
-					VirtualFileOffset start, VirtualFileOffset end) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void visitRecord(SamVisitorCallback callback, SamRecord record) {
-				// TODO Auto-generated method stub
-				
-			}
+		this.accept(new AbstractSamVisitor() {
 			
 			@Override
 			public void visitHeader(SamVisitorCallback callback, SamHeader header) {
@@ -276,18 +263,7 @@ abstract class AbstractSamFileParser implements SamParser{
 				callback.haltParsing();
 				
 			}
-			
-			@Override
-			public void visitEnd() {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void halted() {
-				// TODO Auto-generated method stub
-				
-			}
+		
 		});
 		return headerArray[0];
 	}

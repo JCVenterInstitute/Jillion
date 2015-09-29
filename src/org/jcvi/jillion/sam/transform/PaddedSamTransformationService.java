@@ -143,11 +143,7 @@ public final class PaddedSamTransformationService implements AssemblyTransformat
 			
 		
 
-		@Override
-		public void visitRecord(SamVisitorCallback callback, SamRecord record, VirtualFileOffset start,
-				VirtualFileOffset end) {
-			visitRecord(callback, record);
-		}
+	
 
 		private boolean isReference(SamRecord record){
 			//according to the SAMv1 spec
@@ -159,7 +155,8 @@ public final class PaddedSamTransformationService implements AssemblyTransformat
 				
 		}
 		@Override
-		public void visitRecord(SamVisitorCallback callback, SamRecord record) {
+		public void visitRecord(SamVisitorCallback callback, SamRecord record, VirtualFileOffset start,
+				VirtualFileOffset end) {
 			
 			if(record.isPrimary()){
 				

@@ -20,11 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.sam;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.eq;
-import static org.easymock.EasyMock.isA;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.easymock.EasyMock.*;
 
 import java.io.IOException;
 
@@ -314,7 +310,7 @@ public class TestSamParserFactory {
 		if(isBam){
 			visitor.visitRecord(isA(SamVisitorCallback.class), eq(record), isA(VirtualFileOffset.class), isA(VirtualFileOffset.class));
 		}else{
-			visitor.visitRecord(isA(SamVisitorCallback.class), eq(record));
+			visitor.visitRecord(isA(SamVisitorCallback.class), eq(record), isNull(), isNull());
 		}
 	}
 }
