@@ -391,11 +391,7 @@ class ReSortSamFileWriter implements SamWriter {
 			try {
 				encoding.createNewNoValidationSamParser(samFile).accept(new SamVisitor() {
 					
-					@Override
-					public void visitRecord(SamVisitorCallback callback, SamRecord record) {
-						StreamingSamRecordIterator.this.blockingPut(record);
-						
-					}
+					
 					@Override
 					public void visitRecord(SamVisitorCallback callback, SamRecord record,
 							VirtualFileOffset start, VirtualFileOffset end) {

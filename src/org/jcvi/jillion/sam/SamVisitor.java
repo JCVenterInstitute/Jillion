@@ -89,30 +89,21 @@ public interface SamVisitor {
      * to communicate with the parser object; will never be null.
 	 */
 	void visitHeader(SamVisitorCallback callback, SamHeader header);
+
 	/**
-	 * Visit the next {@link SamRecord} in the file.  This
-	 * method is only called if there is no
-	 * any {@link VirtualFileOffset} information available
-	 * (for example, this is a SAM file, and not a BAM file),
-	 * otherwise {@link #visitRecord(SamVisitorCallback, SamRecord, VirtualFileOffset, VirtualFileOffset)}
-	 * is called instead for each {@link SamRecord}.
-	 * @param callback a {@link SamVisitorCallback} that can be used
-     * to communicate with the parser object; will never be null.
-	 * @param record the {@link SamRecord} to visit; will never be null.
-	 * @see #visitRecord(SamVisitorCallback, SamRecord, VirtualFileOffset, VirtualFileOffset)
-	 */
-	void visitRecord(SamVisitorCallback callback, SamRecord record);
-	/**
-	 * Visit the next {@link SamRecord} in the file.  This
-	 * method is only called if there is valid
+	 * Visit the next {@link SamRecord} in the file.  If there is valid
 	 * {@link VirtualFileOffset} information available
 	 * (for example, this is a BAM file, and not a SAM file),
+	 * then the start and end parameters will be set to something non-null.
+	 * 
 	 * otherwise {@link #visitRecord(SamVisitorCallback, SamRecord)}
 	 * is called instead for each {@link SamRecord}.
+	 * 
 	 * @param callback a {@link SamVisitorCallback} that can be used
-     * to communicate with the parser object; will never be null.
-	 * @param record the {@link SamRecord} to visit; will never be null.
-	 * @see #visitRecord(SamVisitorCallback, SamRecord)
+     * to communicate with the parser object; will be null if the data being visited
+     * is not a BAM encoded file.
+	 * @param record the {@link SamRecord} to visit; ; will be null if the data being visited
+     * is not a BAM encoded file.
 	 */
 	void visitRecord(SamVisitorCallback callback, SamRecord record, VirtualFileOffset start, VirtualFileOffset end);
 	/**

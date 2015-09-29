@@ -38,10 +38,7 @@ public class AbstractTestSamWriter {
 	public static final class SamDataCollector implements SamVisitor {
 		private final List<SamRecord> records = new ArrayList<SamRecord>();
 		private SamHeader header;
-		@Override
-		public void visitRecord(SamVisitorCallback callback, SamRecord record) {
-			records.add(record);
-		}
+		
 
 		@Override
 		public void visitRecord(SamVisitorCallback callback, SamRecord record, VirtualFileOffset start,

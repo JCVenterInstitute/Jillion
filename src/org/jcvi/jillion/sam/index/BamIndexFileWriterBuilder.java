@@ -164,11 +164,6 @@ public final class BamIndexFileWriterBuilder {
 			
 		}
 		
-		@Override
-		public void visitRecord(SamVisitorCallback callback, SamRecord record) {
-			// TODO no-op or throw exception?
-			
-		}
 		
 		@Override
 		public void visitHeader(SamVisitorCallback callback, SamHeader header) {

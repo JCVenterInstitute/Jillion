@@ -25,9 +25,9 @@ import java.io.IOException;
 
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.internal.sam.index.BamIndexer;
+import org.jcvi.jillion.sam.AbstractSamVisitor;
 import org.jcvi.jillion.sam.SamParserFactory;
 import org.jcvi.jillion.sam.SamRecord;
-import org.jcvi.jillion.sam.SamVisitor;
 import org.jcvi.jillion.sam.VirtualFileOffset;
 import org.jcvi.jillion.sam.header.SamHeader;
 import org.junit.Test;
@@ -59,49 +59,28 @@ public class TestBamIndexParser {
 		return visitor.getBamIndex();
 	}
 	
-	private static class BamIndexSamVisitor implements SamVisitor {
+	private static class BamIndexSamVisitor extends AbstractSamVisitor {
 		BamIndexer indexer;
-		SamHeader header;
 		
+
+		@Override
+		public void visitHeader(SamVisitorCallback callback, SamHeader header) {
+			indexer = new BamIndexer(header);
+		}
 		@Override
 		public void visitRecord(SamVisitorCallback callback, SamRecord record,
 				VirtualFileOffset start, VirtualFileOffset end) {
 			indexer.addRecord(record, start, end);
 			
 		}
+	
 		
-		@Override
-		public void visitRecord(SamVisitorCallback callback, SamRecord record) {
-			// TODO Auto-generated method stub
-			
-		}
 		
-		@Override
-		public void visitHeader(SamVisitorCallback callback, SamHeader header) {
-			indexer = new BamIndexer(header);
-			this.header = header;
-		}
-		
-		@Override
-		public void visitEnd() {
-			// TODO Auto-generated method stub
-			
-		}
-		
-		@Override
-		public void halted() {
-			// TODO Auto-generated method stub
-			
-		}
 
 		public BamIndex getBamIndex() {
 			return indexer.createBamIndex();
 		}
 
-		public SamHeader getHeader() {
-			return header;
-		}
-		
 		
 	}
 }

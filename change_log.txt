@@ -111,6 +111,8 @@ New Features
 	This lets users reparse with compressed files multiple times.  Previously
 	compressed files either could only be parsed a single time via
 	InputStream constructors.
+	
+13.  Minor performance improvements of parsing BAM files.
 
 API Changes
 -----------
@@ -168,11 +170,24 @@ API Changes
 14. Changed FastqFileParser and FastqFileDataStoreBuilder to use those 
 	InputStreamProvider objects instead of Function<File, InputStream> which was not only repetitive
 	but forced users to handle IOException themselves.
+	
+15. Changed SamVisitor API to remove visitRecord(Callback, SamRecord) which was only called when visiting SAM files,
+    and not BAM files.  Now all records visited will call 
+    visitRecord(Callback callback, SamRecord record , VirtualFileOffset start, VirtualFileOffset end)
+    where the start and end parameters will now be null if it's a SAM file and non-null if it's a BAM file.
+    Previously start and end would never be null but only called when visiting BAM files.  This lead to a lot 
+    of confusion and duplicated code when dealing with both SAM and BAM files.
 
 Bug Fixes
 ----------
 1. Generate 454 Universal Accession number did not
    generate valid id if the location x,y coordinates were very small.
+   
+2. Bug Fix in SAM and BAM header writer which incorrectly wrote out the MD5 values of the references as "MD5" 
+   instead of the actual md5 hash value.
+   
+3. Bug Fix in SAM and BAM header writer which incorrectly wrote out the URI path to the reference file to be the md5 value
+   instead of the actual path.
 
 ================
 Jillion 4.2

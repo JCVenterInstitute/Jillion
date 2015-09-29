@@ -107,7 +107,7 @@ final class SamFileParser extends AbstractSamFileParser{
 					continue;
 				}			
 				SamRecord record = parseRecord(header, line);
-				visitor.visitRecord(callback, record);
+				visitor.visitRecord(callback, record, null, null);
 			}
 			if(keepParsing.get()){
 				visitor.visitEnd();
