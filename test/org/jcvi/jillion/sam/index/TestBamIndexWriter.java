@@ -20,14 +20,14 @@
  ******************************************************************************/
 package org.jcvi.jillion.sam.index;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +35,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.sam.AbstractSamVisitor;
 import org.jcvi.jillion.sam.SamFileWriterBuilder;
@@ -64,7 +63,7 @@ public class TestBamIndexWriter {
 	@Before
 	public void setup() throws IOException{
 		bamFile = resources.getFile("index_test.bam");
-		expectedBaiFile = resources.getFile("index_test.bam.bai");
+		expectedBaiFile = resources.getFile("picard.index_test.bam.bai");
 	}
 	
 	@Test(expected = NullPointerException.class)
@@ -96,7 +95,7 @@ public class TestBamIndexWriter {
 	}
 	
 	@Test
-	public void writterWithMetaDataMatchesByteForByteToPicard() throws IOException{
+	public void writterWithMetaDataMatchesPicard() throws IOException{
 		
 		
 		File actualBaiFile = tmpDir.newFile("actual.bai");
@@ -107,7 +106,7 @@ public class TestBamIndexWriter {
 		
 		assertEquals(actualBaiFile, out);
 		
-		TestUtil.assertContentsAreEqual(expectedBaiFile, actualBaiFile);
+		assertBaiFilesHaveSameContent(expectedBaiFile, actualBaiFile);
 	}
 	
 	@Test
@@ -123,12 +122,13 @@ public class TestBamIndexWriter {
 			writeAllRecords(bamFile, writer);
 		}
 		
-		File actualBaiFile = new File(tmpDir.getRoot(),"copy.bai");
-		File expectedCopyBaiFile = resources.getFile("expected.copy.bam.bai");
 		
 		assertSamFilesMatch(bamFile, outputFile);
 		
 		
+		File actualBaiFile = new File(tmpDir.getRoot(),"copy.bam.bai");
+		
+		assertBaiFilesHaveSameContent(expectedBaiFile, actualBaiFile);
 		/*
 	//	TestUtil.assertContentsAreEqual(bamFile, outputFile);
 		byte[] actualData = IOUtil.toByteArray(actualBaiFile);
@@ -137,6 +137,21 @@ public class TestBamIndexWriter {
 		TestUtil.assertContentsAreEqual(expectedCopyBaiFile, actualBaiFile);
 		
 		*/
+	}
+
+	private void assertBaiFilesHaveSameContent(File expectedCopyBaiFile,
+			File actualBaiFile) throws IOException, FileNotFoundException {
+		//picard uses (doesn't use ?) different zip compression
+		//so the file sizes are different and but once
+		//taking compression into account should be identical
+		try(InputStream actualIn = new BufferedInputStream(new FileInputStream(actualBaiFile));
+				InputStream expectedIn = new BufferedInputStream(new FileInputStream(expectedCopyBaiFile));
+					
+				){
+			byte[] actualData = IOUtil.toByteArray(actualBaiFile);
+			byte[] expectedData = IOUtil.toByteArray(expectedCopyBaiFile);
+			assertArrayEquals(expectedData, actualData);
+		}
 	}
 	
 	private void assertSamFilesMatch(File expected, File actual) throws IOException{

@@ -36,7 +36,7 @@ public enum SamAttributeType {
 /*
 	A [!-~] Printable character
 	i [-+]?[0-9]+ Singed 32-bit integer
-	I [-+]?[0-9]+ Unsinged 32-bit integer
+	I [-+]?[0-9]+ Unsigned 32-bit integer
 	f [-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)? Single-precision 
 	oating number
 	Z [ !-~]+ Printable string, including space
@@ -229,7 +229,7 @@ public enum SamAttributeType {
 			}else if(i >=0 && i <= 65535){
 				b.put((byte)'S');
 				b.putShort((short)i);
-			}else if(i <= Integer.MAX_VALUE){
+			}else if(i >=Integer.MIN_VALUE && i <= Integer.MAX_VALUE){
 				//the spec also mentions unsigned int
 				//but I don't think we can actually store
 				//that in this attribute type?
@@ -237,14 +237,22 @@ public enum SamAttributeType {
 				b.put((byte)'i');
 				b.putInt((int)i);
 			}else{
-				b.put((byte)'I');
+				//Picard doesn't seem to support unsigned ints
+				//but the SAMv1 spec does
+				//page 13 
+				//"[21] An integer may be stored as one of `cCsSiI' in BAM, representing
+				//int8t,uint8t,int16t,uint16t,int32t and uint32t,
+				//respectively.  In SAM, all single (i.e., non-array) 
+				//integer types are stored as `i', regardless of magnitude."
+				//b.put((byte)'I');	
+				b.put((byte)'i');	
 				b.putInt((int)i);
 			}
 		}
 
 		@Override
 		public void binaryEncode(Object o, ByteBuffer out) throws IOException {
-			//no-op since we override encoideInBam()
+			//no-op since we override encodeInBam()
 			
 		}
 

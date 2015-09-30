@@ -54,6 +54,30 @@ public final class BamIndexFileWriterBuilder {
 	private File outputBaiFile, inputBamFile;
 	
 	/**
+	 * Create a new Builder instance with the given input BAM that
+	 * will write a Bam index file to the same directory as the
+	 * input bam and name it {@code inputBamFile.getName() +".bai"}.
+	 * 
+	 * @apiNote this is the same as
+	 * {@link #BamIndexFileWriterBuilder(File, File) new BamIndexFileWriterBuilder(inputBamFile, new File(inputBamFile.getParentFile(), inputBamFile.getName() +".bai"))}
+	 * 
+	 * @param inputBamFile the input BAM file to parse and create
+	 * 			an index from; can not be null, must exist
+	 * 			and end with {@literal ".bam"}.
+	 * @throws IOException if there are any problems creating any missing output files or if the
+	 * input BAM file does not exist.
+	 * 
+	 * @throws NullPointerException if inputBamFile is null.
+	 * @throws IllegalArgumentException if the file extensions aren't correct.
+	 * 
+	 * @see #BamIndexFileWriterBuilder(File, File)
+	 * 
+	 * @since 5.0
+	 */
+	public BamIndexFileWriterBuilder(File inputBamFile) throws IOException{
+		this(inputBamFile, new File(inputBamFile.getParentFile(), inputBamFile.getName() +".bai"));
+	}
+	/**
 	 * Create a new Builder instance with the given input BAM and 
 	 * output index files.
 	 * @param inputBamFile the input BAM file to parse and create
@@ -63,7 +87,7 @@ public final class BamIndexFileWriterBuilder {
 	 * 			and end with {@literal ".bai"}. If the output path does not exist,
 	 * 			then the file and any non-existent parent directories will be created.
 	 * @throws IOException if there are any problems creating any missing output files
-	 * 			or directories.
+	 * 			or directories or if the input BAM file does not exist.
 	 * @throws NullPointerException if any parameter is null.
 	 * @throws IllegalArgumentException if the file extensions aren't correct.
 	 */

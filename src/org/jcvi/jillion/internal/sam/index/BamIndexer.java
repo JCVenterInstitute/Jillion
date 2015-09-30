@@ -29,7 +29,6 @@ import java.util.Map;
 import org.jcvi.jillion.internal.sam.IndexerCallback;
 import org.jcvi.jillion.sam.SamRecord;
 import org.jcvi.jillion.sam.VirtualFileOffset;
-import org.jcvi.jillion.sam.cigar.Cigar.ClipType;
 import org.jcvi.jillion.sam.header.SamHeader;
 import org.jcvi.jillion.sam.header.SamReferenceSequence;
 import org.jcvi.jillion.sam.index.BamIndex;
@@ -74,7 +73,7 @@ public class BamIndexer implements IndexerCallback{
 				currentRefName = ref;				
 			}
 			int readStartOffset = record.getStartPosition() -1;
-			int readLength = record.getCigar().getPaddedReadLength(ClipType.SOFT_CLIPPED);
+			int readLength = record.getCigar().getNumberOfReferenceBasesAligned();
 			
 			currentBuilder.addAlignment(readStartOffset, readStartOffset + readLength, 
 					start, 

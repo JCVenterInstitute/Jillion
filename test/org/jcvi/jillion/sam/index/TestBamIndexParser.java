@@ -40,7 +40,7 @@ public class TestBamIndexParser {
 	@Test
 	public void parsedBaiMatchesRecordsInBam() throws IOException{
 		File bamfile = resources.getFile("index_test.bam");
-		File expectedBaiFile = resources.getFile("index_test.bam.bai");
+		File expectedBaiFile = resources.getFile("picard.index_test.bam.bai");
 
 			
 		BamIndex expectedIndex = BamIndex.createFromFiles(bamfile, expectedBaiFile);

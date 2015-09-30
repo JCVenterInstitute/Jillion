@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jcvi.jillion.internal.sam.SamUtil;
-import org.jcvi.jillion.internal.sam.index.IndexUtil.BinSorter;
 import org.jcvi.jillion.sam.VirtualFileOffset;
 import org.jcvi.jillion.sam.index.Bin;
 import org.jcvi.jillion.sam.index.Chunk;
@@ -40,15 +39,23 @@ public final class ReferenceIndexBuilder{
 	//need to keep type as ArrayList since
 	//we use trimToSize() method which is only on arraylist.
 	@SuppressWarnings("PMD.LooseCoupling")
-	private final ArrayList<Bin> bins = new ArrayList<Bin>();
-	private int currentBinNumber =1;
-	private BinBuilder currentBinBuilder = null;
+	private ArrayList<Bin> bins;
 	private long numberOfUnalignedReads=0, numberOfAlignedReads=0;
 	private VirtualFileOffset lowestStart = new VirtualFileOffset(Long.MAX_VALUE);
 	private VirtualFileOffset higestEnd = new VirtualFileOffset(0L);
 	
+	private BinBuilder[] binBuilders;
+	
 	public ReferenceIndexBuilder(int length){
-		this.intervals = new VirtualFileOffset[IndexUtil.getIntervalOffsetFor(length)];
+		int arraySize = IndexUtil.getIntervalOffsetFor(length-1);
+		//size of array is largest possible bin of this length + 1 to get the number of those elements
+		//we need to keep an array of all the bin builders because
+		//bin numbers are not monotonically increasing.
+		//we could have reads that span 2 of the samller bins
+		//which gives it a smaller bin number so we will
+		//frequently jump around bins
+		binBuilders = new BinBuilder[ SamUtil.computeBinFor(length-1, length) +1];
+		this.intervals = new VirtualFileOffset[arraySize+1];
 		
 	}
 	
@@ -63,51 +70,52 @@ public final class ReferenceIndexBuilder{
 	}
 	
 	public ReferenceIndex build(){
-		if(currentBinBuilder !=null){
-			//add last bin to
-			//our list of bins used.
-			bins.add(currentBinBuilder.build());
-		}
-		bins.trimToSize();
-		//sort bins in order
-		Collections.sort(bins, BinSorter.INSTANCE);
+		//only include the bins that actually had alignments
+		//in the built index
+		bins = new ArrayList<Bin>(binBuilders.length);
+		for(int i=0; i< binBuilders.length; i++){
+			if(binBuilders[i] !=null){
+				bins.add(binBuilders[i].build());
+			}
+		}		
+		bins.trimToSize();		
 		return new ReferenceIndexImpl(this);
 	}
 	
 	private void updateBins(int readStartOffset, int readEndOffsetExclusive,
 			VirtualFileOffset start, VirtualFileOffset end) {
 		int bin = SamUtil.computeBinFor(readStartOffset, readEndOffsetExclusive);
-		if(bin != currentBinNumber){
-			if(currentBinBuilder !=null){
-				//builder old bin and add it to
-				//our list of bins used.
-				bins.add(currentBinBuilder.build());
-			}
-			//make new bin builder for this new bin
-			currentBinBuilder = new BinBuilder(bin);
-			//update bin number
-			currentBinNumber = bin;
+		
+		BinBuilder binBuilder;
+		if(binBuilders[bin] ==null){
+			//make new one
+			binBuilder = new BinBuilder(bin);
+			binBuilders[bin] = binBuilder;
+		}else{
+			binBuilder = binBuilders[bin];
 		}
-		//assume that the alignments are in sorted order
-		//so we will only see bins that are >= current bin
-		//so if bin isn't greater than the current bin number
-		//than we must be in the same bin.
-		currentBinBuilder.addChunk(new Chunk(start, end));
+		
+		binBuilder.addChunk(new Chunk(start, end));
 		numberOfAlignedReads++;
 	}
 
 	public void updateIntervals(int readStartOffset, int readEndOffset, VirtualFileOffset start, VirtualFileOffset end) {
-		int startInterval = IndexUtil.getIntervalOffsetFor(readStartOffset) -1;
-		int endInterval = IndexUtil.getIntervalOffsetFor(readEndOffset) -1;
+		int startInterval = IndexUtil.getIntervalOffsetFor(readStartOffset);
+		int endInterval = IndexUtil.getIntervalOffsetFor(readEndOffset);
 		
 		if(endInterval > largestIndexUsed){
 			largestIndexUsed = endInterval;
 		}
 		for(int i = startInterval; i<=endInterval; i++){
+			try{
 			VirtualFileOffset currentValue = intervals[i];
 			if(currentValue ==null || start.compareTo(currentValue) < 0){
 				intervals[i] = start;
 			}
+			}catch(ArrayIndexOutOfBoundsException e){
+				throw e;
+			}
+			
 		}
 		
 		if(start.compareTo(lowestStart)<0){

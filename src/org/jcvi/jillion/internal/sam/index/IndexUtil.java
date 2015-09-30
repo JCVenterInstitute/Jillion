@@ -47,19 +47,15 @@ public final class IndexUtil {
 
 	private static final int METADATA_BIN_ID = 37450;
 
-	private static final int INTERVAL_LENGTH = 16384; //16kbp
-	
+	private static final int INTERVAL_SHIFT = 22; //shift by 0x40_000 which is 22 bits
 	private static final byte[] BAM_INDEX_MAGIC = new byte[]{'B','A','I',1};
 	private IndexUtil(){
 		//can not instantiate
 	}
 	
-	public static int getIntervalOffsetFor(int startPosition){
-		int numIntervals =startPosition/INTERVAL_LENGTH;
-		if(startPosition % INTERVAL_LENGTH !=0){
-			numIntervals++;
-		}
-		return numIntervals;
+	public static int getIntervalOffsetFor(int genomicOffset){
+		return genomicOffset >>INTERVAL_SHIFT;
+		
 	}
 	
 	public static BamIndex parseIndex(InputStream in, SamHeader header) throws IOException{
