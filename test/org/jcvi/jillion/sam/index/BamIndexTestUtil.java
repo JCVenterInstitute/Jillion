@@ -68,7 +68,7 @@ public class BamIndexTestUtil {
 	}
 	public static void assertIndexesEqual(BamIndex expectedIndex,
 			BamIndex actualIndex){
-		
+		assertIndexesEqual(expectedIndex, actualIndex, true);
 	}
 	public static void assertIndexesEqual(BamIndex expectedIndex,
 			BamIndex actualIndex, boolean ignoreMetaData){
@@ -115,8 +115,35 @@ public class BamIndexTestUtil {
 	private static void assertBinsMatch(ReferenceIndex expected, ReferenceIndex actual, int refCount){
 		List<Bin> expectedBins = expected.getBins();
 		List<Bin> actualBins = actual.getBins();
+		boolean equalSize = expectedBins.size() == actualBins.size();
 		
-		assertEquals("bin size " +refCount, expectedBins.size(), actualBins.size());
+		if(!equalSize){
+			//pretty print
+			System.err.println("ref # " + refCount);
+			System.err.println("bin size mismatch expected " + expectedBins.size() + " but was : "+ actualBins.size() );
+			//for better error reporting check each bin 
+			for(int i =0; i< expectedBins.size() && i< actualBins.size(); i++){
+				if(!expectedBins.get(i).equals(actualBins.get(i))){
+					System.err.println("\t bin mismatch bin #" + i + " : expected " + expectedBins.get(i) + " but was : " + actualBins.get(i) );
+				}
+			}
+			
+			if(actualBins.size() > expectedBins.size()){
+				System.err.println("\t extra actual bins :");
+				for(int i=expectedBins.size(); i< actualBins.size(); i++){
+					System.err.println("\t\t" + actualBins.get(i));
+				}
+			}else{
+				System.err.println("\t extra expected bins :");
+				for(int i=actualBins.size(); i< expectedBins.size(); i++){
+					System.err.println("\t\t" + expectedBins.get(i));
+				}
+			}
+			
+			throw new AssertionError("bin size " + refCount);
+		}
+		
+		
 		//for better error reporting check each bin 
 		for(int i =0; i< expectedBins.size(); i++){
 			assertEquals("refCount = " + refCount + " bin # " + i, expectedBins.get(i), actualBins.get(i));

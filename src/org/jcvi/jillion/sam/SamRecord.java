@@ -350,9 +350,11 @@ public class SamRecord {
 				throw new NullPointerException("attribute can not be null");
 			}
 			SamAttributeKey key = attribute.getKey();
+			/*
 			if(attributes.containsKey(key)){
 				throw new InvalidAttributeException("attribute with key already exists " + key);
 			}
+			*/
 			attributeValidator.validate(header, attribute);
 			attributes.put(key, attribute);
 			return this;
