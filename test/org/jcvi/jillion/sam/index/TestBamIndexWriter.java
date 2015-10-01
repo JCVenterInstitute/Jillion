@@ -35,6 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.sam.AbstractSamVisitor;
 import org.jcvi.jillion.sam.SamFileWriterBuilder;
@@ -106,7 +107,7 @@ public class TestBamIndexWriter {
 		
 		assertEquals(actualBaiFile, out);
 		
-		assertBaiFilesHaveSameContent(expectedBaiFile, actualBaiFile);
+		TestUtil.assertContentsAreEqual(expectedBaiFile, actualBaiFile);
 	}
 	
 	@Test
@@ -127,8 +128,9 @@ public class TestBamIndexWriter {
 		
 		
 		File actualBaiFile = new File(tmpDir.getRoot(),"copy.bam.bai");
+		TestUtil.assertContentsAreEqual(expectedBaiFile, actualBaiFile);
 		
-		assertBaiFilesHaveSameContent(expectedBaiFile, actualBaiFile);
+		//assertBaiFilesHaveSameContent(expectedBaiFile, actualBaiFile);
 		/*
 	//	TestUtil.assertContentsAreEqual(bamFile, outputFile);
 		byte[] actualData = IOUtil.toByteArray(actualBaiFile);

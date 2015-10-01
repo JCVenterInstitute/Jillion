@@ -428,9 +428,14 @@ public final class SamUtil {
 			cigar = record.getCigar();
 			//binMapNameLength =computeBinFor(startOffset, startOffset + cigar.getPaddedReadLength(ClipType.SOFT_CLIPPED) -1);
 			int refAlignLength = cigar.getNumberOfReferenceBasesAligned();
+			/*
+			 * int readStartOffset = record.getStartPosition() -1;
+			int readLength = record.getCigar().getNumberOfReferenceBasesAligned();
+			
+			 */
 			bin =computeBinFor(startOffset, startOffset + refAlignLength);
 		}else{
-			bin =0;
+			bin =4680;
 			cigar = Cigar.EMPTY_CIGAR;
 		}
 		bin<<=16;

@@ -49,11 +49,12 @@ public final class BinBuilder {
 			//we probably are adding chunks in sorted
 			//order so we should only ever care
 			//about the last chunk in our list
-			Chunk lastChunk = chunks.get(chunks.size() -1);
+			int lastChunkOffset = chunks.size() -1;
+			Chunk lastChunk = chunks.get(lastChunkOffset);
 			if(canBeMerged(lastChunk, chunk)){
 				//replace last chunk with merged chunk
 				Chunk mergedChunk = new Chunk(lastChunk.getBegin(),	chunk.getEnd());
-				chunks.set(chunks.size() -1, mergedChunk);
+				chunks.set(lastChunkOffset, mergedChunk);
 			}else{
 				//append
 				chunks.add(chunk);
