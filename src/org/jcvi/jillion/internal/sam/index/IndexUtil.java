@@ -47,7 +47,7 @@ public final class IndexUtil {
 
 	private static final int METADATA_BIN_ID = 37450;
 
-	private static final int INTERVAL_SHIFT = 22; //shift by 0x40_000 which is 22 bits
+	private static final int INTERVAL_SHIFT = 14; //shift by 0x40_000 which is 14 bits or 16384
 	private static final byte[] BAM_INDEX_MAGIC = new byte[]{'B','A','I',1};
 	private IndexUtil(){
 		//can not instantiate
