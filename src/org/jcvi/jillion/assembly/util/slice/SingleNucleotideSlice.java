@@ -31,9 +31,9 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 
-public class SingleNucleotideSlice implements VariableWidthSlice<Nucleotide, NucleotideSequence>{
+final class SingleNucleotideSlice implements VariableWidthSlice<Nucleotide, NucleotideSequence>{
 
-	private static final int numberOfNucleotideTypes = Nucleotide.values().length;
+	private static final int NUMBER_OF_NUCLEOTIDES = Nucleotide.values().length;
 	/**
 	 * Cache of all possible NucleotideSequences of 1 bp length.
 	 */
@@ -55,7 +55,7 @@ public class SingleNucleotideSlice implements VariableWidthSlice<Nucleotide, Nuc
 	
 	
 	private SingleNucleotideSlice(Builder builder){
-		for(int i=0; i<numberOfNucleotideTypes; i++){
+		for(int i=0; i<NUMBER_OF_NUCLEOTIDES; i++){
 			int count = builder.counts[i];
 			if(count>0){
 				Nucleotide n = Nucleotide.getByOrdinal(i);
@@ -152,7 +152,7 @@ public class SingleNucleotideSlice implements VariableWidthSlice<Nucleotide, Nuc
 	}
 
 	public static class Builder{
-		private int[] counts = new int[numberOfNucleotideTypes];
+		private int[] counts = new int[NUMBER_OF_NUCLEOTIDES];
 		private final Nucleotide ref;
 		
 		public Builder(Nucleotide ref) {

@@ -143,9 +143,9 @@ public final class Sff454NameUtil {
         final Date dateOfRigRun = rigRun.getDate();
         
         
-        final BigInteger encodedDate = _454DateEncoder.INSTANCE.encode(dateOfRigRun);
+        final BigInteger encodedDate = DateEncoder.INSTANCE.encode(dateOfRigRun);
         return new StringBuilder()
-                    .append(_454Base36Encoder.INSTANCE.encode(encodedDate))
+                    .append(Base36Encoder.INSTANCE.encode(encodedDate))
                     .append(rigRun.getRandomizingHashcode())
                     .append(String.format("%02d", regionNumber))
                     .append(wellLocation.encode())
@@ -171,8 +171,8 @@ public final class Sff454NameUtil {
             throw new IllegalArgumentException(readId + " is not a 454 read");
         }
         final String substring = readId.substring(0,6);
-        BigInteger timeStamp = _454Base36Encoder.INSTANCE.decode(substring);        
-        return _454DateEncoder.INSTANCE.decode(timeStamp);
+        BigInteger timeStamp = Base36Encoder.INSTANCE.decode(substring);        
+        return DateEncoder.INSTANCE.decode(timeStamp);
     }
     
     
@@ -237,7 +237,7 @@ public final class Sff454NameUtil {
         }
         
         private String encode(){
-            String encoded = _454Base36Encoder.INSTANCE.encode(BigInteger.valueOf(x * 4096L + y));
+            String encoded = Base36Encoder.INSTANCE.encode(BigInteger.valueOf(x * 4096L + y));
             //make it 5 characters, sometimes we don't have enough digits
             //so padd with leading A's?
             if(encoded.length() ==5){
@@ -256,7 +256,7 @@ public final class Sff454NameUtil {
         }
         
         private static Location decode(String encodedLocation){
-            BigInteger value =_454Base36Encoder.INSTANCE.decode(encodedLocation);
+            BigInteger value =Base36Encoder.INSTANCE.decode(encodedLocation);
             BigInteger x = value.divide(FOURTY_NINETY_SIX);
             BigInteger y = value.mod(FOURTY_NINETY_SIX);
             return new Location(x.intValue(), y.intValue());
@@ -325,7 +325,7 @@ public final class Sff454NameUtil {
      *
      *
      */
-    private static enum _454Base36Encoder{
+    private static enum Base36Encoder{
         INSTANCE;
         
         BigInteger decode(String encodedString){
@@ -380,7 +380,7 @@ public final class Sff454NameUtil {
      *
      *
      */
-    private static enum _454DateEncoder{
+    private static enum DateEncoder{
         INSTANCE;
         
         private static final BigInteger SIXTY = BigInteger.valueOf(60);
@@ -498,7 +498,7 @@ public final class Sff454NameUtil {
                 hash+= c;
                 hash%=31;
             }
-            return _454Base36Encoder.INSTANCE.encode(hash).charAt(0);
+            return Base36Encoder.INSTANCE.encode(hash).charAt(0);
             
         }
     }
