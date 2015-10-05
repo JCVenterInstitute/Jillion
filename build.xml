@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Jillion" default="unit.tests" basedir="." 
-	xmlns:jacoco="antlib:org.jacoco.ant">
+	xmlns:jacoco="antlib:org.jacoco.ant"
+	
+	>
 	
 	<!--Used to set the required version of Java that RUNS the jars -->
 	<property name="jdk.version" value="1.8" />
@@ -36,7 +38,7 @@
 	             resource="org/jacoco/ant/antlib.xml"
 	             classpath="${analysis}/jacoco/jacocoant.jar"/>
 	
-    <taskdef resource="checkstyletask.properties"
+    <taskdef resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties"
          classpath="${analysis}/checkstyle-6.11.2-all.jar"/>
 
     <taskdef name="testability" classname="com.google.ant.TestabilityTask">
