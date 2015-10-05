@@ -233,7 +233,7 @@ abstract class AbstractSamFileParser implements SamParser{
 	}
 	
 	
-	static abstract class AbstractCallback implements SamVisitorCallback{
+	abstract static class AbstractCallback implements SamVisitorCallback{
 		private final AtomicBoolean keepParsing;		
 		
 

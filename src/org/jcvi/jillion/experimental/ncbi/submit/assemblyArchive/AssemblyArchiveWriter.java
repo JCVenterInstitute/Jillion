@@ -42,7 +42,7 @@ public interface AssemblyArchiveWriter extends Closeable{
 		 * can not find a valid trace name for the given read id.
 		 * @throws NullPointerException if readId is null.
 		 */
-		String getTraceNameByContigReadId (String readId);
+		String getTraceNameByContigReadId(String readId);
 	}
 	
 	void write(

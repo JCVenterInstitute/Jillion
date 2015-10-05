@@ -329,7 +329,7 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
         public Hsp<R,S>  build() {
             verifyAllValuesSet();
             sanityCheckValues();
-            return new HspImpl<R,S> (this);
+            return new HspImpl<R,S>(this);
         }
 
         private void sanityCheckValues() {
