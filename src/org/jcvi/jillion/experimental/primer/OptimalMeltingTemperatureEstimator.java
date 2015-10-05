@@ -42,6 +42,7 @@ import org.jcvi.jillion.core.util.iter.PeekableIterator;
  * @author dkatzel
  *
  */
+@SuppressWarnings("checkstyle:magicnumbercheck")
 public enum OptimalMeltingTemperatureEstimator {
 	/**
 	 * Use the Marmur formaula
@@ -421,7 +422,23 @@ initiation factor to predict stability of DNA duplexes.
 	}
 	
 	;
+	private static final double NON_SYMMETRIC_MOLAR_ADJUSTMENT = 4_000_000_000D;
+
+	private static final double SYMMETRIC_MOLAR_ADJUSTMENT = 10_000_000_00D;
+
+	private static final double ABSOLUTE_ZERO_CONVERSION = 273.15D;
+
+	/**
+	 * Entropy lookups are in .1` cal/K/mol
+	 * need to convert them.
+	 */
+	private static final double ENTROPY_CONVERSION = -0.1D;
 	
+	/**
+	 * enthalpy lookups are in 100cal/mol
+	 * need to convert them
+	 */
+	private static final double ENTHALPY_CONVERRSION = -100D;
 	private static final double R = 1.987D;
 	
 	protected final double estimateTm(NucleotideSequence sequence, double nM, 
@@ -440,9 +457,9 @@ initiation factor to predict stability of DNA duplexes.
 			InitialValues symmetryPenalty = getSymmetryCorrection();
 			totalEntropy += symmetryPenalty.getInitialEntropy();
 			totalEnthalpy += symmetryPenalty.getInitialEnthalpy();
-			adjustedMolarConcentration = nM/1000000000D;
+			adjustedMolarConcentration = nM/SYMMETRIC_MOLAR_ADJUSTMENT;
 		}else{
-			adjustedMolarConcentration = nM/4000000000D;
+			adjustedMolarConcentration = nM/NON_SYMMETRIC_MOLAR_ADJUSTMENT;
 		}
 		PeekableIterator<Nucleotide> iter = IteratorUtil.createPeekableIterator(sequence.iterator());
 		
@@ -457,16 +474,13 @@ initiation factor to predict stability of DNA duplexes.
 			totalEntropy += entropyLookup.lookup(diNucleotide);
 			previous = next;
 		}
-		//enthalpy lookups are in 100cal/mol
-		//need to convert them
-		totalEnthalpy *=-100D;
-		//entropy lookups are in .1` cal/K/mol
-		//need to convert them
-		totalEntropy *=-0.1D;
 		
+		totalEnthalpy *=ENTHALPY_CONVERRSION;
+		
+		totalEntropy *=ENTROPY_CONVERSION;		
 		
 		double tempInKelvin= totalEnthalpy / (totalEntropy + ( R * Math.log(adjustedMolarConcentration)));
-		return tempInKelvin - 273.15D;
+		return tempInKelvin - ABSOLUTE_ZERO_CONVERSION;
 	
 	}
 	protected InitialValues getSymmetryCorrection() {

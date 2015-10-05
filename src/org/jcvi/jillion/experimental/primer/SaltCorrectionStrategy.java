@@ -66,6 +66,7 @@ public enum SaltCorrectionStrategy {
 	}
 	;
 	
+	private static final double MICRO_MOLAR_CONVERSION = 1000D;
 	private final double adjustmentConstant;
 	
 	private SaltCorrectionStrategy(double adjustmentConstant){
@@ -85,7 +86,7 @@ public enum SaltCorrectionStrategy {
 		if(mM<0){
 			throw new IllegalArgumentException("concentration can not be negative");
 		}
-		return adjustmentConstant * Math.log10(mM/1000D) + initialTm;
+		return adjustmentConstant * Math.log10(mM/MICRO_MOLAR_CONVERSION) + initialTm;
 	}
 	
 }

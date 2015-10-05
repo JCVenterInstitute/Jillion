@@ -345,6 +345,7 @@ public class LucyVectorSpliceTrimmerBuilder implements Builder<NucleotideTrimmer
 	 *
 	 */
 	public static final class AdaptiveSearchArea{
+		private static final double MIN_DOWNSTREAM_PERCENT_IDENT = .75D;
 		private final List<SearchArea> areas;
 		private final Range areaRange;
 		private AdaptiveSearchArea(AdaptiveSearchAreaBuilder builder){
@@ -360,7 +361,7 @@ public class LucyVectorSpliceTrimmerBuilder implements Builder<NucleotideTrimmer
 		boolean meetsDownstreamMatchingCriteria(Range downstreamSubjectRange, double percentIdentity) {
 			
 			//must be >=75% ident
-			if(percentIdentity < .75D){
+			if(percentIdentity < MIN_DOWNSTREAM_PERCENT_IDENT){
 				return false;
 			}
 			//lucy paper fig 6 implies area 3 parameters used to determine downstream hit
