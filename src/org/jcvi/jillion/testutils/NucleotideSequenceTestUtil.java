@@ -35,7 +35,7 @@ public final class NucleotideSequenceTestUtil {
 
 	private static final NucleotideSequence EMPTY = new NucleotideSequenceBuilder("").build();
 	
-	private static final Random random = new Random();
+	private static final Random RANDOM = new Random();
 	
 	private NucleotideSequenceTestUtil(){
 		//can not instantiate
@@ -94,7 +94,7 @@ public final class NucleotideSequenceTestUtil {
 	}
 	
 	private static Nucleotide nextRandom(){
-		switch(random.nextInt(4)){
+		switch(RANDOM.nextInt(4)){
 			case 0: return Nucleotide.Adenine;
 			case 1: return Nucleotide.Cytosine;
 			case 2: return Nucleotide.Guanine;

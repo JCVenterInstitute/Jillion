@@ -93,7 +93,7 @@ abstract class AbstractSmithWatermanAligner<R extends Residue, S extends Residue
 	protected WalkBack computeBestWalkBack(float alignmentScore,
 			float horrizontalGapPenalty, float verticalGapPenalty){
 		
-		double[] array = new double[] { 0D, alignmentScore,	horrizontalGapPenalty, verticalGapPenalty };
+		double[] array = new double[] {0D, alignmentScore,	horrizontalGapPenalty, verticalGapPenalty};
 
 		float bestScore = (float) Arrays.stream(array).max().getAsDouble();
 		final TracebackDirection dir;

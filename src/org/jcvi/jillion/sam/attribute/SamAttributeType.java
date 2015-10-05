@@ -244,8 +244,39 @@ public enum SamAttributeType {
 				//int8t,uint8t,int16t,uint16t,int32t and uint32t,
 				//respectively.  In SAM, all single (i.e., non-array) 
 				//integer types are stored as `i', regardless of magnitude."
-				//b.put((byte)'I');	
-				b.put((byte)'i');	
+				
+				/*
+				 * Found this comment in the samtools mailing list from Dec 22, 2009
+				 * regarding unsigned ints:
+				 * 
+				 * 
+					Re: [Samtools-help] [picard] getAttribute sometimes returns long
+					From: Alec Wysoker <alecw@br...> - 2009-12-22 22:27:01
+					
+					Hi Ido,
+					
+					I finally got around to implementing your request that integral tag 
+					value types be handled more consistently in Picard.  Now, regardless of 
+					how the integral value is stored in the file, it will be stored in 
+					memory as an Integer.  Storage in the file is as the most compact type 
+					allowed by the value.  The only exception is that if validation 
+					stringency is not strict, a tag can be read from a BAM that contains an 
+					unsigned 32-bit integer value, which will be returned as a Java Long.  
+					This is merely to handle legacy files that have been writing unsigned 
+					integers, which I think should be eliminated from the next SAM spec.  
+					Note that reading a SAM with a tag value > the largest 32-bit signed 
+					integer will not be allowed, only BAM. 
+					
+					In addition, there are now typed SAMRecord.getAttribute() methods so you 
+					don't have to cast all the time.
+					
+					-Alec
+					
+					
+					
+				 */
+				b.put((byte)'I');	
+				//b.put((byte)'i');	
 				b.putInt((int)i);
 			}
 		}

@@ -349,7 +349,7 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 	 * @param <R> the type of {@link Residue} to be written.
 	 * @param <S> type of {@link Sequence} to be written.
 	 */
-	public static abstract class AlnFileWriterBuilder<R extends Residue, S extends Sequence<R>>{
+	public abstract static class AlnFileWriterBuilder<R extends Residue, S extends Sequence<R>>{
 		
 		private final File outFile;
 		
