@@ -39,7 +39,7 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.JoinedStringBuilder;
 
-public class VariableWidthNucleotideSlice implements VariableWidthSlice<Nucleotide, NucleotideSequence>{
+final class VariableWidthNucleotideSlice implements VariableWidthSlice<Nucleotide, NucleotideSequence>{
 
 	
 	private final List<VariableWidthSliceElement<Nucleotide>> list = new ArrayList<VariableWidthSliceElement<Nucleotide>>();

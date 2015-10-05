@@ -30,7 +30,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
-import java.util.stream.Stream;
 
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 /**
@@ -39,6 +38,7 @@ import org.jcvi.jillion.internal.core.util.GrowableIntArray;
  * @author dkatzel
  *
  */
+@SuppressWarnings("checkstyle:magicnumbercheck")
 public final class GenomeStatistics {
 
 	private GenomeStatistics(){
@@ -781,7 +781,7 @@ public final class GenomeStatistics {
 	}
 	
 	
-	private static abstract class AbstractStatBuilder implements GenomeStatisticsBuilder{
+	private abstract static class AbstractStatBuilder implements GenomeStatisticsBuilder{
 
 		private final GrowableIntArray array = new GrowableIntArray();
 		
