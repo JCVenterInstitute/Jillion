@@ -615,7 +615,7 @@ public abstract class AceFileParser implements AceParser {
             } 
         },
         CONSENSUS_TAG("^CT\\{"){
-            private final Pattern consensusTagPattern = Pattern.compile("(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d{6}:\\d{6})(\\s+(noTrans))?");
+            private final Pattern consensusTagPattern = Pattern.compile("(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d{6}(:\\d{6})?)(\\s+(noTrans))?");
             
             @Override
             void handle(Matcher qualityMatcher, AceParserState parserState, String line) throws IOException {
@@ -645,8 +645,8 @@ public abstract class AceFileParser implements AceParser {
 					        tagMatcher.group(6));
 				} catch (ParseException e) {
 					throw new IllegalStateException("error parsing date from consensus tag", e);
-				}
-                boolean isTransient = tagMatcher.group(7)!=null;
+				}				
+                boolean isTransient = tagMatcher.group(8)!=null;
                 
                 AceConsensusTagVisitor tagVisitor = currentParserState.fileVisitor.visitConsensusTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);
 

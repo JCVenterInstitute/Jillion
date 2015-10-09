@@ -114,6 +114,9 @@ New Features
 	
 13.  Minor performance improvements of parsing BAM files.
 
+14. AceFileParser - more lenient Consensus Tag timestamp parsers to support CLC Workbench ace output
+    which doesn't follow the ace file spec regarding timestamp resolution.
+
 API Changes
 -----------
 
