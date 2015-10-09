@@ -95,17 +95,6 @@ public final class AceFileUtil {
 			format.setLenient(false);
 			return format;
 		}
-
-		  @Override
-		  public void remove() {
-		   super.remove();
-		  }
-
-		  @Override
-		  public void set(DateFormat value) {
-		   super.set(value);
-		  }
-
 		 };
 	
     
@@ -116,33 +105,62 @@ public final class AceFileUtil {
 	 * is mutable and not Thread safe.
 	 * This should let us avoid synchronization.
 	 */
-	private static ThreadLocal<DateFormat> TAG_DATE_TIME_FORMATTER = new ThreadLocal<DateFormat>(){
+	private static ThreadLocal<KnownFormats> TAG_DATE_TIME_FORMATTER = new ThreadLocal<KnownFormats>(){
 
 		  @Override
-		  public DateFormat get() {
+		  public KnownFormats get() {
 		   return super.get();
 		  }
 
 		  @Override
-		  protected DateFormat initialValue() {
-			  DateFormat format= new SimpleDateFormat("yyMMdd:HHmmss", Locale.US);
-			  format.setLenient(false);
-			  return format;
+		  protected KnownFormats initialValue() {
+
+			  return new KnownFormats("yyMMdd:HHmmss", 
+					  					"yyMMdd");
 		  }
 
-		  @Override
-		  public void remove() {
-		   super.remove();
-		  }
-
-		  @Override
-		  public void set(DateFormat value) {
-		   super.set(value);
-		  }
 
 		 };
-	
-    
+	/**
+	 * Wrapper around multiple {@link SimpleDateFormat}s that will
+	 * try each one until it passes {@link #parse(String)}.
+	 * 
+	 * <p>
+	 * Not thread-safe 
+	 * </p>
+	 * @author dkatzel
+	 *
+	 */
+    private static class KnownFormats{
+    	private final List<DateFormat> knownFormats;
+    	
+    	public KnownFormats(String...formats){
+    		knownFormats = new ArrayList<>(formats.length);
+    		for(String format : formats){
+    			DateFormat f = new SimpleDateFormat(format, Locale.US);
+    			f.setLenient(true);
+    			knownFormats.add(f);
+    		}
+    	}
+    	
+    	public Date parse(String dateString) throws ParseException{
+    		for(DateFormat f : knownFormats){
+    			try{
+    				return f.parse(dateString);
+    			}catch(ParseException e){
+    				//keep going
+    			}
+    		}
+    		
+    		throw new ParseException("Unparseable date: \"" + dateString + "\"", 0);
+    	}
+    	
+    	public String format(Date date){
+    		//always use first one
+    		return knownFormats.get(0).format(date);
+    	}
+    }
+		 
     private static final String CONTIG_HEADER = "CO %s %d %d %d %s%n";
     /**
      * Initial size to use for StringBuilders used to construct

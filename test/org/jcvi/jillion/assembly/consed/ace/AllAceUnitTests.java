@@ -76,6 +76,8 @@ import org.junit.runners.Suite.SuiteClasses;
        AceTagsFromIndexedAceFileDataStore.class,
        AceTagsFromLargeAceFileDataStore.class,
        
+       AceTagsFromAceFileDataStoreConsensusTagNoTimeInfo.class,
+       
        TestDefaultAceFileDataStore2.class,
        TestIndexedAceFileDataStore2.class,
        TestLargeAceFileDataStore2.class,
