@@ -24,15 +24,18 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.FileUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
+import org.jcvi.jillion.internal.sam.SamUtil;
 import org.jcvi.jillion.sam.SamVisitor.SamVisitorCallback.SamVisitorMemento;
 import org.jcvi.jillion.sam.attribute.InvalidAttributeException;
 import org.jcvi.jillion.sam.attribute.ReservedAttributeValidator;
@@ -86,7 +89,19 @@ final class SamFileParser extends AbstractSamFileParser{
 
 	
 	@Override
+	public void accept(String referenceName, SamVisitor visitor) throws IOException {
+		accept(visitor, SamUtil.alignsToReference(referenceName));		
+	}
+	@Override
+	public void accept(String referenceName, Range alignmentRange, SamVisitor visitor) throws IOException {
+		accept(visitor, SamUtil.alignsToReference(referenceName, alignmentRange));		
+	}
+	@Override
 	public void accept(SamVisitor visitor) throws IOException {
+		accept(visitor, (record)->true);
+	}
+	
+	private void accept(SamVisitor visitor, Predicate<SamRecord> filter) throws IOException {
 		if(visitor ==null){
 			throw new NullPointerException("visitor can not be null");
 		}
@@ -107,7 +122,9 @@ final class SamFileParser extends AbstractSamFileParser{
 					continue;
 				}			
 				SamRecord record = parseRecord(header, line);
-				visitor.visitRecord(callback, record, null, null);
+				if(filter.test(record)){
+					visitor.visitRecord(callback, record, null, null);
+				}
 			}
 			if(keepParsing.get()){
 				visitor.visitEnd();
@@ -118,6 +135,8 @@ final class SamFileParser extends AbstractSamFileParser{
 			IOUtil.closeAndIgnoreErrors(parser);
 		}
 	}
+	
+	
 	
 	private SamRecord parseRecord(SamHeader header, String line) throws IOException{
 		String[] fields = SPLIT_LINE_PATTERN.split(line);

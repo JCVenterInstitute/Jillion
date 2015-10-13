@@ -21,10 +21,10 @@
 package org.jcvi.jillion.sam;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.jcvi.jillion.core.io.FileUtil;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.sam.attribute.ReservedAttributeValidator;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 
@@ -42,22 +42,9 @@ public final class SamParserFactory {
 		//can not instantiate
 	}
 	/**
-	 * Create a new {@link SamParser}
-	 * instance for the given SAM or BAM file
-	 * using the {@link ReservedAttributeValidator}
-	 * to validate the {@link SamRecord}s to be parsed.
-	 * This is the same as
-	 * {@link #create(File, SamAttributeValidator) create(f, ReservedAttributeValidator.INSTANCE)}.
-	 * @param f the SAM or BAM file to be parsed;
-	 * can not be null, must exist and 
-	 * the file must end in either ".sam"
-	 * or ".bam" (ignoring case).
-	 * @return a new {@link SamParser} instance
-	 * will never be null.
-	 * @throws IOException if the file does not exist.
-	 * @throws NullPointerException if any parameter is null.
-	 * @throws IllegalArgumentException if the file's extension
-	 * is not either ".sam" or ".bam" (ignoring case).
+	 * Convenience method for {@link #create(File, SamAttributeValidator)
+	 * with the default attribute validator.
+	 * 
 	 * @see #create(File, SamAttributeValidator)
 	 */
 	public static SamParser create(File f) throws IOException{
@@ -66,6 +53,13 @@ public final class SamParserFactory {
 	/**
 	 * Create a new {@link SamParser}
 	 * instance for the given SAM or BAM file.
+	 * <p>
+	 * Since Jillion 5.0 if the given file is a coordinate sorted BAM file
+	 * and there is an accompanying BAI file in the same directory named <code>f.getName() + ".bai"</code>,
+	 * then a specialized {@link SamParser}
+	 * that uses the index will be returned as if the call to
+	 * {@link #createFromBamIndex(File, File, SamAttributeValidator)} was used instead.
+	 * </p>
 	 * @param f the SAM or BAM file to be parsed;
 	 * can not be null, must exist and 
 	 * the file must end in either ".sam"
@@ -79,25 +73,98 @@ public final class SamParserFactory {
 	 * @throws NullPointerException if any parameter is null.
 	 * @throws IllegalArgumentException if the file's extension
 	 * is not either ".sam" or ".bam" (ignoring case).
+	 * 
+	 * @see #createFromBamIndex(File, File, SamAttributeValidator)
 	 */
 	public static SamParser create(File f, SamAttributeValidator validator) throws IOException{
-		if(f == null){
-			throw new NullPointerException("file can not be null");
-		}
 		
 		if(validator == null){
 			throw new NullPointerException("validator can not be null");
 		}
-		if(!f.exists()){
-			throw new FileNotFoundException(f.getAbsolutePath());
-		}
+		IOUtil.verifyIsReadable(f);
+		
 		String extension = FileUtil.getExtension(f);
 		if("sam".equalsIgnoreCase(extension)){
 			return new SamFileParser(f,validator);
 		}
 		if("bam".equalsIgnoreCase(extension)){
-			return new BamFileParser(f, validator);
+			SamParser unsortedBamParser= new BamFileParser(f, validator);
+			if(unsortedBamParser.getHeader().getSortOrder() == SortOrder.COORDINATE){
+				//is there an indexed bam file that goes with it?
+				File bai = new File(f.getParentFile(), f.getName() +".bai");
+				if(bai.exists()){
+					return createFromBamIndex(f, bai, validator);
+				}
+			
+			}
+			return unsortedBamParser;
+			
 		}
 		throw new IllegalArgumentException("unknown file format " + f.getName());
+	}
+	
+	/**
+	 * Create a new {@link SamParser}
+	 * instance for the Coordinate sorted BAM file
+	 * with accompanying BAI encoded file and
+	 * using the {@link ReservedAttributeValidator}
+	 * to validate the {@link SamRecord}s to be parsed.
+	 * This is the same as
+	 * {@link #create(File, SamAttributeValidator) create(f, ReservedAttributeValidator.INSTANCE)}.
+	 * @param bam the Coordinate sorted BAM file to be parsed;
+	 * can not be null, must exist.
+	 * 
+	 * @param bamIndex the corresponding BAI encoded file to be parsed;
+	 * can not be null, must exist.
+	 * 
+	 * @return a new {@link SamParser} instance
+	 * will never be null.
+	 * @throws IOException if the file does not exist.
+	 * @throws NullPointerException if any parameter is null.
+	 * @throws IllegalArgumentException if the file's extension
+	 * is not either ".sam" or ".bam" (ignoring case).
+	 * @see #create(File, SamAttributeValidator)
+	 * 
+	 * @since 5.0
+	 */
+	public static SamParser createFromBamIndex(File bam, File bamIndex) throws IOException{
+		return new IndexedBamFileParser(bam, bamIndex, ReservedAttributeValidator.INSTANCE);
+	}
+	
+	/**
+	 * Create a new {@link SamParser}
+	 * instance for the Coordinate sorted BAM file
+	 * with accompanying BAI encoded file and
+	 * using the given {@link SamAttributeValidator}
+	 * to validate the {@link SamRecord}s to be parsed.
+	 * This is the same as
+	 * {@link #create(File, SamAttributeValidator) create(f, ReservedAttributeValidator.INSTANCE)}.
+	 * @param bam the Coordinate sorted BAM file to be parsed;
+	 * can not be null, must exist.
+	 * 
+	 * @param bamIndex the corresponding BAI encoded file to be parsed;
+	 * can not be null, must exist.
+	 * 
+	 *  @param validator the {@link SamAttributeValidator}
+	 * to use to validate the {@link SamRecord}s being parsed;
+	 * can not be null.
+	 * 
+	 * @return a new {@link SamParser} instance
+	 * will never be null.
+	 * @throws IOException if the file does not exist.
+	 * @throws NullPointerException if any parameter is null.
+	 * @throws IllegalArgumentException if the file's extension
+	 * is not either ".sam" or ".bam" (ignoring case).
+	 * @see #create(File, SamAttributeValidator)
+	 * 
+	 * @since 5.0
+	 */
+	public static SamParser createFromBamIndex(File bam, File bamIndex, SamAttributeValidator validator) throws IOException{
+		IOUtil.verifyIsReadable(bam);
+		IOUtil.verifyIsReadable(bamIndex);
+		if(validator == null){
+			throw new NullPointerException("validator can not be null");
+		}
+		return new IndexedBamFileParser(bam, bamIndex, validator);
 	}
 }

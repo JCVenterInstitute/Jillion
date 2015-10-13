@@ -66,6 +66,28 @@ public class VirtualFileOffset implements Comparable<VirtualFileOffset>{
 		encodedValue |= uncompressedOffset;
 		return new VirtualFileOffset(encodedValue);
 	}
+	/**
+	 * Compute the next possible {@link VirtualFileOffset}  after this one.
+	 * The returned value should only be used for comparison purposes
+	 * and is not meant to be a valid next {@link VirtualFileOffset}
+	 * in the BAM file.
+	 * 
+	 * @return a new {@link VirtualFileOffset}, will never be null.
+	 * 
+	 * @throws IllegalArgumentException if this {@link VirtualFileOffset}
+	 * is the last possible offset allowed by the BAM spec which is highly unlikely.
+	 * 
+	 * @since 5.0
+	 */
+	public VirtualFileOffset nextOffset(){
+		long compressedOffset = getCompressedBamBlockOffset();
+		int uncompressedOffset = getUncompressedOffset() +1;
+		if(uncompressedOffset > MAX_UNCOMPRESSED_OFFSET){
+			uncompressedOffset=0;
+			compressedOffset ++;
+		}
+		return create(compressedOffset,uncompressedOffset);
+	}
 	
 	public VirtualFileOffset(long encodedValue) {
 		this.encodedValue = encodedValue;

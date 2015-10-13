@@ -69,6 +69,9 @@ abstract class AbstractSamFileParser implements SamParser{
 		
 		SamHeaderBuilder headerBuilder = new SamHeaderBuilder();
 		String currentLine = parser.peekLine();
+		if(currentLine ==null){
+			return headerBuilder;
+		}
 		if(currentLine.startsWith(HEADER_KEY)){
 			handleHeaderLine(currentLine, headerBuilder);
 			//actually consume the line we just peeked.

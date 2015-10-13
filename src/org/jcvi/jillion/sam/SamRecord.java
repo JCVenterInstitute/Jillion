@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.sam.attribute.InvalidAttributeException;
@@ -48,7 +49,7 @@ public class SamRecord {
 	private final SamHeader header;
 	private final String queryName, referenceName, nextReferenceName;
 	private final EnumSet<SamRecordFlags> flags;
-	private final int startOffset, nextOffset;
+	private final int startPosition, nextOffset;
 	private final byte mappingQuality;
 	private final Cigar cigar;
 	private final NucleotideSequence sequence;
@@ -62,7 +63,7 @@ public class SamRecord {
 		this.queryName = builder.queryName;
 		this.flags = builder.flags;
 		this.referenceName = builder.referenceName;
-		this.startOffset = builder.startPosition;
+		this.startPosition = builder.startPosition;
 		this.mappingQuality = builder.mappingQuality;
 		this.cigar = builder.cigar;
 		
@@ -121,7 +122,7 @@ public class SamRecord {
 	}
 
 	public int getStartPosition() {
-		return startOffset;
+		return startPosition;
 	}
 
 	public int getNextOffset() {
@@ -200,7 +201,7 @@ public class SamRecord {
 		result = prime * result	+ referenceName.hashCode();
 		result = prime * result
 				+ ((sequence == null) ? 0 : sequence.hashCode());
-		result = prime * result + startOffset;
+		result = prime * result + startPosition;
 		return result;
 	}
 
@@ -281,7 +282,7 @@ public class SamRecord {
 		} else if (!sequence.equals(other.sequence)) {
 			return false;
 		}
-		if (startOffset != other.startOffset) {
+		if (startPosition != other.startPosition) {
 			return false;
 		}
 		return true;
@@ -292,7 +293,7 @@ public class SamRecord {
 	public String toString() {
 		return "SamRecord [queryName=" + queryName + ", referenceName="
 				+ referenceName + ", nextReferenceName=" + nextReferenceName
-				+ ", flags=" + flags + ", startOffset=" + startOffset
+				+ ", flags=" + flags + ", startPosition=" + startPosition
 				+ ", nextOffset=" + nextOffset + ", mappingQuality="
 				+ mappingQuality + ", cigar=" + cigar + ", sequence="
 				+ sequence + ", qualities=" + qualities
@@ -645,6 +646,15 @@ public class SamRecord {
 	public Direction getDirection(){
 		return flags.contains(SamRecordFlags.REVERSE_COMPLEMENTED) ? Direction.REVERSE : Direction.FORWARD;
 				
+	}
+
+	public Range getAlignmentRange() {
+		if(mapped()){
+			return new Range.Builder(cigar.getNumberOfReferenceBasesAligned())
+							.shift(startPosition -1)
+							.build();
+		}
+		return null;
 	}
 
 

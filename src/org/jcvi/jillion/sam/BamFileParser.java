@@ -30,7 +30,9 @@ import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Predicate;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.FileUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
@@ -58,13 +60,14 @@ import org.jcvi.jillion.sam.header.SamReferenceSequenceBuilder;
  * @author dkatzel
  *
  */
-final class BamFileParser extends AbstractSamFileParser {
+class BamFileParser extends AbstractSamFileParser {
 
 	
 	
-	private final File bamFile;
-	private final SamAttributeValidator validator;
-	
+	protected final File bamFile;
+	protected final SamAttributeValidator validator;
+	protected final String[] refNames;
+	protected final SamHeader header;
 	
 	
 	public BamFileParser(File bamFile) throws IOException {
@@ -88,55 +91,107 @@ final class BamFileParser extends AbstractSamFileParser {
 		}
 		this.bamFile = bamFile;
 		this.validator = validator;
+		
+		try(BgzfInputStream in = new BgzfInputStream(bamFile)){
+			
+			verifyMagicNumber(in);
+			
+			SamHeaderBuilder headerBuilder = parseHeader(new TextLineParser(IOUtil.toInputStream(readPascalString(in))));
+			refNames = parseReferenceNamesAndAddToHeader(in, headerBuilder);
+			header = headerBuilder.build();
+		}
+	}
+	
+	
+	
+	@Override
+	public SamHeader getHeader() throws IOException {
+		return header;
 	}
 	@Override
 	public boolean canAccept() {
 		return true;
 	}
-
+	
+	@Override
+	public void accept(String referenceName, SamVisitor visitor) throws IOException {
+		accept(visitor, SamUtil.alignsToReference(referenceName));		
+	}
+	@Override
+	public void accept(String referenceName, Range alignmentRange, SamVisitor visitor) throws IOException {
+		accept(visitor, SamUtil.alignsToReference(referenceName, alignmentRange));		
+	}
+	
 	@Override
 	public void accept(SamVisitor visitor) throws IOException {
+		accept(visitor, (record)->true);
+	}
+	
+	
+	
+	private void accept(SamVisitor visitor, Predicate<SamRecord> filter) throws IOException {
 		if(visitor ==null){
 			throw new NullPointerException("visitor can not be null");
 		}
 		BgzfInputStream in=null;
 		
 		try{
-			in = new BgzfInputStream(bamFile);
+			in = new BgzfInputStream(bamFile);			
 			
-			verifyMagicNumber(in);
-			
-			SamHeaderBuilder headerBuilder = parseHeader(new TextLineParser(IOUtil.toInputStream(readPascalString(in))));
-			String[] refNames = parseReferenceNamesAndAddToHeader(in, headerBuilder);
-			SamHeader header = headerBuilder.build();
-			AtomicBoolean keepParsing = new AtomicBoolean(true);
-
-			visitor.visitHeader(new BamCallback(keepParsing), header);
-			try{
-				VirtualFileOffset start = in.getCurrentVirutalFileOffset();
-				while(keepParsing.get() && in.hasMoreData()){	
-					
-					SamRecord record = parseNextSamRecord(in, refNames, header);
-					
-					VirtualFileOffset end = in.getCurrentVirutalFileOffset();
-					
-					visitor.visitRecord(new BamCallback(keepParsing, start), 
-										record, start,end);
-					//update start to be old end
-					start = end;
-				}
-			}catch(EOFException e){
-				//ignore, we can't tell if we've hit
-				//EOF until after we hit it otherwise
-				//we will mess up the offset computations
-			}
-			if(keepParsing.get()){
-				visitor.visitEnd();
-			}else{
-				visitor.halted();
-			}
+			parseBamFromBeginning(visitor, filter, (vfs)->true, in);
 		}finally{
 			IOUtil.closeAndIgnoreErrors(in);
+		}
+	}
+	
+	protected void parseBamFromBeginning(SamVisitor visitor, Predicate<SamRecord> filter, Predicate<VirtualFileOffset> keepParsingPredicate, BgzfInputStream in) throws IOException {
+		verifyMagicNumber(in);
+		//have to keep parsing header again for now
+		//since it updates the file pointer in our bgzf stream
+		//probably not worth seeking/skipping for now...
+		//TODO should we replace with skip using virtualOffset?
+		SamHeaderBuilder headerBuilder = parseHeader(new TextLineParser(IOUtil.toInputStream(readPascalString(in))));
+		
+		parseReferenceNamesAndAddToHeader(in, headerBuilder);
+		
+		parseBamRecords(visitor, filter, (vfs)->true, in);
+	}
+	
+	protected void parseBamRecords(SamVisitor visitor, Predicate<SamRecord> filter, Predicate<VirtualFileOffset> keepParsingPredicate, BgzfInputStream in) throws IOException {
+		AtomicBoolean keepParsing = new AtomicBoolean(true);
+
+		visitor.visitHeader(new BamCallback(keepParsing), header);
+		boolean canceledByPredicate=false;
+		long readConter=0;
+		try{
+			VirtualFileOffset start = in.getCurrentVirutalFileOffset();
+			while(keepParsing.get() && in.hasMoreData()){	
+				readConter++;
+				SamRecord record = parseNextSamRecord(in, refNames, header);
+				
+				VirtualFileOffset end = in.getCurrentVirutalFileOffset();
+				if(keepParsingPredicate.test(start)){
+					if(filter.test(record)){
+						visitor.visitRecord(new BamCallback(keepParsing, start), 
+										record, start,end);
+					}
+				}else{
+					keepParsing.set(false);
+					canceledByPredicate=true;
+				}
+				
+				//update start to be old end
+				start = end;
+			}
+		}catch(EOFException e){
+			//ignore, we can't tell if we've hit
+			//EOF until after we hit it otherwise
+			//we will mess up the offset computations
+		}
+		if(canceledByPredicate || keepParsing.get()){
+			visitor.visitEnd();
+		}else{
+			visitor.halted();
 		}
 	}
 	
@@ -173,6 +228,9 @@ final class BamFileParser extends AbstractSamFileParser {
 		
 		int nextRefId = getSignedInt(in);
 		if(nextRefId >=0){
+			if(nextRefId == 1294){
+				System.out.println("here");
+			}
 			builder.setNextReferenceName(refNames[nextRefId]);
 		}
 		//NOTE bam is 0-based while
@@ -387,6 +445,9 @@ final class BamFileParser extends AbstractSamFileParser {
 		return readNullTerminatedString(in, length);
 	}
 	private String readNullTerminatedString(InputStream in, int lengthIncludingNull) throws IOException {
+		if(lengthIncludingNull ==0){
+			return "";
+		}
 		//TODO spec says char[] does
 		//but looks like ASCII bytes so 1 byte per char?
 		byte[] data = new byte[lengthIncludingNull];

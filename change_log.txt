@@ -112,7 +112,8 @@ New Features
 	compressed files either could only be parsed a single time via
 	InputStream constructors.
 	
-13.  Minor performance improvements of parsing BAM files.
+13. Performance improvements of parsing BAM files including now using the BAM index if present 
+    to help skip over unnecessary parts of the file.
 
 14. AceFileParser - more lenient Consensus Tag timestamp parsers to support CLC Workbench ace output
     which doesn't follow the ace file spec regarding timestamp resolution.
@@ -181,6 +182,27 @@ API Changes
     Previously start and end would never be null but only called when visiting BAM files.  This lead to a lot 
     of confusion and duplicated code when dealing with both SAM and BAM files.
 
+16. Added new method to the SamParser API void accept(String referenceName, SamVisitor visitor)
+    which will only visit the SamRecords in the file that map to the given reference.  Sorted Bam parser implementations
+    can use the bam index if available to quickly seek right to the part of the bam file where the alignments for the 
+    specified reference are stored.
+    
+17. Added new method to the SamParser API void accept(String referenceName, Range alignmentRange, SamVisitor visitor)
+    which will only visit the SamRecords in the file that map to the given reference and the alignment intersect the 
+    given alignmentRange.  Sorted Bam parser implementations can use the bam index if available to quickly seek right
+    to the parts of the bam file where the alignments for the specified reference are stored.
+    
+18. Added new factory methods to SamParserFactory: createFromBamIndex(File bam, File bamIndex) and 
+    createFromBamIndex(File bam, File bamIndex, SamAttributeValidator validator) that use a more efficient
+    bam parser that uses the provided index file to randomly access alignment information.
+    
+19. Changed SamParserFactory.create(File) to have additional checks to see if the given file
+    is a coordinate sorted BAM file, and if it is, check to see if it also has a corresponding BAI
+    file and if it does, then use the new parser implementation that uses the index as if
+    createFromBamIndex(File bam, File bamIndex) was called.
+    
+20.  Added new helper method SamRecord.getAlignmentRange()
+  
 Bug Fixes
 ----------
 1. Generate 454 Universal Accession number did not
@@ -191,6 +213,8 @@ Bug Fixes
    
 3. Bug Fix in SAM and BAM header writer which incorrectly wrote out the URI path to the reference file to be the md5 value
    instead of the actual path.
+   
+4. Bug Fix in SAM and BAM parser which would crash if the header was not present.
 
 ================
 Jillion 4.2
