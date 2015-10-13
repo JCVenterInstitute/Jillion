@@ -37,6 +37,7 @@ import java.util.zip.InflaterInputStream;
 import java.util.zip.ZipException;
 
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
 
 /**
  * {@code BgzfInputStream} is an {@link InputStream} implementation
@@ -124,16 +125,62 @@ class BgzfInputStream extends InflaterInputStream {
     
     private int currentBlockSize;
 
-
+    /**
+     * Creates a new {@link BgzfInputStream} with a default buffer size.
+     * 
+     * @param bam The bam file to parse.
+     *
+     * @throws ZipException if a GZIP format error has occurred or the
+     *                         compression method used is unsupported
+     * @throws IOException if an I/O error has occurred
+     * 
+     * @since 5.0
+     */
+    public static BgzfInputStream create(File bamFile) throws IOException{
+    	return new BgzfInputStream(bamFile);
+    }
+    /**
+     * Creates a new {@link BgzfInputStream} starting
+     * from the given {@link VirtualFileOffset}.
+     * 
+     * @param bam The bam file to parse.
+     * @param vfs the {@link VirtualFileOffset} to use to seek to before reading
+     *any bytes from the stream; can not be null.
+     *
+     * @throws ZipException if a GZIP format error has occurred or the
+     *                         compression method used is unsupported
+     *@throw IOException if an I/O error has occurred.
+     * 
+     * @throws NullPointerException if either parameter is null.
+     * 
+     * @since 5.0
+     */
+    public static BgzfInputStream create(File bamFile, VirtualFileOffset vfs) throws IOException{
+    	long compressedBamBlockOffset = vfs.getCompressedBamBlockOffset();
+    	InputStream in;
+    	if(compressedBamBlockOffset>0){
+    		in = new RandomAccessFileInputStream(bamFile, compressedBamBlockOffset);
+    	}else{
+    		in = new BufferedInputStream(new FileInputStream(bamFile));
+    	}
+		
+    	BgzfInputStream bgzfStream = new BgzfInputStream(in);
+    	
+    	IOUtil.blockingSkip(bgzfStream, vfs.getUncompressedOffset());
+    	
+    	return bgzfStream;
+    	
+    }
+    
     /**
      * Creates a new input stream with the specified buffer size.
      * @param in the input stream
      * @param size the input buffer size
      *
-     * @exception ZipException if a GZIP format error has occurred or the
+     * @throws ZipException if a GZIP format error has occurred or the
      *                         compression method used is unsupported
-     * @exception IOException if an I/O error has occurred
-     * @exception IllegalArgumentException if size is <= 0
+     * @throws IOException if an I/O error has occurred
+     * @throws IllegalArgumentException if size is <= 0
      */
     private BgzfInputStream(InputStream in, int size) throws IOException {
         super(in, new Inflater(true), size);
@@ -142,22 +189,25 @@ class BgzfInputStream extends InflaterInputStream {
 
     /**
      * Creates a new input stream with a default buffer size.
-     * @param in the input stream
+     * 
+     * @param bam The bam file to parse.
      *
-     * @exception ZipException if a GZIP format error has occurred or the
+     * @throws ZipException if a GZIP format error has occurred or the
      *                         compression method used is unsupported
-     * @exception IOException if an I/O error has occurred
+     * @throws IOException if an I/O error has occurred
      */
     public BgzfInputStream(File bam) throws IOException {
         this(new BufferedInputStream(new FileInputStream(bam),BUFFER_SIZE));
     }
+    
+    
     /**
      * Creates a new input stream with a default buffer size.
      * @param in the input stream
      *
-     * @exception ZipException if a GZIP format error has occurred or the
+     * @throws ZipException if a GZIP format error has occurred or the
      *                         compression method used is unsupported
-     * @exception IOException if an I/O error has occurred
+     * @throws IOException if an I/O error has occurred
      */
     private BgzfInputStream(InputStream in) throws IOException {
         this(in, BUFFER_SIZE);
@@ -173,12 +223,12 @@ class BgzfInputStream extends InflaterInputStream {
      * @return  the actual number of bytes read, or -1 if the end of the
      *          compressed input stream is reached
      *
-     * @exception  NullPointerException If <code>buf</code> is <code>null</code>.
-     * @exception  IndexOutOfBoundsException If <code>off</code> is negative,
+     * @throws  NullPointerException If <code>buf</code> is <code>null</code>.
+     * @throws  IndexOutOfBoundsException If <code>off</code> is negative,
      * <code>len</code> is negative, or <code>len</code> is greater than
      * <code>buf.length - off</code>
-     * @exception ZipException if the compressed input data is corrupt.
-     * @exception IOException if an I/O error has occurred.
+     * @throws ZipException if the compressed input data is corrupt.
+     * @throws IOException if an I/O error has occurred.
      *
      */
     public int read(byte[] buf, int off, int len) throws IOException {

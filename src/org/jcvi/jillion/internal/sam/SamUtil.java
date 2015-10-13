@@ -34,6 +34,8 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Objects;
+import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -658,6 +660,32 @@ public final class SamUtil {
 			return full.parse(source, pos);
 
 		}
+	}
+	
+	
+	public static Predicate<SamRecord> alignsToReference(String referenceName){
+		Objects.requireNonNull(referenceName, "reference name can not be null");
+		return (record) -> referenceName.equals(record.getReferenceName());
+	}
+	
+	public static Predicate<SamRecord> alignsToReference(String referenceName, Range alignmentRegionOfInterest){
+		Objects.requireNonNull(referenceName, "reference name can not be null");
+		Objects.requireNonNull(alignmentRegionOfInterest, "alignment range can not be null");
+		
+		
+		
+		return (record) -> {
+			if(referenceName.equals(record.getReferenceName())){
+				
+					//check alignment range
+					Range recordRange = new Range.Builder(record.getCigar().getNumberOfReferenceBasesAligned())
+													.shift(record.getStartPosition() -1)
+													.build();
+					return alignmentRegionOfInterest.intersects(recordRange);
+			}
+			return false;
+			
+		};
 	}
 	
 }

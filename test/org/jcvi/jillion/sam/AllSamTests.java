@@ -51,7 +51,9 @@ import org.junit.runners.Suite.SuiteClasses;
     	
     	AllBamIndexTests.class,
     	
-    	AllSamTransformationServiceTests.class
+    	AllSamTransformationServiceTests.class,
+    	
+    	TestBamParserImplementations.class
     }
     )
 public class AllSamTests {

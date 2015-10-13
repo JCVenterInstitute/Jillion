@@ -154,6 +154,24 @@ public final class BamIndex {
 		return indexes.get(i);
 	}
 	/**
+	 * Get the Integer offset for this Reference by its name
+	 * as determined by {@link ReferenceSequence#getName()}.
+	 * This return value can then be used in {@link #getReferenceIndex(int)}.
+	 * 
+	 * @param refName the refName to get, can not be null;
+	 * @return an {@link Integer} or {@code null}
+	 * if there is no {@link ReferenceIndex} with that name.
+	 * @throws NullPointerException if refName is null.
+	 */
+	public Integer getReferenceIndexOffset(String refName){
+		if(refName ==null){
+			throw new NullPointerException("refName can not be null");
+		}
+			
+		return indexOfRefNames.get(refName);
+	}
+	
+	/**
 	 * Get the number of {@link ReferenceIndex}es 
 	 * in this bam index.
 	 * @return an int >=0.
@@ -170,11 +188,8 @@ public final class BamIndex {
 	 * @throws NullPointerException if refName is null.
 	 */
 	public ReferenceIndex getReferenceIndex(String refName){
-		if(refName ==null){
-			throw new NullPointerException("refName can not be null");
-		}
 			
-		Integer i = indexOfRefNames.get(refName);
+		Integer i = getReferenceIndexOffset(refName);
 		if(i==null){
 			return null;
 		}

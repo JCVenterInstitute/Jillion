@@ -20,16 +20,15 @@
  ******************************************************************************/
 package org.jcvi.jillion.sam.index;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.jillion.core.io.IOUtil;
@@ -37,11 +36,11 @@ import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.internal.sam.index.IndexUtil;
 import org.jcvi.jillion.sam.AbstractSamVisitor;
+import org.jcvi.jillion.sam.ReplayableMockSamVisitor;
 import org.jcvi.jillion.sam.SamFileWriterBuilder;
 import org.jcvi.jillion.sam.SamParser;
 import org.jcvi.jillion.sam.SamParserFactory;
 import org.jcvi.jillion.sam.SamRecord;
-import org.jcvi.jillion.sam.SamVisitor;
 import org.jcvi.jillion.sam.SamWriter;
 import org.jcvi.jillion.sam.SortOrder;
 import org.jcvi.jillion.sam.VirtualFileOffset;
@@ -172,7 +171,7 @@ public class TestBamIndexWriter {
 		SamParser expectedParser = SamParserFactory.create(expected);
 		SamParser actualParser = SamParserFactory.create(actual);
 		
-		SamFileMatcher matcher = new SamFileMatcher(checkHeader);
+		ReplayableMockSamVisitor matcher = new ReplayableMockSamVisitor(checkHeader);
 		expectedParser.accept(matcher);
 		actualParser.accept(matcher);
 		
@@ -220,14 +219,6 @@ public class TestBamIndexWriter {
 
 			
 			writeAllRecords(bamFile, writer);
-			/*
-			File actualBai = createIndex(incorrectlySortedFile, SortOrder.COORDINATE);
-			
-			BamIndex expectedIndex = BamIndex.createFromFiles(bamFile, expectedBai);
-			
-			BamIndex actualIndex = BamIndex.createFromFiles(newBam, actualBai);
-			BamIndexTestUtil.assertIndexesEqual(expectedIndex, actualIndex, true);
-		*/
 			assertSamFilesMatch(false, bamFile, incorrectlySortedFile);
 		
 	}
@@ -308,73 +299,5 @@ public class TestBamIndexWriter {
 						});
 		
 		return singleHeaderBuilder[0];
-	}
-	
-	
-	private static class SamFileMatcher implements SamVisitor{
-		private boolean expectationMode=true;
-		private Iterator<SamRecord> expectedIterator;
-		
-		private final List<SamRecord> expected = new ArrayList<SamRecord>();
-
-		private SamHeader expectedHeader;
-		
-		
-		private final boolean checkHeaderMatches;
-		
-	
-		public SamFileMatcher(boolean checkHeaderMatches){
-			this.checkHeaderMatches = checkHeaderMatches;
-		}
-		
-		@Override
-		public void visitHeader(SamVisitorCallback callback, SamHeader header) {
-			if(checkHeaderMatches){
-				if(expectationMode){
-					expectedHeader = header;
-				}else{
-					assertEquals(expectedHeader, header);
-				}
-			}
-			
-		}
-
-		
-
-		@Override
-		public void visitRecord(SamVisitorCallback callback, SamRecord record,
-				VirtualFileOffset start, VirtualFileOffset end) {
-			if(expectationMode){
-				expected.add(record);
-			}else{
-				assertTrue(expectedIterator.hasNext());
-				assertEquals(expectedIterator.next(), record);
-			}
-		}
-
-		@Override
-		public void visitEnd() {
-			if(expectationMode){
-				changeToReplayMode();
-			}else{
-				assertFalse(expectedIterator.hasNext());
-			}
-		}
-
-		private void changeToReplayMode() {
-			expectationMode=false;
-			expectedIterator = expected.iterator();
-		}
-
-		@Override
-		public void halted() {
-			if(expectationMode){
-				changeToReplayMode();
-			}else{
-				assertFalse(expectedIterator.hasNext());
-			}
-		}
-		
-		
 	}
 }
