@@ -23,6 +23,7 @@ package org.jcvi.jillion.sam;
 import java.io.IOException;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.sam.SamVisitor.SamVisitorCallback.SamVisitorMemento;
 import org.jcvi.jillion.sam.header.SamHeader;
 /**
  * {@code SamParser}
@@ -50,6 +51,22 @@ public interface SamParser {
 	 * @throws NullPointerException if visitor is null.
 	 */
 	void accept(SamVisitor visitor) throws IOException;
+	
+	/**
+	 * Parse the Sam or Bam file and <strong>
+	 * starting from the offset of the provided memento</strong>
+	 * and call the appropriate visit methods
+	 * on the given {@link SamVisitor}.
+	 * 
+	 * @param visitor the {@link SamVisitor}
+	 * to call the visit methods on;
+	 * can not be null.
+	 * @throws IOException if there is a problem parsing the sam or bam file.
+	 * @throws NullPointerException if either parameter is null.
+	 * @throws IllegalArgumentException if the memento is invalid for this
+	 * {@link SamParser} instance (wrong file, wrong parser implementation etc).
+	 */
+	void accept(SamVisitor visitor, SamVisitorMemento memento) throws IOException;
 	/**
 	 * Parse the Sam or Bam file and 
 	 * and but only visit the {@link SamRecord}s

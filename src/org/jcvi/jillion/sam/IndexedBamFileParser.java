@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.Range;
@@ -57,10 +58,12 @@ class IndexedBamFileParser extends BamFileParser{
 						in);
 			}else{
 				//assume anything in this interval matches?
+				AtomicBoolean keepParsing = new AtomicBoolean(true);
 				this.parseBamRecords(visitor, 
 						recordMatchPredicate,
 						endPredicate,
-						in);
+						in,
+						keepParsing);
 			}
 		}
 	}
@@ -96,10 +99,12 @@ class IndexedBamFileParser extends BamFileParser{
 		
 		try(BgzfInputStream in = BgzfInputStream.create(bamFile, start)){
 			//assume anything in this interval matches?
+			AtomicBoolean keepParsing = new AtomicBoolean(true);
 			this.parseBamRecords(visitor, 
 					recordBinFilter,
 					(vfs)-> vfs.compareTo(end) <=0,
-					in);
+					in,
+					keepParsing);
 		}
 	}
 

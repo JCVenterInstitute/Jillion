@@ -1,5 +1,7 @@
 package org.jcvi.jillion.sam;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Arrays;
@@ -10,6 +12,7 @@ import java.util.function.Supplier;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.testUtil.SlowTests;
 import org.jcvi.jillion.internal.ResourceHelper;
+import org.jcvi.jillion.sam.SamVisitor.SamVisitorCallback.SamVisitorMemento;
 import org.jcvi.jillion.sam.header.SamHeader;
 import org.jcvi.jillion.sam.header.SamReferenceSequence;
 import org.junit.Test;
@@ -17,7 +20,6 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
 @Category(SlowTests.class)
 @RunWith(Parameterized.class)
 public class TestBamParserImplementations {
@@ -77,11 +79,96 @@ public class TestBamParserImplementations {
 	}
 	
 	@Test
+	public void canAccept(){
+		assertTrue(actualParser.canAccept());
+	}
+	
+	@Test(expected = NullPointerException.class)
+	public void nullVisitorShouldThrowNPE() throws IOException{
+		actualParser.accept(null);
+	}
+	
+	
+	
+	@Test (expected = IllegalArgumentException.class)
+	public void tryToParseUnknownReferenceShouldThrowIllegalArgException() throws IOException{
+		actualParser.accept("fake", new AbstractSamVisitor() {
+		});
+	}
+	@Test
 	public void fromAll() throws IOException{
 		ReplayableMockSamVisitor mock = new ReplayableMockSamVisitor(true);
 		FULL_BAM_PARSER.accept(mock);
 		
 		actualParser.accept(mock);
+	}
+	
+	@Test
+	public void useMementoToStartFromBeginning() throws IOException{
+		ReplayableMockSamVisitor mock = new ReplayableMockSamVisitor(true);
+		SamVisitorMemento[] memento = new SamVisitorMemento[1];
+		//have to use actual parser both for expectations and replay
+		//because memento has to be the same instance
+		actualParser.accept(new WrappedVisitor(mock){
+
+			@Override
+			public void visitHeader(SamVisitorCallback callback, SamHeader header) {
+				assertTrue(callback.canCreateMemento());
+				memento[0] = callback.createMemento();
+				super.visitHeader(callback, header);
+			}
+
+			@Override
+			protected boolean accept(SamRecord record) {
+				return true;
+			}
+
+			
+			
+		});
+		
+		actualParser.accept(mock, memento[0]);
+	}
+	
+	@Test
+	public void useMementoToStartFrom10000thRecord() throws IOException{
+		ReplayableMockSamVisitor mock = new ReplayableMockSamVisitor(true);
+		SamVisitorMemento[] memento = new SamVisitorMemento[1];
+		//have to use actual parser both for expectations and replay
+		//because memento has to be the same instance
+		actualParser.accept(new WrappedVisitor(mock){
+			private int recordCounter=0;
+			
+			@Override
+			public void visitHeader(SamVisitorCallback callback, SamHeader header) {
+				//don't record header because we won't see it on replay
+				//since we start from middle?
+			}
+
+			@Override
+			protected boolean accept(SamRecord record) {
+				//anything that gets this far should be counted
+				return true;
+			}
+
+			@Override
+			public void visitRecord(SamVisitorCallback callback, SamRecord record, VirtualFileOffset start,
+					VirtualFileOffset end) {
+				recordCounter++;
+				if(recordCounter ==10_000){
+					memento[0] = callback.createMemento();
+				}
+				if(recordCounter >= 10_000){
+					super.visitRecord(callback, record, start, end);
+				}
+				
+			}
+			
+			
+			
+		});
+		
+		actualParser.accept(mock, memento[0]);
 	}
 	
 	@Test
