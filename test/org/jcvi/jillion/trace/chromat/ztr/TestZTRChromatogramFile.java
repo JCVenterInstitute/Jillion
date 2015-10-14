@@ -39,11 +39,11 @@ public class TestZTRChromatogramFile {
     private static final ResourceHelper RESOURCES = new ResourceHelper(TestZTRChromatogramFile.class);
     private static final ZTRChromatogramImpl EXPECTED_ZTR;
     static{
-        try {
-            EXPECTED_ZTR= (ZTRChromatogramImpl)ChromatogramXMLSerializer.fromXML(RESOURCES.getFileAsStream("files/GBKAK82TF.ztr.xml"));
-        } catch (IOException e) {
-            throw new IllegalStateException("could not parse expected chromatogram",e);
-        }
+        
+         EXPECTED_ZTR= (ZTRChromatogramImpl)ChromatogramXMLSerializer.fromXML(RESOURCES.getFileAsStream("files/GBKAK82TF.ztr.xml"));
+         if(EXPECTED_ZTR ==null){
+        	 throw new IllegalStateException("could not find expected chromatogram");
+         }
     }
     
     @Test
