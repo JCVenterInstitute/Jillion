@@ -30,12 +30,10 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.getCurrentArguments;
 import static org.easymock.EasyMock.isA;
 
-import java.beans.PropertyChangeEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 
-import org.easymock.EasyMock;
 import org.easymock.IAnswer;
 import org.jcvi.jillion.core.io.IOUtil;
 
@@ -52,26 +50,6 @@ public final class EasyMockUtil {
 	private EasyMockUtil(){
 		//can not instantiate
 	}
-    /**
-     * Argument matcher for EasyMock to allow easyMock to
-     * correctly expect {@link Throwable}s.
-     * example usage:
-     * <code>
-     *
-     * </code>
-     * @param <T>
-     * @param in
-     * @return
-     */
-    public static <T extends Throwable> T eqException(T in) {
-        EasyMock.reportMatcher(new ThrowableEquals(in));
-        return null;
-    }
-
-    public static <T extends PropertyChangeEvent> T  eqPropertyChangeEvent(T in) {
-        EasyMock.reportMatcher(new PropertyChangeEventEquals(in));
-        return null;
-    }
     /**
      * Writes the given array to the inputstream specified by the first argument
      * of the Mocked call.
@@ -125,10 +103,6 @@ public final class EasyMockUtil {
     public static void putInt(InputStream mockInputStream, int value) throws IOException{
         putNumber(mockInputStream, value, 8);
     }
-    public static void putLong(InputStream mockInputStream, long value) throws IOException{
-        //for some reason inputStream reads longs as an array
-        putNumberAsArray(mockInputStream, value, 16);
-    }
 
     private static void putNumber(InputStream mockInputStream, long value,
             int maxNumberOfHexChars) throws IOException {
@@ -139,18 +113,7 @@ public final class EasyMockUtil {
         }
 
     }
-    private static void putNumberAsArray(InputStream mockInputStream, long value,
-            int maxNumberOfHexChars) throws IOException {
-        String asHex = convertToPaddedHex(value, maxNumberOfHexChars);
-        byte[] array = new byte[maxNumberOfHexChars/2];
-        for(int i= 0; i<maxNumberOfHexChars; i+=2){
-            String byteInHex = asHex.substring(i, i+2);
-            array[i/2] = Integer.valueOf(byteInHex, 16).byteValue();
-        }
-        expect(mockInputStream.read(isA(byte[].class), eq(0), eq(maxNumberOfHexChars/2)))
-            .andAnswer(writeArrayToInputStream(array));
-
-    }
+   
 
     private static String convertToPaddedHex(long value, int maxNumberOfHexChars) {
         String hexString =Long.toHexString(value);
