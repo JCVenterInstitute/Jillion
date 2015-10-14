@@ -202,6 +202,9 @@ API Changes
     createFromBamIndex(File bam, File bamIndex) was called.
     
 20.  Added new helper method SamRecord.getAlignmentRange()
+
+21.  Added support for SamVisitor Memento support with new SamParser.accept(visitor, SamVisitorMemento) method.
+     Previously you could create mementos but couldn't use them.
   
 Bug Fixes
 ----------
