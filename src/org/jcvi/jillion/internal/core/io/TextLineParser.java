@@ -21,7 +21,6 @@
 package org.jcvi.jillion.internal.core.io;
 
 import java.io.BufferedInputStream;
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -104,6 +103,12 @@ public final class TextLineParser implements LineParser{
 	public TextLineParser(File f) throws IOException{
 		this(new BufferedInputStream(new FileInputStream(f)));
 	}
+	public TextLineParser(File samFile, long initialPosition) throws IOException {
+		
+		this.position = initialPosition;
+		this.in = new RandomAccessFileInputStream(samFile, initialPosition);
+		getNextLine();
+	}
 	public TextLineParser(InputStream in) throws IOException{
 		this(in, 0L);
 	}
@@ -119,6 +124,7 @@ public final class TextLineParser implements LineParser{
 		this.in = in;
 		getNextLine();
 	}
+	
 	
 	private void getNextLine() throws IOException{
 		if(doneFile){

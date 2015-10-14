@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteOrder;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
@@ -63,7 +64,7 @@ import org.jcvi.jillion.sam.header.SamReferenceSequenceBuilder;
 class BamFileParser extends AbstractSamFileParser {
 
 	
-	
+	private static final VirtualFileOffset BEGINNING_OF_FILE = new VirtualFileOffset(0);
 	protected final File bamFile;
 	protected final SamAttributeValidator validator;
 	protected final String[] refNames;
@@ -113,18 +114,59 @@ class BamFileParser extends AbstractSamFileParser {
 		return true;
 	}
 	
+	
+	private void verifyReferenceInHeader(String referenceName){
+		Objects.requireNonNull(referenceName);
+		if(header.getReferenceSequence(referenceName) == null){
+			throw new IllegalArgumentException("no reference with name '"+ referenceName +"' contained in Bam file");
+		}
+	}
+	
 	@Override
 	public void accept(String referenceName, SamVisitor visitor) throws IOException {
+		verifyReferenceInHeader(referenceName);
 		accept(visitor, SamUtil.alignsToReference(referenceName));		
 	}
 	@Override
 	public void accept(String referenceName, Range alignmentRange, SamVisitor visitor) throws IOException {
+		verifyReferenceInHeader(referenceName);
 		accept(visitor, SamUtil.alignsToReference(referenceName, alignmentRange));		
 	}
 	
 	@Override
 	public void accept(SamVisitor visitor) throws IOException {
 		accept(visitor, (record)->true);
+	}
+	
+	@Override
+	public void accept(SamVisitor visitor, SamVisitorMemento memento) throws IOException {
+		Objects.requireNonNull(visitor);
+		Objects.requireNonNull(memento);
+		
+		if( !(memento instanceof BamFileMemento)){
+			throw new IllegalArgumentException("memento must be for bam file");
+		}
+		BamFileMemento bamMemento = (BamFileMemento)memento;
+		if(this != bamMemento.parserInstance){
+			throw new IllegalArgumentException("memento must be for this exact bam parser instance");
+		}
+		
+		if(bamMemento.encodedFileOffset ==0){
+			//start from beginning
+			accept(visitor);
+			return;
+		}
+		
+		VirtualFileOffset vfs = new VirtualFileOffset(bamMemento.encodedFileOffset);
+		
+		
+		
+		try(BgzfInputStream in = BgzfInputStream.create(bamFile, vfs)){
+			AtomicBoolean keepParsing = new AtomicBoolean(true);
+
+			parseBamRecords(visitor, (record)->true, (v)->true, in, keepParsing);
+		}
+		
 	}
 	
 	
@@ -149,24 +191,23 @@ class BamFileParser extends AbstractSamFileParser {
 		//have to keep parsing header again for now
 		//since it updates the file pointer in our bgzf stream
 		//probably not worth seeking/skipping for now...
-		//TODO should we replace with skip using virtualOffset?
 		SamHeaderBuilder headerBuilder = parseHeader(new TextLineParser(IOUtil.toInputStream(readPascalString(in))));
 		
 		parseReferenceNamesAndAddToHeader(in, headerBuilder);
-		
-		parseBamRecords(visitor, filter, (vfs)->true, in);
-	}
-	
-	protected void parseBamRecords(SamVisitor visitor, Predicate<SamRecord> filter, Predicate<VirtualFileOffset> keepParsingPredicate, BgzfInputStream in) throws IOException {
 		AtomicBoolean keepParsing = new AtomicBoolean(true);
 
 		visitor.visitHeader(new BamCallback(keepParsing), header);
+		
+		parseBamRecords(visitor, filter, (vfs)->true, in, keepParsing);
+	}
+	
+	protected void parseBamRecords(SamVisitor visitor, Predicate<SamRecord> filter, Predicate<VirtualFileOffset> keepParsingPredicate, BgzfInputStream in, AtomicBoolean keepParsing) throws IOException {
+		
 		boolean canceledByPredicate=false;
-		long readConter=0;
+		
 		try{
 			VirtualFileOffset start = in.getCurrentVirutalFileOffset();
 			while(keepParsing.get() && in.hasMoreData()){	
-				readConter++;
 				SamRecord record = parseNextSamRecord(in, refNames, header);
 				
 				VirtualFileOffset end = in.getCurrentVirutalFileOffset();
@@ -228,9 +269,6 @@ class BamFileParser extends AbstractSamFileParser {
 		
 		int nextRefId = getSignedInt(in);
 		if(nextRefId >=0){
-			if(nextRefId == 1294){
-				System.out.println("here");
-			}
 			builder.setNextReferenceName(refNames[nextRefId]);
 		}
 		//NOTE bam is 0-based while
@@ -462,7 +500,7 @@ class BamFileParser extends AbstractSamFileParser {
 		private final long encodedFileOffset;
 		
 		public BamCallback(AtomicBoolean keepParsing){
-			this(keepParsing, VirtualFileOffset.create(0, 0));
+			this(keepParsing,BEGINNING_OF_FILE);
 		}
 		public BamCallback(AtomicBoolean keepParsing, VirtualFileOffset currentPosition) {
 			super(keepParsing);

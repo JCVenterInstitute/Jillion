@@ -23,6 +23,7 @@ package org.jcvi.jillion.sam;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -88,6 +89,54 @@ final class SamFileParser extends AbstractSamFileParser{
 	}
 
 	
+	@Override
+	public void accept(SamVisitor visitor, SamVisitorMemento memento) throws IOException {
+		Objects.requireNonNull(visitor);
+		Objects.requireNonNull(memento);
+		
+		if( !(memento instanceof SamFileMemento)){
+			throw new IllegalArgumentException("memento must be for sam files");
+		}
+		SamFileMemento samMemento = (SamFileMemento) memento;
+		if(this != samMemento.parserInstance){
+			throw new IllegalArgumentException("memento must be for this SamParser instance");
+		}
+		if(samMemento.position ==0){
+			//start at the beginning including header?
+			accept(visitor);
+			return;
+		}
+		TextLineParser parser=null;
+		try{
+			parser = new TextLineParser(samFile, samMemento.position);
+			
+			AtomicBoolean keepParsing = new AtomicBoolean(true);
+			
+			SamCallback callback = new SamCallback(keepParsing, parser.getPosition());
+			SamHeader header = parseHeader(parser).build();
+			visitor.visitHeader(callback, header);
+			while(keepParsing.get() && parser.hasNextLine()){
+				callback = new SamCallback(keepParsing, parser.getPosition());
+				String line = parser.nextLine().trim();
+				if(line.isEmpty()){
+					//skip blanks?
+					continue;
+				}			
+				SamRecord record = parseRecord(header, line);
+				
+				visitor.visitRecord(callback, record, null, null);
+				
+			}
+			if(keepParsing.get()){
+				visitor.visitEnd();
+			}else{
+				visitor.halted();
+			}
+		}finally{
+			IOUtil.closeAndIgnoreErrors(parser);
+		}
+		
+	}
 	@Override
 	public void accept(String referenceName, SamVisitor visitor) throws IOException {
 		accept(visitor, SamUtil.alignsToReference(referenceName));		
