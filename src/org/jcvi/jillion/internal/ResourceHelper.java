@@ -51,10 +51,16 @@ public class ResourceHelper{
     }
    
   
+    /**
+     * Get the File associated with the given path
+     * @param relativePath the path to the file to get relative to the base class
+     * of this Helper object.
+     * @return a {@link File} if it exists, or {@code null} otherwise.
+     * @throws IOException if there is a problem decoding the path into a File object.
+     */
+    public File getFile(String relativePath) throws IOException{
 
-    public File getFile(String fileId) throws IOException {
-
-			URL url = clazz.getResource(fileId);
+			URL url = clazz.getResource(relativePath);
 			
 			if(url==null){
 				return null;
@@ -62,14 +68,20 @@ public class ResourceHelper{
 			return new File(urlDecode(url.getFile()));
         
     }
-
-    public InputStream getFileAsStream(String fileId) throws IOException {
-        return clazz.getResourceAsStream(fileId);
+    /**
+     * Get the InputStream associated with the given path.
+     * @param relativePath the path to the file to get relative to the base class
+     * of this Helper object.
+     * @return an {@link InputStream} if it exists, or {@code null} otherwise.
+     * 
+     */
+    public InputStream getFileAsStream(String relativePath) {
+        return clazz.getResourceAsStream(relativePath);
     }
 
     /**
      * Replace any URL encoding in the file path with the UTF-8 equivalent.
-     * This is needed so paths like in Windows "{@code Docuements%20and%20Settings}"
+     * This is needed so paths like in Windows "{@code Documents%20and%20Settings}"
      * becomes "Documents and Settings"
      * @param path
      * @return
