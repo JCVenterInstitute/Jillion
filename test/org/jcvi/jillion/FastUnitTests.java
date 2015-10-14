@@ -27,6 +27,7 @@ package org.jcvi.jillion;
 
 import org.jcvi.jillion.assembly.AllAssemblyUnitTests;
 import org.jcvi.jillion.core.AllCoreUnitTests;
+import org.jcvi.jillion.core.testUtil.SlowTests;
 import org.jcvi.jillion.experimental.AllExperimentalTests;
 import org.jcvi.jillion.fasta.AllFastaUnitTests;
 import org.jcvi.jillion.maq.AllMaqTests;
@@ -35,18 +36,18 @@ import org.jcvi.jillion.sam.AllSamTests;
 import org.jcvi.jillion.testutils.AllTestUtilsTests;
 import org.jcvi.jillion.trace.AllTraceUnitTests;
 import org.jcvi.jillion.trim.AllTrimmerUnitTests;
+import org.junit.experimental.categories.Categories;
+import org.junit.experimental.categories.Categories.ExcludeCategory;
 import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 /**
- * Run all the tests including some that take
- * a very long time to run.  May take several minutes.
- * 
+ * Run only the "fast" automated tests, mostly unit tests.
+ * This should run 11,000+ tests in a few seconds.
  * @author dkatzel
- * 
- * @see FastUnitTests
+ *
  */
-@RunWith(Suite.class)
+@RunWith(Categories.class)
+@ExcludeCategory(SlowTests.class)
 @SuiteClasses(
     {
         
@@ -65,5 +66,5 @@ import org.junit.runners.Suite.SuiteClasses;
    
     }
 )
-public class AllUnitTests {
+public class FastUnitTests {
 }
