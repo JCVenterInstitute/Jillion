@@ -245,7 +245,7 @@ public abstract class FastqFileParser implements FastqParser{
             }
         }
         //now parse the qualities
-        int expectedQualities =  (int)sequenceBuilder.length();
+        int expectedQualities =  sequenceBuilder.length();
         
         //clear builders
         sequenceBuilder.setLength(0);

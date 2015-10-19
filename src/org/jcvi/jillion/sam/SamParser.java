@@ -35,10 +35,17 @@ import org.jcvi.jillion.sam.header.SamHeader;
  */
 public interface SamParser {
 	/**
+	 * Can this handler accept new parse requests
+	 * via the various parse() methods.
 	 * 
-	 * @return
+	 * Some implementations of {@link SamParser}
+	 * may only allow one parse call in its lifetime 
+	 * (for example, if the sam structure is being parsed via
+	 * an InputStream).
+	 * @return {@code true} if this handler can handle 
+	 * new parse requests; {@code false} otherwise.
 	 */
-	boolean canAccept();
+	boolean canParse();
 	/**
 	 * Parse the Sam or Bam file and 
 	 * and call the appropriate visit methods
@@ -50,7 +57,7 @@ public interface SamParser {
 	 * @throws IOException if there is a problem parsing the sam or bam file.
 	 * @throws NullPointerException if visitor is null.
 	 */
-	void accept(SamVisitor visitor) throws IOException;
+	void parse(SamVisitor visitor) throws IOException;
 	
 	/**
 	 * Parse the Sam or Bam file and <strong>
@@ -66,7 +73,7 @@ public interface SamParser {
 	 * @throws IllegalArgumentException if the memento is invalid for this
 	 * {@link SamParser} instance (wrong file, wrong parser implementation etc).
 	 */
-	void accept(SamVisitor visitor, SamVisitorMemento memento) throws IOException;
+	void parse(SamVisitor visitor, SamVisitorMemento memento) throws IOException;
 	/**
 	 * Parse the Sam or Bam file and 
 	 * and but only visit the {@link SamRecord}s
@@ -83,7 +90,7 @@ public interface SamParser {
 	 * 
 	 * @since 5.0
 	 */
-	void accept(String referenceName, SamVisitor visitor) throws IOException;
+	void parse(String referenceName, SamVisitor visitor) throws IOException;
 	/**
 	 * Parse the Sam or Bam file and 
 	 * and but only visit the {@link SamRecord}s
@@ -106,11 +113,19 @@ public interface SamParser {
 	 * 
 	 * @since 5.0
 	 */
-	void accept(String referenceName, Range alignmentRange, SamVisitor visitor) throws IOException;
+	void parse(String referenceName, Range alignmentRange, SamVisitor visitor) throws IOException;
 	/**
 	 * Get the {@link SamHeader}
 	 * for this SAM or BAM file.
-	 * @return
+	 * 
+	 * @apiNote some SamParser implementations may cache the header
+	 * parsed from the file so this calling this method is usually preferable than
+	 * getting the header via one of the parse methods and then halting parsing.
+	 * 
+	 * @return a {@link SamHeader} object; will never be null but may be empty
+	 * if there is no header information in the sam or bam file.
+	 * 
+	 * @throws IOException if there is a problem (re)parsing the header.
 	 */
 	SamHeader getHeader() throws IOException;
 }

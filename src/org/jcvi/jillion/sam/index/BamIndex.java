@@ -66,7 +66,7 @@ public final class BamIndex {
 	 */
 	public static BamIndex createFromFiles(File bam, File bai) throws IOException{
 		SamHeaderParser headerParser = new SamHeaderParser();
-		SamParserFactory.create(bam).accept(headerParser);
+		SamParserFactory.create(bam).parse(headerParser);
 		SamHeader header = headerParser.getHeader();
 		
 		InputStream in=null;

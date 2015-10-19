@@ -89,7 +89,7 @@ public class AbstractTestSamWriter {
 
 	protected static void parseFile(File samFile, SamVisitor visitor)
 			throws IOException {
-		SamParserFactory.create(samFile).accept(visitor);
+		SamParserFactory.create(samFile).parse(visitor);
 	}
 	
 	@AfterClass

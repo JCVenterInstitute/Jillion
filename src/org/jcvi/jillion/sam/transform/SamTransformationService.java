@@ -107,7 +107,7 @@ public final class SamTransformationService implements AssemblyTransformationSer
 		}
 		try {
 			SamTransformerVisitor visitor = new SamTransformerVisitor(referenceDataStore, transformer);
-			parser.accept(visitor);
+			parser.parse(visitor);
 		} catch (Exception e) {
 			throw new IllegalStateException("error parsing sam file", e);
 		}
