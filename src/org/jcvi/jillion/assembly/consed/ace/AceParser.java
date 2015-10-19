@@ -37,7 +37,7 @@ public interface AceParser {
 	 * calls.
 	 * 
 	 * Some implementations of {@link AceParser}
-	 * may only allow one accept call in its lifetime 
+	 * may only allow one parse call in its lifetime 
 	 * (for example, if the ace structure is being parsed via
 	 * an InputStream).
 	 * @return {@code true} if this handler can handle 
