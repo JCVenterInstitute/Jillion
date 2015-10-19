@@ -258,7 +258,7 @@ abstract class AbstractSamFileParser implements SamParser{
 	
 	public SamHeader getHeader() throws IOException {
 		final SamHeader[] headerArray = new SamHeader[1];
-		this.accept(new AbstractSamVisitor() {
+		this.parse(new AbstractSamVisitor() {
 			
 			@Override
 			public void visitHeader(SamVisitorCallback callback, SamHeader header) {

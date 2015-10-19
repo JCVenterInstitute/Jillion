@@ -110,7 +110,7 @@ class BamFileParser extends AbstractSamFileParser {
 		return header;
 	}
 	@Override
-	public boolean canAccept() {
+	public boolean canParse() {
 		return true;
 	}
 	
@@ -123,23 +123,23 @@ class BamFileParser extends AbstractSamFileParser {
 	}
 	
 	@Override
-	public void accept(String referenceName, SamVisitor visitor) throws IOException {
+	public void parse(String referenceName, SamVisitor visitor) throws IOException {
 		verifyReferenceInHeader(referenceName);
 		accept(visitor, SamUtil.alignsToReference(referenceName));		
 	}
 	@Override
-	public void accept(String referenceName, Range alignmentRange, SamVisitor visitor) throws IOException {
+	public void parse(String referenceName, Range alignmentRange, SamVisitor visitor) throws IOException {
 		verifyReferenceInHeader(referenceName);
 		accept(visitor, SamUtil.alignsToReference(referenceName, alignmentRange));		
 	}
 	
 	@Override
-	public void accept(SamVisitor visitor) throws IOException {
+	public void parse(SamVisitor visitor) throws IOException {
 		accept(visitor, (record)->true);
 	}
 	
 	@Override
-	public void accept(SamVisitor visitor, SamVisitorMemento memento) throws IOException {
+	public void parse(SamVisitor visitor, SamVisitorMemento memento) throws IOException {
 		Objects.requireNonNull(visitor);
 		Objects.requireNonNull(memento);
 		
@@ -153,7 +153,7 @@ class BamFileParser extends AbstractSamFileParser {
 		
 		if(bamMemento.encodedFileOffset ==0){
 			//start from beginning
-			accept(visitor);
+			parse(visitor);
 			return;
 		}
 		

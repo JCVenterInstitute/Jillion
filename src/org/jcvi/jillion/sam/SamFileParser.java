@@ -84,13 +84,13 @@ final class SamFileParser extends AbstractSamFileParser{
 	}
 
 	@Override
-	public boolean canAccept() {
+	public boolean canParse() {
 		return true;
 	}
 
 	
 	@Override
-	public void accept(SamVisitor visitor, SamVisitorMemento memento) throws IOException {
+	public void parse(SamVisitor visitor, SamVisitorMemento memento) throws IOException {
 		Objects.requireNonNull(visitor);
 		Objects.requireNonNull(memento);
 		
@@ -103,7 +103,7 @@ final class SamFileParser extends AbstractSamFileParser{
 		}
 		if(samMemento.position ==0){
 			//start at the beginning including header?
-			accept(visitor);
+			parse(visitor);
 			return;
 		}
 		TextLineParser parser=null;
@@ -138,15 +138,15 @@ final class SamFileParser extends AbstractSamFileParser{
 		
 	}
 	@Override
-	public void accept(String referenceName, SamVisitor visitor) throws IOException {
+	public void parse(String referenceName, SamVisitor visitor) throws IOException {
 		accept(visitor, SamUtil.alignsToReference(referenceName));		
 	}
 	@Override
-	public void accept(String referenceName, Range alignmentRange, SamVisitor visitor) throws IOException {
+	public void parse(String referenceName, Range alignmentRange, SamVisitor visitor) throws IOException {
 		accept(visitor, SamUtil.alignsToReference(referenceName, alignmentRange));		
 	}
 	@Override
-	public void accept(SamVisitor visitor) throws IOException {
+	public void parse(SamVisitor visitor) throws IOException {
 		accept(visitor, (record)->true);
 	}
 	

@@ -55,7 +55,7 @@ public class TestBamIndexParser {
 
 	private BamIndex createIndexFromBam(File bam) throws IOException {
 		BamIndexSamVisitor visitor = new BamIndexSamVisitor();
-		SamParserFactory.create(bam).accept(visitor);
+		SamParserFactory.create(bam).parse(visitor);
 		return visitor.getBamIndex();
 	}
 	

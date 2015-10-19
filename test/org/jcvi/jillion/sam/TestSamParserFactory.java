@@ -70,7 +70,7 @@ public class TestSamParserFactory {
 		SamVisitor visitor = createMockVisitorWithHeaderOnlyExpectations();
 		
 		replay(visitor);
-		sut.accept(visitor);
+		sut.parse(visitor);
 		verify(visitor);
 	}
 	
@@ -81,7 +81,7 @@ public class TestSamParserFactory {
 		SamVisitor visitor = createMockVisitorWithHeaderOnlyExpectations();
 		
 		replay(visitor);
-		sut.accept(visitor);
+		sut.parse(visitor);
 		verify(visitor);
 	}
 	@Test
@@ -91,7 +91,7 @@ public class TestSamParserFactory {
 		SamVisitor visitor = createMockVisitorWithEntireFileExpectations(IS_SAM);
 		
 		replay(visitor);
-		sut.accept(visitor);
+		sut.parse(visitor);
 		verify(visitor);
 	}
 	
@@ -102,7 +102,7 @@ public class TestSamParserFactory {
 		SamVisitor visitor = createMockVisitorWithEntireFileExpectations(IS_BAM);
 		
 		replay(visitor);
-		sut.accept(visitor);
+		sut.parse(visitor);
 		verify(visitor);
 	}
 	
@@ -113,7 +113,7 @@ public class TestSamParserFactory {
 		SamVisitor visitor = createMockVisitorWithHaltHalfwaythroughFileExpectations(IS_SAM);
 		
 		replay(visitor);
-		sut.accept(visitor);
+		sut.parse(visitor);
 		verify(visitor);
 	}
 	
@@ -124,7 +124,7 @@ public class TestSamParserFactory {
 		SamVisitor visitor = createMockVisitorWithHaltHalfwaythroughFileExpectations(IS_BAM);
 		
 		replay(visitor);
-		sut.accept(visitor);
+		sut.parse(visitor);
 		verify(visitor);
 	}
 	

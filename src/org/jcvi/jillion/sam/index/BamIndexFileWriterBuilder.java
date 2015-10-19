@@ -158,7 +158,7 @@ public final class BamIndexFileWriterBuilder {
 	public File build() throws IOException{
 		SamParser parser = SamParserFactory.create(inputBamFile);
 		BamIndexSamVisitor visitor = new BamIndexSamVisitor(assumeSorted);
-		parser.accept(visitor);
+		parser.parse(visitor);
 		
 		OutputStream out =null;
 		try{

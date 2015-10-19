@@ -389,7 +389,7 @@ class ReSortSamFileWriter implements SamWriter {
 		@Override
 		protected void backgroundThreadRunMethod() throws RuntimeException {
 			try {
-				encoding.createNewNoValidationSamParser(samFile).accept(new SamVisitor() {
+				encoding.createNewNoValidationSamParser(samFile).parse(new SamVisitor() {
 					
 					
 					@Override

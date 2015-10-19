@@ -106,7 +106,7 @@ public final class PaddedSamTransformationService implements AssemblyTransformat
 		}
 		try {
 			SamTransformerVisitor visitor = new SamTransformerVisitor(transformer);
-			parser.accept(visitor);
+			parser.parse(visitor);
 		} catch (Exception e) {
 			throw new IllegalStateException("error parsing sam file", e);
 		}

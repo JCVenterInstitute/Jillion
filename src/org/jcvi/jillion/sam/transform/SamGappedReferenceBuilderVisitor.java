@@ -60,7 +60,7 @@ final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 			throw new IOException("error parsing reference datastore", e);
 		}
 		
-		parser.accept(visitor);
+		parser.parse(visitor);
 		return visitor.buildGappedReferences();
 	}
 	

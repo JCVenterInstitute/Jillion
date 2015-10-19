@@ -29,7 +29,7 @@ class IndexedBamFileParser extends BamFileParser{
 	}
 
 	@Override
-	public void accept(String referenceName, SamVisitor visitor) throws IOException {
+	public void parse(String referenceName, SamVisitor visitor) throws IOException {
 		Objects.requireNonNull(referenceName);
 		Objects.requireNonNull(visitor);
 		
@@ -69,7 +69,7 @@ class IndexedBamFileParser extends BamFileParser{
 	}
 
 	@Override
-	public void accept(String referenceName, Range alignmentRange, SamVisitor visitor) throws IOException {
+	public void parse(String referenceName, Range alignmentRange, SamVisitor visitor) throws IOException {
 		Objects.requireNonNull(referenceName);
 		Objects.requireNonNull(visitor);
 		

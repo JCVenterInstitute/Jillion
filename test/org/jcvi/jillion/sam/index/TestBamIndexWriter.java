@@ -172,8 +172,8 @@ public class TestBamIndexWriter {
 		SamParser actualParser = SamParserFactory.create(actual);
 		
 		ReplayableMockSamVisitor matcher = new ReplayableMockSamVisitor(checkHeader);
-		expectedParser.accept(matcher);
-		actualParser.accept(matcher);
+		expectedParser.parse(matcher);
+		actualParser.parse(matcher);
 		
 	}
 	
@@ -261,7 +261,7 @@ public class TestBamIndexWriter {
 	private void writeAllRecords(File bamFile, final SamWriter writer) throws IOException {
 		try{
 			SamParserFactory.create(bamFile)
-			.accept(new AbstractSamVisitor() {
+			.parse(new AbstractSamVisitor() {
 				
 				@Override
 				public void visitRecord(SamVisitorCallback callback, SamRecord record,
@@ -287,7 +287,7 @@ public class TestBamIndexWriter {
 		//anonymous class
 		final SamHeader[] singleHeaderBuilder = new SamHeader[1];
 		SamParserFactory.create(samOrBam)
-						.accept(new AbstractSamVisitor() {
+						.parse(new AbstractSamVisitor() {
 							
 							
 							@Override
