@@ -84,12 +84,12 @@ public abstract class TabularBlastParser implements BlastParser{
 	                DirectedRange subjectRange = DirectedRange.parse(matcher.group(9), matcher.group(10), CoordinateSystem.RESIDUE_BASED);
 	           
 					HspBuilder<?, ?> hspBuilder;
-					if(type!=null){
-						hspBuilder= HspBuilder.forType(type);
-					}else{
+					if(type==null){
 						//doesn't really matter since we don't have
 						//sequences anyway ?
 						hspBuilder= HspBuilder.forBlastN();
+					}else{						
+						hspBuilder= HspBuilder.forType(type);
 					}
 					String queryId = matcher.group(1);
 					String subjectId = matcher.group(2);

@@ -172,14 +172,14 @@ public abstract class AlnFileWriter<R extends Residue, S extends Sequence<R>> im
 			builder.append(id);
 			int padding = maxIdLength - id.length();
 			for(int i=0; i<padding; i++){
-				builder.append(" ");
+				builder.append(' ');
 			}
 			builder.append('\t');			
 			builders.add(builder);
 		}
 		StringBuilder conservationBuilder = new StringBuilder(lineLength);
 		for(int i=0; i<maxIdLength; i++){
-			conservationBuilder.append(" ");
+			conservationBuilder.append(' ');
 		}
 		conservationBuilder.append('\t');
 		for(int i=0; i<rangeLength; i++){

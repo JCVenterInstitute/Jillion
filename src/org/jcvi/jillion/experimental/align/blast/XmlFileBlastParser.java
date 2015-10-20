@@ -113,10 +113,10 @@ public final class XmlFileBlastParser implements BlastParser{
 	public void parse(BlastVisitor visitor) throws IOException {
 		if(canParse()){
 			try {
-				if (inputStream != null) {
-					parser.parse(inputStream, new SaxBlastParser(visitor));
-				}else{
+				if (inputStream == null) {				
 					parser.parse(file, new SaxBlastParser(visitor));
+				}else{
+					parser.parse(inputStream, new SaxBlastParser(visitor));
 				}
 			} catch (SAXException e) {
 				throw new IOException("error parsing xml blast output",e);

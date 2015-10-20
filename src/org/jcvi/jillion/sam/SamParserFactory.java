@@ -103,19 +103,23 @@ public final class SamParserFactory {
 			return new SamFileParser(f,validator);
 		}
 		if("bam".equalsIgnoreCase(extension)){
-			SamParser unsortedBamParser= new BamFileParser(f, validator);
-			if(unsortedBamParser.getHeader().getSortOrder() == SortOrder.COORDINATE){
-				//is there an indexed bam file that goes with it?
-				File bai = new File(f.getParentFile(), f.getName() +".bai");
-				if(bai.exists()){
-					return createFromBamIndex(f, bai, validator);
-				}
-			
-			}
-			return unsortedBamParser;
-			
+			return createFromBamFile(f, validator);			
 		}
 		throw new IllegalArgumentException("unknown file format " + f.getName());
+	}
+	
+	
+	private static SamParser createFromBamFile(File f, SamAttributeValidator validator) throws IOException {
+		SamParser unsortedBamParser= new BamFileParser(f, validator);
+		if(unsortedBamParser.getHeader().getSortOrder() == SortOrder.COORDINATE){
+			//is there an indexed bam file that goes with it?
+			File bai = new File(f.getParentFile(), f.getName() +".bai");
+			if(bai.exists()){
+				return createFromBamIndex(f, bai, validator);
+			}
+		
+		}
+		return unsortedBamParser;
 	}
 	
 	/**

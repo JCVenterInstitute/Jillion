@@ -25,7 +25,7 @@ import java.io.IOException;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
 
-public class AlnUtil {
+public final class AlnUtil {
 	
 	private AlnUtil(){
 		//can not instantiate
@@ -57,7 +57,7 @@ public class AlnUtil {
 			 }
 		 }catch(IOException e){
 			 //will never happen
-			 throw new IllegalStateException("error reading aln header");
+			 throw new IllegalStateException("error reading aln header", e);
 		 }finally{
 			 IOUtil.closeAndIgnoreErrors(parser);
 		 }

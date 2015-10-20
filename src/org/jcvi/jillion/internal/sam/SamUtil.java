@@ -43,8 +43,8 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.sam.SamRecordFlags;
 import org.jcvi.jillion.sam.SamRecord;
+import org.jcvi.jillion.sam.SamRecordFlags;
 import org.jcvi.jillion.sam.attribute.SamAttribute;
 import org.jcvi.jillion.sam.attribute.SamAttributeKey;
 import org.jcvi.jillion.sam.attribute.SamAttributeType;
@@ -317,11 +317,21 @@ public final class SamUtil {
 		int end = endExclusive-1;
 		int beg = begin;
 		//taken directly from C source example in SAMv1 file spec
-		  if (beg>>14 == end>>14) return ((1<<15)-1)/7 + (beg>>14);
-	        if (beg>>17 == end>>17) return ((1<<12)-1)/7 + (beg>>17);
-	        if (beg>>20 == end>>20) return  ((1<<9)-1)/7 + (beg>>20);
-	        if (beg>>23 == end>>23) return  ((1<<6)-1)/7 + (beg>>23);
-	        if (beg>>26 == end>>26) return  ((1<<3)-1)/7 + (beg>>26);
+		if (beg >> 14 == end >> 14) {
+			return ((1 << 15) - 1) / 7 + (beg >> 14);
+		}
+		if (beg >> 17 == end >> 17) {
+			return ((1 << 12) - 1) / 7 + (beg >> 17);
+		}
+		if (beg >> 20 == end >> 20) {
+			return ((1 << 9) - 1) / 7 + (beg >> 20);
+		}
+		if (beg >> 23 == end >> 23) {
+			return ((1 << 6) - 1) / 7 + (beg >> 23);
+		}
+		if (beg >> 26 == end >> 26) {
+			return ((1 << 3) - 1) / 7 + (beg >> 26);
+		}
 		//if we've gotten this far
 		//then we must be in bin 0
 		return 0;

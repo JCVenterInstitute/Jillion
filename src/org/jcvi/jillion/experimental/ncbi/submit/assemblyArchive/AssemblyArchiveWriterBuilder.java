@@ -505,7 +505,7 @@ public class AssemblyArchiveWriterBuilder {
 	        StringBuilder sb = new StringBuilder();
 	        for(Integer index : gapOffsets){
 	            sb.append(index - previous);
-	            sb.append(" ");
+	            sb.append(' ');
 	            previous = index+1;
 	        }
 	        return sb.toString().trim();
@@ -539,11 +539,11 @@ public class AssemblyArchiveWriterBuilder {
 		private static String createTag(String field, String value, int level){
 			StringBuilder builder =  new StringBuilder(field.length() + value.length()+6 );
 			for(int i=0; i<level; i++){
-				builder.append("\t");
+				builder.append('\t');
 			}
-	        return builder.append("<").append(field).append(">")
+	        return builder.append('<').append(field).append('>')
 	                    .append(value)
-            .append("</").append(field).append(">")
+            .append("</").append(field).append('>')
             .append(EOL)
             .toString();
 	    }

@@ -91,7 +91,7 @@ class IndexedBamFileParser extends BamFileParser{
 		
 			Range readAlignmentRange = record.getAlignmentRange();
 			int bin = SamUtil.computeBinFor(readAlignmentRange);
-			if(!(Arrays.binarySearch(overlappingBins, bin) >=0)){
+			if(Arrays.binarySearch(overlappingBins, bin) <0){
 				return false;
 			}
 			return readAlignmentRange.isSubRangeOf(alignmentRange);
