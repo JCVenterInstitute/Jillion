@@ -321,7 +321,7 @@ public class SamRecordBuilder{
 	}
 	
 	
-	public SamRecord build(){
+	public SamRecordImpl build(){
 		assertSequenceLengthsCorrect();
 		//flags must be set
 		if(flags ==null){
@@ -332,7 +332,7 @@ public class SamRecordBuilder{
 		}
 		//TODO force unmapped read to have mapping quality of 0?
 		
-		return new SamRecord(this);
+		return new SamRecordImpl(this);
 	}
 	private void assertSequenceLengthsCorrect() {
 		if(qualities !=null){
