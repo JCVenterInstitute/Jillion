@@ -150,7 +150,7 @@ final class SamFileParser extends AbstractSamFileParser{
 		accept(visitor, (record)->true);
 	}
 	
-	private void accept(SamVisitor visitor, Predicate<SamRecord> filter) throws IOException {
+	private void accept(SamVisitor visitor, Predicate<SamRecordI> filter) throws IOException {
 		if(visitor ==null){
 			throw new NullPointerException("visitor can not be null");
 		}
@@ -193,7 +193,7 @@ final class SamFileParser extends AbstractSamFileParser{
 			//not a sam line?
 			throw new IOException("invalid sam record line : " + line);
 		}
-		SamRecord.Builder builder = new SamRecord.Builder(header, validator);
+		SamRecordBuilder builder = new SamRecordBuilder(header, validator);
 		
 		builder.setQueryName(fields[0]);
 		builder.setFlags(SamRecordFlags.parseFlags(Integer.parseInt(fields[1])));
@@ -243,7 +243,7 @@ final class SamFileParser extends AbstractSamFileParser{
 	}
 
 	private static NucleotideSequence parseSequence(String s){
-		if(SamRecord.UNAVAILABLE.equals(s)){
+		if(SamRecordI.UNAVAILABLE.equals(s)){
 			return null;
 		}
 		return new NucleotideSequenceBuilder(s)
@@ -251,7 +251,7 @@ final class SamFileParser extends AbstractSamFileParser{
 						.build();
 	}
 	private static QualitySequence parseQualities(String s){
-		if(SamRecord.UNAVAILABLE.equals(s)){
+		if(SamRecordI.UNAVAILABLE.equals(s)){
 			return null;
 		}
 		//always encoded in sanger format

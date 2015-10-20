@@ -40,7 +40,7 @@ import org.jcvi.jillion.sam.ReplayableMockSamVisitor;
 import org.jcvi.jillion.sam.SamFileWriterBuilder;
 import org.jcvi.jillion.sam.SamParser;
 import org.jcvi.jillion.sam.SamParserFactory;
-import org.jcvi.jillion.sam.SamRecord;
+import org.jcvi.jillion.sam.SamRecordI;
 import org.jcvi.jillion.sam.SamWriter;
 import org.jcvi.jillion.sam.SortOrder;
 import org.jcvi.jillion.sam.VirtualFileOffset;
@@ -264,7 +264,7 @@ public class TestBamIndexWriter {
 			.parse(new AbstractSamVisitor() {
 				
 				@Override
-				public void visitRecord(SamVisitorCallback callback, SamRecord record,
+				public void visitRecord(SamVisitorCallback callback, SamRecordI record,
 						VirtualFileOffset start, VirtualFileOffset end) {
 					try {
 						writer.writeRecord(record);

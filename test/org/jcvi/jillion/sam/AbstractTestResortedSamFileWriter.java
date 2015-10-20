@@ -61,24 +61,24 @@ public abstract class AbstractTestResortedSamFileWriter extends AbstractTestSamW
 									.setTempRootDir(tempDir.getRoot())
 									.reSortBy(sortOrder)
 									.build();
-		List<SamRecord> unsortedRecords = getShuffledRecords();
+		List<SamRecordI> unsortedRecords = getShuffledRecords();
 		
-		List<SamRecord> expectedRecords = createSortedList(unsortedRecords, sortOrder, getHeader());
+		List<SamRecordI> expectedRecords = createSortedList(unsortedRecords, sortOrder, getHeader());
 		
 		writeAllRecords(writer, unsortedRecords);
 		writer.close();
 		orderOfRecordsMatchesExactly(f, expectedRecords, sortOrder);
 	}
 
-	private List<SamRecord> getShuffledRecords() {
-		List<SamRecord> unsortedRecords = getRecords();
+	private List<SamRecordI> getShuffledRecords() {
+		List<SamRecordI> unsortedRecords = getRecords();
 		Collections.shuffle(unsortedRecords);
 		return unsortedRecords;
 	}
 	
-	private List<SamRecord> createSortedList(List<SamRecord> unsortedRecords,
+	private List<SamRecordI> createSortedList(List<SamRecordI> unsortedRecords,
 			SortOrder sortOrder, SamHeader header) {
-		List<SamRecord> list = new ArrayList<SamRecord>(unsortedRecords);
+		List<SamRecordI> list = new ArrayList<>(unsortedRecords);
 		Collections.sort(list, sortOrder.createComparator(getHeader()));
 		return list;
 	}
@@ -86,8 +86,8 @@ public abstract class AbstractTestResortedSamFileWriter extends AbstractTestSamW
 	
 
 	private void writeAllRecords(SamWriter writer,
-			List<SamRecord> expectedRecords) throws IOException {
-		for(SamRecord r : expectedRecords){
+			List<SamRecordI> expectedRecords) throws IOException {
+		for(SamRecordI r : expectedRecords){
 			writer.writeRecord(r);
 		}
 	}

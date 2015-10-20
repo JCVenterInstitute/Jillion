@@ -27,10 +27,11 @@ import java.util.EnumSet;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.sam.SamRecord;
-import org.jcvi.jillion.sam.SamRecordFlags;
-import org.jcvi.jillion.sam.SamWriter;
 import org.jcvi.jillion.sam.SamFileWriterBuilder;
+import org.jcvi.jillion.sam.SamRecordBuilder;
+import org.jcvi.jillion.sam.SamRecordFlags;
+import org.jcvi.jillion.sam.SamRecordI;
+import org.jcvi.jillion.sam.SamWriter;
 import org.jcvi.jillion.sam.SortOrder;
 import org.jcvi.jillion.sam.attribute.InvalidAttributeException;
 import org.jcvi.jillion.sam.attribute.ReservedSamAttributeKeys;
@@ -79,7 +80,7 @@ public class Fastq2Sam {
 		){
 			while(iter.hasNext()){
                             FastqRecord fastq = iter.next();
-                            SamRecord samRecord = new SamRecord.Builder(header)
+                            SamRecordI samRecord = new SamRecordBuilder(header)
                                     //mark everything as unmapped initially
                                     //but you can use other SamRecordFlags as well to say it mapped
                                     //or to provide info about its mate etc

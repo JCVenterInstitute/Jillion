@@ -27,7 +27,7 @@ import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.internal.sam.index.BamIndexer;
 import org.jcvi.jillion.sam.AbstractSamVisitor;
 import org.jcvi.jillion.sam.SamParserFactory;
-import org.jcvi.jillion.sam.SamRecord;
+import org.jcvi.jillion.sam.SamRecordI;
 import org.jcvi.jillion.sam.VirtualFileOffset;
 import org.jcvi.jillion.sam.header.SamHeader;
 import org.junit.Test;
@@ -68,7 +68,7 @@ public class TestBamIndexParser {
 			indexer = new BamIndexer(header);
 		}
 		@Override
-		public void visitRecord(SamVisitorCallback callback, SamRecord record,
+		public void visitRecord(SamVisitorCallback callback, SamRecordI record,
 				VirtualFileOffset start, VirtualFileOffset end) {
 			indexer.addRecord(record, start, end);
 			

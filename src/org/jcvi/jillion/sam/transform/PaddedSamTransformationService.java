@@ -44,8 +44,8 @@ import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 import org.jcvi.jillion.sam.SamParser;
 import org.jcvi.jillion.sam.SamParserFactory;
-import org.jcvi.jillion.sam.SamRecord;
 import org.jcvi.jillion.sam.SamRecordFlags;
+import org.jcvi.jillion.sam.SamRecordI;
 import org.jcvi.jillion.sam.SamVisitor;
 import org.jcvi.jillion.sam.VirtualFileOffset;
 import org.jcvi.jillion.sam.cigar.Cigar;
@@ -145,7 +145,7 @@ public final class PaddedSamTransformationService implements AssemblyTransformat
 
 	
 
-		private boolean isReference(SamRecord record){
+		private boolean isReference(SamRecordI record){
 			//according to the SAMv1 spec
 			//padded references should have
 			//an identical RNAME, POS set to 1 and FLAG to 516 (filtered and unmapped)
@@ -155,7 +155,7 @@ public final class PaddedSamTransformationService implements AssemblyTransformat
 				
 		}
 		@Override
-		public void visitRecord(SamVisitorCallback callback, SamRecord record, VirtualFileOffset start,
+		public void visitRecord(SamVisitorCallback callback, SamRecordI record, VirtualFileOffset start,
 				VirtualFileOffset end) {
 			
 			if(record.isPrimary()){

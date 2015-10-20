@@ -23,7 +23,7 @@ package org.jcvi.jillion.sam.header;
 import java.util.Collection;
 import java.util.List;
 
-import org.jcvi.jillion.sam.SamRecord;
+import org.jcvi.jillion.sam.SamRecordI;
 import org.jcvi.jillion.sam.SamValidationException;
 import org.jcvi.jillion.sam.SortOrder;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
@@ -126,7 +126,7 @@ public interface SamHeader {
      * @throws SamValidationException if there is a validation problem.
      * @throws NullPointerException if either parameter is null.
      */
-    void validateRecord(SamRecord record,
+    void validateRecord(SamRecordI record,
             SamAttributeValidator attributeValidator)
             throws SamValidationException;
 

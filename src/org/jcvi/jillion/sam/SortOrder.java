@@ -50,7 +50,7 @@ public enum SortOrder{
 	QUERY_NAME{
 
 		@Override
-		public Comparator<SamRecord> createComparator(SamHeader header) {
+		public Comparator<SamRecordI> createComparator(SamHeader header) {
 			return QUERY_NAME_COMPARATOR;
 		}
 		
@@ -69,7 +69,7 @@ public enum SortOrder{
 	COORDINATE{
 
 		@Override
-		public Comparator<SamRecord> createComparator(SamHeader header) {
+		public Comparator<SamRecordI> createComparator(SamHeader header) {
 			return new CoordinateComparator(header);
 		}
 		
@@ -86,10 +86,10 @@ public enum SortOrder{
 	/**
 	 * {@link Comparator} used by {@link SortOrder#QUERY_NAME}.
 	 */
-	private static final Comparator<SamRecord> QUERY_NAME_COMPARATOR = new Comparator<SamRecord>(){
+	private static final Comparator<SamRecordI> QUERY_NAME_COMPARATOR = new Comparator<SamRecordI>(){
 
 		@Override
-		public int compare(SamRecord o1, SamRecord o2) {
+		public int compare(SamRecordI o1, SamRecordI o2) {
 			//nulls always go last
 			if (o1 == null) {
                 return 1;
@@ -153,7 +153,7 @@ public enum SortOrder{
 	 * @return a {@link Comparator} or {@code null}
 	 * if no comparator specified.
 	 */
-	public Comparator<SamRecord> createComparator(SamHeader header){
+	public Comparator<SamRecordI> createComparator(SamHeader header){
 		//by default return null
 		//let types override to return actual
 		//comparator implementation.
@@ -177,7 +177,7 @@ public enum SortOrder{
 	 * @author dkatzel
 	 *
 	 */
-	private static final class CoordinateComparator implements Comparator<SamRecord>, Serializable{
+	private static final class CoordinateComparator implements Comparator<SamRecordI>, Serializable{
 
 		private static final long serialVersionUID = -4315866144598924346L;
 		
@@ -191,7 +191,7 @@ public enum SortOrder{
 			}
 		}
 		@Override
-		public int compare(SamRecord o1, SamRecord o2) {
+		public int compare(SamRecordI o1, SamRecordI o2) {
 			//nulls always go last
 			if (o1 == null) {
                 return 1;

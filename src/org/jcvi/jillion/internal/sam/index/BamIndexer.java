@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jcvi.jillion.internal.sam.IndexerCallback;
-import org.jcvi.jillion.sam.SamRecord;
+import org.jcvi.jillion.sam.SamRecordI;
 import org.jcvi.jillion.sam.VirtualFileOffset;
 import org.jcvi.jillion.sam.header.SamHeader;
 import org.jcvi.jillion.sam.header.SamReferenceSequence;
@@ -36,7 +36,7 @@ import org.jcvi.jillion.sam.index.ReferenceIndex;
 
 public class BamIndexer implements IndexerCallback{
 
-	private SamRecord currentRecord;
+	private SamRecordI currentRecord;
 	private long totalNumberOfUnmappedReads=0;
 	
 	private final SamHeader header;
@@ -57,11 +57,11 @@ public class BamIndexer implements IndexerCallback{
 		}
 	}
 	
-	public void setCurrentRecord(SamRecord record){
+	public void setCurrentRecord(SamRecordI record){
 		this.currentRecord = record;
 	}
 	
-	public void addRecord(SamRecord record, VirtualFileOffset start, VirtualFileOffset end){
+	public void addRecord(SamRecordI record, VirtualFileOffset start, VirtualFileOffset end){
 		if(record ==null){
 			return;
 		}
