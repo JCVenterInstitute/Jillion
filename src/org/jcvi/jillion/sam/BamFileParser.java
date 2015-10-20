@@ -208,7 +208,7 @@ class BamFileParser extends AbstractSamFileParser {
 		try{
 			VirtualFileOffset start = in.getCurrentVirutalFileOffset();
 			while(keepParsing.get() && in.hasMoreData()){	
-				SamRecordImpl record = parseNextSamRecord(in, refNames, header);
+				SamRecord record = parseNextSamRecord(in, refNames, header);
 				
 				VirtualFileOffset end = in.getCurrentVirutalFileOffset();
 				if(keepParsingPredicate.test(start)){
@@ -236,7 +236,7 @@ class BamFileParser extends AbstractSamFileParser {
 		}
 	}
 	
-	private SamRecordImpl parseNextSamRecord(InputStream in, String[] refNames, SamHeader header) throws IOException {
+	private SamRecord parseNextSamRecord(InputStream in, String[] refNames, SamHeader header) throws IOException {
 		//next alignment
 		int blockSize = getSignedInt(in);
 		SamRecordBuilder builder = new SamRecordBuilder(header, validator);

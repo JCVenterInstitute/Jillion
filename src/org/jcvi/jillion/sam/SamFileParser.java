@@ -122,7 +122,7 @@ final class SamFileParser extends AbstractSamFileParser{
 					//skip blanks?
 					continue;
 				}			
-				SamRecordImpl record = parseRecord(header, line);
+				SamRecord record = parseRecord(header, line);
 				
 				visitor.visitRecord(callback, record, null, null);
 				
@@ -170,7 +170,7 @@ final class SamFileParser extends AbstractSamFileParser{
 					//skip blanks?
 					continue;
 				}			
-				SamRecordImpl record = parseRecord(header, line);
+				SamRecord record = parseRecord(header, line);
 				if(filter.test(record)){
 					visitor.visitRecord(callback, record, null, null);
 				}
@@ -187,7 +187,7 @@ final class SamFileParser extends AbstractSamFileParser{
 	
 	
 	
-	private SamRecordImpl parseRecord(SamHeader header, String line) throws IOException{
+	private SamRecord parseRecord(SamHeader header, String line) throws IOException{
 		String[] fields = SPLIT_LINE_PATTERN.split(line);
 		if(fields.length <11){
 			//not a sam line?
