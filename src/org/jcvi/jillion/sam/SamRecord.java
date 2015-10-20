@@ -1,7 +1,7 @@
 package org.jcvi.jillion.sam;
 
 import java.util.Collection;
-import java.util.EnumSet;
+import java.util.Set;
 
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
@@ -63,8 +63,22 @@ public interface SamRecord {
 	String getReferenceName();
 
 	String getNextName();
-
-	EnumSet<SamRecordFlags> getFlags();
+	/**
+	 * Get all the {@link SamRecordFlags}s present
+	 * in this record.  Please note, 
+	 * that some of the common tests and checks for
+	 * the presence/absence of some flags or groups
+	 * of flags are methods.
+	 * 
+	 * @return the unmodifiable set of {@link SamRecordFlags}.
+	 * 
+	 * @see #mapped()
+	 * @see #isPrimary()
+	 * @see #useForAnalysis()
+	 * @see #getDirection()
+	 * 
+	 */
+	Set<SamRecordFlags> getFlags();
 
 	int getStartPosition();
 

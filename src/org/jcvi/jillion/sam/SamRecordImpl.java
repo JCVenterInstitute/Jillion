@@ -22,8 +22,8 @@ package org.jcvi.jillion.sam;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
@@ -43,7 +43,7 @@ import org.jcvi.jillion.sam.header.SamHeader;
 class SamRecordImpl implements SamRecord {
 	private final SamHeader header;
 	private final String queryName, referenceName, nextReferenceName;
-	private final EnumSet<SamRecordFlags> flags;
+	private final Set<SamRecordFlags> flags;
 	private final int startPosition, nextOffset;
 	private final byte mappingQuality;
 	private final Cigar cigar;
@@ -56,7 +56,7 @@ class SamRecordImpl implements SamRecord {
 	SamRecordImpl(SamRecordBuilder builder) {
 		this.header = builder.header;
 		this.queryName = builder.queryName;
-		this.flags = builder.flags;
+		this.flags = Collections.unmodifiableSet(builder.flags);
 		this.referenceName = builder.referenceName;
 		this.startPosition = builder.startPosition;
 		this.mappingQuality = builder.mappingQuality;
@@ -118,7 +118,7 @@ class SamRecordImpl implements SamRecord {
 	}
 
 	@Override
-	public EnumSet<SamRecordFlags> getFlags() {
+	public Set<SamRecordFlags> getFlags() {
 		return flags;
 	}
 
