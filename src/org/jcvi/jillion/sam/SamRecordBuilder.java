@@ -16,6 +16,13 @@ import org.jcvi.jillion.sam.cigar.Cigar;
 import org.jcvi.jillion.sam.cigar.Cigar.ClipType;
 import org.jcvi.jillion.sam.header.SamHeader;
 
+/**
+ * Builder object to build new instances
+ * of {@link SamRecord}s.
+ * 
+ * @author dkatzel
+ *
+ */
 public class SamRecordBuilder{
 	
 	
@@ -36,10 +43,32 @@ public class SamRecordBuilder{
 	QualitySequence qualities;
 	
 	int observedTemplateLength = 0;
-	
+	/**
+	 * Create an new Builder object for a SamRecord
+	 * that will use the given {@link SamHeader}.
+	 * The reference(s) this record maps to as well
+	 * as any read groups or custom tags referred to by this record
+	 * must be defined by this header.
+	 * 
+	 * @param header The {@link SamHeader} to use; can not be null.
+	 * 
+	 * @throws NullPointerException if header is null.
+	 */
 	public SamRecordBuilder(SamHeader header){
 		this(header, ReservedAttributeValidator.INSTANCE);
 	}
+	/**
+	 * Create an new Builder object for a SamRecord
+	 * that will use the given {@link SamHeader} and the given
+	 * {@link SamAttributeValidator}.
+	 * The reference(s) this record maps to as well
+	 * as any read groups or custom tags referred to by this record
+	 * must be defined by this header.
+	 * 
+	 * @param header The {@link SamHeader} to use; can not be null.
+	 * 
+	 * @throws NullPointerException if header is null.
+	 */
 	public SamRecordBuilder(SamHeader header, SamAttributeValidator attributeValidator){
 		if(header ==null){
 			throw new NullPointerException("header can not be null");
@@ -56,10 +85,7 @@ public class SamRecordBuilder{
 	 * can not be null.
 	 * @return this
 	 * @throws NullPointerException if attribute is null.
-	 * @throws InvalidAttributeException if an attribute with the 
-	 * same {@link SamAttributeKey}
-	 * already exists in this record,
-	 * or if the attribute fails the given {@link SamAttributeValidator}.
+	 * @throws InvalidAttributeException if the attribute fails the given {@link SamAttributeValidator}.
 	 * @see #removeAttribute(SamAttributeKey)
 	 */
 	public SamRecordBuilder addAttribute(SamAttribute attribute) throws InvalidAttributeException{
@@ -321,7 +347,7 @@ public class SamRecordBuilder{
 	}
 	
 	
-	public SamRecordImpl build(){
+	public SamRecord build(){
 		assertSequenceLengthsCorrect();
 		//flags must be set
 		if(flags ==null){

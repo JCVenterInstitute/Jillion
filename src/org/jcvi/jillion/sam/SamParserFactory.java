@@ -33,6 +33,21 @@ import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
  * for creating {@link SamParser}
  * instances depending of if the provided file
  * is a SAM or BAM encoded file.
+ * 
+ * 
+ * @apiNote
+ * <p>
+ * To create a new {@link SamParser} from a Sam or Bam file:
+ * 
+ * <pre>
+ * {@code 
+ * File samFile =...
+ * SamParser parser = SamParserFactory.create(samFile);}
+ * </pre>
+ * 
+ * 
+ * </p>
+ * 
  * @author dkatzel
  *
  */
@@ -42,7 +57,7 @@ public final class SamParserFactory {
 		//can not instantiate
 	}
 	/**
-	 * Convenience method for {@link #create(File, SamAttributeValidator)
+	 * Convenience method for {@link #create(File, SamAttributeValidator)}
 	 * with the default attribute validator.
 	 * 
 	 * @see #create(File, SamAttributeValidator)
