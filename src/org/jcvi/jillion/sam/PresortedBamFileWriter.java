@@ -141,7 +141,7 @@ class PresortedBamFileWriter implements SamWriter{
 	}
 
 	@Override
-	public void writeRecord(SamRecordI record) throws IOException {
+	public void writeRecord(SamRecord record) throws IOException {
 		try{
 			header.validateRecord(record, attributeValidator);
 		}catch(SamValidationException e){

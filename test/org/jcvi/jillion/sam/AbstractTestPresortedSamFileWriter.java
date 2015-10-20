@@ -46,7 +46,7 @@ public abstract class AbstractTestPresortedSamFileWriter extends AbstractTestSam
 		SamWriter writer = new SamFileWriterBuilder(f, getHeader())
 									.setTempRootDir(tempDir.getRoot())
 									.build();
-		List<SamRecordI> expectedRecords = getRecords();
+		List<SamRecord> expectedRecords = getRecords();
 		
 		writeAllRecords(writer, expectedRecords);
 		writer.close();
@@ -61,7 +61,7 @@ public abstract class AbstractTestPresortedSamFileWriter extends AbstractTestSam
 									.setTempRootDir(tempDir.getRoot())
 									.reSortBy(SortOrder.UNKNOWN)
 									.build();
-		List<SamRecordI> expectedRecords = getRecords();
+		List<SamRecord> expectedRecords = getRecords();
 		
 		writeAllRecords(writer, expectedRecords);
 		writer.close();
@@ -77,7 +77,7 @@ public abstract class AbstractTestPresortedSamFileWriter extends AbstractTestSam
 									.setTempRootDir(tempDir.getRoot())
 									.reSortBy(SortOrder.UNSORTED)
 									.build();
-		List<SamRecordI> expectedRecords = getRecords();
+		List<SamRecord> expectedRecords = getRecords();
 		
 		writeAllRecords(writer, expectedRecords);
 		writer.close();
@@ -86,8 +86,8 @@ public abstract class AbstractTestPresortedSamFileWriter extends AbstractTestSam
 	}
 
 	private void writeAllRecords(SamWriter writer,
-			List<SamRecordI> expectedRecords) throws IOException {
-		for(SamRecordI r : expectedRecords){
+			List<SamRecord> expectedRecords) throws IOException {
+		for(SamRecord r : expectedRecords){
 			writer.writeRecord(r);
 		}
 	}

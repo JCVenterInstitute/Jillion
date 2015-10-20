@@ -47,7 +47,7 @@ import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 import org.jcvi.jillion.sam.SamParser;
 import org.jcvi.jillion.sam.SamParserFactory;
 import org.jcvi.jillion.sam.SamRecordFlags;
-import org.jcvi.jillion.sam.SamRecordI;
+import org.jcvi.jillion.sam.SamRecord;
 import org.jcvi.jillion.sam.SamVisitor;
 import org.jcvi.jillion.sam.VirtualFileOffset;
 import org.jcvi.jillion.sam.cigar.Cigar;
@@ -149,7 +149,7 @@ public final class SamTransformationService implements AssemblyTransformationSer
 	
 
 		@Override
-		public void visitRecord(SamVisitorCallback callback, SamRecordI record, VirtualFileOffset start,
+		public void visitRecord(SamVisitorCallback callback, SamRecord record, VirtualFileOffset start,
 				VirtualFileOffset end) {
 			if(record.isPrimary()){
 				

@@ -37,7 +37,7 @@ public abstract class AbstractSamVisitor implements SamVisitor{
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void visitRecord(SamVisitorCallback callback, SamRecordI record,
+	public void visitRecord(SamVisitorCallback callback, SamRecord record,
 			VirtualFileOffset start, VirtualFileOffset end) {
 		//no-op
 	}

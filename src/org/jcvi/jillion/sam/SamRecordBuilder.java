@@ -24,7 +24,7 @@ public class SamRecordBuilder{
 	
 	final Map<SamAttributeKey, SamAttribute> attributes = new LinkedHashMap<SamAttributeKey, SamAttribute>();
 	
-	String queryName= SamRecordI.UNAVAILABLE;
+	String queryName= SamRecord.UNAVAILABLE;
 	String referenceName = null;
 	String nextReferenceName = null;
 	EnumSet<SamRecordFlags> flags;
@@ -136,7 +136,7 @@ public class SamRecordBuilder{
 		if(referenceName ==null){
 			throw new NullPointerException("reference name can not be null");
 		}
-		if(SamRecordI.UNAVAILABLE.equals(referenceName)){
+		if(SamRecord.UNAVAILABLE.equals(referenceName)){
 			this.referenceName = null;
 		}else{
 			assertHeaderKnowsAboutReference(referenceName);
@@ -173,10 +173,10 @@ public class SamRecordBuilder{
 		if(nextReferenceName ==null){
 			throw new NullPointerException("next reference name can not be null");
 		}
-		if(nextReferenceName.equals(SamRecordI.UNAVAILABLE)){
+		if(nextReferenceName.equals(SamRecord.UNAVAILABLE)){
 			this.nextReferenceName = null;
 		}else{
-			if(!nextReferenceName.equals(SamRecordI.UNAVAILABLE) && !nextReferenceName.equals(SamRecordI.IDENTICAL)){
+			if(!nextReferenceName.equals(SamRecord.UNAVAILABLE) && !nextReferenceName.equals(SamRecord.IDENTICAL)){
 				assertHeaderKnowsAboutReference(nextReferenceName);
 			}
 			this.nextReferenceName = nextReferenceName;
@@ -327,7 +327,7 @@ public class SamRecordBuilder{
 		if(flags ==null){
 			throw new IllegalStateException("flags must be set");
 		}
-		if(SamRecordI.IDENTICAL.equals(nextReferenceName)){
+		if(SamRecord.IDENTICAL.equals(nextReferenceName)){
 			nextReferenceName = referenceName;
 		}
 		//TODO force unmapped read to have mapping quality of 0?

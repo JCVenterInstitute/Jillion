@@ -29,7 +29,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jcvi.jillion.sam.SamRecordI;
+import org.jcvi.jillion.sam.SamRecord;
 import org.jcvi.jillion.sam.SamValidationException;
 import org.jcvi.jillion.sam.SortOrder;
 import org.jcvi.jillion.sam.attribute.SamAttribute;
@@ -416,7 +416,7 @@ public final class SamHeaderBuilder{
 	         * @throws NullPointerException if either parameter is null.
 	         */
 	        @Override
-	    public void validateRecord(SamRecordI record, SamAttributeValidator attributeValidator) throws SamValidationException{
+	    public void validateRecord(SamRecord record, SamAttributeValidator attributeValidator) throws SamValidationException{
 	                //reference names must be present in a SQ-SN tag
 	                String refName =record.getReferenceName();
 	                if(refName !=null && this.getReferenceSequence(refName) ==null){

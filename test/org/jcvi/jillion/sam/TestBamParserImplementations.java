@@ -119,7 +119,7 @@ public class TestBamParserImplementations {
 			}
 
 			@Override
-			protected boolean accept(SamRecordI record) {
+			protected boolean accept(SamRecord record) {
 				return true;
 			}
 
@@ -146,13 +146,13 @@ public class TestBamParserImplementations {
 			}
 
 			@Override
-			protected boolean accept(SamRecordI record) {
+			protected boolean accept(SamRecord record) {
 				//anything that gets this far should be counted
 				return true;
 			}
 
 			@Override
-			public void visitRecord(SamVisitorCallback callback, SamRecordI record, VirtualFileOffset start,
+			public void visitRecord(SamVisitorCallback callback, SamRecord record, VirtualFileOffset start,
 					VirtualFileOffset end) {
 				recordCounter++;
 				if(recordCounter ==10_000){
@@ -180,7 +180,7 @@ public class TestBamParserImplementations {
 		FULL_BAM_PARSER.parse(new WrappedVisitor(mock){
 
 			@Override
-			protected boolean accept(SamRecordI record) {
+			protected boolean accept(SamRecord record) {
 				if(! record.mapped() || !firstReferenceName.equals(record.getReferenceName())){
 					return false;
 				}
@@ -202,7 +202,7 @@ public class TestBamParserImplementations {
 		FULL_BAM_PARSER.parse(new WrappedVisitor(mock){
 
 			@Override
-			protected boolean accept(SamRecordI record) {
+			protected boolean accept(SamRecord record) {
 				return record.mapped() && firstReferenceName.equals(record.getReferenceName());
 			}
 			
@@ -244,7 +244,7 @@ public class TestBamParserImplementations {
 		FULL_BAM_PARSER.parse(new WrappedVisitor(mock){
 
 			@Override
-			protected boolean accept(SamRecordI record) {
+			protected boolean accept(SamRecord record) {
 				return record.mapped() && lastReferenceName.equals(record.getReferenceName());
 			}
 			
@@ -261,7 +261,7 @@ public class TestBamParserImplementations {
 		FULL_BAM_PARSER.parse(new WrappedVisitor(mock){
 
 			@Override
-			protected boolean accept(SamRecordI record) {
+			protected boolean accept(SamRecord record) {
 				return record.mapped() && lastReferenceName.equals(record.getReferenceName());
 			}
 			
@@ -282,7 +282,7 @@ public class TestBamParserImplementations {
 		}
 
 		@Override
-		public void visitRecord(SamVisitorCallback callback, SamRecordI record, VirtualFileOffset start,
+		public void visitRecord(SamVisitorCallback callback, SamRecord record, VirtualFileOffset start,
 				VirtualFileOffset end) {
 			if(accept(record)){
 				delegate.visitRecord(callback, record, start, end);
@@ -290,7 +290,7 @@ public class TestBamParserImplementations {
 			
 		}
 
-		protected abstract boolean accept(SamRecordI record);
+		protected abstract boolean accept(SamRecord record);
 		@Override
 		public void visitEnd() {
 			delegate.visitEnd();
