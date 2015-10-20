@@ -117,6 +117,9 @@ New Features
 
 14. AceFileParser - more lenient Consensus Tag timestamp parsers to support CLC Workbench ace output
     which doesn't follow the ace file spec regarding timestamp resolution.
+    
+15. Jillion 5 is now OSGI compliant and can now be used in an OSGI container.
+    All classes except for those under org.jcvi.jillion.internal.* are exported.
 
 API Changes
 -----------
@@ -207,6 +210,11 @@ API Changes
 
 22.  Added support for SamVisitor Memento support with new SamParser.parse(visitor, SamVisitorMemento) method.
      Previously you could create mementos but couldn't use them.
+     
+23.  SamRecord.Builder is now pulled out into its own class SamRecordBuilder.
+
+24.  Refactored SamRecord from a class to an interface.  The old SamRecord class is now package private. 
+     All API methods in sam package now use the new SamRecord interface instead of the old class.
   
 Bug Fixes
 ----------
