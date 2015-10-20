@@ -28,14 +28,19 @@ import org.jcvi.jillion.sam.index.BamIndexFileWriterBuilder;
 public class CreateBamIndexFromBam {
 
 	public static void main(String[] args) throws IOException {
-		File bamFile = new File("/path/to/input/example.bam");
+		/*File bamFile = new File("/path/to/input/example.bam");
 		File baiFile = new File("/path/to/output/example.bam.bai");
+		*/
 		
-		File outputBaiFile = new BamIndexFileWriterBuilder(bamFile, baiFile)
+		//File bamFile = new File("/usr/local/scratch/dkatzel/jillion.UHR10pgD93_tophat.sorted.bam");
+		File bamFile = new File("/usr/local/scratch/dkatzel/index_test.bam");
+		
+		File outputBaiFile = new BamIndexFileWriterBuilder(bamFile, new File(bamFile.getParentFile(), "jillion.index_test.bam.bai"))
 				.includeMetaData(true) //includes metadata that Picard and samtools use
 				.assumeSorted(true)
 				.build();
 		
+		System.out.println(outputBaiFile.getAbsolutePath());
 		//output bai file == baiFile
 				
 

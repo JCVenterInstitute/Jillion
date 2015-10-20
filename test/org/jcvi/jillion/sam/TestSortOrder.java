@@ -84,8 +84,8 @@ public class TestSortOrder {
 		expect(first.getQueryName()).andStubReturn("first");
 		expect(second.getQueryName()).andStubReturn("second");
 		
-		expect(first.getReferenceName()).andStubReturn(SamRecord.UNAVAILABLE);
-		expect(second.getReferenceName()).andStubReturn(SamRecord.UNAVAILABLE);
+		expect(first.getReferenceName()).andStubReturn(SamRecordI.UNAVAILABLE);
+		expect(second.getReferenceName()).andStubReturn(SamRecordI.UNAVAILABLE);
 		expect(first.mapped()).andStubReturn(false);
 		expect(second.mapped()).andStubReturn(false);
 		
@@ -103,7 +103,7 @@ public class TestSortOrder {
 		expect(second.mapped()).andStubReturn(false);
 		
 		expect(first.getReferenceName()).andStubReturn("mapped");
-		expect(second.getReferenceName()).andStubReturn(SamRecord.UNAVAILABLE);
+		expect(second.getReferenceName()).andStubReturn(SamRecordI.UNAVAILABLE);
 		
 		
 		replay(first,second);
@@ -179,7 +179,7 @@ public class TestSortOrder {
 		assertCorrectlySorted(order, first, second, header, true);
 	}
 	private void assertCorrectlySorted(SortOrder order, SamRecord first, SamRecord second, SamHeader header,boolean checkSelves){
-		Comparator<SamRecord> comparator = order.createComparator(header);
+		Comparator<SamRecordI> comparator = order.createComparator(header);
 		if(checkSelves){
 			assertEquals("same record should sort equal to itself", 0, comparator.compare(first, first));
 			assertEquals("same record should sort equal to itself", 0, comparator.compare(second, second));

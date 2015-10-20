@@ -67,11 +67,11 @@ import org.jcvi.jillion.sam.header.SamHeader;
 class ReSortSamFileWriter implements SamWriter {
 
 	private final SamHeader header;
-	private final Comparator<SamRecord> recordComparator;
+	private final Comparator<SamRecordI> recordComparator;
 	private final File tmpDir;
 	private final File outputFile;
 	
-	private SamRecord[] inMemoryArray;
+	private SamRecordI[] inMemoryArray;
 	private int currentInMemSize;
 	private final int maxRecordsToKeepInMemory;
 	private final List<File> tempFiles = new ArrayList<File>();
@@ -113,7 +113,7 @@ class ReSortSamFileWriter implements SamWriter {
 		
 		IOUtil.mkdirs(outputFile.getParentFile());
 		tmpDir = IOUtil.createTempDir("jillion", "samWriterTmp", tmpDirRoot);		
-        inMemoryArray = new SamRecord[maxRecordsToKeepInMemory];
+        inMemoryArray = new SamRecordI[maxRecordsToKeepInMemory];
         currentInMemSize=0;
         this.outputFile = outputFile;
         this.attributeValidator = attributeValidator;
@@ -124,7 +124,7 @@ class ReSortSamFileWriter implements SamWriter {
 	}
 
 
-	 private static Comparator<SamRecord> createRecordComparatorFor(SamHeader header){
+	 private static Comparator<SamRecordI> createRecordComparatorFor(SamHeader header){
 	     SortOrder sortOrder = header.getSortOrder();
              if(sortOrder ==null){
                      return null;
@@ -133,7 +133,7 @@ class ReSortSamFileWriter implements SamWriter {
      }
 	
 	@Override
-	public void writeRecord(SamRecord record) throws IOException {
+	public void writeRecord(SamRecordI record) throws IOException {
 		if(record==null){
 			throw new NullPointerException("record can not be null");
 		}
@@ -197,7 +197,7 @@ class ReSortSamFileWriter implements SamWriter {
 	
 	@Override
 	public void close() throws IOException {
-		List<PeekableStreamingIterator<SamRecord>> iterators =new ArrayList<PeekableStreamingIterator<SamRecord>>(1 + tempFiles.size());
+		List<PeekableStreamingIterator<SamRecordI>> iterators =new ArrayList<PeekableStreamingIterator<SamRecordI>>(1 + tempFiles.size());
 		SamWriter writer =null;
 		try{
 			sortInMemoryRecords();
@@ -208,7 +208,7 @@ class ReSortSamFileWriter implements SamWriter {
 				iterators.add(IteratorUtil.createPeekableStreamingIterator(new StreamingSamRecordIterator(tempFile, encoding)));
 			}
 			
-			Iterator<SamRecord> sortedIterator = new MergedSortedRecordIterator(iterators, recordComparator);
+			Iterator<SamRecordI> sortedIterator = new MergedSortedRecordIterator(iterators, recordComparator);
 			writer = encoding.createPreSortedNoValidationOutputWriter(outputFile, header, indexer, includeIndexMetaData);
 			while(sortedIterator.hasNext()){
 				writer.writeRecord(sortedIterator.next());
@@ -230,7 +230,7 @@ class ReSortSamFileWriter implements SamWriter {
 
 	
 
-	private final class InMemoryStreamingIterator implements StreamingIterator<SamRecord>{
+	private final class InMemoryStreamingIterator implements StreamingIterator<SamRecordI>{
 
 		private final int length;
 		private int counter=0;
@@ -251,7 +251,7 @@ class ReSortSamFileWriter implements SamWriter {
 		}
 
 		@Override
-		public SamRecord next() {
+		public SamRecordI next() {
 			if(!hasNext()){
 				throw new NoSuchElementException();
 			}
@@ -273,15 +273,15 @@ class ReSortSamFileWriter implements SamWriter {
 	 * @author dkatzel
 	 *
 	 */
-	public static class MergedSortedRecordIterator implements Iterator<SamRecord> {
-			private final List<PeekableStreamingIterator<SamRecord>> iterators;
+	public static class MergedSortedRecordIterator implements Iterator<SamRecordI> {
+			private final List<PeekableStreamingIterator<SamRecordI>> iterators;
 			
-			private SamRecord next;
+			private SamRecordI next;
 			private final SortedSamRecordElementComparator comparator;
 			private final List<SortedSamRecordElement> elementList;
 			
 			
-			public MergedSortedRecordIterator(List<PeekableStreamingIterator<SamRecord>> iterators, Comparator<SamRecord> comparator) {
+			public MergedSortedRecordIterator(List<PeekableStreamingIterator<SamRecordI>> iterators, Comparator<SamRecordI> comparator) {
 				this.iterators = iterators;
 				this.comparator = new SortedSamRecordElementComparator(comparator);
 				elementList = new ArrayList<SortedSamRecordElement>(iterators.size());
@@ -289,9 +289,9 @@ class ReSortSamFileWriter implements SamWriter {
 				next= getNext();
 			}
 			
-			private SamRecord getNext(){
+			private SamRecordI getNext(){
 				elementList.clear();
-				for(PeekableStreamingIterator<SamRecord> iter : iterators){
+				for(PeekableStreamingIterator<SamRecordI> iter : iterators){
 					if(iter.hasNext()){
 						//we peek instead of next()
 						//incase we don't pick this record yet
@@ -315,10 +315,10 @@ class ReSortSamFileWriter implements SamWriter {
 			
 			
 			@Override
-			public SamRecord next() {
+			public SamRecordI next() {
 				//don't need to check has next
 				//since we can make sure we don't call it incorrectly
-				SamRecord ret= next;
+				SamRecordI ret= next;
 				next = getNext();
 				return ret;
 			}
@@ -337,11 +337,11 @@ class ReSortSamFileWriter implements SamWriter {
 	 *
 	 */
 	private static class SortedSamRecordElement{
-		SamRecord record;
-		Iterator<SamRecord> source;
+		SamRecordI record;
+		Iterator<SamRecordI> source;
 		
-		public SortedSamRecordElement(SamRecord record,
-				Iterator<SamRecord> source) {
+		public SortedSamRecordElement(SamRecordI record,
+				Iterator<SamRecordI> source) {
 			this.record = record;
 			this.source = source;
 		}
@@ -355,10 +355,10 @@ class ReSortSamFileWriter implements SamWriter {
 	}
 	
 	private static class SortedSamRecordElementComparator implements Comparator<SortedSamRecordElement>{
-		private final Comparator<SamRecord> comparator;
+		private final Comparator<SamRecordI> comparator;
 		
 
-		public SortedSamRecordElementComparator(Comparator<SamRecord> comparator) {
+		public SortedSamRecordElementComparator(Comparator<SamRecordI> comparator) {
 			this.comparator = comparator;
 		}
 
@@ -374,7 +374,7 @@ class ReSortSamFileWriter implements SamWriter {
 	 * @author dkatzel
 	 *
 	 */
-	private static class StreamingSamRecordIterator extends AbstractBlockingStreamingIterator<SamRecord>{
+	private static class StreamingSamRecordIterator extends AbstractBlockingStreamingIterator<SamRecordI>{
 
 		private final File samFile;
 		private final Encoding encoding;
@@ -393,7 +393,7 @@ class ReSortSamFileWriter implements SamWriter {
 					
 					
 					@Override
-					public void visitRecord(SamVisitorCallback callback, SamRecord record,
+					public void visitRecord(SamVisitorCallback callback, SamRecordI record,
 							VirtualFileOffset start, VirtualFileOffset end) {
 						StreamingSamRecordIterator.this.blockingPut(record);
 						

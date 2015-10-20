@@ -43,8 +43,8 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.sam.SamRecord;
 import org.jcvi.jillion.sam.SamRecordFlags;
+import org.jcvi.jillion.sam.SamRecordI;
 import org.jcvi.jillion.sam.attribute.SamAttribute;
 import org.jcvi.jillion.sam.attribute.SamAttributeKey;
 import org.jcvi.jillion.sam.attribute.SamAttributeType;
@@ -410,7 +410,7 @@ public final class SamUtil {
 	}
 	
 	
-	public static void writeAsBamRecord(OutputStream out, SamHeader header, SamRecord record, int refIndex, int nextNameIndex) throws IOException{
+	public static void writeAsBamRecord(OutputStream out, SamHeader header, SamRecordI record, int refIndex, int nextNameIndex) throws IOException{
 		//TODO compute buffer size first?
 		//it would be hard because
 		//we would have to know how many bytes
@@ -663,12 +663,12 @@ public final class SamUtil {
 	}
 	
 	
-	public static Predicate<SamRecord> alignsToReference(String referenceName){
+	public static Predicate<SamRecordI> alignsToReference(String referenceName){
 		Objects.requireNonNull(referenceName, "reference name can not be null");
 		return (record) -> referenceName.equals(record.getReferenceName());
 	}
 	
-	public static Predicate<SamRecord> alignsToReference(String referenceName, Range alignmentRegionOfInterest){
+	public static Predicate<SamRecordI> alignsToReference(String referenceName, Range alignmentRegionOfInterest){
 		Objects.requireNonNull(referenceName, "reference name can not be null");
 		Objects.requireNonNull(alignmentRegionOfInterest, "alignment range can not be null");
 		

@@ -171,7 +171,7 @@ class BamFileParser extends AbstractSamFileParser {
 	
 	
 	
-	private void accept(SamVisitor visitor, Predicate<SamRecord> filter) throws IOException {
+	private void accept(SamVisitor visitor, Predicate<SamRecordI> filter) throws IOException {
 		if(visitor ==null){
 			throw new NullPointerException("visitor can not be null");
 		}
@@ -186,7 +186,7 @@ class BamFileParser extends AbstractSamFileParser {
 		}
 	}
 	
-	protected void parseBamFromBeginning(SamVisitor visitor, Predicate<SamRecord> filter, Predicate<VirtualFileOffset> keepParsingPredicate, BgzfInputStream in) throws IOException {
+	protected void parseBamFromBeginning(SamVisitor visitor, Predicate<SamRecordI> filter, Predicate<VirtualFileOffset> keepParsingPredicate, BgzfInputStream in) throws IOException {
 		verifyMagicNumber(in);
 		//have to keep parsing header again for now
 		//since it updates the file pointer in our bgzf stream
@@ -201,7 +201,7 @@ class BamFileParser extends AbstractSamFileParser {
 		parseBamRecords(visitor, filter, (vfs)->true, in, keepParsing);
 	}
 	
-	protected void parseBamRecords(SamVisitor visitor, Predicate<SamRecord> filter, Predicate<VirtualFileOffset> keepParsingPredicate, BgzfInputStream in, AtomicBoolean keepParsing) throws IOException {
+	protected void parseBamRecords(SamVisitor visitor, Predicate<SamRecordI> filter, Predicate<VirtualFileOffset> keepParsingPredicate, BgzfInputStream in, AtomicBoolean keepParsing) throws IOException {
 		
 		boolean canceledByPredicate=false;
 		
@@ -239,7 +239,7 @@ class BamFileParser extends AbstractSamFileParser {
 	private SamRecord parseNextSamRecord(InputStream in, String[] refNames, SamHeader header) throws IOException {
 		//next alignment
 		int blockSize = getSignedInt(in);
-		SamRecord.Builder builder = new SamRecord.Builder(header, validator);
+		SamRecordBuilder builder = new SamRecordBuilder(header, validator);
 		
 		int refId = getSignedInt(in);
 		if(refId >=0){
@@ -310,7 +310,7 @@ class BamFileParser extends AbstractSamFileParser {
 		return cigarBuilder.build();
 	}
 	private void parseAttributesIfAnyAndAddToBuilder(InputStream in,
-			SamRecord.Builder builder, int blockSize, int bytesReadSoFar)
+			SamRecordBuilder builder, int blockSize, int bytesReadSoFar)
 			throws IOException {
 		int attributeByteLength =  blockSize - bytesReadSoFar;
 		if(attributeByteLength >0){
