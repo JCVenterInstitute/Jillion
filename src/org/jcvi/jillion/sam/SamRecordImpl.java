@@ -34,8 +34,13 @@ import org.jcvi.jillion.sam.attribute.SamAttribute;
 import org.jcvi.jillion.sam.attribute.SamAttributeKey;
 import org.jcvi.jillion.sam.cigar.Cigar;
 import org.jcvi.jillion.sam.header.SamHeader;
-
-class SamRecord implements SamRecordI {
+/**
+ * Package-private implementation class of SamRecord.
+ * 
+ * @author dkatzel
+ *
+ */
+class SamRecordImpl implements SamRecordI {
 	private final SamHeader header;
 	private final String queryName, referenceName, nextReferenceName;
 	private final EnumSet<SamRecordFlags> flags;
@@ -48,7 +53,7 @@ class SamRecord implements SamRecordI {
 	private final int observedTemplateLength;
 	private final Map<SamAttributeKey, SamAttribute> attributes;
 	
-	SamRecord(SamRecordBuilder builder) {
+	SamRecordImpl(SamRecordBuilder builder) {
 		this.header = builder.header;
 		this.queryName = builder.queryName;
 		this.flags = builder.flags;
@@ -221,10 +226,10 @@ class SamRecord implements SamRecordI {
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof SamRecord)) {
+		if (!(obj instanceof SamRecordImpl)) {
 			return false;
 		}
-		SamRecord other = (SamRecord) obj;
+		SamRecordImpl other = (SamRecordImpl) obj;
 		if (attributes == null) {
 			if (other.attributes != null) {
 				return false;
