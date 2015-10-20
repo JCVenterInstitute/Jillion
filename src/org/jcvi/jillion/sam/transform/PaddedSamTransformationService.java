@@ -23,7 +23,6 @@ package org.jcvi.jillion.sam.transform;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -44,8 +43,8 @@ import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 import org.jcvi.jillion.sam.SamParser;
 import org.jcvi.jillion.sam.SamParserFactory;
-import org.jcvi.jillion.sam.SamRecordFlags;
 import org.jcvi.jillion.sam.SamRecord;
+import org.jcvi.jillion.sam.SamRecordFlags;
 import org.jcvi.jillion.sam.SamVisitor;
 import org.jcvi.jillion.sam.VirtualFileOffset;
 import org.jcvi.jillion.sam.cigar.Cigar;
@@ -200,7 +199,7 @@ public final class PaddedSamTransformationService implements AssemblyTransformat
 					//if the read is mated SAM doesn't put the /1 or /2 ?
 					//what happens in CASAVA 1.8 reads?
 					String readName = record.getQueryName();
-					EnumSet<SamRecordFlags> flags = record.getFlags();
+					Set<SamRecordFlags> flags = record.getFlags();
 					//from the SAMv1 spec
 					//The leftmost segment has a plus sign and the rightmost has a
 					//minus sign. The sign of segments in the middle is undefined. 
