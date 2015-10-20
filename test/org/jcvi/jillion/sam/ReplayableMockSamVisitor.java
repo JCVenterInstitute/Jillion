@@ -12,9 +12,9 @@ import org.jcvi.jillion.sam.header.SamHeader;
 
 public class ReplayableMockSamVisitor implements SamVisitor{
 	private boolean expectationMode=true;
-	private Iterator<SamRecordI> expectedIterator;
+	private Iterator<SamRecord> expectedIterator;
 	
-	private final List<SamRecordI> expected = new ArrayList<>();
+	private final List<SamRecord> expected = new ArrayList<>();
 
 	private SamHeader expectedHeader;
 	
@@ -41,7 +41,7 @@ public class ReplayableMockSamVisitor implements SamVisitor{
 	
 
 	@Override
-	public void visitRecord(SamVisitorCallback callback, SamRecordI record,
+	public void visitRecord(SamVisitorCallback callback, SamRecord record,
 			VirtualFileOffset start, VirtualFileOffset end) {
 		if(expectationMode){
 			expected.add(record);

@@ -171,7 +171,7 @@ class BamFileParser extends AbstractSamFileParser {
 	
 	
 	
-	private void accept(SamVisitor visitor, Predicate<SamRecordI> filter) throws IOException {
+	private void accept(SamVisitor visitor, Predicate<SamRecord> filter) throws IOException {
 		if(visitor ==null){
 			throw new NullPointerException("visitor can not be null");
 		}
@@ -186,7 +186,7 @@ class BamFileParser extends AbstractSamFileParser {
 		}
 	}
 	
-	protected void parseBamFromBeginning(SamVisitor visitor, Predicate<SamRecordI> filter, Predicate<VirtualFileOffset> keepParsingPredicate, BgzfInputStream in) throws IOException {
+	protected void parseBamFromBeginning(SamVisitor visitor, Predicate<SamRecord> filter, Predicate<VirtualFileOffset> keepParsingPredicate, BgzfInputStream in) throws IOException {
 		verifyMagicNumber(in);
 		//have to keep parsing header again for now
 		//since it updates the file pointer in our bgzf stream
@@ -201,7 +201,7 @@ class BamFileParser extends AbstractSamFileParser {
 		parseBamRecords(visitor, filter, (vfs)->true, in, keepParsing);
 	}
 	
-	protected void parseBamRecords(SamVisitor visitor, Predicate<SamRecordI> filter, Predicate<VirtualFileOffset> keepParsingPredicate, BgzfInputStream in, AtomicBoolean keepParsing) throws IOException {
+	protected void parseBamRecords(SamVisitor visitor, Predicate<SamRecord> filter, Predicate<VirtualFileOffset> keepParsingPredicate, BgzfInputStream in, AtomicBoolean keepParsing) throws IOException {
 		
 		boolean canceledByPredicate=false;
 		

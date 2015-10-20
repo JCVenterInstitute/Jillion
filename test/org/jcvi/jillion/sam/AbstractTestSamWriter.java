@@ -36,12 +36,12 @@ import org.junit.BeforeClass;
 public class AbstractTestSamWriter {
 
 	public static final class SamDataCollector implements SamVisitor {
-		private final List<SamRecordI> records = new ArrayList<>();
+		private final List<SamRecord> records = new ArrayList<>();
 		private SamHeader header;
 		
 
 		@Override
-		public void visitRecord(SamVisitorCallback callback, SamRecordI record, VirtualFileOffset start,
+		public void visitRecord(SamVisitorCallback callback, SamRecord record, VirtualFileOffset start,
 				VirtualFileOffset end) {
 			records.add(record);
 		}
@@ -61,7 +61,7 @@ public class AbstractTestSamWriter {
 			//no-op
 		}
 
-		public List<SamRecordI> getRecords() {
+		public List<SamRecord> getRecords() {
 			return records;
 		}
 
@@ -72,7 +72,7 @@ public class AbstractTestSamWriter {
 		
 	}
 
-	private static List<SamRecordI> RECORDS = new ArrayList<>();
+	private static List<SamRecord> RECORDS = new ArrayList<>();
 	private static SamHeader HEADER = null;
 	
 	@BeforeClass
@@ -99,8 +99,8 @@ public class AbstractTestSamWriter {
 		
 	}
 	
-	protected List<SamRecordI> getRecords(){
-		return new ArrayList<SamRecordI>(RECORDS);
+	protected List<SamRecord> getRecords(){
+		return new ArrayList<SamRecord>(RECORDS);
 	}
 	
 	protected SamHeader getHeader(){
@@ -108,11 +108,11 @@ public class AbstractTestSamWriter {
 	}
 
 	protected void orderOfRecordsMatchesExactly(File f,
-			List<SamRecordI> expectedRecords) throws IOException {
+			List<SamRecord> expectedRecords) throws IOException {
 		orderOfRecordsMatchesExactly(f, expectedRecords, null);
 	}
 	protected void orderOfRecordsMatchesExactly(File f,
-			List<SamRecordI> expectedRecords,
+			List<SamRecord> expectedRecords,
 			SortOrder expectedSortOrderInHeader) throws IOException {
 		SamDataCollector collector = new SamDataCollector();
 		

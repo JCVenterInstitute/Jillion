@@ -44,7 +44,7 @@ class IndexedBamFileParser extends BamFileParser{
 		
 		VirtualFileOffset end = refIndex.getHighestEndOffset();
 		
-		Predicate<SamRecordI> recordMatchPredicate =(record) ->referenceName.equals(record.getReferenceName());
+		Predicate<SamRecord> recordMatchPredicate =(record) ->referenceName.equals(record.getReferenceName());
 		
 		Predicate<VirtualFileOffset> endPredicate =(vfs) ->vfs.compareTo(end) <0;
 		
@@ -84,7 +84,7 @@ class IndexedBamFileParser extends BamFileParser{
 		VirtualFileOffset start = refIndex.getLowestStartOffset();
 		VirtualFileOffset end = refIndex.getHighestEndOffset();
 		
-		Predicate<SamRecordI> recordBinFilter = (record) -> {
+		Predicate<SamRecord> recordBinFilter = (record) -> {
 			if(!referenceName.equals(record.getReferenceName())){
 				return false;
 			}

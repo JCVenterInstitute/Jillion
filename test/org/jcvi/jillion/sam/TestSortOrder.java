@@ -53,8 +53,8 @@ public class TestSortOrder {
 	@Test
 	public void sortByQueryName(){
 		
-		SamRecordI first = createMock(SamRecordI.class);
-		SamRecordI second = createMock(SamRecordI.class);
+		SamRecord first = createMock(SamRecord.class);
+		SamRecord second = createMock(SamRecord.class);
 		
 		expect(first.getQueryName()).andStubReturn("first");
 		expect(second.getQueryName()).andStubReturn("second");
@@ -76,16 +76,16 @@ public class TestSortOrder {
 	}
 	@Test
 	public void sortByCoordinateBothReadsUnmappedShouldOrderByQueryName(){
-		SamRecordI first = createMock(SamRecordI.class);
-		SamRecordI second = createMock(SamRecordI.class);
+		SamRecord first = createMock(SamRecord.class);
+		SamRecord second = createMock(SamRecord.class);
 		
 		SamHeader header = createHeader();
 		
 		expect(first.getQueryName()).andStubReturn("first");
 		expect(second.getQueryName()).andStubReturn("second");
 		
-		expect(first.getReferenceName()).andStubReturn(SamRecordI.UNAVAILABLE);
-		expect(second.getReferenceName()).andStubReturn(SamRecordI.UNAVAILABLE);
+		expect(first.getReferenceName()).andStubReturn(SamRecord.UNAVAILABLE);
+		expect(second.getReferenceName()).andStubReturn(SamRecord.UNAVAILABLE);
 		expect(first.mapped()).andStubReturn(false);
 		expect(second.mapped()).andStubReturn(false);
 		
@@ -94,8 +94,8 @@ public class TestSortOrder {
 	}
 	@Test
 	public void sortByCoordinateMappedAlwaysLessThanUnMapped(){
-		SamRecordI first = createMock(SamRecordI.class);
-		SamRecordI second = createMock(SamRecordI.class);
+		SamRecord first = createMock(SamRecord.class);
+		SamRecord second = createMock(SamRecord.class);
 		
 		SamHeader header = createHeaderWithReferences("mapped");
 		
@@ -103,7 +103,7 @@ public class TestSortOrder {
 		expect(second.mapped()).andStubReturn(false);
 		
 		expect(first.getReferenceName()).andStubReturn("mapped");
-		expect(second.getReferenceName()).andStubReturn(SamRecordI.UNAVAILABLE);
+		expect(second.getReferenceName()).andStubReturn(SamRecord.UNAVAILABLE);
 		
 		
 		replay(first,second);
@@ -111,8 +111,8 @@ public class TestSortOrder {
 	}
 	@Test
 	public void sortByCoordinateSameReferenceShouldSortByCoordinate(){
-		SamRecordI first = createMock(SamRecordI.class);
-		SamRecordI second = createMock(SamRecordI.class);
+		SamRecord first = createMock(SamRecord.class);
+		SamRecord second = createMock(SamRecord.class);
 		
 		SamHeader header = createHeaderWithReferences("sameRef");
 		
@@ -132,8 +132,8 @@ public class TestSortOrder {
 	
 	@Test
 	public void sortByCoordinateDifferentReferenceShouldSortByReferenceOrderInHeader(){
-		SamRecordI first = createMock(SamRecordI.class);
-		SamRecordI second = createMock(SamRecordI.class);
+		SamRecord first = createMock(SamRecord.class);
+		SamRecord second = createMock(SamRecord.class);
 		//picked alphabetically backwards ref name
 		//to make sure we are sorting in header order
 		//not alphabetically
@@ -150,8 +150,8 @@ public class TestSortOrder {
 	}
 	@Test
 	public void sortByCoordinateSameReferenceSamePositionShouldSortByQueryName(){
-		SamRecordI first = createMock(SamRecordI.class);
-		SamRecordI second = createMock(SamRecordI.class);
+		SamRecord first = createMock(SamRecord.class);
+		SamRecord second = createMock(SamRecord.class);
 		
 		SamHeader header = createHeaderWithReferences("sameRef");
 		
@@ -171,15 +171,15 @@ public class TestSortOrder {
 		assertCorrectlySorted(SortOrder.COORDINATE, first, second,header);
 	}
 	
-	private void assertCorrectlySorted(SortOrder order, SamRecordI first, SamRecordI second){
+	private void assertCorrectlySorted(SortOrder order, SamRecord first, SamRecord second){
 		assertCorrectlySorted(order, first, second, null);
 	}
 
-	private void assertCorrectlySorted(SortOrder order, SamRecordI first, SamRecordI second, SamHeader header){
+	private void assertCorrectlySorted(SortOrder order, SamRecord first, SamRecord second, SamHeader header){
 		assertCorrectlySorted(order, first, second, header, true);
 	}
-	private void assertCorrectlySorted(SortOrder order, SamRecordI first, SamRecordI second, SamHeader header,boolean checkSelves){
-		Comparator<SamRecordI> comparator = order.createComparator(header);
+	private void assertCorrectlySorted(SortOrder order, SamRecord first, SamRecord second, SamHeader header,boolean checkSelves){
+		Comparator<SamRecord> comparator = order.createComparator(header);
 		if(checkSelves){
 			assertEquals("same record should sort equal to itself", 0, comparator.compare(first, first));
 			assertEquals("same record should sort equal to itself", 0, comparator.compare(second, second));

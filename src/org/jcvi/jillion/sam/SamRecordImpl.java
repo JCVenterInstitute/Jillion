@@ -40,7 +40,7 @@ import org.jcvi.jillion.sam.header.SamHeader;
  * @author dkatzel
  *
  */
-class SamRecordImpl implements SamRecordI {
+class SamRecordImpl implements SamRecord {
 	private final SamHeader header;
 	private final String queryName, referenceName, nextReferenceName;
 	private final EnumSet<SamRecordFlags> flags;

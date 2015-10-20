@@ -224,7 +224,7 @@ public class TestSamParserFactory {
 				.setStartPosition(37)
 				.setMappingQuality(30)
 				.setCigar(Cigar.parse("9M"))
-				.setNextReferenceName(SamRecordI.IDENTICAL)
+				.setNextReferenceName(SamRecord.IDENTICAL)
 				.setNextPosition(7)
 				.setObservedTemplateLength(-39)
 				.setSequence(new NucleotideSequenceBuilder("CAGCGGCAT").build())
@@ -306,7 +306,7 @@ public class TestSamParserFactory {
 		return new SamRecordBuilder(header, ReservedAttributeValidator.INSTANCE);
 	}
 	
-	private void visitRecord(SamVisitor visitor, SamRecordI record, boolean isBam){
+	private void visitRecord(SamVisitor visitor, SamRecord record, boolean isBam){
 		if(isBam){
 			visitor.visitRecord(isA(SamVisitorCallback.class), eq(record), isA(VirtualFileOffset.class), isA(VirtualFileOffset.class));
 		}else{

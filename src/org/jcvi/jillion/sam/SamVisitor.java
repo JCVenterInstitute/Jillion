@@ -105,7 +105,7 @@ public interface SamVisitor {
 	 * @param record the {@link SamRecord} to visit; ; will be null if the data being visited
      * is not a BAM encoded file.
 	 */
-	void visitRecord(SamVisitorCallback callback, SamRecordI record, VirtualFileOffset start, VirtualFileOffset end);
+	void visitRecord(SamVisitorCallback callback, SamRecord record, VirtualFileOffset start, VirtualFileOffset end);
 	/**
 	 * Reached the end of the SAM or BAM file
 	 * (without halting).

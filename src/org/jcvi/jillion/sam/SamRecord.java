@@ -11,17 +11,45 @@ import org.jcvi.jillion.sam.attribute.ReservedSamAttributeKeys;
 import org.jcvi.jillion.sam.attribute.SamAttribute;
 import org.jcvi.jillion.sam.attribute.SamAttributeKey;
 import org.jcvi.jillion.sam.cigar.Cigar;
-
-public interface SamRecordI {
-
+/**
+ * {@code SamRecord} is an interface for the object
+ * representation of a single alignment in a SAM or BAM
+ * encoded file.
+ * 
+ * @author dkatzel
+ *
+ */
+public interface SamRecord {
+	
 	int NOT_SET = -1;
 	String UNAVAILABLE = "*";
 	String IDENTICAL = "=";
-
+	/**
+	 * Is this the primary alignment for this read.
+	 * Some assemblers may also provide alternate alignments
+	 * for some reads.  In that case, this flag will
+	 * distinguish the primary alignment's record from the alternate records.
+	 * 
+	 * @return {@code true} if this record is the primary;
+	 * {@code false} otherwise.
+	 */
 	boolean isPrimary();
-
+	/**
+	 * Should this record be used in
+	 * analysis.
+	 * Some records should be excluded from downstream
+	 * analysis due to quality or sequencing error concerns.
+	 * 
+	 * @return {@code true} if this record is the should be used for 
+	 * analysis; {@code false} otherwise.
+	 */
 	boolean useForAnalysis();
-
+	/**
+	 * Get the query name of this record, this is usually the sequence read's name;
+	 * but may be set to {@link SamRecord#UNAVAILABLE} if the name is not known.
+	 * 
+	 * @return the Query name as a String or {@link SamRecord#UNAVAILABLE}.
+	 */
 	String getQueryName();
 
 	/**

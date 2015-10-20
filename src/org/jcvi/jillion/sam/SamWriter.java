@@ -40,5 +40,5 @@ public interface SamWriter extends Closeable{
 	 * @throws IOException if there is a problem writing the {@link SamRecord}
 	 * @throws NullPointerException if record is null.
 	 */
-	void writeRecord(SamRecordI record) throws IOException;
+	void writeRecord(SamRecord record) throws IOException;
 }

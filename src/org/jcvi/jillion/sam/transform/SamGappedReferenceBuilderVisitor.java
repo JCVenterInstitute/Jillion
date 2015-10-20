@@ -38,7 +38,7 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
 import org.jcvi.jillion.sam.SamParser;
-import org.jcvi.jillion.sam.SamRecordI;
+import org.jcvi.jillion.sam.SamRecord;
 import org.jcvi.jillion.sam.SamVisitor;
 import org.jcvi.jillion.sam.VirtualFileOffset;
 import org.jcvi.jillion.sam.cigar.Cigar;
@@ -96,7 +96,7 @@ final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 	
 
 	@Override
-	public void visitRecord(SamVisitorCallback callback, SamRecordI record, VirtualFileOffset start,
+	public void visitRecord(SamVisitorCallback callback, SamRecord record, VirtualFileOffset start,
 			VirtualFileOffset end) {
 		if(record.isPrimary() && record.mapped()){
 			
