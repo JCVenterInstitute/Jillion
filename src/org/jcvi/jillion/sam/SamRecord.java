@@ -638,16 +638,34 @@ public class SamRecord {
 		
 	}
 
-
+	/**
+	 * Did this record map to one of the references.
+	 * 
+	 * @return {@code true} if the record mapped somewhere;
+	 * {@code false} otherwise.
+	 */
 	public boolean mapped() {
 		return !flags.contains(SamRecordFlags.READ_UNMAPPED);
 	}
-	
+	/**
+	 * Get the {@link Direction} that this read mapped in.
+	 * If the read didn't map, then the direction will be {@link Direction#FORWARD}.
+	 * 
+	 * @return {@link Direction#REVERSE} if the read mapped in reverse;
+	 * {@link Direction#FORWARD} otherwise.
+	 */
 	public Direction getDirection(){
 		return flags.contains(SamRecordFlags.REVERSE_COMPLEMENTED) ? Direction.REVERSE : Direction.FORWARD;
 				
 	}
-
+	/**
+	 * Get the alignment {@link Range} that his record
+	 * mapped to along the reference.  The returned Range
+	 * is the range used to compute the Bin in indexed bai files.
+	 * 
+	 * @return a {@link Range} for this record's alignment,
+	 * or {@code null} if this record didn't map.
+	 */
 	public Range getAlignmentRange() {
 		if(mapped()){
 			return new Range.Builder(cigar.getNumberOfReferenceBasesAligned())
