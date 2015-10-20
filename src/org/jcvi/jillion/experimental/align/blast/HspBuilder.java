@@ -333,13 +333,9 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
         }
 
         private void sanityCheckValues() {
-        	if(numPositive !=null && numIdentical != null){
-        		if(numPositive < numIdentical){
-        			throw new IllegalStateException("number of matches must be >= number of identical matches");
-        		}
+        	if(numPositive !=null && numIdentical != null && numPositive < numIdentical){
+        		throw new IllegalStateException("number of matches must be >= number of identical matches");        		
         	}
-			
-			
 		}
 		/**
          * 

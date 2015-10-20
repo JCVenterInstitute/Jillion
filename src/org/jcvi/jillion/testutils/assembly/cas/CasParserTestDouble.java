@@ -372,8 +372,7 @@ public final class CasParserTestDouble implements CasParser {
 			
 			
 			this.referenceFile = referenceFile;
-			referenceWriter = new NucleotideFastaWriterBuilder(referenceFile)
-										.build();
+			referenceWriter = new NucleotideFastaWriterBuilder(referenceFile).build();
 			this.workingDir = workingDir;
 		
 			

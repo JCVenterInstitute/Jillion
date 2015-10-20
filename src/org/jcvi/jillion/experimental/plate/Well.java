@@ -264,11 +264,11 @@ public final class Well implements Comparable<Well>{
      * @return the {@link String} representation of this object.
      */
     public String toUnpaddedString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(row);
-        sb.append(String.format("%d", column));
+        return new StringBuilder(3)
+			        .append(row)
+			        .append(String.format("%d", column))
+			        .toString();
 
-        return sb.toString();
     }
     /**
      * Converts this Well into a String of the form:
@@ -279,11 +279,10 @@ public final class Well implements Comparable<Well>{
      * @return the {@link String} representation of this object.
      */
     public String toZeroPaddedString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(row);
-        sb.append(String.format("%02d", column));
-
-        return sb.toString();
+    	return new StringBuilder(3)
+		        .append(row)
+		        .append(String.format("%02d", column))
+		        .toString();
     }
     
     /**

@@ -274,7 +274,7 @@ class BgzfInputStream extends InflaterInputStream {
             return bytesRead;
         } catch (DataFormatException e) {
             String s = e.getMessage();
-            throw new ZipException(s == null ? "Invalid ZLIB data format" : s);
+            throw new IOException(s == null ? "Invalid ZLIB data format" : s, e);
         }
         
     }

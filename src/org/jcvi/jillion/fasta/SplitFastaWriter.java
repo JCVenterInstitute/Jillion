@@ -51,6 +51,7 @@ import org.jcvi.jillion.core.io.IOUtil;
  *
  * @since 5.0
  */
+@SuppressWarnings("unchecked")
 public final class SplitFastaWriter{
 	
 	/**
@@ -138,7 +139,7 @@ public final class SplitFastaWriter{
 	 * </pre>
 	 * 
 	 */
-	@SuppressWarnings("unchecked")
+	
 	public static <S, T extends Sequence<S>, F extends FastaRecord<S, T>, W extends FastaWriter<S,T,F>> W roundRobin(Class<W> interfaceClass, int numberOfFiles,
 			FastaRecordWriterFactory<W> supplier){
 		RoundRobinSplitFastaWriter<S, T, F, W> writer = new RoundRobinSplitFastaWriter<S, T, F, W>(numberOfFiles, supplier);
@@ -190,7 +191,7 @@ public final class SplitFastaWriter{
 	*}
 	 * </pre>
 	 */
-	@SuppressWarnings("unchecked")
+	
 	public static <S, T extends Sequence<S>, F extends FastaRecord<S, T>, W extends FastaWriter<S,T,F>> W rollover(Class<W> interfaceClass, int maxRecordsPerFile,
 			FastaRecordWriterFactory<W> supplier){
 		RolloverSplitFastaWriter<S, T, F, W> writer = new RolloverSplitFastaWriter<S, T, F, W>(maxRecordsPerFile, supplier);
@@ -255,7 +256,7 @@ public final class SplitFastaWriter{
 	 * that were determined to be forward reads were written to "forward.fasta" and the reads that were
 	 * determined to be reversed where written to "reverse.fasta".
 	 */
-	@SuppressWarnings("unchecked")
+	
 	public static <S, T extends Sequence<S>, F extends FastaRecord<S, T>, W extends FastaWriter<S,T,F>, K> W deconvolve(Class<W> interfaceClass, 
 			Function<FastaRecord<S, T>, K> deconvolutionFunction,
 			DeconvolveFastaRecordWriterFactory<K, W> supplier){
@@ -301,7 +302,7 @@ public final class SplitFastaWriter{
 
 		private final FastaWriter<S,T,F> delegate;
 		
-		@SuppressWarnings("unchecked")
+		
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args)
 				throws Throwable {
@@ -517,7 +518,7 @@ public final class SplitFastaWriter{
 		
 		private final FastaWriter<S, T, F>[] writers;
 		
-		@SuppressWarnings("unchecked")
+		
 		private RoundRobinSplitFastaWriter(int numberOfFiles,
 				FastaRecordWriterFactory<W> supplier) {
 
@@ -540,7 +541,7 @@ public final class SplitFastaWriter{
 		
 		private W getCurrentWriter() throws IOException{
 			checkNotClosed();
-			@SuppressWarnings("unchecked")
+			
 			W writer=  (W)writers[currentIndex];
 			if(writer ==null){
 				// supplied index always goes from 1..N not 0..n-1

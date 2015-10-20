@@ -71,19 +71,19 @@ public abstract class AbstractFastqRecordVisitor implements FastqRecordVisitor{
 	@Override
 	public final void visitEnd() {
 	    FastqRecord fastqRecord;
-	    if(currentQualities !=null){
-	        fastqRecord = new FastqRecordBuilder(id, new NucleotideSequenceBuilder(currentBasecalls)
-	        												.turnOffDataCompression(turnOffCompression)
-	        												.build(), currentQualities)
-            							.comment(optionalComment)
-            							.build();
-       	
-	    }else{
-	        if(optionalComment ==null){
-	            fastqRecord = new ParsedFastqRecord(id, currentBasecalls , encodedQualities, qualityCodec, turnOffCompression);
+	    if(currentQualities ==null){
+	    	if(optionalComment ==null){
+	    		fastqRecord = new ParsedFastqRecord(id, currentBasecalls , encodedQualities, qualityCodec, turnOffCompression);
 	        }else{
 	            fastqRecord = new CommentedParsedFastqRecord(id, currentBasecalls , encodedQualities, qualityCodec, turnOffCompression, optionalComment);
-	        }
+	        }       	
+	    }else{
+	    	 fastqRecord = new FastqRecordBuilder(id, new NucleotideSequenceBuilder(currentBasecalls)
+															.turnOffDataCompression(turnOffCompression)
+															.build(), 
+													currentQualities)
+											.comment(optionalComment)
+											.build();
 	    }
 	    
 	    visitRecord(fastqRecord);
