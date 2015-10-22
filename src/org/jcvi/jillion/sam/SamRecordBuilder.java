@@ -9,6 +9,7 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.sam.attribute.InvalidAttributeException;
 import org.jcvi.jillion.sam.attribute.ReservedAttributeValidator;
+import org.jcvi.jillion.sam.attribute.ReservedSamAttributeKeys;
 import org.jcvi.jillion.sam.attribute.SamAttribute;
 import org.jcvi.jillion.sam.attribute.SamAttributeKey;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
@@ -23,7 +24,7 @@ import org.jcvi.jillion.sam.header.SamHeader;
  * @author dkatzel
  *
  */
-public class SamRecordBuilder{
+public class SamRecordBuilder implements SamAttributed{
 	
 	
 	final SamHeader header;
@@ -98,10 +99,12 @@ public class SamRecordBuilder{
 			throw new InvalidAttributeException("attribute with key already exists " + key);
 		}
 		*/
-		attributeValidator.validate(header, attribute);
+		attributeValidator.validate(header, this, attribute);
 		attributes.put(key, attribute);
 		return this;
 	}
+	
+	
 	/**
 	 * Remove the attribute with the given
 	 * {@link SamAttributeKey}.
@@ -376,6 +379,34 @@ public class SamRecordBuilder{
 			
 		}
 		
+	}
+	@Override
+	public boolean hasAttribute(SamAttributeKey key){
+		if(key==null){
+			throw new NullPointerException("key can not be null");
+		}
+		return attributes.containsKey(key);
+	}
+	
+	@Override
+	public SamAttribute getAttribute(SamAttributeKey key){
+		return attributes.get(key);
+	}
+	
+	@Override
+	public boolean hasAttribute(ReservedSamAttributeKeys key){
+		if(key==null){
+			throw new NullPointerException("key can not be null");
+		}
+		return hasAttribute(key.getKey());
+	}
+	
+	@Override
+	public SamAttribute getAttribute(ReservedSamAttributeKeys key){
+		if(key==null){
+			return null;
+		}
+		return getAttribute(key.getKey());
 	}
 	
 }

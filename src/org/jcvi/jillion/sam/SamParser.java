@@ -31,6 +31,8 @@ import org.jcvi.jillion.sam.header.SamHeader;
  * SAM or BAM files and call the appropriate
  * methods on the given {@link SamVisitor}.
  * @author dkatzel
+ * 
+ * @see SamParserFactory
  *
  */
 public interface SamParser {
@@ -76,7 +78,7 @@ public interface SamParser {
 	void parse(SamVisitor visitor, SamVisitorMemento memento) throws IOException;
 	/**
 	 * Parse the Sam or Bam file and 
-	 * and but only visit the {@link SamRecord}s
+	 * but only visit the {@link SamRecord}s
 	 * that map to the given reference.
 	 * 
 	 * @param referenceName the name of the Reference to visit
@@ -93,7 +95,7 @@ public interface SamParser {
 	void parse(String referenceName, SamVisitor visitor) throws IOException;
 	/**
 	 * Parse the Sam or Bam file and 
-	 * and but only visit the {@link SamRecord}s
+	 * but only visit the {@link SamRecord}s
 	 * that map to the given reference and the read
 	 * alignment intersects the reference
 	 * to the provided Range. 

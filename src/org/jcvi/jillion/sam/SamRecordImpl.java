@@ -23,6 +23,7 @@ package org.jcvi.jillion.sam;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.jcvi.jillion.core.Direction;
@@ -167,6 +168,7 @@ class SamRecordImpl implements SamRecord {
 	
 	@Override
 	public SamAttribute getAttribute(SamAttributeKey key){
+		Objects.requireNonNull(key);
 		return attributes.get(key);
 	}
 	
@@ -185,9 +187,7 @@ class SamRecordImpl implements SamRecord {
 	
 	@Override
 	public SamAttribute getAttribute(ReservedSamAttributeKeys key){
-		if(key==null){
-			return null;
-		}
+		Objects.requireNonNull(key);
 		return getAttribute(key.getKey());
 	}
 	

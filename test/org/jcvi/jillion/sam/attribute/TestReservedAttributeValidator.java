@@ -23,11 +23,12 @@ package org.jcvi.jillion.sam.attribute;
 import org.jcvi.jillion.core.util.UnsignedByteArray;
 import org.jcvi.jillion.core.util.UnsignedIntArray;
 import org.jcvi.jillion.core.util.UnsignedShortArray;
-import org.jcvi.jillion.sam.header.SamProgramBuilder;
-import org.jcvi.jillion.sam.header.SamReadGroup;
+import org.jcvi.jillion.sam.SamAttributed;
 import org.jcvi.jillion.sam.header.SamHeader;
 import org.jcvi.jillion.sam.header.SamHeaderBuilder;
 import org.jcvi.jillion.sam.header.SamProgram;
+import org.jcvi.jillion.sam.header.SamProgramBuilder;
+import org.jcvi.jillion.sam.header.SamReadGroup;
 import org.jcvi.jillion.sam.header.SamReadGroupBuilder;
 import org.junit.Test;
 
@@ -38,6 +39,29 @@ public class TestReservedAttributeValidator {
 	private final String readGroupId ="readGroupId";
 	private final String platformUnit = "platformUnit";
 	private final String programId = "programId";
+	
+	private SamAttributed IGNORE = new SamAttributed() {
+		
+		@Override
+		public boolean hasAttribute(ReservedSamAttributeKeys key) {
+			return false;
+		}
+		
+		@Override
+		public boolean hasAttribute(SamAttributeKey key) {
+			return false;
+		}
+		
+		@Override
+		public SamAttribute getAttribute(ReservedSamAttributeKeys key) {
+			return null;
+		}
+		
+		@Override
+		public SamAttribute getAttribute(SamAttributeKey key) {
+			return null;
+		}
+	};
 	
 	@Test
 	public void defaultValidatorShouldDoNothing() throws InvalidAttributeException{
@@ -50,7 +74,7 @@ public class TestReservedAttributeValidator {
 					&& k !=ReservedSamAttributeKeys.READ_GROUP
 					){
 				SamAttribute attr =new SamAttribute(k, createValueFor(k.getType()));
-				sut.validate(header, attr);
+				sut.validate(header, IGNORE, attr);
 			}
 		}
 	}
@@ -65,7 +89,7 @@ public class TestReservedAttributeValidator {
 								.build();
 		
 		SamAttribute attr = new SamAttribute(ReservedSamAttributeKeys.LIBRARY, libId);
-		sut.validate(header, attr);
+		sut.validate(header, IGNORE, attr);
 	}
 	@Test
 	public void libraryShouldBeInHeaderWithMultipleLibraries() throws InvalidAttributeException{
@@ -81,7 +105,7 @@ public class TestReservedAttributeValidator {
 								.build();
 		
 		SamAttribute attr = new SamAttribute(ReservedSamAttributeKeys.LIBRARY, libId);
-		sut.validate(header, attr);
+		sut.validate(header, IGNORE, attr);
 	}
 	@Test(expected = InvalidAttributeException.class)
 	public void libraryNotInHeaderWithMultipleLibrariesShouldThrowException() throws InvalidAttributeException{
@@ -98,7 +122,7 @@ public class TestReservedAttributeValidator {
 								.build();
 		
 		SamAttribute attr = new SamAttribute(ReservedSamAttributeKeys.LIBRARY, libId);
-		sut.validate(header, attr);
+		sut.validate(header, IGNORE, attr);
 	}
 	@Test(expected = InvalidAttributeException.class)
 	public void libraryNotInHeaderShouldThrowException() throws InvalidAttributeException{
@@ -107,7 +131,7 @@ public class TestReservedAttributeValidator {
 								.build();
 		
 		SamAttribute attr = new SamAttribute(ReservedSamAttributeKeys.LIBRARY, libId);
-		sut.validate(header, attr);
+		sut.validate(header, IGNORE, attr);
 	}
 	
 	@Test(expected = InvalidAttributeException.class)
@@ -117,7 +141,7 @@ public class TestReservedAttributeValidator {
 								.build();
 		
 		SamAttribute attr = new SamAttribute(ReservedSamAttributeKeys.READ_GROUP, readGroupId);
-		sut.validate(header, attr);
+		sut.validate(header, IGNORE, attr);
 	}
 	
 	@Test
@@ -129,7 +153,7 @@ public class TestReservedAttributeValidator {
 								.build();
 		
 		SamAttribute attr = new SamAttribute(ReservedSamAttributeKeys.READ_GROUP, readGroupId);
-		sut.validate(header, attr);
+		sut.validate(header, IGNORE, attr);
 	}
 	@Test
 	public void readGroupIdShouldBeInHeaderWithMultipleReadGroups() throws InvalidAttributeException{
@@ -143,7 +167,7 @@ public class TestReservedAttributeValidator {
 								.build();
 		
 		SamAttribute attr = new SamAttribute(ReservedSamAttributeKeys.READ_GROUP, readGroupId);
-		sut.validate(header, attr);
+		sut.validate(header, IGNORE, attr);
 	}
 	@Test(expected = InvalidAttributeException.class)
 	public void readGroupNotInHeaderWithMultipleReadGroupsShouldThrowException() throws InvalidAttributeException{
@@ -157,7 +181,7 @@ public class TestReservedAttributeValidator {
 								.build();
 		
 		SamAttribute attr = new SamAttribute(ReservedSamAttributeKeys.READ_GROUP, readGroupId);
-		sut.validate(header, attr);
+		sut.validate(header, IGNORE, attr);
 	}
 	
 	
@@ -171,7 +195,7 @@ public class TestReservedAttributeValidator {
 								.build();
 		
 		SamAttribute attr = new SamAttribute(ReservedSamAttributeKeys.PLATFORMT_UNIT, platformUnit);
-		sut.validate(header, attr);
+		sut.validate(header, IGNORE, attr);
 	}
 	@Test
 	public void platformUnitShouldBeInHeaderWithMultipleLibraries() throws InvalidAttributeException{
@@ -187,7 +211,7 @@ public class TestReservedAttributeValidator {
 								.build();
 		
 		SamAttribute attr = new SamAttribute(ReservedSamAttributeKeys.PLATFORMT_UNIT, platformUnit);
-		sut.validate(header, attr);
+		sut.validate(header, IGNORE, attr);
 	}
 	@Test(expected = InvalidAttributeException.class)
 	public void platformUnitNotInHeaderWithMultipleLibrariesShouldThrowException() throws InvalidAttributeException{
@@ -204,7 +228,7 @@ public class TestReservedAttributeValidator {
 								.build();
 		
 		SamAttribute attr = new SamAttribute(ReservedSamAttributeKeys.PLATFORMT_UNIT, platformUnit);
-		sut.validate(header, attr);
+		sut.validate(header, IGNORE, attr);
 	}
 	@Test(expected = InvalidAttributeException.class)
 	public void platformNotInHeaderShouldThrowException() throws InvalidAttributeException{
@@ -213,7 +237,7 @@ public class TestReservedAttributeValidator {
 								.build();
 		
 		SamAttribute attr = new SamAttribute(ReservedSamAttributeKeys.PLATFORMT_UNIT, platformUnit);
-		sut.validate(header, attr);
+		sut.validate(header, IGNORE, attr);
 	}
 	
 	@Test
@@ -226,7 +250,7 @@ public class TestReservedAttributeValidator {
 								.build();
 		
 		SamAttribute attr = new SamAttribute(ReservedSamAttributeKeys.PROGRAM, programId);
-		sut.validate(header, attr);
+		sut.validate(header, IGNORE, attr);
 	}
 	@Test
 	public void programShouldBeInHeaderWithMultiplePrograms() throws InvalidAttributeException{
@@ -240,7 +264,7 @@ public class TestReservedAttributeValidator {
 								.build();
 		
 		SamAttribute attr = new SamAttribute(ReservedSamAttributeKeys.PROGRAM, programId);
-		sut.validate(header, attr);
+		sut.validate(header, IGNORE, attr);
 	}
 	@Test(expected = InvalidAttributeException.class)
 	public void programNotInHeaderWithMultipleProgramsShouldThrowException() throws InvalidAttributeException{
@@ -255,7 +279,7 @@ public class TestReservedAttributeValidator {
 				.build();
 		
 		SamAttribute attr = new SamAttribute(ReservedSamAttributeKeys.PROGRAM, programId);
-		sut.validate(header, attr);
+		sut.validate(header, IGNORE, attr);
 	}
 	@Test(expected = InvalidAttributeException.class)
 	public void programNotInHeaderShouldThrowException() throws InvalidAttributeException{
@@ -264,7 +288,7 @@ public class TestReservedAttributeValidator {
 								.build();
 		
 		SamAttribute attr = new SamAttribute(ReservedSamAttributeKeys.PROGRAM, programId);
-		sut.validate(header, attr);
+		sut.validate(header, IGNORE, attr);
 	}
 	
 	

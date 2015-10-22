@@ -20,17 +20,14 @@
  ******************************************************************************/
 package org.jcvi.jillion.sam.attribute;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expectLastCall;
-import static org.easymock.EasyMock.isA;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.easymock.EasyMock.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.List;
 
+import org.jcvi.jillion.sam.SamAttributed;
 import org.jcvi.jillion.sam.header.SamHeader;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,6 +40,28 @@ import org.powermock.reflect.Whitebox;
 @PrepareForTest({SamHeader.class, SamAttribute.class})
 public class TestChainedSamAttributeValidatorBuilder {
 
+	private SamAttributed IGNORE = new SamAttributed() {
+		
+		@Override
+		public boolean hasAttribute(ReservedSamAttributeKeys key) {
+			return false;
+		}
+		
+		@Override
+		public boolean hasAttribute(SamAttributeKey key) {
+			return false;
+		}
+		
+		@Override
+		public SamAttribute getAttribute(ReservedSamAttributeKeys key) {
+			return null;
+		}
+		
+		@Override
+		public SamAttribute getAttribute(SamAttributeKey key) {
+			return null;
+		}
+	};
 	@Test(expected = NullPointerException.class)
 	public void nullValidatorShouldThrowNPE(){
 		new ChainedSamAttributeValidatorBuilder()
@@ -78,7 +97,7 @@ public class TestChainedSamAttributeValidatorBuilder {
 		
 		InvalidAttributeException expected = new InvalidAttributeException("expected");
 		
-		v1.validate(isA(SamHeader.class), isA(SamAttribute.class));
+		v1.validate(isA(SamHeader.class), isA(SamAttributed.class), isA(SamAttribute.class));
 		expectLastCall().andThrow(expected);
 		
 		replay(v1, v2);
@@ -93,7 +112,7 @@ public class TestChainedSamAttributeValidatorBuilder {
 		
 		PowerMock.replay(mockHeader, mockAttr);
 		try{
-			chain.validate(mockHeader, mockAttr);
+			chain.validate(mockHeader, IGNORE, mockAttr);
 			fail("should throw exception");
 		}catch(InvalidAttributeException actual){
 			assertEquals(expected, actual);
@@ -109,9 +128,9 @@ public class TestChainedSamAttributeValidatorBuilder {
 		
 		InvalidAttributeException expected = new InvalidAttributeException("expected");
 		
-		v1.validate(isA(SamHeader.class), isA(SamAttribute.class));
+		v1.validate(isA(SamHeader.class), isA(SamAttributed.class), isA(SamAttribute.class));
 		
-		v2.validate(isA(SamHeader.class), isA(SamAttribute.class));
+		v2.validate(isA(SamHeader.class), isA(SamAttributed.class), isA(SamAttribute.class));
 		expectLastCall().andThrow(expected);
 		
 		replay(v1, v2);
@@ -126,7 +145,7 @@ public class TestChainedSamAttributeValidatorBuilder {
 		
 		PowerMock.replay(mockHeader, mockAttr);
 		try{
-			chain.validate(mockHeader, mockAttr);
+			chain.validate(mockHeader, IGNORE, mockAttr);
 			fail("should throw exception");
 		}catch(InvalidAttributeException actual){
 			assertEquals(expected, actual);
@@ -142,9 +161,9 @@ public class TestChainedSamAttributeValidatorBuilder {
 		
 		
 		
-		v1.validate(isA(SamHeader.class), isA(SamAttribute.class));
-		
-		v2.validate(isA(SamHeader.class), isA(SamAttribute.class));		
+		v1.validate(isA(SamHeader.class), isA(SamAttributed.class), isA(SamAttribute.class));
+	
+		v2.validate(isA(SamHeader.class), isA(SamAttributed.class), isA(SamAttribute.class));		
 		
 		replay(v1, v2);
 		
@@ -158,7 +177,7 @@ public class TestChainedSamAttributeValidatorBuilder {
 		
 		PowerMock.replay(mockHeader, mockAttr);
 		
-		chain.validate(mockHeader, mockAttr);
+		chain.validate(mockHeader, IGNORE, mockAttr);
 		
 		verify(v1, v2);
 		

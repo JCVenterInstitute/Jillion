@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.sam.attribute;
 
+import org.jcvi.jillion.sam.SamAttributed;
 import org.jcvi.jillion.sam.header.SamHeader;
 /**
  * {@code ReservedAttributeValidator}
@@ -38,7 +39,7 @@ public enum ReservedAttributeValidator implements SamAttributeValidator{
 	INSTANCE;
 	
 	@Override
-	public void validate(SamHeader header, SamAttribute attribute)
+	public void validate(SamHeader header, SamAttributed record, SamAttribute attribute)
 			throws InvalidAttributeException {
 		ReservedSamAttributeKeys reserved = ReservedSamAttributeKeys.parseKey(attribute.getKey());
 		if(reserved !=null){

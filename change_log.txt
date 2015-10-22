@@ -120,6 +120,13 @@ New Features
     
 15. Jillion 5 is now OSGI compliant and can now be used in an OSGI container.
     All classes except for those under org.jcvi.jillion.internal.* are exported.
+    
+16. BtabWriter implementation created by the BtabWriterBuilder can now
+    format the dates differently by using alternate Locales.
+    
+17. Added new default method to SamAttributeValidator.  thenComparing(SamAttributeValidator other) which returns
+    a new SamAttributeValidator that checks both validators in a chain and only passes if both validators pass
+    the attribute. Uses a similar construction to the new Java 8 Comparator.thenComparing(...) methods.
 
 API Changes
 -----------
@@ -215,6 +222,23 @@ API Changes
 
 24.  Refactored SamRecord from a class to an interface.  The old SamRecord class is now package private. 
      All API methods in sam package now use the new SamRecord interface instead of the old class.
+     
+25. BtabWriter added new locale(Locale) method to change the Locale for the Date formatting.
+    If not called, the default Locale is used.  Previous versions of Jillion always used the default Locale.
+    
+26.  Created new SamAttributed interface which has the methods hasAttribute(...) and getAttribute(...)
+     SamRecord and SamRecordBuilder now both implement this interface.
+     
+27.  Added additional parameter to SamAttributeValidator to add a SamAttributed instance.  This will be
+     the source that the attribute is from.  This allows new validators to be written to check other attributes
+     from the same source.
+     
+28.  Created new SamAttributeValidator singleton class NoDuplicateSamAttribute that makes sure the given 
+    SamAttributeKey for isn't already used by the record, which would be a violation of the SAM specification.
+    
+29.  Added new default method to SamAttributeValidator.  thenComparing(SamAttributeValidator other) which returns
+    a new SamAttributeValidator that checks both validators in a chain and only passes if both validators pass the attribute.
+    Uses a similar construction to the new Java 8 Comparator.thenComparing(...) methods.
   
 Bug Fixes
 ----------
