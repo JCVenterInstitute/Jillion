@@ -37,14 +37,16 @@ import org.jcvi.jillion.sam.header.SamHeaderBuilder;
  * and optionally re-sort them.
  * If resorting the {@link SamRecord}s, temp data
  * will be written to a temp directory.
- * By default, the system's temp directory is used.
+ * By default, the system's temp directory is used but that can be changed
+ * by using the {@link #setTempRootDir(File)} method.
+ * 
  * @author dkatzel
  *
  */
 public final class SamFileWriterBuilder {
 
 	
-	private static final int DEFAULT_RECORDS_IN_MEMORY = 2000000; //2 million
+	private static final int DEFAULT_RECORDS_IN_MEMORY = 2_000_000;
 	
 	private final File outputFile;
 	private final SamHeaderBuilder headerBuilder;
@@ -204,7 +206,8 @@ public final class SamFileWriterBuilder {
 	/**
 	 * Convenience method to resort 
 	 * using the default number of records to get in memory
-	 * specified by {@link #getDefaultRecordsToKeepInMemory()}.
+	 * specified by {@link #getDefaultRecordsToKeepInMemory()}
+	 * which is currently set to {@value #DEFAULT_RECORDS_IN_MEMORY}.
 	 * Same as {@link #reSortBy(SortOrder, int) reSortBy(sortOrder, getDefaultRecordsToKeepInMemory()}
 	 * 
 	 * @param sortOrder the {@link SortOrder} to use;

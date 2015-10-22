@@ -23,6 +23,7 @@ package org.jcvi.jillion.sam.attribute;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jcvi.jillion.sam.SamAttributed;
 import org.jcvi.jillion.sam.header.SamHeader;
 /**
  * {@code ChainedSamAttributeValidatorBuilder}
@@ -102,10 +103,10 @@ public class ChainedSamAttributeValidatorBuilder {
 		}
 
 		@Override
-		public void validate(SamHeader header, SamAttribute attribute)
+		public void validate(SamHeader header, SamAttributed record, SamAttribute attribute)
 				throws InvalidAttributeException {
 			for(SamAttributeValidator validator : validators){
-				validator.validate(header, attribute);
+				validator.validate(header, record, attribute);
 			}
 			
 		}

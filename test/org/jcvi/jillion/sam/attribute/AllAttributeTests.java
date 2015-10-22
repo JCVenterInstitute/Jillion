@@ -28,6 +28,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
     	TestReservedAttributeValidator.class,
+    	TestDuplicateAttributeValidator.class,
+    	TestDefaultChainedVaidator.class,
+    	
     	TestChainedSamAttributeValidatorBuilder.class
     }
     )

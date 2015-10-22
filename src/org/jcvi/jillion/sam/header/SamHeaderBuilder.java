@@ -427,7 +427,7 @@ public final class SamHeaderBuilder{
 	                        throw new SamValidationException("unknown next reference "+ nextRefName);
 	                }
 	                for(SamAttribute attribute : record.getAttributes()){                   
-	                                attributeValidator.validate(this, attribute);
+	                                attributeValidator.validate(this, record, attribute);
 	                        
 	                }
 	                

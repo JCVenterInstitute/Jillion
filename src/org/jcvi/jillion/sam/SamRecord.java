@@ -7,9 +7,7 @@ import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.sam.attribute.ReservedSamAttributeKeys;
 import org.jcvi.jillion.sam.attribute.SamAttribute;
-import org.jcvi.jillion.sam.attribute.SamAttributeKey;
 import org.jcvi.jillion.sam.cigar.Cigar;
 /**
  * {@code SamRecord} is an interface for the object
@@ -19,7 +17,7 @@ import org.jcvi.jillion.sam.cigar.Cigar;
  * @author dkatzel
  *
  */
-public interface SamRecord {
+public interface SamRecord extends SamAttributed {
 	
 	int NOT_SET = -1;
 	String UNAVAILABLE = "*";
@@ -94,15 +92,7 @@ public interface SamRecord {
 
 	int getObservedTemplateLength();
 
-	boolean hasAttribute(SamAttributeKey key);
-
-	SamAttribute getAttribute(SamAttributeKey key);
-
 	Collection<SamAttribute> getAttributes();
-
-	boolean hasAttribute(ReservedSamAttributeKeys key);
-
-	SamAttribute getAttribute(ReservedSamAttributeKeys key);
 
 	int hashCode();
 

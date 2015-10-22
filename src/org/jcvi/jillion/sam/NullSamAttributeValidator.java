@@ -38,7 +38,7 @@ enum NullSamAttributeValidator implements SamAttributeValidator{
 	INSTANCE;
 
 	@Override
-	public void validate(SamHeader header, SamAttribute attribute)
+	public void validate(SamHeader header, SamAttributed record, SamAttribute attribute)
 			throws InvalidAttributeException {
 		//no-op
 		
