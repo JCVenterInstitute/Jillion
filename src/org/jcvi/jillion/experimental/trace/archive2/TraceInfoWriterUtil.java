@@ -27,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -39,7 +40,7 @@ public final class TraceInfoWriterUtil{
 		        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<trace_volume>\n";
     private static final String END_XML = "</trace_volume>\n";
 
-    private static final DateFormat TRACE_ARCHIVE_DATE_FORMAT = new SimpleDateFormat("yyyy-mm-dd-HH:mm:ss");
+    private static final DateFormat TRACE_ARCHIVE_DATE_FORMAT = new SimpleDateFormat("yyyy-mm-dd-HH:mm:ss", Locale.US);
     
     private TraceInfoWriterUtil(){
     	//can not instantiate
