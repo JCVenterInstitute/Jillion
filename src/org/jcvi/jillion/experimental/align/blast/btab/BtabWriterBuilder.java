@@ -31,6 +31,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Direction;
@@ -54,6 +56,8 @@ public final class BtabWriterBuilder {
 
 	private Date runDate = new Date();
 	private boolean includePvalue=true;
+	
+	private Locale locale = Locale.getDefault();
 	/**
 	 * Create a new Builder object that will
 	 * write the Btab formatted data to the given File.
@@ -68,6 +72,24 @@ public final class BtabWriterBuilder {
 		}
 		this.outputFile = outputFile;
 		this.outStream = null;
+	}
+	
+	/**
+	 * Change the {@link Locale} used in date formatting
+	 * of field #2.  If this method is not called, then
+	 * the default locale is used.
+	 * 
+	 * @param locale the {@link Locale} to use; can not be null.
+	 * @return this
+	 * 
+	 * @throws NullPointerException if locale is null.
+	 * 
+	 * @since 5.0
+	 */
+	public BtabWriterBuilder locale(Locale locale){
+		Objects.requireNonNull(locale);
+		this.locale=locale;
+		return this;
 	}
 	/**
 	 * Create a new Builder object that will
@@ -94,6 +116,8 @@ public final class BtabWriterBuilder {
 	 * @param date the Date to write out, can not be null.
 	 * @return this.
 	 * @throws NullPointerException if date is null.
+	 * 
+	 * @see #locale(Locale)
 	 */
 	public BtabWriterBuilder setRunDate(Date date){
 		if(date ==null){
@@ -150,7 +174,7 @@ public final class BtabWriterBuilder {
 			//thread related problems.  
 			//this constructor should only be called in frequently
 			//so it won't be too much of a performance hit.
-			formattedRunDate = new SimpleDateFormat("MMM dd yyyy").format(builder.runDate);
+			formattedRunDate = new SimpleDateFormat("MMM dd yyyy", builder.locale).format(builder.runDate);
 			
 			scientificNotationFormatter = new DecimalFormat("0.0E0");
 			scientificNotationFormatter.setRoundingMode(RoundingMode.HALF_UP);

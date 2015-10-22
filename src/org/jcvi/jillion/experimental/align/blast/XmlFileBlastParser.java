@@ -156,9 +156,7 @@ public final class XmlFileBlastParser implements BlastParser{
         private static final String QUERY_SEQUENCE = "Hsp_qseq";
         private static final String SUBJECT_SEQUENCE = "Hsp_hseq";
         private static final String SUBJECT_DEF = "Hit_def";
-        
-        private static final Pattern GAP_OPENING_PATTERN = Pattern.compile("[-]+");
-        
+         
         private static final Pattern DEFLINE_PATTERN = Pattern.compile("^\\s*(\\S+)\\s*(.*)$");
         
         private static final String LEGACY_QUERY_ID = "BlastOutput_query-def";
@@ -244,7 +242,8 @@ public final class XmlFileBlastParser implements BlastParser{
 		/**
         * {@inheritDoc}
         */
-        @Override
+        @SuppressWarnings("unchecked")
+		@Override
         public void endElement(String uri, String localName, String qName)
                 throws SAXException {
         	tempVal = tempBuilder.toString();
@@ -406,14 +405,6 @@ public final class XmlFileBlastParser implements BlastParser{
                 }
             }
             return misMatches;
-        }
-        private int parseNumberOfGapOpenings(String basecalls){
-            Matcher matcher = GAP_OPENING_PATTERN.matcher(basecalls);
-            int openings =0;
-            while(matcher.find()){
-                openings++;
-            }
-            return openings;
         }
     }
 }

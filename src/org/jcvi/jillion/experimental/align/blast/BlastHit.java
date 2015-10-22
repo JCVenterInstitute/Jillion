@@ -44,7 +44,7 @@ public interface BlastHit {
     
     Integer getSubjectLength();
     
-    List<Hsp> getHsps();
+    List<Hsp<?,?>> getHsps();
     
     String getBlastDbName();
     

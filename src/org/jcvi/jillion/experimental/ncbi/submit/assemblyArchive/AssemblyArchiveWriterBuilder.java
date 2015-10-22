@@ -450,7 +450,7 @@ public class AssemblyArchiveWriterBuilder {
 			}
 			
 			//have to compute it
-			SliceMap sliceMap = new SliceMapBuilder(superContig, qualityDataStore)
+			SliceMap sliceMap = new SliceMapBuilder<>(superContig, qualityDataStore)
 									.build();
 			NucleotideSequence consensusSequence = superContig.getConsensusSequence();
 			GrowableIntArray gapOffsets =new GrowableIntArray(consensusSequence.getGapOffsets());

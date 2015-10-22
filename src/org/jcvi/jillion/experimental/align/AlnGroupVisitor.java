@@ -71,8 +71,11 @@ public interface AlnGroupVisitor {
         		case ':' : return CONSERVED_SUBSITUTION;
         		case '.' : return SEMI_CONSERVED_SUBSITUTION;
         		case ' ' : return NOT_CONSERVED;
+        		
+        		default:
+        			throw new IllegalArgumentException("unknown conservation " + c);
         	}
-        	throw new IllegalArgumentException("unknown conservation " + c);
+        	
         }
 
 		public char asChar(){		
