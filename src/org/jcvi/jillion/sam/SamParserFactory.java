@@ -115,7 +115,7 @@ public final class SamParserFactory {
 			//is there an indexed bam file that goes with it?
 			File bai = new File(f.getParentFile(), f.getName() +".bai");
 			if(bai.exists()){
-				return createFromBamIndex(f, bai, validator);
+				return createUsingIndex(f, bai, validator);
 			}
 		
 		}
@@ -129,7 +129,7 @@ public final class SamParserFactory {
 	 * using the {@link ReservedAttributeValidator}
 	 * to validate the {@link SamRecord}s to be parsed.
 	 * This is the same as
-	 * {@link #create(File, SamAttributeValidator) create(f, ReservedAttributeValidator.INSTANCE)}.
+	 * {@link #createUsingIndex(File, File, SamAttributeValidator) createUsingIndex(bam, bai, ReservedAttributeValidator.INSTANCE)}.
 	 * @param bam the Coordinate sorted BAM file to be parsed;
 	 * can not be null, must exist.
 	 * 
@@ -138,15 +138,17 @@ public final class SamParserFactory {
 	 * 
 	 * @return a new {@link SamParser} instance
 	 * will never be null.
+	 * 
 	 * @throws IOException if the file does not exist.
 	 * @throws NullPointerException if any parameter is null.
 	 * @throws IllegalArgumentException if the file's extension
 	 * is not either ".sam" or ".bam" (ignoring case).
-	 * @see #create(File, SamAttributeValidator)
+	 * 
+	 * @see #createUsingIndex(File, File, SamAttributeValidator)
 	 * 
 	 * @since 5.0
 	 */
-	public static SamParser createFromBamIndex(File bam, File bamIndex) throws IOException{
+	public static SamParser createUsingIndex(File bam, File bamIndex) throws IOException{
 		return new IndexedBamFileParser(bam, bamIndex, ReservedAttributeValidator.INSTANCE);
 	}
 	
@@ -156,8 +158,7 @@ public final class SamParserFactory {
 	 * with accompanying BAI encoded file and
 	 * using the given {@link SamAttributeValidator}
 	 * to validate the {@link SamRecord}s to be parsed.
-	 * This is the same as
-	 * {@link #create(File, SamAttributeValidator) create(f, ReservedAttributeValidator.INSTANCE)}.
+	 *
 	 * @param bam the Coordinate sorted BAM file to be parsed;
 	 * can not be null, must exist.
 	 * 
@@ -170,15 +171,15 @@ public final class SamParserFactory {
 	 * 
 	 * @return a new {@link SamParser} instance
 	 * will never be null.
+	 * 
 	 * @throws IOException if the file does not exist.
 	 * @throws NullPointerException if any parameter is null.
 	 * @throws IllegalArgumentException if the file's extension
 	 * is not either ".sam" or ".bam" (ignoring case).
-	 * @see #create(File, SamAttributeValidator)
 	 * 
 	 * @since 5.0
 	 */
-	public static SamParser createFromBamIndex(File bam, File bamIndex, SamAttributeValidator validator) throws IOException{
+	public static SamParser createUsingIndex(File bam, File bamIndex, SamAttributeValidator validator) throws IOException{
 		IOUtil.verifyIsReadable(bam);
 		IOUtil.verifyIsReadable(bamIndex);
 		if(validator == null){
