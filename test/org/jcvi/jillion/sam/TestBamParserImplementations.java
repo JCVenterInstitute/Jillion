@@ -56,7 +56,7 @@ public class TestBamParserImplementations {
 				}};
 		Supplier<SamParser> explicitlyIndexed = ()->{
 					try{
-						return SamParserFactory.createFromBamIndex(
+						return SamParserFactory.createUsingIndex(
 								RESOURCES.getFile("wgEncodeUwRepliSeqK562G1AlnRep1.bam"),
 								RESOURCES.getFile("wgEncodeUwRepliSeqK562G1AlnRep1.bam.bai")
 								);
