@@ -48,7 +48,7 @@ New Features
    For example, to make a NucleotideFastaDatastore where the sequences are all > 1000bp:
    
    new NucleotideFastaFileDataStoreBuilder(fastaFile)
-						.filterRecords(record-> record.getSequence().getLength() >1000)
+						.filterRecords(record-> record.getLength() >1000)
 						.build();
 						
 6. Changed DataStoreFilter, ReadFilter and SliceElementFilter to now have the parent interface Predicate<T> and changed
@@ -62,7 +62,7 @@ New Features
         			
    will make a CoverageMap object that only contains forward reads.
 
-7. Created new GenomeStatistics class is a utility class for computing different
+7. Created new GenomeStatistics class which is a utility class for computing different
     statistical measurements about genomes (for example N50).  It uses the new Java 8
     Collector interface.  For example to compute the N50 of all the records in a Fasta file:
     
@@ -73,7 +73,7 @@ New Features
 		Stream<NucleotideFastaRecord> stream = datastore.iterator().toStream();
 		){
 			OptionalInt n50Value = stream
-										.map(fasta -> fasta.getSequence().getLength())
+										.map(fasta -> fasta.getLength())
 										.collect(GenomeStatistics.n50Collector());
 			
 			//return value is optional because there might not be any records!
@@ -185,61 +185,68 @@ API Changes
 	InputStreamProvider objects instead of Function<File, InputStream> which was not only repetitive
 	but forced users to handle IOException themselves.
 	
-15. Changed SamVisitor API to remove visitRecord(Callback, SamRecord) which was only called when visiting SAM files,
+15. Changed FastqFileParser and FastqFileDataStoreBuilder constructors that take File objects
+	to delegate to InputStreamProvider.forFile( file) which handles the detection and decompression for you.
+	This means you can give the constructors
+	zipped or gzipped files and it will work as if it was uncompressed.
+	
+16.  Added zip and gzip support to fastaFileParesr and the FastaFileDataStoreBuilders
+
+18. Changed SamVisitor API to remove visitRecord(Callback, SamRecord) which was only called when visiting SAM files,
     and not BAM files.  Now all records visited will call 
     visitRecord(Callback callback, SamRecord record , VirtualFileOffset start, VirtualFileOffset end)
     where the start and end parameters will now be null if it's a SAM file and non-null if it's a BAM file.
     Previously start and end would never be null but only called when visiting BAM files.  This lead to a lot 
     of confusion and duplicated code when dealing with both SAM and BAM files.
-    
-16. Changed SamParser API methods from canAccept() and accept(...) to canParse() and parse(...).
+ Changed SamParser API methods from canAccept() and accept(...) to canParse() and parse(...).
 
-17. Added new method to the SamParser API void parse(String referenceName, SamVisitor visitor)
+19. Added new method to the SamParser API void parse(String referenceName, SamVisitor visitor)
     which will only visit the SamRecords in the file that map to the given reference.  Sorted Bam parser implementations
     can use the bam index if available to quickly seek right to the part of the bam file where the alignments for the 
     specified reference are stored.
     
-18. Added new method to the SamParser API void parse(String referenceName, Range alignmentRange, SamVisitor visitor)
+20. Added new method to the SamParser API void parse(String referenceName, Range alignmentRange, SamVisitor visitor)
     which will only visit the SamRecords in the file that map to the given reference and the alignment intersect the 
     given alignmentRange.  Sorted Bam parser implementations can use the bam index if available to quickly seek right
     to the parts of the bam file where the alignments for the specified reference are stored.
     
-19. Added new factory methods to SamParserFactory: createFromBamIndex(File bam, File bamIndex) and 
+21. Added new factory methods to SamParserFactory: createFromBamIndex(File bam, File bamIndex) and 
     createFromBamIndex(File bam, File bamIndex, SamAttributeValidator validator) that use a more efficient
     bam parser that uses the provided index file to randomly access alignment information.
     
-20. Changed SamParserFactory.create(File) to have additional checks to see if the given file
+22. Changed SamParserFactory.create(File) to have additional checks to see if the given file
     is a coordinate sorted BAM file, and if it is, check to see if it also has a corresponding BAI
     file and if it does, then use the new parser implementation that uses the index as if
     createFromBamIndex(File bam, File bamIndex) was called.
     
-21.  Added new helper method SamRecord.getAlignmentRange()
+23.  Added new helper method SamRecord.getAlignmentRange()
 
-22.  Added support for SamVisitor Memento support with new SamParser.parse(visitor, SamVisitorMemento) method.
+24.  Added support for SamVisitor Memento support with new SamParser.parse(visitor, SamVisitorMemento) method.
      Previously you could create mementos but couldn't use them.
      
-23.  SamRecord.Builder is now pulled out into its own class SamRecordBuilder.
+25.  SamRecord.Builder is now pulled out into its own class SamRecordBuilder.
 
-24.  Refactored SamRecord from a class to an interface.  The old SamRecord class is now package private. 
+26.  Refactored SamRecord from a class to an interface.  The old SamRecord class is now package private. 
      All API methods in sam package now use the new SamRecord interface instead of the old class.
      
-25. BtabWriter added new locale(Locale) method to change the Locale for the Date formatting.
+27. BtabWriter added new locale(Locale) method to change the Locale for the Date formatting.
     If not called, the default Locale is used.  Previous versions of Jillion always used the default Locale.
     
-26.  Created new SamAttributed interface which has the methods hasAttribute(...) and getAttribute(...)
+28.  Created new SamAttributed interface which has the methods hasAttribute(...) and getAttribute(...)
      SamRecord and SamRecordBuilder now both implement this interface.
      
-27.  Added additional parameter to SamAttributeValidator to add a SamAttributed instance.  This will be
+29.  Added additional parameter to SamAttributeValidator to add a SamAttributed instance.  This will be
      the source that the attribute is from.  This allows new validators to be written to check other attributes
      from the same source.
      
-28.  Created new SamAttributeValidator singleton class NoDuplicateSamAttribute that makes sure the given 
+30.  Created new SamAttributeValidator singleton class NoDuplicateSamAttribute that makes sure the given 
     SamAttributeKey for isn't already used by the record, which would be a violation of the SAM specification.
     
-29.  Added new default method to SamAttributeValidator.  thenComparing(SamAttributeValidator other) which returns
+31.  Added new default method to SamAttributeValidator.  thenComparing(SamAttributeValidator other) which returns
     a new SamAttributeValidator that checks both validators in a chain and only passes if both validators pass the attribute.
     Uses a similar construction to the new Java 8 Comparator.thenComparing(...) methods.
   
+
 Bug Fixes
 ----------
 1. Generate 454 Universal Accession number did not
@@ -250,8 +257,10 @@ Bug Fixes
    
 3. Bug Fix in SAM and BAM header writer which incorrectly wrote out the URI path to the reference file to be the md5 value
    instead of the actual path.
-   
-4. Bug Fix in SAM and BAM parser which would crash if the header was not present.
+
+4. Bug Fix in BAM writer which incorrectly computed BAM bin.
+
+5. Bug Fixes in BAM index writer which incorrectly computed BAM bin and intervals.
 
 ================
 Jillion 4.2
