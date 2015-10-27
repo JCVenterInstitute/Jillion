@@ -104,7 +104,7 @@ New Features
     and so the records will be GC'ed as soon as they are out of scope in the iterator.  
     When tested on large 25 million read fastq files from 1000genomes project, throughput improved by 25%.
 
-11.  Added new DataStores factory method: containedInDataStore(DataStore datastore) which will only accept ids that are
+11.  Added new DataStoreFilters factory method: containedInDataStore(DataStore datastore) which will only accept ids that are
      also contained in the given datastore.
      
 12. Created InputStreamSupplier with support for normal files, zipped and gzipped files.
