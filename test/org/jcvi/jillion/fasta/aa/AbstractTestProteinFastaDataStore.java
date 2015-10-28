@@ -20,22 +20,30 @@
  ******************************************************************************/
 package org.jcvi.jillion.fasta.aa;
 
+import static org.junit.Assert.*;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.residue.aa.AminoAcid;
+import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 import org.jcvi.jillion.core.residue.aa.ProteinSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.aa.ProteinFastaDataStore;
-import org.jcvi.jillion.fasta.aa.ProteinFastaRecord;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.internal.fasta.aa.UnCommentedProteinFastaRecord;
+import org.junit.Rule;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.rules.ExpectedException;
 public abstract class AbstractTestProteinFastaDataStore {
 
+	@Rule
+	public ExpectedException expectedException = ExpectedException.none();
+	
 	private final ProteinFastaRecord firstRecord = new UnCommentedProteinFastaRecord(
 			"ABN50481.1",
 			new ProteinSequenceBuilder("MKAIIVLLLVVTSNADRICTGITSSNSPHVVKTATQGEVNVTGAIPLTTTPTKSHFANLKGTKTRGKLCPTCFN" +
@@ -160,4 +168,77 @@ public abstract class AbstractTestProteinFastaDataStore {
 			IOUtil.closeAndIgnoreErrors(iter);
 		}
 	}
+	
+	
+	 @Test
+	    public void getSubSequenceById() throws IOException, DataStoreException{
+	    	
+	    	assertEquals(getSubSequence( firstRecord.getSequence(), 100), sut.getSubSequence(firstRecord.getId(), 100));
+	    	assertEquals(getSubSequence( middleRecord.getSequence(), 50), sut.getSubSequence(middleRecord.getId(), 50));
+	    	assertEquals(getSubSequence( lastRecord.getSequence(), 87), sut.getSubSequence(lastRecord.getId(), 87));
+	    }
+	    
+	    @Test
+	    public void getSubSequenceByIdThatDoesNotExistShouldReturnNull() throws IOException, DataStoreException{
+	    	assertNull(sut.getSequence("does not exist"));
+	    }
+	    @Test
+	    public void getSubSequenceRangeById() throws IOException, DataStoreException{
+	    	Range range = Range.of(35, 349);
+	    	assertEquals(getSubSequence( firstRecord.getSequence(), range), sut.getSubSequence(firstRecord.getId(), range));
+	    	assertEquals(getSubSequence( middleRecord.getSequence(), range), sut.getSubSequence(middleRecord.getId(), range));
+	    	assertEquals(getSubSequence( lastRecord.getSequence(), range), sut.getSubSequence(lastRecord.getId(), range));
+	    }
+	    @Test
+	    public void getSubSequenceByOffsetThatDoesNotExistShouldReturnNull() throws IOException, DataStoreException{
+	    	assertNull(sut.getSubSequence("does not exist", 100));
+	    }
+	    
+	    @Test
+	    public void getSubSequenceByRangeThatDoesNotExistShouldReturnNull() throws IOException, DataStoreException{
+	    	assertNull(sut.getSubSequence("does not exist", Range.ofLength(100)));
+	    }
+	    
+	    @Test
+	    public void getSubSequenceNullRangeShouldThrowNPE() throws IOException, DataStoreException{
+	    	
+	    	expectedException.expect(NullPointerException.class);    	
+	    	sut.getSubSequence(firstRecord.getId(), null);
+	    }
+	    
+	    @Test
+	    public void getSubSequenceNegativeOffsetShouldThrowIllegalArgumentException() throws IOException, DataStoreException{
+	    	
+	    	expectedException.expect(IllegalArgumentException.class);
+	    	expectedException.expectMessage("negative");
+	    	sut.getSubSequence(firstRecord.getId(), -1);
+	    	
+	    }
+	    
+	    @Test
+	    public void getSubSequenceBeyondLengthOffsetShouldThrowIllegalArgumentException() throws IOException, DataStoreException{
+	    	
+	    	expectedException.expect(IllegalArgumentException.class);
+	    	expectedException.expectMessage("beyond sequence length");
+	    	sut.getSubSequence(firstRecord.getId(), 1_000_000);
+	    	
+	    }
+	    
+	    
+	    private ProteinSequence getSubSequence(ProteinSequence fullSeq, int startOffset){
+	    	Range range = Range.of(startOffset, fullSeq.getLength() -1);
+	    	return getSubSequence(fullSeq, range);
+	    	
+	    }
+
+		private ProteinSequence getSubSequence(ProteinSequence fullSeq, Range range) {
+			//to really test we aren't going to use the helper trim methods on the builder
+			//but just the iterator
+			ProteinSequenceBuilder builder = new ProteinSequenceBuilder();
+			Iterator<AminoAcid> iter = fullSeq.iterator(range);
+	    	while(iter.hasNext()){
+	    		builder.append(iter.next());
+	    	}
+	    	return builder.build();
+		}
 }

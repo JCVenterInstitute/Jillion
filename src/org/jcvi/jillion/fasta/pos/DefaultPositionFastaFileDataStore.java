@@ -31,6 +31,7 @@ import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
+import org.jcvi.jillion.internal.fasta.AdaptedFastaDataStore;
 
 final class DefaultPositionFastaFileDataStore {
 	
@@ -86,7 +87,7 @@ final class DefaultPositionFastaFileDataStore {
 		}
 		@Override
 		public PositionFastaDataStore build() {
-			return DataStoreUtil.adapt(PositionFastaDataStore.class,fastaRecords);
+			return DataStoreUtil.adapt(PositionFastaDataStore.class,new AdaptedFastaDataStore<>(fastaRecords));
 		}
 		
 	}

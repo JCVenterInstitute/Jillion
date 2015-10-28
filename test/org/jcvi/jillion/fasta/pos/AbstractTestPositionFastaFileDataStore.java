@@ -26,16 +26,29 @@
 package org.jcvi.jillion.fasta.pos;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Iterator;
 
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.pos.Position;
+import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.pos.PositionSequenceBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public abstract class AbstractTestPositionFastaFileDataStore {
 	private static final String QUAL_FILE_PATH = "1119369023656.peak";
 
+	@Rule
+	public ExpectedException expectedException = ExpectedException.none();
+	
 	PositionFastaRecord expected = new PositionFastaRecord(
 			"1119369023656", new PositionSequenceBuilder(
 							new short[] { 2, 9, 29, 42, 55, 71, 92, 102, 125,
@@ -154,10 +167,14 @@ public abstract class AbstractTestPositionFastaFileDataStore {
 	ResourceHelper RESOURCES = new ResourceHelper(
 			AbstractTestPositionFastaFileDataStore.class);
 
+	PositionFastaDataStore sut;
+	@Before
+	public void setup() throws IOException, Exception{
+		sut = createPositionFastaMap(RESOURCES
+				.getFile(QUAL_FILE_PATH));
+	}
 	@Test
 	public void parseFile() throws Exception {
-		PositionFastaDataStore sut = createPositionFastaMap(RESOURCES
-				.getFile(QUAL_FILE_PATH));
 		assertEquals(1, sut.getNumberOfRecords());
 		PositionFastaRecord actual = sut.get("1119369023656");
 		assertEquals(expected, actual);
@@ -168,4 +185,74 @@ public abstract class AbstractTestPositionFastaFileDataStore {
 
 	protected abstract PositionFastaDataStore createPositionFastaMap(
 			File fastaFile) throws Exception;
+	
+	
+	@Test
+    public void getSubSequenceById() throws IOException, DataStoreException{
+    	assertEquals(getSubSequence( expected.getSequence(), 100), sut.getSubSequence("1119369023656", 100));
+    	assertEquals(getSubSequence( expected.getSequence(), 50), sut.getSubSequence(expected.getId(), 50));
+    	assertEquals(getSubSequence( expected.getSequence(), 87), sut.getSubSequence(expected.getId(), 87));
+    }
+    
+    @Test
+    public void getSubSequenceByIdThatDoesNotExistShouldReturnNull() throws IOException, DataStoreException{
+    	assertNull(sut.getSequence("does not exist"));
+    }
+    @Test
+    public void getSubSequenceRangeById() throws IOException, DataStoreException{
+    	Range range = Range.of(35, 349);
+    	assertEquals(getSubSequence( expected.getSequence(), range), sut.getSubSequence(expected.getId(), range));
+     }
+    @Test
+    public void getSubSequenceByOffsetThatDoesNotExistShouldReturnNull() throws IOException, DataStoreException{
+    	assertNull(sut.getSubSequence("does not exist", 100));
+    }
+    
+    @Test
+    public void getSubSequenceByRangeThatDoesNotExistShouldReturnNull() throws IOException, DataStoreException{
+    	assertNull(sut.getSubSequence("does not exist", Range.ofLength(100)));
+    }
+    
+    @Test
+    public void getSubSequenceNullRangeShouldThrowNPE() throws IOException, DataStoreException{
+    	
+    	expectedException.expect(NullPointerException.class);    	
+    	sut.getSubSequence(expected.getId(), null);
+    }
+    
+    @Test
+    public void getSubSequenceNegativeOffsetShouldThrowIllegalArgumentException() throws IOException, DataStoreException{
+    	
+    	expectedException.expect(IllegalArgumentException.class);
+    	expectedException.expectMessage("negative");
+    	sut.getSubSequence(expected.getId(), -1);
+    	
+    }
+    
+    @Test
+    public void getSubSequenceBeyondLengthOffsetShouldThrowIllegalArgumentException() throws IOException, DataStoreException{
+    	
+    	expectedException.expect(IllegalArgumentException.class);
+    	expectedException.expectMessage("beyond sequence length");
+    	sut.getSubSequence(expected.getId(), 1_000_000);
+    	
+    }
+    
+    
+    private PositionSequence getSubSequence(PositionSequence fullSeq, int startOffset){
+    	Range range = Range.of(startOffset, fullSeq.getLength() -1);
+    	return getSubSequence(fullSeq, range);
+    	
+    }
+
+	private PositionSequence getSubSequence(PositionSequence fullSeq, Range range) {
+		//to really test we aren't going to use the helper trim methods on the builder
+		//but just the iterator
+		PositionSequenceBuilder builder = new PositionSequenceBuilder();
+		Iterator<Position> iter = fullSeq.iterator(range);
+    	while(iter.hasNext()){
+    		builder.append(iter.next());
+    	}
+    	return builder.build();
+	}
 }

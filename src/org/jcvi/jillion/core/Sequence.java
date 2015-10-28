@@ -80,4 +80,14 @@ public interface Sequence<T> extends Iterable<T>{
      * values outside of the possible sequence offsets.
      */
     Iterator<T> iterator(Range range);
+    
+    
+    /**
+     * Create a new SequenceBuilder object that is initialized
+     * to the current sequence.  Any changes made to the returned Builder
+     * will <strong>NOT</strong> affect this immutable Sequence.
+     * @return a new Builder instance, will never be null.
+     * @since 5.1
+     */
+    SequenceBuilder<T, ? extends Sequence<T>> toBuilder();
 }

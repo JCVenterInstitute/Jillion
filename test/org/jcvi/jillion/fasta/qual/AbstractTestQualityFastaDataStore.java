@@ -25,6 +25,8 @@
  */
 package org.jcvi.jillion.fasta.qual;
 
+import static org.junit.Assert.*;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -36,14 +38,18 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.ResourceHelper;
+import org.junit.Rule;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.rules.ExpectedException;
 public abstract class AbstractTestQualityFastaDataStore {
 
     private static final String QUAL_FILE_PATH = "files/19150.qual";
@@ -181,11 +187,31 @@ public abstract class AbstractTestQualityFastaDataStore {
                                 }).build())
     						.build();
     ResourceHelper RESOURCES = new ResourceHelper(AbstractTestQualityFastaDataStore.class);
+   
+    
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+    
+    private QualityFastaDataStore sut;
+    private File qualFile;
+    
+    public AbstractTestQualityFastaDataStore() {
+    	//the try-catch is so subclasses don't 
+    	//have to have explicit constructor
+    	try {
+			qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
+			sut = createDataStore(qualFile);
+		} catch (Exception e) {
+			
+			throw new IllegalStateException(e);
+		}
+    	
+    	
+	}
+    
     @Test
     public void parseFile() throws IOException, DataStoreException{
-    	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
-    	QualityFastaDataStore sut = createDataStore(qualFile);
-        assertEquals(321, sut.getNumberOfRecords());
+    	 assertEquals(321, sut.getNumberOfRecords());
         assertEquals(JGBAA02T21A12PB1A1F, sut.get("JGBAA02T21A12PB1A1F"));
         assertEquals(JGBAA07T21D08MP605F, sut.get("JGBAA07T21D08MP605F"));
         assertEquals(JGBAA01T21H05PB2A2341BRB, sut.get("JGBAA01T21H05PB2A2341BRB"));
@@ -195,8 +221,6 @@ public abstract class AbstractTestQualityFastaDataStore {
     
     @Test
     public void idIterator() throws IOException, DataStoreException{
-    	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
-		QualityFastaDataStore sut = createDataStore(qualFile);
     	Iterator<String> expectedIdsIter = createExpectedIdsFrom(qualFile);
     	Iterator<String> actual = sut.idIterator();
     	assertTrue(expectedIdsIter.hasNext());
@@ -208,8 +232,6 @@ public abstract class AbstractTestQualityFastaDataStore {
     }
     @Test
     public void iterator() throws IOException, DataStoreException{
-    	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
-    	QualityFastaDataStore sut = createDataStore(qualFile);
     	Iterator<QualityFastaRecord> iterator = sut.iterator();
     	boolean hasJGBAA02T21A12PB1A1F = false;
     	boolean hasJGBAA07T21D08MP605F = false;
@@ -231,8 +253,6 @@ public abstract class AbstractTestQualityFastaDataStore {
     }
     @Test
     public void closingDataStoreAfterIteratingShouldActLikeNoMoreElements() throws IOException, DataStoreException{
-    	File qualFile = RESOURCES.getFile(QUAL_FILE_PATH);
-    	QualityFastaDataStore sut = createDataStore(qualFile);
     	StreamingIterator<QualityFastaRecord> iter = null;
     	try{
 	    	iter =sut.iterator();
@@ -354,18 +374,89 @@ public abstract class AbstractTestQualityFastaDataStore {
     }
 
 	private Iterator<String> createExpectedIdsFrom(File qualFile) throws FileNotFoundException {
-		Scanner scanner = new Scanner(qualFile, IOUtil.UTF_8_NAME);
-		Pattern pattern = Pattern.compile("^>(\\S+)");
-		List<String> ids = new ArrayList<String>();
-		while(scanner.hasNextLine()){
-			String line = scanner.nextLine();
-			Matcher matcher = pattern.matcher(line);
-			if(matcher.find()){
-				ids.add(matcher.group(1));
+		try(Scanner scanner = new Scanner(qualFile, IOUtil.UTF_8_NAME)){
+			Pattern pattern = Pattern.compile("^>(\\S+)");
+			List<String> ids = new ArrayList<String>();
+			while(scanner.hasNextLine()){
+				String line = scanner.nextLine();
+				Matcher matcher = pattern.matcher(line);
+				if(matcher.find()){
+					ids.add(matcher.group(1));
+				}
 			}
+			return ids.iterator();
 		}
-		return ids.iterator();
 	}
 	
+	 @Test
+	    public void getSubSequenceById() throws IOException, DataStoreException{
+	    	assertEquals(getSubSequence( JGBAA02T21A12PB1A1F.getSequence(), 100), sut.getSubSequence(JGBAA02T21A12PB1A1F.getId(), 100));
+	    	assertEquals(getSubSequence( JGBAA07T21D08MP605F.getSequence(), 50), sut.getSubSequence(JGBAA07T21D08MP605F.getId(), 50));
+	    	assertEquals(getSubSequence( JGBAA01T21H05PB2A2341BRB.getSequence(), 87), sut.getSubSequence(JGBAA01T21H05PB2A2341BRB.getId(), 87));
+	    }
+	    
+	    @Test
+	    public void getSubSequenceByIdThatDoesNotExistShouldReturnNull() throws IOException, DataStoreException{
+	    	assertNull(sut.getSequence("does not exist"));
+	    }
+	    @Test
+	    public void getSubSequenceRangeById() throws IOException, DataStoreException{
+	    	Range range = Range.of(35, 349);
+	    	assertEquals(getSubSequence( JGBAA02T21A12PB1A1F.getSequence(), range), sut.getSubSequence(JGBAA02T21A12PB1A1F.getId(), range));
+	    	assertEquals(getSubSequence( JGBAA07T21D08MP605F.getSequence(), range), sut.getSubSequence(JGBAA07T21D08MP605F.getId(), range));
+	    	assertEquals(getSubSequence( JGBAA01T21H05PB2A2341BRB.getSequence(), range), sut.getSubSequence(JGBAA01T21H05PB2A2341BRB.getId(), range));
+	    }
+	    @Test
+	    public void getSubSequenceByOffsetThatDoesNotExistShouldReturnNull() throws IOException, DataStoreException{
+	    	assertNull(sut.getSubSequence("does not exist", 100));
+	    }
+	    
+	    @Test
+	    public void getSubSequenceByRangeThatDoesNotExistShouldReturnNull() throws IOException, DataStoreException{
+	    	assertNull(sut.getSubSequence("does not exist", Range.ofLength(100)));
+	    }
+	    
+	    @Test
+	    public void getSubSequenceNullRangeShouldThrowNPE() throws IOException, DataStoreException{
+	    	
+	    	expectedException.expect(NullPointerException.class);    	
+	    	sut.getSubSequence(JGBAA02T21A12PB1A1F.getId(), null);
+	    }
+	    
+	    @Test
+	    public void getSubSequenceNegativeOffsetShouldThrowIllegalArgumentException() throws IOException, DataStoreException{
+	    	
+	    	expectedException.expect(IllegalArgumentException.class);
+	    	expectedException.expectMessage("negative");
+	    	sut.getSubSequence(JGBAA02T21A12PB1A1F.getId(), -1);
+	    	
+	    }
+	    
+	    @Test
+	    public void getSubSequenceBeyondLengthOffsetShouldThrowIllegalArgumentException() throws IOException, DataStoreException{
+	    	
+	    	expectedException.expect(IllegalArgumentException.class);
+	    	expectedException.expectMessage("beyond sequence length");
+	    	sut.getSubSequence(JGBAA02T21A12PB1A1F.getId(), 1_000_000);
+	    	
+	    }
+	    
+	    
+	    private QualitySequence getSubSequence(QualitySequence fullSeq, int startOffset){
+	    	Range range = Range.of(startOffset, fullSeq.getLength() -1);
+	    	return getSubSequence(fullSeq, range);
+	    	
+	    }
+
+		private QualitySequence getSubSequence(QualitySequence fullSeq, Range range) {
+			//to really test we aren't going to use the helper trim methods on the builder
+			//but just the iterator
+			QualitySequenceBuilder builder = new QualitySequenceBuilder();
+			Iterator<PhredQuality> iter = fullSeq.iterator(range);
+	    	while(iter.hasNext()){
+	    		builder.append(iter.next());
+	    	}
+	    	return builder.build();
+		}
 
 }

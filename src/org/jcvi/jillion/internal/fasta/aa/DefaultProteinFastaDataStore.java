@@ -38,6 +38,7 @@ import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.fasta.aa.AbstractProteinFastaRecordVisitor;
 import org.jcvi.jillion.fasta.aa.ProteinFastaDataStore;
 import org.jcvi.jillion.fasta.aa.ProteinFastaRecord;
+import org.jcvi.jillion.internal.fasta.AdaptedFastaDataStore;
 
 public final class DefaultProteinFastaDataStore{
 	
@@ -129,7 +130,7 @@ public final class DefaultProteinFastaDataStore{
 		}
 		@Override
 		public ProteinFastaDataStore build() {
-			return DataStoreUtil.adapt(ProteinFastaDataStore.class,fastaRecords);
+			return DataStoreUtil.adapt(ProteinFastaDataStore.class, new AdaptedFastaDataStore<>(fastaRecords));
 		}
 		
 	}

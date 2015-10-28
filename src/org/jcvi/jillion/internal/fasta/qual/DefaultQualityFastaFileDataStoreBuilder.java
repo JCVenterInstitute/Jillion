@@ -32,6 +32,7 @@ import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.fasta.qual.AbstractQualityFastaRecordVisitor;
 import org.jcvi.jillion.fasta.qual.QualityFastaDataStore;
 import org.jcvi.jillion.fasta.qual.QualityFastaRecord;
+import org.jcvi.jillion.internal.fasta.AdaptedFastaDataStore;
 
 public class DefaultQualityFastaFileDataStoreBuilder implements FastaVisitor, Builder<QualityFastaDataStore>{
 
@@ -74,7 +75,7 @@ public class DefaultQualityFastaFileDataStoreBuilder implements FastaVisitor, Bu
 	}
 	@Override
 	public QualityFastaDataStore build() {
-		return DataStoreUtil.adapt(QualityFastaDataStore.class,fastaRecords);
+		return DataStoreUtil.adapt(QualityFastaDataStore.class,new AdaptedFastaDataStore<>(fastaRecords));
 	}
 	
 }

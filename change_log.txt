@@ -7,6 +7,28 @@ change the behavior in any public API classes.  The order of changes is mostly
 chronological so the most important changes may not always be ordered first.
 
 
+
+================
+Jillion 5.1
+================
+
+New Features
+------------
+1. Added new methods to FastaDataStore getSequence( id) which gets just the sequence
+   and is equivalent to get(id).getSequence().
+
+2. Added new methods to FastaDataStore getSequence( id, offset) which gets just the sequence
+   starting from the given offset.
+
+3. Added new methods to FastaDataStore getSequence( id, range) which gets just the sequence
+   that intersects the given range.
+
+
+Bug Fixes
+---------
+1.  PositionSequence - Sanger Position Sequence.iterator(Range)
+    off by 1 bug fix did not include the last base in the range.
+
 ================
 Jillion 5.0
 ================
