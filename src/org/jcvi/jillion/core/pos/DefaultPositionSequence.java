@@ -92,7 +92,7 @@ class DefaultPositionSequence implements PositionSequence{
 		private int offset;
 		
 		IteratorImpl(){
-			end = data.length;
+			end = data.length -1;
 			offset=0;
 		}
 		IteratorImpl(Range range){
@@ -109,7 +109,7 @@ class DefaultPositionSequence implements PositionSequence{
 		}
 		@Override
 		public boolean hasNext() {
-			return offset<end;
+			return offset<=end;
 		}
 		@Override
 		public Position next() {
@@ -132,6 +132,11 @@ class DefaultPositionSequence implements PositionSequence{
 	@Override
 	public String toString() {
 		return Arrays.toString(data);
+	}
+
+	@Override
+	public PositionSequenceBuilder toBuilder() {
+		return new PositionSequenceBuilder(this);
 	}
 	
 	

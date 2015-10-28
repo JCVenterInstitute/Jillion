@@ -20,8 +20,10 @@
  ******************************************************************************/
 package org.jcvi.jillion.fasta.pos;
 
-import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.pos.Position;
+import org.jcvi.jillion.core.pos.PositionSequence;
+import org.jcvi.jillion.fasta.FastaDataStore;
 
-public interface PositionFastaDataStore extends DataStore<PositionFastaRecord>{
+public interface PositionFastaDataStore extends FastaDataStore<Position, PositionSequence, PositionFastaRecord>{
 
 }

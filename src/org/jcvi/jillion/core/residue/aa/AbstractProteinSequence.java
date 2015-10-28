@@ -40,7 +40,14 @@ abstract class AbstractProteinSequence extends AbstractResidueSequence<AminoAcid
 	private final Sequence<AminoAcid> encodedAminoAcids;
 	
 	public AbstractProteinSequence(AminoAcid[] glyphs, AminoAcidCodec codec) {
-		this.encodedAminoAcids = new EncodedSequence<AminoAcid>(codec,codec.encode(glyphs));
+		this.encodedAminoAcids = new EncodedSequence<AminoAcid>(codec,codec.encode(glyphs)){
+
+			@Override
+			public ProteinSequenceBuilder toBuilder() {
+				return new ProteinSequenceBuilder(AbstractProteinSequence.this);
+			}
+			
+		};
 	}
 	
 	

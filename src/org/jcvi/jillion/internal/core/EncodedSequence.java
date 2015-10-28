@@ -39,7 +39,7 @@ import org.jcvi.jillion.core.Sequence;
  * possible for a given situation.
  * @author dkatzel
  */
-public class  EncodedSequence<T> implements Sequence<T> {
+public abstract class  EncodedSequence<T> implements Sequence<T> {
     /**
      * codec used to decode the data.
      */
@@ -184,12 +184,6 @@ public class  EncodedSequence<T> implements Sequence<T> {
 			T next = get(currentOffset);
 			currentOffset++;
 			return next;
-		}
-
-		@Override
-		public void remove() {
-			throw new UnsupportedOperationException("can not remove from immutable sequence");
-			
 		}
 		
 	}

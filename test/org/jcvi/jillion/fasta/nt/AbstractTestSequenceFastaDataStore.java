@@ -25,23 +25,24 @@
  */
 package org.jcvi.jillion.fasta.nt;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.ResourceHelper;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 public abstract class AbstractTestSequenceFastaDataStore {
 
     protected static final String FASTA_FILE_PATH = "files/19150.fasta";
@@ -153,6 +154,8 @@ public abstract class AbstractTestSequenceFastaDataStore {
             .comment("48 2311 bases, 00000000 checksum.")
             .build();
     
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
     
     ResourceHelper RESOURCES = new ResourceHelper(AbstractTestSequenceFastaDataStore.class);
     protected File getFile() throws IOException {
@@ -221,9 +224,100 @@ public abstract class AbstractTestSequenceFastaDataStore {
         iter.close();
         assertFalse(iter.hasNext());
     }
-    protected abstract DataStore<NucleotideFastaRecord> parseFile(File file) throws IOException;
+    protected abstract NucleotideFastaDataStore parseFile(File file) throws IOException;
     
    
+    @Test
+    public void getSequenceById() throws IOException, DataStoreException{
+    	NucleotideFastaDataStore sut = parseFile(getFile());
+    	
+    	assertEquals(contig_1.getSequence(), sut.getSequence(contig_1.getId()));
+    	assertEquals(contig_5.getSequence(), sut.getSequence(contig_5.getId()));
+    	assertEquals(contig_9.getSequence(), sut.getSequence(contig_9.getId()));
+    }
+    
+    @Test
+    public void getSubSequenceById() throws IOException, DataStoreException{
+    	NucleotideFastaDataStore sut = parseFile(getFile());
+    	
+    	assertEquals(getSubSequence( contig_1.getSequence(), 100), sut.getSubSequence(contig_1.getId(), 100));
+    	assertEquals(getSubSequence( contig_5.getSequence(), 50), sut.getSubSequence(contig_5.getId(), 50));
+    	assertEquals(getSubSequence( contig_9.getSequence(), 87), sut.getSubSequence(contig_9.getId(), 87));
+    }
+    
+    @Test
+    public void getSubSequenceByIdThatDoesNotExistShouldReturnNull() throws IOException, DataStoreException{
+    	NucleotideFastaDataStore sut = parseFile(getFile());
+    	assertNull(sut.getSequence("does not exist"));
+    }
+    @Test
+    public void getSubSequenceRangeById() throws IOException, DataStoreException{
+    	NucleotideFastaDataStore sut = parseFile(getFile());
+    	Range range = Range.of(35, 349);
+    	assertEquals(getSubSequence( contig_1.getSequence(), range), sut.getSubSequence(contig_1.getId(), range));
+    	assertEquals(getSubSequence( contig_5.getSequence(), range), sut.getSubSequence(contig_5.getId(), range));
+    	assertEquals(getSubSequence( contig_9.getSequence(), range), sut.getSubSequence(contig_9.getId(), range));
+    }
+    @Test
+    public void getSubSequenceByOffsetThatDoesNotExistShouldReturnNull() throws IOException, DataStoreException{
+    	NucleotideFastaDataStore sut = parseFile(getFile());
+    	assertNull(sut.getSubSequence("does not exist", 100));
+    }
+    
+    @Test
+    public void getSubSequenceByRangeThatDoesNotExistShouldReturnNull() throws IOException, DataStoreException{
+    	NucleotideFastaDataStore sut = parseFile(getFile());
+    	assertNull(sut.getSubSequence("does not exist", Range.ofLength(100)));
+    }
+    
+    @Test
+    public void getSubSequenceNullRangeShouldThrowNPE() throws IOException, DataStoreException{
+    	NucleotideFastaDataStore sut = parseFile(getFile());
+    	
+    	expectedException.expect(NullPointerException.class);    	
+    	sut.getSubSequence(contig_1.getId(), null);
+    }
+    
+    @Test
+    public void getSubSequenceNegativeOffsetShouldThrowIllegalArgumentException() throws IOException, DataStoreException{
+    	NucleotideFastaDataStore sut = parseFile(getFile());
+    	
+    	expectedException.expect(IllegalArgumentException.class);
+    	expectedException.expectMessage("negative");
+    	sut.getSubSequence(contig_1.getId(), -1);
+    	
+    }
+    
+    @Test
+    public void getSubSequenceBeyondLengthOffsetShouldThrowIllegalArgumentException() throws IOException, DataStoreException{
+    	NucleotideFastaDataStore sut = parseFile(getFile());
+    	
+    	expectedException.expect(IllegalArgumentException.class);
+    	expectedException.expectMessage("beyond sequence length");
+    	sut.getSubSequence(contig_1.getId(), 1_000_000);
+    	
+    }
+    
+    
+    private NucleotideSequence getSubSequence(NucleotideSequence fullSeq, int startOffset){
+    	Range range = Range.of(startOffset, fullSeq.getLength() -1);
+    	return getSubSequence(fullSeq, range);
+    	
+    }
+
+	private NucleotideSequence getSubSequence(NucleotideSequence fullSeq, Range range) {
+		//to really test we aren't going to use the helper trim methods on the builder
+		//but just the iterator
+    	NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder();
+		Iterator<Nucleotide> iter = fullSeq.iterator(range);
+    	while(iter.hasNext()){
+    		builder.append(iter.next());
+    	}
+    	return builder.build();
+	}
+    
+    
+    
     @Test
     public void closedDataStoreShouldThrowClosedExceptions() throws IOException, DataStoreException{
     	 DataStore<NucleotideFastaRecord> sut = parseFile(getFile());
