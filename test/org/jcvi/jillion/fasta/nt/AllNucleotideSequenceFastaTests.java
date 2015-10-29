@@ -44,6 +44,8 @@ import org.junit.runners.Suite.SuiteClasses;
      TestFastaSequenceDataStoreAdapter.class,
      TestStreamingDefaultSequenceDataStore.class,
      
+     TestFaiNucleotideFastaFileDataStore.class,
+     
      TestDefaultUnixAndDosDataStoresParsedCorrectly.class,
      TestIndexedUnixAndDosDataStoresParsedCorrectly.class,
      TestLargeUnixAndDosDataStoresParsedCorrectly.class,

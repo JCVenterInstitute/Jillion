@@ -246,6 +246,15 @@ public abstract class AbstractTestSequenceFastaDataStore {
     }
     
     @Test
+    public void getSubSequenceAtOffset0ShouldBeFullSeq() throws IOException, DataStoreException{
+    	NucleotideFastaDataStore sut = parseFile(getFile());
+    	
+    	assertEquals(contig_1.getSequence(), sut.getSubSequence(contig_1.getId(), 0));
+    	assertEquals(contig_5.getSequence(), sut.getSubSequence(contig_5.getId(), 0));
+    	assertEquals(contig_9.getSequence(), sut.getSubSequence(contig_9.getId(), 0));
+    }
+    
+    @Test
     public void getSubSequenceByIdThatDoesNotExistShouldReturnNull() throws IOException, DataStoreException{
     	NucleotideFastaDataStore sut = parseFile(getFile());
     	assertNull(sut.getSequence("does not exist"));
