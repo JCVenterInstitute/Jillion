@@ -34,7 +34,6 @@ import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.Builder;
@@ -43,7 +42,7 @@ import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
-import org.jcvi.jillion.internal.fasta.AdaptedFastaDataStore;
+import org.jcvi.jillion.internal.fasta.nt.AdaptedNucleotideFastaDataStore;
 /**
  * {@code DefaultNucleotideFastaFileDataStore} is the default implementation
  * of {@link NucleotideSequenceFastaDataStore} which stores
@@ -126,7 +125,7 @@ final class DefaultNucleotideFastaFileDataStore{
 		}
 		@Override
 		public NucleotideFastaDataStore build() {
-			return DataStoreUtil.adapt(NucleotideFastaDataStore.class, new AdaptedFastaDataStore<>(fastaRecords));
+			return new AdaptedNucleotideFastaDataStore(fastaRecords);
 		}
 		/**
 		 * {@code ReusableNucleotideFastaRecordVisitor}
