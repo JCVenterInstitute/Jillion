@@ -20,8 +20,13 @@
  ******************************************************************************/
 package org.jcvi.jillion.fasta.nt;
 
+import java.util.Objects;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.fasta.FastaDataStore;
 
 /**
@@ -33,4 +38,41 @@ import org.jcvi.jillion.fasta.FastaDataStore;
  */
 public interface NucleotideFastaDataStore extends FastaDataStore<Nucleotide, NucleotideSequence, NucleotideFastaRecord>{
 
+	@Override
+	default NucleotideSequence getSubSequence(String id, long startOffset) throws DataStoreException {
+		
+		if(startOffset < 0){
+			throw new IllegalArgumentException("start offset can not be negative");
+		}
+		//this is faster than the super's default method
+		NucleotideFastaRecord fullSequence = get(id);
+		if(fullSequence ==null){
+			return null;
+		}
+		long fullLength = fullSequence.getLength();
+		
+		if(fullLength-1 < startOffset){
+			throw new IllegalArgumentException("start offset is beyond sequence length : " + startOffset);
+		}
+		Range range = new Range.Builder(fullLength)
+								.contractBegin(startOffset)
+								.build();
+		return new NucleotideSequenceBuilder(fullSequence.getSequence(), range)
+						.build();
+	}
+
+	@Override
+	default NucleotideSequence getSubSequence(String id, Range includeRange) throws DataStoreException {
+		Objects.requireNonNull(includeRange);
+		//this is faster than the super's default method
+		NucleotideFastaRecord fullSequence = get(id);
+		if(fullSequence ==null){
+			return null;
+		}
+		return new NucleotideSequenceBuilder(fullSequence.getSequence(), includeRange)
+						.build();
+	}
+
+	
+	
 }

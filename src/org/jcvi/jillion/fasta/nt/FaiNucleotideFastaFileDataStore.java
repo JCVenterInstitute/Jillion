@@ -18,7 +18,15 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.fasta.DefaultFastaIndex;
 import org.jcvi.jillion.internal.fasta.FastaIndex;
 import org.jcvi.jillion.internal.fasta.FastaIndexRecord;
-
+/**
+ * {@link NucleotideFastaDataStore} implementation that uses
+ * a FastaIndex to quickly seek to the appropriate part in
+ * the fasta file to get a sequence or subsequence.
+ * 
+ * @author dkatzel
+ *
+ * @since 5.1
+ */
 class FaiNucleotideFastaFileDataStore implements NucleotideFastaDataStore{
 
 	private final File fastaFile;
@@ -135,8 +143,16 @@ class FaiNucleotideFastaFileDataStore implements NucleotideFastaDataStore{
 		delegate.close();
 	}
 	
-	
-	private static interface InputStreamFactory{
+	/**
+	 * Interface for Lambda expression
+	 * that can throw IOException so lambdas 
+	 * can be one liners and not have to wrap the 
+	 * code in try-catch blocks.
+	 * 
+	 * @author dkatzel
+	 *
+	 */
+	private interface InputStreamFactory{
 		InputStream get(FastaIndexRecord record) throws IOException;
 	}
 	
