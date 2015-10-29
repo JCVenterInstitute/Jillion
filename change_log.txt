@@ -17,11 +17,16 @@ New Features
 1. Added new methods to FastaDataStore getSequence( id) which gets just the sequence
    and is equivalent to get(id).getSequence().
 
-2. Added new methods to FastaDataStore getSequence( id, offset) which gets just the sequence
+2. Added new methods to FastaDataStore getSubSequence( id, offset) which gets just the sequence
    starting from the given offset.
 
-3. Added new methods to FastaDataStore getSequence( id, range) which gets just the sequence
+3. Added new methods to FastaDataStore getSubSequence( id, range) which gets just the sequence
    that intersects the given range.
+   
+4.  Added support for Fasta Index Files (.fai) files to NucleotideFastaDataStore.
+    The NucleotideFastaFileDataStoreBuilder object can now be given an fai file
+    or auto-detect one and use that to make a more efficent implementation
+    to be used with the new getSequence() or getSubSequence() methods.
 
 
 Bug Fixes
