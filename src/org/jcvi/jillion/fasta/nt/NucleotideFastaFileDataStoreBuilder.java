@@ -40,18 +40,60 @@ import org.jcvi.jillion.internal.fasta.AbstractFastaFileDataStoreBuilder;
  *
  */
 public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFileDataStoreBuilder<Nucleotide, NucleotideSequence, NucleotideFastaRecord, NucleotideFastaDataStore>{
-
+	/**
+	 * File for fai encoded file
+	 * which may be null or point to non-existent file.
+	 * Will only be used by {@link #build()} if the file exists.
+	 */
+	private File faiFile;
+	/**
+	 * The input Fasta File object only used if fai file
+	 * is used.
+	 */
+	private File fastaFile;
+	
 	/**
 	 * Create a new Builder instance of 
 	 * which will build a {@link NucleotideFastaDataStore} for the given
 	 * fasta file.
-	 * @param fastaFile the fasta file make a {@link FastaDataStore} with. 
+	 * @param fastaFile the fasta file make a {@link FastaDataStore} with;
+	 * can not be null and must exist.
+	 * 
+	 * @apiNote As of Jillion 5.1, this will also look for a FastaIndex ({@code .fai})
+	 * file using the standard naming conventions and is equivalent to
+	 * <pre>
+	 * new NucleotideFastaFileDataStoreBuilder(fastaFile, new File(fastaFile.getParentFile(), fastaFile.getName() + ".fai"));
+	 * </pre>
+	 * 
 	 * @throws IOException if the fasta file does not exist, or can not be read.
 	 * @throws NullPointerException if fastaFile is null.
 	 */
 	public NucleotideFastaFileDataStoreBuilder(File fastaFile)
 			throws IOException {
+		this(fastaFile, new File(fastaFile.getParentFile(), fastaFile.getName() + ".fai"));
+	}
+	
+	/**
+	 * Create a new Builder instance of 
+	 * which will build a {@link NucleotideFastaDataStore} for the given
+	 * fasta file that uses the provided Fasta Index File ({@code .fai} file).
+	 * 
+	 * @param fastaFile the fasta file make a {@link FastaDataStore} with;
+	 * can not be null and must exist.
+	 * 
+	 * @param faiFile the Fasta Index File to use, if the file
+	 * is null or does not exist, then it won't be used.
+	 * 
+	 * @throws IOException if the fasta file does not exist, or can not be read.
+	 * @throws NullPointerException if fastaFile is null.
+	 * 
+	 * @since 5.1
+	 */
+	public NucleotideFastaFileDataStoreBuilder(File fastaFile, File faiFile)
+			throws IOException {
 		super(fastaFile);
+		this.fastaFile = fastaFile;
+		this.faiFile = faiFile;
 	}
 	/**
          * Create a new Builder instance
@@ -101,19 +143,31 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 		if(parser.isReadOnceOnly()){
 			return DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter);	
 		}else{
+			NucleotideFastaDataStore delegate;
 			switch(providerHint){
-				case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter);
+				case RANDOM_ACCESS_OPTIMIZE_SPEED: 
+							delegate= DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter);
+							break;
 				case RANDOM_ACCESS_OPTIMIZE_MEMORY: 
-							return parser.canCreateMemento()?
+							delegate = parser.canCreateMemento()?
 										IndexedNucleotideSequenceFastaFileDataStore.create(parser,filter, recordFilter)
 										:
 										DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter);
-				case ITERATION_ONLY: return LargeNucleotideSequenceFastaFileDataStore.create(parser,filter, recordFilter);
+							break;
+				case ITERATION_ONLY: delegate= LargeNucleotideSequenceFastaFileDataStore.create(parser,filter, recordFilter);
+								break;
 				default:
 					throw new IllegalArgumentException("unknown provider hint : "+ providerHint);
 			}
+			
+			if(faiFile !=null && faiFile.exists()){
+				return FaiNucleotideFastaFileDataStore.create(fastaFile, faiFile, delegate);
+			}
+			return delegate;
+			
 		}
 	}
+	
 
 	/**
 	 * 
@@ -142,7 +196,14 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
     }
 
     /**
+	 * Builds a new {@link NucleotideFastaDataStore} for the given
+	 * fasta input and using the provided filtering criteria.
 	 * 
+	 * <p>
+	 * As of Jillion 5.1 if a Fasta Index file is also specified
+	 * or is found using the standard naming conventions, then that file
+	 * will also be used if it exists.
+	 * </p>
 	 * {@inheritDoc}
 	 */
 	@Override
