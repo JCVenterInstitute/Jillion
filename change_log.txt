@@ -25,9 +25,14 @@ New Features
    
 4.  Added support for Fasta Index Files (.fai) files to NucleotideFastaDataStore.
     The NucleotideFastaFileDataStoreBuilder object can now be given an fai file
-    or auto-detect one and use that to make a more efficent implementation
+    or auto-detect one and use that to make a more efficient implementation
     to be used with the new getSequence() or getSubSequence() methods.
 
+API Changes
+-----------
+1. Created new abstract class AbstractReadCasVisitor which is now the parent class of AbstractAlignedReadCasVisitor.  
+   The new class handles iterating over the input read files to link cas alignments to their read names, sequences and qualities.
+   Now you can extend that class if you want that extra information without realigning to gapped references.
 
 Bug Fixes
 ---------
