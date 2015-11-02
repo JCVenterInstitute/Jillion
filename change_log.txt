@@ -27,6 +27,10 @@ New Features
     The NucleotideFastaFileDataStoreBuilder object can now be given an fai file
     or auto-detect one and use that to make a more efficient implementation
     to be used with the new getSequence() or getSubSequence() methods.
+    
+5.  Added support for writing Fasta Index Files (.fai) files to NucleotideFastaWriter using 
+    the createIndex(true) method.  This will make an additional file named $outputFasta.fai.
+    Supports normal, zipped and non-redundant fasta files.
 
 API Changes
 -----------
