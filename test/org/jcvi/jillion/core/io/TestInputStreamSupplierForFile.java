@@ -20,6 +20,8 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.io;
 
+import static org.junit.Assert.assertArrayEquals;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -30,13 +32,12 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipInputStream;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-
-import static org.junit.Assert.*;
 
 @RunWith(Parameterized.class)
 public class TestInputStreamSupplierForFile {
@@ -109,6 +110,18 @@ public class TestInputStreamSupplierForFile {
         byte[] expected = Arrays.copyOfRange(originalBytes, offset, originalBytes.length);
         
         byte[] actual = getBytes(sut.get(offset)); 
+        assertArrayEquals(expected, actual);
+    }
+    
+    
+    @Test
+    public void getRange() throws IOException{
+        int start = originalBytes.length/2;
+        int end = 3* originalBytes.length/4;
+        //copyOfRange has exclusive end which is why we +1
+        byte[] expected = Arrays.copyOfRange(originalBytes, start, end+1);
+        
+        byte[] actual = getBytes(sut.get(Range.of(start, end))); 
         assertArrayEquals(expected, actual);
     }
 }

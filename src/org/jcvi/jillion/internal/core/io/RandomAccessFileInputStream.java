@@ -84,9 +84,6 @@ public final class RandomAccessFileInputStream extends InputStream{
 	 */
 	public RandomAccessFileInputStream(File file, long startOffset, long length) throws IOException{
 		assertStartOffValid(file, startOffset);
-		if(length < 0){
-			throw new IllegalArgumentException("length can not be less than 0");
-		}
 		this.randomAccessFile = new RandomAccessFile(file, "r");
 		randomAccessFile.seek(startOffset);
 		this.length = length;

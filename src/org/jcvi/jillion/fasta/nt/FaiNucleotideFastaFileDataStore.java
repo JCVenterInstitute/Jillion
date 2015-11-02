@@ -12,6 +12,7 @@ import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.io.InputStreamSupplier;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
@@ -29,7 +30,7 @@ import org.jcvi.jillion.internal.fasta.FastaIndexRecord;
  */
 class FaiNucleotideFastaFileDataStore implements NucleotideFastaDataStore{
 
-	private final File fastaFile;
+	private final InputStreamSupplier fastaFileSupplier;
 	private final FastaIndex index;
 	
 	private final NucleotideFastaDataStore delegate;
@@ -44,7 +45,7 @@ class FaiNucleotideFastaFileDataStore implements NucleotideFastaDataStore{
 		Objects.requireNonNull(index);
 		IOUtil.verifyIsReadable(fastaFile);
 		
-		this.fastaFile = fastaFile;		
+		this.fastaFileSupplier = InputStreamSupplier.forFile(fastaFile);		
 		this.delegate = delegate;		
 		this.index = index;
 		
@@ -61,7 +62,7 @@ class FaiNucleotideFastaFileDataStore implements NucleotideFastaDataStore{
 	}
 	@Override
 	public NucleotideSequence getSequence(String id) throws DataStoreException {		
-		return getSequence(id, (record)-> record.newInputStream(fastaFile));
+		return getSequence(id, (record)-> record.newInputStream(fastaFileSupplier));
 	}
 
 	private NucleotideSequence getSequence(String id, InputStreamFactory inputStreamFactory) throws DataStoreException {
@@ -89,7 +90,7 @@ class FaiNucleotideFastaFileDataStore implements NucleotideFastaDataStore{
 
 	@Override
 	public NucleotideSequence getSubSequence(String id, long startOffset) throws DataStoreException {
-		return getSequence(id, (record)-> record.newInputStream(fastaFile, startOffset));
+		return getSequence(id, (record)-> record.newInputStream(fastaFileSupplier, startOffset));
 	}
 
 
@@ -97,7 +98,7 @@ class FaiNucleotideFastaFileDataStore implements NucleotideFastaDataStore{
 
 	@Override
 	public NucleotideSequence getSubSequence(String id, Range includeRange) throws DataStoreException {
-		return getSequence(id, (record)-> record.newInputStream(fastaFile, includeRange));
+		return getSequence(id, (record)-> record.newInputStream(fastaFileSupplier, includeRange));
 	}
 
 

@@ -26,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
 /**
  * An {@link InputStreamSupplier}
@@ -58,5 +59,12 @@ class RawFileInputStreamSupplier implements InputStreamSupplier {
     public InputStream get(long startOffset) throws IOException{
         return new RandomAccessFileInputStream(file, startOffset);
     }
+
+	@Override
+	public InputStream get(Range range) throws IOException {
+		 return new RandomAccessFileInputStream(file, range.getBegin(), range.getLength());
+	}
+    
+    
 
 }
