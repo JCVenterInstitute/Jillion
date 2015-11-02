@@ -24,8 +24,8 @@ import java.util.regex.Pattern;
 
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 import org.jcvi.jillion.core.util.ObjectsUtil;
-import org.jcvi.jillion.fasta.FastaUtil;
 import org.jcvi.jillion.fasta.aa.ProteinFastaRecord;
+import org.jcvi.jillion.internal.fasta.FastaUtil;
 /**
  * {@code UnCommentedProteinFastaRecord} is an implementation
  * of {@link ProteinFastaRecord} that saves
@@ -38,7 +38,7 @@ public class UnCommentedProteinFastaRecord implements ProteinFastaRecord{
 
 	private static final int NUMBER_OF_BASES_PER_LINE = 60;
 	private static final Pattern LINE_SPLITTER_PATTERN = Pattern.compile(String.format("(.{%s})", NUMBER_OF_BASES_PER_LINE));
-	private static final String LINE_SPLITTER_REPLACEMENT = "$1"+FastaUtil.LINE_SEPARATOR;
+	private static final String LINE_SPLITTER_REPLACEMENT = "$1"+FastaUtil.getLineSeparator();
 	
 	private final ProteinSequence sequence;
 	private final String id;
@@ -80,14 +80,14 @@ public class UnCommentedProteinFastaRecord implements ProteinFastaRecord{
     {
     	int bufferSize = computeFormattedBufferSize();
         final StringBuilder record = new StringBuilder(bufferSize);
-        record.append(FastaUtil.HEADER_PREFIX).append(
+        record.append(FastaUtil.getHeaderPrefix()).append(
                 this.getId());
         if (this.getComment() != null) {
         	record.append(' ').append(this.getComment());
         }
-        record.append(FastaUtil.LINE_SEPARATOR)
+        record.append(FastaUtil.getLineSeparator())
 		        .append(this.getRecordBody())
-		        .append(FastaUtil.LINE_SEPARATOR);
+		        .append(FastaUtil.getLineSeparator());
         
         return record.toString();
     }
