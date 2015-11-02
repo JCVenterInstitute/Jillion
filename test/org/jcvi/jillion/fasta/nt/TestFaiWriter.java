@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.testUtil.TestUtil;
@@ -76,5 +77,48 @@ public class TestFaiWriter {
 		
 		File actual = new File(outputFasta.getParentFile(), outputFasta.getName() +".fai");
 		TestUtil.assertContentsAreEqual(expectedFai, actual);
+	}
+	
+	
+	@Test
+	public void createNonRedundantFaiFile() throws IOException, DataStoreException{
+		ResourceHelper helper = new ResourceHelper(getClass());
+		
+		File fasta = helper.getFile("files/no_extra_on_defline.XXXXX.combo2.i.contigs");
+		
+		File outputFasta = tmp.newFile("output.fasta");
+		
+		try(NucleotideFastaDataStore datastore = new NucleotideFastaFileDataStoreBuilder(fasta).build();
+				StreamingIterator<NucleotideFastaRecord> iter = datastore.iterator();
+				NucleotideFastaWriter writer = new NucleotideFastaWriterBuilder(outputFasta)
+													.createIndex(true)
+													.makeNonRedundant()
+													.numberPerLine(25)
+													.build();
+					){
+				while(iter.hasNext()){
+					NucleotideFastaRecord record = iter.next();
+					for(int i=0; i< 5; i++){
+						writer.write(record.getId()+"_"+ i, record.getSequence(), i %2 ==0? "a comment": null);
+					}
+				}
+			}
+		
+		try(NucleotideFastaDataStore expected = DefaultNucleotideFastaFileDataStore.create(outputFasta);
+			NucleotideFastaDataStore actual = FaiNucleotideFastaFileDataStore.create(outputFasta,
+					new File(outputFasta.getParentFile(), outputFasta.getName()+".fai"),
+					expected);
+			
+			StreamingIterator<String> iter = expected.idIterator();
+				){
+			 Range range = Range.of(123, 456);
+			while(iter.hasNext()){
+				String id = iter.next();
+				assertEquals(expected.getSequence(id), actual.getSequence(id));
+				assertEquals(expected.getSubSequence(id, 345), actual.getSubSequence(id, 345));
+				assertEquals(expected.getSubSequence(id, range), actual.getSubSequence(id, range));
+				
+			}
+		}
 	}
 }

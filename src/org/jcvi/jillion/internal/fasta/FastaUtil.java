@@ -55,8 +55,12 @@ public final class FastaUtil {
     private static final char HEADER_PREFIX = '>';
     
     private static final Pattern ID_LINE_PATTERN = Pattern.compile("^>(\\S+)(\\s+(.*))?");
+    private static final Pattern REDUNDANT_ID_LINE_PATTERN = Pattern.compile("(\\S+)(\\s+(.*))?");
 
+    private static final char CONTROL_A = 0x1;
    
+    
+    private static final Pattern NON_REDUNDANT_SPLIT = Pattern.compile(Pattern.quote(Character.toString(CONTROL_A)));
     private FastaUtil(){
     	
     }
@@ -75,6 +79,10 @@ public final class FastaUtil {
     	return HEADER_PREFIX;
     }
     
+    
+    public static char getNonRedundantSeparator(){
+    	return CONTROL_A;
+    }
     
     public static void createIndex(File fastaFile, PrintWriter out, Function<String, Integer> numberOfBases) throws IOException{
     	try(InputStream in = InputStreamSupplier.forFile(fastaFile).get();
@@ -97,10 +105,14 @@ public final class FastaUtil {
 		
 		//TODO handle non-redundant fasta with control A chars
 		
+		
 		Matcher matcher = ID_LINE_PATTERN.matcher(line);
 		if(!matcher.find()){
 			throw new IllegalStateException("invalid fasta file defline ='" + line.trim() + "'");
 		}
+		//trim off trailing whitespace and leading '>'
+		String[] redundantIds = NON_REDUNDANT_SPLIT.split(line.trim().substring(1));
+		
 		String id =matcher.group(1);
 		long sequenceStart = parser.getPosition();
 		
@@ -120,7 +132,7 @@ public final class FastaUtil {
 					//last line can be less
 					(!lastLineOfRecord(parser) || bytesInThisLine > numberOfBytesPerLineIncludingEol)){
 
-				throw new IllegalStateException(
+				throw new IOException(
 						String.format("invalid fasta file, different length seq lines in record '%s', all but last row must be %d bytes, but line at offset %d was %d bytes", 
 								id, numberOfBytesPerLineIncludingEol, lastPosition, bytesInThisLine));
 			}
@@ -129,21 +141,26 @@ public final class FastaUtil {
 			if(numBases != numberOfBasesPerLine &&
 					//last line can be less
 					(!lastLineOfRecord(parser) || numBases > numberOfBasesPerLine)){
-				throw new IllegalStateException(
+				throw new IOException(
 						String.format("invalid fasta file, different length seq lines in record '%s', all but last row must be %d bases, but line at offset %d was %d bases", 
 								id, numberOfBasesPerLine, lastPosition, numBases));
 			}
 			seqLength+= numBases;
 		}
-		
-		List<String> fields = new ArrayList<>(5);
-		fields.add(id);
-		fields.add(Long.toString(seqLength));
-		fields.add(Long.toString(sequenceStart));
-		fields.add(Long.toString(numberOfBasesPerLine));
-		fields.add(Long.toString(numberOfBytesPerLineIncludingEol));
-		
-		out.println(JoinedStringBuilder.create(fields).glue('\t').build());
+		for(String redundantId : redundantIds){
+			List<String> fields = new ArrayList<>(5);
+			Matcher m = REDUNDANT_ID_LINE_PATTERN.matcher(redundantId);
+			if(!m.find()){
+				throw new IOException("error parsing id from non-redundant line: " + redundantId);
+			}
+			fields.add(m.group(1));
+			fields.add(Long.toString(seqLength));
+			fields.add(Long.toString(sequenceStart));
+			fields.add(Long.toString(numberOfBasesPerLine));
+			fields.add(Long.toString(numberOfBytesPerLineIncludingEol));
+			
+			out.println(JoinedStringBuilder.create(fields).glue('\t').build());
+		}
 		
 		
 	}
