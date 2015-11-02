@@ -56,6 +56,8 @@ public final class NucleotideFastaWriterBuilder extends AbstractResidueFastaWrit
 		private boolean nonRedundant;
 		private Integer expectedCapacity;
 		
+		private File outputFile;
+		private boolean createIndex;
 		
 		/**
 		 * Create a new Builder that will use
@@ -75,6 +77,7 @@ public final class NucleotideFastaWriterBuilder extends AbstractResidueFastaWrit
 		 */
 		public NucleotideFastaWriterBuilder(File outputFile) throws IOException {
 			super(outputFile);
+			this.outputFile = outputFile;
 		}
 		/**
 		 * Create a new Builder that will use
@@ -183,6 +186,28 @@ public final class NucleotideFastaWriterBuilder extends AbstractResidueFastaWrit
 			this.nonRedundant = true;
 			return this;
 		}
+		
+		/**
+		 * While writing out the Nucleotide Fasta File,
+		 * also write a {@code .fai} Fasta Index File 
+		 * which is used by Samtools.  The index
+		 * file will follow Samtools naming conventions and write
+		 * the file to the same directory as the output fasta and name
+		 * it {@code $outputFile.fai}; this option is only used
+		 * if this writer was created by using the 
+		 * {@link #NucleotideFastaWriterBuilder(File)} constructor.
+		 * 
+		 * @param createIndex {@code true} if a fai file should be created;
+		 * {@code false} otherwise.
+		 * 
+		 * @return  this.
+		 * 
+		 * @since 5.1
+		 */
+		public NucleotideFastaWriterBuilder createIndex(boolean createIndex){
+			this.createIndex = createIndex;
+			return this;
+		}
 
 		@Override
 		protected NucleotideFastaWriter create(
@@ -200,6 +225,15 @@ public final class NucleotideFastaWriterBuilder extends AbstractResidueFastaWrit
 		
 		
 		
+		@Override
+		public NucleotideFastaWriter build() {
+			NucleotideFastaWriter writer = super.build();
+			if(createIndex && outputFile !=null){
+				File faiFile = new File(outputFile.getParentFile(), outputFile.getName() +".fai");
+				return new FaiNucleotideFastaWriter(outputFile, faiFile, writer);
+			}
+			return writer;
+		}
 		@Override
 		protected NucleotideFastaWriter createTmpDirSortedWriterWriter(
 				FastaWriter<Nucleotide, NucleotideSequence, NucleotideFastaRecord> delegate,

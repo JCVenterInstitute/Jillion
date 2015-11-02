@@ -287,7 +287,7 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		 * @return a new instance of {@link FastaWriter}. 
 		 */
 		@Override
-		public final W build() {
+		public W build() {
 			W writer= create(out, numberOfSymbolsPerLine, charSet,eol);
 			
 			if(comparator ==null){

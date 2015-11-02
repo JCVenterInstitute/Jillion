@@ -102,6 +102,50 @@ public final class FastaIndexRecord {
 	public long getSeqLength() {
 		return seqLength;
 	}
+
+	@Override
+	public String toString() {
+		return "FastaIndexRecord [seqLength=" + seqLength + ", firstBaseOffset=" + firstBaseOffset + ", basesPerLine="
+				+ basesPerLine + ", bytesPerLineIncludingEol=" + bytesPerLineIncludingEol + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + basesPerLine;
+		result = prime * result + bytesPerLineIncludingEol;
+		result = prime * result + (int) (firstBaseOffset ^ (firstBaseOffset >>> 32));
+		result = prime * result + (int) (seqLength ^ (seqLength >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof FastaIndexRecord)) {
+			return false;
+		}
+		FastaIndexRecord other = (FastaIndexRecord) obj;
+		if (basesPerLine != other.basesPerLine) {
+			return false;
+		}
+		if (bytesPerLineIncludingEol != other.bytesPerLineIncludingEol) {
+			return false;
+		}
+		if (firstBaseOffset != other.firstBaseOffset) {
+			return false;
+		}
+		if (seqLength != other.seqLength) {
+			return false;
+		}
+		return true;
+	}
 	
 	
 	
