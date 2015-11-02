@@ -41,6 +41,7 @@ import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaWriter;
 import org.jcvi.jillion.internal.fasta.AbstractResidueFastaWriter;
+import org.jcvi.jillion.internal.fasta.FastaUtil;
 import org.jcvi.jillion.internal.fasta.InMemorySortedFastaWriter;
 import org.jcvi.jillion.internal.fasta.TmpDirSortedFastaWriter;
 /**
@@ -382,7 +383,7 @@ public final class NucleotideFastaWriterBuilder extends AbstractResidueFastaWrit
 		
 		private static final class NonRedundantNucleotideSequenceFastaWriter implements NucleotideFastaWriter{
 
-			private static final char CONTROL_A = 0x1;
+			
 			private final Map<NucleotideSequence, Set<NonRedundantEntry>> nonRedundantMap;
 			
 			private final NucleotideSequenceFastaRecordWriterImpl delegateWriter;
@@ -405,7 +406,7 @@ public final class NucleotideFastaWriterBuilder extends AbstractResidueFastaWrit
 						NucleotideSequence sequence = entry.getKey();
 						
 						String ids =JoinedStringBuilder.create(entry.getValue())
-											.glue(CONTROL_A)
+											.glue(FastaUtil.getNonRedundantSeparator())
 											.transform(NonRedundantEntry::getNonRedundantId)
 											.build();
 						
