@@ -18,10 +18,7 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.fasta;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+package org.jcvi.jillion.internal.fasta;
 
 /**
  * 
@@ -37,41 +34,30 @@ public final class FastaUtil {
 	 * a Fasta file.  This Separator is platform
 	 * independent.
 	 */
-    public static final String LINE_SEPARATOR = "\n";
+    private static final String LINE_SEPARATOR = "\n";
     /**
      * The required prefix in a fasta header '{@value}'.
      */
-    public static final char HEADER_PREFIX = '>';
+    private static final char HEADER_PREFIX = '>';
     
     
-    public static final Pattern ID_LINE_PATTERN = Pattern.compile("^>(\\S+)(\\s+(.*))?");
-
+   
     private FastaUtil(){
     	
     }
-    
-
-    
-    public static String parseCommentFromDefLine(String line) {
-        final Matcher idMatcher = ID_LINE_PATTERN.matcher(line);
-        if (idMatcher.find()){
-        	String comment= idMatcher.group(3);
-        	if(comment ==null){
-        		return null;
-        	}
-            if(!comment.isEmpty()){
-            	return comment;
-            }
-        }
-        return null;
+    /**
+	 * The line String used to separate lines in 
+	 * a Fasta file.  This Separator is platform
+	 * independent.
+	 */
+    public static String getLineSeparator(){
+    	return LINE_SEPARATOR;
     }
-
-    public static String parseIdFromDefLine(String line) {
-        final Matcher idMatcher = ID_LINE_PATTERN.matcher(line);
-        if (idMatcher.find()){
-            return idMatcher.group(1);           
-        }
-        return null;
+    /**
+     * The required prefix in a fasta header '{@value}'.
+     */
+    public static char getHeaderPrefix(){
+    	return HEADER_PREFIX;
     }
     
 }

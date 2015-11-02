@@ -36,7 +36,6 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-    	TestFastaUtil_parseDefLine.class,
         TestFastaParser.class,
 
         AllFastaQualityTests.class,

@@ -36,7 +36,6 @@ import java.util.Objects;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.fasta.FastaRecord;
-import org.jcvi.jillion.fasta.FastaUtil;
 import org.jcvi.jillion.fasta.FastaWriter;
 
 
@@ -129,7 +128,7 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 	
 	private void appendDefline(String id, String comment,
 			final StringBuilder record) {
-		record.append(FastaUtil.HEADER_PREFIX).append(id);
+		record.append(FastaUtil.getHeaderPrefix()).append(id);
         if (comment != null) {
         	record.append(' ').append(comment);
         }
@@ -155,7 +154,7 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
     	public static final int ALL_ON_ONE_LINE =-1;
     	
 		private static final Charset DEFAULT_CHARSET = IOUtil.UTF_8;
-		private static final String DEFAULT_LINE_SEPARATOR = FastaUtil.LINE_SEPARATOR;
+		private static final String DEFAULT_LINE_SEPARATOR = FastaUtil.getLineSeparator();
 		
 		private final OutputStream out;
 		private int numberOfSymbolsPerLine;
