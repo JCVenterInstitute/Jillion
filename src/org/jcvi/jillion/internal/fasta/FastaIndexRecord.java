@@ -1,11 +1,10 @@
 package org.jcvi.jillion.internal.fasta;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
+import org.jcvi.jillion.core.io.InputStreamSupplier;
 /**
  * Object representation of a single
  * record in a {@code fai} index file
@@ -83,17 +82,17 @@ public final class FastaIndexRecord {
 						computeFileOffset(sequenceOffsetRange.getEnd()));
 	}
 
-	public InputStream newInputStream(File fastaFile) throws IOException{
+	public InputStream newInputStream(InputStreamSupplier fastaFile) throws IOException{
 		Range range = computeFileOffsetRange(Range.ofLength(seqLength));
-		return new RandomAccessFileInputStream(fastaFile, firstBaseOffset, range.getLength());
+		return fastaFile.get(range);
+	}
+	public InputStream newInputStream(InputStreamSupplier fastaFile, Range sequenceRange) throws IOException{
+		Range offsetRange = computeFileOffsetRange(sequenceRange);
+		return fastaFile.get(offsetRange);
 	}
 	
-	public InputStream newInputStream(File fastaFile, Range sequenceRange) throws IOException{
-		Range range = computeFileOffsetRange(sequenceRange);
-		return new RandomAccessFileInputStream(fastaFile, range.getBegin(), range.getLength());
-	}
 	
-	public InputStream newInputStream(File fastaFile, long sequenceStartOffset) throws IOException{
+	public InputStream newInputStream(InputStreamSupplier fastaFile, long sequenceStartOffset) throws IOException{
 		Range range = new Range.Builder(seqLength)
 								.contractBegin(sequenceStartOffset)
 								.build();

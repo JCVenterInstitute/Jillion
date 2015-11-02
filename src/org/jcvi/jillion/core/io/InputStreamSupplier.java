@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipInputStream;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.core.io.MagicNumberInputStream;
 
 /**
@@ -74,6 +75,30 @@ public interface InputStreamSupplier {
         InputStream in = get();
         IOUtil.blockingSkip(in, startOffset);
         return in;
+    }
+    
+    /**
+     * Create a new {@link InputStream} that starts 
+     * at the specified byte start offset.
+     * 
+     * @param range the {@link Range} of <strong>uncompressed</strong>
+     *          bytes to read in this file/
+     *          .
+     * @return a new {@link InputStream}; should
+     *          never be null but might not have any bytes to read.
+     *          
+     * @throws IOException if there is a problem creating the {@link InputStream}
+     *                   or skipping over the desired number of bytes.
+     *          
+     * @implNote the default implementation creates a new {@link InputStream}
+     *                 via {@link #get()} and then skips over {@code startOffset}
+     *                 number of bytes. Implementations should override this method
+     *                 if they are able to more efficiently start in the middle of an {@link InputStream}.
+     */
+    default InputStream get(Range range) throws IOException{
+        InputStream in = get(range.getBegin());
+       
+        return new SubLengthInputStream(in, range.getLength());
     }
     
     /**
