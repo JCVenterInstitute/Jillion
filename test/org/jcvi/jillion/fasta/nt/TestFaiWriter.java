@@ -46,7 +46,7 @@ public class TestFaiWriter {
 
 	private void writeFai(File fasta, File fai) throws IOException, FileNotFoundException {
 		try(PrintWriter writer = new PrintWriter(fai)){
-			FastaUtil.createIndex(fasta, writer, (line)->(int) new NucleotideSequenceBuilder(line).getLength());
+			FastaUtil.createIndex(fasta, writer, "\n", (line)->(int) new NucleotideSequenceBuilder(line).getLength());
 		}
 	}
 	

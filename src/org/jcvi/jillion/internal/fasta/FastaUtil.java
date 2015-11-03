@@ -84,16 +84,19 @@ public final class FastaUtil {
     	return CONTROL_A;
     }
     
-    public static void createIndex(File fastaFile, PrintWriter out, Function<String, Integer> numberOfBases) throws IOException{
+    public static void createIndex(File fastaFile, PrintWriter out, String eol,
+    		Function<String, Integer> numberOfBases) throws IOException{
     	try(InputStream in = InputStreamSupplier.forFile(fastaFile).get();
     		TextLineParser parser = new TextLineParser(in);
     	){
     		while(parser.hasNextLine()){
-    			handleNextFastaRecord(parser, out, numberOfBases);
+    			handleNextFastaRecord(parser, out, eol, numberOfBases);
     		}
     	}
     }
-	private static void handleNextFastaRecord(TextLineParser parser, PrintWriter out, Function<String, Integer> numberOfBases) throws IOException {
+	private static void handleNextFastaRecord(TextLineParser parser, PrintWriter out, 
+			String eol,
+			Function<String, Integer> numberOfBases) throws IOException {
 		String line = parser.nextLine();
 		while(line!=null && line.charAt(0) != HEADER_PREFIX){
 			line = parser.nextLine();
@@ -102,8 +105,6 @@ public final class FastaUtil {
 			//EOF
 			return;
 		}
-		
-		//TODO handle non-redundant fasta with control A chars
 		
 		
 		Matcher matcher = ID_LINE_PATTERN.matcher(line);
@@ -159,7 +160,7 @@ public final class FastaUtil {
 			fields.add(Long.toString(numberOfBasesPerLine));
 			fields.add(Long.toString(numberOfBytesPerLineIncludingEol));
 			
-			out.println(JoinedStringBuilder.create(fields).glue('\t').build());
+			out.print(JoinedStringBuilder.create(fields).glue('\t').suffix(eol).build());
 		}
 		
 		

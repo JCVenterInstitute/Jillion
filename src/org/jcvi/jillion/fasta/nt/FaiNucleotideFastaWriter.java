@@ -2,12 +2,8 @@ package org.jcvi.jillion.fasta.nt;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 
-import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.internal.fasta.FastaUtil;
 /**
  * Wraps a NucleotideFastaWriter that writes to an output 
  * file and on {@link #close()} will parse the completed
@@ -36,9 +32,10 @@ class FaiNucleotideFastaWriter implements NucleotideFastaWriter {
 		if(!closed){
 			closed = true;
 			delegate.close();
-			try(PrintWriter writer = new PrintWriter(outputfaiFile, IOUtil.UTF_8_NAME)){
-				FastaUtil.createIndex(inputFasta, writer, (line) -> (int) new NucleotideSequenceBuilder(line).getLength());
-			}
+			new FaiNucleotideWriterBuilder(inputFasta)
+				.outputFile(outputfaiFile)
+				.build();
+			
 		}
 	}
 
