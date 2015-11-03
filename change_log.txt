@@ -31,12 +31,18 @@ New Features
 5.  Added support for writing Fasta Index Files (.fai) files to NucleotideFastaWriter using 
     the createIndex(true) method.  This will make an additional file named $outputFasta.fai.
     Supports normal, zipped and non-redundant fasta files.
+    
+6.  Added new class FaiNucleotideWriterBuilder that can create new Fasta Index Files (.fai) for 
+    existing fasta files.  The builder object supports fully configuration of the fai to be written
+    including the output path, the end of line character, and the Charset.
 
 API Changes
 -----------
 1. Created new abstract class AbstractReadCasVisitor which is now the parent class of AbstractAlignedReadCasVisitor.  
    The new class handles iterating over the input read files to link cas alignments to their read names, sequences and qualities.
    Now you can extend that class if you want that extra information without realigning to gapped references.
+   
+2.  Moved FastaUtil to internal package since it should not be used outside of Jillion classes.  Heavily refactored it.
 
 Bug Fixes
 ---------
