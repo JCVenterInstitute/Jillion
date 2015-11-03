@@ -32,20 +32,43 @@ public class DefaultFastaIndex implements FastaIndex{
 
 	/**
 	 * Parse the given fai encoded file into a {@link FastaIndex}
-	 * object.
+	 * object as a UTF-8 file.
 	 * 
 	 * @param fai the fai encoded file to be read;
 	 * must exist and be readable.
+	 * 
+	 * @apiNote this is the same as 
+	 * {@link #parse(File, String) parse(fai, "UTF-8")}
+	 * 
+	 * @return a new {@link FastaIndex} object; will never be null.
+	 * @throws IOException if there is a problem reading the file.
+	 * 
+	 * @throws NullPointerException if fai is null.
+	 * 
+	 * @see #parse(File, String)
+	 */
+	public static FastaIndex parse(File fai) throws IOException{
+		return parse(fai, IOUtil.UTF_8_NAME);
+	}
+	
+	/**
+	 * Parse the given fai encoded file into a {@link FastaIndex}
+	 * object with the given {@link java.nio.charset.Charset} name.
+	 * 
+	 * @param fai the fai encoded file to be read;
+	 * must exist and be readable.
+	 * 
+	 * @param charsetName the name of the {@link java.nio.charset.Charset} to use.
 	 * 
 	 * @return a new {@link FastaIndex} object; will never be null.
 	 * @throws IOException if there is a problem reading the file.
 	 * 
 	 * @throws NullPointerException if fai is null.
 	 */
-	public static FastaIndex parse(File fai) throws IOException{
+	public static FastaIndex parse(File fai, String charsetName) throws IOException{
 		Map<String, FastaIndexRecord> map = new HashMap<>();
 		
-		try(BufferedReader reader = IOUtil.createNewBufferedReader(fai, IOUtil.UTF_8_NAME)){
+		try(BufferedReader reader = IOUtil.createNewBufferedReader(fai, charsetName)){
 			String line;
 			while( (line= reader.readLine()) !=null){
 				String[] fields = FIELD_SEPARATOR.split(line);
