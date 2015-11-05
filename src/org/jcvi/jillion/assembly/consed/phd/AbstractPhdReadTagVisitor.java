@@ -91,13 +91,15 @@ public abstract class AbstractPhdReadTagVisitor implements PhdReadTagVisitor{
 		
 	}
 	/**
+	 * Visit a {@link PhdReadTag}.
+	 * @param type the type of the tag.
+	 * @param source the source of the tag.
+	 * @param ungappedRange the {@link Range} on the read
+	 * that spans this tag.
 	 * 
-	 * @param type
-	 * @param source
-	 * @param ungappedRange
-	 * @param date
-	 * @param comment
-	 * @param freeFormData
+	 * @param date the date this tag was generated.
+	 * @param comment any additional comments.
+	 * @param freeFormData any additional data as a string.
 	 */
 	protected abstract void visitPhdReadTag(String type, String source,
 			Range ungappedRange, Date date, String comment, String freeFormData);

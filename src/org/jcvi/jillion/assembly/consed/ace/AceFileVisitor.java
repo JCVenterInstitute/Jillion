@@ -30,7 +30,7 @@ import java.util.Date;
 /**
  * {@code AceFileVisitor} is a Visitor
  * implementation for .ace encoded assembly files.
- * <p/>
+ * <p>
  * The {@link AceFileVisitor} will have the appropriate
  * visit methods called on it as an ace file is parsed/ traversed.
  * @author dkatzel

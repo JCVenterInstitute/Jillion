@@ -57,7 +57,7 @@ import org.jcvi.jillion.trace.sff.SffFileIterator;
  * This means that all the read alignments in the cas must be matched up 
  * exactly with the input read files.  This can get very complicated
  * so this class handles all of that for you.
- * <p/>
+ * <p>
  * This abstract class finds all the read files to be parsed
  * and maps them to the corresponding read in the input sequence file(s)
  * so you can get the {@link Trace} for each read.
@@ -88,7 +88,7 @@ public abstract class AbstractReadCasVisitor extends AbstractCasFileVisitor{
 	 * @param workingDir the working directory of the cas file;
 	 * may be null (means current directory).
 	 * 
-	 * @thorws NullPointerException if gappedReferenceDataStore is null.
+	 * @throws NullPointerException if gappedReferenceDataStore is null.
 	 */
 	public AbstractReadCasVisitor(File workingDir) {
 		

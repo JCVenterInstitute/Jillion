@@ -25,16 +25,16 @@ import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequence;
 /**
  * {@code PairwiseSequenceAlignment} is a {@link SequenceAlignment}
- * between two {@link Sequence}s.
+ * between two {@link org.jcvi.jillion.core.Sequence}s.
  * @author dkatzel
  *
  * @param <R> the type of {@link Residue} in the sequence.
- * @param <S> the type of {@link Sequence} in this alignment.
+ * @param <S> the type of {@link org.jcvi.jillion.core.Sequence} in this alignment.
  */
 public interface PairwiseSequenceAlignment<R extends Residue, S extends ResidueSequence<R>> extends SequenceAlignment<R, S> {
 	/**
 	 * Get the score of this alignment that 
-	 * was computed from the {@link SubstitutionMatrix}
+	 * was computed from the {@link org.jcvi.jillion.align.SubstitutionMatrix}
 	 * used to make the alignment.
 	 * @return the score as a float depending
 	 * on the type of alignment and values

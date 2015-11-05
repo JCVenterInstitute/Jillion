@@ -30,7 +30,7 @@ import org.jcvi.jillion.core.io.IOUtil;
  * {@code SinglePhdWriter} is a {@link PhdWriter}
  * that only allows one {@link Phd} to be written out.
  * Trying to write more than one {@link Phd} will throw an {@link IOException}. 
- * <p/>
+ * <p>
  * This class is not thread-safe.
  * @author dkatzel
  *
@@ -46,6 +46,7 @@ public final class SinglePhdWriter implements PhdWriter{
 	 * @param out the {@link OutputStream} to write to;
 	 * can not be null.  
 	 * @throws NullPointerException if outputFile is null.
+	 * @throws IOException if there is a problem creating the writer.
 	 */
 	public SinglePhdWriter(OutputStream out) throws IOException{
 		delegateWriter = new PhdBallWriter(out);

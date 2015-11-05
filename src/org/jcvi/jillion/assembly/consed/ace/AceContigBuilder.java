@@ -65,7 +65,7 @@ import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.assembly.DefaultContig;
 /**
- * {@code AceContigBuilder} is a {@link Builder}
+ * Builder
  * for {@link AceContig}s that allows
  * creating {@link AceContig} objects read by read by adding assembled reads
  * and setting a consensus.  An {@link AceContigBuilder}
@@ -77,7 +77,7 @@ import org.jcvi.jillion.internal.assembly.DefaultContig;
  * reads to be modified before
  * the creation of the {@link AceContig} instance
  * (which is immutable).
- * <p/>
+ * <p>
  * This class is not thread-safe.
  * @author dkatzel
  *
@@ -228,11 +228,11 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
      * @param initialConsensus the initial contig consensus for this contig (may be changed later)
      * @param estimatedNumberOfReads expected number of reads that will be added to this
      * contig.  This value is only used to allocate the initial map sizes for internal
-     * data structures as a performance optimization.  Must be >=0.
+     * data structures as a performance optimization.  Must be &ge;0.
      * 
      * @throws NullPointerException if contigId or consensus are null.
      * @throws IllegalArgumentException if estimatedNumberOfReads
-     * is <0
+     * is &lt; 0
      */
     public AceContigBuilder(String contigId, NucleotideSequence initialConsensus,
     		int estimatedNumberOfReads){
@@ -658,7 +658,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
      * If this method is called without first
      * setting a {@link ConsensusCaller}, then this
      * method will throw an {@link IllegalStateException}.
-     * <p/>
+     * <p>
      * Recomputing the contig consensus may be computationally
      * expensive and time consuming.  So this method
      * should not be called on a regular basis.

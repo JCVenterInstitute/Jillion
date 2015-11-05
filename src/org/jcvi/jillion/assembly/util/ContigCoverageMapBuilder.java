@@ -84,7 +84,7 @@ public final class ContigCoverageMapBuilder<R extends AssembledRead> {
 	 * {@link #filter(Predicate)}.  So it is possible for 
 	 * a {@link ReadFilter} to accept a read and still have that
 	 * read excluded due to the maxCoverage threshold.
-	 * <p/>
+	 * <p>
 	 * This exclusion is performed by computing
 	 * read arrival and departure values so the first reads
 	 * providing coverage by start coordinate will be included while
@@ -102,7 +102,7 @@ public final class ContigCoverageMapBuilder<R extends AssembledRead> {
 	 * 5x|	     =read7=
 	 * </pre>
 	 * @param maxCoverage the maxCoverage any {@link CoverageRegion}
-	 * will be allowed to have; must be >=0.
+	 * will be allowed to have; must be &ge; 0.
 	 * @return this
 	 * @see #maxAllowedCoverage(int, int)
 	 */
@@ -125,10 +125,10 @@ public final class ContigCoverageMapBuilder<R extends AssembledRead> {
 	 * {@code requiredMinCoverage}. 
 	 * This exclusion is performed AFTER any read filtering
 	 * performed by the filter specified by
-	 * {@link #filter(ReadFilter)}.  So it is possible for 
-	 * a {@link ReadFilter} to accept a read and still have that
+	 * {@link #filter(Predicate)}.  So it is possible for 
+	 * a filter to accept a read and still have that
 	 * read excluded due to the maxCoverage threshold.
-	 * <p/>
+	 * <p>
 	 * This exclusion is performed by computing
 	 * read arrival and departure values so the first reads
 	 * providing coverage by start coordinate will be included while
@@ -149,10 +149,10 @@ public final class ContigCoverageMapBuilder<R extends AssembledRead> {
 	 * 5x|	     =read7=
 	 * </pre>
 	 * @param preferredMaxCoverage the maximum coverage any {@link CoverageRegion}
-	 * will strive to have; must be >=0.
+	 * will strive to have; must be &ge; 0.
 	 * @param requiredMinCoverage the minimum coverage any 
 	 * {@link CoverageRegion} must have even at the expense of exceeding the 
-	 * preferredMaxCoverage; must be >=0.
+	 * preferredMaxCoverage; must be &ge; 0.
 	 * @return this
 	 */
 	public ContigCoverageMapBuilder<R> maxAllowedCoverage(int preferredMaxCoverage, int requiredMinCoverage) {

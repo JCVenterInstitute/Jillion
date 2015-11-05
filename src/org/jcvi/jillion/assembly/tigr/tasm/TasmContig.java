@@ -126,7 +126,7 @@ public interface TasmContig extends Contig<TasmAssembledRead>{
     * Get the average ungapped read coverage
     * as a double.
     * @return the coverage will always
-    * by >= 0.
+    * by &ge; 0.
     */
    double getAvgCoverage();
    /**

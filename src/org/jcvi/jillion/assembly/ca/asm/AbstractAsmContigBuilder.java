@@ -63,10 +63,10 @@ public abstract class AbstractAsmContigBuilder implements AsmContigVisitor{
 	/**
 	 * Ignored by default.  This method
 	 * may be overridden to handle variant records
-	 * (example, dephasing diploid sequence by collecting
+	 * (example, de-phasing diploid sequence by collecting
 	 * all the linked variants and modifying the builder
 	 * as a post process.
-	 * <p/>
+	 * <p>
 	 * {@inheritDoc}
 	 */
 	@Override

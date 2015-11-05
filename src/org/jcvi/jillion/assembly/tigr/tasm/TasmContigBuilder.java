@@ -37,7 +37,7 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.assembly.AbstractContigBuilder;
 import org.jcvi.jillion.internal.assembly.DefaultContig;
 /**
- * {@code TasmContigBuilder} is a {@link Builder}
+ * Builder
  * for {@link TasmContig}s that allows
  * creating {@link TasmContig} objects read by read by adding assembled reads
  * and setting a consensus.  An {@link TasmContigBuilder}
@@ -234,7 +234,7 @@ public final class TasmContigBuilder extends AbstractContigBuilder<TasmAssembled
      * <strong>regardless</strong> of what the actual
      * underlying reads are.
      * @return this.
-     * @throws IllegalArgumentException if avgCoverage < 0
+     * @throws IllegalArgumentException if avgCoverage &lt; 0
      */
     public TasmContigBuilder setCoverageInfo(Integer numberOfReads, Double avgCoverage){
     	if(numberOfReads !=null && numberOfReads <0){

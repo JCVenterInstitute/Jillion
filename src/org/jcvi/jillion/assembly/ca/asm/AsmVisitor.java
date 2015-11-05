@@ -32,7 +32,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
  * {@code AsmVisitor} is a visitor implementation
  * to traverse a Celera Assembler .ASM file.
- * <p/>
+ * <p>
  * The ASM file is the output of the 
  * Celera Assembler pipeline.  It provides a precise description
  * of the assembly as a hierarchical data structure.  The messages
@@ -582,10 +582,14 @@ public interface AsmVisitor{
      * string as the DST accession field in the input frg file.
      * @param internalId an internal integer value that associates this message with
      * future messages visited further on in the assembly pipeline.
-     * @param meanOfDistances
-     * @param stdDev
-     * @param min
-     * @param max
+     * @param meanOfDistances the mean of the distances between mates in this library.
+     * 
+     * @param stdDev the standard deviation for the mean distance of mate pairs in this library.
+     * 
+     * @param min the minimum distance between mate pairs in this library.
+     * 
+     * @param max the maximum distance between mate pairs in this library.
+     * 
      * @param histogram a histogram of the distances observed in one library.
      * A normal distribution indicates a well-constructed library; other distributions
      * can indicate library problems.
@@ -638,7 +642,7 @@ public interface AsmVisitor{
      * @param consensusSequence the consensus of this unitig.
      * @param consensusQualities the consensus qualities of this unitig.
      * @param numberOfReads number of reads in the unitig, should always
-     * be >=1.
+     * be &ge; 1.
      * @return an instance of {@link AsmUnitigVisitor} to be used
      * to visit this unitig; if a {@code null} value
      * is returned, then this unitig is skipped by the parser.
@@ -727,7 +731,7 @@ public interface AsmVisitor{
      * future messages visited further on in the assembly pipeline. 
      * @param numberOfContigPairs  the number of contig pairs in this scaffold.
      * when numberOfContigPairs = 0, then this scaffold consists of exactly one contig.
-     * When numberOfContigPairs >0, then the scaffold consists of multiple contigs whose
+     * When numberOfContigPairs  &gt; 0, then the scaffold consists of multiple contigs whose
      * order, orientation and separation are derived from mate pairs.
      * @return an instance of {@link AsmScaffoldVisitor} that will be used
      * to visit the underlying scaffold data.  If a {@code null}

@@ -50,7 +50,7 @@ public final class GappedReferenceBuilder {
 	 * longer than {@link Integer#MAX_VALUE}
 	 * @throws NullPointerException if ungappedReference is null.
 	 * @throws IllegalArgumentException if ungappedReference is gapped or if
-	 * the length > Integer.MAX_VALUE
+	 * the length &gt; Integer.MAX_VALUE
 	 */
 	public GappedReferenceBuilder(NucleotideSequence ungappedReference){
 		if(ungappedReference ==null){

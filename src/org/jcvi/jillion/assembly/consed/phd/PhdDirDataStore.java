@@ -48,8 +48,10 @@ public class PhdDirDataStore implements PhdDataStore{
     private volatile boolean closed =false;
     
     /**
-     * @param phdDir
-     * @throws FileNotFoundException 
+     * Create a new {@link PhdDataStore}.
+     * @param phdDir the directory containing all the phds to include.
+     * 
+     * @throws IOException if there is a problem parsing the phds in the phdDir. 
      */
     public PhdDirDataStore(File phdDir) throws IOException {
         this.phdDir = phdDir;

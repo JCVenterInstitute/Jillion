@@ -72,7 +72,7 @@ public final class TasmFileWriterBuilder implements Builder<TasmWriter>{
 	 * internally by JCVI</strong> since only
 	 * internal JCVI utilities require annotation tasm files.
 	 * 
-	 * @return
+	 * @return this
 	 */
 	public TasmFileWriterBuilder writeAnnotationContigs(){
 		this.annotationContigs=true;

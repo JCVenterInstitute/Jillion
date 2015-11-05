@@ -64,8 +64,11 @@ public abstract class AbstractAceConsensusTagVisitor implements AceConsensusTagV
 	}
 	/**
 	 * Visit the fully populated {@link ConsensusAceTag} instance.
-	 * Called by {@link #visitEnd()}
-	 * @param consensusTag
+	 * Called by {@link #visitEnd()}.
+	 * 
+	 * @param consensusTag the current {@link ConsensusAceTag} being visited;
+	 * will never be null.
+	 * 
 	 */
 	protected abstract void visitConsensusTag(ConsensusAceTag consensusTag);
 	@Override

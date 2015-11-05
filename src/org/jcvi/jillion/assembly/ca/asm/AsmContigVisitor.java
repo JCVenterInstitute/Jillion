@@ -23,12 +23,9 @@ package org.jcvi.jillion.assembly.ca.asm;
 import java.util.List;
 import java.util.SortedSet;
 
-import org.jcvi.jillion.assembly.ca.asm.AsmVisitor.AsmVisitorCallback;
 import org.jcvi.jillion.assembly.ca.asm.AsmVisitor.UnitigLayoutType;
 import org.jcvi.jillion.core.DirectedRange;
-import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
  * {@code AsmContigVisitor} is a visitor interface
@@ -54,13 +51,13 @@ public interface AsmContigVisitor{
         /**
          * The weight of this variant, the greater
          * the number the more major this variant is.
-         * @return
+         * @return the weight.
          */
         int getWeight();
         /**
          * The {@link NucleotideSequence}
          * of this variant.
-         * @return
+         * @return the variant sequence.
          */
         NucleotideSequence getVariantSequence();
     }
@@ -69,17 +66,18 @@ public interface AsmContigVisitor{
      * Visit one read layout onto the the current contig.
      * @param readType the type of the read, usually 'R' for
      * random read.  This is the same type as from the frg file.
+     * 
      * @param externalReadId the read id.
      * @param readRange the {@link DirectedRange} which has the gapped 
      * range on the contig that this read
-     * aligns to and the {@link Direction} of the read on this contig.
+     * aligns to and the {@link org.jcvi.jillion.core.Direction} of the read on this contig.
      * @param gapOffsets the gap offsets of this read onto the frg sequence.
      */
     void visitReadLayout(char readType, String externalReadId, 
             DirectedRange readRange, List<Integer> gapOffsets);
     /**
      * Visiting this contig has been halted
-     * by a call to {@link AsmVisitorCallback#haltParsing()}.
+     * by a call to {@link org.jcvi.jillion.assembly.ca.asm.AsmVisitor.AsmVisitorCallback#haltParsing()}.
      */
 	void halted();
 	/**
@@ -115,8 +113,8 @@ public interface AsmContigVisitor{
      * why the unitig is layed out here.
      * @param unitigExternalId the external id of this unitig.
      * @param unitigRange the gapped {@link DirectedRange} on the contig that this unitig
-     * aligns to in the {@link Direction} of the unitig on the contig.
-     * If direction is {@link Direction#REVERSE}, then the contig uses the 
+     * aligns to in the {@link org.jcvi.jillion.core.Direction} of the unitig on the contig.
+     * If direction is {@link org.jcvi.jillion.core.Direction#REVERSE}, then the contig uses the 
      * reverse complement of the unitig's consensus sequence.
      * @param gapOffsets the gap offsets of this layed out unitig onto the unitig consensus sequence
      * (after reverse complementing?).

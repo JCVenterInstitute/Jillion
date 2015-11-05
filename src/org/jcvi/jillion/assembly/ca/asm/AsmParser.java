@@ -62,7 +62,7 @@ public interface AsmParser {
 	
 	/**
 	 * Parse the asm structure starting from 
-	 * location provided by the {@AsmVisitorMemento}
+	 * location provided by the {@link AsmVisitorMemento}
 	 * and call the appropriate
 	 * visit methods on the given {@link AsmVisitor}.
 	 * @param visitor the {@link AsmVisitor} instance to call
@@ -73,8 +73,8 @@ public interface AsmParser {
 	 * @throws IOException if there is a problem parsing the asm file.
 	 * @throws NullPointerException if either the visitor or memento are null.
 	 * @throws UnsupportedOperationException if mementos are not supported by this
-	 * parser implementation (for example when parsing an {@link InputStream}
-	 * instead of a {@link File}).
+	 * parser implementation (for example when parsing an {@link java.io.InputStream}
+	 * instead of a {@link java.io.File}).
 	 * @throws IllegalStateException if this handler can not accept
 	 * any new parse requests.
 	 * @see #canParse()

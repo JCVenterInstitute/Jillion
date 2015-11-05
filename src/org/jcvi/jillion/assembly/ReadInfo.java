@@ -39,7 +39,7 @@ public class ReadInfo{
 	 * read in fulllength coordinates; can not be null.
 	 * @param fullLength the ungapped full length of this read
 	 * including any portions that have been trimmed off;
-	 * must be >=0.
+	 * must be &ge; 0.
 	 * @throws NullPointerException if validRange is null
 	 * @throws IllegalArgumentException if {@code fullLength < 0 } or
 	 * if  {@code fullLength < validRange.getEnd()} 
@@ -59,7 +59,7 @@ public class ReadInfo{
 	}
 	/**
      * Get the valid {@link Range} which is ungapped "good" part of the basecalls.  Depending
-     * on what this {@link NucleotideSequence} represents can change the 
+     * on what this {@link org.jcvi.jillion.core.residue.nt.NucleotideSequence} represents can change the 
      * meaning of valid range some possible meanings include:
      * <ul>
      * <li>the high quality region<li>

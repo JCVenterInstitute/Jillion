@@ -45,13 +45,13 @@ public class TasmContigFileDataStoreBuilder {
 	
 	/**
 	 * Create a new instance of {@code TigrContigFileDataStoreBuilder}
-	 * which will build a {@link TigrContigDataStore} for the given
+	 * which will build a {@link org.jcvi.jillion.assembly.tigr.contig.TigrContigDataStore} for the given
 	 * tasm file.
-	 * @param tasmFile the tasm file make a {@link TigrContigDataStore} with.
+	 * @param tasmFile the tasm file make a {@link org.jcvi.jillion.assembly.tigr.contig.TigrContigDataStore} with.
 	 * @param  fullLengthSequenceDataStore a datastore containing the full length sequences
 	 * of all the input reads that are assembled into the contig file.  This datastore
 	 * is used to extract the full ungapped length for each read to correctly populate the 
-	 * {@link AssembledRead#getReadInfo()} instance since not all of that
+	 * {@link org.jcvi.jillion.assembly.AssembledRead#getReadInfo()} instance since not all of that
 	 * information is stored directly in the contig file. Each read id in the contigs 
 	 * must have a corresponding record in this sequence datastore. This sequence datastore
 	 * may contain additional records that did not make it into the contig file.
@@ -76,13 +76,13 @@ public class TasmContigFileDataStoreBuilder {
 	}
 	/**
 	 * Create a new instance of {@code TigrContigFileDataStoreBuilder}
-	 * which will build a {@link TigrContigDataStore} for the given
+	 * which will build a {@link org.jcvi.jillion.assembly.tigr.contig.TigrContigDataStore} for the given
 	 * contig file.
-	 * @param tasmFile the tasm file make a {@link TigrContigDataStore} with.
+	 * @param tasmFile the tasm file make a {@link org.jcvi.jillion.assembly.tigr.contig.TigrContigDataStore} with.
 	 * @param  fullLengthSequenceDataStore a datastore containing the full length sequences
 	 * of all the input reads that are assembled into the contig file.  This datastore
 	 * is used to extract the full ungapped length for each read to correctly populate the 
-	 * {@link AssembledRead#getReadInfo()} instance since not all of that
+	 * {@link org.jcvi.jillion.assembly.AssembledRead#getReadInfo()} instance since not all of that
 	 * information is stored directly in the contig file. Each read id in the contigs 
 	 * must have a corresponding record in this sequence datastore. This sequence datastore
 	 * may contain additional records that did not make it into the contig file.

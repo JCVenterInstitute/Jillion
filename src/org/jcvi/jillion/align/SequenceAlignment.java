@@ -25,11 +25,11 @@ import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequence;
 /**
  * {@code SequenceAlignment} is an interface that describes
- * an alignment between two {@link Sequence}s.
+ * an alignment between two {@link org.jcvi.jillion.core.Sequence}s.
  * @author dkatzel
  *
  * @param <R> the {@link Residue} type.
- * @param <S> the {@link Sequence} type.
+ * @param <S> the {@link org.jcvi.jillion.core.Sequence} type.
  */
 public interface SequenceAlignment<R extends Residue, S extends ResidueSequence<R>> {
 	/**
@@ -54,7 +54,7 @@ public interface SequenceAlignment<R extends Residue, S extends ResidueSequence<
 	 * Get the number of times a 
 	 * consecutive group of gaps (which may 
 	 * only be of length 1) appears in the alignment.
-	 * <p/>
+	 * <p>
 	 * For example if a nucleotide sequence alignment
 	 * contains the gapped sequence :
 	 * {@literal AC-GT-ACGT----AA}
@@ -64,19 +64,19 @@ public interface SequenceAlignment<R extends Residue, S extends ResidueSequence<
 	int getNumberOfGapOpenings();
 
 	/**
-	 * Get the {@link Sequence} that represents
+	 * Get the {@link org.jcvi.jillion.core.Sequence} that represents
 	 * the gapped sequence of the query that aligns
 	 * to the subject.
-	 * @return a {@link Sequence} which probably
+	 * @return a {@link org.jcvi.jillion.core.Sequence} which probably
 	 * contains gaps; will never be null.
 	 */
 	S getGappedQueryAlignment();
 
 	/**
-	 * Get the {@link Sequence} that represents
+	 * Get the {@link org.jcvi.jillion.core.Sequence} that represents
 	 * the gapped sequence of the subject that aligns
 	 * to the query.
-	 * @return a {@link Sequence} which probably
+	 * @return a {@link org.jcvi.jillion.core.Sequence} which probably
 	 * contains gaps; will never be null.
 	 */
 	S getGappedSubjectAlignment();

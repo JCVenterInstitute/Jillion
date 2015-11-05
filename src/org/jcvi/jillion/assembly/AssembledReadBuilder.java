@@ -27,8 +27,7 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 /**
- * {@code AssembledReadBuilder} is a {@link Builder}
- * for {@link AssembledRead}s for a specific contig.
+ * Builds an {@link AssembledRead} for a specific contig.
  * Methods in this interface can change the bases
  * of this read or shift where on the reference (or contig consensus)
  * this read lands.
@@ -43,6 +42,8 @@ public interface AssembledReadBuilder<R extends AssembledRead> extends Rangeable
      * 
     * Get the gapped start offset of this read
      * against the new reference in reference coordinate space.
+     * 
+     * @return the start offset.
      */
     long getBegin();
     /**
@@ -96,7 +97,9 @@ public interface AssembledReadBuilder<R extends AssembledRead> extends Rangeable
     * 
     * and the  current
     * values given to this builder.
-    * @param contigConsensus the reference
+    * @param contigConsensus the reference or contig consensus sequence to use.
+    * 
+    * @return a new {@link AssembledRead} instance; will never be null.
      */
     R build(NucleotideSequence contigConsensus);
     /**
@@ -122,17 +125,21 @@ public interface AssembledReadBuilder<R extends AssembledRead> extends Rangeable
     /**
     * Get the gapped length of this read that
     * aligns to the reference.
+    * 
+    * @return the length.
      */
     long getLength();
     /**
     * Get the gapped end coordinate of this read that
     * aligns to the reference.
+    * 
+    * @return the end offset.
      */
     long getEnd();
     /**
      * 
     * {@inheritDoc}
-    * <p/>
+    * <p>
     * Get the gapped start and end offsets of this
     * read against this reference as a Range.
      */
@@ -200,6 +207,9 @@ public interface AssembledReadBuilder<R extends AssembledRead> extends Rangeable
      * to begin insertion.
      * @param sequence the nucleotide sequence to be 
      * inserted at the given offset.
+     * 
+     * @return this.
+     * 
      * @throws NullPointerException if sequence is null.
      * @throws IllegalArgumentException if offset is invalid.
      * return this.
@@ -264,7 +274,7 @@ public interface AssembledReadBuilder<R extends AssembledRead> extends Rangeable
      * inserted at the given offset.
      * @return this
      * @throws NullPointerException if sequence is null.
-     * @throws IllegalArgumentException if offset <0 or > current sequence length.
+     * @throws IllegalArgumentException if offset &lt; 0 or &gt; current sequence length.
      */
     AssembledReadBuilder<R> insert(int offset, Iterable<Nucleotide> sequence);
     
@@ -280,7 +290,7 @@ public interface AssembledReadBuilder<R extends AssembledRead> extends Rangeable
      * inserted at the given offset.
      * @return this
      * @throws NullPointerException if base is null.
-     * @throws IllegalArgumentException if offset <0 or > current sequence length.
+     * @throws IllegalArgumentException if offset &lt; 0 or &gt; current sequence length.
      */
     AssembledReadBuilder<R> insert(int offset, Nucleotide base);
     /**

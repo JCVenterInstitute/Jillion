@@ -33,7 +33,7 @@ import org.jcvi.jillion.assembly.consed.ace.AceFileVisitorCallback.AceFileVisito
 public interface AceParser {
 	/**
 	 * Can this handler accept new parse requests
-	 * via {@link #parse(AceFileVisitor)} or {@link #parse(AceFileVisitor, AceFileVisitorMemento)}
+	 * via one of the parse() methods.
 	 * calls.
 	 * 
 	 * Some implementations of {@link AceParser}

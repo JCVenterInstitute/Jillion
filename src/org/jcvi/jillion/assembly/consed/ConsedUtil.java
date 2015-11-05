@@ -92,7 +92,6 @@ public final class ConsedUtil {
      * @param basecallsWithAceGaps a string of basecalls with the '*' to 
      * represent gaps.
      * @return a new string with all the '*' converted into '-'.
-     * @see #convertContigGapstoAceGaps(String)
      */
     public static String convertAceGapsToContigGaps(String basecallsWithAceGaps) {
         return basecallsWithAceGaps.replace('*', '-');
@@ -122,7 +121,7 @@ public final class ConsedUtil {
      * into multiple contigs which all have at least some coverage at every
      * location.  If the given contig is split, the new contigs will be named
      * {@code <original_id>_<ungapped reference 1-based start>_<ungapped reference 1-based end>}
-     * <p/>
+     * <p>
      * Some Assemblers (mostly reference assemblers) create contigs with zero coverage
      * regions (0x) but that have the reference basecalls as the consensus in those 
      * areas. This method removes the parts of the contig which only have consensus. 
@@ -201,7 +200,7 @@ public final class ConsedUtil {
      * @param consensusTag the tag to check.
      * @return {@code true} if this tag denotes a contig rename; {@code false}
      * otherwise.
-     * @throw {@link NullPointerException} if consensusTag is null.
+     * @throws NullPointerException if consensusTag is null.
      */
     public static boolean isContigRename(ConsensusAceTag consensusTag){
         return CONTIG_RENAME_TAG_TYPE.equals(consensusTag.getType());
@@ -237,11 +236,11 @@ public final class ConsedUtil {
      * @param filenamePrefix prefix to ace file name
      * before the ".ace.$version"; can not be null.
      * @param version the ace version number;
-     * must be >= 1
+     * must be &ge; 1
      * @return the {@link File} to that ace file;
      * or {@code null} if the specified ace does not exist
      * or the editDir is {@code null} .
-     * @throws IllegalArgumentException if version < 1.
+     * @throws IllegalArgumentException if version &lt; 1.
      */
     public static File getAceFile(File editDir, String filenamePrefix, int version){
     	if(filenamePrefix == null){
@@ -268,13 +267,16 @@ public final class ConsedUtil {
     /**
      * Gets the latest ace file with the given prefix in the given edit_dir.
      * 
-     *<p/>Consed labels each version of the ace file with a incrementing
+     *<p>
+     *Consed labels each version of the ace file with a incrementing     *
      *value so {@code prefix.ace.2} is newer than {@code prefix.ace.1}.
+     *
      * @param editDir the consed edit_dir folder to inspect.
      * If this parameter is null, then this method will
      * return null.
      * @param filenamePrefix the beginning part of the file name to filter,
      * incase there are more than 1 groups of versioned assemblies.
+     * 
      * @return the File object representing the latest version of the ace file
      * with the given prefix in the given edit_dir; {@code null}
      * if no such file exists or if editDir is also {@code null}.

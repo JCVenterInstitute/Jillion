@@ -85,7 +85,7 @@ public final class NucleotideSubstitutionMatrices {
 	/**
 	 * Parse an {@link InputStream} which is a text file
 	 * of a single nucleotide substitution matrix.
-	 * <p/>
+	 * <p>
 	 * Rules for parsing file:
 	 * <ol>
 	 * <li>Any lines that start with '#' are ignored</li>

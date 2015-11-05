@@ -39,7 +39,7 @@ public interface PhdReadTagVisitor {
 	/**
 	 * Visit the source that generated this tag
 	 *  (usually the program name).
-	 * @param type a String describing the source,
+	 * @param source a String describing the source,
 	 * will never be null, but may be empty.
 	 */
 	void visitSource(String source);

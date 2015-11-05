@@ -75,7 +75,7 @@ public abstract class AceFileParser implements AceParser {
 	 * Create a new Parser object that will parse
 	 * the given inputStream.
 	 * the inputStream will be closed at the end
-	 * of the first call to {@link #accept(AceFileVisitor)}.
+	 * of the first call to {@link #parse(AceFileVisitor)}.
 	 * @param aceFileStream  the {@link InputStream} to parse;
 	 * should never be null.
 	 * @return a new {@link AceFileParser} instance;

@@ -142,7 +142,7 @@ public final class Distance {
     /**
      * Get the minimum distance between
      * mates.
-     * @return the min as an int, should always be >=0.
+     * @return the min as an int, should always be &ge;0.
      */
     public int getMin() {
         return min;
@@ -150,7 +150,7 @@ public final class Distance {
     /**
      * Get the max distance between
      * mates.
-     * @return the max as an int, should always be >={@link #getMin()}.
+     * @return the max as an int, should always be &ge; {@link #getMin()}.
      */
     public int getMax() {
         return max;

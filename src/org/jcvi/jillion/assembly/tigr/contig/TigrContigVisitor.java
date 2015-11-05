@@ -60,7 +60,7 @@ public interface TigrContigVisitor {
 	 * parsing but has not
 	 * actually finished the parsing this contig,
 	 * this will happen only if 
-	 * a visitor calls {@link TigrContigVisitorCallback#haltParsing()}.
+	 * a visitor calls {@link org.jcvi.jillion.assembly.tigr.contig.TigrContigFileVisitor.TigrContigVisitorCallback#haltParsing()}.
 	 */
 	void halted();
 	/**

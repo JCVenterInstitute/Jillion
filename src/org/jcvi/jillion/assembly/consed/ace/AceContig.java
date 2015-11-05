@@ -56,7 +56,7 @@ public interface AceContig extends Contig<AceAssembledRead>{
      * by {@link AceAssembledRead#getGappedLength()} is returned.
      * If two reads have the same start offset AND gapped length,
      * the the read with the lexigraphically lower read id is returned.
-     * <p/>
+     * <p>
      * {@inheritDoc}
      */
     @Override

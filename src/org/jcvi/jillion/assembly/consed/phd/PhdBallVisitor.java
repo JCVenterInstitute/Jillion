@@ -34,7 +34,9 @@ public interface PhdBallVisitor {
 	 * The comment is often the path to the 
 	 * corresponding wrapped input file
 	 * (path to fastq or sff file).
-	 * @param comment
+	 * 
+	 * @param comment the comment at the beginning of the phd file.
+	 * 
 	 */
 	void visitFileComment(String comment);
 	/**

@@ -26,7 +26,7 @@ import org.jcvi.jillion.assembly.tigr.tasm.TasmVisitor.TasmVisitorCallback.TasmV
 /**
  * {@code TasmParser} is an interface that will
  * parse a TIGR Assembler (tasm) formatted structure and call the appropriate 
- * visit methods on the given {@link FastaVisitor}.
+ * visit methods on the given {@link TasmVisitor}.
  * @author dkatzel
  *
  */
@@ -72,8 +72,8 @@ public interface TasmParser {
 	 * @throws IOException if there is a problem parsing the tasm file.
 	 * @throws NullPointerException if either the visitor or memento are null.
 	 * @throws UnsupportedOperationException if mementos are not supported by this
-	 * parser implementation (for example when parsing an {@link InputStream}
-	 * instead of a {@link File}).
+	 * parser implementation for example when parsing an {@link java.io.InputStream}
+	 * instead of a {@link java.io.File}.
 	 * @throws IllegalStateException if this handler can not accept
 	 * any new parse requests.
 	 * @see #canParse()

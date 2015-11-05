@@ -61,6 +61,16 @@ public interface ScaffoldBuilder extends Builder<Scaffold> {
 	 * Convenience method for adding a contig in the forward
 	 * direction.  This is the same as
 	 * {@link #add(String, Range, Direction) add(contigId, contigRange, Direction.FORWARD)}
+	 * 
+	 * @param contigId the id of the contig,
+	 * must be unique to this Scaffold; 
+	 * can not be null.
+	 * @param contigRange the {@link Range}
+	 * that this contig aligns to on the scaffold;
+	 * can not be null.
+	 * 
+	 * @return this
+	 * 
 	 * @see #add(String, Range, Direction)
 	 */
 	ScaffoldBuilder add(String contigId, Range contigRange);
@@ -68,7 +78,17 @@ public interface ScaffoldBuilder extends Builder<Scaffold> {
 	/**
 	 * Convenience method for adding a contig in the forward
 	 * direction.  This is the same as
-	 * {@link #add(String, Range, Direction) add(contigId, contigRange.getRange(), contigRange.getDirection())}
+	 * {@link #add(String, Range, Direction) add(contigId, contigRange.getRange(), contigRange.getDirection())}.
+	 * 
+	 * @param contigId the id of the contig,
+	 * must be unique to this Scaffold; 
+	 * can not be null.
+	 * @param contigRange the {@link DirectedRange}
+	 * that this contig aligns to on the scaffold;
+	 * can not be null.
+	 * 
+	 * @return this.
+	 * 
 	 * @see #add(String, Range, Direction)
 	 */
 	ScaffoldBuilder add(String contigId, DirectedRange contigRange);
@@ -78,13 +98,16 @@ public interface ScaffoldBuilder extends Builder<Scaffold> {
 	 * contig will start at the scaffold origin (offset 0).
 	 * The distances between contigs will not change, 
 	 * only the actual begin and end locations.  
-	 * <p/>
+	 * <p>
 	 * The actual
 	 * coordinate conversion will occur at built time during the
 	 * {@link #build()} method. This means that the shift flag 
 	 * can be switched on or off many times without affecting
 	 * any of the contig coordinates (until the Scaffold is built).
-	 * @param shiftContigs
+	 * 
+	 * @param shiftContigs {@code true} to shift the contigs to the origin;
+	 * {@code false} otherwise.
+	 * 
 	 * @return this
 	 */
 	ScaffoldBuilder shiftContigsToOrigin(boolean shiftContigs);

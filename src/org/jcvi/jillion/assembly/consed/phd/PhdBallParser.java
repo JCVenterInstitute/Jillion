@@ -69,8 +69,8 @@ public interface PhdBallParser {
 	 * @throws IOException if there is a problem parsing the phd file.
 	 * @throws NullPointerException if either the visitor or memento are null.
 	 * @throws UnsupportedOperationException if mementos are not supported by this
-	 * parser implementation (for example when parsing an {@link InputStream}
-	 * instead of a {@link File}).
+	 * parser implementation for example when parsing an {@link java.io.InputStream}
+	 * instead of a {@link java.io.File}.
 	 * @throws IllegalStateException if this handler can not accept
 	 * any new parse requests.
 	 * @see #canParse()

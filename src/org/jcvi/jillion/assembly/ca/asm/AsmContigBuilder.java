@@ -50,6 +50,10 @@ public interface AsmContigBuilder extends ContigBuilder<AsmAssembledRead, AsmCon
      * @param ungappedFullLength the ungapped full length
      * non-trimmed raw full length
      * read from the sequence machine.
+     * 
+     * @param isSurrogate {@code true} if this read is a surrogate Read;
+     * {@code false} otherwise.
+     * 
      * @return this.
      */
     AsmContigBuilder addRead(String readId, String validBases, int offset,

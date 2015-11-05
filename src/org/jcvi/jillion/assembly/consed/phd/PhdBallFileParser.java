@@ -73,15 +73,23 @@ public abstract class PhdBallFileParser implements PhdBallParser{
     
     private static final Pattern RIGHT_TRIM_PATTERN = Pattern.compile("(.*)\\s+$");
 	/**
+	 * Create a new {@link PhdBallParser} that will parse the given phdball file.
+	 * @param phdBall the phd to parse.
 	 * 
-	 * @param phdBall
-	 * @return
-	 * @throws FileNotFoundException
+	 * @return a new {@link PhdBallParser}; will never be null.
+	 * @throws FileNotFoundException if the file does not exist.
 	 */
 	public static PhdBallParser create(File phdBall) throws FileNotFoundException{
 		return new FileBasedPhdBallParser(phdBall);
 	}
-	public static PhdBallParser create(InputStream phdBallStream) throws FileNotFoundException{
+	/**
+	 * Create a new {@link PhdBallParser} that will parse the given phdball data
+	 * from an InputStream.
+	 * @param phdBallStream the InputStream that contains the phd data to parse.
+	 * 
+	 * @return a new {@link PhdBallParser}; will never be null.
+	 */
+	public static PhdBallParser create(InputStream phdBallStream){
 		return new InputStreamBasedPhdBallParser(phdBallStream);
 	}
 
