@@ -148,9 +148,11 @@ public final class AssemblyUtil {
     /**
      * Convert the given gapped valid range offset of a given read into its
      * corresponding ungapped full length (untrimmed) equivalent.
-     * @param placedRead the read
-     * @param ungappedFullLength the ungapped full length of the untrimmed (raw) read.
-     * @param gappedOffset the gapped offset to convert into an ungapped full range offset
+     * 
+     * @param placedRead the read to use in the computation.
+     * 
+     * @param gappedOffset the gapped offset to convert into an ungapped full range offset.
+     * 
      * @return the ungapped full range offset as a positive int.
      */
     public static  int convertToUngappedFullRangeOffset(AssembledRead placedRead, int gappedOffset) {
@@ -179,8 +181,8 @@ public final class AssemblyUtil {
     }
    
     /**
-     * Get the first non-gap {@link Nucleotide} from the left side of the given
-     * gappedReadIndex on the given encoded glyphs.  If the given base is not a gap, 
+     * Get the first non-gap {@link org.jcvi.jillion.core.residue.nt.Nucleotide} from the left side of the given
+     * gappedReadIndex on the given {@link NucleotideSequence}.  If the given base is not a gap, 
      * then that is the value returned.
      * @param gappedNucleotides the gapped nucleotides to search 
      * @param gappedReadIndex the gapped offset (0-based) to start the search from.
@@ -200,8 +202,8 @@ public final class AssemblyUtil {
     
     
     /**
-     * Get the first non-gap {@link Nucleotide} from the right side of the given
-     * gappedOffset on the given encoded glyphs.  If the given base is not a gap, 
+     * Get the first non-gap {@link org.jcvi.jillion.core.residue.nt.Nucleotide} from the right side of the given
+     * gappedOffset on the given {@link NucleotideSequence}.  If the given base is not a gap, 
      * then that is the value returned.
      * @param sequence the gapped {@link NucleotideSequence} to search 
      * @param gappedOffset the gapped offset (0-based) to start the search from.

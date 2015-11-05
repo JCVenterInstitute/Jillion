@@ -51,11 +51,11 @@ public abstract class AbstractAceContigBuilderVisitor implements AceContigVisito
 	 * Create a new instance of {@link AbstractAceContigBuilderVisitor} that will
 	 * populate an {@link AceContigBuilder} as visit methods are called.
 	 * @param contigId the contig id of the contig to build.
-	 * @param consensusLength the expected initial consensus length; must be >1.
+	 * @param consensusLength the expected initial consensus length; must be &gt; 1.
 	 * @param numberOfReads the expected initial number of reads that will be in this builder;
-	 * must be >=0.  This value is only used to initialize the size of internal hashes,
+	 * must be &ge; 0.  This value is only used to initialize the size of internal hashes,
 	 * the number of reads actually visited may be greater or less than this value.
-	 * @throws IllegalArgumentException if consensusLength <1 or numberOfReads <0.
+	 * @throws IllegalArgumentException if consensusLength &lt; 1 or numberOfReads &lt; 0.
 	 */
 	public AbstractAceContigBuilderVisitor(String contigId, int consensusLength, int numberOfReads) {
 		this.contigId = contigId;
@@ -71,7 +71,7 @@ public abstract class AbstractAceContigBuilderVisitor implements AceContigVisito
 	}
 	/**
 	 * Ignored by default, users may override this method if they wish.
-	 * <p/>
+	 * <p>
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -97,7 +97,7 @@ public abstract class AbstractAceContigBuilderVisitor implements AceContigVisito
 	}
 	/**
 	 * Ignored by default, users may override this method if they wish.
-	 * <p/>
+	 * <p>
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -111,7 +111,7 @@ public abstract class AbstractAceContigBuilderVisitor implements AceContigVisito
 	 * reason why a read is ignored is the read does not 
 	 * contain any high quality bases that aligned to
 	 * the consensus.
-	 * <p/>
+	 * <p>
 	 * By default this method does not do anything,
 	 * users are encouraged to implement this method
 	 * to perform some kind of logging.

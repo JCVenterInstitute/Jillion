@@ -33,7 +33,9 @@ public interface AsmAssembledRead extends AssembledRead{
      * unitig which was cautiously placed
      * by Celera Assembler at one or more
      * locations.
-     * @return
+     * 
+     * @return {@code true} if this read is a 
+     * repeat surrogate; {@code false} otherwise.
      */
     boolean isRepeatSurrogate();
 }

@@ -60,7 +60,7 @@ public interface ContigBuilder<R extends AssembledRead,C extends Contig<R>> exte
     /**
      * Get the number of reads currently
      * in this contig.
-     * @return an int will always be >=0.
+     * @return an int will always be &ge; 0.
      */
     int numberOfReads();
     /**
@@ -127,11 +127,17 @@ public interface ContigBuilder<R extends AssembledRead,C extends Contig<R>> exte
      * The consensus will get recalled inside the {@link #build()}
      * and {@link #recallConsensusNow()}.
      * method before the {@link Contig} instance is created.
+     * 
      * @param consensusCaller the {@link ConsensusCaller}  instance to use
      * to recall the consensus of this contig; can not be null.
+     * 
      * @param qualityDataStore the {@link QualitySequenceDataStore}
      * which contains all the quality data for all of the reads
      * in this contig; can not be null.
+     * 
+     * @param qualityValueStrategy the {@link GapQualityValueStrategy} to use
+     * to compute the quality scores of gaps; can not be null.
+     * 
      * @return this.
      * @throws NullPointerException if any parameter is null.
      */
@@ -167,7 +173,7 @@ public interface ContigBuilder<R extends AssembledRead,C extends Contig<R>> exte
      * If this method is called without first
      * setting a {@link ConsensusCaller}, then this
      * method will throw an {@link IllegalStateException}.
-     * <p/>
+     * <p>
      * Recomputing the contig consensus may be computationally
      * expensive and time consuming.  So this method
      * should not be called on a regular basis.
@@ -186,7 +192,7 @@ public interface ContigBuilder<R extends AssembledRead,C extends Contig<R>> exte
     
     /**
      * {@inheritDoc}
-     * <p/>
+     * <p>
      * Take the current read and consensus data 
      * (which has possibly been previous edited and/or shifted)
      * and create a new AceContig instance.  Calling this method

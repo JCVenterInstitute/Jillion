@@ -106,7 +106,7 @@ public interface DataStore<T> extends Closeable{
     boolean contains(String id) throws DataStoreException;
     /**
      * Get the total number of objects in this DataStore.
-     * @return the number of objects in this DataStore; always >=0.
+     * @return the number of objects in this DataStore; always &ge; 0.
      * @throws DataStoreException if there is a problem fetching the
      * data from this {@link DataStore}.
      * @throws DataStoreClosedException if this {@link DataStore} is closed.
@@ -169,9 +169,9 @@ public interface DataStore<T> extends Closeable{
      * Create a new {@link Stream} of the records
      * in this DataStore.
      * @return a new Stream.
-     * @throws DataStoreException
-     * @since 5.0
      * @throws DataStoreException if there is a problem creating this stream.
+     * 
+     * @since 5.0
      */
     default Stream<T> records() throws DataStoreException{
     	return iterator().toStream();

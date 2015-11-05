@@ -65,7 +65,7 @@ public final class CoverageMapBuilder<T extends Rangeable> {
 	 * any elements
 	 *  that provide additional coverage than
 	 * the specified max will not be included in the CoverageMap. 
-	 * <p/>
+	 * <p>
 	 * This exclusion is performed by computing
 	 * element arrival and departure values so the first elements
 	 * providing coverage by start coordinate will be included while
@@ -83,8 +83,10 @@ public final class CoverageMapBuilder<T extends Rangeable> {
 	 * 5x|	     =element7=
 	 * </pre>
 	 * @param maxCoverage the maxCoverage any {@link CoverageRegion}
-	 * will be allowed to have; must be >=0.
+	 * will be allowed to have; must be &ge; 0.
 	 * @return this
+	 * 
+	 * @throws IllegalArgumentException if maxCoverage &lt; 0.
 	 */
 	public CoverageMapBuilder<T> maxAllowedCoverage(int maxCoverage){
 		if(maxCoverage<0){
@@ -98,13 +100,13 @@ public final class CoverageMapBuilder<T extends Rangeable> {
 	/**
 	 * Set the PREFERRED maximum coverage depth any {@link CoverageRegion}
 	 * in the resulting CoverageMap will have.
-	 * Any {@link AssembledRead} in the {@link Contig}
+	 * Any {@link org.jcvi.jillion.assembly.AssembledRead} in the {@link org.jcvi.jillion.assembly.Contig}
 	 *  that provides additional coverage than
 	 * the specified max will not be included in the CoverageMap
 	 * EXCEPT if there are other nearby {@link CoverageRegion}s
 	 * whose coverage depth will be below the specified
 	 * {@code requiredMinCoverage}. 
-	 * <p/>
+	 * <p>
 	 * This exclusion is performed by computing
 	 * element arrival and departure values so the first elements
 	 * providing coverage by start coordinate will be included while
@@ -125,10 +127,10 @@ public final class CoverageMapBuilder<T extends Rangeable> {
 	 * 5x|	     =element7=
 	 * </pre>
 	 * @param preferredMaxCoverage the maximum coverage any {@link CoverageRegion}
-	 * will strive to have; must be >=0.
+	 * will strive to have; must be &ge; 0.
 	 * @param requiredMinCoverage the minimum coverage any 
 	 * {@link CoverageRegion} must have even at the expense of exceeding the 
-	 * preferredMaxCoverage; must be >=0.
+	 * preferredMaxCoverage; must be &ge; 0.
 	 * @return this
 	 */
 	public CoverageMapBuilder<T> maxAllowedCoverage(int preferredMaxCoverage, int requiredMinCoverage) {
@@ -169,7 +171,7 @@ public final class CoverageMapBuilder<T extends Rangeable> {
 	 * then a CoverageRegion that has {@link CoverageRegion#getCoverageDepth()} ==0 
 	 * (a 0x region) will be inserted into the map
 	 * even if it that makes it the first or last region in the map.
-	 * <p/>
+	 * <p>
 	 * If not set, then defaults to {@code false}.
 	 * @param flag {@code true} to include the origin;
 	 * {@code false} otherwise.

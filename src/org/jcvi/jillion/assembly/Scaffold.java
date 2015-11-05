@@ -82,12 +82,19 @@ public interface Scaffold {
     int getNumberOfContigs();
     /**
      * Get the length of this scaffold in ungapped bases.
-     * @return
+     * @return the length of this scaffold.
      */
     long getLength();
 
     /**
-     *  converts contig based coordinates into scaffold coordinates.
+     *  Converts contig based coordinates into scaffold coordinates.
+     *  
+     *  @param placedContigId the id of the contig to use.
+     *  
+     *  @param placedContigRange the {@link Range} on this contig to convert.
+     *  
+     *  @return The {@link Range} of the input placedContigRange converted
+     *  into the coordinate system of the scaffold.
      */
     Range convertContigRangeToScaffoldRange(String placedContigId, Range placedContigRange);
     /**

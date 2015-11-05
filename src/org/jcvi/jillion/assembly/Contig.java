@@ -44,7 +44,7 @@ public interface Contig<T extends AssembledRead>{
     String getId();
     /**
      * Get the number of reads in this contig.
-     * @return the number of reads in this contig; will always be >=0.
+     * @return the number of reads in this contig; will always be &ge; 0.
      */
     long getNumberOfReads();
     /**
@@ -62,7 +62,7 @@ public interface Contig<T extends AssembledRead>{
      * and paramters.
      * @return the consensus of this contig as {@link NucleotideSequence}; will
      * never be null.
-     * @see ConsensusCaller
+     * @see org.jcvi.jillion.assembly.util.consensus.ConsensusCaller
      */
     NucleotideSequence getConsensusSequence();
     /**

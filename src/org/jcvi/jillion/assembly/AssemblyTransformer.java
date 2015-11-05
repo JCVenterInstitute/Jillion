@@ -67,7 +67,7 @@ public interface AssemblyTransformer {
 			QualitySequence qualitySequence, PositionSequence positions, URI uri);
 	/**
 	 * This read aligned to a particular reference at the given location.
-	 * @param id the read id.
+	 * @param readId the read id.
 	 * @param nucleotideSequence the {@link NucleotideSequence};
 	 * can not be null.
 	 * @param qualitySequence the {@link QualitySequence} for this
@@ -78,7 +78,7 @@ public interface AssemblyTransformer {
 	 * @param sourceFileUri the {@link URI} for the location of the file
 	 * that contains this read; may be {@code null} if not known.
 	 * @param referenceId the reference id this read aligned to.  This id
-	 * must be mentioned previously by a call to {@link #referenceOrConsensus(String, NucleotideSequence).
+	 * must be mentioned previously by a call to {@link #referenceOrConsensus(String, NucleotideSequence)}.
 	 * @param gappedStartOffset the gapped start offset (0-based)
 	 * of the read into the gapped reference or consensus sequence.
 	 * @param direction the read direction.
@@ -94,16 +94,19 @@ public interface AssemblyTransformer {
 			ReadInfo readInfo);
 	/**
 	 * The command that was run to generate this assembly.
-	 * This method will only be called if the command is kown.
-	 * @param name
-	 * @param version
-	 * @param parameters
+	 * This method will only be called if the command is known.
+	 * 
+	 * @param name the name of the assembler used.
+	 * 
+	 * @param version the version of the assembler used.
+	 * @param parameters the parameters used in the assembly invocation.
 	 */
 	void assemblyCommand(String name, String version, String parameters);
 	/**
 	 * The {@link URI} of the reference file
 	 * used in this assembly.
-	 * @param uri
+	 * 
+	 * @param uri the path to the reference file.
 	 */
 	void referenceFile(URI uri);
 	/**
@@ -111,7 +114,8 @@ public interface AssemblyTransformer {
 	 * used in this assembly.  If more than one
 	 * read file was used, then this method
 	 * may be called more than once.
-	 * @param uri
+	 * 
+	 * @param uri the path to the read file.
 	 */
 	void readFile(URI uri);
 

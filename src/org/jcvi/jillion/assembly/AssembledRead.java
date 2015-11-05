@@ -60,7 +60,7 @@ public interface AssembledRead extends Rangeable{
     /**
      * Get the {@link Direction} that this read is relative to the contig
      * this read was placed in. If the read is {@link Direction#REVERSE}
-     * then the {@link NucleotideSequence} of this read has already been
+     * then the {@link org.jcvi.jillion.core.residue.nt.NucleotideSequence} of this read has already been
      * reverse complemented so that it matches the consensus.
      * @return either {@link Direction#FORWARD} or {@link Direction#REVERSE}.
      */
@@ -86,7 +86,7 @@ public interface AssembledRead extends Rangeable{
      * will return {@code 100}.
      * @param gappedValidRangeOffset zero based gapped valid range offset.
      * @return the equivalent zero based gapped reference offset as a long.
-     * @throws IndexOutOfBoundsException if gappedValidRangeOffset <0 or >=
+     * @throws IndexOutOfBoundsException if gappedValidRangeOffset &lt; 0 or &ge;
      * this read's length
      */
     long toReferenceOffset(long gappedValidRangeOffset);
@@ -111,8 +111,9 @@ public interface AssembledRead extends Rangeable{
      */
     String getId();
     /**
-     * Get the ungapped {@link NucleotideSequence} of this read.
-     * @return the {@link NucleotideSequence} of this read; will
+     * Get the ungapped {@link org.jcvi.jillion.core.residue.nt.NucleotideSequence} of this read.
+     * 
+     * @return the {@link org.jcvi.jillion.core.residue.nt.NucleotideSequence} of this read; will
      * never be null.
      */
     ReferenceMappedNucleotideSequence getNucleotideSequence();

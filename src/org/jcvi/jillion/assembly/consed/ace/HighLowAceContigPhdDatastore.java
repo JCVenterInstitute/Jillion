@@ -317,7 +317,7 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
     	 * {@value org.jcvi.jillion.assembly.consed.ace.HighLowAceContigPhdDatastore.Builder#DEFAULT_LOW_QUALITY} will be used.
     	 * @param qv the PhredQuality value as an int to use for lowercase letters.
     	 * @return this
-    	 * @throws IllegalArgumentException - if qualityScore < 0 or > Byte.MAX_VALUE.
+    	 * @throws IllegalArgumentException - if qualityScore &lt; 0 or &gt; Byte.MAX_VALUE.
     	 */
     	public Builder lowercaseQuality(int qv){
     		lowQuality = PhredQuality.valueOf(qv);
@@ -330,7 +330,7 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
     	 * {@value org.jcvi.jillion.assembly.consed.ace.HighLowAceContigPhdDatastore.Builder#DEFAULT_HIGH_QUALITY} will be used.
     	 * @param qv the PhredQuality value as an int to use for uppercase letters.
     	 * @return this
-    	 * @throws IllegalArgumentException - if qualityScore < 0 or > Byte.MAX_VALUE.
+    	 * @throws IllegalArgumentException - if qualityScore &lt; 0 or &gt; Byte.MAX_VALUE.
     	 */
     	public Builder uppercaseQuality(int qv){
     		highQuality = PhredQuality.valueOf(qv);

@@ -39,7 +39,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
  * @author dkatzel
  *
  * @param <R> the type of {@link Residue} (either {@link Nucleotide} or {@link AminoAcid} ). 
- * @param <S> the type of {@link Sequence} (either {@link NucleotideSequence} or {@link ProteinSequence} ).
+ * @param <S> the type of {@link org.jcvi.jillion.core.Sequence} (either {@link NucleotideSequence} or {@link ProteinSequence} ).
  * @param <A> the type of {@link PairwiseSequenceAlignment} to build.
  */
 public final class PairwiseAlignmentBuilder<R extends Residue, S extends ResidueSequence<R>, A extends PairwiseSequenceAlignment<R,S>> {

@@ -35,8 +35,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Map.Entry;
+import java.util.Objects;
 
 import org.jcvi.jillion.assembly.AssemblyTransformer;
 import org.jcvi.jillion.assembly.ReadInfo;
@@ -131,7 +131,7 @@ public class ConsedAssemblyTransformerBuilder {
 	 * so that consed packages can be used on legacy consed installations or other ace and phd
 	 * parser libraries and tools that don't support phd.ball.
 	 * If this method is not called, then the default
-	 * is to use a phd.ball file (similar to {@link #createIndividualPhdFiles(boolean), createIndividualPhdFiles(false)}
+	 * is to use a phd.ball file (similar to {@link #createIndividualPhdFiles(boolean) createIndividualPhdFiles(false)}
 	 * @param createIndividualPhdFiles {@code true} if should create individual phd files in the phd_dir; {@code false}
 	 * if should use phd.ball in phdball_dir instead (default is {@code false}.
 	 * @return this.
@@ -169,11 +169,11 @@ public class ConsedAssemblyTransformerBuilder {
 	/**
 	 * Set the default quality value to use if an aligned read
 	 * does not have associated quality data.  If not called,
-	 * then the default is {@value #DEFAULT_QUALITY_VALUE}
+	 * then the default is {@link #DEFAULT_QUALITY_VALUE}
 	 * @param qualityValue the quality value to use;
 	 * must be between 0 and {@link Byte#MAX_VALUE}.
 	 * @return this.
-	 * @throws IllegalArgumentException if if qualityScore < 0 or > {@link Byte#MAX_VALUE}.
+	 * @throws IllegalArgumentException if if qualityScore &lt; 0 or &gt; {@link Byte#MAX_VALUE}.
 	 */
 	public ConsedAssemblyTransformerBuilder setDefaultQualityValue(int qualityValue){
 		//Phredquality object does all validation for us

@@ -179,7 +179,7 @@ public abstract class AbstractContigBuilder<P extends AssembledRead, C extends C
          * If this method is called without first
          * setting a {@link ConsensusCaller}, then this
          * method will throw an {@link IllegalStateException}.
-         * <p/>
+         * <p>
          * Recomputing the contig consensus may be computationally
          * expensive and time consuming.  So this method
          * should not be called on a regular basis.

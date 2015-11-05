@@ -43,7 +43,7 @@ import org.jcvi.jillion.core.Rangeable;
  * {@link CoverageRegion} objects. Adjacent {@link CoverageRegion}s may
  * have the same depth of coverage but will not contain the same exact
  * elements.
- * <p/>
+ * <p>
  * For example, a CoverageMap of a  {@link org.jcvi.jillion.assembly.Contig} 
  * will show where each of its {@link org.jcvi.jillion.assembly.AssembledRead}s align
  * to the contig consensus. Each consensus offset will have a different level of coverage
@@ -56,25 +56,32 @@ public interface CoverageMap <T extends Rangeable> extends Iterable<CoverageRegi
 	/**
 	 * Get the number of {@link CoverageRegion}s.
 	 * @return the number of regions will always be 
-	 * >=0.
+	 * &ge; 0.
 	 */
     int getNumberOfRegions();
     /**
      * Get the ith {@link CoverageRegion}.
      * @param i the index into this coverage map;
-     * where 0 <= i <= {@link #getNumberOfRegions()} -1
+     * where 0 &le; i &lt; {@link #getNumberOfRegions()} 
      * @return the ith {@link CoverageRegion} will never be null
      * but may have 0 depth of coverage. 
-     * @throws IndexOutOfBoundsException if i <0 or i > {@link #getNumberOfRegions()} -1
+     * @throws IndexOutOfBoundsException if i &lt; 0 or i &ge; {@link #getNumberOfRegions()}.
      */
     CoverageRegion<T> getRegion(int i);
     /**
      * Does this CoverageMap have any CoverageRegions.
-     * @return {@code true} if {@link #getNumberOfRegions()}>0;
+     * @return {@code true} if {@link #getNumberOfRegions()} &lt; 0;
      * {@code false} otherwise.
      */
     boolean isEmpty();
-
+    /**
+     * Get the {@link CoverageMapStats} for this coverage map.
+     * Some implementations may cache these values so it is more
+     * efficient to call this method then manually compute them everytime
+     * yourself.
+     * 
+     * @return the {@link CoverageMapStats} for this map; will never be null.
+     */
     CoverageMapStats getStats();
     
     /**
@@ -82,6 +89,7 @@ public interface CoverageMap <T extends Rangeable> extends Iterable<CoverageRegi
      * in the coverage map. This is the same as (but may be more
      * efficient than):
      * <pre>
+     * {@code
      	long totalLength = 0L;
      	long totalCoverage =0L;
      	for(CoverageRegion<?> region : this){
@@ -90,9 +98,10 @@ public interface CoverageMap <T extends Rangeable> extends Iterable<CoverageRegi
         	totalCoverage += region.getCoverageDepth() * rangeLength;
         }
         avgCoverage = totalLength==0? 0D : totalCoverage/(double)totalLength;
+        }
         </pre>
      * @return the average coverage depth will always be 
-     * >=0.
+     * &ge; 0.
      */
     double getAverageCoverage();
     /**

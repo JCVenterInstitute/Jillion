@@ -66,7 +66,7 @@ public abstract class AbstractNavigationElement implements NavigationElement{
     }
     /**
      * Convenience constructor.  This is the same as
-     * {@link #AbstractNavigationElement(org.jcvi.jillion.assembly.ace.consed.NavigationElement.Type, String, Range, String)
+     * {@link #AbstractNavigationElement(org.jcvi.jillion.assembly.consed.nav.NavigationElement.Type, String, Range, String)
      * new AbstractNavigationElement(type, elementId, ungappedPositionRange, null)}
      * @param type the Type of the element; cannot be null.
      * @param elementId the id of the element of that is to be navigated.
@@ -74,7 +74,7 @@ public abstract class AbstractNavigationElement implements NavigationElement{
      * range of this element; cannot be null.
      * @throws NullPointerException if type, targetId or 
      * ungappedPositionRange are null.
-     * @see #AbstractNavigationElement(org.jcvi.jillion.assembly.ace.consed.NavigationElement.Type, String, Range, String)
+     * @see #AbstractNavigationElement(org.jcvi.jillion.assembly.consed.nav.NavigationElement.Type, String, Range, String)
      */
     public AbstractNavigationElement(Type type, String elementId,
             Range ungappedPositionRange){

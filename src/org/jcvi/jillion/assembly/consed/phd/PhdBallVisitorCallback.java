@@ -56,7 +56,7 @@ public interface PhdBallVisitorCallback {
 	PhdBallVisitorMemento createMemento();
 	/**
 	 * Tell the {@link PhdBallFileParser} to stop parsing
-	 * the ace file.  {@link AceFileVisitor#halted()}
+	 * the ace file.  {@link org.jcvi.jillion.assembly.consed.ace.AceFileVisitor#halted()}
 	 * will still be called.
 	 */
 	void haltParsing();

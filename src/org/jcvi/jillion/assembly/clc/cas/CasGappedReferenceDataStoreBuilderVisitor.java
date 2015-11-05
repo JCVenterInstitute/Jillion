@@ -50,17 +50,17 @@ import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
  * {@link CasGappedReferenceDataStore} when it visits a {@literal .cas}
  * encoded file.
  * 
- * <p/>
+ * <p>
  * CLC {@literal .cas} files don't store the final gapped assembly
  * consensus sequences.  In order to correctly build valid
  * contig objects, the gapped consensus must be calculated for each
  * reference by visiting all the alignment information of all the input reads.
  * 
- * <p/>
+ * <p>
  * Once the entire cas file has been visited, the {@link #build()}
  * method can be called to return the {@link CasGappedReferenceDataStore}.
  * 
- * <p/>
+ * <p>
  * Here is how this class should be used:
  * <pre>
  * File casFile = ...

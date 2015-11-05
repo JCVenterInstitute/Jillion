@@ -43,7 +43,7 @@ import org.jcvi.jillion.trace.sff.SffUtil;
  * This means that all the read alignments in the cas must be matched up 
  * exactly with the input read files.  This can get very complicated
  * so this class handles all of that for you.
- * <p/>
+ * <p>
  * This abstract class finds all the read files to be parsed
  * and maps them to the alignment information inside the cas file.
  * For each read that aligned (matched), the {@link #aligned(Trace, String, CasPlacedRead)}
@@ -77,7 +77,7 @@ public abstract class AbstractAlignedReadCasVisitor extends AbstractReadCasVisit
 	 * which contains the precomputed gapped referenced by 
 	 * in this cas file for these alignments; can not be null.
 	 * 
-	 * @thorws NullPointerException if gappedReferenceDataStore is null.
+	 * @throws NullPointerException if gappedReferenceDataStore is null.
 	 */
 	public AbstractAlignedReadCasVisitor(File workingDir,
 			CasGappedReferenceDataStore gappedReferenceDataStore) {

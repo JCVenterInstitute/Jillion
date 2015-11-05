@@ -69,9 +69,12 @@ public class PhdBallWriter implements PhdWriter{
 	 * @param out the {@link OutputStream} to write to;
 	 * can not be null.  
 	 * @throws NullPointerException if outputFile is null.
+	 * 
+	 * @throws IOException if there are problems creating the writer.
 	 */
 	public PhdBallWriter(OutputStream out) throws IOException{
 		this(out, null);
+		
 	}
 	/**
 	 * Create a new {@link PhdBallWriter} instance

@@ -46,7 +46,7 @@ public interface AceFileDataStore extends ContigDataStore<AceAssembledRead,AceCo
 	 * or don't provide any coverage</li>
 	 * </ol>
 	 * @return the total number of 
-	 * reads in all the contigs in this datastore, will always be >= 0.
+	 * reads in all the contigs in this datastore, will always be &ge; 0.
 	 * 
 	 * @throws DataStoreException if there is a problem reading the 
 	 * data from this datastore.

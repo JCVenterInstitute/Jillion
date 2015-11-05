@@ -32,21 +32,27 @@ public enum MateOrientation {
      * 3' end of one is adjacent to the 5'
      * end of the other.
      * <pre>
-     * ----->  ----->
+     * {@code
+     * 5'   3' 5'   3'
+     * ----->  ----->}
      * </pre>
      */
     NORMAL('N'),
     /**
      * 3' Ends are adjacent.
      * <pre>
-     * ----->  <-----
+     * {@code
+     * 5'   3' 3'   5'
+     * ----->  <-----}
      * </pre>
      */
     INNIE('I'),
     /**
      * 5' ends are adjacent.
      * <pre>
-     * <-----  ----->
+     * {@code
+     * 3'   5' 5'   3'
+     * <-----  ----->}
      * </pre>
      */
     OUTTIE('O'),

@@ -27,7 +27,7 @@ import org.jcvi.jillion.assembly.tigr.contig.TigrContigFileVisitor.TigrContigVis
 /**
  * {@code TigrContigParser} is an interface that will
  * traverse a TIGR Contig formatted structure and call the appropriate 
- * visit methods on the given {@link FastaVisitor}.
+ * visit methods on the given {@link TigrContigFileVisitor}.
  * @author dkatzel
  *
  */
@@ -56,7 +56,7 @@ public interface TigrContigParser {
 	 * @throws NullPointerException if visitor is null.
 	 * @throws IllegalStateException if this handler can not accept
 	 * any new visit requests.
-	 * @see #canAccept()
+	 * @see #canParse()
 	 */
 	void parse(TigrContigFileVisitor visitor) throws IOException;
 	
@@ -74,11 +74,11 @@ public interface TigrContigParser {
 	 * @throws IOException if there is a problem parsing the contig file.
 	 * @throws NullPointerException if either the visitor or memento are null.
 	 * @throws UnsupportedOperationException if mementos are not supported by this
-	 * parser implementation (for example when parsing an {@link InputStream}
-	 * instead of a {@link File}).
+	 * parser implementation for example when parsing an {@link java.io.InputStream}
+	 * instead of a {@link java.io.File}.
 	 * @throws IllegalStateException if this parser can not accept
 	 * any new parse requests.
-	 * @see #canAccept()
+	 * @see #canParse()
 	 */
 	void parse(TigrContigFileVisitor visitor, TigrContigVisitorMemento memento) throws IOException;
 	

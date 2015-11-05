@@ -29,7 +29,7 @@ import org.jcvi.jillion.assembly.Contig;
  * contigs produced by the Celera Assembler
  * are several unitigs that have been extended 
  * to overlap each other.
- * <p/>
+ * <p>
  * A Unitig of a repetitive region in the genome
  * will only contain the "perfect repeat"; all underlying reads
  * will be trimmed so any parts of the read that span the non-repetitive

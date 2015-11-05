@@ -157,7 +157,7 @@ public final class PhdBuilder implements Builder<Phd>{
 	 * If this method is not called, and this
 	 * builder is not instructed to fake the peak data
 	 * either by calling {@link #fakePeaks()} or {@link #fakePeaks(int, int)}
-	 * then the built {@link Phd#getPositionSequence()} will return null.
+	 * then the built {@link Phd#getPeakSequence()} will return null.
 	 * If this method is called AFTER a call to 
 	 * {@link #fakePeaks()} or {@link #fakePeaks(int, int)}
 	 * then the given peaks value will be used instead
@@ -197,12 +197,12 @@ public final class PhdBuilder implements Builder<Phd>{
 	 * The peaks will start at {@code firstPeakPosition}
 	 * and be evenly spaced by {@code spacing} positions.
 	 * @param firstPeakPosition the position of the first peak;
-	 * must be >0.
+	 * must be &gt; 0.
 	 * @param spacing the spacing between peaks to use;
-	 * must be >0.
+	 * must be &gt; 0.
 	 * @return this
 	 * @throws IllegalArgumentException if any parameters
-	 * are <=0
+	 * are &le; 0
 	 */
 	public PhdBuilder fakePeaks(int firstPeakPosition, int spacing){		
 		if(firstPeakPosition<1){
