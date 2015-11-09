@@ -49,17 +49,17 @@ public interface SliceElement {
     String getId();
     /**
      * Get the {@link Nucleotide} of this SliceElement.
-     * @return
+     * @return the {@link Nucleotide} of this sliceElement.
      */
     Nucleotide getBase();
     /**
      * Get the {@link PhredQuality} of this SliceElement.
-     * @return
+     * @return the quality value.
      */
     PhredQuality getQuality();
     /**
      * Get the {@link Direction} of this SliceElement.
-     * @return
+     * @return the direction of the read this element belongs.
      */
     Direction getDirection();
 }

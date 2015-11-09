@@ -35,10 +35,10 @@ package org.jcvi.jillion.assembly.util;
  * at each assembly position. With this picture in mind it is 
  * easy to understand that the contig view and the slice view 
  * is purely a shift in representation, and there is no change in information.
- * <p/>
+ * <p>
  * Operations that are difficult to perform within a contig representation may trivial 
  * to perform with a slice representation.
- * <p/>
+ * <p>
  * The Slice concept was originally created at The Institute for Genomic
  * Research (TIGR) which has since merged with other affiliated
  * organizations to form JCVI. 

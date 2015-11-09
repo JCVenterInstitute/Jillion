@@ -89,8 +89,10 @@ public enum Direction
      * <li>dirString is 'TR' ignoring case</li>
      * <li>dirString is '1'</li>
      * </ul>
-     * @param dirString
-     * @return
+     * @param dirString the direction to parse as a String.
+     * 
+     * @return the {@link Direction} object equivalent.
+     * 
      * @throws NullPointerException if dirString is null.
      * @throws IllegalArgumentException if dirString is not 
      * one of the specified values.
@@ -114,8 +116,8 @@ public enum Direction
     
     /**
      * Get a 1 character String representation of this direction
-     * (F, R, N or U).
-     * @return
+     * (F or R).
+     * @return The first character of this Direction as a String.
      */
     public String getCode()
     {
@@ -124,8 +126,8 @@ public enum Direction
     
     /**
      * Get a 1 character representation of this direction
-     * (F, R, N or U).
-     * @return
+     * (F or R).
+     * @return the first character of this Direction.
      */
     public char getCodeCharacter()
     {

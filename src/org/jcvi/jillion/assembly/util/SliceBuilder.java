@@ -79,6 +79,9 @@ public final class SliceBuilder implements Builder<Slice>{
     /**
      * Create a new {@link SliceBuilder}
      * which will start off empty with a null consensus.
+     * 
+     * @param consensus the {@link Nucleotide} of the consensus at this slice.
+     * 
      */
     public SliceBuilder(Nucleotide consensus){
     	setConsensus(consensus);

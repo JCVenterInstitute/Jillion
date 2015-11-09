@@ -33,15 +33,17 @@ public class DataStoreException extends Exception {
     private static final long serialVersionUID = 537135759192307631L;
 
     /**
-     * @param message
-     * @param cause
+     * Create a new DataStoreException that was caused by another Exception.
+     * @param message the error message.
+     * @param cause the cause of this exception.
      */
     public DataStoreException(String message, Throwable cause) {
         super(message, cause);
     }
 
     /**
-     * @param message
+     * Create a new DataStoreException.
+     * @param message the error message.
      */
     public DataStoreException(String message) {
         super(message);

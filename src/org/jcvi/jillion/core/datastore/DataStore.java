@@ -34,7 +34,7 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
  * repository of entity records which can be  fetched by
  * a unique (to this DataStore) id.  How the data in the datastore is stored is implementation
  * dependent.
- * <p/>
+ * <p>
  * <strong>NOTE:</strong> DataStores have a method {@link #iterator()} but do not 
  * implement {@link Iterable}.  This is because if the returned {@link StreamingIterator} throws an exception,
  * client code may not always be able to properly clean up resources by

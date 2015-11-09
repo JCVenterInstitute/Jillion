@@ -53,7 +53,7 @@ import org.jcvi.jillion.internal.core.util.JillionUtil;
  * value.  The start value will always be less than or equal to the end value.
  * The minimum start value of a Range is {@link Long#MIN_VALUE}  and the max end
  * value of a Range is {@link Long#MAX_VALUE}. Also due to limitations
- * to Java primitives, Ranges can not have a length > {@link Long#MAX_VALUE}.
+ * to Java primitives, Ranges can not have a length &lt; {@link Long#MAX_VALUE}.
  *  Any attempt to build Ranges beyond
  * those values will throw Exceptions.
  * <p>
@@ -73,13 +73,13 @@ import org.jcvi.jillion.internal.core.util.JillionUtil;
  * A different {@link CoordinateSystem} can be also be specified at construction time
  * via the {@link Range#of(CoordinateSystem, long, long)} method.  If this method is used,
  * the input values will automatically get converted into 0-based coordinates.
- * <p/>
+ * <p>
  * Ranges can be constructed using either {@link Builder Range.Builder} 
  * of through several convenience static factory methods including
  *  {@link Range#of(long)}, {@link Range#of(long, long)} ,
  *  {@link Range#of(CoordinateSystem, long, long)} and {@link Range#ofLength(long)}.
  *  All of these methods use {@link Builder Range.Builder}  internally.
- *  <p/>
+ *  <p>
  *  The actual implementation of Range returned by these methods or the {@link Builder Range.Builder} 
  *  might vary based on input values in order to decrease memory usage.  (For example a Range that is very short
  *  could represent the length as a byte instead of a long.  Or if the range is in positive
@@ -111,7 +111,7 @@ import org.jcvi.jillion.internal.core.util.JillionUtil;
  * @author jsitz@jcvi.org
  * 
  * @see CoordinateSystem
- * @see #Range.Builder
+ * @see org.jcvi.jillion.core.Range.Builder
  * 
  */
 //This is a really long class
@@ -267,7 +267,7 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
     }
     /**
      * Enumeration of available range coordinate systems.
-     * <p/>
+     * <p>
      * Different file formats or conventions use
      * different numbering systems in bioinformatics utilities.
      * All Range objects use the same internal system to be inter-operable
@@ -426,7 +426,7 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
      * @return a {@link Range}; never null but might 
      * not be a new instance.
      * @throws IllegalArgumentException if {@code end < start -1} 
-     * or if the resulting range length > {@link Long#MAX_VALUE}.
+     * or if the resulting range length &gt; {@link Long#MAX_VALUE}.
      */
     public static Range of(long start, long end){
         return new Range.Builder(start,end).build();
@@ -628,8 +628,12 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
      * <li>24,35</li>
      * </ul>
      * 
-     * @param rangeAsString
-     * @return a {@link Range}.
+     * @param rangeAsString the range to parse.
+     * @param coordinateSystem the {@link CoordinateSystem} the coordinates
+     * in the String to parse are in.
+     * 
+     * @return a {@link Range}; will never be null.
+     * 
      * @throws IllegalArgumentException if the given String does not
      * match the correct format.
      */
@@ -659,7 +663,7 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
      * <li>24,35</li>
      * </ul>
      * 
-     * @param rangeAsString
+     * @param rangeAsString the range to parse.
      * @return a {@link Range}.
      * @throws IllegalArgumentException if the given String does not
      * match the correct format.
@@ -706,6 +710,8 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
      * Fetch the first coordinate using the given 
      * {@link CoordinateSystem}.  
      *
+     * @param coordinateSystem the {@link CoordinateSystem} to use to convert the coordinate.
+     *
      * @return The first coordinate.
      * @throws NullPointerException if the given {@link CoordinateSystem} is null.
      */
@@ -728,6 +734,8 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
     /**
      * Fetch the right (end) coordinate using the given 
      * {@link CoordinateSystem}.
+     *
+     *@param coordinateSystem the {@link CoordinateSystem} to use to convert the coordinate.
      *
      * @return The right-hand (ending) coordinate.
      * @throws NullPointerException if the given {@link CoordinateSystem} is null.
@@ -838,9 +846,11 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
     /**
      * Get the List of Ranges that represents the 
      * {@code this - other}.  This is similar to the 
-     * Set of all coordinates that don't intersect.
+     * Set of all coordinates that don't intersect. 
+     * 
      * @param other the range to complement with.
-     * @return
+     * 
+     * @return a List of {@link Ranges}; will never be null but may be empty.
      */
     public List<Range> complement(Range other){
         //this - other
@@ -966,6 +976,12 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
     /**
      * Returns a String representation of this Range in given coordinate system.
      * The actual format is {@code [localStart .. localEnd]/systemAbbreviatedName}
+     * 
+     * @param coordinateSystem the {@link CoordinateSystem} to use; can not be null.
+     * 
+     * @return the Range as a String formatted in the given {@link CoordinateSystem};
+     * will never be null.
+     * 
      * @throws NullPointerException if coordinateSystem is null.
      */
     public String toString(CoordinateSystem coordinateSystem)
@@ -994,7 +1010,7 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
      * just be a single element if this Range is smaller than the max length
      * specified.
      * @throws IllegalArgumentException if maxSplitLength
-     * <1.
+     * &lt; 1.
      */
     public List<Range> split(long maxSplitLength){
     	if(maxSplitLength <1){
@@ -1018,14 +1034,14 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
     /**
      * Get the length of this range.
      * @return the length;
-     * will always be >=0.
+     * will always be &ge; 0.
      */
     public long getLength() {
     	 return getEnd() - getBegin() + 1;
     }
     /**
     * {@inheritDoc} 
-    * <p/>
+    * <p>
     * Returns this since it is already a Range.
     * @return this.
     */
@@ -1039,6 +1055,7 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
      * writeReplace method that must be called
      * by subclasses for serialization
      * using the Serialzation Proxy Class.
+     * 
      * @return a new RangeProxy to handle
      * serialization for us.
      */
@@ -1049,6 +1066,9 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
      * readObject method that must be called
      * by subclasses for serialization
      * using the Serialzation Proxy Class.
+     * 
+     * @param stream the {@link ObjectInputStream} to read from.
+     * 
      * @throws java.io.InvalidObjectException always
      * to prevent users from constructing
      * invalid objects.
@@ -2558,10 +2578,10 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
      * that allows clients to create a 
      * {@link Range} object using the current
      * specification.  
-     * <p/>
+     * <p>
      * <strong>Note:</strong> {@link Builder#build()} is not guaranteed to return new instances and may return
      * a cached instance instead (flyweight pattern).
-     * <p/>
+     * <p>
      * This class is not thread-safe.
      * @author dkatzel
      *
@@ -2593,7 +2613,7 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
     	 * new Builder(CoordinateSystem.ZERO_BASED, begin,end)}.
     	 * @param begin the initial  inclusive begin coordinate of the range in zero based coordinates. 
     	 * @param end the initial inclusive end coordinate in zero based coordinates. 
-    	 * @see Builder#Builder(CoordinateSystem, long, long)
+    	 * 
     	 *  @throws IllegalArgumentException if the given
     	 * begin and end coordiantes cause the
     	 * length to be negative.
@@ -2772,6 +2792,9 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
     	 * value won't cause an invalid range
     	 * based on the end value. (which won't get checked
     	 * until {@link #build()}).
+    	 * 
+    	 * @param begin the new begin coordinate to use.
+    	 * 
     	 * @return this
     	 */
 		public Builder setBegin(long begin) {
@@ -2793,7 +2816,10 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
     	 * value won't cause an invalid range
     	 * based on the begin value. (which won't get checked
     	 * until {@link #build()}).
-    	 * return this
+    	 * 
+    	 * @param end the new end coordinate to use.
+    	 * 
+    	 * @return this
     	 * 
     	 */
 		public Builder setEnd(long end) {
@@ -2824,8 +2850,8 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 	     * a cached instance instead (flyweight pattern).
 	     * @return a {@link Range}; never null but might 
 	     * not be a new instance.
-	     * @throws IllegalArgumentException if {@code end < begin -1} 
-	     * or if the resulting range length > {@link Long#MAX_VALUE}.
+	     * @throws IllegalArgumentException if {@code end &lt; begin -1} 
+	     * or if the resulting range length &gt; {@link Long#MAX_VALUE}.
     	 */
     	public Range build(){
     		long length = end-begin+1;

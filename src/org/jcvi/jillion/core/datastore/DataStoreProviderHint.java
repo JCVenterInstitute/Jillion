@@ -20,8 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.datastore;
 
-import java.util.Map;
-
 /**
  * {@code DataStoreProviderHint}
  * describes implementation hints to 
@@ -47,7 +45,7 @@ public enum DataStoreProviderHint{
 	 * at the cost
 	 * of possibly taking up more memory.
 	 * For example, an implementation might 
-	 * use a {@link Map} as a backing store which will
+	 * use a {@link java.util.Map} as a backing store which will
 	 * put all records in memory to allow for very fast lookups.
 	 * This is a very useful implementation if all the data
 	 * fits into memory and the client code that uses
@@ -67,7 +65,7 @@ public enum DataStoreProviderHint{
 	 * chosen will probably take more time to access records
 	 * than {@link #RANDOM_ACCESS_OPTIMIZE_SPEED} but the {@link DataStore}
 	 * will take up less total memory.
-	 * <p/> 
+	 * <p> 
 	 * For example, if the input to this {@link DataStore} was 
 	 * some kind of file containing record data, then perhaps
 	 * and implementation will only store file offsets
@@ -104,7 +102,7 @@ public enum DataStoreProviderHint{
 	 * that contain so many records that storing them in memory would
 	 * cause out of memory errors or if the number of records exceeds
 	 * {@link Integer#MAX_VALUE}. 
-	 * <p/>
+	 * <p>
 	 * Since calls to
 	 * {@link DataStore#get(String)} or {@link DataStore#contains(String)}
 	 * may be so expensive,

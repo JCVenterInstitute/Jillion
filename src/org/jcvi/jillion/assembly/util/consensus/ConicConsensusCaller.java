@@ -71,7 +71,7 @@ public class ConicConsensusCaller extends AbstractChurchillWatermanConsensusCall
      * The angle {@value} degrees was the angle that was found to most often match
      * expert human consensus callers in TIGR experiments performed in 2003
      * on Sanger data.
-     * <p/>
+     * <p>
      * TIGR data to validate the conic model and was used to come up with 
      * this angle is available http://slicetools.sourceforge.net/libSlice/worksheet.xls
      * and http://slicetools.sourceforge.net/libSlice/results.xls

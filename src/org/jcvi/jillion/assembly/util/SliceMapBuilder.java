@@ -82,7 +82,7 @@ public final class SliceMapBuilder<R extends AssembledRead> implements Builder<S
 	 * @param filter the {@link ReadFilter} to use, can not be null;
 	 * if no filter is required, do not call this method.
 	 * @return this
-	 * @see #maxAllowedCoverage(int)
+	 * 
 	 * @throws NullPointerException if filter is null.
 	 */
 	public SliceMapBuilder<R> filter(Predicate<? super R> filter){

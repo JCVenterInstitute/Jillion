@@ -29,7 +29,7 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 /**
  * {@code ConsensusResult} is the base call
  * and quality value that best represents
- * a particular {@link Slice} in a Contig.
+ * a particular {@link org.jcvi.jillion.assembly.util.Slice} in a Contig.
  * 
  * @author dkatzel
  *
