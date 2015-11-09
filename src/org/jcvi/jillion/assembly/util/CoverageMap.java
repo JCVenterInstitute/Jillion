@@ -108,22 +108,29 @@ public interface CoverageMap <T extends Rangeable> extends Iterable<CoverageRegi
      * Get the lowest coverage depth of 
      * any {@link CoverageRegion}
      * in the coverage map.
+     * 
+     * @return the lowest coverage depth.
      */
     int getMinCoverage();
     /**
      * Get the highest coverage depth of 
      * any {@link CoverageRegion}
      * in the coverage map.
+     * 
+     * @return the highest coverage depth.
      */
     int getMaxCoverage();
     /**
      * Get a List of all the {@link CoverageRegion}s in this CoverageMap
      * that intersect the given {@link Range}.
+     * 
      * @param range the Range to get all the coverageRegions for.
+     * 
      * @return A List of CoverageRegions; if the coverage map does not contain
      * any CoverageRegions that intersect the given range, then the returned
      * List will be empty.  Will never return null.  It is possible that
      * CoverageRegions returned may have 0 depth of coverage.
+     * 
      * @throws NullPointerException if range is null.
      */
     List<CoverageRegion<T>> getRegionsWhichIntersect(Range range);

@@ -141,7 +141,7 @@ public enum GapQualityValueStrategy{
      * that only includes the valid range portion (provided the
      * {@link AssembledRead#getReadInfo()} ) and gap qualities
      * have been inserted at the appropriate locations.
-     * <p/>
+     * <p>
      * This is a convience method for 
      * {@link #getGappedValidRangeQualitySequenceFor(NucleotideSequence, QualitySequence, Range, Direction)
      * getGappedValidRangeQualitySequenceFor(read.getNucleotideSequence(), 

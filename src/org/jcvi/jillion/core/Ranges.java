@@ -39,7 +39,8 @@ public final class Ranges {
 	/**
      * Combine the given Ranges into fewer ranges that cover the same region.
      * This is the same as {@link #merge(Collection, int) merge(rangesToMerge,0)} 
-     * @param rangesToMerge
+     * @param rangesToMerge the collection of Ranges to merge;
+     * 
      * @return a new list of merged Ranges.
      * @see #merge(Collection, int)
      */
@@ -55,7 +56,7 @@ public final class Ranges {
      * and the start of another in order
      * to be merged.
      * @return a new list of merged Ranges.
-     * @throws IllegalArgumentException if clusterDistance <0.
+     * @throws IllegalArgumentException if clusterDistance &lt; 0.
      */
     public static List<Range> merge(Collection<Range> rangesToMerge, int maxDistanceBetweenAdjacentRanges){
         if(maxDistanceBetweenAdjacentRanges <0){
@@ -76,7 +77,7 @@ public final class Ranges {
      * and the start of another in order
      * to be merged.
      * @return a new list of merged Ranges.
-     * @throws IllegalArgumentException if clusterDistance <0.
+     * @throws IllegalArgumentException if clusterDistance &lt; 0.
      */
     public static List<Range> mergeIntoClusters(Collection<Range> rangesToMerge, int maxClusterDistance){
         List<Range> tempRanges = merge(rangesToMerge);

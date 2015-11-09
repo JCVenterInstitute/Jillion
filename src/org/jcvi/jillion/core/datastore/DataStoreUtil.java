@@ -56,7 +56,7 @@ public final class DataStoreUtil {
 	/**
 	 * {@code AdapterCallback} is a callback
 	 * method that can convert one type into 
-	 * another.  The {@link DataStoreUtil#adapt(Class, DataStore, AdapterCallback)}
+	 * another.   The {@link DataStoreUtil#adapt(Class, DataStore, Function)}
 	 * factory method will call
 	 * {@link AdapterCallback#get(Object)} to adapt the records
 	 * in the original {@link DataStore} on all calls
@@ -114,7 +114,7 @@ public final class DataStoreUtil {
      * The order of entries return by the {@link DataStore#idIterator()}
      * and {@link DataStore#iterator()} are determined by the iteration
      * order of input Map <strong>at the time this method is called</strong>.
-     * <p/>
+     * <p>
      * This factory method uses the Java Dynamic Proxy classes
      * to create a new implementation of the given interface
      * which uses the map as a backing store.  This factory class
@@ -149,7 +149,7 @@ public final class DataStoreUtil {
      * and {@link DataStore#iterator()} are determined by the 
      * the iteration
      * order of input DataStore.
-     * <p/>
+     * <p>
      * This factory method uses the Java Dynamic Proxy classes
      * to create a new implementation of the given interface
      * which wraps the input DataStore as a backing store.  This factory class
@@ -224,17 +224,17 @@ public final class DataStoreUtil {
      * will return a combined total over all the datastores.</li>
      * <li> Calls to {@link DataStore#iterator()} and {@link DataStore#idIterator()}
      * will chain the iterators of each DataStore one after the other.  When the first datastore's
-     * iterator is finished, then {@link Iterator#next()} will move onto the iterator
+     * iterator is finished, then {@link StreamingIterator#next()} will move onto the iterator
      * from the next DataStore etc.  </li>
      * <li>Closing the returned DataStore will close all the input DataStores</li>
-     * 
-     * <p/>
+     * </ul>
+     * <p>
      * This is a useful method for combining several different DataStore objects to appear
      * as a single DataStore.  For example combining several sequence input files (possibly in different
      * file formats) which have been parsed into DataStores can be adapted into a single 
      * chained DataStore for processing.  The fact that the sequence data comes from multiple
      * files (objects) has been abstracted away.
-     * <p/>
+     * <p>
      * This factory method uses the Java Proxy classes
      * to create a new implementation of the given interface
      * which then delegates all calls to the given datastore.  This factory class
@@ -263,17 +263,17 @@ public final class DataStoreUtil {
      * will return a combined total over all the datastores.</li>
      * <li> Calls to {@link DataStore#iterator()} and {@link DataStore#idIterator()}
      * will chain the iterators of each DataStore one after the other.  When the first datastore's
-     * iterator is finished, then {@link Iterator#next()} will move onto the iterator
+     * iterator is finished, then {@link StreamingIterator#next()} will move onto the iterator
      * from the next DataStore etc.  </li>
      * <li>Closing the returned DataStore will close all the input DataStores</li>
-     * 
-     * <p/>
+     * </ul>
+     * <p>
      * This is a useful method for combining several different DataStore objects to appear
      * as a single DataStore.  For example combining several sequence input files (possibly in different
      * file formats) which have been parsed into DataStores can be adapted into a single 
      * chained DataStore for processing.  The fact that the sequence data comes from multiple
      * files (objects) has been abstracted away.
-     * <p/>
+     * <p>
      * This factory method uses the Java Proxy classes
      * to create a new implementation of the given interface
      * which then delegates all calls to the given datastore.  This factory class

@@ -55,7 +55,7 @@ public final class DirectedRange implements Rangeable, Serializable{
      * Parse a range given as a string using the given {@link CoordinateSystem}
      * and determine the direction by the orientation of the start and 
      * end coordinates. 
-     * <p/>
+     * <p>
      * Current supported String formats are :
      * <ul>
      * <li>start - end</li>
@@ -92,7 +92,7 @@ public final class DirectedRange implements Rangeable, Serializable{
      * in the forward direction.
      * @param range the range to use; can not be null.
      * @return a new DirectedRange will never be null.
-     * @throw NullPointerException if range is null.
+     * @throws NullPointerException if range is null.
      */
     public static DirectedRange create(Range range){
         return create(range,Direction.FORWARD);
@@ -103,7 +103,7 @@ public final class DirectedRange implements Rangeable, Serializable{
      * @param range the range to use; can not be null.
      * @param direction the direction to use; can not be null.
      * @return a new DirectedRange will never be null.
-     * @throw NullPointerException if either range or direction is null.
+     * @throws NullPointerException if either range or direction is null.
      */
     public static DirectedRange create(Range range, Direction direction){
         return new DirectedRange(range,direction);

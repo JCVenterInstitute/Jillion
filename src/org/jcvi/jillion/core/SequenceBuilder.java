@@ -30,12 +30,12 @@ import org.jcvi.jillion.core.util.Builder;
  * similar to how a {@link StringBuilder} can be used
  * to create a String.  The contents of the Sequence
  * can be changed by method calls. 
- * <p/>
+ * <p>
  *  {@link SequenceBuilder} uses method chaining to make combining
  *  several operations easier to read.
  *  
  *  The {@link #build()} method will return an instance of the {@link Sequence}.
- *  <p/>
+ *  <p>
  *  Implementations of {@link SequenceBuilder} are probably
  *  not thread safe unless thread safety is explicitly mentioned.
  * 
@@ -51,14 +51,18 @@ public interface SequenceBuilder <T, S extends Sequence<T>> extends Builder<S> ,
      * @param symbol a single residue to be appended
      * to the end our builder.
      * @throws NullPointerException if the symbol is null.
+     * 
+     * @return this
      */
 	SequenceBuilder<T,S> append(T symbol);
 	/**
 	 * Get the element at the given offset.
-	 * @param offset
-	 * @return
+	 * @param offset the offset-th element of the sequence to get.
+	 * 
+	 * @return this
+	 * 
 	 * @throws IndexOutOfBoundsException if offset
-	 * is < 0 or >= length.
+	 * is &lt; 0 or &ge; length.
 	 */
 	T get(int offset);
    
@@ -73,8 +77,8 @@ public interface SequenceBuilder <T, S extends Sequence<T>> extends Builder<S> ,
     /**
      * Replace the residue at the given offset with a different nucleotide.
      * @param offset the gapped offset to modify.
-     * @param replacement the new {@link Residue} to replace the old
-     * {@link Residue} at that location.
+     * @param replacement the new {@link org.jcvi.jillion.core.residue.Residue} to replace the old
+     * {@link org.jcvi.jillion.core.residue.Residue} at that location.
      * @return this
      * @throws NullPointerException if replacement is null.
      * @throws IllegalArgumentException if offset is invalid.
@@ -98,26 +102,26 @@ public interface SequenceBuilder <T, S extends Sequence<T>> extends Builder<S> ,
     
    
     /**
-     * Inserts the given {@link Residue} to the builder's mutable sequence
+     * Inserts the given {@link org.jcvi.jillion.core.residue.Residue} to the builder's mutable sequence
      * at the given offset.  If any nucleotides existed
      * downstream of this offset before this insert method
      * was executed, then those nucleotides will be shifted by 1
      * base.
      * @param offset the GAPPED offset into this mutable sequence
      * to begin insertion.
-     * @param base the {@link Residue} to be 
+     * @param base the {@link org.jcvi.jillion.core.residue.Residue} to be 
      * inserted at the given offset.
      * @return this
      * @throws NullPointerException if base is null.
-     * @throws IllegalArgumentException if offset <0 or > current sequence length.
+     * @throws IllegalArgumentException if offset &lt; 0 or &gt; current sequence length.
      */
     SequenceBuilder<T,S> insert(int offset, T base);
 
     /**
     * {@inheritDoc}
     * <p>
-    * Create a new {@link ResidueSequenceBuilder} instance
-    * from the current mutable residues.  This method
+    * Create a new {@link Sequence} instance
+    * from the current mutable elements.  This method
     * does not destroy any temp data so this method
     * could be called multiple times each time 
     * creating a new {@link ResidueSequenceBuilder}.
@@ -145,6 +149,9 @@ public interface SequenceBuilder <T, S extends Sequence<T>> extends Builder<S> ,
 	 * Create a new deep copy instance of the Builder.
 	 * Any downstream modifications to either this Builder or the returned one
      * are independent of each other.
+     * 
+     * @return a new {@link SequenceBuilder} that contains the same state
+     * as this builder; will never be null.
 	 */
     SequenceBuilder<T,S> copy();
     

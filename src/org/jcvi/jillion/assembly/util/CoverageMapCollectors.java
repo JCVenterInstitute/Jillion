@@ -51,6 +51,11 @@ public final class CoverageMapCollectors {
 					.collect(CoverageMapCollectors.computeStats());
 				}
 	 * </pre>
+	 * 
+	 * @param <T> the type of each element in the CoverageMap.
+	 * @param <R> the type of {@link CoverageRegion} in the coverageMap.
+	 * 
+	 * 
 	 * @return a new CoverageMapStats Collector
 	 */
 	public static <T extends Rangeable, R extends CoverageRegion<T>> Collector<R, CoverageStatsCombiner, CoverageMapStats> computeStats(){
@@ -86,7 +91,7 @@ public final class CoverageMapCollectors {
      * new {@code CoverageMap} that has limited each coverage region to the specified maxCoverage.
      * Any elements that provide additional coverage than the specified max will not be included in the CoverageMap.
      *
-     * @param maxCoverage the maxCoverage any CoverageRegion will be allowed to have; must be >=0.
+     * @param maxCoverage the maxCoverage any CoverageRegion will be allowed to have; must be &ge; 0.
      * 
      * @param <T> the type of the input elements which must implement the {@link Rangeable} interface.
      * 
@@ -95,7 +100,7 @@ public final class CoverageMapCollectors {
      * 
      * @see CoverageMapBuilder#maxAllowedCoverage(int)
      * 
-     * @throws IllegalArgumentException if maxCoverage < 0.
+     * @throws IllegalArgumentException if maxCoverage &lt; 0.
      * 
      * @implNote filtering parallel streams may return CoverageMaps which contain different elements or even
      * have different levels of coverage at certain coverage regions.  This is because the max coverage filter
@@ -120,10 +125,10 @@ public final class CoverageMapCollectors {
 	 * in the resulting CoverageMap will have while still maintaining the required minimum coverage.
 	 * 
 	 * @param preferredMaxCoverage the maximum coverage any {@link CoverageRegion}
-	 * will strive to have; must be >=0.
+	 * will strive to have; must be &ge; 0.
 	 * @param requiredMinCoverage the minimum coverage any 
 	 * {@link CoverageRegion} must have even at the expense of exceeding the 
-	 * preferredMaxCoverage; must be >=0.
+	 * preferredMaxCoverage; must be &ge; 0.
 	 * 
      * @param <T> the type of the input elements which must implement the {@link Rangeable} interface.
      * 
@@ -132,7 +137,7 @@ public final class CoverageMapCollectors {
      * 
      * @see CoverageMapBuilder#maxAllowedCoverage(int, int)
      * 
-     * @throws IllegalArgumentException if either parameter is < 0
+     * @throws IllegalArgumentException if either parameter is &lt; 0
 	 */
 	public static <T extends Rangeable> Collector<T, List<T>, CoverageMap<T>> toCoverageMap(int preferredMaxCoverage, int requiredMinCoverage){
 		if(preferredMaxCoverage < 1){
