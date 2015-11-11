@@ -3,10 +3,17 @@
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+
+	
+	<name>Jillion</name>
+	<description>An open source genomics software library written in Java to support sequence and assembly analysis</description>
+	<url>http://jillion.sourceforge.net</url>
+	
+	
 	<groupId>org.jcvi.jillion</groupId>
 	<artifactId>jillion</artifactId>
 	<version>5.1-SNAPSHOT</version>
-	<packaging>bundle</packaging> <!-- OSGI compliant jar -->
+	<packaging>jar</packaging> <!-- OSGI compliant jar -->
 
 	<properties>
 		<powermock.version>1.6.2</powermock.version>
@@ -63,8 +70,12 @@
     <configuration>
     <!-- include SVN revision number in output jar name -->
 		
-        <finalName>${project.artifactId}-${project.version}-r${buildNumber}</finalName>          
+        <finalName>${project.artifactId}-${project.version}-r${buildNumber}</finalName>
+         <archive>  
+	      <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+	    </archive>           
     </configuration>
+    
 </plugin>   
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -173,13 +184,83 @@
 				<artifactId>maven-bundle-plugin</artifactId>
 				<version>2.5.4</version>
 				<extensions>true</extensions>
+				<executions>
+				<execution>
+				<id>bundle-manifest</id>
+				<phase>process-classes</phase>
+				<goals>
+				<goal>manifest</goal>
+				</goals>
+				</execution>
+				</executions>
 				<configuration>
 					<instructions>
 						<Private-Package>org.jcvi.jillion.internal.*</Private-Package>
 						<Implementation-Build>${buildNumber}</Implementation-Build>
 					</instructions>
 				</configuration>		
-			</plugin>
+			</plugin>			
+			<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-source-plugin</artifactId>
+  <executions>
+    <execution>
+      <id>attach-sources</id>
+      <goals>
+        <goal>jar</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
+
+<plugin>
+  <groupId>org.apache.maven.plugins</groupId>
+  <artifactId>maven-javadoc-plugin</artifactId>
+  <executions>
+    <execution>
+      <id>attach-javadocs</id>
+      <goals>
+        <goal>jar</goal>
+      </goals>
+    </execution>
+  </executions>
+  
+  <configuration>
+					<!-- force links to Java 8 documentation (should happen automatically 
+						but doesn't) -->
+					<javaApiLinks>
+						<property>
+							<name>api_1.8</name>
+							<value>https://docs.oracle.com/javase/8/docs/api/</value>
+						</property>
+					</javaApiLinks>
+					<tags>
+						<tag>
+							<name>apiNote</name>
+							<placement>a</placement>
+							<head>API Note:</head>
+						</tag>
+						<tag>
+							<name>implSpec</name>
+							<placement>a</placement>
+							<head>Implementation Requirements:</head>
+						</tag>
+						<tag>
+							<name>implNote</name>
+							<placement>a</placement>
+							<head>Implementation Note:</head>
+						</tag>
+						<tag><name>param</name></tag>
+						<tag><name>return</name></tag>
+						<tag><name>throws</name></tag>
+						<tag><name>since</name></tag>
+						<tag><name>version</name></tag>
+						<tag><name>serialData</name></tag>
+						<tag><name>see</name></tag>
+					</tags>
+				</configuration>
+</plugin>
+
 		</plugins>
 	</build>
 <reporting>
@@ -242,6 +323,21 @@
 		</dependency>
 	</dependencies>
 
+<developers>
+<developer>
+<name>Dan Katzel</name>
+<organization>J. Craig Venter Institute</organization>
+<organizationUrl>http://jcvi.org</organizationUrl>
+
+</developer>
+</developers>
+<licenses>
+	<license>
+		<name>GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1, February 1999</name>
+		<url>http://www.gnu.org/licenses/lgpl-2.1.txt</url>
+		<distribution>repo</distribution>
+	</license>
+</licenses>
 	<scm>
 		<connection>scn:svn:http://svn.code.sf.net/p/jillion/code/trunk</connection>
 		<url>http://svn.code.sf.net/p/jillion/code/trunk</url>
