@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.core.util.FIFOQueue;
+import org.jcvi.jillion.internal.core.util.FIFOQueue;
 import org.jcvi.jillion.internal.core.util.GrowableCharArray;
 /**
  * {@code TextLineParser} can read lines from on {@link InputStream}.  The main

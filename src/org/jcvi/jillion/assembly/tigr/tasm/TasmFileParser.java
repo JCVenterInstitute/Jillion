@@ -108,7 +108,7 @@ public abstract class TasmFileParser implements TasmParser{
     }
     
      
-    protected final void parseTasm(TextLineParser parser, TasmVisitor visitor) throws IOException{
+    final void parseTasm(TextLineParser parser, TasmVisitor visitor) throws IOException{
          
 
          ParserState parserState = new ParserState(visitor);
@@ -161,7 +161,7 @@ public abstract class TasmFileParser implements TasmParser{
     private static final boolean isEndOfRecord(String line) {
         return line.trim().isEmpty();
     }
-    protected abstract AbstractCallback createCallback(long currentOffset);
+    abstract AbstractCallback createCallback(long currentOffset);
     
     
     private static class OffsetMementoCallback extends AbstractCallback{

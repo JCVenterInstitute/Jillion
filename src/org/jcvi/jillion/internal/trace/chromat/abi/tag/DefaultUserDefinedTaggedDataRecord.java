@@ -20,6 +20,11 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.trace.chromat.abi.tag;
 
+import org.jcvi.jillion.trace.chromat.abi.tag.ByteArrayTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataName;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataType;
+import org.jcvi.jillion.trace.chromat.abi.tag.UserDefinedTaggedDataRecord;
+
 /**
  * @author dkatzel
  *

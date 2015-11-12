@@ -22,7 +22,7 @@ package org.jcvi.jillion.core.residue.aa;
 
 import org.jcvi.jillion.internal.core.GlyphCodec;
 
-public interface AminoAcidCodec extends GlyphCodec<AminoAcid>{
+interface AminoAcidCodec extends GlyphCodec<AminoAcid>{
 	
 	byte[] encode(AminoAcid[] aas);
 }

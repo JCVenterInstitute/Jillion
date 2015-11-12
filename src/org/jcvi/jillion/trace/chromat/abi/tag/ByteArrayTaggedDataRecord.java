@@ -18,23 +18,13 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.internal.trace.chromat.abi.tag;
+package org.jcvi.jillion.trace.chromat.abi.tag;
 
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public interface ByteArrayTaggedDataRecord extends TaggedDataRecord<ByteArrayTaggedDataRecord,byte[]>{
 
-public interface TaggedDataRecord<T,D> {
-	
-	TaggedDataName getTagName();
-	long getTagNumber();
-	TaggedDataType getDataType();
-	int getElementLength();
-	long getNumberOfElements();
-	long getRecordLength();
-	long getDataRecord();
-	long getCrypticValue();
-	
-	Class<D> getParsedDataType();
-	
-	Class<T> getType();
-	
-	D parseDataRecordFrom(byte[] ab1DataBlock);
 }

@@ -116,7 +116,7 @@ public abstract class TigrContigFileParser implements TigrContigParser{
 	 */
 	public abstract void parse(TigrContigFileVisitor visitor,TigrContigVisitorMemento memento) throws IOException;
 
-	protected final void parse(TigrContigFileVisitor visitor,
+	final void parse(TigrContigFileVisitor visitor,
 			TextLineParser parser) throws IOException {
 		
 		State state = new State(visitor,parser);
@@ -321,7 +321,7 @@ public abstract class TigrContigFileParser implements TigrContigParser{
 		protected abstract boolean handle(State state, String line);
 	}
 	
-	protected abstract AbstractTigrContigVisitorCallback createCallback(long currentOffset);
+	abstract AbstractTigrContigVisitorCallback createCallback(long currentOffset);
 
 	
 	
@@ -343,7 +343,7 @@ public abstract class TigrContigFileParser implements TigrContigParser{
 	        return !newSequenceMatcher.group(3).isEmpty();
 	    }
 	
-	protected abstract InputStream getInputStream() throws IOException;
+	abstract InputStream getInputStream() throws IOException;
 	
 	private static class InputStreamBasedTigrContigParser extends TigrContigFileParser{
 		private final OpenAwareInputStream in;

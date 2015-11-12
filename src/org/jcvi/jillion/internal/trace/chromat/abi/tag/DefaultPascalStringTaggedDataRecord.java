@@ -21,6 +21,10 @@
 package org.jcvi.jillion.internal.trace.chromat.abi.tag;
 
 import org.jcvi.jillion.internal.trace.chromat.abi.AbiUtil;
+import org.jcvi.jillion.trace.chromat.abi.tag.PascalStringTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.StringTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataName;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataType;
 
 public class DefaultPascalStringTaggedDataRecord extends AbstractTaggedDataRecord<StringTaggedDataRecord,String> implements PascalStringTaggedDataRecord{
 

@@ -38,6 +38,8 @@ import java.util.Queue;
 
 import org.jcvi.jillion.core.util.iter.ArrayIterator;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
+import org.jcvi.jillion.internal.core.util.FIFOQueue;
+import org.jcvi.jillion.internal.core.util.LIFOQueue;
 
 /**
  * {@code FileIterator} is an {@link Iterator} for File objects.

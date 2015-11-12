@@ -18,7 +18,7 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.internal.assembly;
+package org.jcvi.jillion.assembly;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,10 +26,6 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.jcvi.jillion.assembly.AssembledRead;
-import org.jcvi.jillion.assembly.AssembledReadBuilder;
-import org.jcvi.jillion.assembly.Contig;
-import org.jcvi.jillion.assembly.ContigBuilder;
 import org.jcvi.jillion.assembly.util.GapQualityValueStrategy;
 import org.jcvi.jillion.assembly.util.Slice;
 import org.jcvi.jillion.assembly.util.SliceBuilder;

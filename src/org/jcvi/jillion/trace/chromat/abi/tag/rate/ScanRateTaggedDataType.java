@@ -18,36 +18,15 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-/*
- * Created on Aug 7, 2009
- *
- * @author dkatzel
- */
-package org.jcvi.jillion.core.util;
-import java.util.Deque;
-import java.util.Queue;
+package org.jcvi.jillion.trace.chromat.abi.tag.rate;
 
-import org.jcvi.jillion.internal.core.util.AbstractFOQueue;
-
+import org.jcvi.jillion.trace.chromat.abi.tag.UserDefinedTaggedDataRecord;
 
 /**
- * {@code FIFOQueue} is a First In First Out {@link Queue} that
- * adds elements to the tail and removes elements from
- * the head.
  * @author dkatzel
  *
  *
  */
-public final class FIFOQueue<E> extends AbstractFOQueue<E>{
+public interface ScanRateTaggedDataType extends UserDefinedTaggedDataRecord<ScanRateTaggedDataType, ScanRate>{
 
-    @Override
-    protected boolean add(E e, Deque<E> deque) {
-        return deque.add(e);
-    }
-    @Override
-    protected boolean offer(E e, Deque<E> deque) {
-        return deque.offer(e);
-    }
-    
-    
 }

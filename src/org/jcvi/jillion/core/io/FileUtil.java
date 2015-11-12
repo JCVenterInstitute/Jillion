@@ -23,7 +23,7 @@ package org.jcvi.jillion.core.io;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.jillion.core.util.LIFOQueue;
+import org.jcvi.jillion.internal.core.util.LIFOQueue;
 /**
  * {@code FileUtil} is a Utility class
  * containing common static methods to work with {@link File}

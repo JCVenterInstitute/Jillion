@@ -22,6 +22,11 @@ package org.jcvi.jillion.internal.trace.chromat.abi.tag;
 
 import java.nio.ByteBuffer;
 
+import org.jcvi.jillion.trace.chromat.abi.tag.Ab1LocalDate;
+import org.jcvi.jillion.trace.chromat.abi.tag.DateTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataName;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataType;
+
 public class DefaultDateTaggedDataRecord extends AbstractTaggedDataRecord<DateTaggedDataRecord,Ab1LocalDate> implements DateTaggedDataRecord{
 
 	public DefaultDateTaggedDataRecord(TaggedDataName name, long number,

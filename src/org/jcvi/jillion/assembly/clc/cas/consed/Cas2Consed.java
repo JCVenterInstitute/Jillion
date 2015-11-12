@@ -62,7 +62,7 @@ import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
 import org.jcvi.jillion.trace.Trace;
 import org.jcvi.jillion.trace.fastq.FastqDataStore;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
-import org.jcvi.jillion.trace.sff.SffFileIterator;
+import org.jcvi.jillion.trace.sff.SffFileDataStoreBuilder;
 
 public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
 
@@ -259,9 +259,9 @@ public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
 
 	@Override
 	protected StreamingIterator<PhdReadRecord> createSffIterator(File sffFile)
-			throws DataStoreException {
+			throws DataStoreException, IOException {
 		return new FlowgramConsedPhdAdaptedIterator(
-                SffFileIterator.createNewIteratorFor(sffFile),
+				 new SffFileDataStoreBuilder(sffFile).hint(DataStoreProviderHint.ITERATION_ONLY).build().iterator(),
                 sffFile,
                 phdDate);
 	}

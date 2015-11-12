@@ -18,7 +18,7 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.internal.fasta;
+package org.jcvi.jillion.fasta;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
@@ -35,8 +35,7 @@ import java.util.Objects;
 
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.fasta.FastaRecord;
-import org.jcvi.jillion.fasta.FastaWriter;
+import org.jcvi.jillion.internal.fasta.FastaUtil;
 
 
 public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F extends FastaRecord<S,T>> implements FastaWriter<S, T, F>{

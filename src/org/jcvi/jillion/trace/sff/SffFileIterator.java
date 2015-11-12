@@ -25,7 +25,6 @@ import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
-import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
 
 /**
@@ -35,7 +34,7 @@ import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterato
  * @author dkatzel
  *
  */
-public final class SffFileIterator extends AbstractBlockingStreamingIterator<SffFlowgram>{
+final class SffFileIterator extends AbstractBlockingStreamingIterator<SffFlowgram>{
 
 	private final File sffFile;
 	private final DataStoreFilter filter;

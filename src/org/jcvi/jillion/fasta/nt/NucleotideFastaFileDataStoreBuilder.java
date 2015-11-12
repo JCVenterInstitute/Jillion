@@ -29,8 +29,8 @@ import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.InputStreamSupplier;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.fasta.AbstractFastaFileDataStoreBuilder;
 import org.jcvi.jillion.fasta.FastaParser;
-import org.jcvi.jillion.internal.fasta.AbstractFastaFileDataStoreBuilder;
 /**
  * {@code NucleotideFastaFileDataStoreBuilder}
  * is a factory class that can create new instances

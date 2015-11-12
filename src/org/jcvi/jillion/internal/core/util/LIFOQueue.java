@@ -18,13 +18,35 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.internal.trace.chromat.abi.tag;
+/*
+ * Created on Aug 7, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.internal.core.util;
+
+import java.util.Deque;
+import java.util.Queue;
 
 /**
+ * {@code LIFOQueue} is a Last In First Out {@link Queue} that
+ * adds and removes elements from the head.
  * @author dkatzel
  *
  *
  */
-public interface TimeTaggedDataRecord extends TaggedDataRecord<TimeTaggedDataRecord,Ab1LocalTime>{
+public final class LIFOQueue<E> extends AbstractFOQueue<E>{
+  
+
+    @Override
+    protected boolean add(E e, Deque<E> deque) {
+        deque.addFirst(e);
+        return true;
+    }
+
+    @Override
+    protected boolean offer(E e, Deque<E> deque) {
+        return deque.offerFirst(e);
+    }
 
 }

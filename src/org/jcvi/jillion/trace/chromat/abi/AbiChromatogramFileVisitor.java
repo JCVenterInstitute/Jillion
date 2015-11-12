@@ -24,19 +24,19 @@ import java.util.List;
 
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.Ab1LocalDate;
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.Ab1LocalTime;
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.ByteArrayTaggedDataRecord;
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.DateTaggedDataRecord;
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.FloatArrayTaggedDataRecord;
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.IntArrayTaggedDataRecord;
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.ShortArrayTaggedDataRecord;
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.StringTaggedDataRecord;
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.TimeTaggedDataRecord;
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.UserDefinedTaggedDataRecord;
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.rate.ScanRate;
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.rate.ScanRateTaggedDataType;
 import org.jcvi.jillion.trace.chromat.ChromatogramFileVisitor;
+import org.jcvi.jillion.trace.chromat.abi.tag.Ab1LocalDate;
+import org.jcvi.jillion.trace.chromat.abi.tag.Ab1LocalTime;
+import org.jcvi.jillion.trace.chromat.abi.tag.ByteArrayTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.DateTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.FloatArrayTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.IntArrayTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.ShortArrayTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.StringTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.TimeTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.UserDefinedTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.rate.ScanRate;
+import org.jcvi.jillion.trace.chromat.abi.tag.rate.ScanRateTaggedDataType;
 /**
  * {@code AbiChromatogramFileVisitor} is an ABI
  * Chromatogram specific implementation of 

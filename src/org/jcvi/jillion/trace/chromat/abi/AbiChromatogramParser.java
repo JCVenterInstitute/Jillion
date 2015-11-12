@@ -45,26 +45,26 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.trace.chromat.abi.AbiUtil;
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.Ab1LocalDate;
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.Ab1LocalTime;
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.AsciiTaggedDataRecord;
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.ByteArrayTaggedDataRecord;
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.DateTaggedDataRecord;
 import org.jcvi.jillion.internal.trace.chromat.abi.tag.DefaultShortArrayTaggedDataRecord;
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.FloatArrayTaggedDataRecord;
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.IntArrayTaggedDataRecord;
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.PascalStringTaggedDataRecord;
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.ShortArrayTaggedDataRecord;
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.StringTaggedDataRecord;
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.TaggedDataName;
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.TaggedDataRecord;
 import org.jcvi.jillion.internal.trace.chromat.abi.tag.TaggedDataRecordBuilder;
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.TaggedDataType;
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.TimeTaggedDataRecord;
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.UserDefinedTaggedDataRecord;
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.rate.ScanRateTaggedDataType;
 import org.jcvi.jillion.internal.trace.chromat.abi.tag.rate.ScanRateUtils;
 import org.jcvi.jillion.trace.chromat.ChromatogramFileVisitor;
+import org.jcvi.jillion.trace.chromat.abi.tag.Ab1LocalDate;
+import org.jcvi.jillion.trace.chromat.abi.tag.Ab1LocalTime;
+import org.jcvi.jillion.trace.chromat.abi.tag.AsciiTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.ByteArrayTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.DateTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.FloatArrayTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.IntArrayTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.PascalStringTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.ShortArrayTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.StringTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataName;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataType;
+import org.jcvi.jillion.trace.chromat.abi.tag.TimeTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.UserDefinedTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.rate.ScanRateTaggedDataType;
 /**
  * {@code Ab1FileParser} can parse an
  * Applied BioSystems "ab1" formatted chromatogram
@@ -538,7 +538,7 @@ public abstract class AbiChromatogramParser {
         props.put("FWO_", order.toString() );
     }
 
-    protected static Properties extractSingleIntValueComments(
+    private static Properties extractSingleIntValueComments(
             GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
             Properties props) {
         Map<TaggedDataName, List<IntArrayTaggedDataRecord>> map= groupedDataRecordMap.intArrayDataRecords;
@@ -550,7 +550,7 @@ public abstract class AbiChromatogramParser {
         }
         return props;
     }
-    protected static void addSingleShortValueComments(
+    private static void addSingleShortValueComments(
             GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
             Map<String,String> props) {
         Map<TaggedDataName, List<ShortArrayTaggedDataRecord>> map= groupedDataRecordMap.shortArrayDataRecords;
@@ -560,7 +560,7 @@ public abstract class AbiChromatogramParser {
         }
     }
 
-    protected static void addStringComments(
+    private static void addStringComments(
             GroupedTaggedRecords groupedDataRecordMap,byte[] traceData, Map<String,String> props) {
         Map<TaggedDataName, List<PascalStringTaggedDataRecord>> pascalStrings= groupedDataRecordMap.pascalStringDataRecords;
 		//asciiStrings

@@ -93,10 +93,10 @@ public abstract class AlnFileParser implements AlnParser{
         return result;
     }
     
-    protected void parse(AlnVisitor visitor, InputStream in) throws IOException{
+    void parse(AlnVisitor visitor, InputStream in) throws IOException{
     	parse(visitor, in, true);
     }
-    protected void parse(AlnVisitor visitor, InputStream in, boolean validateHeader) throws IOException{
+    void parse(AlnVisitor visitor, InputStream in, boolean validateHeader) throws IOException{
 		TextLineParser parser = new TextLineParser(in);
 		AtomicBoolean keepParsing=new AtomicBoolean(true);
 		boolean eofReached=false;
@@ -133,7 +133,7 @@ public abstract class AlnFileParser implements AlnParser{
 		}
 	}
    
-	protected abstract AlnVisitorCallback createCallBack(TextLineParser parser, AtomicBoolean keepParsing);
+	abstract AlnVisitorCallback createCallBack(TextLineParser parser, AtomicBoolean keepParsing);
     
     
 	/**

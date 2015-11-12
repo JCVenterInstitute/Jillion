@@ -20,6 +20,10 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.trace.chromat.abi.tag;
 
+import org.jcvi.jillion.trace.chromat.abi.tag.ByteArrayTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataName;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataType;
+
 public class DefaultTaggedDataRecord extends AbstractTaggedDataRecord<ByteArrayTaggedDataRecord,byte[]> implements ByteArrayTaggedDataRecord{
 
 	public DefaultTaggedDataRecord(TaggedDataName name, long number,
