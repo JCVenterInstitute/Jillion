@@ -203,6 +203,7 @@
 			<plugin>
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-source-plugin</artifactId>
+  <version>2.4</version>
   <executions>
     <execution>
       <id>attach-sources</id>
@@ -216,6 +217,7 @@
 <plugin>
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-javadoc-plugin</artifactId>
+  <version>2.10.3</version>
   <executions>
     <execution>
       <id>attach-javadocs</id>
@@ -223,6 +225,7 @@
         <goal>jar</goal>
       </goals>
     </execution>
+    
   </executions>
   
   <configuration>
@@ -258,6 +261,12 @@
 						<tag><name>serialData</name></tag>
 						<tag><name>see</name></tag>
 					</tags>
+					<!-- turn off Java 8's strict checking  which will fail the build if any javadoc problems
+					http://blog.joda.org/2014/02/turning-off-doclint-in-jdk-8-javadoc.html
+					-->
+					<properties>
+						<additionalparam>-Xdoclint:none</additionalparam>
+					</properties>
 				</configuration>
 </plugin>
 
