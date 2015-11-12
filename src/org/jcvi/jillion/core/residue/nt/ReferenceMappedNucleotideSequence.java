@@ -34,7 +34,7 @@ import java.util.SortedMap;
  * which has extra methods to get the differences between
  * the reference and this sequence and the to get the actual 
  * reference sequence used.
- * <p/>
+ * <p>
  * It is possible to reduce the memory footprint for
  * {@link ReferenceMappedNucleotideSequence}s by only
  * storing these  2 fields.  All other return values from
@@ -64,7 +64,7 @@ public interface ReferenceMappedNucleotideSequence extends NucleotideSequence{
     /**
      * Get the Reference sequence that this
      * sequence is mapped to.
-     * @return
+     * @return the {@link NucleotideSequence} of the reference.
      */
     NucleotideSequence getReferenceSequence();
 }

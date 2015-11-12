@@ -18,7 +18,7 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.core.io;
+package org.jcvi.jillion.internal.core.io;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -40,8 +40,9 @@ public final class StreamUtil {
      * IOException as an {@link UncheckedIOException}.
      * This is supposed to be used as input to 
      * {@link java.util.stream.Stream#onClose(Runnable)}.
-     * @param c
-     * @return
+     * @param c the {@link Closeable} to be closed; can not be null.
+     * 
+     * @return a new {@link Runnable} that will try to close the Closeable
      */
     public static Runnable newOnCloseRunnableThatThrowsUncheckedIOExceptionIfNecessary(Closeable c){
     	return () ->{

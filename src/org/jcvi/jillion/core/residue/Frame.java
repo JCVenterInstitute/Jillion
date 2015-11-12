@@ -39,7 +39,7 @@ public enum Frame{
      * inclusive.
      * @param frame
      * @return a {@link Frame}
-     * @throws IllegalArgumentException if <code> frame < 0 || frame > 2</code>
+     * @throws IllegalArgumentException if <code> frame &lt; 0 || frame &gt; 2</code>
      */
     public static Frame parseFrame(int frame){
         for(Frame f : Frame.values()){

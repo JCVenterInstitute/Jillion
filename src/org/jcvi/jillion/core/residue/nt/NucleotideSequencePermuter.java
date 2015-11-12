@@ -57,9 +57,11 @@ public final class NucleotideSequencePermuter {
 	 * </li>
 	 * </ol>
 	 * @param seq the sequence to permute; may not be null.
+	 * 
 	 * @return a Set of all the permutations; will never be empty.
 	 * If the given sequence does not have any ambiguities, then
 	 * a Set that only contains the original sequence is returned.
+	 * 
 	 * @throws NullPointerException if seq is null.
 	 */
 	public static Set<NucleotideSequence> permuteAmbiguities(NucleotideSequence seq) {
@@ -107,16 +109,19 @@ public final class NucleotideSequencePermuter {
 	 * @apiNote
 	 * This is equivalent to :
 	 * <pre>
-	 * {@code 
+	 * <code>
 	 * 	Set<NucleotideSequence> set = new LinkedHashSet<>();
 	 * 		for(NucleotideSequence seq : sequences){
 	 *		set.addAll(permuteAmbiguities(seq));
 	 *	}
 	 *	return set;
-	 * 
+	 * </code>
 	 * </pre>
-	 * @param sequences
-	 * @return
+	 * @param sequences the sequences to permute; may not be null.
+	 * 
+	 * @return a Set of all the permutations; will never be empty.
+	 * If the given sequence does not have any ambiguities, then
+	 * a Set that only contains the original sequence is returned.
 	 */
 	public static Set<NucleotideSequence> permuteAmbiguities(Iterable<NucleotideSequence> sequences){
 		Set<NucleotideSequence> set = new LinkedHashSet<>();

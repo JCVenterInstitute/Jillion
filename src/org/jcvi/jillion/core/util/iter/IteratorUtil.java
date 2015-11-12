@@ -56,6 +56,10 @@ public final class IteratorUtil {
     }
     /**
      * Creates an efficient {@link Iterator} over an array.
+     * 
+     * @param array the array to iterate over; can not be null.
+     * 
+     * @param <E> the type of elements to be iterated over.
      */
     public static <E> Iterator<E> createIteratorFromArray(E[] array){
     	return new ArrayIterator<E>(array);
@@ -63,10 +67,13 @@ public final class IteratorUtil {
     /**
      * Create a new {@link PeekableStreamingIterator} instance
      * which wraps the given iterator.
-     * @param iter
+     * @param iter the Iterator to wrap in a peekable iterator; can not be null.
+     * 
      * @return a new {@link PeekableStreamingIterator};
      * never null.
      * @throws NullPointerException if iter is null.
+     * 
+     * @param <E> the type of elements to be iterated over.
      */
     public static <E> PeekableIterator<E> createPeekableIterator(Iterator<E> iter){
     	return new PeekableIteratorImpl<E>(iter);
@@ -74,10 +81,12 @@ public final class IteratorUtil {
     /**
      * Create a new {@link StreamingIterator} instance
      * which wraps the given iterator.
-     * @param iter
+     * @param iter the Iterator to wrap in a streaming iterator; can not be null.
      * @return a new {@link StreamingIterator};
      * never null.
      * @throws NullPointerException if iter is null.
+     * 
+     * @param <E> the type of elements to be iterated over.
      */
     public static <E> StreamingIterator<E> createStreamingIterator(Iterator<E> iter){
     	return StreamingIteratorAdapter.adapt(iter);
@@ -85,10 +94,12 @@ public final class IteratorUtil {
     /**
      * Create a new {@link PeekableStreamingIterator} instance
      * which wraps the given iterator.
-     * @param iter
+     * @param iter the Iterator to wrap in a peekable streaming iterator; can not be null.
      * @return a new {@link PeekableStreamingIterator};
      * never null.
      * @throws NullPointerException if iter is null.
+     * 
+     * @param <E> the type of elements to be iterated over.
      */
     public static <E> PeekableStreamingIterator<E> createPeekableStreamingIterator(Iterator<E> iter){
     	return new PeekableStreamingIteratorImpl<E>(createStreamingIterator(iter));
@@ -102,6 +113,8 @@ public final class IteratorUtil {
      * @return a new {@link PeekableStreamingIterator};
      * never null.
      * @throws NullPointerException if iter is null.
+     * 
+     * @param <E> the type of elements to be iterated over.
      */
     public static <E> PeekableIterator<E> createPeekableIterator(Iterable<E> iter){
     	return createPeekableIterator(iter.iterator());

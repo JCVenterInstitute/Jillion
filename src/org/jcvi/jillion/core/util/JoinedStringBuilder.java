@@ -74,6 +74,8 @@ public final class JoinedStringBuilder<T> implements Builder<String>{
      * If an element is null, then it will be skipped
      * during the join.
      * @param <T> The type of object being joined.
+     * 
+     * @return a new JoinedStringBuilder object; will never be null.
      */
     @SafeVarargs
     public static <T> JoinedStringBuilder<T> create(T... elements){
@@ -130,7 +132,9 @@ public final class JoinedStringBuilder<T> implements Builder<String>{
      * Change the behavior of 
      * how inner empty strings are handled,
      * by default, empty strings will be skipped.
-     * @param value 
+     * @param value  {@code true} if empty string should be included in the
+     * final built string; {@code false} otherwise.
+     * 
      * @return this
      */
     public JoinedStringBuilder<T> includeEmptyStrings(boolean value){

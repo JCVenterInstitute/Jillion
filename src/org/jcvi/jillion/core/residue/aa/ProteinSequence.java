@@ -27,7 +27,7 @@ import org.jcvi.jillion.core.residue.ResidueSequence;
 /**
  * {@code ProteinSequence} is a marker interface for
  * {@link Sequence}s that contain {@link AminoAcid}s.
- * <br/>
+ * <br>
  * {@link ProteinSequence} is {@link Serializable} in a (hopefully)
  * forwards compatible way. However, there is no 
  * guarantee that the implementation will be the same

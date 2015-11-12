@@ -36,7 +36,7 @@ public interface QualitySequence extends Sequence<PhredQuality>{
      * Two {@link QualitySequence}s are equal
      * if they contain the same {@link PhredQuality}s 
      * in the same order.
-     * <p/>
+     * <p>
      * {@inheritDoc}
      */
     @Override
@@ -80,13 +80,12 @@ public interface QualitySequence extends Sequence<PhredQuality>{
      */
     PhredQuality getMaxQuality();
     /**
-     *  /**
      * Create a new Builder object that is initialized
      * to the current sequence.  Any changes made to the returned Builder
      * will <strong>NOT</strong> affect this immutable Sequence.
      * 
      * @return a new Builder instance, will never be null.
-     * @sincen 5.0
+     * @since 5.0
      */
     default QualitySequenceBuilder toBuilder(){
         return new QualitySequenceBuilder(this);

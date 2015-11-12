@@ -50,13 +50,13 @@ public interface ResidueSequence<R extends Residue> extends Sequence<R> {
     int getNumberOfGaps();
    
     /**
-     * Is the {@link Nucleotide} at the given gapped index a gap?
+     * Is the {@link Residue} at the given gapped index a gap?
      * @param gappedOffset the gappedOffset to check.
      * @return {@code true} is it is a gap; {@code false} otherwise.
      */
     boolean isGap(int gappedOffset);
     /**
-     * Get the number of {@link Nucleotide}s in this {@link NucleotideSequence} 
+     * Get the number of {@link Residue}s in this sequence 
      * that are not gaps.
      * @return the number of non gaps as a long.
      */
@@ -111,12 +111,19 @@ public interface ResidueSequence<R extends Residue> extends Sequence<R> {
      * in the same order. 
      * {@inheritDoc}.
      * 
-     * @see #isEqualIgnoringGaps(ResidueSequence)
+     * @see #isEqualToIgnoringGaps(ResidueSequence)
      */
     @Override
     boolean equals(Object o);
     
-    
+    /**
+     * Two {@link ResidueSequence}s are considered
+     * equal to ignoring gaps
+     * if their ungapped versions contain the same residues 
+     * in the same order. 
+     * {@inheritDoc}.
+     * 
+     */
     default boolean isEqualToIgnoringGaps(ResidueSequence<? extends R> other){
     	if(other ==null){
     		return false;

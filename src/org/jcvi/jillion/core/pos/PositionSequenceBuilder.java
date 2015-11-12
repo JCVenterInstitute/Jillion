@@ -50,8 +50,10 @@ public final class PositionSequenceBuilder implements SequenceBuilder<Position, 
 	/**
 	 * Create a new empty builder with the given
 	 * capacity.
+	 * @param initialCapacity the initial size of the backing array to use.
+	 * 
 	 * @throws NegativeArraySizeException if initialCapacity
-	 * is <0.
+	 * is negative.
 	 */
 	public PositionSequenceBuilder(int initialCapacity){
 		this.builder = new GrowableShortArray(initialCapacity);
@@ -60,6 +62,9 @@ public final class PositionSequenceBuilder implements SequenceBuilder<Position, 
 	 * Create a builder and set the initial
 	 * sequence to the position values represented
 	 * by the given short array.
+	 * 
+	 * @param initialPositions an array of position information to intialize
+	 * the sequence to.
 	 */
 	public PositionSequenceBuilder(short[] initialPositions){
 		this.builder = new GrowableShortArray(initialPositions);
@@ -99,7 +104,7 @@ public final class PositionSequenceBuilder implements SequenceBuilder<Position, 
 	/**
 	 * 
 	 * {@inheritDoc}
-	 * @param position a single {@link PhredQuality}
+	 * @param position a single {@link Position}
 	 * to be appended to the end of the current sequence
 	 * (can not be null).
 	 * 

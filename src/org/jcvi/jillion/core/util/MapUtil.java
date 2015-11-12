@@ -45,8 +45,8 @@ public final class MapUtil {
 	 * throw an Exception.  (This is better than having
 	 * clients downcast and possibly truncate the value without any error).
 	 * @return the initial size value to pass to the HashMap constructor.
-	 * @throws IllegalArgumentException if expectedNumberOfEntries is <0 or
-	 * > {@link Integer#MAX_VALUE}.
+	 * @throws IllegalArgumentException if expectedNumberOfEntries is &lt; 0 or
+	 * &gt; {@link Integer#MAX_VALUE}.
 	 */
 	public static int computeMinHashMapSizeWithoutRehashing(long expectedNumberOfEntries){
 		return computeMinHashMapSizeWithoutRehashing(expectedNumberOfEntries, DEFAULT_LOAD_FACTOR);
@@ -58,6 +58,7 @@ public final class MapUtil {
 	 * load factor that will not cause the map to 
 	 * perform an expensive rehashing operation (which also
 	 * doubles the number of buckets used).
+	 * 
 	 * @param expectedNumberOfEntries the expected number
 	 * of entries that will be put into the map.
 	 * This type is long to help clients avoid
@@ -65,9 +66,14 @@ public final class MapUtil {
 	 * Passing in a value greater than {@link Integer#MAX_VALUE} will
 	 * throw an Exception.  (This is better than having
 	 * clients downcast and possibly truncate the value without any error).
+	 * 
+	 * @param loadFactor is a measure of how full the hash table is 
+	 * allowed to get before its capacity is automatically increased.
+	 * 
 	 * @return the initial size value to pass to the HashMap constructor.
-	 * @throws IllegalArgumentException if expectedNumberOfEntries is <0 or
-	 * > {@link Integer#MAX_VALUE}.
+	 * 
+	 * @throws IllegalArgumentException if expectedNumberOfEntries is &lt; 0 or
+	 * &gt; {@link Integer#MAX_VALUE}.
 	 */
 	public static int computeMinHashMapSizeWithoutRehashing(long expectedNumberOfEntries, float loadFactor){
 		if(expectedNumberOfEntries <0){

@@ -37,7 +37,7 @@ import org.jcvi.jillion.core.residue.ResidueSequence;
  * Different encoding implementations can take up more or less memory or require
  * more computations to decode.  This interface hides implementation details
  * regarding the decoding so users don't have to worry about it.
- * <br/>
+ * <br>
  * {@link NucleotideSequence} is {@link Serializable} in a (hopefully)
  * forwards compatible way. However, there is no 
  * guarantee that the implementation will be the same
@@ -51,7 +51,7 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide>, Seriali
      * Two {@link NucleotideSequence}s are equal
      * if they contain the same {@link Nucleotide}s 
      * in the same order.
-     * <p/>
+     * <p>
      * {@inheritDoc}
      */
     @Override
