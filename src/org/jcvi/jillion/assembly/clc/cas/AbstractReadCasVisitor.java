@@ -48,7 +48,7 @@ import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
 import org.jcvi.jillion.trace.fastq.FastqRecord;
 import org.jcvi.jillion.trace.fastq.FastqRecordBuilder;
-import org.jcvi.jillion.trace.sff.SffFileIterator;
+import org.jcvi.jillion.trace.sff.SffFileDataStoreBuilder;
 /**
  * A {@link CasFileVisitor}
  * that handles iterating over the aligned reads in the cas file.
@@ -209,8 +209,8 @@ public abstract class AbstractReadCasVisitor extends AbstractCasFileVisitor{
 		
     }
 
-    protected StreamingIterator<? extends Trace> createSffIterator(File sffFile) throws DataStoreException{
-        return SffFileIterator.createNewIteratorFor(sffFile);
+    protected StreamingIterator<? extends Trace> createSffIterator(File sffFile) throws DataStoreException, IOException{
+        return new SffFileDataStoreBuilder(sffFile).hint(DataStoreProviderHint.ITERATION_ONLY).build().iterator();
     }
 
     protected StreamingIterator<? extends Trace> createFastaIterator(File fastaFile) throws DataStoreException{        

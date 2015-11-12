@@ -18,15 +18,22 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.internal.trace.chromat.abi.tag.rate;
+package org.jcvi.jillion.trace.chromat.abi.tag;
 
-import org.jcvi.jillion.internal.trace.chromat.abi.tag.UserDefinedTaggedDataRecord;
-
-/**
- * @author dkatzel
- *
- *
- */
-public interface ScanRateTaggedDataType extends UserDefinedTaggedDataRecord<ScanRateTaggedDataType, ScanRate>{
-
+public interface TaggedDataRecord<T,D> {
+	
+	TaggedDataName getTagName();
+	long getTagNumber();
+	TaggedDataType getDataType();
+	int getElementLength();
+	long getNumberOfElements();
+	long getRecordLength();
+	long getDataRecord();
+	long getCrypticValue();
+	
+	Class<D> getParsedDataType();
+	
+	Class<T> getType();
+	
+	D parseDataRecordFrom(byte[] ab1DataBlock);
 }

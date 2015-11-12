@@ -128,14 +128,14 @@ public abstract class BfaParser implements FastaParser{
 		this.endian = endian;
 	}
 	
-	protected abstract OpenAwareInputStream createInputStream() throws IOException;
+	abstract OpenAwareInputStream createInputStream() throws IOException;
 	
 
 	
 
 	
 
-	protected final void parseBfaData(FastaVisitor visitor, OpenAwareInputStream in, long offset) throws IOException {
+	final void parseBfaData(FastaVisitor visitor, OpenAwareInputStream in, long offset) throws IOException {
 		FastaRecordVisitor recordVisitor =null;
 		long currentOffset = offset;
 		Callback callback = createCallback(currentOffset);

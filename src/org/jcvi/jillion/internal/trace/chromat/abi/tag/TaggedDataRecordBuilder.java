@@ -21,6 +21,9 @@
 package org.jcvi.jillion.internal.trace.chromat.abi.tag;
 
 import org.jcvi.jillion.internal.trace.chromat.abi.tag.rate.DefaultScanRateTaggedDataType;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataName;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataType;
 
 
 public class TaggedDataRecordBuilder implements org.jcvi.jillion.core.util.Builder<TaggedDataRecord<?,?>>{

@@ -20,9 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.fasta;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -37,7 +35,6 @@ import org.jcvi.jillion.core.io.InputStreamSupplier;
 import org.jcvi.jillion.fasta.FastaVisitorCallback.FastaVisitorMemento;
 import org.jcvi.jillion.internal.core.io.LineParser;
 import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
-import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
 /**
  * {@code FastaFileParser} will parse a single 
@@ -141,11 +138,11 @@ public abstract class FastaFileParser implements FastaParser{
 			throw new NullPointerException("visitor can not be null");
 		}
 	}
-	protected final void parseFile(TextLineParser parser, FastaVisitor visitor) throws IOException {
+	final void parseFile(TextLineParser parser, FastaVisitor visitor) throws IOException {
 		parseFile(parser, visitor, 0);
 	}
 	@SuppressWarnings("PMD.AvoidDeeplyNestedIfStmts")
-	protected final void parseFile(TextLineParser parser, FastaVisitor visitor, int initialRedundantIndex) throws IOException {
+	final void parseFile(TextLineParser parser, FastaVisitor visitor, int initialRedundantIndex) throws IOException {
 		AtomicBoolean keepParsing=new AtomicBoolean(true);
 		FastaRecordVisitor recordVisitor =null;
 		long currentOffset=parser.getPosition();

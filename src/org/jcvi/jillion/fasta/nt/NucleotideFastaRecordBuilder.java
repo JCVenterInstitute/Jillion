@@ -23,7 +23,7 @@ package org.jcvi.jillion.fasta.nt;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.internal.fasta.AbstractFastaRecordBuilder;
+import org.jcvi.jillion.fasta.AbstractFastaRecordBuilder;
 /**
  * {@code NucleotideFastaRecordBuilder} is a builder class
  * that makes instances of {@link NucleotideSequenceFastaRecord}s.

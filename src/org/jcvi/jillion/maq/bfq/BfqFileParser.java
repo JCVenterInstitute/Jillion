@@ -262,9 +262,9 @@ public abstract class BfqFileParser implements FastqParser{
 		
 	}
 	
-	protected abstract OpenAwareInputStream createInputStream() throws IOException;
+	abstract OpenAwareInputStream createInputStream() throws IOException;
 	
-	protected abstract Callback createCallback(long startOffset);
+	abstract Callback createCallback(long startOffset);
 	
 	
 	private class Callback implements FastqVisitorCallback{

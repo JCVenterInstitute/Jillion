@@ -23,6 +23,10 @@ package org.jcvi.jillion.internal.trace.chromat.abi.tag;
 import java.nio.ByteBuffer;
 import java.nio.ShortBuffer;
 
+import org.jcvi.jillion.trace.chromat.abi.tag.ShortArrayTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataName;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataType;
+
 public class DefaultShortArrayTaggedDataRecord extends AbstractTaggedDataRecord<ShortArrayTaggedDataRecord,short[]> implements ShortArrayTaggedDataRecord{
 
 	public DefaultShortArrayTaggedDataRecord(TaggedDataName name, long number,

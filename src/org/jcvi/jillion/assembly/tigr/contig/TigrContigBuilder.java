@@ -23,6 +23,7 @@ package org.jcvi.jillion.assembly.tigr.contig;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.jcvi.jillion.assembly.AbstractContigBuilder;
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.AssembledReadBuilder;
 import org.jcvi.jillion.assembly.Contig;
@@ -34,7 +35,6 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.internal.assembly.AbstractContigBuilder;
 import org.jcvi.jillion.internal.assembly.DefaultAssembledRead;
 import org.jcvi.jillion.internal.assembly.DefaultContig;
 

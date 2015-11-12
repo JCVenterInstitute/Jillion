@@ -161,7 +161,7 @@ public abstract class FastqFileParser implements FastqParser{
 		this.multiLine = multiLine;
 	}
 	
-	protected void parseFastqFile(FastqVisitor visitor, LineParser parser) throws IOException{
+	void parseFastqFile(FastqVisitor visitor, LineParser parser) throws IOException{
 		ParserState parserState = parser.tracksPosition() ? new ParserState(parser.getPosition()) : new ParserState(0);
 		while(parserState.keepParsing() && parser.hasNextLine()){
 			parserState=parseNextRecord(visitor, parser, parserState);

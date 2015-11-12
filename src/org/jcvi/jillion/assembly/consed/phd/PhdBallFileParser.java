@@ -99,7 +99,7 @@ public abstract class PhdBallFileParser implements PhdBallParser{
 	
 	
 	
-	protected void accept(TextLineParser parser, PhdBallVisitor visitor) throws IOException{
+	void accept(TextLineParser parser, PhdBallVisitor visitor) throws IOException{
 		ParserState parserState = new ParserState();
 		boolean seenFileComment=false;
 		 PhdVisitor phdVisitor =null;

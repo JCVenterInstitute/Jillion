@@ -22,6 +22,9 @@ package org.jcvi.jillion.internal.trace.chromat.abi.tag;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.trace.chromat.abi.AbiUtil;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataName;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataType;
 
 
 public abstract class AbstractTaggedDataRecord<T,D> implements TaggedDataRecord<T,D>{

@@ -18,13 +18,13 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.internal.trace.chromat.abi.tag;
+package org.jcvi.jillion.trace.chromat.abi.tag;
 
 /**
  * @author dkatzel
  *
  *
  */
-public interface FloatArrayTaggedDataRecord extends TaggedDataRecord<FloatArrayTaggedDataRecord,float[]>{
+public interface TimeTaggedDataRecord extends TaggedDataRecord<TimeTaggedDataRecord,Ab1LocalTime>{
 
 }

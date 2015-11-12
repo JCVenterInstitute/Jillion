@@ -48,7 +48,7 @@ import org.jcvi.jillion.trace.Trace;
 import org.jcvi.jillion.trace.fastq.FastqDataStore;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
-import org.jcvi.jillion.trace.sff.SffFileIterator;
+import org.jcvi.jillion.trace.sff.SffFileDataStoreBuilder;
 
 public class CasFileTransformationService implements AssemblyTransformationService{
 
@@ -241,9 +241,9 @@ public class CasFileTransformationService implements AssemblyTransformationServi
 
 		@Override
 		protected StreamingIterator<? extends Trace> createSffIterator(
-				File sffFile) throws DataStoreException {
+				File sffFile) throws DataStoreException, IOException {
 			
-			return new FlowgramReadDataAdaptedIterator(SffFileIterator.createNewIteratorFor(sffFile),
+			return new FlowgramReadDataAdaptedIterator( new SffFileDataStoreBuilder(sffFile).hint(DataStoreProviderHint.ITERATION_ONLY).build().iterator(),
 					sffFile);
 		}
 

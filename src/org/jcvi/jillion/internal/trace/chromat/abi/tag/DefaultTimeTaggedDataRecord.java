@@ -22,6 +22,11 @@ package org.jcvi.jillion.internal.trace.chromat.abi.tag;
 
 import java.nio.ByteBuffer;
 
+import org.jcvi.jillion.trace.chromat.abi.tag.Ab1LocalTime;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataName;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataType;
+import org.jcvi.jillion.trace.chromat.abi.tag.TimeTaggedDataRecord;
+
 
 public class DefaultTimeTaggedDataRecord extends AbstractTaggedDataRecord<TimeTaggedDataRecord,Ab1LocalTime> implements TimeTaggedDataRecord{
 

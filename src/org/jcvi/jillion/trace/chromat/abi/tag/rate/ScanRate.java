@@ -18,13 +18,28 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.internal.trace.chromat.abi.tag;
+package org.jcvi.jillion.trace.chromat.abi.tag.rate;
 
 /**
  * @author dkatzel
  *
  *
  */
-public interface UserDefinedTaggedDataRecord<T, D> extends TaggedDataRecord<T,D>{
-
+public interface ScanRate {
+    /**
+     * The time when the scan rate changed.
+     * @return the time as an int.
+     */
+    int getTime();
+    /**
+     * The Scan period in milliseconds.
+     * @return the scan period in milliseconds.
+     */
+    int getScanPeriod();
+    /**
+     * The scan line of the first line 
+     * of a new rate.
+     * @return the scan line as an int.
+     */
+    int getFirstScanLine();
 }

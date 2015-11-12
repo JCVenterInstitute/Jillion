@@ -20,6 +20,8 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.trace.chromat.abi.tag.rate;
 
+import org.jcvi.jillion.trace.chromat.abi.tag.rate.ScanRate;
+
 /**
  * @author dkatzel
  *

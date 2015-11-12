@@ -23,6 +23,10 @@ package org.jcvi.jillion.internal.trace.chromat.abi.tag;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
+import org.jcvi.jillion.trace.chromat.abi.tag.IntArrayTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataName;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataType;
+
 public class DefaultIntegerArrayTaggedDataRecord  extends AbstractTaggedDataRecord<IntArrayTaggedDataRecord,int[]> implements IntArrayTaggedDataRecord{
 
 	public DefaultIntegerArrayTaggedDataRecord(TaggedDataName name, long number,
