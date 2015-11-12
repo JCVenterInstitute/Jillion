@@ -41,6 +41,8 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * @param sequence the residue sequence to be appended
      * to the end our builder.
      * @throws NullPointerException if sequence is null.
+     * 
+     * @return this.
      */
     ResidueSequenceBuilder<R,S>  append(Iterable<R> sequence);
     
@@ -52,6 +54,9 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * of the builder's mutable sequence.
      * @param sequence the residue sequence to be appended
      * to the end our builder.
+     * 
+     * @return this.
+     * 
      * @throws NullPointerException if sequence is null.
      */
     ResidueSequenceBuilder<R,S> append(String sequence);
@@ -67,6 +72,9 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * to begin insertion.
      * @param sequence the nucleotide sequence to be 
      * inserted at the given offset.
+     * 
+     * @return this.
+     * 
      * @throws NullPointerException if sequence is null.
      * @throws IllegalArgumentException if offset is invalid.
      */
@@ -116,7 +124,7 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
     ResidueSequenceBuilder<R,S> delete(Range range);
     /**
      * Get the number of gaps currently in this sequence.
-     * @return the number of gaps; will always be >= 0.
+     * @return the number of gaps; will always be &ge;  0.
      */
     int getNumGaps();
     
@@ -146,7 +154,7 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * inserted at the given offset.
      * @return this
      * @throws NullPointerException if sequence is null.
-     * @throws IllegalArgumentException if offset <0 or > current sequence length.
+     * @throws IllegalArgumentException if offset lt; 0 or &gt; current sequence length.
      */
     ResidueSequenceBuilder<R,S> insert(int offset, Iterable<R> sequence);
     /**
@@ -168,7 +176,7 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * residues are to be inserted at the given offset.
      * @return this
      * @throws NullPointerException if otherBuilder is null.
-     * @throws IllegalArgumentException if offset <0 or > current sequence length.
+     * @throws IllegalArgumentException if offset lt; 0 or &gt; current sequence length.
      */
     ResidueSequenceBuilder<R,S> insert(int offset, ResidueSequenceBuilder<R,S> otherBuilder);
     
@@ -186,7 +194,7 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * inserted at the given offset.
      * @return this
      * @throws NullPointerException if base is null.
-     * @throws IllegalArgumentException if offset <0 or > current sequence length.
+     * @throws IllegalArgumentException if offset lt; 0 or &gt; current sequence length.
      */
     @Override
     ResidueSequenceBuilder<R,S> insert(int offset, R base);
@@ -265,7 +273,7 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * Calling this method will only reverse residues that 
      * already exist in this builder; any additional operations
      * to insert residues will not be affected.
-     * </p>
+     * <p>
      * For example if this builder had the sequence
      * "AAGG" then after this method is called the resulting
      * sequence would be "GGAA".

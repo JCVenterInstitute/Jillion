@@ -38,6 +38,8 @@ import java.util.List;
  * all wrapped instances to be called by only a single
  * call to the wrapper.
  * @author dkatzel
+ * 
+ * @param <T> the interface type to wrap to make several instances appear as a single one.
  */
 public final class  MultipleWrapper<T> implements InvocationHandler{
     
@@ -62,8 +64,7 @@ public final class  MultipleWrapper<T> implements InvocationHandler{
     }
     /**
      * Create a dynamic proxy to wrap the given delegate instances.
-     * @param <T> the interface to proxy.
-     * @param <I> the instances of T.
+
      * @param classType the class object of T.
      * @param policy the return policy to use on methods that return something.
      * @param delegates the list of delegates to wrap in the order in which 
@@ -71,9 +72,12 @@ public final class  MultipleWrapper<T> implements InvocationHandler{
      * @return a new instance of T that wraps the delegates.
      * @throws IllegalArgumentException if no delegates are given
      * @throws NullPointerException if classType ==null or policy ==null or any delegate ==null.
+     * 
+     * @param <T> the interface type to wrap to make several instances appear as a single one.
+     * 
      */
     @SuppressWarnings("unchecked")
-    public static <T, I extends T> T createMultipleWrapper(Class<T> classType,ReturnPolicy policy, Iterable<I> delegates){
+    public static <T> T createMultipleWrapper(Class<T> classType,ReturnPolicy policy, Iterable<? extends T> delegates){
         
         return (T) Proxy.newProxyInstance(classType.getClassLoader(), new Class<?>[]{classType}, 
                 new MultipleWrapper<T>(policy,delegates));
@@ -82,9 +86,14 @@ public final class  MultipleWrapper<T> implements InvocationHandler{
      * Convenience constructor which is the same as calling
      * {@link #createMultipleWrapper(Class, ReturnPolicy, Object...)
      * createMultipleWrapper(classType,ReturnPolicy.RETURN_FIRST,delegates)}
+     * 
+     * @param classType the {@link Class} of T
+     * 
+     * @param delegates the instances to wrap; can not be null.
+     * 
      * @see #createMultipleWrapper(Class, ReturnPolicy, Object...)
      */
-    public static <T,I extends T> T createMultipleWrapper(Class<T> classType,Iterable<I> delegates){
+    public static <T> T createMultipleWrapper(Class<T> classType,Iterable<? extends T> delegates){
        return createMultipleWrapper(classType,ReturnPolicy.RETURN_FIRST,delegates);
     }
     /**
@@ -92,9 +101,13 @@ public final class  MultipleWrapper<T> implements InvocationHandler{
      * {@link #createMultipleWrapper(Class, ReturnPolicy, Object...)
      * createMultipleWrapper(classType,ReturnPolicy.RETURN_FIRST,delegates)}
      * @see #createMultipleWrapper(Class, ReturnPolicy, Object...)
+     * 
+     * @param classType the {@link Class} of T
+     * 
+     * @param delegates the instances to wrap; can not be null.
      */
     @SafeVarargs
-    public static <T,I extends T> T createMultipleWrapper(Class<T> classType,I... delegates){
+    public static <T> T createMultipleWrapper(Class<T> classType,T... delegates){
        return createMultipleWrapper(classType,ReturnPolicy.RETURN_FIRST,Arrays.asList(delegates));
     }
     /**
@@ -102,9 +115,15 @@ public final class  MultipleWrapper<T> implements InvocationHandler{
      * {@link #createMultipleWrapper(Class, ReturnPolicy, Object...)
      * createMultipleWrapper(classType,ReturnPolicy.RETURN_FIRST,delegates)}
      * @see #createMultipleWrapper(Class, ReturnPolicy, Object...)
+     * 
+     * 
+     * @param classType the {@link Class} of T
+     * @param policy the {@link ReturnPolicy} to use for methods that return a value.
+     * 
+     * @param delegates the instances to wrap; can not be null.
      */
     @SafeVarargs
-    public static <T,I extends T> T createMultipleWrapper(Class<T> classType,ReturnPolicy policy,I... delegates){
+    public static <T> T createMultipleWrapper(Class<T> classType,ReturnPolicy policy,T... delegates){
        return createMultipleWrapper(classType,policy,Arrays.asList(delegates));
     }
     

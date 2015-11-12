@@ -2827,8 +2827,10 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 			return this;
 		}
 		/**
-		 * Get the current length of this Range
-		 * @return
+		 * Get the current length of this Range.
+		 * 
+		 * @return the length; will never be negative.
+		 * 
 		 */
 		public long getLength(){
 			return end-begin+1;

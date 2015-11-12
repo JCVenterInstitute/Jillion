@@ -105,7 +105,9 @@ public final class IOUtil {
      * Recursively delete the given children (and only the children)
      * of the given directory.  If the directory does not exist,
      * then this method does nothing.
-     * @param file the root directory to delete.
+     * 
+     * @param dir the root directory to delete.
+     * 
      * @throws IOException if deleting the directory or
      * a file under the directory fails.
      * @throws NullPointerException if dir is null.    
@@ -569,10 +571,13 @@ public final class IOUtil {
     }
     
     /**
-     * This method changes the endian of the byte array.
-     * @param byteArray
+     * This method makes a new byte array that contains
+     * the same data as the input byte array, but the endian is reversed.
+     * 
+     * @param byteArray the input byte array to change the endian of.
+     * 
      * @return a new byte array which represents the same data as the
-     * passed in array, but with the endian switched. (Big Endian -> Little Endian
+     * passed in array, but with the endian switched. (Big Endian to Little Endian
      * or vice versa)
      */
     public static byte[] switchEndian(byte[] byteArray){
@@ -775,15 +780,27 @@ public final class IOUtil {
     /**
      * Convert an unsigned short into a fully padded
      * byte array.
-     * <p/>
-     * For Example:<br/>
-     * 3 => [0, 3]<br/>
-     * 255 => [0, 255]<br/>
-     * 256 => [1, 255]<br/>
-     * @param unsignedShort
-     * @return
+     * <p>
+     * For Example:
+     * <pre>
+     * <code>
+     * 3 => [0, 3]
+     * 255 => [0, 255]
+     * 256 => [1, 255]
+     * </code>
+     * </pre>
+     * @param unsignedShort the value of the unsigned value to convert;
+     * must be &ge; 0.
+     * 
+     * @return a new byte array.
+     * 
+     * @throws IllegalArgumentException if unsignedShort is negative.
      */
     public static byte[] convertUnsignedShortToByteArray(int unsignedShort){
+    	
+    	if(unsignedShort < 0){
+    		throw new IllegalArgumentException("unsigned value can not be negative");
+    	}
         byte[] result = new byte[2];
         int currentValue = unsignedShort;
         for(int i=result.length-1; i>=0; i--){
@@ -833,10 +850,12 @@ public final class IOUtil {
      * Get the number of bits required
      * to represent this value in binary.
      * @param value the value as an positive long.
+     * 
      * @return the number of bits that are required
      * to represent this value as an unsigned binary
      * integer.
-     * @throw IllegalArgumentException if value < 0.
+     * 
+     * @throws IllegalArgumentException if value is negative.
      */
     public static int getUnsignedBitCount(long value) {
         if(value <0){
@@ -856,7 +875,7 @@ public final class IOUtil {
      * @return the number of bytes that are required
      * to represent this value as an unsigned binary
      * integer.
-     * @throw IllegalArgumentException if value < 0.
+     * @throws IllegalArgumentException if value is negative.
      */
     public static int getUnsignedByteCount(long value){
         int numBits = getUnsignedBitCount(value);
@@ -869,6 +888,7 @@ public final class IOUtil {
      * For some reason {@link BitSet}
      * Java API thru java 6 does not include methods for converting
      * to and from a byte array.
+     * 
      * @param bitset the bitset to convert.
      * @param bitLength the number of bits that need to be present
      * in the byte array.  This needs to be specified because
@@ -878,7 +898,7 @@ public final class IOUtil {
      * number of bytes required to store the same data as
      * the given {@link BitSet}.
      * @throws NullPointerException if bitset is null.
-     * @throws IllegalArgumentException if bitLength <0.
+     * @throws IllegalArgumentException if bitLength is negative.
      */
     public static byte[] toByteArray(BitSet bitset, int bitLength){
     	if(bitset ==null){
@@ -1018,14 +1038,18 @@ public final class IOUtil {
      * as a String.  This method will not close the stream
      * when it is done.  There is no need to buffer the {@link InputStream}
      * since this method will buffer internally.
+     * 
      * @param in the inputStream to read as a String; can not be null.
+     * 
      * @param encoding the name of the {@link Charset} encoding to use; if this value
      * is null, then use the default as defined by {@link Charset#defaultCharset()}.
+     * 
      * @return a String representing the contents of the given
      * String using the default character encoding.
-     * @throws IOException if there is a problem reading the Stream.
+     * 
+     * @throws IOException if there is a problem reading the InputStream or the charset encoding.
      * @throws NullPointerException if inputStream is null.
-     * @throws UnsupportedEncodingException if the encoding name is not supported.
+     * 
      */
     public static String toString(InputStream in, String encoding) throws IOException{
     	StringWriter writer = new StringWriter();
@@ -1082,16 +1106,29 @@ public final class IOUtil {
 	 /**
      * Copy the numberOfBytesToRead of the given {@link InputStream}
      * and return it as a byte[].  This is the same
-     * as {@link #toByteArray(InputStream, int, Endian)
-     * toByteArray(in,numberOfBytesToRead,Endian.BIG)}
+     * as {@link #toByteArray(InputStream, int, ByteOrder)
+     * toByteArray(in,numberOfBytesToRead,ByteOrder.BIG_ENDIAN)}
+     * 
+     * @param in the inputStream to convert into a byte[].  
+     * This stream is not closed when the method finishes.
+     * @param numberOfBytesToRead the number of bytes to read from the stream;
+     * if there aren't enough bytes, then this method will block until
+     * more bytes are available or until the stream reaches end of file
+     * (which will cause an IOException to be thrown).
+     * 
+     * @return a new byte array instance containing all the bytes
+     * from the given inputStream.
+     * @throws EOFException if the end of the file is reached before
+     * the given number of bytes.
+     * @throws IOException if there is a problem reading the inputStream.
      */
 	 public static byte[] toByteArray(InputStream in, int numberOfBytesToRead) throws IOException {
 	       return toByteArray(in, numberOfBytesToRead, ByteOrder.BIG_ENDIAN);
 	 }
 	 /**
      * Copy the numberOfBytesToRead of the given {@link InputStream}
-     * and return it as a byte[] using the given {@link Endian}
-     * order.
+     * and return it as a byte[] using the given {@link ByteOrder}.
+     * 
      * @param in the inputStream to convert into a byte[].  
      * This stream is not closed when the method finishes.
      * @param numberOfBytesToRead the number of bytes to read from the stream;
@@ -1100,6 +1137,7 @@ public final class IOUtil {
      * (which will cause an IOException to be thrown).
      * @param endian the {@link ByteOrder} to use; null is considered
      * {@link ByteOrder#BIG_ENDIAN} (the default).
+     * 
      * @return a new byte array instance containing all the bytes
      * from the given inputStream.
      * @throws EOFException if the end of the file is reached before
@@ -1175,7 +1213,7 @@ public final class IOUtil {
 	 *   invocation of the virtual machine. </li>
 	 *   </ol>
 	 
-	 * </p>
+	 * 
 	 * @param prefix The prefix string to be used in generating the file's name;
 	 *			 must be at least three characters long
 	 * @param suffix The suffix string to be used in generating the file's name;
@@ -1185,7 +1223,8 @@ public final class IOUtil {
 	 *			If the directory is not null and does not exist,
 	 *			then it will be created.
 	 * @return a new File object that points to this new created directory.
-	 * @throws IOException
+	 * 
+	 * @throws IOException if there is a problem creating the directory.
 	 */
 	public static File createTempDir(String prefix, String suffix, File directory) throws IOException{
 		if(directory !=null && !directory.exists()){
@@ -1208,6 +1247,7 @@ public final class IOUtil {
 	/**
 	 * Checks to make sure the given file is readable 
 	 * and throws an descriptive IOException if it's not.
+	 * 
 	 * @param f the File to verify; can not be null
 	 * @throws NullPointerException if f is null.
 	 * @throws FileNotFoundException if the file does not exist.
@@ -1248,7 +1288,8 @@ public final class IOUtil {
 	 * Create a new {@link BufferedWriter} instance
 	 * that reads the given file in the given {@link Charset}.
 	 * 
-	 * @param file the file to write to, will be overwritten.
+	 * @param file the file to write to, will be overwritten; can not be null.
+	 * 
 	 * @param charset the name of the {@link Charset} to use.
 	 * @return a new {@link BufferedWriter}.
 	 * @throws IOException if there is a problem creating the file or translating the
@@ -1263,7 +1304,8 @@ public final class IOUtil {
 	 * Create a new {@link BufferedWriter} instance
 	 * that reads the given file in the given {@link Charset}.
 	 * 
-	 * @param file the file to write to, will be overwritten.
+	 * @param out the OutputStream to write to; can not be null.
+	 * 
 	 * @param charset the name of the {@link Charset} to use.
 	 * @return a new {@link BufferedWriter}.
 	 * @throws IOException if there is a problem creating the file or translating the

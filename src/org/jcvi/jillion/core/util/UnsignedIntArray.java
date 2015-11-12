@@ -51,7 +51,7 @@ public class UnsignedIntArray {
 	
 	/**
 	 * The number of elements in the array.
-	 * @return an int always >=0.
+	 * @return an int always &ge; 0.
 	 */
 	public int getLength(){
 		return array.length;
@@ -59,9 +59,9 @@ public class UnsignedIntArray {
 	/**
 	 * Get the unsigned byte value
 	 * of the given 0-based index.
-	 * @param i the 0-based index; must be >=0 and < length
+	 * @param i the 0-based index; must be &ge; 0 and &lt; length
 	 * @return the unsigned byte value;
-	 * will always be >=0.
+	 * will always be &ge; 0.
 	 */
 	public long get(int i){
 		return IOUtil.toUnsignedInt(array[i]);
@@ -69,7 +69,7 @@ public class UnsignedIntArray {
 	/**
 	 * Set the given value to the given
 	 * 0-based index in the array.
-	 * @param i
+	 * @param i the index to put.
 	 * @param value the unsigned value to set.
 	 */
 	public void put(int i, long value){

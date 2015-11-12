@@ -232,8 +232,10 @@ public enum Nucleotide implements Residue {
      * Same as {@link #parse(char)}
      * except if the character is ASCII whitespace
      * then return null.
-     * @param base
-     * @return
+     * @param base the nucleotide base to parse.
+     * 
+     * @return the {@link Nucleotide} of {@code null}
+     * if the char does not represent a valid nucleotide.
      */
 	protected static Nucleotide parseOrNull(char base) {
 		//if it's a whitespace character return null.
@@ -338,7 +340,7 @@ public enum Nucleotide implements Residue {
      * the two {@link Nucleotide}s
      * {@link Nucleotide#Adenine} and
      * {@link Nucleotide#Guanine}.
-     * <p/>
+     * <p>
      * This method mirrors {@link #getAmbiguityFor(Collection)}
      * such that the input of one of these methods should
      * be the return value of the other.

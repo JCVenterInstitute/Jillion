@@ -59,8 +59,11 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 	/**
 	 * Create a new empty builder with the given
 	 * capacity.
+	 * 
+	 * @param initialCapacity the intial size of the builder's backing array.
+	 * 
 	 * @throws NegativeArraySizeException if initialCapacity
-	 * is <0.
+	 * is negative.
 	 */
 	public QualitySequenceBuilder(int initialCapacity){
 		this.builder = new GrowableByteArray(initialCapacity);
@@ -318,7 +321,7 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 		return this;
 	}
 	/**
-     * Inserts the given qualityscore value
+     * Inserts the given quality score value
      * to the beginning
      * of this builder's mutable sequence.
      * This is the same as calling 
@@ -326,14 +329,14 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
      * @param qualityScore the quality value to
      * be inserted at the beginning of the sequence.
      * @return this.
-     * @throws IllegalArgumentException if qualityScore < 0 or > {@link Byte#MAX_VALUE}.
+     * @throws IllegalArgumentException if qualityScore &lt; 0 or &gt; {@link Byte#MAX_VALUE}.
      */
 	public QualitySequenceBuilder prepend(int qualityScore){
 		return insert(0,PhredQuality.valueOf(qualityScore));
 	}
 	
 	/**
-     * Inserts the given qualityscores value
+     * Inserts the given quality scores value
      * to the beginning
      * of this builder's mutable sequence.
      * This is the same as calling 
@@ -341,7 +344,7 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
      * @param qualityScores the quality value to
      * be inserted at the beginning of the sequence.
      * @return this.
-     * @throws IllegalArgumentException if qualityScore < 0.
+     * @throws NullPointerException if qualityScore is null.
      */
 	public QualitySequenceBuilder prepend(byte[] qualityScores){
 		return insert(0,qualityScores);

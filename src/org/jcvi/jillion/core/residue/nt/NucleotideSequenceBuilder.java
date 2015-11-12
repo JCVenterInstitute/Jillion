@@ -95,7 +95,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * the given capacity.
      * of the array backing the {@link NucleotideSequence}
      * (will be grown if sequence gets too large)
-     * @throws IllegalArgumentException if initialCapacity < 1.
+     * @throws IllegalArgumentException if initialCapacity &lt; 1.
      */
     public NucleotideSequenceBuilder(int initialCapacity){
         if(initialCapacity<1){
@@ -206,7 +206,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      *  			.trim(range)}
      *  </pre>
      * 
-     * @param sequence the initial nucleotide sequence.
+     * @param seq the initial nucleotide sequence.
      * @param range the range of the sequence to use; can not be null.
      * @throws NullPointerException if sequence is null.
      * @throws IndexOutOfBoundsException if Range contains values outside of the possible sequence offsets.
@@ -224,6 +224,8 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @param base a single nucleotide sequence to be appended
      * to the end our builder.
      * @throws NullPointerException if base is null.
+     * 
+     * @return this.
      */
     public NucleotideSequenceBuilder append(Nucleotide base){
         if(base==null){
@@ -236,6 +238,9 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * of the builder's mutable sequence.
      * @param sequence the nucleotide sequence to be appended
      * to the end our builder.
+     * 
+     * @return this.
+     * 
      * @throws NullPointerException if sequence is null.
      */
     public NucleotideSequenceBuilder append(Iterable<Nucleotide> sequence){
@@ -250,6 +255,8 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @param sequence the nucleotide sequence to be appended
      * to the end our builder.
      * @throws NullPointerException if sequence is null.
+     * 
+     * @return this.
      */
     public NucleotideSequenceBuilder append(NucleotideSequence sequence){
         assertNotNull(sequence);
@@ -272,6 +279,9 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * 
      * @param otherBuilder the {@link NucleotideSequenceBuilder} whose current
      * nucleotides are to be appended.
+     * 
+     * @return this.
+     * 
      * @throws NullPointerException if otherBuilder is null.
      * @throws IllegalArgumentException if otherBuilder is not a NucleotideSequenceBuilder.
      */
@@ -308,8 +318,12 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * Any whitespace in the input string will be ignored.
      *  This method is able to parse both
      * '*' (consed) and '-' (TIGR) as gap characters. 
+     * 
      * @param sequence the nucleotide sequence to be appended
      * to the end our builder; any '\0' characters are ignored.
+     * 
+     * @return this.
+     * 
      * @throws NullPointerException if sequence is null.
      */
     public NucleotideSequenceBuilder append(char[] sequence){
@@ -351,10 +365,14 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * '*' (consed) and '-' (TIGR) as gap characters. 
      * If the offset = the current length then this insertion
      * is treated as an append.
+     * 
      * @param offset the GAPPED offset into this mutable sequence
      * to begin insertion.
      * @param sequence the nucleotide sequence to be 
      * inserted at the given offset.
+     * 
+     * @return this.
+     * 
      * @throws NullPointerException if sequence is null.
      * @throws IllegalArgumentException if offset is invalid.
      */
@@ -374,6 +392,9 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * </pre>
      * @param gappedRangeToBeReplaced the range of this sequence to be replaced.
      * @param replacementSeq the sequence use in this range.
+     * 
+     * @return this.
+     * 
      */
 	public NucleotideSequenceBuilder replace(Range gappedRangeToBeReplaced, NucleotideSequenceBuilder replacementSeq) {
 		delete(gappedRangeToBeReplaced);
@@ -391,6 +412,8 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * </pre>
      * @param gappedRangeToBeReplaced the range of this sequence to be replaced.
      * @param replacementSeq the sequence use in this range.
+     * 
+     * @return this.
      */
 	public NucleotideSequenceBuilder replace(Range gappedRangeToBeReplaced, char[] replacementSeq) {
 		delete(gappedRangeToBeReplaced);
@@ -409,6 +432,8 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * </pre>
      * @param gappedRangeToBeReplaced the range of this sequence to be replaced.
      * @param replacementSeq the sequence use in this range.
+     * 
+     * @return this.
      */
 	public NucleotideSequenceBuilder replace(Range gappedRangeToBeReplaced, String replacementSeq) {
 		delete(gappedRangeToBeReplaced);
@@ -427,6 +452,8 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * </pre>
      * @param gappedRangeToBeReplaced the range of this sequence to be replaced.
      * @param replacementSeq the sequence use in this range.
+     * 
+     * @return this.
      */
 	public NucleotideSequenceBuilder replace(Range gappedRangeToBeReplaced, NucleotideSequence replacementSeq) {
 		delete(gappedRangeToBeReplaced);
@@ -594,7 +621,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * inserted at the given offset.
      * @return this
      * @throws NullPointerException if sequence is null.
-     * @throws IllegalArgumentException if offset <0 or > current sequence length.
+     * @throws IllegalArgumentException if offset &lt; 0 or &gt; current sequence length.
      */
     public NucleotideSequenceBuilder insert(int offset, Iterable<Nucleotide> sequence){
         assertInsertionParametersValid(offset, sequence);   
@@ -615,7 +642,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * inserted at the given offset.
      * @return this
      * @throws NullPointerException if sequence is null.
-     * @throws IllegalArgumentException if offset <0 or > current sequence length.
+     * @throws IllegalArgumentException if offset &lt; 0 or &gt; current sequence length.
      */
     public NucleotideSequenceBuilder insert(int offset, NucleotideSequence sequence){
         assertInsertionParametersValid(offset, sequence);   
@@ -658,7 +685,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * nucleotides are to be inserted at the given offset.
      * @return this
      * @throws NullPointerException if otherBuilder is null.
-     * @throws IllegalArgumentException if offset <0 or > current sequence length or if otherBuilder is not a NucleotideSequenceBuilder.
+     * @throws IllegalArgumentException if offset &lt; 0 or &gt; current sequence length or if otherBuilder is not a NucleotideSequenceBuilder.
      */
     public NucleotideSequenceBuilder insert(int offset, ResidueSequenceBuilder<Nucleotide, NucleotideSequence> otherBuilder){
         assertNotNull(otherBuilder);
@@ -698,7 +725,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * inserted at the given offset.
      * @return this
      * @throws NullPointerException if base is null.
-     * @throws IllegalArgumentException if offset <0 or > current sequence length.
+     * @throws IllegalArgumentException if offset &lt; 0 or &gt; current sequence length.
      */
     public NucleotideSequenceBuilder insert(int offset, Nucleotide base){
     	if(base ==null){
@@ -819,7 +846,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      *  to construct a more memory efficient
      * {@link NucleotideSequence} implementation.  The given sequence and start coordinate
      * provided should be the coordinates used in the final fully built sequence.
-     * <br/>
+     * <br>
      * For example:
      * <pre>
      * 
@@ -831,7 +858,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
                 .append("N");     
      * </pre>
      * might use the part of the reference "GCCGT"
-     * that aligns to this sequence being built with only one SNP (T ->N )
+     * that aligns to this sequence being built with only one SNP ({@code T ->N} )
      * to save memory. 
      * 
      * @param referenceSequence the reference sequence 
@@ -847,7 +874,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * the length of this reference.
      * @return this.
      * @throws NullPointerException if referenceSequence is null.
-     * @throws IllegalArgumentException if gappedStartOffset is <0 or beyond the reference.
+     * @throws IllegalArgumentException if gappedStartOffset is &lt; 0 or beyond the reference.
      */
     public NucleotideSequenceBuilder setReferenceHint(NucleotideSequence referenceSequence, int gappedStartOffset){
     	codecDecider.alignedReference(new AlignedReference(referenceSequence, gappedStartOffset));
@@ -1037,7 +1064,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * Calling this method will only reverse complement bases that 
      * already exist in this builder; any additional operations
      * to insert bases will not be affected.
-     * <p/>
+     * <p>
      * For example:
      * <pre>
      *      new NucleotideSequenceBuilder("CGGC")
@@ -1075,7 +1102,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * Calling this method will only complement bases that 
      * already exist in this builder; any additional operations
      * to insert bases will not be affected.
-     * <p/>
+     * <p>
      * For example:
      * <pre>
      *      new NucleotideSequenceBuilder("ATGT")

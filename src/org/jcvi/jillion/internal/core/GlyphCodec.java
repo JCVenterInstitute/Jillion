@@ -57,7 +57,7 @@ public interface GlyphCodec<T> {
      * array.
      * @param encodedGlyphs the byte array of
      * glyphs.
-     * @return an int >=0.
+     * @return an int &ge; 0.
      */
     int decodedLengthOf(byte[] encodedGlyphs);
 }

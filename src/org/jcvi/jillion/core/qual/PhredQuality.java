@@ -32,7 +32,7 @@ import org.jcvi.jillion.internal.core.util.JillionUtil;
 /**
  * {@code PhredQuality} is a representation of
  * a Phred quality score.
- * <p/>
+ * <p>
  * PhredQuality uses the flyweight pattern to reuse the same
  * objects for the same quality score.  So  
  * @author dkatzel
@@ -128,7 +128,7 @@ public final class PhredQuality implements Comparable<PhredQuality>{
      * @param qualityScore the quality score
      * @return the {@link PhredQuality} instance that represents
      * the given qualityScore.
-     * @throws IllegalArgumentException if qualityScore < 0 or > {@link Byte#MAX_VALUE}.
+     * @throws IllegalArgumentException if qualityScore &lt; 0 or &gt; {@link Byte#MAX_VALUE}.
      */
     public static PhredQuality valueOf(int qualityScore){
     	 validate(qualityScore);
@@ -168,7 +168,7 @@ public final class PhredQuality implements Comparable<PhredQuality>{
      * but without the overhead of object construction.
      * @param qualityValue the quality value to print.
      * @return a String will never be null.
-     * @throws IllegalArgumentException if qualityScore < 0 or > {@link Byte#MAX_VALUE}.
+     * @throws IllegalArgumentException if qualityScore &lt; 0 or &gt; {@link Byte#MAX_VALUE}.
      */
     public static String toString(byte qualityValue){
     	validate(qualityValue);

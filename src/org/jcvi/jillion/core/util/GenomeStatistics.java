@@ -86,7 +86,7 @@ public final class GenomeStatistics {
 	 * that will compute the Nx value of the elements in the given stream.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #nXBuilder(double)}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link java.util.stream.Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -123,7 +123,7 @@ public final class GenomeStatistics {
 	 * Compute the N50 value of the elements in the given {@link IntStream}.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #n50Builder()}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link java.util.stream.Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -152,7 +152,7 @@ public final class GenomeStatistics {
 	 * Compute the N50 value of the elements in the given {@link LongStream}.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #n50Builder()}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link java.util.stream.Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -182,7 +182,7 @@ public final class GenomeStatistics {
 	 * Compute the N75 value of the elements in the given {@link IntStream}.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #n75Builder()}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link java.util.stream.Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -211,7 +211,7 @@ public final class GenomeStatistics {
 	 * Compute the N75 value of the elements in the given {@link LongStream}.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #n75Builder()}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link java.util.stream.Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -242,7 +242,7 @@ public final class GenomeStatistics {
 	 * Compute the N90 value of the elements in the given {@link IntStream}.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #n90Builder()}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link java.util.stream.Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -271,7 +271,7 @@ public final class GenomeStatistics {
 	 * Compute the N90 value of the elements in the given {@link LongStream}.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #n90Builder()}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link java.util.stream.Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -302,9 +302,9 @@ public final class GenomeStatistics {
 	/**
 	 * Create and execute a {@link java.util.stream.Collector}
 	 * that will compute the NGx value of the elements in the given stream.  The end result
-	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ngXBuilder(double)}
+	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ngXBuilder(long, double)}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link java.util.stream.Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -343,7 +343,7 @@ public final class GenomeStatistics {
 	 * that will compute the NGx value of the elements in the given stream.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ngXBuilder(double)}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link java.util.stream.Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -386,7 +386,7 @@ public final class GenomeStatistics {
 	 * Compute the NG50 value of the elements in the given {@link IntStream}.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ng50Builder(long)}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link java.util.stream.Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -416,7 +416,7 @@ public final class GenomeStatistics {
 	 * Compute the NG50 value of the elements in the given {@link LongStream}.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ng50Builder(long)}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link java.util.stream.Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -448,7 +448,7 @@ public final class GenomeStatistics {
 	 * Compute the NG75 value of the elements in the given {@link IntStream}.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ng75Builder(int)}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link java.util.stream.Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -462,7 +462,7 @@ public final class GenomeStatistics {
 	 * a value, or is empty if there was an error computing it.
 	 * 
 	 * @throws NullPointerException if stream is null.
-	 * @throws IllegalArgumentException if genomeLength < 1.
+	 * @throws IllegalArgumentException if genomeLength &lt; 1.
 	 * 
 	 * @apiNote the reason this method exists is because Java 8 collectors
 	 * on primitives doesn't have a catch all collect(Collector) method
@@ -476,9 +476,9 @@ public final class GenomeStatistics {
 	}
 	/**
 	 * Compute the NG75 value of the elements in the given {@link LongStream}.  The end result
-	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ng75Builder(int)}
+	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ng75Builder(long)}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link java.util.stream.Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -509,7 +509,7 @@ public final class GenomeStatistics {
 	 * Compute the NG90 value of the elements in the given {@link IntStream}.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ng90Builder(long)}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link java.util.stream.Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -539,7 +539,7 @@ public final class GenomeStatistics {
 	 * Compute the NG90 value of the elements in the given {@link LongStream}.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ng90Builder(long)}
 	 * and then manually adding each element to the stream to the builder then returning
-	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link java.util.stream.Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -945,7 +945,7 @@ public final class GenomeStatistics {
 	 * and compute the NG50 value.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ng50Builder(long)}
 	 * and then manually adding each element of the stream to the builder then returning
-	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link java.util.stream.Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -955,10 +955,12 @@ public final class GenomeStatistics {
 	 * @return an {@link OptionalInt} which either has
 	 * a value, or is empty if there was an error computing it.
 	 * 
-	 * @throws IllegalArgumentException if genomeLength < 1.
+	 * @throws IllegalArgumentException if genomeLength &lt; 1.
 	 * 
 	 * 
 	 * @implNote This is the same as {@link #ngXCollector(long, double) ngX(genomeLength, .5D)}
+	 * 
+	 * @param <T> the type of Number to be collected (usually ints or longs)
 	 */
 	public static<T extends Number> Collector<T, GenomeStatisticsBuilder, OptionalInt> ng50Collector(long genomeLength){
 		return ngXCollector(genomeLength, .5D);
@@ -968,7 +970,7 @@ public final class GenomeStatistics {
 	 * and compute the NG90 value.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ng90Builder(long)}
 	 * and then manually adding each element of the stream to the builder then returning
-	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link java.util.stream.Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -978,8 +980,9 @@ public final class GenomeStatistics {
 	 * @return an {@link OptionalInt} which either has
 	 * a value, or is empty if there was an error computing it.
 	 * 
-	 * @throws IllegalArgumentException if genomeLength < 1.
+	 * @throws IllegalArgumentException if genomeLength &lt; 1.
 	 * 
+	 * @param <T> the type of Number to be collected (usually ints or longs)
 	 * 
 	 * @implNote This is the same as {@link #ngXCollector(long, double) ngX(genomeLength, .9D)}
 	 */
@@ -991,7 +994,7 @@ public final class GenomeStatistics {
 	 * and compute the NG75 value.  The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ng75Builder(long)}
 	 * and then manually adding each element of the stream to the builder then returning
-	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link java.util.stream.Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -1001,8 +1004,9 @@ public final class GenomeStatistics {
 	 * @return an {@link OptionalInt} which either has
 	 * a value, or is empty if there was an error computing it.
 	 * 
-	 * @throws IllegalArgumentException if genomeLength < 1.
+	 * @throws IllegalArgumentException if genomeLength &lt; 1.
 	 * 
+	 * @param <T> the type of Number to be collected (usually ints or longs)
 	 * 
 	 * @implNote This is the same as {@link #ngXCollector(long, double) ngX(genomeLength, .75D)}
 	 */
@@ -1017,7 +1021,7 @@ public final class GenomeStatistics {
 	 * The end result
 	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ngXBuilder(long)}
 	 * and then manually adding each element of the stream to the builder then returning
-	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link java.util.stream.Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -1031,8 +1035,10 @@ public final class GenomeStatistics {
 	 * @return an {@link OptionalInt} which either has
 	 * a value, or is empty if there was an error computing it.
 	 * 
-	 * @throws IllegalArgumentException if genomeLength < 1 or
-	 * percentage >= 1 or percentage <= 0.
+	 * @throws IllegalArgumentException if genomeLength &lt; 1 or
+	 * percentage &ge; 1 or percentage &le; 0.
+	 * 
+	 * @param <T> the type of Number to be collected (usually ints or longs)
 	 * 
 	 */
 	public static <T extends Number> Collector<T, GenomeStatisticsBuilder, OptionalInt> ngXCollector(long genomeLength, double percentage){
@@ -1081,9 +1087,9 @@ public final class GenomeStatistics {
 	/**
 	 * Collect all the elements of a Stream of Numbers
 	 * and compute the N50 value.  The end result
-	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #n50Builder(long)}
+	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #n50Builder()}
 	 * and then manually adding each element of the stream to the builder then returning
-	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link java.util.stream.Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -1091,10 +1097,12 @@ public final class GenomeStatistics {
 	 * @return an {@link OptionalInt} which either has
 	 * a value, or is empty if there was an error computing it.
 	 * 
-	 * @throws IllegalArgumentException if genomeLength < 1.
+	 * @throws IllegalArgumentException if genomeLength &lt; 1.
 	 * 
 	 * 
-	 * @implNote This is the same as {@link #nXCollector(long, double) ngX(.5D)}
+	 * @implNote This is the same as {@link #nXCollector(double) ngX(.5D)}
+	 * 
+	 * @param <T> the type of Number to be collected (usually ints or longs)
 	 */
 	public static <T extends Number> Collector<T, GenomeStatisticsBuilder, OptionalInt> n50Collector(){
 		return nXCollector(.5D);
@@ -1102,9 +1110,9 @@ public final class GenomeStatistics {
 	/**
 	 * Collect all the elements of a Stream of Numbers
 	 * and compute the N90 value.  The end result
-	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #n90Builder(long)}
+	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #n90Builder()}
 	 * and then manually adding each element of the stream to the builder then returning
-	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link java.util.stream.Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -1112,10 +1120,12 @@ public final class GenomeStatistics {
 	 * @return an {@link OptionalInt} which either has
 	 * a value, or is empty if there was an error computing it.
 	 * 
-	 * @throws IllegalArgumentException if genomeLength < 1.
+	 * @throws IllegalArgumentException if genomeLength &lt; 1.
 	 * 
 	 * 
 	 * @implNote This is the same as {@link #nXCollector(long, double) ngX(.9D)}
+	 * 
+	 * @param <T> the type of Number to be collected (usually ints or longs)
 	 */
 	public static <T extends Number> Collector<T, GenomeStatisticsBuilder, OptionalInt> n90Collector(){
 		return nXCollector(.9D);
@@ -1123,9 +1133,9 @@ public final class GenomeStatistics {
 	/**
 	 * Collect all the elements of a Stream of Numbers
 	 * and compute the N75 value.  The end result
-	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #n75Builder(long)}
+	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #n75Builder()}
 	 * and then manually adding each element of the stream to the builder then returning
-	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link java.util.stream.Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -1133,10 +1143,12 @@ public final class GenomeStatistics {
 	 * @return an {@link OptionalInt} which either has
 	 * a value, or is empty if there was an error computing it.
 	 * 
-	 * @throws IllegalArgumentException if genomeLength < 1.
+	 * @throws IllegalArgumentException if genomeLength &lt; 1.
 	 * 
 	 * 
 	 * @implNote This is the same as {@link #nXCollector(long, double) ngX(.55D)}
+	 * 
+	 * @param <T> the type of Number to be collected (usually ints or longs)
 	 */
 	public static <T extends Number> Collector<T, GenomeStatisticsBuilder, OptionalInt> n75Collector(){
 		return nXCollector(.75D);
@@ -1148,9 +1160,9 @@ public final class GenomeStatistics {
 	 * to compute N50, the percentage value is {@code 0.5}.
 	 * 
 	 * The end result
-	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #nXBuilder(long)}
+	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #nXBuilder(double)}
 	 * and then manually adding each element of the stream to the builder then returning
-	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link Stream}
+	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link java.util.stream.Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
 	 * parallel stream.
 	 * 
@@ -1163,7 +1175,9 @@ public final class GenomeStatistics {
 	 * a value, or is empty if there was an error computing it.
 	 * 
 	 * @throws IllegalArgumentException if
-	 * percentage >= 1 or percentage <= 0.
+	 * percentage &ge; 1 or percentage &le; 0.
+	 * 
+	 * @param <T> the type of Number to be collected (usually ints or longs)
 	 * 
 	 */
 	public static <T extends Number> Collector<T, GenomeStatisticsBuilder, OptionalInt> nXCollector( double percentage){

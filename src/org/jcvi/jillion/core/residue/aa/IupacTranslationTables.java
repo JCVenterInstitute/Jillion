@@ -106,8 +106,8 @@ public enum IupacTranslationTables implements TranslationTable{
 	 * Nucleotide Translation table used by
 	 * <ul>
 	 * <li>Ciliata - Oxytricha and Stylonycha, Paramecium, Tetrahymena, Oxytrichidae etc. </li>
-	 * </li>Dasycladaceae - Acetabulara and Batophora</li>
-	 * </li>Diplomonadida - Scope: Hexamita</li>
+	 * <li>Dasycladaceae - Acetabulara and Batophora</li>
+	 * <li>Diplomonadida - Scope: Hexamita</li>
 	 * </ul>
 	 */
 	CILIATE_DASYCLADACEAN_AND_HEXAMITA(6){

@@ -60,7 +60,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
      * @param initialCapacity the initial capacity 
      * of the array backing the {@link ProteinSequence}
      * (will be grown if sequence gets too large)
-     * @throws IllegalArgumentException if initialCapacity < 1.
+     * @throws IllegalArgumentException if initialCapacity &lt; 1.
      */
 	public ProteinSequenceBuilder(int initialCapacity){
 		builder = new GrowableByteArray(initialCapacity);
@@ -142,15 +142,17 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	}
 
 	/**
-     * Appends the current contents of the given {@link NucleotideSequenceBuilder} to the end
+     * Appends the current contents of the given {@link ProteinSequenceBuilder} to the end
      * of the builder's mutable sequence.  Any further modifications to the passed in builder
      * will not be reflected in this builder.  This is an equivalent but more efficient way operation
      * as {@code this.append(otherBuilder.build())}
      * 
-     * @param otherBuilder the {@link NucleotideSequenceBuilder} whose current
+     * @param otherBuilder the {@link ProteinSequenceBuilder} whose current
      * nucleotides are to be appended.
+     * 
+     * @return this.
+     * 
      * @throws NullPointerException if otherBuilder is null.
-     * @throws IllegalArgumentException if otherBuilder is not a NucleotideSequenceBuilder.
      */
 	public ProteinSequenceBuilder append(
 			ProteinSequenceBuilder otherBuilder) {

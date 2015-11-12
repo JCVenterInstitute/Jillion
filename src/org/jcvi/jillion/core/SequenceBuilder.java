@@ -124,8 +124,9 @@ public interface SequenceBuilder <T, S extends Sequence<T>> extends Builder<S> ,
     * from the current mutable elements.  This method
     * does not destroy any temp data so this method
     * could be called multiple times each time 
-    * creating a new {@link ResidueSequenceBuilder}.
-    * @return a new residue Sequence never null
+    * creating a new {@link Sequence}.
+    * 
+    * @return a new Sequence; will never null
     * but may be empty.
     */
     @Override

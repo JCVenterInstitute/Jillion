@@ -135,13 +135,20 @@ public enum AminoAcid implements Residue{
     /**
     * Get the full name of this Amino Acid, the name may 
     * contain spaces if the full name is more than 1 word.
+    * (ex "Aspartic Acid").
+    * 
+    * @return the full name of this amino acid.
     */
     public String getName() {
         return name;
     }
     
     
-    
+    /**
+     * Is this amino acid a gap?
+     * 
+     * @return {@code false} unless this is {@link AminoAcid#Gap}.
+     */
     @Override
 	public boolean isGap() {
 		return false;
