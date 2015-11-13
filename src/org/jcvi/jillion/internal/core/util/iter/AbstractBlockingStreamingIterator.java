@@ -189,7 +189,7 @@ public abstract class AbstractBlockingStreamingIterator<T> implements StreamingI
     /**
      * 
     * {@inheritDoc}
-    * <p/>
+    * <p>
     * Not supported.
     * @throws UnsupportedOperationException always.
      */
@@ -203,6 +203,9 @@ public abstract class AbstractBlockingStreamingIterator<T> implements StreamingI
     */
     @Override
     public final void close(){
+    	if(isClosed){
+    		return;
+    	}
         isClosed=true;
         nextRecord=endOfFileToken;
         queue.clear();	        
@@ -211,8 +214,8 @@ public abstract class AbstractBlockingStreamingIterator<T> implements StreamingI
     private void setErroredOut(RuntimeException uncaughtException){
 		AbstractBlockingStreamingIterator.this.uncaughtException = uncaughtException;
 		nextRecord=endOfFileToken;
+		
 		queue.clear();
-		queue.add(endOfFileToken);
     }
 	/**
 	 * Safety-net to close the iterator
