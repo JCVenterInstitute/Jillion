@@ -29,11 +29,11 @@ import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.InputStreamSupplier;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
-import org.jcvi.jillion.fasta.AbstractFastaFileDataStoreBuilder;
 import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.internal.fasta.aa.DefaultProteinFastaDataStore;
 import org.jcvi.jillion.internal.fasta.aa.IndexedProteinFastaFileDataStore;
 import org.jcvi.jillion.internal.fasta.aa.LargeProteinFastaFileDataStore;
+import org.jcvi.jillion.shared.fasta.AbstractFastaFileDataStoreBuilder;
 
 
 /**

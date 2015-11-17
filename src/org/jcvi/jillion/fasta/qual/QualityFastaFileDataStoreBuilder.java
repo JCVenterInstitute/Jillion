@@ -29,10 +29,10 @@ import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.InputStreamSupplier;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
-import org.jcvi.jillion.fasta.AbstractFastaFileDataStoreBuilder;
 import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.internal.fasta.qual.IndexedQualityFastaFileDataStore;
 import org.jcvi.jillion.internal.fasta.qual.LargeQualityFastaFileDataStore;
+import org.jcvi.jillion.shared.fasta.AbstractFastaFileDataStoreBuilder;
 
 /**
  * {@code QualityFastaFileDataStoreBuilder}

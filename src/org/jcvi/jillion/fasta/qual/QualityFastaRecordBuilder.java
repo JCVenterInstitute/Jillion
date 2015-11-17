@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
-import org.jcvi.jillion.fasta.AbstractFastaRecordBuilder;
+import org.jcvi.jillion.shared.fasta.AbstractFastaRecordBuilder;
 /**
  * {@code QualityFastaRecordBuilder} is a factory class
  * that makes instances of {@link QualityFastaRecord}s.

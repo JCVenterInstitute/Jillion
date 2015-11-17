@@ -23,9 +23,9 @@ package org.jcvi.jillion.fasta.aa;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 import org.jcvi.jillion.core.residue.aa.ProteinSequenceBuilder;
-import org.jcvi.jillion.fasta.AbstractFastaRecordBuilder;
 import org.jcvi.jillion.internal.fasta.aa.CommentedProteinFastaRecord;
 import org.jcvi.jillion.internal.fasta.aa.UnCommentedProteinFastaRecord;
+import org.jcvi.jillion.shared.fasta.AbstractFastaRecordBuilder;
 /**
  * {@code ProteinFastaRecordBuilder} is a Builder class
  * that makes instances of {@link AminoAcidSequenceFastaRecord}s.

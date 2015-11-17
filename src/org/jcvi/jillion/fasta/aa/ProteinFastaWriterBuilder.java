@@ -30,11 +30,11 @@ import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.AbstractResidueFastaWriter;
 import org.jcvi.jillion.fasta.FastaWriter;
 import org.jcvi.jillion.internal.fasta.InMemorySortedFastaWriter;
 import org.jcvi.jillion.internal.fasta.TmpDirSortedFastaWriter;
 import org.jcvi.jillion.internal.fasta.aa.LargeProteinFastaFileDataStore;
+import org.jcvi.jillion.shared.fasta.AbstractResidueFastaWriter;
 /**
  * {@code ProteinFastaWriterBuilder} is a Builder
  * class that will create a new instance of 

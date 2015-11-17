@@ -18,7 +18,7 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.fasta;
+package org.jcvi.jillion.shared.fasta;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +27,8 @@ import java.nio.charset.Charset;
 
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequence;
+import org.jcvi.jillion.fasta.FastaRecord;
+import org.jcvi.jillion.fasta.FastaWriter;
 
 /**
  * {@code AbstractResidueFastaWriter} is an abstract
