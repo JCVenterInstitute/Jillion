@@ -17,7 +17,7 @@
 
 	<properties>
 		<powermock.version>1.6.2</powermock.version>
-		
+		<additionalparam>-Xdoclint:none</additionalparam>
 		 <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     	<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
