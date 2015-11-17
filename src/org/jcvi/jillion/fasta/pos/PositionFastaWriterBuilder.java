@@ -29,11 +29,11 @@ import java.util.Comparator;
 import org.jcvi.jillion.core.pos.Position;
 import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.AbstractFastaRecordWriter;
 import org.jcvi.jillion.fasta.FastaWriter;
-import org.jcvi.jillion.fasta.AbstractFastaRecordWriter.AbstractBuilder;
 import org.jcvi.jillion.internal.fasta.InMemorySortedFastaWriter;
 import org.jcvi.jillion.internal.fasta.TmpDirSortedFastaWriter;
+import org.jcvi.jillion.shared.fasta.AbstractFastaRecordWriter;
+import org.jcvi.jillion.shared.fasta.AbstractFastaRecordWriter.AbstractBuilder;
 /**
  * {@code PositionFastaWriterBuilder} will create
  * new {@link PositionFastaWriter} instance

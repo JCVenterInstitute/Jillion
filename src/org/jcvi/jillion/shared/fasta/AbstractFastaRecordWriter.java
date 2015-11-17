@@ -18,7 +18,7 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.fasta;
+package org.jcvi.jillion.shared.fasta;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
@@ -35,6 +35,8 @@ import java.util.Objects;
 
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.fasta.FastaRecord;
+import org.jcvi.jillion.fasta.FastaWriter;
 import org.jcvi.jillion.internal.fasta.FastaUtil;
 
 

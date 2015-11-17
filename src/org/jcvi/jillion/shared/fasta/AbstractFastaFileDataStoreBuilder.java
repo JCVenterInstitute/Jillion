@@ -18,7 +18,7 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.fasta;
+package org.jcvi.jillion.shared.fasta;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +28,10 @@ import java.util.function.Predicate;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.InputStreamSupplier;
+import org.jcvi.jillion.fasta.FastaDataStore;
+import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.fasta.FastaParser;
+import org.jcvi.jillion.fasta.FastaRecord;
 /**
  * Abstract class that creates a Builder to make a {@link FastaDataStore} instance.
  * Subclasses should override the abstract methods to make the correct type of datastore.

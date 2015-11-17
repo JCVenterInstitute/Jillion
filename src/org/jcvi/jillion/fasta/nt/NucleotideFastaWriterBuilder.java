@@ -39,11 +39,11 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.JoinedStringBuilder;
 import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.AbstractResidueFastaWriter;
 import org.jcvi.jillion.fasta.FastaWriter;
 import org.jcvi.jillion.internal.fasta.FastaUtil;
 import org.jcvi.jillion.internal.fasta.InMemorySortedFastaWriter;
 import org.jcvi.jillion.internal.fasta.TmpDirSortedFastaWriter;
+import org.jcvi.jillion.shared.fasta.AbstractResidueFastaWriter;
 /**
  * {@code NucleotideFastaWriterBuilder} is a Builder
  * class that will create a new instance of 
