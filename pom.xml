@@ -195,7 +195,7 @@
 				</executions>
 				<configuration>
 					<instructions>
-						<Private-Package>org.jcvi.jillion.internal.*</Private-Package>
+					
 						<Implementation-Build>${buildNumber}</Implementation-Build>
 					</instructions>
 				</configuration>		
