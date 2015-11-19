@@ -90,7 +90,7 @@ public abstract class AbstractTigrContigBuilderVisitor implements TigrContigVisi
 		
 	}
 	/**
-	 * Calls {@link #visitContig(TigrContigBuilder)}
+	 * Calls visitContig(builder)
 	 * with the populated internal {@link TigrContigBuilder}.
 	 * @throws IllegalStateException if {@link #visitConsensus(NucleotideSequence)}
 	 * has not yet been called.

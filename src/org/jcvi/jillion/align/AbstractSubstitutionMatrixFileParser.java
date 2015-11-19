@@ -32,7 +32,7 @@ import org.jcvi.jillion.core.residue.Residue;
  * the  {@link SubstitutionMatrix} text files
  * provided by NCBI.
  * @author dkatzel
- * @see ftp://ftp.ncbi.nlm.nih.gov/blast/matrices
+ * @see <a href="ftp://ftp.ncbi.nlm.nih.gov/blast/matrices">NCBI Blast Matrices FTP</a>
  */
 abstract class AbstractSubstitutionMatrixFileParser<R extends Residue> implements SubstitutionMatrix<R> {
 

@@ -82,12 +82,9 @@ public interface AlnGroupVisitor {
     		return myChar;
     	}
     }
-	 /**
-     * End of the current  group of aligned reads is about to be
-     * visited.  If there are more groups, then the next method to be
-     * visited will be {@link #visitBeginGroup()}
-     * or {@link #visitEndOfFile()} if the file has been
-     * completely parsed.
+
+    /**
+     * End of the current  group of aligned reads.
      */
     void visitEndGroup();
     /**

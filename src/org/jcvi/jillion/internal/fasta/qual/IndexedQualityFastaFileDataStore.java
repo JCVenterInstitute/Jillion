@@ -46,7 +46,7 @@ import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 /**
  * {@code IndexedProteinFastaFileDataStore} is an implementation of 
  * {@link QualityFastaDataStore} that only stores an index containing
- * file offsets to the various {@link FastaRecord}s contained
+ * file offsets to the various {@link QualityFastaRecord}s contained
  * inside the fasta file.  This implementation provides random access
  * to large files taking up much memory.  The downside is each fasta record
  * must be seeked to and then re-parsed each time and the fasta file must exist and not
@@ -65,7 +65,7 @@ public final class IndexedQualityFastaFileDataStore{
 	 * for.
 	 * @return a new instance of {@link QualityFastaDataStore};
 	 * never null.
-	 * @throws FileNotFoundException if the input fasta file does not exist.
+	 * @throws IOException if the input fasta file does not exist.
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
 	public static QualityFastaDataStore create(File fastaFile) throws IOException{
@@ -75,13 +75,13 @@ public final class IndexedQualityFastaFileDataStore{
 	/**
 	 * Creates a new {@link QualityFastaDataStore}
 	 * instance using the given fastaFile.
-	 * @param fastaFile the fasta to create an {@link QualityFastaDataStore}
+	 * @param fastaFile the fasta to use to create an {@link QualityFastaDataStore}
 	 * for.
-	 * @param filter the {@link DataStoreFilter} instance used to filter out the fasta records;
+	 * @param filter the {@link Predicate} instance used to filter out the fasta records;
 	 * can not be null.
 	 * @return a new instance of {@link QualityFastaDataStore};
 	 * never null.
-	 * @throws FileNotFoundException if the input fasta file does not exist.
+	 * @throws IOException if the input fasta file does not exist or there is a problem parsing it.
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
 	public static QualityFastaDataStore create(File fastaFile, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter) throws IOException{
@@ -92,13 +92,13 @@ public final class IndexedQualityFastaFileDataStore{
 	/**
 	 * Creates a new {@link QualityFastaDataStore}
 	 * instance using the given fastaFile.
-	 * @param fastaFile the fasta to create an {@link QualityFastaDataStore}
+	 * @param parser the {@link FastaParser} to use to create an {@link QualityFastaDataStore}
 	 * for.
-	 * @param filter the {@link DataStoreFilter} instance used to filter out the fasta records;
+	 * @param filter the {@link Predicate} instance used to filter out the fasta records;
 	 * can not be null.
 	 * @return a new instance of {@link QualityFastaDataStore};
 	 * never null.
-	 * @throws FileNotFoundException if the input fasta file does not exist.
+	 * @throws IOException if the input fasta file does not exist or there is a problem parsing it.
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
 	public static QualityFastaDataStore create(FastaParser parser, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter) throws IOException{

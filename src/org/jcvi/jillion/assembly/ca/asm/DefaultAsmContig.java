@@ -28,6 +28,7 @@ import java.util.Map;
 import org.jcvi.jillion.assembly.AssembledReadBuilder;
 import org.jcvi.jillion.assembly.Contig;
 import org.jcvi.jillion.assembly.ContigBuilder;
+import org.jcvi.jillion.assembly.consed.ace.AceContig;
 import org.jcvi.jillion.assembly.util.GapQualityValueStrategy;
 import org.jcvi.jillion.assembly.util.Slice;
 import org.jcvi.jillion.assembly.util.SliceMap;

@@ -22,6 +22,7 @@ package org.jcvi.jillion.core.residue.aa;
 
 import java.io.Serializable;
 
+import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.ResidueSequence;
 
 /**

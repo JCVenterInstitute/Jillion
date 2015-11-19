@@ -24,13 +24,14 @@ import java.util.Date;
 
 import org.jcvi.jillion.core.Range;
 /**
- * {@code AbstractAceConsensusTagVisitor} is an
+ * An
  * {@link AceConsensusTagVisitor} that collects the visit calls
  * for a single consensus tag and
  * populates an
  * {@link ConsensusAceTag} instance  
  * which will be sent to subclasses when it is fully built
- * via {@link #visitConsensusTag(ConsensusAceTag)}.
+ * via visitConsensusTag.
+ * 
  * @author dkatzel
  *
  */

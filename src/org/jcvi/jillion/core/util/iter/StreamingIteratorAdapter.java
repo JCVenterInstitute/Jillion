@@ -60,11 +60,11 @@ final class StreamingIteratorAdapter<T> implements StreamingIterator<T>{
     /**
     * Close this iterator.  If the adapted
     * iterator happens to be a {@link StreamingIterator}
-    * before adaption, then its {@link #close()}
+    * before adaption, then its {@link StreamingIterator#close()}
     * method will be called too.  This will
-    * force this iterator's {@link #hasNext()}
+    * force this iterator's {@link StreamingIterator#hasNext()}
     * to return {@code false}
-    * and {@link #next()} to throw
+    * and {@link StreamingIterator#next()} to throw
     * a {@link NoSuchElementException}
     * as if there were no more elements
     * to iterate over.

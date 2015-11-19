@@ -41,7 +41,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
  * that collects all the information about a single
  * phd record.
  * Subclasses are required to implement the abstract
- * method {@link #visitPhd(String, Integer, NucleotideSequence, QualitySequence, PositionSequence, Map, List, List)}
+ * method visitPhd(...)
  * which will be called when all the information has been collected
  * (when {@link #visitEnd()} is called).
  * 

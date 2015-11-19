@@ -31,10 +31,6 @@ final class DefaultCasAlignmentRegion implements CasAlignmentRegion{
     private final long length;
     
     
-    /**
-     * @param type
-     * @param length
-     */
     public DefaultCasAlignmentRegion(CasAlignmentRegionType type, long length) {
         if(type ==null){
             throw new NullPointerException("type can not be null");

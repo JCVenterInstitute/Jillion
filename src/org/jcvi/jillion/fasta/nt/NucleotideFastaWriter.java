@@ -36,7 +36,7 @@ public interface NucleotideFastaWriter extends FastaWriter<Nucleotide, Nucleotid
 	/**
 	 * Write the given {@link NucleotideFastaRecord}
 	 * (including the optionalComment if there is one).
-	 * @param record the {@link NucleotideSequenceFastaRecord}
+	 * @param record the {@link NucleotideFastaRecord}
 	 * to write, can not be null.
 	 * @throws IOException if there is a problem writing out the record.
 	 * @throws NullPointerException if record is null.

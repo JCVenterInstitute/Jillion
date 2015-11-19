@@ -22,6 +22,7 @@ package org.jcvi.jillion.assembly.clc.cas.consed;
 
 import java.io.File;
 import java.util.Date;
+import java.util.Iterator;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.FileUtil;
@@ -33,7 +34,7 @@ import org.jcvi.jillion.fasta.qual.QualityFastaDataStore;
 import org.jcvi.jillion.fasta.qual.QualityFastaFileDataStoreBuilder;
 import org.jcvi.jillion.fasta.qual.QualityFastaRecord;
 /**
- * {@code QualFastaConsedPhdAdaptedIterator} is a {@link FastaConsedPhdAdaptedIterator}
+ * An {@link Iterator}
  * that will try to find a corresponding qual file
  * and look up the quality scores.
  * @author dkatzel

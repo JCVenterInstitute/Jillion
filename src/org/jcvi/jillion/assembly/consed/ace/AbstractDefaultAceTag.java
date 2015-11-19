@@ -34,12 +34,7 @@ abstract class AbstractDefaultAceTag implements AceTag{
     private final Date creationDate;
     private final String data;
     
-    /**
-     * @param type
-     * @param creator
-     * @param creationDate
-     * @param data
-     */
+   
     public AbstractDefaultAceTag(String type, String creator,
             Date creationDate, String data) {
     	if(type ==null){

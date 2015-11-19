@@ -32,10 +32,6 @@ class DefaultConsensusResult implements ConsensusResult {
     private final Nucleotide consensus;
     private final int consensusQuality;
     
-    /**
-     * @param consensus
-     * @param consensusQuality
-     */
     public DefaultConsensusResult(Nucleotide consensus,
             int consensusQuality) {
         this.consensus = consensus;

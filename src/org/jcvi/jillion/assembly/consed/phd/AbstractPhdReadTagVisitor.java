@@ -24,13 +24,13 @@ import java.util.Date;
 
 import org.jcvi.jillion.core.Range;
 /**
- * {@code AbstractPhdReadTagVisitor} is a {@link PhdReadTagVisitor}
+ * A {@link PhdReadTagVisitor}
  * that collects the information about a single read tag
- * and then calls {@link #visitPhdReadTag(String, String, Range, Date, String, String)}
+ * and then calls the protected method
+ * visitPhdReadTag()
  * when the entire tag has been visited (this is known because {@link #visitEnd()}
  * as been called).
- * Subclasses are required to implement the abstract class 
- * {@link #visitPhdReadTag(String, String, Range, Date, String, String)}
+ * Subclasses are required to implement the abstract method 
  * to handle the completely visited read tag.
  * 
  * @author dkatzel

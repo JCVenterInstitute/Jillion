@@ -112,7 +112,7 @@ public class PositionFastaFileDataStoreBuilder {
      * performance since the position values don't have to be parsed
      * on reads that aren't accepted by the id filter.
 	 * 
-	 * @see #filterRecord(Predicate)
+	 * @see #filterRecords(Predicate)
 	 */
 	public PositionFastaFileDataStoreBuilder filter(Predicate<String> filter) {
 		if(filter==null){
@@ -167,8 +167,10 @@ public class PositionFastaFileDataStoreBuilder {
      * Create a new {@link PositionFastaDataStore} object
      * from the records in the provided fasta file
      * but only including the records that pass the filters.
-     * @return
-     * @throws IOException
+     * 
+     * @return a new {@link PositionFastaDataStore}; will never be null.
+     * 
+     * @throws IOException if there is a problem parsing the input fasta data.
      */
 	public PositionFastaDataStore build() throws IOException{
 		if(hint == DataStoreProviderHint.ITERATION_ONLY){

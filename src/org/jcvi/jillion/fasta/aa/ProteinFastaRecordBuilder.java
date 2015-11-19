@@ -28,7 +28,7 @@ import org.jcvi.jillion.internal.fasta.aa.UnCommentedProteinFastaRecord;
 import org.jcvi.jillion.shared.fasta.AbstractFastaRecordBuilder;
 /**
  * {@code ProteinFastaRecordBuilder} is a Builder class
- * that makes instances of {@link AminoAcidSequenceFastaRecord}s.
+ * that makes instances of {@link ProteinFastaRecord}s.
  * Depending on the different parameters, this builder might
  * choose to return different implementations.
  * @author dkatzel

@@ -44,7 +44,6 @@ public class ResourceHelper{
      * Construct a new {@link ResourceHelper} using
      * the given class's ClassLoader to as the file server.
      * @param clazz the class all paths will be relative from.
-     * @throws IOException 
      */
     public ResourceHelper(Class<?> clazz){
     	this.clazz = clazz;

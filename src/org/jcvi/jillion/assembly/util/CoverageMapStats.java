@@ -27,7 +27,7 @@ package org.jcvi.jillion.assembly.util;
  * {@link CoverageMap}.
  * 
  *  @implNote This implementation is not thread safe. However, it is safe to use
- * {@link CoverageMapStatsCollector#CoverageMapStatsCollector()} on a parallel stream, because the parallel
+ *   on a parallel stream, because the parallel
  * implementation of {@link java.util.stream.Stream#collect Stream.collect()}
  * provides the necessary partitioning, isolation, and merging of results for
  * safe and efficient parallel execution.

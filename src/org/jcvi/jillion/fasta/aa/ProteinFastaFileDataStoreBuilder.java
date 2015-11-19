@@ -63,7 +63,7 @@ public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDat
      * Create a new Builder instance of 
      * which will build a {@link ProteinFastaDataStore} for the given
      * fasta file.
-     * @param fastaFile the fasta file make a {@link FastaDataStore} with. 
+     * @param fastaFile the fasta file make a {@link ProteinFastaDataStore} with. 
      * @throws IOException if the fasta file does not exist, or can not be read.
      * @throws NullPointerException if fastaFile is null.
      */
@@ -76,7 +76,7 @@ public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDat
      * that will build a {@link ProteinFastaDataStore} from the
      * protein fasta encoded data from the given {@link InputStreamSupplier}.
      * 
-     * @param inputStreamSupplier the {@link InputStreamSupplier} to use
+     * @param supplier the {@link InputStreamSupplier} to use
      * to get the inputStreams of fasta encoded data.
      * @throws NullPointerException if the inputStreamSupplier is null.
      * 

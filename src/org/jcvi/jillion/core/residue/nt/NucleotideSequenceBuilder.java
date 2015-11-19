@@ -1616,11 +1616,12 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     	
     	
     	/**
-    	 * Convenience construcutor that allocates
+    	 * Convenience constructor that allocates
     	 * the gap Offsets and bitSet fields to the needed
     	 * sizes
     	 * since we know those sizes before processing. 
-    	 * @param sequence
+    	 * @param sequence the sequence to use.
+    	 * 
     	 */
     	public NewValues(NucleotideSequence sequence){
     		nOffsets = new GrowableIntArray(12);

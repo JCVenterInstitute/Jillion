@@ -32,7 +32,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
  * to visit a single contig in an ASM file.
  * 
  * @author dkatzel
- * @see AsmVisitor#visitContig(AsmVisitorCallback, String, long, boolean, NucleotideSequence, QualitySequence, long, long, long)
+ * @see AsmVisitor#visitContig(org.jcvi.jillion.assembly.ca.asm.AsmVisitor.AsmVisitorCallback, String, long, boolean, NucleotideSequence, org.jcvi.jillion.core.qual.QualitySequence, long, long, long)
  * 
  */
 public interface AsmContigVisitor{

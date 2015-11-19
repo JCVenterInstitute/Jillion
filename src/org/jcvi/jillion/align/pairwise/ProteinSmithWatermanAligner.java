@@ -49,7 +49,7 @@ final class ProteinSmithWatermanAligner  extends AbstractSmithWatermanAligner<Am
 	 * local alignment algorithm.
 	 * @param query the query {@link ProteinSequence} to align;
 	 * can not be null.
-	 * @param subject the subject {@link NucleotideSequence} to align;
+	 * @param subject the subject {@link ProteinSequence} to align;
 	 * can not be null.
 	 * @param matrix the {@link SubstitutionMatrix} to use; can not be null.
 	 * @param openGapPenalty the penalty value for opening a gap.

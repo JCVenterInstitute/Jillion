@@ -28,6 +28,7 @@ package org.jcvi.jillion.core.residue.nt;
 
 import java.io.Serializable;
 
+import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.ResidueSequence;
 /**
  * {@code NucleotideSequence} an interface to abstract

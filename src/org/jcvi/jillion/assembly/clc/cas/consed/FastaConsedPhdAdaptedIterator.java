@@ -41,7 +41,7 @@ import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
  * {@code FastaConsedPhdAdaptedIterator} is a PhdReadRecord generator
  * for chromatograms.  Since CLC's reference mappers don't handle chromatograms,
  * they have to be passed in as fasta files.  This class will find the chromatogram in the 
- * chromat_dir folder with the same name as the current read id in the fasta and create a {@link PhdReadRecord}
+ * chromat_dir folder with the same name as the current read id in the fasta and create a PhdReadRecord
  * with the correct sequence, qualities and postions from the chromatogram as well
  * as a correctly formatted {@link PhdInfo} so consed can correctly display the chromatogram
  * wave forms.

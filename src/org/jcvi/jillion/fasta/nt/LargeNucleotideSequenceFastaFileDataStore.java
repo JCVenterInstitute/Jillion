@@ -49,7 +49,7 @@ import org.jcvi.jillion.internal.fasta.AbstractLargeFastaFileDataStore;
  */
 final class LargeNucleotideSequenceFastaFileDataStore extends AbstractLargeFastaFileDataStore<Nucleotide, NucleotideSequence, NucleotideFastaRecord> implements NucleotideFastaDataStore{
     /**
-     * Construct a {@link LargeNucleotideSequenceFastaFileDataStore}
+     * Construct a {@link NucleotideFastaDataStore}
      * for the given Fasta file.
      * @param parser the FastaParser to use, can not be null.
      * @throws NullPointerException if fastaFile is null.
@@ -58,7 +58,7 @@ final class LargeNucleotideSequenceFastaFileDataStore extends AbstractLargeFasta
 		return create(parser, DataStoreFilters.alwaysAccept(), null);
 	}
 	 /**
-     * Construct a {@link LargeNucleotideSequenceFastaFileDataStore}
+     * Construct a {@link NucleotideFastaDataStore}
      * for the given Fasta file.
      * @param parser the FastaParser to use, can not be null.
      * @throws NullPointerException if fastaFile is null.

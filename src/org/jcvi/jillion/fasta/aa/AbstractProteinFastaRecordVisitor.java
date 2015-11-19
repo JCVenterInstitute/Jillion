@@ -28,8 +28,8 @@ import org.jcvi.jillion.fasta.FastaRecordVisitor;
  * the visit methods <strong>for a single fasta record</strong>
  * and build an instance of {@link ProteinFastaRecord}.
  * When {@link FastaRecordVisitor#visitEnd()} is called,
- * the {@link AminoAcidSequenceFastaRecord} is built
- * and the abstract method {@link #visitRecord(AminoAcidSequenceFastaRecord)}
+ * the {@link ProteinFastaRecord} is built
+ * and the abstract method visitRecord(ProteinFastaRecord)
  * will be called.  
  * 
  * <p/>

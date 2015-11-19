@@ -31,6 +31,7 @@ import java.util.function.Function;
 
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.trace.fastq.SplitFastqWriter.FastqWriterFactory;
 /**
  * Utility class that creates {@link FastaWriter} instances
  * that split the {@link FastaRecord} objects being written out
@@ -107,8 +108,7 @@ public final class SplitFastaWriter{
 	 * @param interfaceClass The <strong>interface</strong> type the lambda function will be returning
 	 * which is also going to be the return type for this Fasta Writer.
 	 * 
-	 * @param recordsPerFile the max number of {@link FastaRecord}s to be written to a file
-	 * before it should be closed and the next file created. Must be >=1.
+	 * @param numberOfFiles the number of files to write to in a round robin fashion. Must be >=1.
 	 * 
 	 * @param supplier a {@link FastqWriterFactory} instance that will create a new FastaWriter of type W for the
 	 * ith file to be created.  The passed in value i will be in the range 1..N where N is the number of files
@@ -123,13 +123,13 @@ public final class SplitFastaWriter{
 	 * @apiNote for example, to make a Split Fasta Writer that will write out to 10 different fasta files
 	 *  named "1.fasta" to "10.fasta" in a round robin fashion would look like this:
 	 * <pre>
-	 * {@code 
+	 * 
 	 * File outputDir = ...
-	 * Iterator<NucleotideFastaRecord> iter = ...
+	 * {@code Iterator<NucleotideFastaRecord>} iter = ...
 	 * 
 	 * try(NucleotideFastaWriter writer = SplitFastaWriter.roundRobin(NucleotideFastaWriter.class,
 	 * 					10,
-	 * 					i -> new NucleotideFastaWriterBuilder(new File(outputDir, i +".fasta"))
+	 * 					i {@code ->} new NucleotideFastaWriterBuilder(new File(outputDir, i +".fasta"))
 	 *										.build());
 	*){
 	*	while(iter.hasNext()){
@@ -158,7 +158,7 @@ public final class SplitFastaWriter{
 	 * @param interfaceClass The <strong>interface</strong> type the lambda function will be returning
 	 * which is also going to be the return type for this Fasta Writer.
 	 * 
-	 * @param recordsPerFile the max number of {@link FastaRecord}s to be written to a file
+	 * @param maxRecordsPerFile the max number of {@link FastaRecord}s to be written to a file
 	 * before it should be closed and the next file created. Must be >=1.
 	 * 
 	 * @param supplier a {@link FastqWriterFactory} instance that will create a new FastaWriter of type W for the
@@ -176,13 +176,13 @@ public final class SplitFastaWriter{
 	 *  named "1.fasta", "2.fasta", etc where "1.fasta" will contain the first 1000 sequences
 	 *  and "2.fasta" will contain the next 1000 sequences etc would look like this:
 	 * <pre>
-	 * {@code 
+	 * 
 	 * File outputDir = ...
-	 * Iterator<NucleotideFastaRecord> iter = ...
+	 * {@code Iterator<NucleotideFastaRecord>} iter = ...
 	 * 
 	 * try(NucleotideFastaWriter writer = SplitFastaWriter.rollover(NucleotideFastaWriter.class,
 	 * 					1000,
-	 * 					i -> new NucleotideFastaWriterBuilder(new File(outputDir, i +".fasta"))
+	 * 					i {@code ->} new NucleotideFastaWriterBuilder(new File(outputDir, i +".fasta"))
 	 *										.build());
 	*){
 	*	while(iter.hasNext()){
@@ -236,20 +236,20 @@ public final class SplitFastaWriter{
 	 * of that read then the following code:
 	 * 
 	 * <pre>
-	 * {@code 
+	 * 
 	 * File outputDir = ...
-         * Iterator<NucleotideFastaRecord> iter = ...
+         * {@code Iterator<NucleotideFastaRecord>} iter = ...
          * 
          * try(NucleotideFastaWriter writer = SplitFastaWriter.deconvolve(NucleotideFastaWriter.class, 
-					record-> getSequenceDirectionFor(record.getId()),
-					dir -> new NucleotideFastaWriterBuilder(new File(outputDir, dir + ".fasta"))
+					record {@code ->} getSequenceDirectionFor(record.getId()),
+					dir {@code ->} new NucleotideFastaWriterBuilder(new File(outputDir, dir + ".fasta"))
 											.build());
 	){
         *       while(iter.hasNext()){
         *               writer.write(iter.next());
         *       }
         *}
-        *}
+        *
 	 * </pre>
 	 * 
 	 * Will write out all the fastas to 2 files, "forward.fasta" and "reverse.fasta" where the reads

@@ -36,14 +36,6 @@ abstract class AbstractDefaultPlacedAceTag extends AbstractDefaultAceTag impleme
     private final Rangeable location;
     private final boolean isTransient;
     
-    /**
-     * @param id
-     * @param type
-     * @param creator
-     * @param creationDate
-     * @param location
-     * @param data
-     */
     public AbstractDefaultPlacedAceTag(String id, String type, String creator,
             Date creationDate, Rangeable location, String data,boolean isTransient) {
         super(type, creator, creationDate, data);

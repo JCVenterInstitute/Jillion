@@ -38,7 +38,8 @@ import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.PeekableIterator;
 import org.jcvi.jillion.core.util.iter.PeekableStreamingIterator;
 /**
- * Utility class for working with {@link AceBaseSegment}s.
+ * Utility class for working with
+ * Consed's legacy "BestSegment".
  * @author dkatzel
  *
  */
@@ -48,14 +49,19 @@ final class BaseSegmentUtil {
 		//can not instantiate
 	}
 	/**
-	 * Compute the {@link AceBaseSegment}s for the given contig
-	 * @param contig
-	 * @return
+	 * Compute the BestSegments
+	 * for the given contig
+	 * @param contig the contig to look at; can not be null.
+	 * 
+	 * @return a List of BestSegments;
+	 * 
 	 * @throws NoReadMatchesConsensusException if there no aligned
 	 * read has an exact basecall match to the consensus.  This
 	 * can often happen when the consensus has ambiguity values
 	 * and the underlying sequences are the bases
-	 * that make up the ambiguity. 
+	 * that make up the ambiguity.
+	 * 
+	 * @throws NullPointerException if contig is null.
 	 */
 	public static List<AceBaseSegment> computeBestSegmentsFor(AceContig contig){
 		List<AceBaseSegment> baseSegments = new ArrayList<AceBaseSegment>();

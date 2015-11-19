@@ -31,8 +31,9 @@ import org.jcvi.jillion.core.io.IOUtil;
  * {@code ChainedStreamingIterator}
  * is a {@link StreamingIterator} that chains
  * multiple {@link StreamingIterator}s
- * together similar to {@link ChainedIterator}
- * but for {@link StreamingIterator}s
+ * together. Once all the elements in the first
+ * iterator have been iterated over, the next iterator in the chain
+ * gets used.
  * 
  * @author dkatzel
  *
@@ -43,9 +44,7 @@ final class ChainedStreamingIterator<T> implements StreamingIterator<T>{
     private final List<StreamingIterator<? extends T>> delegates;
     private final Iterator<? extends T> iterator;
     
-    /**
-     * @param delegates
-     */
+    
     public ChainedStreamingIterator(Collection<? extends StreamingIterator<? extends T>> delegates) {
     	if(delegates.contains(null)){
             throw new NullPointerException("can not contain null iterator");

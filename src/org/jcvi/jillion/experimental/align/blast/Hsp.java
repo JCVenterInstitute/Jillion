@@ -72,9 +72,8 @@ public interface Hsp<R extends Residue, S extends ResidueSequence<R>> extends Se
      * Get the Bit score for this hit.
      * The bitscore is a normalized raw score.
      * 
-     * @return
-     */
-    
+     * @return the bit score as a {@link BigDecimal}.
+     */    
     BigDecimal getBitScore();
     
     Float getHspScore();

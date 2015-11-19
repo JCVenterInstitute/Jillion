@@ -165,25 +165,25 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideFas
 		
 	}
 	/**
-	 * Creates a new {@link IndexedNucleotideSequenceFastaFileDataStore}
+	 * Creates a new {@link NucleotideFastaDataStore}
 	 * instance using the given fastaFile.
-	 * @param fastaFile the fasta to create an {@link IndexedNucleotideSequenceFastaFileDataStore}
+	 * @param fastaFile the fasta to create an {@link NucleotideFastaDataStore}
 	 * for.
-	 * @return a new instance of {@link IndexedNucleotideSequenceFastaFileDataStore};
+	 * @return a new instance of {@link NucleotideFastaDataStore};
 	 * never null.
-	 * @throws IOException 
+	 * @throws IOException  if there is a problem parsing the fasta file.
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
 	public static NucleotideFastaDataStore create(File fastaFile) throws IOException{
 		return create(fastaFile, DataStoreFilters.alwaysAccept(), null);
 	}
 	/**
-	 * Creates a new {@link IndexedNucleotideSequenceFastaFileDataStore}
+	 * Creates a new {@link NucleotideFastaDataStore}
 	 * instance using the given fastaFile.
-	 * @param fastaFile the fasta to create an {@link IndexedNucleotideSequenceFastaFileDataStore}
+	 * @param fastaFile the fasta to create an {@link NucleotideFastaDataStore}
 	 * for.
-	 * @param filter the {@link DataStoreFilter} to use to filter the records from the fasta file.
-	 * @return a new instance of {@link IndexedNucleotideSequenceFastaFileDataStore};
+	 * @param filter the {@link Predicate} to use to filter the records from the fasta file.
+	 * @return a new instance of {@link NucleotideFastaDataStore};
 	 * never null.
 	 * @throws IOException  if there is a problem parsing the fasta file.
 	 * @throws NullPointerException if the input fasta file is null.
@@ -195,11 +195,11 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideFas
 	}
 	
 	/**
-	 * Creates a new {@link IndexedNucleotideSequenceFastaFileDataStore}
+	 * Creates a new {@link NucleotideFastaDataStore}
 	 * instance using the given fastaFile.
-	 * @param parser the {@link FastaParser} to use to create an {@link IndexedNucleotideSequenceFastaFileDataStore};
+	 * @param parser the {@link FastaParser} to use to create an {@link NucleotideFastaDataStore};
 	 * can not be null.
-	 * @return a new instance of {@link IndexedNucleotideSequenceFastaFileDataStore};
+	 * @return a new instance of {@link NucleotideFastaDataStore};
 	 * never null.
 	 * @throws IOException if there is a problem parsing the fasta data.
 	 * @throws NullPointerException if the parser is null.
@@ -208,12 +208,12 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideFas
 		return create(parser, DataStoreFilters.alwaysAccept(), null);
 	}
 	/**
-	 * Creates a new {@link IndexedNucleotideSequenceFastaFileDataStore}
+	 * Creates a new {@link NucleotideFastaDataStore}
 	 * instance using the given fastaFile.
-	 * @param parser the {@link FastaParser} to use to create an {@link IndexedNucleotideSequenceFastaFileDataStore};
+	 * @param parser the {@link FastaParser} to use to create an {@link NucleotideFastaDataStore};
 	 * can not be null.
-	 * @param filter the {@link DataStoreFilter} to use to filter the records from the fasta file.
-	 * @return a new instance of {@link IndexedNucleotideSequenceFastaFileDataStore};
+	 * @param filter the {@link Predicate} to use to filter the records from the fasta file.
+	 * @return a new instance of {@link NucleotideFastaDataStore};
 	 * never null.
 	 * @throws IOException if there is a problem parsing the fasta data.
 	 * @throws NullPointerException if either parameter is null.

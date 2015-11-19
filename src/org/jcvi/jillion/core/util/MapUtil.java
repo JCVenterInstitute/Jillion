@@ -20,6 +20,9 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.util;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Utility class for working with {@link Map}s.
  * @author dkatzel

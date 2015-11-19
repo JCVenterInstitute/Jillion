@@ -183,7 +183,7 @@ public final class TasmContigBuilder extends AbstractContigBuilder<TasmAssembled
 		return (TasmAssembledReadBuilder)super.getAssembledReadBuilder(readId);
 	}
 	/**
-     * Sets the {@link TasmContigAttribute#COMMENT}
+     * Sets the comment
      * attribute for this adapted contig.  Calling this method
      * multiple times will overwrite previous entries with the current
      * entry. Setting the value to {@code null} will remove the current
@@ -199,7 +199,7 @@ public final class TasmContigBuilder extends AbstractContigBuilder<TasmAssembled
         return this;
     }
     /**
-     * Sets the {@link TasmContigAttribute#COM_NAME}
+     * Sets the com_name
      * attribute for this adapted contig.  Calling this method
      * multiple times will overwrite previous entries with the current
      * entry. Setting the value to {@code null} will remove the current
@@ -216,8 +216,7 @@ public final class TasmContigBuilder extends AbstractContigBuilder<TasmAssembled
     }
     
     /**
-     * Sets the {@link TasmContigAttribute#NUMBER_OF_READS}
-     * and {@link TasmContigAttribute#AVG_COVERAGE}
+     * Sets the number of reads and avg coverage
      * attributes for this contig.  If these values are not set,
      * or set to {@code null}, then the values
      * will be computed by counting the bases in the
@@ -248,7 +247,7 @@ public final class TasmContigBuilder extends AbstractContigBuilder<TasmAssembled
         return this;
     }
     /**
-     * Sets the {@link TasmContigAttribute#CA_CONTIG_ID}
+     * Sets the Celeara Assembler UID
      * attribute for this adapted contig.  Calling this method
      * multiple times will overwrite previous entries with the current
      * entry. Setting the value to {@code null} will remove the current
@@ -270,7 +269,7 @@ public final class TasmContigBuilder extends AbstractContigBuilder<TasmAssembled
     }
     
     /**
-     * Sets the {@link TasmContigAttribute#BAC_ID}
+     * Sets the bac_id
      * attribute for this adapted contig.  Calling this method
      * multiple times will overwrite previous entries with the current
      * entry. Setting the value to {@code null} will remove the current
@@ -661,25 +660,23 @@ public final class TasmContigBuilder extends AbstractContigBuilder<TasmAssembled
     		return true;
     	}
 
-		private boolean readsMatch(TasmContig other) {
-			StreamingIterator<TasmAssembledRead> readIter=null;
-    		try{
-    			readIter = contig.getReadIterator();
-    			while(readIter.hasNext()){
-    				TasmAssembledRead read = readIter.next();
-    				String readId = read.getId();
-    				if(!other.containsRead(readId)){
-    					return false;
-    				}
-    				if(!read.equals(other.getRead(readId))){
-    					return false;
-    				}
-    			}
-    			return true;
-    		}finally{
-    			IOUtil.closeAndIgnoreErrors(readIter);
-    		}
-		}
+        private boolean readsMatch(TasmContig other) {
+
+            try (StreamingIterator<TasmAssembledRead> readIter = contig
+                    .getReadIterator()) {
+                while (readIter.hasNext()) {
+                    TasmAssembledRead read = readIter.next();
+                    String readId = read.getId();
+                    if (!other.containsRead(readId)) {
+                        return false;
+                    }
+                    if (!read.equals(other.getRead(readId))) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
 
     }
 

@@ -40,7 +40,8 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
      * Get a List of all the offsets into this
      * sequence which are gaps.  This list SHOULD be
      * sorted by offset in ascending order.  The size of the returned list should be
-     * the same as the value returned by {@link #getNumberOfGaps(byte[])}.
+     * the same as the value returned by getNumberOfGaps(byte[]).
+     * 
      * @return a List of gap offsets as Integers.
      */
     List<Integer> getGapOffsets(byte[] encodedData);    
@@ -101,8 +102,8 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
     byte[] encode(Nucleotide nucleotide);
     /**
      * Creates a new {@link Iterator}
-     * in an efficent manner.
-     * @return
+     * in an efficient manner.
+     * @return an {@link Iterator} of all the {@link Nucleotide}s.
      */
     Iterator<Nucleotide> iterator(byte[] encodedData);
     

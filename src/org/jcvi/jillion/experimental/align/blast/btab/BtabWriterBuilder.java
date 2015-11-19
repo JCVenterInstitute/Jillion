@@ -133,7 +133,10 @@ public final class BtabWriterBuilder {
 	 * the p-value is often not available.
 	 * If this method is not called, then the p-value
 	 * <em>is</em> included by default.
-	 * @param includePvalue
+	 * 
+	 * @param includePvalue {@code true} if the p-value should be included;
+	 * {@code false} otherwise.
+	 * 
 	 * @return this
 	 */
 	public BtabWriterBuilder includePvalue(boolean includePvalue){

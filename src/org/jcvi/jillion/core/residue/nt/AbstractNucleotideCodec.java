@@ -33,12 +33,10 @@ import org.jcvi.jillion.internal.core.util.ArrayUtil;
 
 
 /**
- * {@code AbstractNucleotideCodec} is a
- * {@link NucleotideCodec} that
- * is able to encode
+ * Encodes
  * nucleotides as in as few bits as possible
  * plus some extra bytes to store offsets
- * for a special "sentental" base (usually gaps).  
+ * for a special "sentinel" base (usually gaps).  
  * 
  * 
  * This allows quick random access of bases
@@ -320,18 +318,20 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
 		
         /**
          * Convenience method to encode a single basecall.
-         * @param glyph
-         * @return
+         * @param nt the Nucleotide to encode; can not be null.
+         * @return the encoded nucleotide
+         * 
+         * @throws NullPointerException if nt is null.
          */
         @Override
-        public byte[] encode(Nucleotide glyph) {
+        public byte[] encode(Nucleotide nt) {
         	final int gapOffsets[];
-        	if(glyph.isGap()){
+        	if(nt.isGap()){
         		gapOffsets = new int[]{0};
         	}else{
         		gapOffsets = new int[0];
         	}
-            return encodeNucleotides(new SingleElementIterator<>(glyph), gapOffsets, 1);
+            return encodeNucleotides(new SingleElementIterator<>(nt), gapOffsets, 1);
             
         }
         

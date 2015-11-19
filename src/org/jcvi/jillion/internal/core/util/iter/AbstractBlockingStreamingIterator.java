@@ -21,6 +21,7 @@
 package org.jcvi.jillion.internal.core.util.iter;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -56,7 +57,7 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
      //Example implementation 
      //will compute the approximate value of &pi;.
-     //Each {@link BigDecimal} returned by this iterator
+     //Each BigDecimal returned by this iterator
      //will be a more accurate approximation.
     //This class computes the value of &pi; using the Madhava-Leibniz series:
     //&pi; = 4 &sum; ( (-1)<sup>k</sup> / (2k + 1) )

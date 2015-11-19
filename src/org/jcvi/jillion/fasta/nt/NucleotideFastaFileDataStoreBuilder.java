@@ -56,7 +56,7 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	 * Create a new Builder instance of 
 	 * which will build a {@link NucleotideFastaDataStore} for the given
 	 * fasta file.
-	 * @param fastaFile the fasta file make a {@link FastaDataStore} with;
+	 * @param fastaFile the fasta file make a {@link NucleotideFastaDataStore} with;
 	 * can not be null and must exist.
 	 * 
 	 * @apiNote As of Jillion 5.1, this will also look for a FastaIndex ({@code .fai})
@@ -78,7 +78,7 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	 * which will build a {@link NucleotideFastaDataStore} for the given
 	 * fasta file that uses the provided Fasta Index File ({@code .fai} file).
 	 * 
-	 * @param fastaFile the fasta file make a {@link FastaDataStore} with;
+	 * @param fastaFile the fasta file make a {@link NucleotideFastaDataStore} with;
 	 * can not be null and must exist.
 	 * 
 	 * @param faiFile the Fasta Index File to use, if the file
@@ -114,7 +114,7 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
          * that will build a {@link NucleotideFastaDataStore} from the
          * nucleotide fasta encoded data from the given {@link InputStreamSupplier}.
          * 
-         * @param inputStreamSupplier the {@link InputStreamSupplier} to use
+         * @param supplier the {@link InputStreamSupplier} to use
          * to get the inputStreams of fasta encoded data.
          * @throws NullPointerException if the inputStreamSupplier is null.
          * 
@@ -126,9 +126,9 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 
 	/**
 	 * Create a new Builder instance of 
-	 * which will build a {@link FastaDataStore} for the given
+	 * which will build a {@link NucleotideFastaDataStore} for the given
 	 * fasta file.
-	 * @param fastaFile the fasta file make a {@link FastaDataStore} with. 
+	 * @param fastaFileStream the {@link InputStream} of the fasta file to make a {@link NucleotideFastaDataStore} with. 
 	 * @throws IOException if the fasta file does not exist, or can not be read.
 	 * @throws NullPointerException if fastaFile is null.
 	 */
