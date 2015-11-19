@@ -121,7 +121,6 @@ public interface ResidueSequence<R extends Residue> extends Sequence<R> {
      * equal to ignoring gaps
      * if their ungapped versions contain the same residues 
      * in the same order. 
-     * {@inheritDoc}.
      * 
      */
     default boolean isEqualToIgnoringGaps(ResidueSequence<? extends R> other){

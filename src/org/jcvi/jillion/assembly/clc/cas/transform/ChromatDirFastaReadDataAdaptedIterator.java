@@ -33,20 +33,11 @@ import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
 import org.jcvi.jillion.trace.chromat.Chromatogram;
 import org.jcvi.jillion.trace.chromat.ChromatogramFactory;
 
-/**
- * @author dkatzel
- *
- *
- */
+
 class ChromatDirFastaReadDataAdaptedIterator extends FastaReadDataAdaptedIterator{
 	private static List<String> EXTENSION_LIST = Arrays.asList("",".scf",".ztr",".ab1");
     private final File chromatDir;
-    /**
-     * @param fastaIterator
-     * @param fastaFile
-     * @param phdDate
-     * @param defaultQualityValue
-     */
+ 
     public ChromatDirFastaReadDataAdaptedIterator(
             StreamingIterator<NucleotideFastaRecord> fastaIterator,
             File fastaFile, 
@@ -72,9 +63,12 @@ class ChromatDirFastaReadDataAdaptedIterator extends FastaReadDataAdaptedIterato
      * id.  The file to be parsed will be named
      * id only without any file extensions and must be in SCF format (since 
      * this is what consed expects).
+     * 
      * @param id the id to look for in the chromat directory.
-     * @return a {@link Chromatogram} object if parsing
+     * 
+     * @returns a {@link Chromatogram} object if parsing
      * is a success; or null if no chromatogram is found.
+     * 
      * @throws IllegalStateException if there is a problem 
      * parsing chromatogram file.
      */

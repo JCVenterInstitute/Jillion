@@ -34,13 +34,7 @@ final class DefaultCasFileInfo implements CasFileInfo{
     private final List<String> names;
     private final BigInteger numberOfResidues;
     private final long numberOfSequences;
-    
-    
-    /**
-     * @param names
-     * @param numberOfSequences
-     * @param numberOfResidues
-     */
+   
     public DefaultCasFileInfo(List<String> names, long numberOfSequences,
             BigInteger numberOfResidues) {
         this.names = new ArrayList<String>(names);

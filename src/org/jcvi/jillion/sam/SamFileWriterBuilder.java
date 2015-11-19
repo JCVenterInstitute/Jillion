@@ -189,7 +189,7 @@ public final class SamFileWriterBuilder {
 	 *otherwise.
 	 *
 	 *
-	 * @param includeMetaData Some BAM indexes created by some other SAM libraries such as samtools and picard
+	 * @param includeMetadata Some BAM indexes created by some other SAM libraries such as samtools and picard
 	 * add additional
 	 * metadata to the index such as the number of unaligned reads. This metadata
 	 * is not specified in the BAM Index specification so some SAM parsers might not be able to correctly
@@ -213,7 +213,7 @@ public final class SamFileWriterBuilder {
 	 * @param sortOrder the {@link SortOrder} to use;
 	 * can not be null.
 	 * @return this.
-	 * @see #reSortBy(SortOrder, int).
+	 * @see #reSortBy(SortOrder, int)
 	 */
 	public SamFileWriterBuilder reSortBy(SortOrder sortOrder){
 		return reSortBy(sortOrder, DEFAULT_RECORDS_IN_MEMORY);

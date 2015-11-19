@@ -59,7 +59,7 @@ public enum SortOrder{
 	 * The major sort key is the Reference Name,
 	 * with the order defined by the order of the
 	 * References defined in the sequence dictionary. 
-	 * And the minor sort key is the {@link org.jcvi.jillion.sam.SamRecord#getStartOffset()}
+	 * And the minor sort key is the {@link org.jcvi.jillion.sam.SamRecord#getStartPosition()}
 	 * field.
 	 * Alignments with the same reference and start offset,
 	 * the order is arbitrary.

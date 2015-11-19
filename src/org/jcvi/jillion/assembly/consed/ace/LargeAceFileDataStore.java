@@ -31,6 +31,7 @@ import org.jcvi.jillion.assembly.consed.ConsedUtil;
 import org.jcvi.jillion.assembly.consed.ConsedUtil.ClipPointsType;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
@@ -46,9 +47,9 @@ import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterato
  * {@code LargeAceFileDataStore} is an {@link AceFileDataStore}
  * implementation that doesn't store any contig or 
  * read information in memory.
- * This means that each {@link #get(String)} or {@link #contains(String)}
+ * This means that each {@link DataStore#get(String)} or {@link DataStore#contains(String)}
  * requires re-parsing the ace file which can take some time.
- * Other methods such as {@link #getNumberOfRecords()} are lazy-loaded
+ * Other methods such as {@link DataStore#getNumberOfRecords()} are lazy-loaded
  * and are only parsed the first time they are asked for.
  * <p/>
  * Since each method call involves re-parsing the ace file,
@@ -62,22 +63,25 @@ import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterato
  */
 final class LargeAceFileDataStore implements AceFileDataStore{
 
-	private final File aceFile;
-	private Long numberOfContigs = null;
-	private Long totalNumberOfReads =null;
-	
-	private List<WholeAssemblyAceTag> wholeAssemblyTags =null;
-    private List<ConsensusAceTag> consensusTags= null;
-    private List<ReadAceTag> readTags=null;
-    
-	private final DataStoreFilter contigIdFilter;
-	 private volatile boolean isClosed;
+    private final File aceFile;
+    private Long numberOfContigs = null;
+    private Long totalNumberOfReads = null;
+
+    private List<WholeAssemblyAceTag> wholeAssemblyTags = null;
+    private List<ConsensusAceTag> consensusTags = null;
+    private List<ReadAceTag> readTags = null;
+
+    private final DataStoreFilter contigIdFilter;
+    private volatile boolean isClosed;
 	/**
-	 * Create a new instance of {@link LargeAceFileDataStore}.
+	 * Create a new instance of {@link AceFileDataStore}.
+	 * 
 	 * @param aceFile the ace file to create an {@link AceFileDataStore}
 	 * from. (can not be null and must exist)
+	 * 
 	 * @return a new {@link AceFileDataStore}; 
 	 * will never be null.
+	 * 
 	 * @throws FileNotFoundException if the ace file does not exist.
 	 * @throws NullPointerException if aceFile is null.
 	 */
@@ -85,21 +89,25 @@ final class LargeAceFileDataStore implements AceFileDataStore{
 		return new LargeAceFileDataStore(aceFile, DataStoreFilters.alwaysAccept());
 	}
 	/**
-	 * Create a new instance of {@link LargeAceFileDataStore}
+	 * Create a new instance of {@link AceFileDataStore}
 	 * with only some of the contigs from the given ace file.
 	 * Any contigs excluded by the given {@link DataStoreFilter}
-	 * will be completely ignored during calls to {@link #getNumberOfRecords()}
-	 * {@link #iterator()} and {@link #idIterator()}, return
-	 * {@code false} for {@link #contains(String)}
-	 * and return null for {@link #get(String)}
+	 * will be completely ignored during calls to {@link DataStore#getNumberOfRecords()}
+	 * {@link DataStore#iterator()} and {@link DataStore#idIterator()}, return
+	 * {@code false} for {@linkDataStore #contains(String)}
+	 * and return null for {@link DataStore#get(String)}.
+	 * 
 	 * @param aceFile the ace file to create an {@link AceFileDataStore}
 	 * from. (can not be null and must exist)
+	 * 
 	 * @param contigIdFilter a {@link DataStoreFilter}
 	 * instance if only some contigs from the given
 	 * file should be included in this datastore.
-	 * Calls to {@link #get(String)}
+	 * Calls to {@link DataStore#get(String)}
+	 * 
 	 * @return a new {@link AceFileDataStore}; 
 	 * will never be null.
+	 * 
 	 * @throws FileNotFoundException if the ace file does not exist.
 	 * @throws NullPointerException if aceFile is null.
 	 */

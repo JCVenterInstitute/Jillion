@@ -72,8 +72,7 @@ public abstract class FastaFileParser implements FastaParser{
 	 * file.
 	 * @param fastaFile the file to parse.
 	 * @throws NullPointerException if the file is null.
-	 * @throws FileNotFoundException if the file does not exist.
-	 * @throws IOException if the file is not readable.
+	 * @throws IOException if the file is not readable or does not exist.
 	 */
 	public static FastaParser create(File fastaFile) throws IOException{
 		return new FileFastaParser(fastaFile);
@@ -97,7 +96,7 @@ public abstract class FastaFileParser implements FastaParser{
 	 * that will parse the given fasta encoded
 	 * inputStream.  Please Note that inputStream implementations
 	 * of the FastaFileParser can not create {@link FastaVisitorMemento}s
-	 * or use {@link #accept(FastaVisitor, FastaVisitorMemento)}
+	 * or use {@link #parse(FastaVisitor, FastaVisitorMemento)}
 	 * method.
 	 * @param inputStream the {@link InputStream} to parse.
 	 * @throws NullPointerException if inputStream is null.

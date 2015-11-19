@@ -38,8 +38,7 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
 import org.jcvi.jillion.internal.core.util.RunLength;
 /**
- * {@code RunLengthEncodedQualityCodec} is a {@link QualitySymbolCodec}
- * that encodes {@link PhredQuality} values in a run-length encoding.
+ * Encodes {@link PhredQuality} values in a run-length encoding.
  * Since reads often have clusters of basecalls with the same quality value
  * encoding them in a run-length format could have significant memory savings.
  * @author dkatzel

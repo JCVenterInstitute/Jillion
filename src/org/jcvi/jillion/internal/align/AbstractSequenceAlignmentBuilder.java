@@ -38,7 +38,7 @@ import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
  * @author dkatzel
  *
  * @param <R> the {@link Residue} type used.
- * @param <S> the {@link Sequence} type used.
+ * @param <S> the {@link ResidueSequence} type used.
  * @param <A> the {@link SequenceAlignment} used.
  * @param <B> the {@link ResidueSequenceBuilder} used.
  */

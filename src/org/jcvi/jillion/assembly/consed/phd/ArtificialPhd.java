@@ -59,17 +59,18 @@ final class ArtificialPhd implements Phd{
    private final int positionOfFirstPeak;
    private final String id;
    /**
-    * Create an {@link ArtificialPhd} record that matches
+    * Create an {@link Phd} record that matches
     * the way Newbler creates phd records for 454 reads.
     * This is needed so tools like consed will correctly
     * space the fake chromatograms for 454 reads since it uses
     * 454 developed tools which rely on this spacing.
+    * 
     * @param id the id for this Phd.
     * @param basecalls the basecalls for this Phd.
     * @param qualities the qualities for this Phd.
     * @param comments the comments for this Phd.
-    * @param tags the {@link PhdTag}s for this Phd.
-    * @return a new {@link ArtificialPhd} which has position data that matches
+    * @param wholeReadItems the {@link PhdWholeReadItem}s for this Phd.
+    * @return a new {@link Phd} which has position data that matches
     * what would have been created by Newbler.
     */
    public static ArtificialPhd createNewbler454Phd(
@@ -82,16 +83,17 @@ final class ArtificialPhd implements Phd{
     		   NEWBLER_454_START_POSITION,NEWBLER_454_PEAK_SPACING);
    }
    /**
-    * Create an {@link ArtificialPhd} record that matches
+    * Create an {@link Phd} record that matches
     * the way Newbler creates phd records for 454 reads.
     * This is needed so tools like consed will correctly
     * space the fake chromatograms for 454 reads since it uses
     * 454 developed tools which rely on this spacing.
+    * 
     * @param id the id for this Phd.
     * @param basecalls the basecalls for this Phd.
     * @param qualities the qualities for this Phd.
     * @param comments the comments for this Phd.
-    * @return a new {@link ArtificialPhd} which has position data that matches
+    * @return a new {@link Phd} which has position data that matches
     * what would have been created by Newbler.
     */
    public static ArtificialPhd createNewbler454Phd(
@@ -103,7 +105,7 @@ final class ArtificialPhd implements Phd{
                comments,Collections.<PhdWholeReadItem>emptyList());
    }
    /**
-    * Create an {@link ArtificialPhd} record that matches
+    * Create an {@link Phd} record that matches
     * the way Newbler creates phd records for 454 reads.
     * This is needed so tools like consed will correctly
     * space the fake chromatograms for 454 reads since it uses
@@ -111,7 +113,7 @@ final class ArtificialPhd implements Phd{
     * @param id the id for this Phd.
     * @param basecalls the basecalls for this Phd.
     * @param qualities the qualities for this Phd.
-    * @return a new {@link ArtificialPhd} which has position data that matches
+    * @return a new {@link Phd} which has position data that matches
     * what would have been created by Newbler.
     */
    public static ArtificialPhd createNewbler454Phd(String id,
@@ -121,20 +123,19 @@ final class ArtificialPhd implements Phd{
                Collections.<String,String>emptyMap(),Collections.<PhdWholeReadItem>emptyList());
    }
    /**
-    * {@code buildArtificalPhd} creates a {@link DefaultPhd}
+    * {@code buildArtificalPhd} creates a {@link Phd}
     * using the given basecalls and qualities
     * but creates artificial peak data spacing each
     * peak {@code numberOfPositionsForEachPeak} apart.
-    * This Phd will have no comments and no {@link PhdTag}s.
-    * This method is the same as calling
-    * {@link #ArtificialPhd(String, NucleotideSequence, QualitySequence, Properties, List, int)
-    * new ArtificalPhd(basecalls, qualities, new Properties(),Collections.<PhdTag>emptyList(),numberOfPositionsForEachPeak)}
+    * This Phd will have no comments and no tags.
+    * 
+    *
     * @param id the id for this Phd.
     * @param basecalls the basecalls for this Phd.
     * @param qualities the qualities for this Phd.
     * @param numberOfPositionsForEachPeak number of positions each
     * peak should be separated as.
-    * @see #ArtificialPhd(String, NucleotideSequence, QualitySequence, Properties, List, int)
+    * 
     */
    public ArtificialPhd(String id,
 		   NucleotideSequence basecalls,
@@ -147,7 +148,7 @@ final class ArtificialPhd implements Phd{
     		   numberOfPositionsForEachPeak);
    }
    /**
-    * {@code buildArtificalPhd} creates a {@link DefaultPhd}
+    * {@code buildArtificalPhd} creates a {@link Phd}
     * using the given basecalls and qualities, comments and tags
     * but creates artificial peak data spacing each
     * peak {@code numberOfPositionsForEachPeak} apart.
@@ -171,7 +172,7 @@ final class ArtificialPhd implements Phd{
         
     }
     /**
-     * {@code buildArtificalPhd} creates a {@link DefaultPhd}
+     * {@code buildArtificalPhd} creates a {@link Phd}
      * using the given basecalls and qualities, comments and tags
      * but creates artificial peak data spacing each
      * peak {@code numberOfPositionsForEachPeak} apart.
@@ -179,7 +180,9 @@ final class ArtificialPhd implements Phd{
      * @param basecalls the basecalls for this Phd.
      * @param qualities the qualities for this Phd.
      * @param comments the comments for this Phd.
-     * @param tags the {@link PhdTag}s for this Phd.
+     * @param wholeReadItems the {@link PhdWholeReadItem}s for this Phd.
+     *  @param readTags the {@link PhdReadTag}s for this Phd.
+     * 
      * @param numberOfPositionsForEachPeak number of positions each
      * peak should be separated as.
      */

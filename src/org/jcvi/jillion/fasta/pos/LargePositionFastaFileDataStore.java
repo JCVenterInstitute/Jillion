@@ -57,7 +57,7 @@ final class LargePositionFastaFileDataStore extends AbstractLargeFastaFileDataSt
      * Construct a {@link PositionFastaDataStore}
      * for the given Fasta file using the provided filters.
      * @param parser the FastaParser to use, can not be null.
-     * @param idFilter the {@link Predicate} to use to filter by fasta ID, can not be null.
+     * @param filter the {@link Predicate} to use to filter by fasta ID, can not be null.
      * @param recordFilter the {@link Predicate} to use to filter by entire {@link PositionFastaRecord} 
      * if null, then no additional record filtering is used.
      * @throws NullPointerException if fastaFile is null.

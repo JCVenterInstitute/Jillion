@@ -59,13 +59,13 @@ public enum SamRecordFlags {
 	EACH_SEGMENT_PROPERLY_ALIGNED(2),
 	/**
 	 * This is the only reliable place to 
-	 * tell whether the read is unmapped. If {@link READ_UNMAPPED} is set,
+	 * tell whether the read is unmapped. If {@link #READ_UNMAPPED} is set,
 	 *  no assumptions can be made about {@link SamRecord#getReferenceName()},
-	 *  {@link SamRecord#getStartOffset()}, {@link SamRecord#getCigar()},
+	 *  {@link SamRecord#getStartPosition()}, {@link SamRecord#getCigar()},
 	 *  {@link SamRecord#getMappingQuality()} and the {@link SamRecordFlags} :
-	 *  {@link EACH_SEGMENT_PROPERLY_ALIGNED}, {@link REVERSE_COMPLEMENTED},
-	 *  {@link SECONDARY_ALIGNMENT}, {@link SUPPLEMENTARY_ALIGNMENT}
-	 *  and {@link MATE_REVERSE_COMPLEMENTED}
+	 *  {@link #EACH_SEGMENT_PROPERLY_ALIGNED}, {@link #REVERSE_COMPLEMENTED},
+	 *  {@link #SECONDARY_ALIGNMENT}, {@link #SUPPLEMENTARY_ALIGNMENT}
+	 *  and {@link #MATE_REVERSE_COMPLEMENTED}
 	 * of the previous read in the template.
 	 */
 	READ_UNMAPPED(4),

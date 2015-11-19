@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
+import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
@@ -41,7 +42,7 @@ import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.internal.fasta.AbstractLargeFastaFileDataStore;
 /**
  * {@code LargeQualityFastaFileDataStore} is an implementation
- * of {@link QualitySequenceFastaDataStore} which does not
+ * of {@link QualityFastaDataStore} which does not
  * store any Fasta record data 
  * in memory except it's size (which is lazy loaded).
  * This means that each get() or contain() requires re-parsing the fastq file

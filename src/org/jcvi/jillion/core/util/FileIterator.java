@@ -434,9 +434,7 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
     }
     
     private static final class BreadthFirstFileIteratorBuilder extends FileIteratorBuilder{
-        /**
-         * @param rootdir
-         */
+        
         public BreadthFirstFileIteratorBuilder(File rootdir) {
             super(rootdir);
         }
@@ -452,9 +450,7 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
         
     }
     private static final class DepthFirstFileIteratorBuilder extends FileIteratorBuilder{
-        /**
-         * @param rootdir
-         */
+       
         public DepthFirstFileIteratorBuilder(File rootdir) {
             super(rootdir);
         }
@@ -471,9 +467,7 @@ public abstract class FileIterator implements Iterator<File>, Iterable<File>{
     }
     
     private static final class NonRecursiveFileIteratorBuilder extends FileIteratorBuilder{
-        /**
-         * @param rootdir
-         */
+        
         public NonRecursiveFileIteratorBuilder(File rootdir) {
             super(rootdir);
         }

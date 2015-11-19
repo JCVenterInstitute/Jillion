@@ -27,7 +27,7 @@ import org.jcvi.jillion.core.util.ObjectsUtil;
  * {@code UnCommentedNucleotideSequenceFastaRecord} is an implementation
  * of {@link NucleotideSequenceFastaRecord} that saves
  * memory by not having a reference to a comment.
- * All calls to {@link #getComment()} will return null.
+ * All calls to {@link NucleotideFastaRecord#getComment()} will return null.
  * @author dkatzel
  *
  */

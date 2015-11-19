@@ -46,9 +46,8 @@ import org.jcvi.jillion.trace.sff.SffUtil;
  * <p>
  * This abstract class finds all the read files to be parsed
  * and maps them to the alignment information inside the cas file.
- * For each read that aligned (matched), the {@link #aligned(Trace, String, CasPlacedRead)}
- * method is called; for each non-aligned read, the {@link #notAligned(Trace)}
- * is called.
+ * For each read that aligned (matched), the aligned()
+ * method is called.
  * 
  * @author dkatzel
  *

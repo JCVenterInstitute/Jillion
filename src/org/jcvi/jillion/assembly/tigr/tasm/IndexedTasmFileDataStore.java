@@ -43,7 +43,7 @@ import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
  * This will keep memory usage small put require
  * additional I/O opperations to seek
  * to the specified location and reparse the contig during
- * calls to {@link #get(String)}.
+ * calls to {@link DataStore#get(String)}.
  * @author dkatzel
  *
  */

@@ -25,10 +25,7 @@ import java.util.List;
 
 public interface AssemblyArchiveMetaData {
 
-	/**
-	 * 
-	 * @return
-	 */
+	
 	String getSubmitterReference();
 	
 	String getCenterName();

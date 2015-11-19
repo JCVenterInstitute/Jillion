@@ -24,10 +24,8 @@ import java.nio.ByteBuffer;
 import java.util.Iterator;
 
 /**
- * {@code AbstractTwoBitEncodedNucleotideCodec} is a 
- * version of {@link NucleotideCodec} that will
- * pack each basecall into two bytes.
- * The sentiental value can then be used to store
+ * Encodes each basecall into two bytes.
+ * The sentinel value can then be used to store
  * a 5th type of base that is rarely used
  * (gaps or N's).
  * @author dkatzel

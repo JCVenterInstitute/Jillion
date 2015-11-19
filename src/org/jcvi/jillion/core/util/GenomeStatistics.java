@@ -341,7 +341,7 @@ public final class GenomeStatistics {
 	/**
 	 * Create and execute a {@link java.util.stream.Collector}
 	 * that will compute the NGx value of the elements in the given stream.  The end result
-	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ngXBuilder(double)}
+	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ngXBuilder(long, double)}
 	 * and then manually adding each element to the stream to the builder then returning
 	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link java.util.stream.Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
@@ -446,7 +446,7 @@ public final class GenomeStatistics {
 	
 	/**
 	 * Compute the NG75 value of the elements in the given {@link IntStream}.  The end result
-	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ng75Builder(int)}
+	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ng75Builder(long)}
 	 * and then manually adding each element to the stream to the builder then returning
 	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link java.util.stream.Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
@@ -1019,7 +1019,7 @@ public final class GenomeStatistics {
 	 * to compute NG50, the percentage value is {@code 0.5}.
 	 * 
 	 * The end result
-	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ngXBuilder(long)}
+	 * is the same as creating a {@link GenomeStatisticsBuilder} via {@link #ngXBuilder(long, double)}
 	 * and then manually adding each element of the stream to the builder then returning
 	 * the resulting  built {@link OptionalInt}.  However, since this uses the new {@link java.util.stream.Stream}
 	 * and {@link java.util.stream.Collector} classes, it may have better performance if using a
@@ -1123,7 +1123,7 @@ public final class GenomeStatistics {
 	 * @throws IllegalArgumentException if genomeLength &lt; 1.
 	 * 
 	 * 
-	 * @implNote This is the same as {@link #nXCollector(long, double) ngX(.9D)}
+	 * @implNote This is the same as {@link #nXCollector(double) ngX(.9D)}
 	 * 
 	 * @param <T> the type of Number to be collected (usually ints or longs)
 	 */
@@ -1146,7 +1146,7 @@ public final class GenomeStatistics {
 	 * @throws IllegalArgumentException if genomeLength &lt; 1.
 	 * 
 	 * 
-	 * @implNote This is the same as {@link #nXCollector(long, double) ngX(.55D)}
+	 * @implNote This is the same as {@link #nXCollector(double) ngX(.55D)}
 	 * 
 	 * @param <T> the type of Number to be collected (usually ints or longs)
 	 */

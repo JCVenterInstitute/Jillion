@@ -69,8 +69,12 @@ public class PrimerDetector {
 								.ambiguityScore(2)
 								.build();
     /**
-     * @param minLength
-     * @param minPercentIdentity
+     * Create a new {@link PrimerDetector} with that will only find
+     * primers with the given minimum length match and min percent identity.
+     * 
+     * @param minLength the min length of a primer alignment match to report.
+     * @param minPercentIdentity the minimum percent identity.
+     * 
      */
     public PrimerDetector(int minLength, double minPercentIdentity) {
         this(minLength, minPercentIdentity, true);

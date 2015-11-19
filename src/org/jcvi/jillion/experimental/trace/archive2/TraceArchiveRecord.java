@@ -46,13 +46,13 @@ public interface TraceArchiveRecord {
      */
     boolean contains(TraceInfoField traceInfoField);
     /**
-     * Get the Set of key value pairs
-     * @return
+     * Get the Set of key value pairs of all the metadata.
+     * @return all the key-value pairs as a Set.
      */
     Set<Entry<TraceInfoField, String>> entrySet();
     /**
      * Extra ancillary information not specified by the TraceInfo Fields.
-     * @return
+     * @return a Map; will not be null but could be empty.
      */
     Map<String, String> getExtendedData();
 }

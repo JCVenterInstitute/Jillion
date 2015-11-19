@@ -89,16 +89,15 @@ public interface CoverageMap <T extends Rangeable> extends Iterable<CoverageRegi
      * in the coverage map. This is the same as (but may be more
      * efficient than):
      * <pre>
-     * {@code
-     	long totalLength = 0L;
-     	long totalCoverage =0L;
-     	for(CoverageRegion<?> region : this){
-        	long rangeLength =region.asRange().getLength();
-        	totalLength += rangeLength;
-        	totalCoverage += region.getCoverageDepth() * rangeLength;
-        }
-        avgCoverage = totalLength==0? 0D : totalCoverage/(double)totalLength;
-        }
+     * long totalLength = 0L;
+     * long totalCoverage =0L;
+     * for(CoverageRegion{@code<?>} region : this){
+     *     long rangeLength =region.asRange().getLength();
+     *     totalLength += rangeLength;
+     *     totalCoverage += region.getCoverageDepth() * rangeLength;
+     * }
+     * avgCoverage = totalLength==0? 0D : totalCoverage/(double)totalLength;
+        
         </pre>
      * @return the average coverage depth will always be 
      * &ge; 0.

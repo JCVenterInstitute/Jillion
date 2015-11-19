@@ -33,20 +33,11 @@ import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
 import org.jcvi.jillion.trace.chromat.Chromatogram;
 import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramBuilder;
 
-/**
- * @author dkatzel
- *
- *
- */
+
 class ChromatDirFastaConsedPhdAdaptedIterator extends QualFastaConsedPhdAdaptedIterator{
 
     private final File chromatDir;
-    /**
-     * @param fastaIterator
-     * @param fastaFile
-     * @param phdDate
-     * @param defaultQualityValue
-     */
+  
     public ChromatDirFastaConsedPhdAdaptedIterator(
             StreamingIterator<NucleotideFastaRecord> fastaIterator,
             File fastaFile, Date phdDate, PhredQuality defaultQualityValue,

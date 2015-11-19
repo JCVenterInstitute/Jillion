@@ -95,10 +95,6 @@ public final class TraceArchiveWriter implements Closeable{
 	private final Date volumeDate;
 	/**
 	 * Create a new TraceArchiveWriter without any common fields.
-	 * This is the same as
-	 * {@link #TraceArchiveWriter(File, Map, TraceArchiveRecordCallback) 
-	 * TraceArchiveWriter(rootDir, Collections.<TraceInfoField, String>emptyMap(), recordFactory)}.
-	 * @see #TraceArchiveWriter(File, Map, TraceArchiveRecordCallback)
 	 */
 	public TraceArchiveWriter(File rootDir,TraceArchiveRecordCallback recordFactory,
 			String volumeName, Date volumeDate, String volumeVersion) throws IOException {
@@ -153,12 +149,13 @@ public final class TraceArchiveWriter implements Closeable{
 	}
 	/**
 	 * 
-	 * @param traceName
-	 * @param traceFile
+	 * @param traceName the name of the trace (read id)
+	 * @param traceFile the File containing the actual trace data.
+	 * 
 	 * @throws IOException if there is an exception parsing the given
 	 * traceFile.
 	 * @throws NullPointerException if traceName or traceFile are null.
-	 * @throws TraceArchiveRecordDataException 
+	 * 
 	 * @throws IllegalArgumentException if a trace with the given traceName
 	 * has already been added.
 	 */

@@ -41,9 +41,6 @@ final class MultipleFileFilter implements FileFilter{
     private final List<FileFilter> delegates;
     
     
-    /**
-     * @param delegates
-     */
     public MultipleFileFilter(List<FileFilter> delegates) {
         this.delegates = new ArrayList<FileFilter>(delegates);
     }

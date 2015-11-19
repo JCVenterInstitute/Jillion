@@ -38,6 +38,7 @@ import org.jcvi.jillion.internal.trace.chromat.ztr.data.RunLengthEncodedData;
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.ShrinkToEightBitData;
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.ZLibData;
 import org.jcvi.jillion.trace.chromat.Chromatogram;
+import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogram;
 
 
 /**
@@ -358,7 +359,7 @@ public final class DefaultZTRChromatogramWriterBuilder implements Builder<ZtrChr
 		 * encode and write; may not be null.
 		 * @param out the OutputStream to write the encoded
 		 * ZTR to.
-		 * @throws TraceEncoderException if there is a problem
+		 * @throws IOException if there is a problem
 		 * encoding the ZTR chromatogram.
 		 * @throws NullPointerException if chromatogram or out
 		 * are null.

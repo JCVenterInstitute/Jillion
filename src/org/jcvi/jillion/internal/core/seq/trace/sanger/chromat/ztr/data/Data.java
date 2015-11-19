@@ -70,7 +70,7 @@ public interface Data {
      * is encoded. If no optional parameters can be
      * passed in then any value would be ignored.
      * @return  the encoded data as a byte array.
-     * @throws TraceEncoderException if there are any problems
+     * @throws IOException if there are any problems
      * encoding the data.
      */
     byte[] encodeData(byte[] data, byte optionalParameter) throws IOException;

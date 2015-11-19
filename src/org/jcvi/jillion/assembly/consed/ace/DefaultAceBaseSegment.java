@@ -32,11 +32,7 @@ class DefaultAceBaseSegment implements AceBaseSegment{
     private final String name;
     private final Range gappedConsensusRange;
     
-    /**
-     * @param name
-     * @param gappedConsensusRange
-     * @throws NullPointerException if either parameter is null.
-     */
+  
     public DefaultAceBaseSegment(String name, Range gappedConsensusRange) {
         if(name ==null || gappedConsensusRange==null){
             throw new NullPointerException("parameters can not be null");

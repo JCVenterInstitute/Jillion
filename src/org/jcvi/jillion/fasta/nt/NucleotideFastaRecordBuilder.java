@@ -26,7 +26,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.shared.fasta.AbstractFastaRecordBuilder;
 /**
  * {@code NucleotideFastaRecordBuilder} is a builder class
- * that makes instances of {@link NucleotideSequenceFastaRecord}s.
+ * that makes instances of {@link NucleotideFastaRecord}s.
  * Depending on the different parameters, this builder might
  * choose to return different implementations.
  * @author dkatzel

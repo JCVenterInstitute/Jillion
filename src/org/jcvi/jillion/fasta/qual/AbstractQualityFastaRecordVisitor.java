@@ -26,10 +26,10 @@ import org.jcvi.jillion.fasta.FastaRecordVisitor;
  * {@code AbstractQualityFastaRecordVisitor} is an abstract
  * implementation of {@link FastaRecordVisitor} that will collect
  * the visit methods <strong>for a single fasta record</strong>
- * and build an instance of {@link QualitySequenceFastaRecord}.
+ * and build an instance of {@link QualityFastaRecord}.
  * When {@link FastaRecordVisitor#visitEnd()} is called,
- * the {@link QualitySequenceFastaRecord} is built
- * and the abstract method {@link #visitRecord(QualitySequenceFastaRecord)}
+ * the {@link QualityFastaDataStore} is built
+ * and the abstract method visitRecord(QualityFastaDataStore)
  * will be called.  
  * 
  * <p/>

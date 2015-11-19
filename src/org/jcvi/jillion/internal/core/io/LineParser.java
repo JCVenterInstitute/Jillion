@@ -2,9 +2,10 @@ package org.jcvi.jillion.internal.core.io;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 /**
  * Reads lines from an {@link InputStream}.  The main
- * differences between {@link LineParser} and other similar JDK classes is 
+ * differences between {@link LineParser} and other similar JDK classes are: 
  * <ul>
  * <li>may keep track of how many bytes have been read to allow random seek access later</li>
  * <li>some implementations include end of line characters in {@link #nextLine()} call</li>

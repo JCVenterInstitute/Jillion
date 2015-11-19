@@ -37,12 +37,7 @@ final class DefaultCasAlignment implements CasAlignment {
     private final List<CasAlignmentRegion> alignmentRegions;
     
     
-    /**
-     * @param contigSequenceId
-     * @param startOfMatch
-     * @param readIsReversed
-     * @param alignmentRegions
-     */
+    
     public DefaultCasAlignment(long contigSequenceId,
             long startOfMatch, boolean readIsReversed,
             List<CasAlignmentRegion> alignmentRegions) {
@@ -135,11 +130,8 @@ final class DefaultCasAlignment implements CasAlignment {
         List<CasAlignmentRegion> regions = new ArrayList<CasAlignmentRegion>();
         private CasAlignmentRegionType currentType;
         private long currentLength;
-        /**
-         * @param contigSequenceId
-         * @param startOfMatch
-         * @param readIsReversed
-         */
+        
+
         public Builder(long contigSequenceId, long startOfMatch,
                 boolean readIsReversed) {
             this.contigSequenceId = contigSequenceId;

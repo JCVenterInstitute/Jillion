@@ -313,8 +313,7 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
     	/**
     	 * Set the {@link PhredQuality} score to use
     	 * for each lowercase base found. If this method 
-    	 * is not called, then the default value of 
-    	 * {@value org.jcvi.jillion.assembly.consed.ace.HighLowAceContigPhdDatastore.Builder#DEFAULT_LOW_QUALITY} will be used.
+    	 * is not called, then the default value will be used.
     	 * @param qv the PhredQuality value as an int to use for lowercase letters.
     	 * @return this
     	 * @throws IllegalArgumentException - if qualityScore &lt; 0 or &gt; Byte.MAX_VALUE.
@@ -326,8 +325,7 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
     	/**
     	 * Set the {@link PhredQuality} score to use
     	 * for each uppercase base found. If this method 
-    	 * is not called, then the default value of 
-    	 * {@value org.jcvi.jillion.assembly.consed.ace.HighLowAceContigPhdDatastore.Builder#DEFAULT_HIGH_QUALITY} will be used.
+    	 * is not called, then the default value will be used.
     	 * @param qv the PhredQuality value as an int to use for uppercase letters.
     	 * @return this
     	 * @throws IllegalArgumentException - if qualityScore &lt; 0 or &gt; Byte.MAX_VALUE.

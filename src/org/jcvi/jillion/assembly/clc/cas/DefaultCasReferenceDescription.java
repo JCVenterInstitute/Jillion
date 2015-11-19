@@ -30,10 +30,6 @@ final class DefaultCasReferenceDescription implements CasReferenceDescription {
     private final long contigLength;
     
     
-    /**
-     * @param contigLength
-     * @param isCircular
-     */
     public DefaultCasReferenceDescription(long contigLength, boolean isCircular) {
         this.contigLength = contigLength;
         this.isCircular = isCircular;

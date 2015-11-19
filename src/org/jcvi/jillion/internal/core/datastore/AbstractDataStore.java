@@ -43,7 +43,7 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
  * can not accidentally or maliciously override them to break the {@link DataStore}
  * contract of throwing exceptions if already closed.
  * 
- * For example, subclasses need to implement {@link #getImpl(String)}
+ * For example, subclasses need to implement getImpl(String)
  * to perform the actual act of getting a record out of the datastore.
  * {@link AbstractDataStore#get(String)} method is final and is implemented
  * with the following pseudocode:

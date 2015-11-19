@@ -37,7 +37,8 @@ public enum Frame{
      * Parse a {@link Frame} from the given int value.
      * Valid values are <code>0</code> to <code>2</code>
      * inclusive.
-     * @param frame
+     * @param frame the frame number as an int (0, 1 or 2).
+     * 
      * @return a {@link Frame}
      * @throws IllegalArgumentException if <code> frame &lt; 0 || frame &gt; 2</code>
      */

@@ -62,7 +62,7 @@ public interface FastaVisitorCallback {
 	FastaVisitorMemento createMemento();
 	/**
 	 * Tell the {@link FastaParser} to stop parsing
-	 * the fasta file.  {@link FastqVisitor#visitEnd()}
+	 * the fasta file.  {@link FastaVisitor#visitEnd()}
 	 * will still be called.
 	 */
 	void haltParsing();

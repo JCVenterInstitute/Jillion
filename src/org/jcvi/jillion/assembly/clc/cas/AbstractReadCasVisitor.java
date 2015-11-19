@@ -61,8 +61,8 @@ import org.jcvi.jillion.trace.sff.SffFileDataStoreBuilder;
  * This abstract class finds all the read files to be parsed
  * and maps them to the corresponding read in the input sequence file(s)
  * so you can get the {@link Trace} for each read.
- * For each read that aligned (matched), the {@link #aligned(Trace, String, CasMatch)}
- * method is called; for each non-aligned read, the {@link #notAligned(Trace)}
+ * For each read that aligned (matched), the aligned()
+ * method is called; for each non-aligned read, the notAligned()
  * is called.
  * 
  * @author dkatzel

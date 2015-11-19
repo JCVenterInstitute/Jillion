@@ -33,11 +33,6 @@ final class DefaultCasScoringScheme implements CasScoringScheme{
     private final CasScoreType scoreType;
     private final CasAlignmentType alignmentType;
     
-    /**
-     * @param scoreType
-     * @param alignmentScore
-     * @param alignmentType
-     */
     public DefaultCasScoringScheme(CasScoreType scoreType,
             CasAlignmentScore alignmentScore, CasAlignmentType alignmentType) {
         this.scoreType = scoreType;

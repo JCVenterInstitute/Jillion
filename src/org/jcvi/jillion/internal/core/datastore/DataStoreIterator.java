@@ -25,6 +25,8 @@
  */
 package org.jcvi.jillion.internal.core.datastore;
 
+import java.util.Iterator;
+
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;

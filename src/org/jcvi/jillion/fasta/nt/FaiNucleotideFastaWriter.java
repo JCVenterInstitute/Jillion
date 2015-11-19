@@ -6,7 +6,7 @@ import java.io.IOException;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
  * Wraps a NucleotideFastaWriter that writes to an output 
- * file and on {@link #close()} will parse the completed
+ * file and on {@link NucleotideFastaWriter#close()} will parse the completed
  * output fasta file and write out the index fai file to the
  * specified output file.
  * 

@@ -32,17 +32,7 @@ final class DefaultCasAlignmentScore implements CasAlignmentScore {
                 match,
                 transition, transversion,unknown;
     
-    
-    /**
-     * @param firstInsertion
-     * @param insertionExtension
-     * @param firstDeletion
-     * @param deletionExtension
-     * @param match
-     * @param transition
-     * @param transversion
-     * @param unknown
-     */
+  
     public DefaultCasAlignmentScore(int firstInsertion, int insertionExtension,
             int firstDeletion, int deletionExtension, int match,
             int transition, int transversion, int unknown) {

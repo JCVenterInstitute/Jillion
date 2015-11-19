@@ -28,13 +28,13 @@ import org.jcvi.jillion.fasta.FastaRecordVisitor;
  * {@code AbstractPositionSequenceFastaRecordVisitor} is an abstract
  * implementation of {@link FastaRecordVisitor} that will collect
  * the visit methods <strong>for a single fasta record</strong>
- * and build an instance of {@link PositionSequenceFastaRecord}.
+ * and build an instance of {@link PositionFastaRecord}.
  * When {@link FastaRecordVisitor#visitEnd()} is called,
- * the {@link PositionSequenceFastaRecord} is built
- * and the abstract method {@link #visitRecord(PositionSequenceFastaRecord)}
+ * the {@link PositionFastaRecord} is built
+ * and the abstract method visitRecord(PositionFastaRecord)
  * will be called.  
  * 
- * <p/>
+ * <p>
  * A new instance of this class should be used for each fasta record
  * to be visited.  This class is not threadsafe.
  * @author dkatzel

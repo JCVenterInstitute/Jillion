@@ -30,7 +30,7 @@ import org.jcvi.jillion.core.util.Builder;
  * @author dkatzel
  *
  * @param <R> the {@link Residue} type used.
- * @param <S> the {@link Sequence} type used.
+ * @param <S> the {@link ResidueSequence} type used.
  * @param <A> the {@link SequenceAlignment} used
  */
 public interface SequenceAlignmentBuilder<R extends Residue, S extends ResidueSequence<R>, A extends SequenceAlignment<R, S>> extends Builder<A> {

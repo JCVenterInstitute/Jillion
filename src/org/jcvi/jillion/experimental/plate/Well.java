@@ -59,10 +59,10 @@ public final class Well implements Comparable<Well>{
      * Create a Well.getWell instance for the given well name
      * as a string.
      * @param wellName a well name for 96 or 384 well plates.
-     * @return
+     * @return a new Well object
      * 
      * @throws IllegalArgumentException if the name is not in 96 or 384 well format.
-     * @throws NullPointerException
+     * @throws NullPointerException if wellName is null.
      */
     public static Well create(String wellName){
         if(wellName ==null){

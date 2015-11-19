@@ -49,7 +49,7 @@ import org.jcvi.jillion.internal.fasta.nt.AdaptedNucleotideFastaDataStore;
  * all fasta records in memory.  This is only recommended for small fasta
  * files that won't take up too much memory.
  * @author dkatzel
- * @see LargeNucleotideSequenceFastaFileDataStore
+ *
  *
  */
 final class DefaultNucleotideFastaFileDataStore{

@@ -23,8 +23,7 @@ package org.jcvi.jillion.core.residue.nt;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 /**
- * {@code BasicNucleotideCodec} is a {@link NucleotideCodec}
- * that will store each base in 4 bits.
+ * Encodes each Nucleotide as 4 bits.
  * @author dkatzel
  *
  */

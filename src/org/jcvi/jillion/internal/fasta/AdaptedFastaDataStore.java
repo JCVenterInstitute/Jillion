@@ -19,9 +19,9 @@ import org.jcvi.jillion.fasta.FastaRecord;
  * 
  * @author dkatzel
  *
- * @param <S>
- * @param <T>
- * @param <F>
+ * @param <S> the type of element in the sequence
+ * @param <T> the type of Sequence in the fasta record
+ * @param <F> the type of {@link FastaRecord} in the datastore.
  * 
  * @since 5.1
  */

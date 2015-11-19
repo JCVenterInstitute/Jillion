@@ -106,7 +106,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	/**
      * Appends the given residue to the end
      * of the builder's mutable sequence.
-     * @param base a single {@link AminoAcid} to be appended
+     * @param residue a single {@link AminoAcid} to be appended
      * to the end our builder.
      * @throws NullPointerException if residue is null.
      */

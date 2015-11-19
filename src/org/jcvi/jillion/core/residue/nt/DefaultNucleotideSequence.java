@@ -34,9 +34,9 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
 
 /**
- * {@code DefaultNucleotideSequence} is the default
+ * Default
  * implementation of a {@link NucleotideSequence}.  
- * Depending on the {@link NucleotideCodec} used,
+ * Depending on the codec used,
  * the nucleotides can be encoded as 4 bits, 2 bits
  * or some other efficient manner.
  * @author dkatzel

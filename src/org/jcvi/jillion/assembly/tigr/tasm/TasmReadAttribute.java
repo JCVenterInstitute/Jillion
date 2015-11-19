@@ -56,14 +56,14 @@ enum TasmReadAttribute {
 	/**
 	 * 1-based position of the left end of the valid range of this
      * ungapped sequence.  The value returned will be greater than
-     * what would be returned by {@link #SEQUENCE_RIGHT} if this
+     * what would be returned by SEQUENCE_RIGHT if this
      * sequence has been reverse complemented in the assembly.
 	 */
 	SEQUENCE_LEFT("seq_lend"),
 	/**
 	 * 1-based position of the right end of the valid range of this
      * ungapped sequence.  The value returned will be less than
-     * what would be returned by {@link #SEQUENCE_LEFT} if this
+     * what would be returned by SEQUENCE_LEFT if this
      * sequence has been reverse complemented in the assembly.
 	 */
 	SEQUENCE_RIGHT("seq_rend"),
