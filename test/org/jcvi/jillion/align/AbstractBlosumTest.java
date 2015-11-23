@@ -22,8 +22,9 @@ package org.jcvi.jillion.align;
 
 import static org.junit.Assert.assertEquals;
 
-import org.jcvi.jillion.align.pairwise.ProteinPairwiseSequenceAlignment;
 import org.jcvi.jillion.align.pairwise.PairwiseAlignmentBuilder;
+import org.jcvi.jillion.align.pairwise.ProteinPairwiseSequenceAlignment;
+import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 import org.jcvi.jillion.core.residue.aa.ProteinSequenceBuilder;
 import org.junit.Test;
@@ -72,5 +73,15 @@ public abstract class AbstractBlosumTest {
 		assertEquals(seq1,alignment.getGappedQueryAlignment());
 		assertEquals(seq2,alignment.getGappedSubjectAlignment());
 	
+	}
+	
+	@Test
+	public void PyrrolysinematchesLysine(){
+		for(AminoAcid a : AminoAcid.values()){
+			float p =matrix.getValue(a, AminoAcid.Pyrrolysine);
+			float k =matrix.getValue(a, AminoAcid.Lysine);
+			
+			assertEquals(a.getCharacter().toString(), p, k, 0.0001F);
+		}
 	}
 }
