@@ -44,10 +44,22 @@ API Changes
    
 2.  Moved FastaUtil to internal package since it should not be used outside of Jillion classes.  Heavily refactored it.
 
+3.  Improved Javadoc.  Many more classes and methods now have javadoc.  Hundreds of javadoc comments have been improved
+    to fix problems found by the javadoc: lint.
+    
+4.  BlosumMatrices class added support for Blosum30 and 40.
+
+5.  Some classes that were in jillion.internal were moved to jillion.shared since all internal classes can't
+    be exported by OSGI.  These classes should not be considered part of the public API and should only be for internal use.
+    
+
 Bug Fixes
 ---------
 1.  PositionSequence - Sanger Position Sequence.iterator(Range)
     off by 1 bug fix did not include the last base in the range.
+    
+2.  StreamingIterator - abstract class that many StreamingIterators extend to use background thread
+    to populate iterator has been improved to fix occasional dead lock issues if the background thread throws exceptions.
 
 ================
 Jillion 5.0
