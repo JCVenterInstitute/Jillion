@@ -21,10 +21,10 @@
 package org.jcvi.jillion.internal.core.util.iter;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
@@ -121,7 +121,23 @@ public abstract class AbstractBlockingStreamingIterator<T> implements StreamingI
     private void blockingGetNextRecord(){
         if(!isClosed){
             try {
-				nextRecord = queue.take();
+            	Object obj =null;
+            	while(obj ==null){
+            		//to avoid a deadlock we will 
+            		//stop blocking after 1 second
+            		//to check if an exception was thrown
+            		obj = queue.poll(1, TimeUnit.SECONDS);
+            		if(obj ==null){
+            			//check exception
+            			if(uncaughtException !=null){
+            				nextRecord = null;
+            				break;
+            			}
+            		}else{
+            			nextRecord = obj;
+            		}
+            	}
+				
 			} catch (InterruptedException e) {
 				//assume interrupted is closed?
 				IOUtil.closeAndIgnoreErrors(this);
