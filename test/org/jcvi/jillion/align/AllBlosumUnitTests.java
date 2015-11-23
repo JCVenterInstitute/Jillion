@@ -27,6 +27,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
+    	TestBlosum30.class,
+    	TestBlosum40.class,
     	TestBlosum50.class,
     	TestBlosum62.class,
     	TestBlosum90.class
