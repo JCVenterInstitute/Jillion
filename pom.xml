@@ -87,12 +87,34 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version> 2.18.1</version>
-				<configuration>
-					<includes>
-						<include>org/jcvi/jillion/AllUnitTests.java</include>
-					</includes>
-				</configuration>
+				<executions>
+				<execution>
+					<id>default-test</id> <!-- overrides default configuration (unit tests) -->
+					<configuration>
+						<includes>
+							<include>org/jcvi/jillion/FastUnitTests.java</include>
+						</includes>
+					</configuration>
+				</execution>
+				
+				<execution>
+					<id>integration-test</id>
+			          <goals>
+			            <goal>test</goal>
+			          </goals>
+			          <phase>prepare-package</phase> <!--  only run these during before building jar since they take so long-->
+					<configuration>
+						<includes>
+							<include>org/jcvi/jillion/SlowUnitTests.java</include>
+						</includes>
+					</configuration>
+				</execution>
+				
+				
+				</executions>
+				
 			</plugin>
+		
 	  <!--  		<plugin>
   <groupId>org.apache.maven.plugins</groupId>
    <artifactId>maven-checkstyle-plugin</artifactId>
