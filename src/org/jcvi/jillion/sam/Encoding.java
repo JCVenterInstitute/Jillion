@@ -160,7 +160,7 @@ enum Encoding{
 	 * if the extension is "bam" ignoring case,
 	 * "sam" otherwise.
 	 */
-	public static Encoding parseEncoding(String extension){
+	static Encoding parseEncoding(String extension){
 		if("bam".equalsIgnoreCase(extension)){
 			return BAM;
 		}

@@ -197,7 +197,7 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		 * @param outputFile the File to use;
 		 * can not be null.
 		 * @throws NullPointerException if outputFile is null.
-		 * @throws FileNotFoundException if the file exists but 
+		 * @throws IOException if the file exists but 
 		 * is a directory rather than a regular file, 
 		 * does not exist but cannot be created, 
 		 * or cannot be opened for any other reason.
@@ -389,7 +389,7 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		 * itself will not be deleted so feel free to provide non-temp directories as well.
 		 * </p>
 		 * 
-		 * @param comparator the {@link Comparator} to use to sort the {@link FastqRecord}s;
+		 * @param comparator the {@link Comparator} to use to sort the {@link FastaRecord}s;
 		 * can not be null.
 		 * @param inMemoryCacheSize the in memory cache size to use; must be positive.
 		 * 

@@ -53,7 +53,8 @@ public interface Chromatogram extends Trace{
      * Get the number of actual trace scan positions
      * in the trace file.  Most Sanger Trace files
      * have about 15,000 trace points.
-     * @return 
+     * @return the number of trace position in this chromatogram.
+     * 
      */
     int getNumberOfTracePositions();
     /**

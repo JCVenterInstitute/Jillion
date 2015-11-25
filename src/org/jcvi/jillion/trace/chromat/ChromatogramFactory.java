@@ -82,7 +82,7 @@ public final class ChromatogramFactory {
 	 * 
 	 * The value returned by the {@link Chromatogram#getId()}
 	 * will be the value passed in as the id parameter.
-	 * @param id, the id of this chromatogram.
+	 * @param id the id of this chromatogram.
 	 * @param chromatogramFile the chromatogram file
 	 * to parse and create a {@link Chromatogram}
 	 * object from.
@@ -108,7 +108,7 @@ public final class ChromatogramFactory {
 	 * 
 	 * The value returned by the {@link Chromatogram#getId()}
 	 * will be the value passed in as the id parameter.
-	 * @param id, the id of this chromatogram.
+	 * @param id the id of this chromatogram.
 	 * @param in the chromatogram data given an {@link InputStream}
 	 * to parse and create a {@link Chromatogram}
 	 * object from; can not be null.

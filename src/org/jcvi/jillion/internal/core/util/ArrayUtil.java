@@ -35,9 +35,11 @@ public final class ArrayUtil {
 	 * the backing array as primitives so
 	 * there is no memory or performance
 	 * penalty for boxing/unboxing until
-	 * users perform a {@link List#get(int)}
-	 * @param array
-	 * @return
+	 * users perform a {@link List#get(int)}.
+	 * 
+	 * @param array the array to wrap in a List.
+	 * 
+	 * @return a new List of Integers.
 	 */
 	public static List<Integer> asList(int[] array){
 		return new IntArrayList(array);

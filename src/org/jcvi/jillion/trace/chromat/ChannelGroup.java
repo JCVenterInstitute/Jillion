@@ -63,7 +63,7 @@ public interface ChannelGroup {
      * passing in an ambiguous nucleotide such as an N 
      * will return the T channel since some formats
      * put non A,C,G data in the T channel.
-     * @return the {@link DefaultChannel} for that {@link Nucleotide}.
+     * @return the {@link Channel} for that {@link Nucleotide}.
      * @throws NullPointerException if channelToGet is null.
      */
     Channel getChannel(Nucleotide channelToGet);

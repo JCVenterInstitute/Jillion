@@ -33,8 +33,9 @@ public interface Channel {
 	/**
 	 * Two {@link Channel}s are equal
 	 * if they have equal positions and confidences.
-	 * @param obj
-	 * @return
+	 * @param obj the object to compare.
+	 * @return {@code true} if the other object
+	 * is also a {@link Channel} and has the same position and confidence data.
 	 */
 	boolean equals(Object obj);
 

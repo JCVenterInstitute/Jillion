@@ -31,6 +31,7 @@ import org.jcvi.jillion.trace.fastq.FastqDataStore;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.jillion.trace.fastq.FastqParser;
 import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
+import org.jcvi.jillion.trace.fastq.FastqRecord;
 /**
  * {@code BfqFileDataStoreBuilder}
  * is a Builder object that can

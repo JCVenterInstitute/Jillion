@@ -422,12 +422,7 @@ public abstract class AbiChromatogramParser {
 	}
 
 
-    /**
-     * @param groupedDataRecordMap
-     * @param traceData
-     * @param props
-     * @return
-     */
+   
     private static void parseSamplingRateFrom(
             GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
             Map<String,String> props) {
@@ -439,24 +434,14 @@ public abstract class AbiChromatogramParser {
         }
     }
 
-    /**
-     * @param groupedDataRecordMap
-     * @param traceData
-     * @param props
-     * @return
-     */
+   
     private static void addNumberOfBases(
             List<NucleotideSequence> basecalls,
             Map<String,String> props) {
         props.put("NBAS", ""+basecalls.get(ORIGINAL_VERSION).getLength());
     }
 
-    /**
-     * @param groupedDataRecordMap
-     * @param traceData
-     * @param props
-     * @return
-     */
+   
     private static void addNoiseComment(
             GroupedTaggedRecords groupedDataRecordMap,
             List<Nucleotide> channelOrder,
@@ -471,12 +456,7 @@ public abstract class AbiChromatogramParser {
         }
     }
 
-    /**
-     * @param groupedDataRecordMap
-     * @param traceData
-     * @param props
-     * @return
-     */
+    
     private static void addTimeStampComment(
             GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
             Map<String,String> props) {
@@ -508,12 +488,6 @@ public abstract class AbiChromatogramParser {
         }
     }
 
-    /**
-     * @param groupedDataRecordMap
-     * @param traceData
-     * @param props
-     * @return
-     */
     private static void addSpacingComment(
             GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
             Map<String,String> props) {
@@ -524,11 +498,6 @@ public abstract class AbiChromatogramParser {
 
     }
 
-    /**
-     * @param channelOrder
-     * @param props
-     * @return
-     */
     private static void addChannelOrderComment(
             List<Nucleotide> channelOrder, Map<String,String> props) {
         StringBuilder order = new StringBuilder();

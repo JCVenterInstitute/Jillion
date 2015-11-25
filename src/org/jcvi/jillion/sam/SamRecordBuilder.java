@@ -148,8 +148,9 @@ public class SamRecordBuilder implements SamAttributed{
 	 * Set the reference name that this segment
 	 * aligns to.  If this field is not set to
 	 * {@link SamRecord#UNAVAILABLE}, then the reference
-	 * {@link SamHeader#hasReferenceSequence(String) header.hasReferenceSequence(referenceName)}
-	 * must return {@code true}.
+	 * {@link SamHeader#getReferenceSequence(String)}
+	 * must return a non-null value.
+	 * 
 	 * If this method is not called, then the value will default
 	 * to null.
 	 * @param referenceName the reference name this segment aligns;
@@ -185,8 +186,9 @@ public class SamRecordBuilder implements SamAttributed{
 	 * of the NEXT read in the template.
 	 * If nextReferenceName is not {@link SamRecord#UNAVAILABLE}
 	 * or {@link SamRecord#IDENTICAL} then the reference
-	 * {@link SamHeader#hasReferenceSequence(String) header.hasReferenceSequence(referenceName)}
-	 * must return {@code true}. 
+	 * {@link SamHeader#getReferenceSequence(String)}
+	 * must return a non-null value. 
+	 * 
 	 * If nextReferenceName is not  {@link SamRecord#IDENTICAL}
 	 * and the next read in the template {@link SamRecord#isPrimary()}, then this field is
 	 * identical to {@link SamRecord#getReferenceName()} of the next read.
@@ -250,7 +252,7 @@ public class SamRecordBuilder implements SamAttributed{
 	 * Set the start position on the reference (1-based) of the 
 	 * matching base of the NEXT
 	 * read in the template.
-	 * This value should match the {@link SamRecord#getStartOffset()}
+	 * This value should match the {@link SamRecord#getStartPosition()}
 	 * of the primary line of the next read.
 	 * @param nextPosition the start position; must be >=0.
 	 * If this method is not called, then the default nextPosition
@@ -322,7 +324,9 @@ public class SamRecordBuilder implements SamAttributed{
 	 * should be null.  If not null,
 	 * then then this segment's {@link NucleotideSequence}
 	 * must also not be null and have an equal length.
-	 * @param qualities
+	 * @param qualities the {@link QualitySequence} for this record; may be null
+	 * if the qualities are not known.
+	 * 
 	 * @see #setSequence(NucleotideSequence)
 	 * @return this.
 	 */

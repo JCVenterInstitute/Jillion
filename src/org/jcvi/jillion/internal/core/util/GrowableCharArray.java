@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.core.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -243,8 +244,8 @@ public final class GrowableCharArray implements Iterable<Character>{
 	 * Removes the value at the given offset
 	 * and shifts all downstream
 	 * elements down by 1.
-	 * @param offset
-	 * @return
+	 * @param offset the offset to remove
+	 * @return the char value that was removed.
 	 */
 	public char remove(int offset){
 		assertValidOffset(offset);
@@ -397,7 +398,7 @@ public final class GrowableCharArray implements Iterable<Character>{
 	 * Calling this method on an unsorted
 	 * backing array may not insert the value
 	 * correctly.
-	 * @param value the value to insert.
+	 * @param values the values to insert.
 	 */
 	public void sortedInsert(char[] values){
 		if(values.length==0){

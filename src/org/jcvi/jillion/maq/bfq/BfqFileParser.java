@@ -137,7 +137,7 @@ public abstract class BfqFileParser implements FastqParser{
 		return false;
 	}
 	@Override
-	public boolean canAccept() {
+	public boolean canParse() {
 		return true;
 	}
 

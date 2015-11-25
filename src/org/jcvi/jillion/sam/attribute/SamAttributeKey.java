@@ -51,8 +51,9 @@ public final class SamAttributeKey{
 	/**
 	 * Two Keys are equal if they have the same
 	 * 2 characters.
-	 * @param obj
-	 * @return
+	 * @param obj the other object to compare.
+	 * @return {@code true} if the other object is also a {@link SamAttributeKey}
+	 * and the 2 character key is the same as this 2 character key.
 	 */
 	@Override
 	public boolean equals(Object obj) {
@@ -76,7 +77,7 @@ public final class SamAttributeKey{
 	}
 	/**
 	 * The two letter key as a String.
-	 * @return
+	 * @return the 2 letter key.
 	 */
 	@Override
 	public String toString(){

@@ -178,7 +178,7 @@ final class BgzfOutputStream extends OutputStream{
 	 * @throws NullPointerException if out is null.
 	 * @throws IOException if there is a problem creating the output file.
 	 */
-	public BgzfOutputStream(File outputBam, IndexerCallback callback) throws IOException {
+	BgzfOutputStream(File outputBam, IndexerCallback callback) throws IOException {
 		if(outputBam ==null){
 			throw new NullPointerException("output can not be null");
 		}

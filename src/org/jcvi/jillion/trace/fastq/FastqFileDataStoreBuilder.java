@@ -26,13 +26,15 @@ import java.io.InputStream;
 import java.util.Objects;
 import java.util.function.Predicate;
 
+import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.InputStreamSupplier;
 /**
  * {@code FastqFileDataStoreBuilder}
- * is a {@link Builder} that can create new instances
+ * is a Builder that can create new instances
  * of {@link FastqDataStore}s
  * using data from a given input fastq file.
+ * 
  * @author dkatzel
  *
  */
@@ -81,7 +83,9 @@ public final class FastqFileDataStoreBuilder{
          * Create a new instance of {@code FastqFileDataStoreBuilder}
          * which will build a {@link FastqDataStore} for the given
          * {@link InputStreamSupplier}.
-         * @param fastqFile the fastq file make a {@link FastqDataStore} with. 
+         * @param inputStreamSupplier the {@link InputStreamSupplier} that will
+         * return {@link InputStream}s of fastq file data to make a {@link FastqDataStore} with. 
+         * 
          * @throws NullPointerException if inputStreamSupplier is null.
          */
         public FastqFileDataStoreBuilder(InputStreamSupplier inputStreamSupplier){
@@ -230,7 +234,7 @@ public final class FastqFileDataStoreBuilder{
      * performance since the nucleotide and quality values don't have to be parsed
      * on reads that aren't accepted by the id filter.
 	 * 
-	 * @see #filterRecord(Predicate)
+	 * @see #filterRecords(Predicate)
 	 */
 	public FastqFileDataStoreBuilder filter(Predicate<String> filter){
 		if(filter==null){
@@ -319,8 +323,8 @@ public final class FastqFileDataStoreBuilder{
 	 * penalty.
 	 * </li>
 	 * <li>
-	 * If no {@link DataStoreFilter} has been specified
-	 * by {@link #filter(DataStoreFilter)},
+	 * If no filter has been specified
+	 * by {@link #filter(Predicate)} or {@link #filterRecords(Predicate)},
 	 * then all {@link FastqRecord}s will be included in this {@link FastqDataStore}.
 	 * </li>
 	 * <li>
@@ -345,7 +349,8 @@ public final class FastqFileDataStoreBuilder{
 	 * (can be thrown even if the quality codec is auto-detected).
 	 * @see #qualityCodec(FastqQualityCodec)
 	 * @see #hint(DataStoreProviderHint)
-	 * @see #filter(DataStoreFilter)
+	 * @see #filter(Predicate)
+	 * @see #filterRecords(Predicate)
 	 */
 	public FastqFileDataStore build() throws IOException {
 	    

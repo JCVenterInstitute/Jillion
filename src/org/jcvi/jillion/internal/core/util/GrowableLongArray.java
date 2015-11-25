@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.core.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -81,7 +82,7 @@ public final class GrowableLongArray implements Iterable<Long>{
 	 * is the determined by the Collection's iteration order.
 	 * The capacity and length of this growable array
 	 * are set to the collection's size.
-	 * @param shorts the Collection of Integers to 
+	 * @param longs the Collection of Longs to 
 	 * create into a growable array from.
 	 * @throws NullPointerException if the given
 	 * collection is null or any elements in the collection
@@ -391,7 +392,7 @@ public final class GrowableLongArray implements Iterable<Long>{
 	 * Calling this method on an unsorted
 	 * backing array may not insert the value
 	 * correctly.
-	 * @param value the value to insert.
+	 * @param values the values to insert.
 	 */
 	public void sortedInsert(long[] values){
 		if(values.length==0){

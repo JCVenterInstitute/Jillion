@@ -73,7 +73,7 @@ public abstract class BfaParser implements FastaParser{
 	 * @param endian the {@link ByteOrder} to use to parse the file.
 	 * Make sure the endian matches the endian of the machine that 
 	 * Maq was run on (or matches the {@link ByteOrder}
-	 * used by the {@link BinaryfastaFileWriterBuilder} )
+	 * used by the {@link BfaWriterBuilder} )
 	 * that produced the file.
 	 * @return a new {@link FastaParser} instance;
 	 * will never be null.
@@ -111,7 +111,7 @@ public abstract class BfaParser implements FastaParser{
 	 * @param endian the {@link ByteOrder} to use to parse the file.
 	 * Make sure the endian matches the endian of the machine that 
 	 * Maq was run on (or matches the {@link ByteOrder}
-	 * used by the {@link BinaryfastaFileWriterBuilder} )
+	 * used by the {@link BfaWriterBuilder} )
 	 * that produced the file.
 	 * @return a new {@link FastaParser} instance;
 	 * will never be null.
