@@ -21,6 +21,8 @@
 package org.jcvi.jillion.trace.fastq;
 
 import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback;
 /**
  * {@code FastqRecordVisitor} is a visitor
  * interface to visit a single fastq record
@@ -30,7 +32,7 @@ import org.jcvi.jillion.core.qual.QualitySequence;
  */
 public interface FastqRecordVisitor {
 
-	/**
+    /**
      * Visit the nucleotide sequence of the current 
      * fastq record as a String.
      * @param nucleotides the {@link NucleotideSequence};

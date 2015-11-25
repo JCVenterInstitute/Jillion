@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.core.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -57,7 +58,7 @@ public final class GrowableIntArray implements Iterable<Integer>{
 	 */
 	private int[] data;
 	/**
-	 * Creates a new {@link GrowableIntrray}
+	 * Creates a new Growable array
 	 * with the given initial capacity.
 	 * @param initialCapacity the initial size 
 	 * of the backing int array.  When adding
@@ -73,7 +74,7 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		data = new int[initialCapacity];		
 	}
 	/**
-	 * Creates a new {@link GrowableIntrray}
+	 * Creates a new Growable array
 	 * where the backing array contains
 	 * the contents of the given Collection
 	 * stored as primitives.  The order in the array
@@ -96,7 +97,7 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		currentLength=data.length;
 	}
 	/**
-	 * Creates a new {@link GrowableIntrray}
+	 * Creates a new Growable array
 	 * where the backing int array is an exact
 	 * copy of the input array and the initial
 	 * capacity is set to the array length.
@@ -120,7 +121,7 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		currentLength = copy.currentLength;
 	}
 	/**
-	 * Creates a new {@link GrowableIntrray}
+	 * Creates a new Growable array
 	 * with a default initial capacity.
 	 */
 	public GrowableIntArray() {
@@ -373,7 +374,7 @@ public final class GrowableIntArray implements Iterable<Integer>{
 	 * Calling this method on an unsorted
 	 * backing array may not insert the value
 	 * correctly.
-	 * @param value the value to insert.
+	 * @param values the values to insert.
 	 */
 	public void sortedInsert(int[] values){
 		if(values.length==0){

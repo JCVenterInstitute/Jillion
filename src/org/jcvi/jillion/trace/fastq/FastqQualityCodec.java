@@ -82,26 +82,31 @@ public enum FastqQualityCodec {
 
 	/**
 	 * Decode the given FASTQ quality encoded String
-	 * into the equivalent Encoded Qualities.
-	 * @param fastqQualities
-	 * @return a new EncodedGlyphs representing
+	 * into the equivalent {@link QualitySequence}.
+	 * @param fastqQualities the encoded qualities.
+	 * 
+	 * @return a {@link QualitySequence}
 	 * the decoded FASTQ quality values.
 	 */
     public QualitySequence decode(String fastqQualities) {
     	return decode(fastqQualities, false);
     }
-	/**
-	 * Decode the given FASTQ quality encoded String
-	 * into the equivalent Encoded Qualities.
-	 * @param fastqQualities
-	 * @param turnOffCompression 
-	 * @return a new EncodedGlyphs representing
-	 * the decoded FASTQ quality values.
-	 */
+    /**
+     * Decode the given FASTQ quality encoded String
+     * into the equivalent {@link QualitySequence}.
+     * @param fastqQualities the encoded qualities.
+     * 
+     * @param turnOffCompression {@code true} if the quality sequence to be built
+     * should disable additional processing to compress or compact the sequence in as little memory 
+     * as possible.  Turning off compression may have improve speed but take up more memory.
+     * 
+     * @return a {@link QualitySequence}
+     * the decoded FASTQ quality values.
+     */
     public QualitySequence decode(String fastqQualities, boolean turnOffCompression) {
     	byte[] buffer = new byte[fastqQualities.length()];
       
-        for(int i=0; i<fastqQualities.length(); i++){        	;
+        for(int i=0; i<fastqQualities.length(); i++){
             buffer[i] =(byte)(fastqQualities.charAt(i) - offset);
         }
         return new QualitySequenceBuilder(buffer)

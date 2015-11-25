@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.core.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -411,7 +412,7 @@ public final class GrowableByteArray implements Iterable<Byte>{
 	 * Calling this method on an unsorted
 	 * backing array may not insert the value
 	 * correctly.
-	 * @param value the value to insert.
+	 * @param values the values to insert.
 	 */
 	public void sortedInsert(byte[] values){
 		if(values.length==0){

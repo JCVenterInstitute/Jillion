@@ -206,8 +206,7 @@ public final class SamFileWriterBuilder {
 	/**
 	 * Convenience method to resort 
 	 * using the default number of records to get in memory
-	 * specified by {@link #getDefaultRecordsToKeepInMemory()}
-	 * which is currently set to {@value #DEFAULT_RECORDS_IN_MEMORY}.
+	 * specified by {@link #getDefaultRecordsToKeepInMemory()}.
 	 * Same as {@link #reSortBy(SortOrder, int) reSortBy(sortOrder, getDefaultRecordsToKeepInMemory()}
 	 * 
 	 * @param sortOrder the {@link SortOrder} to use;

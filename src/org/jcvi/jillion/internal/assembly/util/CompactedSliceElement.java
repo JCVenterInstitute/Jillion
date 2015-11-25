@@ -53,11 +53,11 @@ public final class CompactedSliceElement implements SliceElement{
     /**
      * package private constructor used by compactedSlice to build
      * already encoded elements.
-     * @param id
-     * @param quality
-     * @param encodedDirAndNucleotide
+     * @param id the id of this element.
+     * @param quality the quality value of this element.
+     * @param encodedDirAndNucleotide the direction and base encoded into a single byte value.
      */
-    public CompactedSliceElement(String id, byte quality, byte encodedDirAndNucleotide){
+    private CompactedSliceElement(String id, byte quality, byte encodedDirAndNucleotide){
         if(id ==null){
             throw new NullPointerException("fields can not be null");
         }

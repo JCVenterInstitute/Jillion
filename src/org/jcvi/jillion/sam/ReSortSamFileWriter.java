@@ -42,7 +42,7 @@ import org.jcvi.jillion.sam.header.SamHeader;
  * {@code ReSortSamFileWriter}
  * is a {@link SamWriter} implementation
  * that can take {@link SamRecord}s given to it via
- * the {@link #writeRecord(SamRecord)}
+ * the {@link SamWriter#writeRecord(SamRecord)}
  * in ANY ORDER and write out the SAM or BAM file
  * sorted by the specified manner.
  * Subclasses handle the actual SAM/BAM encoding.
@@ -53,7 +53,7 @@ import org.jcvi.jillion.sam.header.SamHeader;
  * and write out a SAM/BAM file to a temp file and
  * clear the in memory array to make room for more
  * records.
- * When {@link #close()} is called,
+ * When {@link SamWriter#close()} is called,
  * write the combined sorted
  * records to the specified output file.
  * Since 
@@ -84,15 +84,28 @@ class ReSortSamFileWriter implements SamWriter {
 	
 	/**
 	 * 
-	 * @param outputFile
-	 * @param tmpDirRoot
-	 * @param header
-	 * @param maxRecordsToKeepInMemory
-	 * @param attributeValidator
-	 * @param tmpFileSuffix
-	 * @throws IOException
+	 * @param outputFile The output File to write.
+	 * @param tmpDirRoot the root directory to create child temp directories to write temp data to.
+	 * @param header the {@link SamHeader} to use in the output file.
+	 * @param maxRecordsToKeepInMemory the max number of SamRecords to keep in memory at a time.  When 
+	 * more than this amount of records have been written to memory, they will be flushed to a temp file under the tmpDirRoot.
+	 * Value must be &ge; 0.
+	 * 
+	 * @param attributeValidator the {@link SamAttributeValidator} to use to validate the records to be written;
+	 * can not be null.
+	 * 
+	 * @param encodingToUse The {@link Encoding} to use to write the output file; can not be null.
+	 * @param indexer the {@link BamIndexer} to use to index the files
+	 * @param includeIndexMetaData  should the index also include metadata.
+	 * 
+	 * @throws NullPointerException if any of the parameters that can't be null are null.
+	 * @throws IllegalArgumentException if maxRecordsToKeepInMemory is negative.
+	 * 
+	 * @throws IOException if there is a problem creating the output file or creating a temp directory under tmpDirRoot.
 	 */
-	public ReSortSamFileWriter(File outputFile, File tmpDirRoot, SamHeader header, int maxRecordsToKeepInMemory, SamAttributeValidator attributeValidator, Encoding encodingToUse, BamIndexer indexer, boolean includeIndexMetaData) throws IOException {
+	ReSortSamFileWriter(File outputFile, File tmpDirRoot, SamHeader header, 
+	        int maxRecordsToKeepInMemory, SamAttributeValidator attributeValidator,
+	        Encoding encodingToUse, BamIndexer indexer, boolean includeIndexMetaData) throws IOException {
 		
 		if(maxRecordsToKeepInMemory <0){
 			throw new IllegalArgumentException("max records to keep in memory must be >=1");

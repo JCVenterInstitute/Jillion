@@ -21,6 +21,7 @@
 package org.jcvi.jillion.internal.core.util.iter;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;

@@ -52,6 +52,7 @@ API Changes
 5.  Some classes that were in jillion.internal were moved to jillion.shared since all internal classes can't
     be exported by OSGI.  These classes should not be considered part of the public API and should only be for internal use.
     
+6. FastqFileParser.canAccept() renamed to canParse() to match the other parsers.
 
 Bug Fixes
 ---------

@@ -99,8 +99,7 @@ public final class SplitFastqWriter{
 	 * have written a record, the next {@link FastqRecord} to be written will write to the first
 	 * output file again.  This will continue until the writer is closed.
 	 * 
-	 * @param recordsPerFile the max number of {@link FastqRecord}s to be written to a file
-	 * before it should be closed and the next file created. Must be >=1.
+	 * @param numberOfFiles the number of files to write; must be >=1.
 	 * 
 	 * @param supplier a {@link FastqWriterFactory} instance that will create a new {@link FastqWriter} for the
 	 * ith file to be created.  The passed in value i will be in the range 1..N where N is the number of files
@@ -115,9 +114,9 @@ public final class SplitFastqWriter{
 	 * @apiNote for example, to make a Split FastqWriter that will write out to 10 different fastq files
 	 *  named "1.fastq" to "10.fastq" in a round robin fashion would look like this:
 	 * <pre>
-	 * {@code 
+	 * 
 	 * File outputDir = ...
-	 * Iterator<FastqRecord> iter = ...
+	 * {@code Iterator<FastqRecord>} iter = ...
 	 * 
 	 * try(FastqWriter writer = SplitFastqWriter.roundRobin(
 	 * 					10,
@@ -142,7 +141,7 @@ public final class SplitFastqWriter{
 	 * the max number of records, a new output fastq file will be created to write out the next max number of records
 	 * (the additional written records will be rolled over to the new writer).
 	 * 
-	 * @param recordsPerFile the max number of {@link FastqRecord}s to be written to a file
+	 * @param maxRecordsPerFile the max number of {@link FastqRecord}s to be written to a file
 	 * before it should be closed and the next file created. Must be >=1.
 	 * 
 	 * @param supplier a {@link FastqWriterFactory} instance that will create a new FastqWriter for the
@@ -159,10 +158,10 @@ public final class SplitFastqWriter{
 	 *  every 1000 sequences
 	 *  named "1.fastq", "2.fastq", etc where "1.fastq" will contain the first 1000 sequences
 	 *  and "2.fastq" will contain the next 1000 sequences etc would look like this:
+	 *  
 	 * <pre>
-	 * {@code 
 	 * File outputDir = ...
-	 * Iterator<FastqRecord> iter = ...
+	 * {@code Iterator<FastqRecord>} iter = ...
 	 * 
 	 * try(FastqWriter writer = SplitFastqWriter.rollover(
 	 * 					1000,
@@ -210,11 +209,9 @@ public final class SplitFastqWriter{
 	 * out which "barcode" was used in that read, then to the code to bin the reads
 	 * by barcode will look like this:
 	 * 
-	 * <pre>
-	 * {@code 
-	 * 
+	 * <pre> 
 	 * File outputDir = ...
-	 * Iterator<FastqRecord> iter = ...
+	 * {@code Iterator<FastqRecord>} iter = ...
 	 * try(FastqWriter writer = SplitFastqWriter.deconvolve(
 	 * 					record-> findBarocdeFor(record),
 	 * 					barcode -> new FastqWriterBuilder(new File(outputDir, barcode + ".fastq"))

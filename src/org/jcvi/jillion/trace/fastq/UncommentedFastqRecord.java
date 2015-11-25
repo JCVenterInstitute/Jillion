@@ -24,7 +24,7 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
  * {@link FastqRecord} implementation that doesn't
- * have a comment (so {@link #getComment()} returns null).
+ * have a comment (so {@link FastqRecord#getComment()} returns null).
  * This saves us 8 bytes per record.
  * @author dkatzel
  *

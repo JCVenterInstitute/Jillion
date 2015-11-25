@@ -76,7 +76,7 @@ public final class PaddedSamTransformationService implements AssemblyTransformat
 	 * the given padded SAM encoded file  which
 	 * should already include the gapped reference sequences
 	 * inside it.
-	 * @param samFile the SAM file to parse and transform; can not be null
+	 * @param paddedSamOrBamFile the SAM file to parse and transform; can not be null
 	 * and must exist.
 	 * 
 	 * @throws IOException if there is a problem parsing the input file.

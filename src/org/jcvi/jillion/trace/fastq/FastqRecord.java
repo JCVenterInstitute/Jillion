@@ -91,8 +91,9 @@ public interface FastqRecord extends Trace{
      * and {@link QualitySequence}s.
      * Any comments returned by {@link #getComment()}
      * are ignored for equality testing.
-     * @param obj
-     * @return
+     * @param obj the other object to compare.
+     * @return {@code true} if the other object is also a {@link FastqRecord}
+     * and has the same id, nucleotide and quality sequence.
      */
     @Override
     boolean equals(Object obj);

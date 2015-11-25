@@ -24,7 +24,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
+
 import org.jcvi.jillion.core.io.InputStreamSupplier;
+import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback.FastqVisitorMemento;
 /**
  * Creates a {@link FastqParser}
  * that parses the given fastq encoded file
@@ -66,19 +68,23 @@ public final class FastqFileParserBuilder {
 	 * {@link InputStream}.  Please Note that inputStream implementations
 	 * of the FastqFileParser can only be parsed once 
 	 * and will not not create {@link FastqVisitorMemento}s
-	 * or use {@link #accept(FastqVisitor, FastqVisitorMemento)}
+	 * or use {@link FastqParser#parse(FastqVisitor, FastqVisitorMemento)}
 	 * method.
 	 * 
 	 * @apiNote if you have a compressed file that you want to be
-	 * able to parse multiple times, use {@link #FastqFileParserBuilder(File, Function)}
+	 * able to parse multiple times, use {@link #FastqFileParserBuilder(File) } if
+	 * the compressed file is one of the supported file types 
+	 * or {@link #FastqFileParserBuilder(InputStreamSupplier, boolean) } if you want to provide
+	 * your own {@link InputStreamSupplier} impelentation.
 	 * 
 	 * @param in the fastq encoded {@link InputStream} to parse; can not be null.
 	 * 
 	 * @throws NullPointerException if inputstream is null.
 	 * 
-	 * @return a new {@link FastqParser} instance; will never be null.
+	 * @returns a new {@link FastqParser} instance; will never be null.
 	 * 
-	 * @see #FastqFileParserBuilder(File, Function)
+	 * @see #FastqFileParserBuilder(File)
+	 * @see #FastqFileParserBuilder(InputStreamSupplier, boolean)
 	 */
     public FastqFileParserBuilder(InputStream in){
         Objects.requireNonNull(in, "Inputstream can not be null");
@@ -135,8 +141,7 @@ public final class FastqFileParserBuilder {
      *                  Adding memento support requires extra processing time
      *                  so it is usually {@code false} by default.
      * 
-     * @throws IOException if the file is not readable
-     * @throws NullPointerException if file is null.
+     * @throws NullPointerException if inputStreamSupplier is null.
      * 
      * @see FastqParser#canCreateMemento()
      * 

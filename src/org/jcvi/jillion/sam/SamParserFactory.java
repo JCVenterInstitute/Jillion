@@ -73,7 +73,7 @@ public final class SamParserFactory {
 	 * and there is an accompanying BAI file in the same directory named <code>f.getName() + ".bai"</code>,
 	 * then a specialized {@link SamParser}
 	 * that uses the index will be returned as if the call to
-	 * {@link #createFromBamIndex(File, File, SamAttributeValidator)} was used instead.
+	 * {@link #createUsingIndex(File, File, SamAttributeValidator)} was used instead.
 	 * </p>
 	 * @param f the SAM or BAM file to be parsed;
 	 * can not be null, must exist and 
@@ -89,7 +89,7 @@ public final class SamParserFactory {
 	 * @throws IllegalArgumentException if the file's extension
 	 * is not either ".sam" or ".bam" (ignoring case).
 	 * 
-	 * @see #createFromBamIndex(File, File, SamAttributeValidator)
+	 * @see #createUsingIndex(File, File, SamAttributeValidator)
 	 */
 	public static SamParser create(File f, SamAttributeValidator validator) throws IOException{
 		

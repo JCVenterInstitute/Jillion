@@ -25,12 +25,12 @@
  */
 package org.jcvi.jillion.trace.fastq;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.util.Builder;
 /**
@@ -39,7 +39,6 @@ import org.jcvi.jillion.core.util.Builder;
  * all {@link FastqRecord}s from a file in memory.  This is only recommended for small fastq
  * files that won't take up too much memory.
  * @author dkatzel
- * @see LargeFastqFileDataStore
  *
  */
 final class DefaultFastqFileDataStore{

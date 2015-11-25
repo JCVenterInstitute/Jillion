@@ -20,7 +20,9 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace.fastq;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback.FastqVisitorMemento;
 /**
@@ -43,7 +45,7 @@ public interface FastqParser {
 	 * @return {@code true} if this handler can handle 
 	 * new parse requests; {@code false} otherwise.
 	 */
-	boolean canAccept();
+	boolean canParse();
 	
 	/**
 	 * Is this {@link FastqParser}'s callbacks capable of

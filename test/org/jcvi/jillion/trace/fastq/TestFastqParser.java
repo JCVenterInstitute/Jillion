@@ -52,7 +52,7 @@ public class TestFastqParser extends EasyMockSupport{
 	public void visitFile() throws IOException{
 		FastqParser sut = createSut(fastqFile);
 		
-		assertTrue(sut.canAccept());
+		assertTrue(sut.canParse());
 		FastqVisitor visitor = createMockFullFileVisitor();
 		replayAll();
 		sut.parse(visitor);
@@ -63,7 +63,7 @@ public class TestFastqParser extends EasyMockSupport{
 		FastqParser sut = createSut(fastqFile);
 		
 		List<FastqVisitorMemento> mementos = new ArrayList<>();
-		assertTrue(sut.canAccept());
+		assertTrue(sut.canParse());
 		FastqVisitor visitor = createMockFullFileVisitor(mementos);
 		replayAll();
 		sut.parse(visitor);

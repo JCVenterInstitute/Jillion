@@ -82,7 +82,7 @@ public abstract class FastqFileParser implements FastqParser{
 	 * inputStream that does not contain defline comments and is
 	 * only 4 lines per fastq record.  Please Note that inputStream implementations
 	 * of the FastqFileParser can not create {@link FastqVisitorMemento}s
-	 * or use {@link #accept(FastqVisitor, FastqVisitorMemento)}
+	 * or use {@link #parse(FastqVisitor, FastqVisitorMemento)}
 	 * method.
 	 * <p>
 	 * If you need to parse Fastq files that have
@@ -107,7 +107,7 @@ public abstract class FastqFileParser implements FastqParser{
          * File which may be zipped or gzipped, but does not contain defline comments and is
          * only 4 lines per fastq record.  Please Note the returned implementations
          * of the FastqFileParser can not create {@link FastqVisitorMemento}s
-         * or use {@link #accept(FastqVisitor, FastqVisitorMemento)}
+         * or use {@link #parse(FastqVisitor, FastqVisitorMemento)}
          * method.
          * <p>
          * If you need to parse Fastq files that have
@@ -116,7 +116,7 @@ public abstract class FastqFileParser implements FastqParser{
          * please use {@link FastqFileParserBuilder}
          * which has additional configuration options.
          *
-         * @param in the fastq encoded file to parse; must
+         * @param fastq the fastq encoded file to parse; must
          * exist and be readable; may be a "normal" fastq file, or zipped or gzipped.
          * 
          * @throws NullPointerException if fastq is null.
@@ -492,7 +492,7 @@ public abstract class FastqFileParser implements FastqParser{
 
 
 		@Override
-		public boolean canAccept() {
+		public boolean canParse() {
 			return true;
 		}
 
@@ -563,7 +563,7 @@ public abstract class FastqFileParser implements FastqParser{
 
 		@Override
 		public synchronized void parse(FastqVisitor visitor) throws IOException {
-			if(!canAccept()){
+			if(!canParse()){
 				throw new IllegalStateException("can not accept, inputStream closed");
 			}
 			//synchronized to only let in one visitor at a time since they will
@@ -581,7 +581,7 @@ public abstract class FastqFileParser implements FastqParser{
 		}
 
 		@Override
-		public boolean canAccept() {
+		public boolean canParse() {
 			return in.isOpen();
 		}
 

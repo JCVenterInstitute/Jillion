@@ -126,9 +126,9 @@ class BgzfInputStream extends InflaterInputStream {
     private int currentBlockSize;
 
     /**
-     * Creates a new {@link BgzfInputStream} with a default buffer size.
+     * Creates a new BgzfInputStream with a default buffer size.
      * 
-     * @param bam The bam file to parse.
+     * @param bamFile The bam file to parse.
      *
      * @throws ZipException if a GZIP format error has occurred or the
      *                         compression method used is unsupported
@@ -143,7 +143,7 @@ class BgzfInputStream extends InflaterInputStream {
      * Creates a new {@link BgzfInputStream} starting
      * from the given {@link VirtualFileOffset}.
      * 
-     * @param bam The bam file to parse.
+     * @param bamFile The bam file to parse.
      * @param vfs the {@link VirtualFileOffset} to use to seek to before reading
      *any bytes from the stream; can not be null.
      *
@@ -155,7 +155,7 @@ class BgzfInputStream extends InflaterInputStream {
      * 
      * @since 5.0
      */
-    public static BgzfInputStream create(File bamFile, VirtualFileOffset vfs) throws IOException{
+    static BgzfInputStream create(File bamFile, VirtualFileOffset vfs) throws IOException{
     	long compressedBamBlockOffset = vfs.getCompressedBamBlockOffset();
     	InputStream in;
     	if(compressedBamBlockOffset>0){
@@ -303,7 +303,7 @@ class BgzfInputStream extends InflaterInputStream {
      * will return equal file offsets (but
      * may not be the same instance).
      */
-    public VirtualFileOffset getCurrentVirutalFileOffset(){    	
+    VirtualFileOffset getCurrentVirutalFileOffset(){    	
     	int uncompressedBytesReadInCurrentBlock = (int)this.inf.getBytesWritten();
     	if(uncompressedBytesReadInCurrentBlock > BUFFER_SIZE){
     		//this will cause an overflow in the encoded virtual file offset

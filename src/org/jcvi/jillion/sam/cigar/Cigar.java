@@ -476,7 +476,7 @@ public final class Cigar implements Iterable<CigarElement>{
 	 * is null.
 	 * @throws IllegalArgumentException if rawUngappedSequence has gaps.
 	 * @throws IllegalArgumentException if rawUngappedSequence ungapped length
-	 * does not match the cigar unpadded length returned by {@link #getRawUnPaddedReadLength()}
+	 * does not match the cigar unpadded length.
 	 */
 	public NucleotideSequence toGappedTrimmedSequence(NucleotideSequence rawUngappedSequence){
 		
@@ -495,7 +495,7 @@ public final class Cigar implements Iterable<CigarElement>{
 	 * <pre>
 	 * Cigar.parse( this.toCigarString() ).equals(this);
 	 * </pre>
-	 * @return
+	 * @return the Cigar as a String using the standard CIGAR format.
 	 */
 	public  String toCigarString() {
 		StringBuilder builder = new StringBuilder(3*elements.length);
@@ -728,7 +728,7 @@ public final class Cigar implements Iterable<CigarElement>{
 	 * is null.
 	 * @throws IllegalArgumentException if rawUngappedSequence has gaps.
 	 * @throws IllegalArgumentException if rawUngappedSequence ungapped length
-	 * does not match the cigar unpadded length returned by {@link #getRawUnPaddedReadLength()}
+	 * does not match the cigar unpadded length.
 	 */
 	@SuppressWarnings("fallthrough")
 	@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SF_SWITCH_FALLTHROUGH")

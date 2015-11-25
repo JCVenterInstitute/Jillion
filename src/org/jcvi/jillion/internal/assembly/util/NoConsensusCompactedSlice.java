@@ -45,8 +45,8 @@ public class NoConsensusCompactedSlice implements Slice{
     public static final NoConsensusCompactedSlice EMPTY = (NoConsensusCompactedSlice) new SliceBuilder().build();
     
     /**
-     * @param elements
-     * @param ids
+     * @param elements array of encoded element data.
+     * @param ids list of ids in the same order as the encoded elements.
      */
     @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
     		value = {"EI_EXPOSE_REP2"},

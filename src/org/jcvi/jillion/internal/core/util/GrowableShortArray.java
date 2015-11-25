@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.core.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -243,8 +244,8 @@ public final class GrowableShortArray implements Iterable<Short>{
 	 * Removes the value at the given offset
 	 * and shifts all downstream
 	 * elements down by 1.
-	 * @param offset
-	 * @return
+	 * @param offset the offset to remove.
+	 * @return the short value removed.
 	 */
 	public short remove(int offset){
 		assertValidOffset(offset);
@@ -397,7 +398,7 @@ public final class GrowableShortArray implements Iterable<Short>{
 	 * Calling this method on an unsorted
 	 * backing array may not insert the value
 	 * correctly.
-	 * @param value the value to insert.
+	 * @param values the values to insert.
 	 */
 	public void sortedInsert(short[] values){
 		if(values.length==0){

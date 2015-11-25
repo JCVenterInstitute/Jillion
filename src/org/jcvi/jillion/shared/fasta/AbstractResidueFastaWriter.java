@@ -37,7 +37,7 @@ import org.jcvi.jillion.fasta.FastaWriter;
  * @author dkatzel
  *
  * @param <R> the type of {@link Residue}
- * @param <S> the type of {@link Sequence}
+ * @param <S> the type of {@link ResidueSequence}
  * @param <F> the Type of {@link FastaRecord}
  */
 public abstract class AbstractResidueFastaWriter<R extends Residue, S extends ResidueSequence<R>, F extends FastaRecord<R,S>> extends  AbstractFastaRecordWriter<R, S, F>{
@@ -74,7 +74,7 @@ public abstract class AbstractResidueFastaWriter<R extends Residue, S extends Re
 	 * @author dkatzel
 	 *
 	 * @param <R> the type of {@link Residue}
-	 * @param <S> the type of {@link Sequence}
+	 * @param <S> the type of {@link ResidueSequence}
 	 * @param <F> the Type of {@link FastaRecord}
 	 * @param <W> the Type of {@link FastaWriter} that will be built.
 	 */
