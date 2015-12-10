@@ -1,3 +1,40 @@
+#5.1 Release Notes
+
+##New Features
+1. Added new methods to `FastaDataStore` getSequence( id) which gets just the sequence
+   and is equivalent to get(id).getSequence().
+2. Added new methods `FastaDataStore.getSubSequence( id, offset)` which gets just the sequence
+   starting from the given offset.
+3. Added new methods to `FastaDataStore.getSubSequence( id, range)` which gets just the sequence
+   that intersects the given range.
+4.  Added support for Fasta Index Files (.fai) files to NucleotideFastaDataStore.
+    The `NucleotideFastaFileDataStoreBuilder` object can now be given an fai file
+    or auto-detect one and use that to make a more efficient implementation
+    to be used with the new getSequence() or getSubSequence() methods.    
+5.  Added support for writing Fasta Index Files (.fai) files to `NucleotideFastaWriter` using 
+    the createIndex(true) method.  This will make an additional file named `$outputFasta.fai`.
+    Supports normal, zipped and non-redundant fasta files.    
+6.  Added new class `FaiNucleotideWriterBuilder` that can create new Fasta Index Files (.fai) for 
+    existing fasta files.  The builder object supports fully configuration of the fai to be written
+    including the output path, the end of line character, and the Charset.
+7. Improved JavaDoc
+8. `BlosumMatrices` class added support for Blosum30 and 40.
+
+##API Changes
+1. `FastqFileParser.canAccept()` renamed to `canParse()` to match the other parsers.
+2. Created new abstract class AbstractReadCasVisitor which is now the parent class of AbstractAlignedReadCasVisitor.  The new class handles iterating over the input read files to link cas alignments to their read names, sequences and qualities.
+   Now you can extend that class if you want that extra information without realigning to gapped references.
+3. To Fix OSGi issues, Some classes that were in jillion.internal were moved to jillion.shared since all internal classes can't be exported by OSGI.  These classes should not be considered part of the public API and should only be for internal use.
+4. Moved FastaUtil to internal package since it should not be used outside of Jillion classes.  Heavily refactored it.
+
+##Bug Fixes
+1.  PositionSequence - sanger `PositionSequence.iterator(Range)`
+    had off by 1 bug that did not include the last base in the range.    
+2.  StreamingIterator - abstract class that many StreamingIterators extend to use background thread
+    to populate iterator has been improved to fix occasional dead lock issues if the background thread throws exceptions.
+
+
+
 #5.0 Release Notes
 
 ##Jillion 5 License change. 
