@@ -20,6 +20,8 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.nt;
 
+import org.jcvi.jillion.internal.core.GlyphCodec;
+
 
 /**
  * {@code NoAmbiguitiesNucleotideCodec} is a {@link GlyphCodec}
