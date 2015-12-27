@@ -32,6 +32,7 @@ import java.nio.charset.Charset;
 import java.util.Comparator;
 import java.util.Objects;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -320,31 +321,53 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 			writer.close();
 			
 		}
-	
 		@Override
-		public void write(FastqRecord record) throws IOException {
+                public void write(FastqRecord record) throws IOException{
+		    write(record, null);
+		}
+		
+		@Override
+		public void write(FastqRecord record, Range trimRange) throws IOException {
 		    if(record instanceof ParsedFastqRecord){
 		        ParsedFastqRecord parsedRecord = (ParsedFastqRecord) record;
 		        FastqQualityCodec recordCodec = parsedRecord.getQualityCodec();
 		        String formattedString;
 		        if(codec.equals(recordCodec)){
 		            //same quality encoding can use encoded qualities as is
-		            formattedString=  toFormattedString(parsedRecord.getId(), encodeNucleotides(parsedRecord.getNucleotideString()),
-		                    formatEncodedQualities(parsedRecord.getEncodedQualities()), parsedRecord.getComment());
+		            formattedString=  toFormattedString(parsedRecord.getId(),
+		                    encodeNucleotides(parsedRecord.getNucleotideString(), trimRange),
+		                    formatEncodedQualities(parsedRecord.getEncodedQualities(), trimRange), parsedRecord.getComment());
 		        }else{
 		            //not same quality encoding		            
 		            int offsetCorrection = codec.getOffset() - recordCodec.getOffset();
-		            char[] chars =parsedRecord.getEncodedQualities().toCharArray();
+		            char[] chars = trimRange ==null?  parsedRecord.getEncodedQualities().toCharArray()
+		                                : parsedRecord.getEncodedQualities().substring((int)trimRange.getBegin(), (int) trimRange.getEnd()+1).toCharArray();
 		            for(int i=0; i< chars.length; i++){
 		                chars[i] = (char)(chars[i] + offsetCorrection);
 		            }
-		            formattedString = toFormattedString(parsedRecord.getId(), encodeNucleotides(parsedRecord.getNucleotideString()),
-		                    formatEncodedQualities( new String(chars)), parsedRecord.getComment());
+		            
+		            formattedString = toFormattedString(parsedRecord.getId(), encodeNucleotides(parsedRecord.getNucleotideString(), trimRange),
+		                    formatEncodedQualities( new String(chars), null), parsedRecord.getComment());
 		        }
 		        
 		        writer.write(formattedString);
 		    }else{
-			write(record.getId(), record.getNucleotideSequence(), record.getQualitySequence(), record.getComment());
+		        if(trimRange ==null){
+		            write(record.getId(), record.getNucleotideSequence(), record.getQualitySequence(), record.getComment());
+		        }else{
+		            write(record.getId(), 
+		                    record.getNucleotideSequence()
+		                            .toBuilder()
+		                            .trim(trimRange)
+		                            .turnOffDataCompression(true)
+		                            .build(), 
+		                    record.getQualitySequence()
+		                            .toBuilder()
+		                            .trim(trimRange)
+		                            .turnOffDataCompression(true)
+		                            .build(),
+		                 record.getComment());
+		        }
 		    }
 			
 		}
@@ -375,25 +398,28 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 				throw new IllegalArgumentException(
 						String.format("nucleotide and quality sequences must be same length: %d vs %d",nucLength, qualLength));
 			}
-			final String formattedString =toFormattedString(id, encodeNucleotides(sequence.toString()), encodeQualities(qualities), optionalComment);
+			final String formattedString =toFormattedString(id, encodeNucleotides(sequence.toString(), null), encodeQualities(qualities), optionalComment);
 			
 			writer.write(formattedString);
 	
 		}
 	
-		private CharSequence encodeNucleotides(String sequence){
+		private CharSequence encodeNucleotides(String sequence, Range trimRange){
+		    
+		    String nucleotidesToWrite = trimRange==null? sequence : sequence.substring((int)trimRange.getBegin(), (int) trimRange.getEnd()+1);
+	            
 			if(numberOfBasesPerLine==ALL_ON_ONE_LINE){
-				return sequence;
+				return nucleotidesToWrite;
 			}
 			
-			int numBases = sequence.length();
+			int numBases = nucleotidesToWrite.length();
 			int numberOfLines = numBases/numberOfBasesPerLine +1;
 			StringBuilder builder = new StringBuilder(numBases+numberOfLines);
 			if(numBases ==0){
 				return builder;
 			}
 			
-			char[] charArray = sequence.toCharArray();
+			char[] charArray = nucleotidesToWrite.toCharArray();
 			builder.append(charArray[0]);
 			
 			for(int i=1; i< numBases; i++){
@@ -406,21 +432,23 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 		}
 		private CharSequence encodeQualities(QualitySequence qualities){
 			String encodedQualities = codec.encode(qualities);
-			return formatEncodedQualities(encodedQualities);
+			return formatEncodedQualities(encodedQualities, null);
 		}
 
 
-        private CharSequence formatEncodedQualities(String encodedQualities) {
+        private CharSequence formatEncodedQualities(String encodedQualities, Range trimRange) {
+            String qualitiesToWrite = trimRange==null? encodedQualities : encodedQualities.substring((int)trimRange.getBegin(), (int) trimRange.getEnd()+1);
+            
             if(numberOfBasesPerLine==ALL_ON_ONE_LINE){
-				return encodedQualities;
+				return qualitiesToWrite;
 			}
-			int numberOfLines = encodedQualities.length()/numberOfBasesPerLine +1;
-			StringBuilder builder = new StringBuilder(encodedQualities.length()+numberOfLines);
-			for(int i=0; i<encodedQualities.length();i++){
+			int numberOfLines = qualitiesToWrite.length()/numberOfBasesPerLine +1;
+			StringBuilder builder = new StringBuilder(qualitiesToWrite.length()+numberOfLines);
+			for(int i=0; i<qualitiesToWrite.length();i++){
 				if(i>0 && i%numberOfBasesPerLine ==0){
 					builder.append(CR);
 				}
-				builder.append(encodedQualities.charAt(i));
+				builder.append(qualitiesToWrite.charAt(i));
 			}
 			
 			return builder;

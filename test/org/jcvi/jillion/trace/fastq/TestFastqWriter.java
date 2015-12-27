@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Comparator;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
@@ -76,6 +77,40 @@ public class TestFastqWriter {
         sut.write(datastore.get("SOLEXA1:4:1:12:1489#0/1"));
         sut.close();
         
+        String actual = new String(out.toByteArray(), IOUtil.UTF_8);
+        assertEquals(expected, actual);
+    }
+	
+    @Test
+    public void writeTrimmedWithNullRangeWritesFullRange() throws DataStoreException,
+            IOException {
+        String expected = "@SOLEXA1:4:1:12:1489#0/1\n"
+                + "TATTTAAAATCTAATANGTCTTGATTTGAAATTGAAAGAGCAAAAATCTGATTGATTTTATTGAAGAATAATTTGATTTAATATATTCTTAAGTCTGTTT\n"
+                + "+\n"
+                + "BCBBC>@>BBBACCBC#A8C@@BB=@>8>BA?<A=5AB;B@BBA89BAA>@A<A?B??<A?><B?3BBB=7=02>B:2?BB?=A(35%1A?5?-C?B3A4\n";
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        FastqWriter sut = new FastqWriterBuilder(out).build();
+        sut.write(datastore.get("SOLEXA1:4:1:12:1489#0/1"), null);
+        sut.close();
+
+        String actual = new String(out.toByteArray(), IOUtil.UTF_8);
+        assertEquals(expected, actual);
+    }
+    
+    @Test
+    public void writeTrimmed() throws DataStoreException,
+            IOException {
+        String expected = "@SOLEXA1:4:1:12:1489#0/1\n"
+                + "CTAATANGTCT\n"
+                + "+\n"
+                + "BACCBC#A8C@\n";
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        FastqWriter sut = new FastqWriterBuilder(out).build();
+        sut.write(datastore.get("SOLEXA1:4:1:12:1489#0/1"), Range.of(10,20));
+        sut.close();
+
         String actual = new String(out.toByteArray(), IOUtil.UTF_8);
         assertEquals(expected, actual);
     }

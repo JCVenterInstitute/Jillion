@@ -23,6 +23,7 @@ package org.jcvi.jillion.trace.fastq;
 import java.io.Closeable;
 import java.io.IOException;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
@@ -40,7 +41,66 @@ public interface FastqWriter extends Closeable{
 	 * {@link FastqRecord}.
 	 * @throws NullPointerException if record is null.
 	 */
-	void write(FastqRecord record) throws IOException;	
+	void write(FastqRecord record) throws IOException;
+	
+	/**
+         * Write the given {@link FastqRecord} out.
+         * 
+         * @param record the {@link FastqRecord} to write;
+         * can not be null.
+         * 
+         * @param trimRange the {@link Range} to trim the sequence
+         * and quality to.  If the trimRange is null, then the whole
+         * sequence is written. 
+         * 
+         * @throws IOException if there is a problem writing out the
+         * {@link FastqRecord}.
+         * 
+         * @throws NullPointerException if record is null.
+         * 
+         * 
+         * @implNote The default implementation is given below, but 
+         *           implementations may override this method to provide
+         *           a more efficient version:
+         * 
+         * <pre>
+         * if(trimRange==null){
+         *     write(record);
+         *     return;
+         * }
+         * write(record.getId(), 
+                    record.getNucleotideSequence()
+                            .toBuilder()
+                            .trim(trimRange)
+                            .build(), 
+                    record.getQualitySequence()
+                            .toBuilder()
+                            .trim(trimRange)
+                            .build(),
+                 record.getComment());
+         * </pre>
+         * 
+         * @since 5.2
+         */
+        default void write(FastqRecord record, Range trimRange) throws IOException{
+            if(trimRange==null){
+                write(record);
+                return;
+            }
+            
+            write(record.getId(), 
+                    record.getNucleotideSequence()
+                            .toBuilder()
+                            .trim(trimRange)
+                            .turnOffDataCompression(true)
+                            .build(), 
+                    record.getQualitySequence()
+                            .toBuilder()
+                            .trim(trimRange)
+                            .turnOffDataCompression(true)
+                            .build(),
+                 record.getComment());
+        }
 	/**
 	 * Write the given id, {@link NucleotideSequence}
 	 * and {@link QualitySequence}
