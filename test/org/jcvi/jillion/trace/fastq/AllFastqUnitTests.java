@@ -43,6 +43,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestParseSangerEncodedFastQFile.class,        
         TestFastqWriter.class,
         TestFastqWriterWithComment.class,
+        TestWriteTrimmedFastq.class,
         
         TestFastqParser.class,
         TestFastqParserWithFunctionLambda.class,

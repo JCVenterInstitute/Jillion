@@ -49,8 +49,8 @@ public interface FastqWriter extends Closeable{
          * @param record the {@link FastqRecord} to write;
          * can not be null.
          * 
-         * @param trimRange the {@link Range} to trim the sequence
-         * and quality to.  If the trimRange is null, then the whole
+         * @param trimRange the {@link Range} to use to trim the nucleotide
+         * and quality sequences.  If the trimRange is null, then the whole
          * sequence is written. 
          * 
          * @throws IOException if there is a problem writing out the

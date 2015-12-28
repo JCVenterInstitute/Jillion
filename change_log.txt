@@ -7,6 +7,15 @@ change the behavior in any public API classes.  The order of changes is mostly
 chronological so the most important changes may not always be ordered first.
 
 
+================
+Jillion 5.2
+================
+
+New Features
+------------
+1.  Added new method to fastq writer to automatically trim given a Range. 
+    This saves users the trouble of creating SequenceBuilders and trimming themselves.
+
 
 ================
 Jillion 5.1

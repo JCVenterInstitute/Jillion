@@ -1,3 +1,10 @@
+#5.2 Release Notes
+
+##New Features
+1. Added new method to fastq writer to automatically trim given a Range. 
+This saves users the trouble of creating SequenceBuilders and trimming themselves.
+
+
 #5.1 Release Notes
 
 ##New Features

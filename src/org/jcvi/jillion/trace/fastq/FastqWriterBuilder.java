@@ -328,6 +328,25 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 		
 		@Override
 		public void write(FastqRecord record, Range trimRange) throws IOException {
+		    //performance improvement:
+		    //ParsedFastqRecord is a special implementation of FastqRecord
+		    //that delays converting the encoded sequence and qualities
+		    //from Strings into Jillion Sequence objects.
+		    //
+		    //This is actually the implementation returned by FastqParser
+		    //visit methods since Jillion 5.0.
+		    //
+		    //Profiling code to find performance bottlenecks
+		    //revealed all the CPU cycles wasted from
+		    //parsing a fastq file, and then rewriting
+		    //those records practically unaltered
+		    //back out (possibly filtering out records).
+		    //
+		    //It seemed silly to decode the encoded strings
+		    //into Jillion objects only to re-encode them
+		    //back into the same strings again right away during writing.
+		    //
+		    //This code is much uglier, but improves performance by 25%
 		    if(record instanceof ParsedFastqRecord){
 		        ParsedFastqRecord parsedRecord = (ParsedFastqRecord) record;
 		        FastqQualityCodec recordCodec = parsedRecord.getQualityCodec();
@@ -339,15 +358,10 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 		                    formatEncodedQualities(parsedRecord.getEncodedQualities(), trimRange), parsedRecord.getComment());
 		        }else{
 		            //not same quality encoding		            
-		            int offsetCorrection = codec.getOffset() - recordCodec.getOffset();
-		            char[] chars = trimRange ==null?  parsedRecord.getEncodedQualities().toCharArray()
-		                                : parsedRecord.getEncodedQualities().substring((int)trimRange.getBegin(), (int) trimRange.getEnd()+1).toCharArray();
-		            for(int i=0; i< chars.length; i++){
-		                chars[i] = (char)(chars[i] + offsetCorrection);
-		            }
+		            String reEncodedQualities = reEncodeTrimmedQualities(parsedRecord, recordCodec, trimRange);
 		            
 		            formattedString = toFormattedString(parsedRecord.getId(), encodeNucleotides(parsedRecord.getNucleotideString(), trimRange),
-		                    formatEncodedQualities( new String(chars), null), parsedRecord.getComment());
+		                    formatEncodedQualities(reEncodedQualities, null), parsedRecord.getComment());
 		        }
 		        
 		        writer.write(formattedString);
@@ -371,6 +385,18 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 		    }
 			
 		}
+
+
+        private String reEncodeTrimmedQualities(ParsedFastqRecord parsedRecord,
+                FastqQualityCodec recordCodec, Range trimRange) {
+            int offsetCorrection = codec.getOffset() - recordCodec.getOffset();
+            char[] chars = trimRange ==null?  parsedRecord.getEncodedQualities().toCharArray()
+                                : parsedRecord.getEncodedQualities().substring((int)trimRange.getBegin(), (int) trimRange.getEnd()+1).toCharArray();
+            for(int i=0; i< chars.length; i++){
+                chars[i] = (char)(chars[i] + offsetCorrection);
+            }
+            return new String(chars);
+        }
 	
 		@Override
 		public void write(String id, NucleotideSequence nucleotides,
