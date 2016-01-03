@@ -72,10 +72,41 @@ public final class PhredQuality implements Comparable<PhredQuality>{
     private PhredQuality(byte b) {
     	this.value = b;
     }
-    
+    /**
+     * Compares this quality value to the given quality.
+     * 
+     * @param other the other quality value.
+     * 
+     * @return A negative number if this quality is less than the
+     * other quality, {@code 0} if the two qualities
+     * are equal, and a positive value if this
+     * quality value is greater than the other quality.
+     */
     @Override
-    public int compareTo(PhredQuality o) {
-        return JillionUtil.compare(value, o.value);
+    public int compareTo(PhredQuality other) {
+        return JillionUtil.compare(value, other.value);
+    }
+    /**
+     * Compares this quality value to the given quality value <strong>as a double</strong>.
+     * 
+     * @param qualityValue the other quality value to compare to.  
+     * <strong>Note:</strong> no boundary checks are done to make sure that the other quality value is
+     *  a value in the valid {@link PhredQuality} range.
+     *  
+     * @implSpec this is the functionally the same as
+     * {@link #compareTo(PhredQuality) compareTo(PhredQuality.valueOf(qualityValue))}
+     * but should be computed faster since there is no creation of an extra {@link PhredQuality}
+     * object.
+     * 
+     * @return A negative number if this quality is less than the
+     * other quality, {@code 0} if the two qualities
+     * are equal, and a positive value if this
+     * quality value is greater than the other quality.
+     * 
+     * @since 5.2
+     */
+    public int compareTo(double qualityValue) {
+        return Double.compare(value, qualityValue);
     }
     /**
      * Get the {@link PhredQuality} with the given

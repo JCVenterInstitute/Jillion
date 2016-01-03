@@ -22,8 +22,36 @@ package org.jcvi.jillion.trim;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 
 public interface QualityTrimmer {
 
 	Range trim(QualitySequence qualities);
+	
+	 /**
+         * Find the Good Range to keep for the given
+         * {@link QualitySequenceBuilder}. <strong>Note:</strong>
+         * The builder is not modified by this trimming operation.
+         * 
+         * @implSec the default implementation builds a new QualitySequence
+         * from the current builder's state and performs the trim operation on that.
+         * <pre>
+         * {@code trim(builder.build());}
+         * </pre>
+         * But this method may be overridden to use a more efficient implementation.
+         * 
+         * @param builder the {@link QualitySequenceBuilder} to examine for trimming;
+         * can not be null.
+         * @return a {@link Range} of the portion of the sequence to keep.
+         * will never be null but may be empty if there is no portion
+         * of the sequence to keep.
+         * 
+         * @throws NullPointerException if the given builder is null.
+         * 
+         * @since 5.2
+         */
+    default Range trim(QualitySequenceBuilder builder){
+        return trim(builder.build());
+    }
 }

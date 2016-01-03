@@ -405,4 +405,15 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 		}
 		
 	}
+    /**
+     * Get the current quality values as a byte array.
+     * 
+     * @return the current qualities as a byte array;
+     * will never be null but could be empty.
+     * 
+     * @since 5.2
+     */
+    public byte[] toArray() {
+        return builder.toArray();
+    }
 }

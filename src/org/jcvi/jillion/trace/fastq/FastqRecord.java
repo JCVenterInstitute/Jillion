@@ -114,4 +114,22 @@ public interface FastqRecord extends Trace{
     default long getLength(){
     	return getNucleotideSequence().getLength();
     }
+    
+    
+    /**
+     * Get the average quality score as a double.
+     * This calculation only works on a sequence
+     * that is not empty.
+     * @return the avg quality score as a double.
+     * @throws ArithmeticException if the sequence length is 0.
+     * 
+     * @implSpec the default implementation
+     * of this method calls
+     * {@code getQualitySequence().getAvgQuality()} but some {@link FastqRecord}
+     * implementations may optimize this computation.
+     * @since 5.2
+     */
+    default double getAvgQuality() throws ArithmeticException{
+        return getQualitySequence().getAvgQuality();
+    }
 }

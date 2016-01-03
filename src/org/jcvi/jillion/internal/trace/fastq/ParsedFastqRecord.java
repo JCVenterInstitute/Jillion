@@ -94,6 +94,30 @@ public class ParsedFastqRecord implements FastqRecord {
         return qualityCodec;
     }
     
+    
+    
+    @Override
+    public double getAvgQuality() throws ArithmeticException {
+        
+        //this implementation gets the 
+        //average ASCII value
+        //and then computes the equivalent
+        //value based on the quality codec offset.
+        //this should be much faster since we 
+        //still have the encoded quality string.
+        long total =0;
+        char[] chars = encodedQualities.toCharArray();
+        if(chars.length ==0){
+            throw new ArithmeticException("length of fastq record is 0");
+        }
+        for(int i=0; i< chars.length; i++){
+            total+= chars[i];
+        }
+        double avg = total/chars.length;
+        
+        return avg - qualityCodec.getOffset();
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

@@ -78,7 +78,9 @@ import org.junit.runners.Suite.SuiteClasses;
         
         AllIlluminaUnitTests.class,
         AllSolexaUnitTests.class,
-        AllFastqUtilUnitTests.class
+        AllFastqUtilUnitTests.class,
+        
+        TestAvgQualityFastqRecord.class
     }
     )
 public class AllFastqUnitTests {

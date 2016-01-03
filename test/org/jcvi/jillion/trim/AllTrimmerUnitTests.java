@@ -28,6 +28,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
 	TestBwaQualityTrimmer.class,
+	TestSlidingWindowQualityTrimmer.class,
 	
 	AllLucyUnitTests.class
 })

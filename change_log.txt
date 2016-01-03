@@ -13,8 +13,18 @@ Jillion 5.2
 
 New Features
 ------------
-1.  Added new method to fastq writer to automatically trim given a Range. 
+1.  Added new method to FastqWriter to automatically trim given a Range. 
     This saves users the trouble of creating SequenceBuilders and trimming themselves.
+    
+2.  Added new method to FastqRecord to get the average Quality of the quality sequence.
+    The default implementation calls getQualitySequence().getAvgQuality() but some implementations
+    use a more efficient version. 
+    
+3.  Added new QualityTrimmer SlidingWindowQualityTrimmer which acts like Trimmomatic's SLIDINGWINDOW option.
+
+4. Added new convenience methods to NucleotideTrimmer and QualityTrimmer that take Builders.  This is really useful
+   when performing multiple trimming operations in serial since some trimmers may be able to save CPU cycles
+   and work directly from the builders.
 
 
 ================
