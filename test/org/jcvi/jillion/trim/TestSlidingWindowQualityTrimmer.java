@@ -7,6 +7,7 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -36,8 +37,15 @@ public class TestSlidingWindowQualityTrimmer {
         
         list.add( new Object[]{"innerBasesDipBelowThresholdStillOK", new byte[]{20,20,14,20,20,20,20,20,20,12,12,12}, Range.ofLength(9)});
         
-        
-        
+        /*
+        @SRR062634.1 HWI-EAS110_103327062:6:1:1092:8469/1
+        GGGTTTTCCTGAAAAAGGGATTCAAGAAAGAAAACTTACATGAGGTGATTGTTTAATGTTGCTACCAAAGAAGAGAGAGTTACCTGCCCATTCACTCAGG
+        +
+        @C'@9:BB:?DCCB5CC?5C=?5@CADC?BDB)B@?-A@=:=:@CC'C>5AA+*+2@@'-?>5-?C=@-??)'>>B?D@?*?A
+    */
+        list.add(new Object[]{"trimmomatic_1", 
+                FastqQualityCodec.SANGER.decode("@C'@9:BB:?DCCB5CC?5C=?5@CADC?BDB)B@?-A@=:=:@CC'C>5AA+*+2@@'-?>5-?C=@-??)'>>B?D@?*?A").toArray(),
+                Range.ofLength(52)} );
         return list;
     }
     

@@ -26,7 +26,7 @@ import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 public class SlidingWindowQualityTrimmer implements QualityTrimmer {
 
     private final int windowSize;
-    private final PhredQuality requiredQuality;
+    private final double requiredQuality;
     
     private static Range EMPTY = Range.ofLength(0);
     
@@ -37,21 +37,15 @@ public class SlidingWindowQualityTrimmer implements QualityTrimmer {
         }
         
         this.windowSize = windowSize;
-        this.requiredQuality = requiredQuality;
+        this.requiredQuality = requiredQuality.getQualityScore();
     }
     @Override
     public Range trim(QualitySequence qualities) {
         byte[] quals = qualities.toArray();
-        if(quals.length ==0){
-            return EMPTY;
-        }
-        
+        //match trimmomatic and always trim off everything
+        //when the read is too short
         if(quals.length < windowSize){
-            double avgQual = qualities.getAvgQuality();
-            if(requiredQuality.compareTo(avgQual) <0){
-                return EMPTY;
-            }
-            return Range.ofLength(quals.length);
+            return EMPTY;
         }
         return trim(quals);
     }
@@ -59,16 +53,12 @@ public class SlidingWindowQualityTrimmer implements QualityTrimmer {
     @Override
     public Range trim(QualitySequenceBuilder builder) {
         byte[] quals = builder.toArray();
-        if(quals.length ==0){
+        //match trimmomatic and always trim off everything
+        //when the read is too short
+        if(quals.length < windowSize){
             return EMPTY;
         }
-        if(quals.length < windowSize){
-            double avgQual = builder.build().getAvgQuality();
-            if(requiredQuality.compareTo(avgQual) <0){
-                return EMPTY;
-            }
-            return Range.ofLength(quals.length);
-        }
+       
         return trim(quals);
     }
     
@@ -77,9 +67,9 @@ public class SlidingWindowQualityTrimmer implements QualityTrimmer {
     private Range trim(byte[] quals) {
         
         int currentWindowStart=0;
-        while(currentWindowStart < quals.length - windowSize){
+        while(currentWindowStart < quals.length){
         double avgQual = computeAvgQualFor(quals, currentWindowStart);
-            if(requiredQuality.compareTo(avgQual) >0){
+            if(avgQual < requiredQuality){
                 //entered bad range
                 break;
             }
@@ -88,10 +78,17 @@ public class SlidingWindowQualityTrimmer implements QualityTrimmer {
         //if we get this far we have good quality
         //all the way until the end of full windows
         
+        
+        
         //trimmomatic appears to trim off
         //any end bases that are below the required quality?
-        for(int i= Math.min(quals.length-1, currentWindowStart+windowSize); i>=0; i--){
-            if(requiredQuality.compareTo(quals[i]) <= 0){
+        
+        //our currentWindowStart is one too far
+        //it's off the end or into a bad window
+        currentWindowStart--;
+        //now look for bad quality bases from the end of our last good window
+        for(int i= Math.min(quals.length-1, currentWindowStart+windowSize-1); i>=0; i--){
+                if(quals[i] >= requiredQuality){
                 //found good qual base
                 return Range.ofLength(i+1);
             }
@@ -105,7 +102,7 @@ public class SlidingWindowQualityTrimmer implements QualityTrimmer {
        for(int i=currentWindowStart; i< end; i++){
            total+=quals[i];
        }
-        return total/(end - currentWindowStart);
+        return total/(double)(end - currentWindowStart);
     }
 
 }
