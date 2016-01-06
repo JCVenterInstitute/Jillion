@@ -1,4 +1,4 @@
-package org.jcvi.jillion.trim;
+package org.jcvi.jillion.trim.trimmomatic;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +8,7 @@ import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
+import org.jcvi.jillion.trim.trimmomatic.SlidingWindowQualityTrimmer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

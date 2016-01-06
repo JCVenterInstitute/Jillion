@@ -1,4 +1,4 @@
-package org.jcvi.jillion.trim;
+package org.jcvi.jillion.trim.trimmomatic;
 
 import java.util.Objects;
 
@@ -6,10 +6,11 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.trim.QualityTrimmer;
 
 abstract class AbstractEdgeQualityTrimmer implements QualityTrimmer {
 
-    private final PhredQuality threshold;
+    private final byte threshold;
     private final boolean trimFromLeading;
     
     private static final Range EMPTY = Range.ofLength(0);
@@ -20,7 +21,7 @@ abstract class AbstractEdgeQualityTrimmer implements QualityTrimmer {
     public AbstractEdgeQualityTrimmer(PhredQuality threshold, boolean trimFromLeading) {
         Objects.requireNonNull(threshold);
         
-        this.threshold = threshold;
+        this.threshold = threshold.getQualityScore();
         this.trimFromLeading = trimFromLeading;
     }
 
@@ -37,13 +38,13 @@ abstract class AbstractEdgeQualityTrimmer implements QualityTrimmer {
     private Range trim(byte[] quals){
         if(trimFromLeading){
             for(int i=0; i< quals.length; i++){
-                if(threshold.compareTo(quals[i]) <=0){
+                if(threshold <= quals[i]){
                     return Range.of(i, quals.length -1);
                 }
             }
         }else{
             for(int i=quals.length -1; i>=0; i--){
-                if(threshold.compareTo(quals[i]) <=0){
+                if(threshold <= quals[i]){
                     return Range.ofLength(i+1);
                 }
             }

@@ -1,4 +1,4 @@
-package org.jcvi.jillion.trim;
+package org.jcvi.jillion.trim.trimmomatic;
 
 import org.jcvi.jillion.core.qual.PhredQuality;
 /**

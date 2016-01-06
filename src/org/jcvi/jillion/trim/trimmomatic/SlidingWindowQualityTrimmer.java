@@ -1,4 +1,4 @@
-package org.jcvi.jillion.trim;
+package org.jcvi.jillion.trim.trimmomatic;
 
 import java.util.Objects;
 
@@ -6,6 +6,7 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.trim.QualityTrimmer;
 /**
  * A {@link QualityTrimmer} implementation that uses a sliding
  * window of the given length to trim off the 3' 
