@@ -25,7 +25,13 @@ New Features
 4. Added new convenience methods to NucleotideTrimmer and QualityTrimmer that take Builders.  This is really useful
    when performing multiple trimming operations in serial since some trimmers may be able to save CPU cycles
    and work directly from the builders.
+   
+5. Added new TrimmerPipeline and TrimmerPipelineBuilder classes which can take multiple NucleotideTrimmers
+   and QualityTrimmers and combine the trimming results for you.
 
+API Changes
+-----------
+1. Added Trace.getLength() 
 
 ================
 Jillion 5.1

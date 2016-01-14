@@ -52,4 +52,14 @@ public interface Trace{
      * @return a {@link QualitySequence}, should never be null.
      */
     QualitySequence getQualitySequence();
+    /**
+     * Get the length of the Trace.  This should be the length
+     * of the {@link NucleotideSequence} and {@link QualitySequence}.
+     * @return the length as a long.
+     * 
+     * @since 5.2
+     */
+    default long getLength(){
+        return getNucleotideSequence().getLength();
+    }
 }

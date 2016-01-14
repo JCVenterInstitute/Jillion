@@ -31,7 +31,9 @@ import org.junit.runners.Suite.SuiteClasses;
 	TestBwaQualityTrimmer.class,
 	TestSlidingWindowQualityTrimmer.class,
 	
-	AllLucyUnitTests.class
+	AllLucyUnitTests.class,
+	
+	TestTrimmerPipeline.class
 })
 public class AllTrimmerUnitTests {
 
