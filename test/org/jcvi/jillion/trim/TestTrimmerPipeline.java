@@ -18,7 +18,22 @@ import static org.junit.Assert.*;
 public class TestTrimmerPipeline {
 
     
-    
+    @Test
+    public void shortCircuit(){
+        NucleotideTrimmer trimmer = createMock(NucleotideTrimmer.class);
+        expect(trimmer.trim(isA(NucleotideSequenceBuilder.class))).andReturn(Range.of(9,19)).anyTimes();
+        
+        replay(trimmer);
+        
+        TrimmerPipeline sut = new TrimmerPipelineBuilder()
+                                    .add(trimmer)
+                                    .shortCircuit(range-> range.getBegin()>5)
+                                    .build();
+        
+        NucleotideSequence seq = NucleotideSequenceTestUtil.create("A", 100);
+      
+        assertTrue(sut.trim(seq).isEmpty());
+    }
     @Test
     public void nucleotideTrimmerOnly(){
         NucleotideTrimmer trimmer = createMock(NucleotideTrimmer.class);
@@ -89,9 +104,11 @@ public class TestTrimmerPipeline {
         
         expect(trimmer.trim(and(isA(NucleotideSequenceBuilder.class), capture(seqCapture))))
                                 .andStubAnswer(() ->{ 
-                                    return new Range.Builder(seqCapture.getValue().getLength())
+                                    Range r= new Range.Builder(seqCapture.getValue().getLength())
                                                 .contractBegin(10)
                                                 .build();
+                                  //  System.out.println(r);
+                                    return r;
                                 }
                                 );
         

@@ -28,6 +28,72 @@ package org.jcvi.jillion.core;
  *
  */
 public interface Rangeable {
-
+        /**
+         * Get this {@link Rangeable} expressed
+         * as a {@link Range}.
+         * @return a {@link Range} object, the
+         * return value might be cached.
+         */
 	Range asRange();
+	/**
+	 * Get the length of this Rangeable.
+	 * 
+	 * @return the length.
+	 * 
+	 * @implNote by default, this method should return
+	 * {@code asRange().getLength();}.
+	 * 
+	 * @since 5.2
+	 * 
+	 * @see Range#getLength()
+	 */
+	default long getLength(){
+	    return asRange().getLength();
+	}
+	/**
+         * Get the begin coordinate of this Rangeable.
+         * 
+         * @return the begin coordinate as a long.
+         * 
+         * @implNote by default, this method should return
+         * {@code asRange().getBegin();}.
+         * 
+         * @since 5.2
+         * 
+         * @see Range#getBegin()
+         */
+	default long getBegin(){
+	    return asRange().getBegin();
+	}
+	/**
+         * Get the end coordinate of this Rangeable.
+         * 
+         * @return the end coordinate as a long.
+         * 
+         * @implNote by default, this method should return
+         * {@code asRange().getEnd();}.
+         * 
+         * @since 5.2
+         * 
+         * @see Range#getEnd()
+         */
+	default long getEnd(){
+	    return asRange().getEnd();
+	}
+	/**
+         * Is this Rangeable empty.
+         * 
+         * @return {@code true} if this
+         * Rangeable is emtpy; {@code false} otherwise..
+         * 
+         * @implNote by default, this method should return
+         * {@code asRange().isEmpty();}.
+         * 
+         * @since 5.2
+         * 
+         * @see Range#isEmpty()
+         */
+	default boolean isEmpty(){
+	    return asRange().isEmpty();
+	}
 }

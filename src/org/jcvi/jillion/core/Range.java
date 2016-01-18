@@ -2586,7 +2586,7 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
      * @author dkatzel
      *
      */
-    public static final class Builder {
+    public static final class Builder implements Rangeable{
     	
     	private long begin;
     	private long end;
@@ -2603,6 +2603,8 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
     	public Builder(Builder copy){
     		this(copy.inputCoordinateSystem, copy.begin, copy.end);
     	}
+    	
+    	
     	/**
     	 * Create a new Builder instance
     	 * which is initialized to the given
@@ -2892,6 +2894,60 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 			return "Builder [begin=" + begin + ", end=" + end
 					+ ", inputCoordinateSystem=" + inputCoordinateSystem + "]";
 		}
+		
+	/**
+	 * Intersect the current begin and end coordinates
+	 * with another Range, the resulting intersection
+	 * coordinates are now this Builder's begin and end.
+	 * 
+	 * @param other the other Range to intersect with;
+	 * can not be null.
+	 * 
+	 * @return this
+	 * 
+	 * @throws NullPointerException if other is null.
+	 * 
+	 * @see Range#intersection(Range)
+	 * @since 5.2
+	 */
+        public Builder intersect(Range other) {
+            //performing an intersection is actually complicated
+            //for now just build a temp range then do an intersection
+            Range temp = new LongRange(begin, end);
+            Range result = temp.intersection(other);
+            this.begin = result.getBegin();
+            this.end = result.getEnd();
+            return this;
+        }
+        
+        /**
+         * Intersect the current begin and end coordinates
+         * with another Range, the resulting intersection
+         * coordinates are now this Builder's begin and end.
+         * 
+         * @param other the other Range to intersect with;
+         * can not be null.
+         * 
+         * @return this
+         * 
+         * @throws NullPointerException if other is null.
+         * 
+         * @see Range#intersection(Range)
+         * @since 5.2
+         */
+        public Builder intersect(Builder other) {
+           return intersect(other.asRange());
+        }
+        
+        @Override
+        public Range asRange() {
+            //for speed make a new Long Range
+            return new LongRange(begin, end);
+        }
+        @Override
+        public boolean isEmpty() {
+            return end-begin < 0;
+        }
     	
     	
     	
