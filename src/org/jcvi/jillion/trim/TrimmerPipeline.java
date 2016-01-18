@@ -23,16 +23,20 @@ public class TrimmerPipeline {
     private final List<NucleotideTrimmer> nucleotideTrimmers;
     private final List<QualityTrimmer> qualityTrimmers;
     
-    private final Predicate<Rangeable> predicate;
+    private final Predicate<Rangeable> rangePredicate;
+    private final Predicate<NucleotideSequence> seqPredicate;
+    private final Predicate<QualitySequence> qualityPredicate;
     private final long minLength;
         
-    TrimmerPipeline(List<NucleotideTrimmer> nucleotideTrimmers,
-            List<QualityTrimmer> qualityTrimmers,
-            Predicate<Rangeable> predicate, long minLength) {
-        this.nucleotideTrimmers = new ArrayList<>(nucleotideTrimmers);
-        this.qualityTrimmers = new ArrayList<>(qualityTrimmers);
-        this.predicate = predicate;
-        this.minLength = minLength;
+    TrimmerPipeline(TrimmerPipelineBuilder builder) {
+        this.nucleotideTrimmers = new ArrayList<>(builder.nucleotideTrimmers);
+        this.qualityTrimmers = new ArrayList<>(builder.qualityTrimmers);
+        
+        this.rangePredicate = builder.rangePredicate;
+        this.seqPredicate = builder.seqPredicate;
+        this.qualityPredicate = builder.qualityPredicate;      
+        
+        this.minLength = builder.minLength;
         
     }
 
@@ -55,11 +59,25 @@ public class TrimmerPipeline {
             return EMPTY;
         }
         
-        if(predicate !=null && predicate.test(range)){
+        if(rangePredicate !=null && rangePredicate.test(range)){
             //short circuit
             return EMPTY;
         }
-        return range.build();
+        Range builtRange = range.build();
+        
+        if(seqPredicate !=null && seqPredicate.test(
+                new NucleotideSequenceBuilder(trace.getNucleotideSequence(), builtRange)
+                .turnOffDataCompression(true)
+                .build())){
+            return EMPTY;
+        }
+        if(qualityPredicate !=null && qualityPredicate.test(
+                new QualitySequenceBuilder(trace.getQualitySequence(), builtRange)
+                .turnOffDataCompression(true)
+                .build())){
+            return EMPTY;
+        }
+        return builtRange;
     }
     
     public Range trim(NucleotideSequence seq){
@@ -67,6 +85,25 @@ public class TrimmerPipeline {
         if(builder == EMPTY_BUILDER){
             return EMPTY;
         }
+        
+        if(minLength !=NOT_SET && builder.getLength() < minLength){
+            return EMPTY;
+        }
+        
+        if(rangePredicate !=null && rangePredicate.test(builder)){
+            //short circuit
+            return EMPTY;
+        }
+        Range builtRange = builder.build();
+        
+        if(seqPredicate !=null && seqPredicate.test(
+                new NucleotideSequenceBuilder(seq, builtRange)
+                .turnOffDataCompression(true)
+                .build())){
+            return EMPTY;
+        }
+       
+        
         return builder.build();
     }
     
@@ -75,13 +112,11 @@ public class TrimmerPipeline {
         if(minLength !=NOT_SET && length < minLength){
             return EMPTY_BUILDER;
         }
-        NucleotideSequenceBuilder builder = seq.toBuilder();
+        
+        NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(seq).turnOffDataCompression(true);
        
         Range.Builder fullTrimRange = new Range.Builder(length);
-        if(predicate !=null && predicate.test(fullTrimRange)){
-            //short circuit
-            return EMPTY_BUILDER;
-        }
+
          for(NucleotideTrimmer trimmer : nucleotideTrimmers){
              Range currentRange = trimmer.trim(builder);
              if(minLength !=NOT_SET && currentRange.getLength() < minLength){
@@ -89,12 +124,9 @@ public class TrimmerPipeline {
              }
              fullTrimRange.contractBegin(currentRange.getBegin());
              fullTrimRange.setEnd(fullTrimRange.getBegin() + currentRange.getLength()-1);
-             
-             if(predicate !=null && predicate.test(fullTrimRange)){
-                 //short circuit
-                 return EMPTY_BUILDER;
-             }
+
              builder.trim(currentRange);
+             
          }
          
          return fullTrimRange;
@@ -104,6 +136,23 @@ public class TrimmerPipeline {
         if(builder == EMPTY_BUILDER){
             return EMPTY;
         }
+        if(minLength !=NOT_SET && builder.getLength() < minLength){
+            return EMPTY;
+        }
+        
+        if(rangePredicate !=null && rangePredicate.test(builder)){
+            //short circuit
+            return EMPTY;
+        }
+        Range builtRange = builder.build();
+       
+        if(qualityPredicate !=null && qualityPredicate.test(
+                new QualitySequenceBuilder(seq, builtRange)
+                .turnOffDataCompression(true)
+                .build())){
+            return EMPTY;
+        }
+        
         return builder.build();
     }
     private Range.Builder qualTrim(QualitySequence seq){
@@ -112,11 +161,15 @@ public class TrimmerPipeline {
         if(minLength !=NOT_SET && length < minLength){
             return EMPTY_BUILDER;
         }
-        QualitySequenceBuilder builder = seq.toBuilder();
+        if(qualityPredicate !=null && qualityPredicate.test(seq)){
+            return EMPTY_BUILDER;
+        }
+        
+        QualitySequenceBuilder builder = new QualitySequenceBuilder(seq).turnOffDataCompression(true);
         
         Range.Builder fullTrimRange = new Range.Builder(length);
         
-        if(predicate !=null && predicate.test(fullTrimRange)){
+        if(rangePredicate !=null && rangePredicate.test(fullTrimRange)){
             //short circuit
             return EMPTY_BUILDER;
         }
@@ -128,11 +181,15 @@ public class TrimmerPipeline {
              fullTrimRange.contractBegin(currentRange.getBegin());
              fullTrimRange.setEnd(fullTrimRange.getBegin() + currentRange.getLength()-1);
             
-             if(predicate !=null && predicate.test(fullTrimRange)){
+             if(rangePredicate !=null && rangePredicate.test(fullTrimRange)){
                  //short circuit
                  return EMPTY_BUILDER;
              }
              builder.trim(currentRange);
+             
+             if(qualityPredicate !=null && qualityPredicate.test(builder.build())){
+                 return EMPTY_BUILDER;
+             }
          }
          
          return fullTrimRange;

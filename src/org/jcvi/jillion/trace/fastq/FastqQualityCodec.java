@@ -58,13 +58,13 @@ public enum FastqQualityCodec {
 	 */
 	SOLEXA(64){
 		    @Override
-		    protected PhredQuality decode(char encodedQuality) {
+		    public PhredQuality decode(char encodedQuality) {
 		        int solexaQuality =encodedQuality -64;
 		        return SolexaUtil.convertSolexaQualityToPhredQuality(solexaQuality);
 		    }
 
 		    @Override
-		    protected char encode(PhredQuality quality) {
+		    public char encode(PhredQuality quality) {
 		        int solexaQuality = SolexaUtil.convertPhredQualityToSolexaQuality(quality);
 		        return (char)(solexaQuality +64);
 		    }
@@ -131,12 +131,12 @@ public enum FastqQualityCodec {
 		return offset;
 	}
     
-    protected PhredQuality decode(char encodedQuality) {
+    public PhredQuality decode(char encodedQuality) {
         return PhredQuality.valueOf(encodedQuality -offset);
     }
 
    
-    protected char encode(PhredQuality quality) {
+    public char encode(PhredQuality quality) {
         return (char)(quality.getQualityScore()+offset);
     }
 

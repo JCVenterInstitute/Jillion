@@ -15,9 +15,7 @@ abstract class AbstractEdgeQualityTrimmer implements QualityTrimmer {
     
     private static final Range EMPTY = Range.ofLength(0);
     
-    public AbstractEdgeQualityTrimmer(int threshold, boolean trimFromLeading) {
-        this(PhredQuality.valueOf(threshold), trimFromLeading);
-    }
+    
     public AbstractEdgeQualityTrimmer(PhredQuality threshold, boolean trimFromLeading) {
         Objects.requireNonNull(threshold);
         

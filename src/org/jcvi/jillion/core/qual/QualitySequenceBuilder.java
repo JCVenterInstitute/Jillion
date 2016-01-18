@@ -107,6 +107,20 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 	public QualitySequenceBuilder(QualitySequence qualitySequence){
 		this.builder = new GrowableByteArray(qualitySequence.toArray());
 	}
+	
+	/**
+         * Creates a new builder whose initial sequence
+         * is set to the given {@link QualitySequence}.
+         * @param qualitySequence the initial quality sequence
+         * @param range the subRange of the sequence to use; can not be null.
+         * @throws NullPointerException if either parameter is null.
+         * 
+         * @since 5.2
+         */
+        public QualitySequenceBuilder(QualitySequence qualitySequence, Range range){
+            this.builder = new GrowableByteArray(qualitySequence.toArray(range));
+               
+        }
 	/**
 	 * internal copy constructor used by {@link #copy()}.
 	 * @param copy
@@ -382,13 +396,35 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 	public Iterator<PhredQuality> iterator() {
 		return new IteratorImpl();
 	}
+	
+	/**
+	 * 
+	 * @param range
+	 * @return
+	 * 
+	 * @since 5.2
+	 */
+        public Iterator<PhredQuality> iterator(Range range) {
+                return new IteratorImpl(range);
+        }
 
 	private class IteratorImpl implements Iterator<PhredQuality>{
-		private int currentOffset=0;
+		private int currentOffset;
+		private int endOffset;
+		
+		public IteratorImpl(){
+		    currentOffset=0;
+		    endOffset = builder.getCurrentLength()-1;
+		}
+		
+		public IteratorImpl(Range range) {
+		    currentOffset = Math.max(0, (int)range.getBegin());
+		    endOffset = Math.min(builder.getCurrentLength() -1,(int) range.getEnd());
+                }
 
-		@Override
+        @Override
 		public boolean hasNext() {
-			return currentOffset<builder.getCurrentLength();
+			return currentOffset<=endOffset;
 		}
 
 		@Override

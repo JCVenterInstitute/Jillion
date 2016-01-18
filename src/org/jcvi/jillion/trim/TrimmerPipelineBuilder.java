@@ -6,15 +6,19 @@ import java.util.Objects;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.Rangeable;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 public class TrimmerPipelineBuilder {
 
-    private final List<NucleotideTrimmer> nucleotideTrimmers = new ArrayList<>();
-    private final List<QualityTrimmer> qualityTrimmers = new ArrayList<>();
+    final List<NucleotideTrimmer> nucleotideTrimmers = new ArrayList<>();
+    final List<QualityTrimmer> qualityTrimmers = new ArrayList<>();
     
     
-    private Predicate<Rangeable> predicate = null;
-    private long minLength = -1;
+    Predicate<Rangeable> rangePredicate = null;
+    Predicate<NucleotideSequence> seqPredicate = null;
+    Predicate<QualitySequence> qualityPredicate = null;
+    long minLength = -1;
     
     public TrimmerPipelineBuilder minLength(long length){
         if(length < 0){
@@ -23,10 +27,21 @@ public class TrimmerPipelineBuilder {
         this.minLength = length;
         return this;
     }
-    public TrimmerPipelineBuilder shortCircuit(Predicate<Rangeable> predicate){
-        this.predicate = predicate;
+    public TrimmerPipelineBuilder filterRange(Predicate<Rangeable> predicate){
+        this.rangePredicate = predicate;
         return this;
     }
+    
+    public TrimmerPipelineBuilder filterSequence(Predicate<NucleotideSequence> predicate){
+        this.seqPredicate = predicate;
+        return this;
+    }
+    
+    public TrimmerPipelineBuilder filterQualities(Predicate<QualitySequence> predicate){
+        this.qualityPredicate = predicate;
+        return this;
+    }
+    
     public TrimmerPipelineBuilder add(NucleotideTrimmer trimmer){
         Objects.requireNonNull(trimmer);
         nucleotideTrimmers.add(trimmer);
@@ -40,7 +55,7 @@ public class TrimmerPipelineBuilder {
     }
     
     public TrimmerPipeline build(){
-        return new TrimmerPipeline(nucleotideTrimmers, qualityTrimmers, predicate, minLength);
+        return new TrimmerPipeline(this);
     }
     
 }

@@ -20,6 +20,9 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.qual;
 
+import java.util.Arrays;
+
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
 
 /**
@@ -57,6 +60,23 @@ public interface QualitySequence extends Sequence<PhredQuality>{
      * @return a new byte array, never null.
      */
     byte[] toArray();
+    /**
+     * Create an new array of bytes of length {@link Range#getLength()}
+     * where index in the array is the ith quality score stored
+     * as a byte.  This method may be expensive to perform
+     * depending on the size of the sequence and the encoding used.
+     * 
+     * @param range the subrange of quality scores to get; can not be null.
+     * 
+     * @return a new byte array, never null.
+     * 
+     * @since 5.2
+     * 
+     * @throws NullPointerException if range is null.
+     */
+    default byte[] toArray(Range range){
+        return Arrays.copyOfRange(toArray(), (int)range.getBegin(), (int)range.getEnd()+1);
+    }
     /**
      * Get the average quality score as a double.
      * This calculation only works on a sequence

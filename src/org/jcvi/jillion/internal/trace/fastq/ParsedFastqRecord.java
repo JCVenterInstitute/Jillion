@@ -74,7 +74,7 @@ public class ParsedFastqRecord implements FastqRecord {
     @Override
     public QualitySequence getQualitySequence() {
        if(qualitySequence ==null){
-           qualitySequence = qualityCodec.decode(encodedQualities, turnOffCompression);
+           qualitySequence = new ParsedQualitySequence(qualityCodec, encodedQualities);
        }
        return qualitySequence;
     }

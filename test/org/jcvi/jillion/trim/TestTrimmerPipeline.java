@@ -19,7 +19,7 @@ public class TestTrimmerPipeline {
 
     
     @Test
-    public void shortCircuit(){
+    public void shortCircuitRange(){
         NucleotideTrimmer trimmer = createMock(NucleotideTrimmer.class);
         expect(trimmer.trim(isA(NucleotideSequenceBuilder.class))).andReturn(Range.of(9,19)).anyTimes();
         
@@ -27,7 +27,7 @@ public class TestTrimmerPipeline {
         
         TrimmerPipeline sut = new TrimmerPipelineBuilder()
                                     .add(trimmer)
-                                    .shortCircuit(range-> range.getBegin()>5)
+                                    .filterRange(range-> range.getBegin() > 5)
                                     .build();
         
         NucleotideSequence seq = NucleotideSequenceTestUtil.create("A", 100);
