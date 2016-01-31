@@ -5,37 +5,44 @@ import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.trim.QualityTrimmer;
-/**
- * {@link QualityTrimmer} implementation of Trimomatic's
- * MaximumInfo algorithm which is an adaptive quality trimmer 
- * which balances read length and error rate to maximize the value of each read.
- * The algorithm tries to balance read length
- * and quality to maximize the unique alignment length.
- * <p>
- * From the Trimomatic Manual:
- * <blockquote>
- * For many applications, the “value” of a read is a balance between three factors:
-Minimal read length: The read needs to be long enough that it can be uniquely located
-within the target sequence. Extremely short reads, which can be placed into many
-different locations within the target sequence, provide little value. The length required
-before a read is likely to be unique depends on the size and complexity of the target
-sequence, but a typical target length would be in the order of 40 bases.
-Additional read length: There may be added value in retaining additional bases,
-beyond those needed to uniquely place a read. This is dependent primarily on the
-application. For pure counting applications, such as RNA-Seq, unique placement is
-sufficient. For assembly or variant finding tasks, additional bases provide extra
-evidence for or against putative results, and thus can be valuable.
-Error sensitivity: The downstream analysis can be more or less sensitive to errors
-within the data. This is determined by the tools and settings used. One extreme would
-be tools were a single base error would cause the entire read to be ignored, which
-favours aggressive quality trimming. The other extreme would be tools which can
-tolerate or even correct a large number of errors, which favour retaining as much data
-as possible.
-Two user provided values are used, the “target read length”, which affects the first scoring
-factor, and the “strictness” which affects the balance between the second and third factor.
-Trimming is applied to
 
-</blockquote>
+/**
+ * {@link QualityTrimmer} implementation of Trimomatic's MaximumInfo algorithm
+ * which is an adaptive quality trimmer which balances read length and error
+ * rate to maximize the value of each read. The algorithm tries to balance read
+ * length and quality to maximize the unique alignment length.
+ * <p>
+ * From the Trimomatic Manual: <blockquote> For many applications, the “value”
+ * of a read is a balance between three factors:
+ * <ul>
+ * <li>
+ * Minimal read length: The read needs to be long enough that it can be uniquely
+ * located within the target sequence. Extremely short reads, which can be
+ * placed into many different locations within the target sequence, provide
+ * little value. The length required before a read is likely to be unique
+ * depends on the size and complexity of the target sequence, but a typical
+ * target length would be in the order of 40 bases.</li>
+ * <li>
+ * Additional read length: There may be added value in retaining additional
+ * bases, beyond those needed to uniquely place a read. This is dependent
+ * primarily on the application. For pure counting applications, such as
+ * RNA-Seq, unique placement is sufficient. For assembly or variant finding
+ * tasks, additional bases provide extra evidence for or against putative
+ * results, and thus can be valuable.</li>
+ * <li>
+ * Error sensitivity: The downstream analysis can be more or less sensitive to
+ * errors within the data. This is determined by the tools and settings used.
+ * One extreme would be tools were a single base error would cause the entire
+ * read to be ignored, which favours aggressive quality trimming. The other
+ * extreme would be tools which can tolerate or even correct a large number of
+ * errors, which favour retaining as much data as possible.</li>
+ * </ul>
+ * Two user provided values are used, the “target read length”, which affects
+ * the first scoring factor, and the “strictness” which affects the balance
+ * between the second and third factor. Trimming is applied to
+ * 
+ * </blockquote>
+ * 
  * @author dkatzel
  *
  * @since 5.2
@@ -70,9 +77,9 @@ sequence, but a typical target length would be in the order of 40 bases. must be
         }
         
         double[] factorLookup = new double[MAX_READ_LENGTH];
-        double strictnessDistance = 1 - strictness;
+        double leniency = 1 - strictness;
         for(int i=0; i< MAX_READ_LENGTH; i++){            
-            factorLookup[i] = Math.log(1D /(1 + Math.exp(targetLength - i -1))) + (Math.log(i +1) * (strictnessDistance));
+            factorLookup[i] = Math.log(1D /(1 + Math.exp(targetLength - i -1))) + (Math.log(i +1) * (leniency));
         }
         //we have to match trimomatic 100% so we have to normalize exactly like they do
         //and use longs instead of doubles...
