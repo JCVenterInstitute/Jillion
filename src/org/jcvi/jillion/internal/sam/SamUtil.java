@@ -687,11 +687,7 @@ public final class SamUtil {
 		return (record) -> {
 			if(referenceName.equals(record.getReferenceName())){
 				
-					//check alignment range
-					Range recordRange = new Range.Builder(record.getCigar().getNumberOfReferenceBasesAligned())
-													.shift(record.getStartPosition() -1)
-													.build();
-					return alignmentRegionOfInterest.intersects(recordRange);
+					return alignmentRegionOfInterest.intersects(record.getAlignmentRange());
 			}
 			return false;
 			
