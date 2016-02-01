@@ -28,10 +28,20 @@ New Features
    
 5. Added new TrimmerPipeline and TrimmerPipelineBuilder classes which can take multiple NucleotideTrimmers
    and QualityTrimmers and combine the trimming results for you.
+   
+6. Added SamFileDataStore and SamFileDataStoreBuilder to finally provide a higher level API for
+   working with sam and bam files without needing to use a low level Visitor. 
 
 API Changes
 -----------
 1. Added Trace.getLength() 
+Added methods to Range.Builder and Rangeable.
+
+1. Added default methods to Rangeable for getLength() getBegin(), getEnd() and isEmpty() since that is used the most don't have to always build a new Range object.
+
+2. Added Range.Builder intersect methods
+
+3.  Changed TrimmerPipeline methods to be faster by making fewer Range objects and working off of Range.Builders instead.
 
 ================
 Jillion 5.1
