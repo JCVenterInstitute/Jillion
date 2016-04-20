@@ -72,7 +72,7 @@ final class CasFileInfoValidator {
 	 * @param expected the {@link CasFileInfo} of the file(s) to check
 	 * and verify; can not be null.
 	 * @throws DataStoreException if there is a problem parsing the files.
-	 * @throws IOException if the files don't exist.
+	 * @throws IOException if the files don't exist or contains multiple encodings
 	 * @throws IllegalStateException if there is a validation error.
 	 */
 	public static void validateFileInfo(File dirOfCas, CasFileInfo expected) throws DataStoreException, IOException{

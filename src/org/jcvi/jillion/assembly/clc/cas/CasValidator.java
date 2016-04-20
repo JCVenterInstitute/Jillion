@@ -55,7 +55,8 @@ class CasValidator extends AbstractCasFileVisitor{
 		} catch (DataStoreException e) {
 			throw new IllegalStateException("error parsing read file(s)", e);
 		} catch (IOException e) {
-			throw new IllegalStateException("input read file(s) " + readFileInfo.getFileNames() + " do not exist", e);
+			System.err.println("message "+e.getMessage());
+			throw new IllegalStateException("input read file(s) " + readFileInfo.getFileNames() + " do not exist or contain multiple encodings", e);
 		}
 	}
 
