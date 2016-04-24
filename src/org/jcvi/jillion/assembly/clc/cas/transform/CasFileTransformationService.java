@@ -46,6 +46,7 @@ import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
 import org.jcvi.jillion.trace.Trace;
 import org.jcvi.jillion.trace.fastq.FastqDataStore;
+import org.jcvi.jillion.trace.fastq.FastqFileDataStore;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
 import org.jcvi.jillion.trace.sff.SffFileDataStoreBuilder;
@@ -57,6 +58,8 @@ public class CasFileTransformationService implements AssemblyTransformationServi
 	
 	private FastqQualityCodec qualityCodec;
 	private final CasParser casParser;
+	
+	private boolean fakeQVs=false;
 	
 	public CasFileTransformationService(File casFile) throws IOException{
 		this(casFile, null);
@@ -91,7 +94,10 @@ public class CasFileTransformationService implements AssemblyTransformationServi
 		this.chromatDir = chromatDir;
 	}
 
-	public FastqQualityCodec getQualityCodec() {
+    public void setFakeQVs(boolean fakeQVs) {
+        this.fakeQVs = fakeQVs;
+    }
+    public FastqQualityCodec getQualityCodec() {
 		return qualityCodec;
 	}
 	public void setQualityCodec(FastqQualityCodec qualityCodec) {
@@ -131,7 +137,7 @@ public class CasFileTransformationService implements AssemblyTransformationServi
 			 IOUtil.closeAndIgnoreErrors(idIter);
 		 }
 		 
-		 Visitor visitor = new Visitor(casParser.getWorkingDir(), gappedReferenceDataStore, transformer,chromatDir, qualityCodec);
+		 Visitor visitor = new Visitor(casParser.getWorkingDir(), gappedReferenceDataStore, transformer,chromatDir, qualityCodec, fakeQVs);
 		 casParser.parse(wrapVisitor(visitor));
 		 transformer.endAssembly();
 		 
@@ -145,14 +151,17 @@ public class CasFileTransformationService implements AssemblyTransformationServi
 
 		private final AssemblyTransformer transformer;
 		private final File chromatDir;
+		private final boolean fakeQVs;
 		public Visitor(File workingDir,  
 				CasGappedReferenceDataStore gappedReferenceDataStore,
 				AssemblyTransformer transformer,
 				File chromatDir,
-				FastqQualityCodec qualityCodec) {
+				FastqQualityCodec qualityCodec,
+				boolean fakeQVs) {
 			super(workingDir, gappedReferenceDataStore);
 			this.transformer = transformer;
 			this.chromatDir = chromatDir;
+			this.fakeQVs = fakeQVs;
 			//maybe null
 			this.setQualityCodec(qualityCodec);
 		}
@@ -227,17 +236,14 @@ public class CasFileTransformationService implements AssemblyTransformationServi
 		}
 
 		@Override
-		protected StreamingIterator<? extends Trace> createFastqIterator(
-				File illuminaFile) throws DataStoreException {
-			try {
-				FastqDataStore datastore = new FastqFileDataStoreBuilder(illuminaFile)
-												.hint(DataStoreProviderHint.ITERATION_ONLY)
-												.build();
-			return new FastqReadDatadAdaptedIterator(datastore.iterator(), illuminaFile);
-			} catch (IOException e) {
-				throw new IllegalStateException("fastq file no longer exists! : "+ illuminaFile.getAbsolutePath(), e);
-			}
-			}
+        protected StreamingIterator<? extends Trace> createIteratorFor(
+                FastqFileDataStore datastore) throws DataStoreException {
+		    //I think the get() on the optional is safe here
+		    //since we are always using real files?
+		    return new FastqReadDatadAdaptedIterator(datastore.iterator(), datastore.getFile().get());
+        }
+
+      
 
 		@Override
 		protected StreamingIterator<? extends Trace> createSffIterator(

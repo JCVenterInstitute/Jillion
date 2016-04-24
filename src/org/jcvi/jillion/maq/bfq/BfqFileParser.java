@@ -26,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteOrder;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.GZIPInputStream;
 
@@ -335,6 +336,11 @@ public abstract class BfqFileParser implements FastqParser{
 			return new Callback(startOffset);
 		}
 
+        @Override
+        public Optional<File> getFile() {
+            return Optional.of(bfqFile);
+        }
+
 		
 	}
 	
@@ -359,6 +365,11 @@ public abstract class BfqFileParser implements FastqParser{
 		}
 
 		@Override
+        public Optional<File> getFile() {
+            return Optional.empty();
+        }
+
+        @Override
 		public boolean canCreateMemento() {
 			return false;
 		}

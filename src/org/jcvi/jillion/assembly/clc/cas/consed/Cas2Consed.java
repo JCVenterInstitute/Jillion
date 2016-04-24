@@ -60,8 +60,7 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
 import org.jcvi.jillion.trace.Trace;
-import org.jcvi.jillion.trace.fastq.FastqDataStore;
-import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
+import org.jcvi.jillion.trace.fastq.FastqFileDataStore;
 import org.jcvi.jillion.trace.sff.SffFileDataStoreBuilder;
 
 public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
@@ -240,23 +239,18 @@ public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
 		// TODO Auto-generated method stub
 		
 	}
+	
 
 	@Override
-	protected StreamingIterator<PhdReadRecord> createFastqIterator(
-			File illuminaFile) throws DataStoreException {
-		try {
-			FastqDataStore datastore = new FastqFileDataStoreBuilder(illuminaFile)
-											.hint(DataStoreProviderHint.ITERATION_ONLY)
-											.build();
-			return new FastqConsedPhdAdaptedIterator( 
-	        		datastore.iterator(),
-	                illuminaFile, 
-	                phdDate);
-		} catch (IOException e) {
-			throw new IllegalStateException("fastq file no longer exists! : "+ illuminaFile.getAbsolutePath(), e);
-		}
-	}
+    protected StreamingIterator<? extends Trace> createIteratorFor(
+            FastqFileDataStore datastore) throws DataStoreException {
+	    return new FastqConsedPhdAdaptedIterator( 
+                    datastore.iterator(),
+                        datastore.getFile().get(), 
+                        phdDate);
+    }
 
+  
 	@Override
 	protected StreamingIterator<PhdReadRecord> createSffIterator(File sffFile)
 			throws DataStoreException, IOException {

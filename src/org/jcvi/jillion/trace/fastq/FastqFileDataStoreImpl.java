@@ -20,8 +20,10 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace.fastq;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
@@ -37,14 +39,24 @@ final class FastqFileDataStoreImpl implements FastqFileDataStore{
     private final FastqDataStore datastore;
     private final FastqQualityCodec codec;
     
+    private final File fastqFile;
+    
     public FastqFileDataStoreImpl(FastqDataStore datastore,
-            FastqQualityCodec codec) {
+            FastqQualityCodec codec, File fastqFile) {
         Objects.requireNonNull(datastore);
         Objects.requireNonNull(codec);
         
         this.datastore = datastore;
         this.codec = codec;
+        this.fastqFile = fastqFile;
     }
+
+    
+    @Override
+    public Optional<File> getFile() {
+        return Optional.ofNullable(fastqFile);
+    }
+
 
     @Override
     public StreamingIterator<String> idIterator() throws DataStoreException {

@@ -44,6 +44,7 @@ import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
 import org.jcvi.jillion.trace.Trace;
 import org.jcvi.jillion.trace.TraceDataStore;
 import org.jcvi.jillion.trace.fastq.FastqDataStore;
+import org.jcvi.jillion.trace.fastq.FastqFileDataStore;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
 import org.jcvi.jillion.trace.fastq.FastqRecord;
@@ -193,20 +194,45 @@ public abstract class AbstractReadCasVisitor extends AbstractCasFileVisitor{
    }
 
 
-    protected StreamingIterator<? extends Trace> createFastqIterator(File illuminaFile) throws DataStoreException {
+    private StreamingIterator<? extends Trace> createFastqIterator(File illuminaFile) throws DataStoreException {
 		try {
-			FastqFileDataStoreBuilder builder = new FastqFileDataStoreBuilder(illuminaFile)
-											.hint(DataStoreProviderHint.ITERATION_ONLY);
-			FastqQualityCodec codecToUse = getQualityCodec();
-			if(codecToUse !=null){
-				builder.qualityCodec(codecToUse);
-			}
-			FastqDataStore datastore = builder.build();
-			return new RemoveWhitespaceFromIdAdapter(datastore.iterator());
+		    FastqFileDataStore datastore = createFastqDataStore(illuminaFile);
+			return createIteratorFor(datastore);
 		} catch (IOException e) {
-			throw new IllegalStateException("fastq file no longer exists! : "+ illuminaFile.getAbsolutePath(), e);
+			throw new IllegalStateException("error processing fastq file: "+ illuminaFile.getAbsolutePath(), e);
 		}
 		
+    }
+
+
+
+    protected StreamingIterator<? extends Trace> createIteratorFor(FastqFileDataStore datastore) throws DataStoreException {
+        return new RemoveWhitespaceFromIdAdapter(datastore.iterator());
+    }
+
+
+    /**
+     * Create a new FastqDataStore to process the {@link FastqRecord}s
+     * in the given fastq file.  This method can be overwritten to 
+     * override the default behavior.
+     * 
+     * @param illuminaFile the file to parse; will not be null, but may not
+     * exist if the cas file is corrupted.
+     * 
+     * @return a new FastqFileDataStore instance; can not be null.
+     * @throws IOException if there is a problem parsing the file.
+     * 
+     * @since 5.2
+     */
+    protected FastqFileDataStore createFastqDataStore(File fastqFile)
+            throws IOException {
+        FastqFileDataStoreBuilder builder = new FastqFileDataStoreBuilder(fastqFile)
+        								.hint(DataStoreProviderHint.ITERATION_ONLY);
+        FastqQualityCodec codecToUse = getQualityCodec();
+        if(codecToUse !=null){
+        	builder.qualityCodec(codecToUse);
+        }
+        return builder.build();
     }
 
     protected StreamingIterator<? extends Trace> createSffIterator(File sffFile) throws DataStoreException, IOException{

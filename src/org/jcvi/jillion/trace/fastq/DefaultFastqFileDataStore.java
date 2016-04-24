@@ -25,12 +25,12 @@
  */
 package org.jcvi.jillion.trace.fastq;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.util.Builder;
 /**
@@ -76,7 +76,8 @@ final class DefaultFastqFileDataStore{
 	public static FastqFileDataStore create(FastqParser parser,
 			FastqQualityCodec qualityCodec, Predicate<String> filter, Predicate<FastqRecord> recordFilter)
 			throws IOException {
-		DefaultFastqFileDataStoreBuilderVisitor2 visitor = new DefaultFastqFileDataStoreBuilderVisitor2(qualityCodec,filter, recordFilter);
+		DefaultFastqFileDataStoreBuilderVisitor2 visitor = new DefaultFastqFileDataStoreBuilderVisitor2(
+		        qualityCodec,filter, recordFilter, parser.getFile().orElse(null));
 		   
 		   parser.parse(visitor);
 
@@ -89,8 +90,11 @@ final class DefaultFastqFileDataStore{
 		private final FastqQualityCodec qualityCodec;
 		private final Map<String, FastqRecord> map = new LinkedHashMap<>();
 
+		private final File fastqFile;
+		
 		public DefaultFastqFileDataStoreBuilderVisitor2(
-				FastqQualityCodec qualityCodec, Predicate<String> filter, Predicate<FastqRecord> recordFilter) {
+				FastqQualityCodec qualityCodec, Predicate<String> filter, Predicate<FastqRecord> recordFilter,
+				File fastqFile) {
 			if(qualityCodec==null){
 				throw new NullPointerException("quality codec can not be null");
 			}
@@ -101,6 +105,7 @@ final class DefaultFastqFileDataStore{
 			this.qualityCodec = qualityCodec;
 			this.filter = filter;
 			this.recordFilter = recordFilter;
+			this.fastqFile = fastqFile;
 		}
 
 		@Override
@@ -131,7 +136,7 @@ final class DefaultFastqFileDataStore{
 		@Override
 		public FastqFileDataStore build() {
 			return new FastqFileDataStoreImpl(DataStoreUtil.adapt(FastqDataStore.class, map),
-			                                    qualityCodec);
+			                                    qualityCodec, fastqFile);
 		}
 
 	}

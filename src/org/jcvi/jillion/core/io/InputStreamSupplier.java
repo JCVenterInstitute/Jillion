@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipInputStream;
 
@@ -102,6 +103,18 @@ public interface InputStreamSupplier {
     }
     
     /**
+     * Get the {@link File} object
+     * that is the source of this inputStream.
+     * 
+     * @return an {@link Optional} File that may be empty
+     * if the file source is not known.
+     * 
+     * @since 5.2
+     */
+    default Optional<File> getFile(){
+        return Optional.empty();
+    }
+    /**
      * Create a new {@link InputStreamSupplier} for the given {@link File}
      * and try to correctly automatically decompress it.
      * 
@@ -151,16 +164,11 @@ public interface InputStreamSupplier {
        
        if (magicNumber[0] == (byte)0x50 && magicNumber[1] == (byte)0x4B && magicNumber[2] == (byte)0x03 && magicNumber[3]== (byte) 0x04){
            //zipped
-           return ()-> {
-               ZipInputStream in =new ZipInputStream(new BufferedInputStream(new FileInputStream(f)));
-               //assume first record is the entry we care about?
-               in.getNextEntry();
-               return in;
-           };
+           return new BasicZipInputStreamSupplier(f);
        }
        if( magicNumber[0] == (byte) 0x1F && magicNumber[1] == (byte)0x8B){
            //gzip
-           return ()-> new GZIPInputStream(new BufferedInputStream(new FileInputStream(f)));
+           return new GZipInputStreamSupplier(f);
        }
        
         return new RawFileInputStreamSupplier(f);

@@ -22,7 +22,7 @@ package org.jcvi.jillion.trace.fastq;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.Optional;
 
 import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback.FastqVisitorMemento;
 /**
@@ -101,5 +101,13 @@ public interface FastqParser {
 	 * @see #canParse()
 	 */
 	void parse(FastqVisitor visitor, FastqVisitorMemento memento) throws IOException;
+	/**
+	 * Get the Fastq encoded file being parsed.
+	 * 
+	 * @return An {@link Optional} {@link File} if it is known.
+	 * 
+	 * @since 5.2
+	 */
+	Optional<File> getFile();
 	
 }

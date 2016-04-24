@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
@@ -50,6 +51,13 @@ class RawFileInputStreamSupplier implements InputStreamSupplier {
     public InputStream get() throws IOException {
         return new BufferedInputStream(new FileInputStream(file));
     }
+    
+    
+    @Override
+    public Optional<File> getFile() {
+        return Optional.of(file);
+    }
+
     /**
      * Uses {@link RandomAccessFileInputStream} to start
      * the stream directly from the start offset without

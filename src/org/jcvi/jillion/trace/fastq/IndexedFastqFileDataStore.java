@@ -20,9 +20,11 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace.fastq;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
@@ -188,6 +190,10 @@ final class IndexedFastqFileDataStore{
             
         }
         
+        @Override
+        public Optional<File> getFile() {
+            return parser.getFile();
+        }
         private void throwExceptionIfClosed(){
         	if(closed){
         		throw new DataStoreClosedException("datastore is closed");

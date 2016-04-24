@@ -19,6 +19,10 @@
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
 package org.jcvi.jillion.trace.fastq;
+
+import java.io.File;
+import java.util.Optional;
+
 /**
  * {@link FastqFileDataStore} is a {@link FastqDataStore}
  * where all the {@link FastqRecord}s in the datastore
@@ -40,4 +44,15 @@ public interface FastqFileDataStore extends FastqDataStore{
      * depending on the implementation of the {@link FastqDataStore}.
      */
     FastqQualityCodec getQualityCodec();
+    /**
+     * Get the actual {@link java.io.File} that this datastore
+     * wraps.  Note, because of datastore filtering and other decorators, the file may contain additional reads
+     * not present in this datastore and the {@link FastqRecord}s that are present, may not match 100% to
+     * the input file.
+     * 
+     * @return an {@link Optional}  {@link java.io.File}, if it is known.
+     * 
+     * @since 5.2
+     */
+    Optional<File> getFile();
 }
