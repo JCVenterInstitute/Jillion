@@ -45,7 +45,6 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
 import org.jcvi.jillion.trace.Trace;
-import org.jcvi.jillion.trace.fastq.FastqDataStore;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStore;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
@@ -53,13 +52,18 @@ import org.jcvi.jillion.trace.sff.SffFileDataStoreBuilder;
 
 public class CasFileTransformationService implements AssemblyTransformationService{
 
-	
+    @FunctionalInterface
+    public interface FastqDataStoreSupplier{
+        FastqFileDataStore apply(File fastqFile) throws IOException;
+    }
+    
 	private final File chromatDir;
 	
 	private FastqQualityCodec qualityCodec;
 	private final CasParser casParser;
 	
-	private boolean fakeQVs=false;
+	private FastqDataStoreSupplier fastqDataStoreSupplier;
+        
 	
 	public CasFileTransformationService(File casFile) throws IOException{
 		this(casFile, null);
@@ -87,16 +91,19 @@ public class CasFileTransformationService implements AssemblyTransformationServi
 		this(parser, null);
 	}
 	
-	public CasFileTransformationService(CasParser parser, File chromatDir) throws IOException{
+	
+	public void setFastqDataStoreSupplier(
+	        FastqDataStoreSupplier fastqDataStoreSupplier) {
+        this.fastqDataStoreSupplier = fastqDataStoreSupplier;
+    }
+    public CasFileTransformationService(CasParser parser, File chromatDir) throws IOException{
 
 		Objects.requireNonNull(parser);
 		this.casParser = parser;		
 		this.chromatDir = chromatDir;
 	}
 
-    public void setFakeQVs(boolean fakeQVs) {
-        this.fakeQVs = fakeQVs;
-    }
+   
     public FastqQualityCodec getQualityCodec() {
 		return qualityCodec;
 	}
@@ -137,13 +144,30 @@ public class CasFileTransformationService implements AssemblyTransformationServi
 			 IOUtil.closeAndIgnoreErrors(idIter);
 		 }
 		 
-		 Visitor visitor = new Visitor(casParser.getWorkingDir(), gappedReferenceDataStore, transformer,chromatDir, qualityCodec, fakeQVs);
+		 
+		 
+		 Visitor visitor = new Visitor(casParser.getWorkingDir(), gappedReferenceDataStore, 
+		         transformer,chromatDir, getFastqDataStoreSupplier());
 		 casParser.parse(wrapVisitor(visitor));
 		 transformer.endAssembly();
 		 
 	}
 	
-	protected CasFileVisitor wrapVisitor(final CasFileVisitor transformationVisitor){
+	private FastqDataStoreSupplier getFastqDataStoreSupplier() {
+        if(fastqDataStoreSupplier !=null){
+            return fastqDataStoreSupplier;
+        }
+        final FastqQualityCodec codec = qualityCodec;
+        return (file)->{
+            FastqFileDataStoreBuilder builder = new FastqFileDataStoreBuilder(file);
+            if(codec !=null){
+                builder.qualityCodec(codec);
+            }
+            return builder.hint(DataStoreProviderHint.ITERATION_ONLY)
+                            .build();
+        };
+    }
+    protected CasFileVisitor wrapVisitor(final CasFileVisitor transformationVisitor){
 		return transformationVisitor;
 	}
 	
@@ -151,19 +175,18 @@ public class CasFileTransformationService implements AssemblyTransformationServi
 
 		private final AssemblyTransformer transformer;
 		private final File chromatDir;
-		private final boolean fakeQVs;
+		
+		private FastqDataStoreSupplier fastqDataStoreSupplier;
+		
 		public Visitor(File workingDir,  
 				CasGappedReferenceDataStore gappedReferenceDataStore,
 				AssemblyTransformer transformer,
 				File chromatDir,
-				FastqQualityCodec qualityCodec,
-				boolean fakeQVs) {
+				FastqDataStoreSupplier fastqDataStoreSupplier) {
 			super(workingDir, gappedReferenceDataStore);
 			this.transformer = transformer;
 			this.chromatDir = chromatDir;
-			this.fakeQVs = fakeQVs;
-			//maybe null
-			this.setQualityCodec(qualityCodec);
+			this.fastqDataStoreSupplier = fastqDataStoreSupplier;
 		}
 
 		@Override
@@ -236,6 +259,13 @@ public class CasFileTransformationService implements AssemblyTransformationServi
 		}
 
 		@Override
+        protected FastqFileDataStore createFastqDataStore(File fastqFile)
+                throws IOException {
+            return fastqDataStoreSupplier.apply(fastqFile);
+                   
+        }
+
+        @Override
         protected StreamingIterator<? extends Trace> createIteratorFor(
                 FastqFileDataStore datastore) throws DataStoreException {
 		    //I think the get() on the optional is safe here
