@@ -31,6 +31,12 @@ New Features
    
 6. Added SamFileDataStore and SamFileDataStoreBuilder to finally provide a higher level API for
    working with sam and bam files without needing to use a low level Visitor. 
+   
+7. Added Optional<File> getFile() to FastqParser and refactored CasParser
+   implementations to make begin to make it easier to extend cas file parsing.
+   
+8. Add lambda hook to CasFileTransformationService to override how fastqDataStore is generated so
+   users could override to provide their own implementation. 
 
 API Changes
 -----------
