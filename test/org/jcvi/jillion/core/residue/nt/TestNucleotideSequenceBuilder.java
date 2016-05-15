@@ -929,6 +929,83 @@ public class TestNucleotideSequenceBuilder {
 		assertEquals(sut.trim(range), subrange);
     }
     
+    @Test
+    public void getUngappedRangeNoGaps(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+        
+        Range r = Range.of(2,3);
+        assertEquals(r, sut.toUngappedRange(r));
+    }
+    @Test(expected = NullPointerException.class)
+    public void getUngappedRangeNullRangeShouldThrowNPE(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+        
+        sut.toUngappedRange(null);
+    }
+    
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void getUngappedRangeStartsBeyondSeqLengthShouldThrowIndexOutOfBoundsException(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+        
+        Range r = Range.of(10,12);
+        sut.toUngappedRange(r);
+    }
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void getUngappedRangeEndsBeyondSeqLengthShouldThrowIndexOutOfBoundsException(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+        
+        Range r = Range.of(1,12);
+        sut.toUngappedRange(r);
+    }
+    
+    @Test
+    public void getUngappedRangeRangeBeforeAnyGaps(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT-TTG-GT");
+        
+        Range r = Range.of(2,3);
+        assertEquals(r, sut.toUngappedRange(r));
+    }
+    
+    @Test
+    public void getUngappedRangeAfterSomeGaps(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT-TTG-GT");
+        
+        Range r = Range.of(5,7);
+        assertEquals(Range.of(4,6), sut.toUngappedRange(r));
+    }
+    
+    @Test
+    public void getUngappedRangeRangeAfterGaps(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT-TTG-GT");
+        
+        Range r = Range.of(9,10);
+        assertEquals(Range.of(7,8), sut.toUngappedRange(r));
+    }
+    
+    @Test
+    public void getUngappedRangeRangeSpansGaps(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT-TTG-GT");
+        
+        Range r = Range.of(2,10);
+        assertEquals(Range.of(2,8), sut.toUngappedRange(r));
+    }
+    
+    @Test
+    public void getUngappedRangeRangeIsOnGapCoord(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT-TTG-GT");
+        
+        Range r = Range.of(2,8);
+        assertEquals(Range.of(2,6), sut.toUngappedRange(r));
+    }
+    @Test
+    public void getUngappedRangeRangeIsOnSpanOfGapsCord(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT-TTG---GT");
+        
+        Range r = Range.of(2,10);
+        assertEquals(Range.of(2,6), sut.toUngappedRange(r));
+    }
+    
+    
     
     
 }

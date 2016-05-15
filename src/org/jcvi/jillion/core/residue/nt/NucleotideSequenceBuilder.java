@@ -23,6 +23,7 @@ package org.jcvi.jillion.core.residue.nt;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Objects;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
@@ -1197,6 +1198,50 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     			getGappedOffsetFor(ungappedEnd)
     			); 
 	}
+    /**
+     * Get the corresponding ungapped Range (where the start and end values
+     * of the range are in ungapped coordinate space) for the given
+     * gapped {@link NucleotideSequence} and gapped {@link Range}.
+     * @param gappedRange the Range of gapped coordinates.
+     * @return a new Range never null.
+     * @throws NullPointerException if the gappedRange is null.
+     * @throws IndexOutOfBoundsException if the given Range goes beyond
+     * the gapped sequence.
+     * 
+     * @since 5.2
+     */
+    public Range toUngappedRange(Range gappedRange) {
+        Objects.requireNonNull(gappedRange);
+        long gappedBegin = gappedRange.getBegin();
+        long gappedEnd = gappedRange.getEnd();
+        
+        long currentLength = codecDecider.getCurrentLength();
+        if(gappedBegin >= currentLength || gappedEnd >= currentLength){
+            throw new IndexOutOfBoundsException("gapped Range of " + gappedRange +" is beyond the gapped sequence length of " + currentLength);
+        }
+        
+        GrowableIntArray gaps = codecDecider.gapOffsets;
+        if(gaps.getCurrentLength() == 0){
+            //no gaps
+            return gappedRange;
+        }
+        
+        long ungappedStart = gappedBegin - numGapsUntil(gaps, (int)gappedBegin);
+        long ungappedEnd = gappedEnd - numGapsUntil(gaps, (int)gappedEnd);
+       
+        return Range.of(ungappedStart, ungappedEnd); 
+    }
+    
+    private int numGapsUntil(GrowableIntArray gaps, int gappedOffset){
+        int insertionPoint = gaps.binarySearch(gappedOffset);
+        if(insertionPoint >=0){
+            //if we landed on a gap, then
+            //the we want the length of the array
+            //up until that offset so that's why it's +1
+            return insertionPoint +1;
+        }
+        return -insertionPoint -1;
+    }
     
     public int getGappedOffsetFor(int ungappedOffset){
     	SingleThreadAdder currentOffset = new SingleThreadAdder(ungappedOffset);
