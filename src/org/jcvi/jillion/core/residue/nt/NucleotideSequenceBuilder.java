@@ -1190,10 +1190,19 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 		codecDecider.ungap();
 		return this;
     }
-    
-    public Range toGappedRange(Range ungappedRegion) {
-    	int ungappedStart = (int)ungappedRegion.getBegin();
-    	int ungappedEnd = (int)ungappedRegion.getEnd();
+    /**
+     * Get the corresponding gapped Range (where the start and end values
+     * of the range are in gapped coordinate space) for the given
+     * ungapped {@link Range}.
+     * @param ungappedRegion the Range of ungapped coordinates; can not be null.
+     * @return a new Range never null.
+     * @throws NullPointerException if the gappedRange is null.
+     * 
+     * 
+     */
+    public Range toGappedRange(Range ungappedRange) {
+    	int ungappedStart = (int)ungappedRange.getBegin();
+    	int ungappedEnd = (int)ungappedRange.getEnd();
     	return Range.of(getGappedOffsetFor(ungappedStart),
     			getGappedOffsetFor(ungappedEnd)
     			); 
@@ -1201,8 +1210,8 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     /**
      * Get the corresponding ungapped Range (where the start and end values
      * of the range are in ungapped coordinate space) for the given
-     * gapped {@link NucleotideSequence} and gapped {@link Range}.
-     * @param gappedRange the Range of gapped coordinates.
+     * gapped {@link Range}.
+     * @param gappedRange the Range of gapped coordinates; can not be null.
      * @return a new Range never null.
      * @throws NullPointerException if the gappedRange is null.
      * @throws IndexOutOfBoundsException if the given Range goes beyond
