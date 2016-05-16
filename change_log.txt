@@ -41,14 +41,31 @@ New Features
 API Changes
 -----------
 1. Added Trace.getLength() 
-Added methods to Range.Builder and Rangeable.
 
-1. Added default methods to Rangeable for getLength() getBegin(), getEnd() and isEmpty() since that is used the most don't have to always build a new Range object.
+2. Added default methods to Rangeable for getLength() getBegin(), getEnd() and isEmpty() since 
+   that is used the most don't have to always build a new Range object.
 
-2. Added Range.Builder intersect methods
+3. Added Range.Builder intersect methods
 
-3.  Changed TrimmerPipeline methods to be faster by making fewer Range objects and working off of Range.Builders instead.
+4.  Changed TrimmerPipeline methods to be faster by making fewer Range objects and working off of Range.Builders instead.
 
+5.  Added new Range.toString() methods that take lambda expressions so users can make their 
+    own toString implementations.  Have several overloaded versions 
+    * toString(RangeToStringFunction)
+    * toString(RangeToStringFunction, CoordinateSystem)
+    
+    * toString(RangeAndCoordinateSystemToStringFunction)
+    * toString(RangeAndCoordinateSystemToStringFunction, CoordinateSystem)
+    
+    to let users convert to different coordinate systems and to
+    include that coordinate system in the lambda expression or not.
+
+6.  Added toGappedRange( Range) and toUngappedRange( Range) to ResidueSequence
+   with default implementations and more efficient implementation when the codec 
+   knows it doesn't have gaps.  Changed AssemblyUtil to use that instead of its own implementation.
+
+7.  Added toUngappedRange( Range) to NucleotideSequenceBuilder
+    
 ================
 Jillion 5.1
 ================
