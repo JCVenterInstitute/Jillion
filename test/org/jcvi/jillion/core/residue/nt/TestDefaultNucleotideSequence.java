@@ -110,6 +110,75 @@ public class TestDefaultNucleotideSequence {
         assertEquals("after all gaps", 17, sut.getGappedOffsetFor(15));
     }
     
+    @Test
+    public void toUngappedRange(){
+        // private String gappedBasecalls = "ACGTACGT-ACGTACG-T";
+        
+        assertEquals(Range.of(0, 5), sut.toUngappedRange(Range.of(0,5)));
+        assertEquals(Range.of(8,11), sut.toUngappedRange(Range.of(9,12)));
+        assertEquals(Range.of(0,15), sut.toUngappedRange(Range.of(0,17)));
+        
+    }
+    
+    @Test(expected = NullPointerException.class)
+    public void toUngappedRangeNullRangeShouldThrowNPE(){
+        sut.toGappedRange(null);
+    }
+    
+    @Test(expected = NullPointerException.class)
+    public void toGappedRangeNullRangeShouldThrowNPE(){
+        sut.toGappedRange(null);
+    }
+    
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void toGappedRangeNegativeEndRangeShouldThrowIndexOutOfBounds(){
+        sut.toGappedRange(Range.of(-10, -1));
+    }
+    
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void toUngappedRangeNegativeEndRangeShouldThrowIndexOutOfBounds(){
+        sut.toUngappedRange(Range.of(-10, -1));
+    }
+    
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void toGappedRangeNegativeBeginRangeShouldThrowIndexOutOfBounds(){
+        sut.toGappedRange(Range.of(-10, 1));
+    }
+    
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void toUngappedRangeNegativeBeginRangeShouldThrowIndexOutOfBounds(){
+        sut.toUngappedRange(Range.of(-10, 1));
+    }
+    
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void toGappedRangeEndTooBigShouldThrowIndexOutOfBounds(){
+        sut.toGappedRange(Range.of(1, 100));
+    }
+    
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void toUngappedRangeEndTooBigShouldThrowIndexOutOfBounds(){
+        sut.toUngappedRange(Range.of(1, 100));
+    }
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void toGappedRangeBeginTooBigShouldThrowIndexOutOfBounds(){
+        sut.toGappedRange(Range.of(99, 100));
+    }
+    
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void toUngappedRangeBeginTooBigShouldThrowIndexOutOfBounds(){
+        sut.toUngappedRange(Range.of(99, 100));
+    }
+    
+    @Test
+    public void toGappedRange(){
+        // private String gappedBasecalls = "ACGTACGT-ACGTACG-T";
+        
+        assertEquals(Range.of(0, 5), sut.toGappedRange(Range.of(0,5)));
+        assertEquals(Range.of(9,12), sut.toGappedRange(Range.of(8,11)));
+        assertEquals(Range.of(0,17), sut.toGappedRange(Range.of(0,15)));
+        
+    }
+    
     @Test(expected = IndexOutOfBoundsException.class)
     public void getGappedOffsetBeyondLengthShouldThrowException(){
     	sut.getGappedOffsetFor(100);

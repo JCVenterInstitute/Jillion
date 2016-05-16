@@ -23,6 +23,7 @@ package org.jcvi.jillion.core.residue;
 import java.util.Iterator;
 import java.util.List;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
 /**
  * {@code ResidueSequence} is a {@link Sequence}
@@ -98,6 +99,50 @@ public interface ResidueSequence<R extends Residue> extends Sequence<R> {
      * gapped offset would extend beyond the sequence length.
      */
     int getGappedOffsetFor(int ungappedOffset);
+    
+    /**
+     * Get the corresponding ungapped Range (where the start and end values
+     * of the range are in ungapped coordinate space) for the given
+     * gapped {@link Range}.
+     * @param gappedRange the Range of gapped coordinates; can not be null.
+     * @return a new Range never null.
+     * @throws NullPointerException if the gappedRange is null.
+     * @throws IndexOutOfBoundsException if the given Range goes beyond
+     * the gapped sequence.
+     * 
+     * @since 5.2
+     */
+    default Range toUngappedRange(Range gappedRange){
+       
+        if(gappedRange ==null){
+            throw new NullPointerException("gappedRange can not be null");
+        }
+        return Range.of(
+                getUngappedOffsetFor((int)gappedRange.getBegin()),
+                getUngappedOffsetFor((int)gappedRange.getEnd())
+                );
+    }
+    
+    /**
+     * Get the corresponding gapped Range (where the start and end values
+     * of the range are in gapped coordinate space) for the given
+     * ungapped {@link Range}.
+     * @param ungappedRegion the Range of ungapped coordinates; can not be null.
+     * @return a new Range never null.
+     * @throws NullPointerException if the gappedRange is null.
+     * 
+     * @since 5.2
+     */
+    default Range toGappedRange(Range ungappedRange){
+       
+        if(ungappedRange ==null){
+            throw new NullPointerException("ungappedRange can not be null");
+        }
+        return Range.of(
+                getGappedOffsetFor((int)ungappedRange.getBegin()),
+                getGappedOffsetFor((int)ungappedRange.getEnd())
+                );
+    }
     /**
      * Get this sequence as a single long string
      * of characters with no whitespace.

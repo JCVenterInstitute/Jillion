@@ -23,6 +23,8 @@ package org.jcvi.jillion.core.residue.nt;
 import java.util.Collections;
 import java.util.List;
 
+import org.jcvi.jillion.core.Range;
+
 /**
  * {@code AcgtnNucloetideCodec} is a special version
  * of {@link TwoBitEncodedNucleotideCodec} that
@@ -52,7 +54,26 @@ final class AcgtnNucloetideCodec extends AbstractTwoBitEncodedNucleotideCodec{
     }
 
 
-	/**
+	@Override
+    public Range toUngappedRange(byte[] encodedData, Range gappedRange) {
+	ensureWithinSequence(encodedData, gappedRange);
+        return gappedRange;
+    }
+
+    private void ensureWithinSequence(byte[] encodedData, Range gappedRange) {
+        int length = decodedLengthOf(encodedData);
+	    if(gappedRange.getBegin() < 0 || gappedRange.getEnd() < 0 || length < gappedRange.getEnd()){
+	        throw new IndexOutOfBoundsException("range "+ gappedRange + " is out of beyond the boundaries of seq with length "+ length);
+	    }
+    }
+
+    @Override
+    public Range toGappedRange(byte[] encodedData, Range ungappedRange) {
+        ensureWithinSequence(encodedData, ungappedRange);
+        return ungappedRange;
+    }
+
+    /**
     * {@inheritDoc}
     */
     @Override

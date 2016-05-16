@@ -95,6 +95,53 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
     int getGappedOffsetFor(byte[] encodedData,int ungappedOffset);
     
     /**
+     * Get the corresponding ungapped Range (where the start and end values
+     * of the range are in ungapped coordinate space) for the given
+     * gapped {@link Range}.
+     * @param encodedData the encoded bytes which contain
+     * all the nucleotides.
+     * @param gappedRange the Range of gapped coordinates; can not be null.
+     * @return a new Range never null.
+     * @throws NullPointerException if the gappedRange is null.
+     * @throws IndexOutOfBoundsException if the given Range goes beyond
+     * the gapped sequence.
+     * 
+     * @since 5.2
+     */
+    default Range toUngappedRange(byte[] encodedData, Range gappedRange){
+       
+        if(gappedRange ==null){
+            throw new NullPointerException("gappedRange can not be null");
+        }
+        return Range.of(
+                getUngappedOffsetFor(encodedData,(int)gappedRange.getBegin()),
+                getUngappedOffsetFor(encodedData, (int)gappedRange.getEnd())
+                );
+    }
+    
+    /**
+     * Get the corresponding gapped Range (where the start and end values
+     * of the range are in gapped coordinate space) for the given
+     * ungapped {@link Range}.
+     * @param encodedData the encoded bytes which contain
+     * all the nucleotides.
+     * @param ungappedRegion the Range of ungapped coordinates; can not be null.
+     * @return a new Range never null.
+     * @throws NullPointerException if the gappedRange is null.
+     * 
+     * @since 5.2
+     */
+    default Range toGappedRange(byte[] encodedData, Range ungappedRange){
+        if(ungappedRange ==null){
+            throw new NullPointerException("ungappedRange can not be null");
+        }
+        return Range.of(
+                getGappedOffsetFor(encodedData, (int)ungappedRange.getBegin()),
+                getGappedOffsetFor(encodedData, (int)ungappedRange.getEnd())
+                );
+    }
+    
+    /**
      * Convenience method to encode a single nucleotide.
      * @param nucleotide
      * @return the byte array which encodes the single given nucleotide.

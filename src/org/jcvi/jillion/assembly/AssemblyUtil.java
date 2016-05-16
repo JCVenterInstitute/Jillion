@@ -232,16 +232,7 @@ public final class AssemblyUtil {
      */
     public static Range toUngappedRange(final NucleotideSequence gappedSequence,
             Range gappedRange) {
-        if(gappedSequence ==null){
-            throw new NullPointerException("gapped sequence can not be null");
-        }
-        if(gappedRange ==null){
-            throw new NullPointerException("gappedFeatureValidRange can not be null");
-        }
-        return Range.of(
-                gappedSequence.getUngappedOffsetFor((int)gappedRange.getBegin()),
-                gappedSequence.getUngappedOffsetFor((int)gappedRange.getEnd())
-                );
+       return gappedSequence.toUngappedRange(gappedRange);
         
     }
 }

@@ -29,6 +29,9 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.LongSupplier;
+import java.util.function.Supplier;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
@@ -90,7 +93,43 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
 	}
 
 
+    @Override
+    public Range toUngappedRange(Range gappedRange){
+        ensureRangeWithinSequence(gappedRange, this::getLength);
+        return codec.toUngappedRange(data, gappedRange);
+    }
+    @Override
+    public Range toGappedRange(Range ungappedRange){
+        ensureRangeWithinSequence(ungappedRange, this::getUngappedLength);
+        return codec.toGappedRange(data, ungappedRange);
+    }
 
+
+
+    /**
+     * Check the input Range boundaries against this sequence.
+     * @param gappedRange the range to check.
+     * @param lengthSupplier a lambda that will return the length
+     * of this sequence as a long.  This method can be used to determine
+     * if we want to check gapped length or ungapped length without 
+     */
+    private void ensureRangeWithinSequence(Range gappedRange, LongSupplier lengthSupplier) {
+        Objects.requireNonNull(gappedRange);
+        long end = gappedRange.getEnd();
+        long begin = gappedRange.getBegin();
+        //the conditions are broken into 2 
+        //separate if blocks because getLength()
+        //may be an expensive operation
+        //so we only want to compute it if we have to.
+        if(end < 0 || begin < 0){
+            throw new IndexOutOfBoundsException();
+            
+        }
+        long length = lengthSupplier.getAsLong();
+        if(end >= length || begin >= length){
+            throw new IndexOutOfBoundsException();
+        }
+    }
 
 	@Override
     public List<Integer> getGapOffsets() {
