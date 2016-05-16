@@ -35,6 +35,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -986,15 +987,143 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
      */
     public String toString(CoordinateSystem coordinateSystem)
     {
-    	if(coordinateSystem ==null){
-    		throw new NullPointerException("coordinateSystem can not be null");
-    	}
-        return String.format("[ %d .. %d ]/%s", 
-        		coordinateSystem.getLocalStart(getBegin()) ,
-        		coordinateSystem.getLocalEnd(getEnd()),
-                coordinateSystem.getAbbreviatedName());
+    	return toString((b,e,cs) -> "[ " + b + " .. " + e+" ]/" + cs.getAbbreviatedName(), coordinateSystem);
+       
     }
-   
+   /**
+    * Generate a new String representation of this Range using
+    * the given {@link RangeToStringFunction} with this Range's begin
+    * and end coordinates in zero based coordinate system.
+    * 
+    * @param function the {@link RangeToStringFunction} to create String with; can not be null.
+    * @return a new String; should not be null.
+    * 
+    * @throws NullPointerException if function is null.
+    * 
+    * @since 5.2
+    * 
+    * @implNote this is the same as 
+    * {@link #toString(RangeToStringFunction, CoordinateSystem) toString(function, CoordinateSystem.ZERO_BASED)}.
+    */
+    public String toString(RangeToStringFunction function){
+        return toString(function, CoordinateSystem.ZERO_BASED);
+    }
+    /**
+     * Generate a new String representation of this Range using
+     * the given {@link RangeToStringFunction} with this Range's begin
+     * and end coordinates converted into the given CoordinateSystem.
+     * 
+     * @param function the {@link RangeToStringFunction} to create String with; can not be null.
+     * @param coordinateSystem the CoordinateSystem to use to convert the begin and end values to pass into the function.
+     * 
+     * @return a new String; should not be null.
+     * 
+     * @throws NullPointerException if either parameter is null.
+     * 
+     * @since 5.2
+     */
+    public String toString(RangeToStringFunction function, CoordinateSystem coordinateSystem){
+        Objects.requireNonNull(coordinateSystem);
+        return function.apply(
+                        coordinateSystem.getLocalStart(getBegin()) ,
+                        coordinateSystem.getLocalEnd(getEnd()));
+    }
+    /**
+     * Generate a new String representation of this Range using
+     * the given {@link RangeAndCoordinateSystemToStringFunction} with this Range's begin
+     * and end coordinates in zero based coordinate system.
+     * 
+     * @param function the {@link RangeAndCoordinateSystemToStringFunction} to create String with; can not be null.
+     * @return a new String; should not be null.
+     * 
+     * @throws NullPointerException if function is null.
+     * 
+     * @since 5.2
+     * 
+     * @implNote this is the same as 
+     * {@link #toString(RangeAndCoordinateSystemToStringFunction, CoordinateSystem) toString(function, CoordinateSystem.ZERO_BASED)}.
+     */
+    public String toString(RangeAndCoordinateSystemToStringFunction function){
+        return toString(function, CoordinateSystem.ZERO_BASED);
+    }
+    /**
+     * Generate a new String representation of this Range using
+     * the given {@link RangeAndCoordinateSystemToStringFunction} with this Range's begin
+     * and end coordinates converted into the given CoordinateSystem.
+     * 
+     * @param function the {@link RangeAndCoordinateSystemToStringFunction} to create String with; can not be null.
+     * @param coordinateSystem the CoordinateSystem to use to convert the begin and end values to pass into the function.
+     * 
+     * @return a new String; should not be null.
+     * 
+     * @throws NullPointerException if either parameter is null.
+     * 
+     * @since 5.2
+     */
+    public String toString(RangeAndCoordinateSystemToStringFunction function, CoordinateSystem coordinateSystem){
+        Objects.requireNonNull(coordinateSystem);
+        return function.apply(
+                        coordinateSystem.getLocalStart(getBegin()) ,
+                        coordinateSystem.getLocalEnd(getEnd()),
+                        coordinateSystem);
+    }
+    /**
+     * Functional interface to generate a toString() string
+     * for the given range coordinates only.
+     * 
+     * @author dkatzel
+     *
+     * @since 5.2
+     * 
+     * @see RangeAndCoordinateSystemToStringFunction
+     * @see #toString(RangeToStringFunction)
+     * @see #toString(RangeToStringFunction, CoordinateSystem)
+     */
+    @FunctionalInterface
+    interface RangeToStringFunction{
+        /**
+         * Generate a toString() String for a Range
+         * with the given begin and end coordinates
+         * that have already been translated into the local
+         * coordinate system (zero based, residue based etc)
+         * 
+         * @param begin the local begin coordinate of this Range.
+         * @param end the local end coordinate of this Range.
+         * 
+         * @return a new String object; should not be null.
+         */
+        String apply(long begin, long end);
+    }
+    /**
+     * Functional interface to generate a toString() string
+     * for the given range coordinates and the {@link CoordinateSystem}
+     * that was used to compute those coordinates.
+     * 
+     * @author dkatzel
+     *
+     * @since 5.2
+     * 
+     * @see RangeToStringFunction
+     * @see #toString(RangeAndCoordinateSystemToStringFunction)
+     * @see #toString(RangeAndCoordinateSystemToStringFunction, CoordinateSystem)
+     */
+    @FunctionalInterface
+    interface RangeAndCoordinateSystemToStringFunction{
+        /**
+         * Generate a toString() String for a Range
+         * with the given begin and end coordinates
+         * that have already been translated into the local
+         * coordinate system (zero based, residue based etc)
+         * 
+         * @param begin the local begin coordinate of this Range.
+         * @param end the local end coordinate of this Range.
+         * @param coordinateSystem the {@link CoordinateSystem} that was 
+         *              used to compute the other parameters; will never be null.
+         * 
+         * @return a new String object; should not be null.
+         */
+        String apply(long begin, long end, CoordinateSystem coordinateSystem);
+    }
 
     @Override
     public Iterator<Long> iterator() {

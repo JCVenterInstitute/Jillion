@@ -538,7 +538,7 @@ public class TestRange{
    
     @Test(expected =NullPointerException.class)
     public void testToStringNullCoordinateSystemShouldThrowNPE(){
-        range.toString(null);
+        range.toString((CoordinateSystem)null);
     }
     @Test 
     public void testToString(){
@@ -1689,4 +1689,25 @@ public class TestRange{
     public void complementCollectionThrowsNPEIfCollectionIsNull(){
     	range.complement((Collection<Range>)null);
     }
+    
+    @Test
+    public void toStringLambdaDefaultsToZeroBased(){
+        assertEquals(range.getBegin()+" .. "+ range.getEnd(), 
+                range.toString( (b,e) -> b + " .. " + e)
+                );
+    }
+    
+    @Test
+    public void toStringLambdaUsingCoordinateSystem(){
+        assertEquals(range.getBegin(CoordinateSystem.RESIDUE_BASED)+" .. "+ range.getEnd(CoordinateSystem.RESIDUE_BASED), 
+                range.toString( (b,e) -> b + " .. " + e, CoordinateSystem.RESIDUE_BASED)
+                );
+    }
+    
+    @Test
+    public void toStringLambdaWithCoordinateSystemUsingCoordinateSystem(){
+        assertEquals(range.getBegin(CoordinateSystem.RESIDUE_BASED)+" .. "+ range.getEnd(CoordinateSystem.RESIDUE_BASED) + " in system: " + CoordinateSystem.RESIDUE_BASED, 
+                range.toString( (b,e, cs) -> b + " .. " + e + " in system: " + cs, CoordinateSystem.RESIDUE_BASED)
+                );
+    } 
 }
