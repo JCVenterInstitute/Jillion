@@ -218,6 +218,17 @@ public final class SliceBuilder implements Builder<Slice>{
         }
         return this;
     }
+    
+    public SliceBuilder addAll(SliceBuilder other){
+        other.addTo(this);
+        return this;
+    }
+    protected void addTo(SliceBuilder sliceBuilder) {
+        for(SliceElement e : build()){
+            sliceBuilder.add(e);
+        }
+        
+    }
     /**
      * Add a new SliceElement with the following values
      * to this builder.
