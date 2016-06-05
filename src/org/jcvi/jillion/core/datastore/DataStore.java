@@ -26,6 +26,7 @@
 package org.jcvi.jillion.core.datastore;
 
 import java.io.Closeable;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
@@ -175,6 +176,25 @@ public interface DataStore<T> extends Closeable{
      */
     default Stream<T> records() throws DataStoreException{
     	return iterator().toStream();
+    }
+    
+    /**
+     * Convenience method to adapt this datastore into another datastore type.
+     * @param datastoreInterface the {@link Class} of the DataStore interface to adapt into; can not be null.
+     * @param adapter a {@link Function} to convert an element of this datastore into the equivalent 
+     * in the adapted datastore; can not be null.
+     * @return a new DataStore; will never be null.
+     * 
+     * @implNote this is the same as calling {@code DataStoreUtil.adapt(datastoreInterface, this, adapter);}
+     * 
+     * @throws NullPointerException if any parameter is null.
+     * 
+     * @see DataStoreUtil#adapt(Class, DataStore, Function)
+     * 
+     * @since 5.2
+     */
+    default <E, D extends DataStore<E>> D adapt(Class<D> datastoreInterface, Function<T, E> adapter){
+        return DataStoreUtil.adapt(datastoreInterface, this, adapter);
     }
     
 }
