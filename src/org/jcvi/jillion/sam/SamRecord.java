@@ -138,7 +138,7 @@ public interface SamRecord extends SamAttributed {
 	Direction getDirection();
 
 	/**
-	 * Get the alignment {@link Range} that his record
+	 * Get the alignment {@link Range} that this record
 	 * mapped to along the reference.  The returned Range
 	 * is the range used to compute the Bin in indexed bai files.
 	 * 
