@@ -25,7 +25,9 @@
  */
 package org.jcvi.jillion.core.datastore;
 
-public class DataStoreException extends Exception {
+import java.io.IOException;
+
+public class DataStoreException extends IOException {
 
     /**
      * 
