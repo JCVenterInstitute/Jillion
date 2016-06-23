@@ -218,7 +218,17 @@ public final class SliceBuilder implements Builder<Slice>{
         }
         return this;
     }
-    
+    /**
+     * Add all the slice Elements from the given builder to this builder.
+     * 
+     * @param other the other SliceBuilder whose elements are to be added;
+     *          can not be null.
+     * @return this
+     * 
+     * @throws NullPointerException if other is null.
+     * 
+     * @since 5.2
+     */
     public SliceBuilder addAll(SliceBuilder other){
         other.addTo(this);
         return this;

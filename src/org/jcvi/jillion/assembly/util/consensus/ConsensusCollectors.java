@@ -68,12 +68,24 @@ public final class ConsensusCollectors {
     public static Collector<AssembledRead, ConsensusCombiner, NucleotideSequence> toAssemblyConsensus(ConsensusCaller caller){
         return toAssemblyConsensus(caller, PhredQuality.valueOf(25));
     }
+    
+    public static Collector<AssembledRead, ConsensusCombiner, NucleotideSequence> toAssemblyConsensus(ConsensusCaller caller, NucleotideSequence referenceOrOldConsensus){
+        return toAssemblyConsensus(caller, PhredQuality.valueOf(25), referenceOrOldConsensus);
+    }
  
     public static Collector<AssembledRead, ConsensusCombiner, NucleotideSequence> toAssemblyConsensus(ConsensusCaller caller, PhredQuality defaultQuality){
         Objects.requireNonNull(caller);
         Objects.requireNonNull(defaultQuality);
         
         return new DefaultQualityAssemblyConsensusCollector(caller, defaultQuality);
+        
+    }
+    
+    public static Collector<AssembledRead, ConsensusCombiner, NucleotideSequence> toAssemblyConsensus(ConsensusCaller caller, PhredQuality defaultQuality, NucleotideSequence referenceOrOldConsensus){
+        Objects.requireNonNull(caller);
+        Objects.requireNonNull(defaultQuality);
+        
+        return new DefaultQualityAssemblyConsensusCollector(caller, defaultQuality, referenceOrOldConsensus);
         
     }
     
@@ -86,22 +98,40 @@ public final class ConsensusCollectors {
         
     }
     
- public static Collector<AssembledRead, ConsensusCombiner, NucleotideSequence> toAssemblyConsensus(ConsensusCaller caller, QualitySequenceDataStore rawQualityDataStore, GapQualityValueStrategy gapQualityValueStrategy){
+ public static Collector<AssembledRead, ConsensusCombiner, NucleotideSequence> toAssemblyConsensus(ConsensusCaller caller, QualitySequenceDataStore gappedQualityDataStore, NucleotideSequence referenceOrOldConsensus){
         
         Objects.requireNonNull(caller);
-        Objects.requireNonNull(rawQualityDataStore);
-        Objects.requireNonNull(gapQualityValueStrategy);
+        Objects.requireNonNull(gappedQualityDataStore);
         
-       return new UngappedConverterAssemblyConsensusCollector(caller, rawQualityDataStore, gapQualityValueStrategy);
+       return new AssemblyDataStoreConsensusCollector(caller, gappedQualityDataStore, referenceOrOldConsensus);
         
     }
+    
+ public static Collector<AssembledRead, ConsensusCombiner, NucleotideSequence> toAssemblyConsensus(ConsensusCaller caller, QualitySequenceDataStore rawQualityDataStore, GapQualityValueStrategy gapQualityValueStrategy){
+   
+        
+       return toAssemblyConsensus(caller, rawQualityDataStore, gapQualityValueStrategy, null);
+        
+    }
+ 
+ public static Collector<AssembledRead, ConsensusCombiner, NucleotideSequence> toAssemblyConsensus(ConsensusCaller caller, QualitySequenceDataStore rawQualityDataStore, GapQualityValueStrategy gapQualityValueStrategy, NucleotideSequence referenceOrOldConsensus){
+     
+     Objects.requireNonNull(caller);
+     Objects.requireNonNull(rawQualityDataStore);
+     Objects.requireNonNull(gapQualityValueStrategy);
+     
+    return new UngappedConverterAssemblyConsensusCollector(caller, rawQualityDataStore, gapQualityValueStrategy,referenceOrOldConsensus);
+     
+ }
     
     private static class UngappedConverterAssemblyConsensusCollector extends AssemblyDataStoreConsensusCollector{
 
         private final GapQualityValueStrategy strategy;
         
-        public UngappedConverterAssemblyConsensusCollector(ConsensusCaller caller, QualitySequenceDataStore qualities, GapQualityValueStrategy strategy) {
-            super(caller, qualities);
+       
+        
+        public UngappedConverterAssemblyConsensusCollector(ConsensusCaller caller, QualitySequenceDataStore qualities, GapQualityValueStrategy strategy, NucleotideSequence referenceConsensus) {
+            super(caller, qualities, referenceConsensus);
            this.strategy = strategy;
         }
 
@@ -276,12 +306,31 @@ public final class ConsensusCollectors {
     private static class DefaultQualityAssemblyConsensusCollector extends AbstractAssemblyConsensusCollector{
         private final byte defaultQuality;
 
+        private final NucleotideSequence referenceConsensus;
+        
         protected DefaultQualityAssemblyConsensusCollector(
                 ConsensusCaller caller, PhredQuality defaultQuality) {
+            this(caller, defaultQuality, null);
+        }
+        
+        protected DefaultQualityAssemblyConsensusCollector(
+                ConsensusCaller caller, PhredQuality defaultQuality, NucleotideSequence reference) {
             super(caller);
             this.defaultQuality = defaultQuality.getQualityScore();
+            this.referenceConsensus = reference;
         }
+       
 
+        @Override
+        public Function<ConsensusCombiner, NucleotideSequence> finisher() {
+            return (combiner) -> {
+               if(referenceConsensus !=null){
+                   combiner.setReferenceSequence(referenceConsensus);
+               }
+               return super.finisher().apply(combiner);
+            };
+                   
+        }
         @Override
         protected QualitySequence getQualitySequenceFor(AssembledRead read) {
             int length = (int)read.getLength();
@@ -300,13 +349,28 @@ public final class ConsensusCollectors {
             extends AbstractAssemblyConsensusCollector{
         
         private final QualitySequenceDataStore qualities;
+        private NucleotideSequence referenceConsensus;
         
-        public AssemblyDataStoreConsensusCollector(ConsensusCaller caller, QualitySequenceDataStore qualities) {
+        public AssemblyDataStoreConsensusCollector(ConsensusCaller caller, QualitySequenceDataStore qualities){
+            this(caller, qualities, null);
+        }
+        public AssemblyDataStoreConsensusCollector(ConsensusCaller caller, QualitySequenceDataStore qualities, NucleotideSequence referenceConsensus) {
            super(caller);
             this.qualities = qualities;
+            this.referenceConsensus = referenceConsensus;
         }
 
         
+        @Override
+        public Function<ConsensusCombiner, NucleotideSequence> finisher() {
+            return (combiner) -> {
+               if(referenceConsensus !=null){
+                   combiner.setReferenceSequence(referenceConsensus);
+               }
+               return super.finisher().apply(combiner);
+            };
+                   
+        }
         @Override
         protected QualitySequence getQualitySequenceFor(AssembledRead read) {
             String id = read.getId();

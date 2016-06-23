@@ -20,9 +20,16 @@
  ******************************************************************************/
 package org.jcvi.jillion.experimental.align;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
+import org.jcvi.jillion.assembly.util.consensus.ConsensusCaller;
+import org.jcvi.jillion.assembly.util.consensus.ConsensusCollectors;
+import org.jcvi.jillion.assembly.util.consensus.MostFrequentBasecallConsensusCaller;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
 
 public final class AlnUtil {
@@ -67,4 +74,24 @@ public final class AlnUtil {
 	    	return header.startsWith("CLUSTAL");
 			
 		}
+	 /**
+	  * Compute the consensus of the alignment in the given aln file
+	  * using the given ConsensusCaller.
+	  * 
+	  * @param alnFile the alignment file to parse, can not be null and must exist.
+	  * @param consensusCaller the ConsensusCaller to use; can not be null.
+	  * @return a new {@link NucleotideSequence} of the called consensus.
+	  * 
+	  * @throws DataStoreException
+	  * @throws IOException if there is a problem parsing the file.
+	  */
+	 public static NucleotideSequence computeConsensus(File alnFile, ConsensusCaller consensusCaller) throws DataStoreException, IOException{
+	     Objects.requireNonNull(consensusCaller);
+	     
+	     return GappedNucleotideAlignmentDataStore.createFromAlnFile(alnFile)
+                     .entryIterator()
+                     .toStream()
+                     .collect(ConsensusCollectors.toDataStoreConsensus(consensusCaller));
+
+	 }
 }

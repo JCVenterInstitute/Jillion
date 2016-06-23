@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.jcvi.jillion.assembly.util.SliceBuilder;
 import org.jcvi.jillion.assembly.util.SliceElement;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 
 
@@ -22,6 +24,14 @@ class ConsensusCombiner {
             if(element !=null){
                 builders.get(i).add(element);
             }
+        }
+    }
+    
+    public void setReferenceSequence(NucleotideSequence consensus){
+        Iterator<Nucleotide> refIter = consensus.iterator();
+        Iterator<SliceBuilder> sliceIter = builders.iterator();
+        while(refIter.hasNext() && sliceIter.hasNext()){
+            sliceIter.next().setConsensus(refIter.next());
         }
     }
     
