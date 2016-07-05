@@ -189,7 +189,7 @@ public class ComputeCoverageMapForCas2 {
 						}
 					}
 					
-				} catch (IOException | DataStoreException e) {
+				} catch (IOException e) {
 					throw new IllegalStateException("error parsing reference file(s)", e);
 				}
 			}
