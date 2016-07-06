@@ -40,6 +40,8 @@ New Features
    
 9.  Added new ConsensusCollectors class that can take Streams of various sequence inputs and compute a consensus.
 
+10.  Added new TraceDirPhdDataStoreBuilder class that can make a PhdDataStore implementation from a folder of sanger trace files.
+
 API Changes
 -----------
 1. Added Trace.getLength() 
@@ -69,6 +71,8 @@ API Changes
 7.  Added toUngappedRange( Range) to NucleotideSequenceBuilder
 
 8. DataStoreException now extends IOException
+
+9.  Added new StreamingIterator.empty() method
     
 ================
 Jillion 5.1
