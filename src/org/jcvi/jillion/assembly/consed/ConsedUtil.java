@@ -310,6 +310,17 @@ public final class ConsedUtil {
         	throw e;
         }
     }
+    
+    public static File generateNextAceFileFor(File editDir, String filenamePrefix){
+    	File latestAceFile = getLatestAceFile(editDir, filenamePrefix);
+    	if(latestAceFile ==null){
+    		//no ace file make the .1
+    		return new File(editDir, filenamePrefix + ".ace.1");
+    	}
+    	return new File(editDir, generateNextAceVersionNameFor(latestAceFile));
+    }
+    
+    
     public static File getPhdDirFor(File consedDir){
         verifyNotNull(consedDir);
         return new File(consedDir,"phd_dir");

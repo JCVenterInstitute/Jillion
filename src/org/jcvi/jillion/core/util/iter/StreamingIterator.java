@@ -147,5 +147,14 @@ public interface StreamingIterator<T> extends Closeable, Iterator<T>{
                 .onClose(
                 		StreamUtil.newOnCloseRunnableThatThrowsUncheckedIOExceptionIfNecessary(this));
     }
+    /**
+     * Create and return a new empty streaming iterator.
+     * 
+     * @return a new StreamingIterator that does not have any elements.
+     * @param <T> the type of elements in the stream.
+     */
+	static <T> StreamingIterator<T> empty(){
+		return IteratorUtil.createEmptyStreamingIterator();
+	}
 
 }
