@@ -13,7 +13,6 @@ import java.util.stream.Collector;
 import java.util.stream.Collector.Characteristics;
 
 import org.jcvi.jillion.assembly.AssembledRead;
-import org.jcvi.jillion.assembly.util.DefaultSliceElement;
 import org.jcvi.jillion.assembly.util.GapQualityValueStrategy;
 import org.jcvi.jillion.assembly.util.SliceElement;
 import org.jcvi.jillion.core.Direction;
@@ -25,6 +24,7 @@ import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.internal.assembly.util.CompactedSliceElement;
 
 /**
  * Utility class of {@link Collector}s that can compute
@@ -276,7 +276,7 @@ public final class ConsensusCollectors {
         while (nIter.hasNext()) {
             Nucleotide n = nIter.next();
             PhredQuality q = qIter.next();
-            array[i++] = new DefaultSliceElement(id, n, q, dir);
+            array[i++] = new CompactedSliceElement(id, n, q, dir);
         }
     
         combiner.add(array, startOffset);
