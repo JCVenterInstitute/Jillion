@@ -40,6 +40,11 @@ public enum TaggedDataType {
 	 * to the creators of this type to know how to parse.
 	 */
 	USER_DEFINED(1024),
+	
+	/**
+         * byte boolean value, with zero meaning false and any other value meaning true. 
+         */
+        LEGACY_BOOL(13),
 	;
 	
 	private static final Map<Integer, TaggedDataType> MAP;

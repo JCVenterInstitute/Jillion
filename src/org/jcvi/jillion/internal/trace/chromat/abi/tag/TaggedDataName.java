@@ -303,7 +303,103 @@ public enum TaggedDataName {
 	P2AM("P2AM"),
     P2RL("P2RL"),  
     P2BA("P2BA"),
-    RGOw("RGOw")
+    RGOw("RGOw"),
+    
+
+    AAct("AAct"),
+    /**
+     * Anode Buffer expiration Date in the format YYYY-MM-DDTHH:MM:SS.ss+/-HH:MM
+     */
+    ANODE_BUFFER_EXPIRATION_DATE("ABED"),
+        /**
+         * Date the Anode Buffer was first installed.
+         */
+    ANODE_BUFFER_INSTALL_DATE("ABID"),
+    
+    ANODE_BUFFER_LOT_NUMBER("ABLt"),
+    /**
+     * Number of Runs process by this anode buffer so far.
+     */
+    ANODE_BUFFER_RUN_NUMBER("ABRn"),
+    
+    ANODE_BUFFER_TYPE("ABTp"),
+    
+    ASSAY_VALIDATION_FLAG("AVld"),
+    /**
+     * Assay content as XML
+     */
+    ASSAY_XML("AsyC"),
+    /**
+     * list of ambient temperature readings.
+     */
+    AMBIENT_TEMP("AmbT"),
+    
+    ASSAY_NAME("AsyN"),
+    
+    ASSAY_VERSION("AsyV"),
+    
+    BASECALL_QC_CODE("BcRn"),
+    /**
+     * Comma Separated List of Basecall warnings or errors depending on the type.
+     */
+    BASECAL_WARNINGS_OR_ERRORS("BcRs"),
+    
+    CAPILLARY_ARRAY_EXPIRATION("CAED"),
+    /**
+     * Capillary array ID ?
+     */
+    CAID("CAID"),
+    
+    CAPILLARY_ARRAY_LOT_NUM("CALt"),
+    /**
+     * Number of injections so far through the capillary
+     */
+    CAPILLAY_INJECTION_COUNT("CARn"),
+    
+    CAPILLARY_ARRAY_SERIAL_NUM("CASN"),
+    
+    CATHODE_BUFFER_EXPIRATION_DATE("CBED"),
+    
+    CATHODE_BUFFER_INSTALL_DATE("CBID"),
+    CATHODE_BUFFER_LOT_NUMBER("CBLt"),
+    
+    CATHODE_BUFFER_RUN_NUMBER("CBRn"),
+    
+    CATHODE_BUFFER_TYPE("CBTp"),
+    /**
+     * The Start of the Clear Range (inclusive) or the Length depending on the number.
+     */
+    CLEAR_RANGE_START_or_LENGTH("CLRG"),
+    
+    CONTINIOUS_READ_LENGTH_or_PASS_FAIL_CHECK("CRLn"),
+    
+    FILE_CHECKSUM("CkSm"),
+    
+    DCMD("DCMD"),
+    
+    INJECTION_NAME("InjN"),
+    
+    MEDIUM_PUPSCORE("PuSc"),
+    
+    QV20("QV20"),
+    
+    QC_PARAMS("QcPa"),
+    
+    QC_TRIMCODE("QcRn"),
+    
+    QC_WARNINGS_OR_ERRORS("QcRs"),
+    
+    RAMAN_NORMALIZATION_FACTOR("RNmF"),
+    
+    POLYMER_INSTALL_DATE("SMID"),
+    
+    POLYMER_RUN_NUMBER("SMRn"),
+    
+    ACTIVE_SPECTRAL_CALIBRATION_NAME("SpeN"),
+    
+    TRIMMING_PARAMETERS("TrPa"),
+    
+    TRACE_SCORE("TrSc")
 	
 	;
 	
