@@ -210,7 +210,7 @@ public abstract class AbiChromatogramParser {
 			List<NucleotideSequence> basecallsList,
 			ChromatogramFileVisitor visitor) {
 		
-		List<ByteArrayTaggedDataRecord> qualityRecords =groupedDataRecordMap.byteArrayRecords.get(TaggedDataName.JTC_QUALITY_VALUES);
+		List<ByteArrayTaggedDataRecord> qualityRecords =groupedDataRecordMap.byteArrayRecords.get(TaggedDataName.QUALITY_VALUES);
 		for(int i=0; i<qualityRecords.size(); i++){
 		    ByteArrayTaggedDataRecord qualityRecord = qualityRecords.get(i);
 		    NucleotideSequence basecalls = basecallsList.get(i);
@@ -448,8 +448,8 @@ public abstract class AbiChromatogramParser {
             byte[] traceData,
             Map<String,String> props) {
         Map<TaggedDataName, List<FloatArrayTaggedDataRecord>> map= groupedDataRecordMap.floatDataRecords;
-        if(map.containsKey(TaggedDataName.JTC_NOISE)){
-            float[] noiseData = map.get(TaggedDataName.JTC_NOISE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData);
+        if(map.containsKey(TaggedDataName.NOISE)){
+            float[] noiseData = map.get(TaggedDataName.NOISE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData);
             Noise noise = Noise.create(channelOrder, noiseData);
             
             props.put("NOIS",noise.toString()); 
@@ -511,8 +511,8 @@ public abstract class AbiChromatogramParser {
             GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
             Properties props) {
         Map<TaggedDataName, List<IntArrayTaggedDataRecord>> map= groupedDataRecordMap.intArrayDataRecords;
-        if(map.containsKey(TaggedDataName.JTC_TEMPERATURE)){
-            props.put("Tmpr", map.get(TaggedDataName.JTC_TEMPERATURE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]);
+        if(map.containsKey(TaggedDataName.OVEN_TEMPERATURE)){
+            props.put("Tmpr", map.get(TaggedDataName.OVEN_TEMPERATURE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]);
         }
         if(map.containsKey(TaggedDataName.ELECTROPHERSIS_VOLTAGE)){
             props.put("EPVt", map.get(TaggedDataName.ELECTROPHERSIS_VOLTAGE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]);
@@ -551,8 +551,8 @@ public abstract class AbiChromatogramParser {
 		if(asciiStrings.containsKey(TaggedDataName.MODEL)){
             props.put("MODL", asciiStrings.get(TaggedDataName.MODEL).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
         }
-		if(pascalStrings.containsKey(TaggedDataName.MODF)){
-            props.put("MODF", pascalStrings.get(TaggedDataName.MODF).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
+		if(pascalStrings.containsKey(TaggedDataName.RUN_MODULE_FILENAME)){
+            props.put("MODF", pascalStrings.get(TaggedDataName.RUN_MODULE_FILENAME).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
         }
 		if(pascalStrings.containsKey(TaggedDataName.MATRIX_FILE_NAME)){
             props.put("MTFX", pascalStrings.get(TaggedDataName.MATRIX_FILE_NAME).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
@@ -560,11 +560,11 @@ public abstract class AbiChromatogramParser {
 		if(pascalStrings.containsKey(TaggedDataName.SPACING)){
             props.put("BCAL", pascalStrings.get(TaggedDataName.SPACING).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
         }
-		if(pascalStrings.containsKey(TaggedDataName.SMLt)){
-            props.put("SMLt", pascalStrings.get(TaggedDataName.SMLt).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
+		if(pascalStrings.containsKey(TaggedDataName.SEPARATION_MEDIUM_LOT_NUMBER)){
+            props.put("SMLt", pascalStrings.get(TaggedDataName.SEPARATION_MEDIUM_LOT_NUMBER).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
         }
-		if(pascalStrings.containsKey(TaggedDataName.SMED)){
-            props.put("SMED", pascalStrings.get(TaggedDataName.SMED).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
+		if(pascalStrings.containsKey(TaggedDataName.SEPARATION_MEDIUM_EXPIRATION_DATE)){
+            props.put("SMED", pascalStrings.get(TaggedDataName.SEPARATION_MEDIUM_EXPIRATION_DATE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
         }
 		if(pascalStrings.containsKey(TaggedDataName.SOFTWARE_VERSION)){
             final List<PascalStringTaggedDataRecord> versions = pascalStrings.get(TaggedDataName.SOFTWARE_VERSION);
@@ -573,19 +573,19 @@ public abstract class AbiChromatogramParser {
                 props.put("VER"+(i+1), versions.get(i).parseDataRecordFrom(traceData).trim());
              }
         }
-		if(pascalStrings.containsKey(TaggedDataName.JTC_PROTOCOL_NAME)){
-            props.put("PRON", pascalStrings.get(TaggedDataName.JTC_PROTOCOL_NAME).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
+		if(pascalStrings.containsKey(TaggedDataName.ANALYSIS_PARAMETERS_FILE_NAME)){
+            props.put("PRON", pascalStrings.get(TaggedDataName.ANALYSIS_PARAMETERS_FILE_NAME).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
         }
 		
 		
-		if(pascalStrings.containsKey(TaggedDataName.JTC_TUBE)){
-            props.put("TUBE", pascalStrings.get(TaggedDataName.JTC_TUBE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
+		if(pascalStrings.containsKey(TaggedDataName.TUBE)){
+            props.put("TUBE", pascalStrings.get(TaggedDataName.TUBE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
         }
 		if(asciiStrings.containsKey(TaggedDataName.JTC_RUN_NAME)){
             props.put("RUNN", asciiStrings.get(TaggedDataName.JTC_RUN_NAME).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
         }
-		if(asciiStrings.containsKey(TaggedDataName.JTC_PROTOCOL_VERSION)){
-            props.put("PROV", asciiStrings.get(TaggedDataName.JTC_PROTOCOL_VERSION).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
+		if(asciiStrings.containsKey(TaggedDataName.ANALYSIS_PROTOCOL_XML_SCHEMA_VERSION)){
+            props.put("PROV", asciiStrings.get(TaggedDataName.ANALYSIS_PROTOCOL_XML_SCHEMA_VERSION).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
         }
     }
 
@@ -867,9 +867,9 @@ public abstract class AbiChromatogramParser {
 	    LASER_POWER(TaggedDataName.LASER_POWER,"LsrP"),
 	    B1Pt(TaggedDataName.B1Pt,"B1Pt"),
 	    Scan(TaggedDataName.Scan,"Scan"),
-	    LENGTH_OF_DETECTOR(TaggedDataName.LENGTH_OF_DETECTOR,"LNTD"),
-	    JTC_START_POINT(TaggedDataName.JTC_START_POINT,"ASPT"),
-	    JTC_END_POINT(TaggedDataName.JTC_END_POINT,"AEPT"),
+	    LENGTH_OF_DETECTOR(TaggedDataName.LENGTH_TO_DETECTOR,"LNTD"),
+	    JTC_START_POINT(TaggedDataName.ANALYSIS_START_SCAN_POINT,"ASPT"),
+	    JTC_END_POINT(TaggedDataName.ANALYSIS_ENDING_SCAN_POINT,"AEPT"),
 	    ;
 	    private final TaggedDataName dataName;
 	    private final String propertyKey;

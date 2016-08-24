@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace.chromat.abi.tag;
 
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,12 +67,15 @@ public enum TaggedDataName {
 	 */
 	LAT_PIXEL_AVG("NAVG"),
 	/**
-	 * The number of sample lanes 
-	 * tracked on the original gel file.
+	 * The number of capillaries.
 	 */
-	NLNE("NLNE"),
+	NUM_CAPILLARIES("NLNE"),
 	/**
 	 * The ABI software's basecalls.
+	 * <ol>
+	 * <li>Basecalls edited by user</li>
+	 * <li>Basecalls called by basecaller</li>
+	 * </ol>
 	 */
 	BASECALLS("PBAS",true),
 	
@@ -82,9 +86,10 @@ public enum TaggedDataName {
 	DYE_PRIMER_CORRECTION_FILE("PDMF"),
 	
 	/**
-	 * scan numbers of the ABI
-	 * processed display traces at which
-	 * the basecalls are centered.
+	 * <ol>
+	 * <li>Peak Locations edited by user</li>
+	 * <li>Peak Locations called by basecaller</li>
+	 * <ol>
 	 */
 	PEAK_LOCATIONS("PLOC"),
 	
@@ -95,7 +100,41 @@ public enum TaggedDataName {
 	 * display trace data streams).
 	 */
 	PEAK_POSITIONS("PPOS"),
-	
+	    /**
+     * ABI 3500 additional peak information. There are 25 records of this tag
+     * with different value datatypes:
+     * <ol>
+     * <li>Peak 1 short[] The peak dye indices</li>
+     * <li>Peak 2 int[] The peak data points</li>
+     * <li>Peak 3 int[] The peak begin data points</li>
+     * <li>Peak 4 int[] The peak end data points</li>
+     * <li>Peak 5 short[] FWHM of peak</li>
+     * <li>Peak 6 double[] Corrected FWHM of peak</li>
+     * <li>Peak 7 int[] The peak heights</li>
+     * <li>Peak 8 int[] The peak begin heights</li>
+     * <li>Peak 9 int[] The peak end heights</li>
+     * <li>Peak 10 int[] The peak area (in data points)</li>
+     * <li>Peak 11 double[] The corrected peak area (in data points)</li>
+     * <li>Peak 12 double[] The peak positions (in bases)</li>
+     * <li>Peak 13 double[] The peak begin positions (in bases)</li>
+     * <li>Peak 14 double[] The peak end positions (in base)</li>
+     * <li>Peak 15 double[] FWHM (in base) of peak</li>
+     * <li>Peak 16 double[] Corrected FWHM (in base) of peak</li>
+     * <li>Peak 17 double[] The peak area (in base)</li>
+     * <li>Peak 18 double[] The corrected peak area (in base)</li>
+     * <li>Peak 19 cString The peak labels separated by comma</li>
+     * <li>Peak 20 cString The flag indicating whether peak is size matched
+     * separated by comma</li>
+     * <li>Peak 21 double[] The base when peak is size matched</li>
+     * <li>Peak 22 cString The flag indicating whether peak is off-scale
+     * separated by comma</li>
+     * <li>Peak 23 cString The flag indicating whether peak is user created
+     * separated by comma</li>
+     * <li>Peak 24 cString The flag indicating whether peak is broaded</li>
+     * <li>Peak 25 cString The flag indicating whether peak is pullup</li>
+     * </ol>
+     */
+	PEAK_3500("Peak"),
 	/**
 	 * The start and stop dates of the gel run.
 	 */
@@ -140,56 +179,90 @@ public enum TaggedDataName {
 	 */
 	TRACKING_INITIAL_ADJUSTMENT("TRKP"),
 	
+	/**
+	 * First occurrence for initial analysis, 2nd for occurrence for
+	 * last analysis.
+	 */
+	ANALYSIS_ENDING_SCAN_POINT("AEPt"),
+	/**
+	 * Optional
+	 */
+	ANALYSIS_PARAMETERS_FILE_NAME("APFN"),
 	
-	JTC_END_POINT("AEPt"),
+	ANALYSIS_PROTOCOL_XML_SCHEMA_VERSION("APXV",true),
 	
-	JTC_PROTOCOL_NAME("APFN"),
+	ANALYSIS_PROTOCOL_SETTING_NAME("APrN",true),
 	
-	JTC_PROTOCOL_VERSION("APXV",true),
+	ANALYSIS_PROTOCOL_SETTING_VERSION("APrV"),
+	ANALYSIS_PROTOTCOL_SETTING_XML("APrX"),
+	/**
+	 * Analysis Return code. Produced only by 5 Prime basecaller {@code 1.0b3}.
+	 */
+	ANALYSIS_RETURN_CODE("ARTN"),
+	/**
+	 * Flag to indicate whether adaptive processing worked or not
+	 */
+	ADAPTIVE_PROCESSING_FLAG("ASPF"),
+	/**
+         * First occurrence for initial analysis, 2nd for occurrence for
+         * last analysis.
+         */
+	ANALYSIS_START_SCAN_POINT("ASPt"),
 	
-	APrN("APrN",true),
-	
-	APrV("APrV"),
-	APrX("APrX"),
-	
-	ARTN("ARTN"),
-	
-	ASPF("ASPF"),
-	
-	JTC_START_POINT("ASPt"),
-	
-	AUDT("AUDT"),
-	
+	AUDIT_LOG("AUDT"),
+	/**
+	 * Reference scan number for mobility and spacing curves. first occurrence
+	 * for initial analysis, second for last analysis.
+	 */
 	B1Pt("B1Pt"),
-	
-	BCTS("BCTS"),
+	/**
+	 * Time of completion of most recent analysis
+	 */
+	BASECALLER_TIMESTAMP("BCTS"),
 	
 	COMMENT("CMNT"),
+	/**
+	 * Container Identifier, a.k.a. plate barcode.
+	 */
+	CONTAINER_ID("CTID",true),
 	
-	CT_ID("CTID",true),
+	CONTAINER_NAME("CTNM",true),
 	
-	CT_NAME("CTNM",true),
+	CONTAINER_OWNER("CTOw",true),
 	
-	CT_OWNER("CTOw",true),
+	COMMENT_TITLE("CTTL"),
+	/**
+	 * Capillary type electrophoresis. 1 for a capillary based machine. 
+	 * 0 for a slab gel based machine.
+	 */
+	CAPILLARY_TYPE_ELECTROPHORESIS("CpEP"),
+	/**
+	 * The detection cell heater temperature setting from the Run Module.
+	 * Reserved for backward compatibility. ; Not used for 3500.
+	 */
+	DETECTION_CELL_HEATER_TEMP("DCHT"),
 	
-	CTTL("CTTL"),
+	DOWNSAMPLING_RATE("DSam"),
 	
-	CpEP("CpEP"),
-	
-	DCHT("DCHT"),
-	
-	DSam("DSam"),
-	
-	DySN("DySN"),
-	
+	DYE_SET_NAME("DySN"),
+	/**
+	 * Number of dyes.
+	 */
 	DYE_NUMBER("Dye#"),
 	
-	DyeN("DyeN"),
+	DYE_NAME("DyeN"),
 	
-	DyeW("DyeW"),
+	DYE_WAVELENGTH("DyeW"),
 	
 	ELECTROPHERSIS_VOLTAGE("EPVt"),
-	
+	/**
+	 * <ol>
+	 * <li>Start Run Event</li>
+	 * <li>Stop Run Event</li>
+	 * <li>Start Collection Event</li>
+	 * <li>Stop Collection Event</li>
+	 * </ol>
+	 */
 	EVENT("EVNT"),
 	/**
 	 * Polymer/Gel Type.
@@ -207,28 +280,48 @@ public enum TaggedDataName {
 	 * </ol>
 	 */
 	INSTRUMENT_INFORMATION("HCFG",true),
+	/**
+	 * Injection time setting in Seconds.
+	 */
+	INJECTION_TIME_SETTINGS("InSc"),
+	/**
+	 * Injection Voltage setting in Volts
+	 */
+	INJECTION_VOLTAGE_SETTINGS("InVt"),
 	
-	InSc("InSc"),
-	
-	InVt("InVt"),
-	
-	LIMS("LIMS"),
-	
-	LENGTH_OF_DETECTOR("LNTD"),
-	
+	SAMPLE_TRACKING_ID_FOR_LIMS("LIMS"),
+	/**
+	 * Length To Detector (capillary length)
+	 */
+	LENGTH_TO_DETECTOR("LNTD"),
+	/**
+	 * Laser power setting in micro Watts
+	 */
 	LASER_POWER("LsrP"),
 	
 	MACHINE_NAME("MCHN"),
-	
-	MODF("MODF"),
+	/**
+	 * Run Module filename. This is redundant with the new tag #RmDn
+	 */
+	RUN_MODULE_FILENAME("MODF"),
 	/**
 	 * The ABI sequencing machine model number.
 	 */
 	MODEL("MODL",true),
-	
-	JTC_NOISE("NOIS"),
-	
-	JTC_QUALITY_VALUES("PCON"),
+	/**
+	 * The estimate of rms baseline noise (S/N ratio) for each dye for a
+successfully analyzed sample. Corresponds in order to the raw data in
+tags DATA 1-4. KB basecaller only.
+	 */
+	NOISE("NOIS"),
+	/**
+	 * array of Quality values:
+	 * <ol>
+	 * <li>Array of quality Values (0-255) as edited by user</li>
+	 * <li>Array of quality values (0-255) as called by Basecaller</li>
+	 * </ol>
+	 */
+	QUALITY_VALUES("PCON"),
 	/**
 	 * The size of the Sequencing Plate being sequenced.
 	 */
@@ -256,39 +349,101 @@ public enum TaggedDataName {
 	Rate("Rate"),
 	RevC("RevC"),
 	JTC_RUN_NAME("RunN",true),
+	/**
+	 * Number of Scans.
+	 */
 	SCAN("SCAN"),
-	SMED("SMED"),
-	SMLt("SMLt"),
-	
+	/**
+	 * Separation Medium Lot Exp Date
+	 */
+	SEPARATION_MEDIUM_EXPIRATION_DATE("SMED"),
+	/**
+	 * Separation Medium Lot Number (polymer lot number)
+	 */
+	SEPARATION_MEDIUM_LOT_NUMBER("SMLt"),
+	/**
+	 * SVER 1 pString Data Collection version number
+SVER 2 cString Sizecaller version
+SVER 3 pString Firmware version number
+SVER 4 pString Sample File Format Version String
+	 */
 	SOFTWARE_VERSION("SVER"),
+	/**
+	 * Rescaling Divisor for reducing the dynamic range of the color data.
+	 */
 	Scal("Scal"),
-	
+	/**
+	 * Number of scans. Redundant with {@link #SCAN}, but lower range. (legacy)
+	 */
 	Scan("Scan"),
 	/**
 	 * The Tube/ Well this trace came from.
 	 */
-	JTC_TUBE("TUBE"),
-	JTC_TEMPERATURE("Tmpr"),
+	TUBE("TUBE"),
+	/**
+	 * Oven Temperature setting in degrees C.
+	 */
+	OVEN_TEMPERATURE("Tmpr"),
 	USER("User"),
-	
-	phAR("phAR"),
-	phCH("phCH"),
-	phDY("phDY"),
-	
-	phQL("phQL"),
+	/**
+	 * The flag indicating whether size match results have been edited by the
+user. Unused for 3500. Reserved for backward compatibility.
+	 */
+	USER_EDITED_SIZE_MATCH_RESULTS("UsrE"),
+	/**
+	 * Trace peak aria ratio.
+	 */
+	PEAK_ARIA_RATIO("phAR"),
+	/**
+	 * Chemistry type ("term", "prim", "unknown"), based on DYE_1
+information
+	 */
+	CHEMISTRY_TYPE("phCH"),
+	/**
+	 * Dye ("big", "d-rhod", "unknown"), based on mob file information
+	 */
+	DYE_TYPE("phDY"),
+	/**
+	 * Maximum Quality Value.
+	 */
+	MAX_QUAL_VALUE("phQL"),
+	/**
+	 * phTR 1 short Set Trim region
+phTR 2 float Trim probability
+	 */
 	phTR("phTR"),
 	
 	MATRIX_FILE_NAME("MTFX"),
-	
+	/**
+	 * Feature Table.
+	 */
 	FTab("FTab"),
-	
+	/**
+	 * Feature Vocabulary.
+	 */
 	FVoc("FVoc"),
-	
+	/**
+	 * Features.
+	 */
 	Feat("Feat"),
-	OFFS("OFFS"),
-	ScSt("ScSt"),
-	OfSc("OfSc"),
-	Satd("Satd"),
+	/**
+	 * The off-scale data separated by semi-colon(;). Each data consists of five
+numbers separated by comma: start data point, end data point, start
+base, end base, and validity
+	 */
+	OFF_SCALE("OffS", true),
+	/**
+	 * Raw data start point. Set to 0 for 3500.data collection.
+	 */
+	RAW_DATA_START_POINT("ScSt"),
+	/**
+	 * List of scan numbers that are offscale (optional)
+	 */
+	OFF_SCALE_LIST("OfSc"),
+	/**
+	 * List of scan indexes which were saturated in the camera.
+	 */
+	SATURATED_SCAN_INDEXES("Satd"),
 	
 	BufT("BufT"),
 	BufG("BufG"),
@@ -303,8 +458,12 @@ public enum TaggedDataName {
     P2RL("P2RL"),  
     P2BA("P2BA"),
     RGOw("RGOw"),
-    
-    AAct("AAct"),
+    /**
+     * Primary Analysis Audit Active indication. True if system auditing was
+enabled during the last write of this file, false if system auditing was
+disabled.
+     */
+    PRIMARY_ANALYSIS_AUDIT_ACTIVE_INDICATOR("AAct"),
     /**
      * Anode Buffer expiration Date in the format YYYY-MM-DDTHH:MM:SS.ss+/-HH:MM
      */
@@ -397,26 +556,51 @@ public enum TaggedDataName {
     
     TRIMMING_PARAMETERS("TrPa"),
     
+    /**
+     * The root directory entry in the ab1 file.
+     */
+    DIRECTORY("tdir"),
+    
     TRACE_SCORE("TrSc")
 	;
 	
-	private static final Map<String, TaggedDataName> MAP;
-	static{
-		MAP = new HashMap<String, TaggedDataName>();
-		for(TaggedDataName tag : values()){
-			MAP.put(tag.toString(), tag);
-		}
-	}
 	
+	public static TaggedDataName getTagFromIntCode(int code){
+	    return INT_MAP.get(code);
+	}
 	public static TaggedDataName parseTaggedDataName(String taggedDataName){
 		if(MAP.containsKey(taggedDataName)){
 		    return MAP.get(taggedDataName);
 		}
-		throw new IllegalArgumentException("unknown tag data name "+ taggedDataName);
+		throw new IllegalArgumentException("unknown tag data name '"+ taggedDataName + "'");
 		
 	}
 	private final String name;
 	private final boolean isNullTerminated;
+	
+	private static final Map<Integer, TaggedDataName> INT_MAP;
+	private static final Map<String, TaggedDataName> MAP;
+        
+	static{
+	    TaggedDataName[] values = TaggedDataName.values();
+	    INT_MAP = new HashMap<>(values.length);
+	    
+	    MAP = new HashMap<String, TaggedDataName>(values.length);
+	    
+            for(TaggedDataName tag : values){
+                    MAP.put(tag.name, tag);
+                    byte[] bytes = tag.name.getBytes(StandardCharsets.US_ASCII);
+                    int value=0;
+                    for(int i=bytes.length-1; i>=0; i--){
+                        value<<=8;
+                        value |= bytes[i];
+                        
+                    }
+                    
+                    INT_MAP.put(value, tag);
+                    
+            }
+	}
 	
 	private TaggedDataName(String name,boolean isNullTerminated){
 	    this.name = name;
