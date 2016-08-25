@@ -1,9 +1,88 @@
+Jillion 5 requires Java 8 and uses new Java 8 language features such as default methods, lambda expressions and the new `Stream` and `Collector` API.
+
+#How to install
+## Using downloadable jar
+Just include the downloadable jar on your classpath.  Jillion does not require any other dependencies (other than the JVM)
+
+##Building from source
+Jillion 5+ uses Maven to build and package a jar file.  From the root folder where the `pom.xml` file is type on the command line
+```
+% mvn clean install
+```
+This will build jillion, run all the unit and integration tests and installs it in your local repository.
+
+Jillion is now ready to use.
+
+
+
 #5.2 Release Notes
 
 ##New Features
 1. Added new method to fastq writer to automatically trim given a Range. 
 This saves users the trouble of creating SequenceBuilders and trimming themselves.
+    
+2.  Added new method to FastqRecord to get the average Quality of the quality sequence.
+    The default implementation calls getQualitySequence().getAvgQuality() but some implementations
+    use a more efficient version. 
+    
+3.  Added new QualityTrimmer SlidingWindowQualityTrimmer which acts like Trimmomatic's SLIDINGWINDOW option.
 
+4. Added new convenience methods to NucleotideTrimmer and QualityTrimmer that take Builders.  This is really useful
+   when performing multiple trimming operations in serial since some trimmers may be able to save CPU cycles
+   and work directly from the builders.
+   
+5. Added new TrimmerPipeline and TrimmerPipelineBuilder classes which can take multiple NucleotideTrimmers
+   and QualityTrimmers and combine the trimming results for you.
+   
+6. Added SamFileDataStore and SamFileDataStoreBuilder to finally provide a higher level API for
+   working with sam and bam files without needing to use a low level Visitor. 
+   
+7. Added Optional<File> getFile() to FastqParser and refactored CasParser
+   implementations to make it easier to extend cas file parsing.
+   
+8. Add lambda hook to CasFileTransformationService to override how FastqDataStore is generated so
+   users could provide their own implementation. 
+   
+9.  Added new ConsensusCollectors class that can take Streams of various sequence inputs and compute a consensus.
+
+10.  Added new TraceDirPhdDataStoreBuilder class that can make a PhdDataStore implementation from a folder of sanger trace files.
+
+11. AbiChromatogramParser - Added support for ABI 3500 abi files.
+
+##API Changes
+1. Added Trace.getLength() 
+
+2. Added default methods to Rangeable for getLength() getBegin(), getEnd() and isEmpty() since 
+   that is used the most don't have to always build a new Range object.
+
+3. Added Range.Builder intersect methods
+
+4.  Changed TrimmerPipeline methods to be faster by making fewer Range objects and working off of Range.Builders instead.
+
+5.  Added new Range.toString() methods that take lambda expressions so users can make their 
+    own toString implementations.  There are several overloaded versions:
+    * toString(RangeToStringFunction)
+    * toString(RangeToStringFunction, CoordinateSystem)
+    
+    * toString(RangeAndCoordinateSystemToStringFunction)
+    * toString(RangeAndCoordinateSystemToStringFunction, CoordinateSystem)
+    
+    to let users convert to different coordinate systems and to
+    include that coordinate system in the lambda expression or not.
+
+6.  Added toGappedRange( Range) and toUngappedRange( Range) to ResidueSequence
+   with default implementations and more efficient implementation when the codec 
+   knows it doesn't have gaps.  Changed AssemblyUtil to use that instead of its own implementation.
+
+7.  Added toUngappedRange( Range) to NucleotideSequenceBuilder
+
+8.  DataStoreException now extends IOException
+
+9.  Added new StreamingIterator.empty() method
+
+##Bug Fixes
+1.  BlastParser - fixed bug in XML Blast Parser when it sometimes accidentally set percent identity to be (1 - percent identity).
+ 
 
 #5.1 Release Notes
 
