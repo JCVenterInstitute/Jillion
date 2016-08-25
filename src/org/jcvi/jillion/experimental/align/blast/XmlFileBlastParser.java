@@ -264,7 +264,7 @@ public final class XmlFileBlastParser implements BlastParser{
                     }else{
                     	long length = queryRange.asRange().getLength();
                     	int numMismatches = (int)(length - numMatches);
-                    	hspBuilder.percentIdentity(numMismatches/(double)length);
+                    	hspBuilder.percentIdentity(numMatches/(double)length);
                     	 hspBuilder.numMismatches(numMismatches);
                     }
                     hspBuilder.numGapOpenings(numberOfGapOpenings);

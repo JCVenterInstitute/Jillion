@@ -42,6 +42,8 @@ New Features
 
 10.  Added new TraceDirPhdDataStoreBuilder class that can make a PhdDataStore implementation from a folder of sanger trace files.
 
+11. AbiChromatogramParser - Added support for ABI 3500 abi files.
+
 API Changes
 -----------
 1. Added Trace.getLength() 
@@ -73,6 +75,11 @@ API Changes
 8. DataStoreException now extends IOException
 
 9.  Added new StreamingIterator.empty() method
+
+
+Bug Fixes
+---------
+1.  BlastParser - fixed bug in XML Blast Parser when it sometimes accidentally set percent identity to be (1 - percent identity).
     
 ================
 Jillion 5.1
@@ -102,6 +109,7 @@ New Features
     existing fasta files.  The builder object supports fully configuration of the fai to be written
     including the output path, the end of line character, and the Charset.
 
+
 API Changes
 -----------
 1. Created new abstract class AbstractReadCasVisitor which is now the parent class of AbstractAlignedReadCasVisitor.  
@@ -127,6 +135,8 @@ Bug Fixes
     
 2.  StreamingIterator - abstract class that many StreamingIterators extend to use background thread
     to populate iterator has been improved to fix occasional dead lock issues if the background thread throws exceptions.
+    
+3.  BlastParser - fixed bug in XML Blast Parser when it sometimes accidentally set percent identity to be (1 - percent identity).
 
 ================
 Jillion 5.0
