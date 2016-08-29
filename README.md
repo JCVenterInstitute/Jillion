@@ -1,4 +1,5 @@
 Jillion 5 requires Java 8 and uses new Java 8 language features such as default methods, lambda expressions and the new `Stream` and `Collector` API.
+if you are still stuck on Java 7, then you must use Jilion 4.
 
 #How to install
 ## Using downloadable jar
@@ -9,7 +10,7 @@ Jillion 5+ uses Maven to build and package a jar file.  From the root folder whe
 ```
 % mvn clean install
 ```
-This will build jillion, run all the unit and integration tests and installs it in your local repository.
+This will build jillion, run all the unit and integration tests and install it in your local repository.
 
 Jillion is now ready to use.
 
@@ -70,19 +71,22 @@ This saves users the trouble of creating SequenceBuilders and trimming themselve
     to let users convert to different coordinate systems and to
     include that coordinate system in the lambda expression or not.
 
-6.  Added toGappedRange( Range) and toUngappedRange( Range) to ResidueSequence
+6.  Added `toGappedRange( Range)` and `toUngappedRange( Range)` to ResidueSequence
    with default implementations and more efficient implementation when the codec 
    knows it doesn't have gaps.  Changed AssemblyUtil to use that instead of its own implementation.
 
 7.  Added toUngappedRange( Range) to NucleotideSequenceBuilder
 
-8.  DataStoreException now extends IOException
+8.  DataStoreException now extends IOException - This is a *Breaking Change* if you had code that
+    caught only DataStoreException and not IOException of had code that used a multi-catch to catch
+    both an IOException and a DataStore Exception will now cause a compiler error if left unchanged. 
 
 9.  Added new StreamingIterator.empty() method
 
 ##Bug Fixes
 1.  BlastParser - fixed bug in XML Blast Parser when it sometimes accidentally set percent identity to be (1 - percent identity).
  
+---
 
 #5.1 Release Notes
 
@@ -119,7 +123,7 @@ This saves users the trouble of creating SequenceBuilders and trimming themselve
 2.  StreamingIterator - abstract class that many StreamingIterators extend to use background thread
     to populate iterator has been improved to fix occasional dead lock issues if the background thread throws exceptions.
 
-
+---
 
 #5.0 Release Notes
 
