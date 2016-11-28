@@ -44,7 +44,7 @@ public class TestBlastXmlNoDefLine {
 							.parse(visitor);
 		
 		Set<String> uniqueNames = new HashSet<>();
-		for(Hsp<?,?> hsp :visitor.hsps){
+		for(Hsp<?,?,?> hsp :visitor.hsps){
 			assertEquals("No definition line found", hsp.getSubjectDefinition());
 			assertTrue(hsp.getSubjectId().contains("RVA"));
 			

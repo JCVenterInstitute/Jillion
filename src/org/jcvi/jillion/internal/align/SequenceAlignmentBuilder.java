@@ -23,6 +23,7 @@ package org.jcvi.jillion.internal.align;
 import org.jcvi.jillion.align.SequenceAlignment;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequence;
+import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
 import org.jcvi.jillion.core.util.Builder;
 /**
  * {@code SequenceAlignmentBuilder} is a {@link Builder}
@@ -33,20 +34,20 @@ import org.jcvi.jillion.core.util.Builder;
  * @param <S> the {@link ResidueSequence} type used.
  * @param <A> the {@link SequenceAlignment} used
  */
-public interface SequenceAlignmentBuilder<R extends Residue, S extends ResidueSequence<R>, A extends SequenceAlignment<R, S>> extends Builder<A> {
+public interface SequenceAlignmentBuilder<R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S>, A extends SequenceAlignment<R, S>> extends Builder<A> {
 	/**
 	 * 
 	 * @param match the Residue to add to both the query and subject alignments
 	 * @return this
 	 */
-	SequenceAlignmentBuilder<R,S,A> addMatch(R match);
-	SequenceAlignmentBuilder<R,S,A> addMatches(Iterable<R> matches);
+	SequenceAlignmentBuilder<R,S,B,A> addMatch(R match);
+	SequenceAlignmentBuilder<R,S,B,A> addMatches(Iterable<R> matches);
 	
-	SequenceAlignmentBuilder<R, S,A> addMatches(String matchedSequence);
+	SequenceAlignmentBuilder<R, S,B,A> addMatches(String matchedSequence);
 	
-	SequenceAlignmentBuilder<R,S,A> addMismatch(R query, R subject);
-	SequenceAlignmentBuilder<R,S,A> addGap(R query, R subject);
-	SequenceAlignmentBuilder<R, S,A> addGap(char query, char subject);
+	SequenceAlignmentBuilder<R,S,B,A> addMismatch(R query, R subject);
+	SequenceAlignmentBuilder<R,S,B,A> addGap(R query, R subject);
+	SequenceAlignmentBuilder<R, S,B, A> addGap(char query, char subject);
 
 	/**
 	 * Sets the offset of the first base in the 
@@ -67,9 +68,9 @@ public interface SequenceAlignmentBuilder<R extends Residue, S extends ResidueSe
 	 * @param subjectOffset the offset into the subject sequence.
 	 * @return this.
 	 */
-	SequenceAlignmentBuilder<R,S,A> setAlignmentOffsets(int queryOffset, int subjectOffset);
+	SequenceAlignmentBuilder<R,S,B, A> setAlignmentOffsets(int queryOffset, int subjectOffset);
 	
-	SequenceAlignmentBuilder<R,S,A> addMismatches(String query, String subject);
+	SequenceAlignmentBuilder<R,S,B, A> addMismatches(String query, String subject);
 	
 	
 	

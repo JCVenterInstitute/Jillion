@@ -36,6 +36,7 @@ import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.JoinedStringBuilder;
 import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
@@ -53,7 +54,7 @@ import org.jcvi.jillion.shared.fasta.AbstractResidueFastaWriter;
  * @author dkatzel
  *
  */
-public final class NucleotideFastaWriterBuilder extends AbstractResidueFastaWriter.Builder<Nucleotide, NucleotideSequence, NucleotideFastaRecord,NucleotideFastaWriter> {
+public final class NucleotideFastaWriterBuilder extends AbstractResidueFastaWriter.Builder<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder, NucleotideFastaRecord,NucleotideFastaWriter> {
 		private boolean nonRedundant;
 		private Integer expectedCapacity;
 		
@@ -252,7 +253,7 @@ public final class NucleotideFastaWriterBuilder extends AbstractResidueFastaWrit
 
 
 
-		private static final class NucleotideSequenceFastaRecordWriterImpl extends AbstractResidueFastaWriter<Nucleotide, NucleotideSequence, NucleotideFastaRecord> implements NucleotideFastaWriter{
+		private static final class NucleotideSequenceFastaRecordWriterImpl extends AbstractResidueFastaWriter<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder, NucleotideFastaRecord> implements NucleotideFastaWriter{
 
 			private NucleotideSequenceFastaRecordWriterImpl(OutputStream out,
 					int numberOfResiduesPerLine, Charset charSet, String eol) {

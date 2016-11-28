@@ -31,7 +31,7 @@ class BlastHitImpl implements BlastHit{
 
 	private final Integer queryLength, subjectLength;
 	//initialize to empty list
-	private final List<Hsp<?,?>> hsps;
+	private final List<Hsp<?,?,?>> hsps;
 	
 	public BlastHitImpl(Builder builder) {
 		this.queryId = builder.queryId;
@@ -43,7 +43,7 @@ class BlastHitImpl implements BlastHit{
 		this.dbName = builder.dbName;
 		
 		//defensive copy
-		ArrayList<Hsp<?,?>> sortedList = new ArrayList<>(builder.hsps);
+		ArrayList<Hsp<?,?,?>> sortedList = new ArrayList<>(builder.hsps);
 		Collections.sort(sortedList, HspComparator.INSTANCE);
 		this.hsps = Collections.unmodifiableList(sortedList);
 	}
@@ -84,7 +84,7 @@ class BlastHitImpl implements BlastHit{
 	}
 
 	@Override
-	public List<Hsp<?,?>> getHsps() {
+	public List<Hsp<?,?,?>> getHsps() {
 		return hsps;
 	}
 	
@@ -185,11 +185,11 @@ class BlastHitImpl implements BlastHit{
 
 
 
-	private static enum HspComparator implements Comparator<Hsp<?,?>> {
+	private static enum HspComparator implements Comparator<Hsp<?,?,?>> {
 		INSTANCE;
 		
 		@Override
-		public int compare(Hsp<?,?> o1, Hsp<?,?> o2) {
+		public int compare(Hsp<?,?,?> o1, Hsp<?,?,?> o2) {
 			//the lower the evalue the better
 			int eCmp =o1.getEvalue().compareTo(o2.getEvalue());
 			if(eCmp !=0){
@@ -236,7 +236,7 @@ class BlastHitImpl implements BlastHit{
 		
 		private String programName, dbName;
 		//initialize to empty list
-		private List<Hsp<?,?>> hsps = new ArrayList<>();
+		private List<Hsp<?,?,?>> hsps = new ArrayList<>();
 		
 		public Builder(String queryId, String subjectId) {
 			this.queryId = queryId;
@@ -277,7 +277,7 @@ class BlastHitImpl implements BlastHit{
 			return this;
 		}
 		
-		public Builder addHsp(Hsp<?,?> hsp){
+		public Builder addHsp(Hsp<?,?,?> hsp){
 			if(hsp ==null){
 				throw new NullPointerException("hsp can not be null");
 			}

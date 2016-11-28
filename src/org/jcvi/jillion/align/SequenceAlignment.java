@@ -31,7 +31,7 @@ import org.jcvi.jillion.core.residue.ResidueSequence;
  * @param <R> the {@link Residue} type.
  * @param <S> the {@link org.jcvi.jillion.core.Sequence} type.
  */
-public interface SequenceAlignment<R extends Residue, S extends ResidueSequence<R>> {
+public interface SequenceAlignment<R extends Residue, S extends ResidueSequence<R, S, ?>> {
 	/**
 	 * Get the percent of the residues that match exactly.
 	 * @return the percentage as a double; this

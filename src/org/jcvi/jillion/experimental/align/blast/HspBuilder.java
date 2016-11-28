@@ -25,17 +25,20 @@ import java.math.BigDecimal;
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequence;
+import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
+import org.jcvi.jillion.core.residue.aa.ProteinSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 
 /**
  * @author dkatzel
  *
  *
  */
-public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> implements org.jcvi.jillion.core.util.Builder<Hsp<R,S>>{
+public final class HspBuilder<R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S>> implements org.jcvi.jillion.core.util.Builder<Hsp<R,S,B>>{
 
     private static final double ONE_HUNDRED = 100.0D;
 
@@ -58,36 +61,36 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
          * Create a new {@link HspBuilder} for BLASTN (Nucleotide query to Nucleotide subject) results.
          * @return a new {@link HspBuilder} will never be null.
          */
-        public static HspBuilder<Nucleotide,NucleotideSequence> forBlastN(){
-        	return new HspBuilder<Nucleotide,NucleotideSequence>();
+        public static HspBuilder<Nucleotide,NucleotideSequence,NucleotideSequenceBuilder> forBlastN(){
+        	return new HspBuilder<Nucleotide,NucleotideSequence,NucleotideSequenceBuilder>();
         }
         /**
          * Create a new {@link HspBuilder} for BLASTP (Protein query to Protein subject) results.
          * @return a new {@link HspBuilder} will never be null.
          */
-        public static HspBuilder<AminoAcid,ProteinSequence> forBlastP(){
-        	return new HspBuilder<AminoAcid,ProteinSequence>();
+        public static HspBuilder<AminoAcid,ProteinSequence,ProteinSequenceBuilder> forBlastP(){
+        	return new HspBuilder<AminoAcid,ProteinSequence,ProteinSequenceBuilder>();
         }
         /**
          * Create a new {@link HspBuilder} for BLASTX (Nucleotide (translated) query to Protein subject) results.
          * @return a new {@link HspBuilder} will never be null.
          */
-        public static HspBuilder<AminoAcid,ProteinSequence> forBlastX(){
-        	return new HspBuilder<AminoAcid,ProteinSequence>();
+        public static HspBuilder<AminoAcid,ProteinSequence,ProteinSequenceBuilder> forBlastX(){
+        	return new HspBuilder<AminoAcid,ProteinSequence,ProteinSequenceBuilder>();
         }
         /**
          * Create a new {@link HspBuilder} for TBLASTX (Nucleotide (translated) query to Nucleotide (translated) subject) results.
          * @return a new {@link HspBuilder} will never be null.
          */
-        public static HspBuilder<AminoAcid,ProteinSequence> forTBlastX(){
-        	return new HspBuilder<AminoAcid,ProteinSequence>();
+        public static HspBuilder<AminoAcid,ProteinSequence,ProteinSequenceBuilder> forTBlastX(){
+        	return new HspBuilder<AminoAcid,ProteinSequence,ProteinSequenceBuilder>();
         }
         /**
          * Create a new {@link HspBuilder} for TBLASTN (Protein query to Nucleotide (translated) subject) results.
          * @return a new {@link HspBuilder} will never be null.
          */
-        public static HspBuilder<AminoAcid,ProteinSequence> forTBlastN(){
-        	return new HspBuilder<AminoAcid,ProteinSequence>();
+        public static HspBuilder<AminoAcid,ProteinSequence,ProteinSequenceBuilder> forTBlastN(){
+        	return new HspBuilder<AminoAcid,ProteinSequence,ProteinSequenceBuilder>();
         }
         /**
          * Create a new {@link HspBuilder} instance for the given type
@@ -98,7 +101,7 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
          * @throws IllegalArgumentException if type is not
          * equal-ignoring-case with "blastn", "blastp", "blastx", "tblastn",  or "tblastp".
          */
-        public static HspBuilder<?,?> forType(String type){
+        public static HspBuilder<?,?,?> forType(String type){
         	if(type==null){
         		throw new NullPointerException("type can not be null");
         	}
@@ -120,8 +123,8 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
         	throw new IllegalArgumentException("unknown type :" + type);
         }
     	
-        public static <R extends Residue, S extends ResidueSequence<R>> HspBuilder<R,S> copy(Hsp<R,S> hsp){
-            return new HspBuilder<R,S>(hsp);
+        public static <R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S>> HspBuilder<R,S, B> copy(Hsp<R,S, B> hsp){
+            return new HspBuilder<R,S,B>(hsp);
         }
         
         /**
@@ -131,13 +134,13 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
          * will not affect the other. 
          * @return  a new {@link HspBuilder} will never be null.
          */
-        public  HspBuilder<R,S> copy(){
-            return new HspBuilder<R,S>(this);
+        public  HspBuilder<R,S,B> copy(){
+            return new HspBuilder<R,S,B>(this);
         }
         
         
         
-        private HspBuilder(HspBuilder<R,S> copy){
+        private HspBuilder(HspBuilder<R,S,B> copy){
         	this.bitScore =copy.bitScore;
         	this.eValue = copy.eValue;
         	this.numGapsOpenings = copy.numGapsOpenings;
@@ -152,7 +155,7 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
             this.alignmentLength = copy.alignmentLength;
             
         }
-        private HspBuilder(Hsp<R,S> copy) {
+        private HspBuilder(Hsp<R,S,B> copy) {
            
             bitScore(copy.getBitScore())
             .eValue(copy.getEvalue())
@@ -176,7 +179,7 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
         private HspBuilder(String queryId) {
             query(queryId);
         }
-        public HspBuilder<R,S> gappedAlignments(S queryAlignment, S subjectAlignment) {
+        public HspBuilder<R,S,B> gappedAlignments(S queryAlignment, S subjectAlignment) {
             if((queryAlignment ==null && subjectAlignment !=null) 
             		|| (subjectAlignment ==null && queryAlignment !=null)){
                 throw new NullPointerException("gapped alignments must be either both null or neither null");
@@ -185,7 +188,7 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
             this.subjectAlignment = subjectAlignment;
             return this;
         }
-        public HspBuilder<R,S>  query(String queryId) {
+        public HspBuilder<R,S,B>  query(String queryId) {
             if(queryId ==null){
                 throw new NullPointerException("query id can not be null");
             }
@@ -196,11 +199,11 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
             this.queryId = trimmed;
             return this;
         }
-        public HspBuilder<R,S>  subjectDef(String subjectDef){           
+        public HspBuilder<R,S,B>  subjectDef(String subjectDef){           
             this.subjectDef = subjectDef;
             return this;
         }
-        public HspBuilder<R,S>  subject(String subjectId){
+        public HspBuilder<R,S,B>  subject(String subjectId){
             if(subjectId ==null){
                 throw new NullPointerException("subject id can not be null");
             }
@@ -212,7 +215,7 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
             return this;
         }
 
-        public HspBuilder<R,S>  percentIdentity(double percentIdentity){            
+        public HspBuilder<R,S,B>  percentIdentity(double percentIdentity){            
             if(percentIdentity <0){
                 throw new IllegalArgumentException("percentIdentity score must be positive: " + percentIdentity);
             }
@@ -222,7 +225,7 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
             this.percentIdentity = percentIdentity;
             return this;
         }
-        public HspBuilder<R,S>  bitScore(BigDecimal bitScore){  
+        public HspBuilder<R,S,B>  bitScore(BigDecimal bitScore){  
             if(bitScore ==null){
                 throw new NullPointerException("bit score can not be null");
             }
@@ -233,7 +236,7 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
             return this;
         }
         
-        public HspBuilder<R,S>  queryRange(DirectedRange queryRange){
+        public HspBuilder<R,S,B>  queryRange(DirectedRange queryRange){
             if(queryRange ==null){
                 throw new NullPointerException("queryRange can not be null");
             }
@@ -241,14 +244,14 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
             return this;
         }
 
-        public HspBuilder<R,S>  subjectRange(DirectedRange subjectRange){
+        public HspBuilder<R,S,B>  subjectRange(DirectedRange subjectRange){
             if(subjectRange ==null){
                 throw new NullPointerException("subjectRange can not be null");
             }
             this.subjectRange = subjectRange;
             return this;
         }
-        public HspBuilder<R,S>  eValue(BigDecimal eValue){
+        public HspBuilder<R,S,B>  eValue(BigDecimal eValue){
             if(eValue ==null){
                 throw new NullPointerException("e-value can not be null");
             }
@@ -259,35 +262,35 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
             return this;
         }
         
-        public HspBuilder<R,S>  numGapOpenings(int numberOfGapOpenings){
+        public HspBuilder<R,S,B>  numGapOpenings(int numberOfGapOpenings){
             if(numberOfGapOpenings<0){
                 throw new IllegalArgumentException("number of gap openings can not be negative : " + numberOfGapOpenings);
             }
             this.numGapsOpenings = numberOfGapOpenings;
             return this;
         }
-        public HspBuilder<R,S>  numMismatches(int numberOfMismatches){
+        public HspBuilder<R,S,B>  numMismatches(int numberOfMismatches){
             if(numberOfMismatches<0){
                 throw new IllegalArgumentException("number of mismatches can not be negative : " + numberOfMismatches);
             }
             this.numMismatches = numberOfMismatches;
             return this;
         }
-        public HspBuilder<R,S>  numIdenticalMatches(int numIdentical){
+        public HspBuilder<R,S,B>  numIdenticalMatches(int numIdentical){
             if(numIdentical<0){
                 throw new IllegalArgumentException("number of identical can not be negative : " + numIdentical);
             }
             this.numIdentical = numIdentical;
             return this;
         }
-        public HspBuilder<R,S>  numPositiveMatches(int numPositive){
+        public HspBuilder<R,S,B>  numPositiveMatches(int numPositive){
             if(numPositive<0){
                 throw new IllegalArgumentException("number of positive matches can not be negative : " + numIdentical);
             }
             this.numPositive = numPositive;
             return this;
         }
-        public HspBuilder<R,S>  alignmentLength(int alignmentLength){
+        public HspBuilder<R,S,B>  alignmentLength(int alignmentLength){
             if(alignmentLength<0){
                 throw new IllegalArgumentException("alignment length can not be negative : " + alignmentLength);
             }
@@ -295,27 +298,27 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
             return this;
         }
         
-        public HspBuilder<R,S> hitFrame(Integer frame) {
+        public HspBuilder<R,S,B> hitFrame(Integer frame) {
     		this.hitFrame = frame;
     		return this;
     	}
         
         
-        public HspBuilder<R,S>  queryLength(int queryLength){
+        public HspBuilder<R,S,B>  queryLength(int queryLength){
             if(queryLength<0){
                 throw new IllegalArgumentException("query length can not be negative : " + queryLength);
             }
             this.queryLength = queryLength;
             return this;
         }
-        public HspBuilder<R,S>  subjectLength(int subjectLength){
+        public HspBuilder<R,S,B>  subjectLength(int subjectLength){
             if(subjectLength<0){
                 throw new IllegalArgumentException("subject length can not be negative : " + subjectLength);
             }
             this.subjectLength = subjectLength;
             return this;
         }
-        public HspBuilder<R,S>  hspScore(float hspScore){
+        public HspBuilder<R,S,B>  hspScore(float hspScore){
             if(hspScore <0){
                 throw new IllegalArgumentException("hsp score can not be negative : " + hspScore);
             }
@@ -326,10 +329,10 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
         * {@inheritDoc}
         */
         @Override
-        public Hsp<R,S>  build() {
+        public Hsp<R,S, B>  build() {
             verifyAllValuesSet();
             sanityCheckValues();
-            return new HspImpl<R,S>(this);
+            return new HspImpl<>(this);
         }
 
         private void sanityCheckValues() {
@@ -372,7 +375,7 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
         
     
 
-    private static final class HspImpl<R extends Residue, S extends ResidueSequence<R>> implements Hsp<R,S>{
+    private static final class HspImpl<R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S>> implements Hsp<R,S, B>{
         
     private final String queryId,subjectId, subjectDef;
     private final double percentIdentity;
@@ -386,7 +389,7 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R>> i
     private final Float hspScore;
     private final Integer hitFrame;
     
-    private HspImpl(HspBuilder<R,S> builder) {
+    private HspImpl(HspBuilder<R,S, B> builder) {
         this.queryId = builder.queryId;
         this.subjectId = builder.subjectId;
         this.percentIdentity = builder.percentIdentity;

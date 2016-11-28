@@ -192,6 +192,10 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
 			return delegate.iterator(range);
 		}
 
+		 @Override
+		    public NucleotideSequence asSubtype(){
+		        return this;
+		    }
 		@Override
 		public SortedMap<Integer, Nucleotide> getDifferenceMap() {
 			throw new UnsupportedOperationException("invalid for adapted sequence");

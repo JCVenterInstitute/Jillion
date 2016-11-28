@@ -29,6 +29,7 @@ import java.util.Comparator;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
+import org.jcvi.jillion.core.residue.aa.ProteinSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaWriter;
 import org.jcvi.jillion.internal.fasta.InMemorySortedFastaWriter;
@@ -44,7 +45,7 @@ import org.jcvi.jillion.shared.fasta.AbstractResidueFastaWriter;
  * @author dkatzel
  *
  */
-public final class ProteinFastaWriterBuilder extends AbstractResidueFastaWriter.Builder<AminoAcid, ProteinSequence, ProteinFastaRecord,ProteinFastaWriter> {
+public final class ProteinFastaWriterBuilder extends AbstractResidueFastaWriter.Builder<AminoAcid, ProteinSequence, ProteinSequenceBuilder, ProteinFastaRecord,ProteinFastaWriter> {
 	
 	/**
 	 * Create a new Builder that will use
@@ -99,7 +100,7 @@ public final class ProteinFastaWriterBuilder extends AbstractResidueFastaWriter.
 		return new ProteinFastaWriterImpl(out, numberOfResiduesPerLine, charSet,eol);
 	}
 	
-	private static final class ProteinFastaWriterImpl extends AbstractResidueFastaWriter<AminoAcid, ProteinSequence, ProteinFastaRecord> implements ProteinFastaWriter{
+	private static final class ProteinFastaWriterImpl extends AbstractResidueFastaWriter<AminoAcid, ProteinSequence, ProteinSequenceBuilder, ProteinFastaRecord> implements ProteinFastaWriter{
 
 		private ProteinFastaWriterImpl(OutputStream out,
 				int numberOfResiduesPerLine, Charset charSet, String eol) {

@@ -83,7 +83,7 @@ public abstract class TabularBlastParser implements BlastParser{
 	                DirectedRange queryRange = DirectedRange.parse(matcher.group(7), matcher.group(8), CoordinateSystem.RESIDUE_BASED);
 	                DirectedRange subjectRange = DirectedRange.parse(matcher.group(9), matcher.group(10), CoordinateSystem.RESIDUE_BASED);
 	           
-					HspBuilder<?, ?> hspBuilder;
+					HspBuilder<?, ?,?> hspBuilder;
 					if(type==null){
 						//doesn't really matter since we don't have
 						//sequences anyway ?
@@ -94,7 +94,7 @@ public abstract class TabularBlastParser implements BlastParser{
 					String queryId = matcher.group(1);
 					String subjectId = matcher.group(2);
 					
-					Hsp<?,?> hsp =hspBuilder.query(queryId)
+					Hsp<?,?,?> hsp =hspBuilder.query(queryId)
 	                                .subject(subjectId)
 	                                .percentIdentity(Double.parseDouble(matcher.group(3)))
 	                                .alignmentLength(Integer.parseInt(matcher.group(4)))

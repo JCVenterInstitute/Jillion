@@ -42,7 +42,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
  * @param <S> the type of {@link org.jcvi.jillion.core.Sequence} (either {@link NucleotideSequence} or {@link ProteinSequence} ).
  * @param <A> the type of {@link PairwiseSequenceAlignment} to build.
  */
-public final class PairwiseAlignmentBuilder<R extends Residue, S extends ResidueSequence<R>, A extends PairwiseSequenceAlignment<R,S>> {
+public final class PairwiseAlignmentBuilder<R extends Residue, S extends ResidueSequence<R, S, ?>, A extends PairwiseSequenceAlignment<R,S>> {
 	private final S query,  subject;
 	private final SubstitutionMatrix<R> matrix;
 	private float gapOpen=0;

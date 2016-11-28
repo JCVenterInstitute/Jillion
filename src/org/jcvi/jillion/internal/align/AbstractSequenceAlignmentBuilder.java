@@ -43,7 +43,7 @@ import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
  * @param <B> the {@link ResidueSequenceBuilder} used.
  */
 public abstract class AbstractSequenceAlignmentBuilder
-		<R extends Residue, S extends ResidueSequence<R>, A extends SequenceAlignment<R, S>, B extends ResidueSequenceBuilder<R, S>> implements SequenceAlignmentBuilder<R, S,A>{
+		<R extends Residue, S extends ResidueSequence<R, S,B>, B extends ResidueSequenceBuilder<R, S>, A extends SequenceAlignment<R, S>> implements SequenceAlignmentBuilder<R, S,B,A>{
 
 	private final B querySequenceBuilder, subjectSequenceBuilder;
 	private int numMatches=0, numMisMatches=0;
@@ -103,7 +103,7 @@ public abstract class AbstractSequenceAlignmentBuilder
 	 * {@inheritDoc}
 	 */
 	@Override
-	public SequenceAlignmentBuilder<R, S, A> setAlignmentOffsets(
+	public SequenceAlignmentBuilder<R,S,B,A> setAlignmentOffsets(
 			int queryOffset, int subjectOffset) {
 		queryStart = queryOffset;
 		subjectStart = subjectOffset;
@@ -111,13 +111,13 @@ public abstract class AbstractSequenceAlignmentBuilder
 	}
 
 	@Override
-	public SequenceAlignmentBuilder<R, S,A> addMatches(String matchedSequence) {
+	public SequenceAlignmentBuilder<R, S,B,A> addMatches(String matchedSequence) {
 		return addMatches(parse(matchedSequence));
 	}
 	
 	
 	@Override
-	public SequenceAlignmentBuilder<R, S, A> addMismatches(String query,
+	public SequenceAlignmentBuilder<R,S,B,A> addMismatches(String query,
 			String subject) {
 		if(query.length() != subject.length()){
 			throw new IllegalArgumentException(
@@ -170,13 +170,13 @@ public abstract class AbstractSequenceAlignmentBuilder
 	}
 
 	@Override
-	public SequenceAlignmentBuilder<R, S,A> addMatch(R match) {
+	public SequenceAlignmentBuilder<R,S,B,A> addMatch(R match) {
 		numMatches++;		
 		return appendToBuilders(match,match);
 	}
 	
 	@Override
-	public SequenceAlignmentBuilder<R, S,A> addMatches(Iterable<R> matches) {
+	public SequenceAlignmentBuilder<R,S,B,A> addMatches(Iterable<R> matches) {
 		for(R match : matches){
 			addMatch(match);
 		}
@@ -184,13 +184,13 @@ public abstract class AbstractSequenceAlignmentBuilder
 	}
 
 	@Override
-	public SequenceAlignmentBuilder<R, S,A> addMismatch(R query, R subject) {
+	public SequenceAlignmentBuilder<R,S,B,A> addMismatch(R query, R subject) {
 		numMisMatches++;
 		appendToBuilders(query, subject);
 		return this;
 	}
 
-	private SequenceAlignmentBuilder<R, S,A> appendToBuilders(R query, R subject) {
+	private SequenceAlignmentBuilder<R,S,B,A> appendToBuilders(R query, R subject) {
 		querySequenceBuilder.append(query);
 		subjectSequenceBuilder.append(subject);
 		alignmentLength++;
@@ -198,13 +198,13 @@ public abstract class AbstractSequenceAlignmentBuilder
 	}
 
 	@Override
-	public SequenceAlignmentBuilder<R, S,A> addGap(char query, char subject){
+	public SequenceAlignmentBuilder<R,S,B,A> addGap(char query, char subject){
 		return addGap(parse(query),
 				parse(subject));
 	}
 			
 	@Override
-	public SequenceAlignmentBuilder<R, S,A> addGap(R query, R subject) {
+	public SequenceAlignmentBuilder<R,S,B,A> addGap(R query, R subject) {
 		numGaps++;
 		return appendToBuilders(query,subject);
 	}

@@ -26,7 +26,7 @@ import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 import org.jcvi.jillion.core.residue.aa.ProteinSequenceBuilder;
 
-public class ProteinSequenceAlignmentBuilder extends AbstractSequenceAlignmentBuilder<AminoAcid, ProteinSequence, ProteinSequenceAlignment, ProteinSequenceBuilder>{
+public class ProteinSequenceAlignmentBuilder extends AbstractSequenceAlignmentBuilder<AminoAcid, ProteinSequence, ProteinSequenceBuilder, ProteinSequenceAlignment>{
 
 	public ProteinSequenceAlignmentBuilder() {
 		super();

@@ -23,11 +23,10 @@ package org.jcvi.jillion.experimental.align.blast;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.jcvi.jillion.experimental.align.blast.Hsp.Comparators;
 
 class MyBlastVisitor implements BlastVisitor{
 
-	SortedSet<Hsp<?,?>> hsps = new TreeSet<Hsp<?,?>>(Hsp.Comparators.BIT_SCORE_BEST_TO_WORST);
+	SortedSet<Hsp<?,?,?>> hsps = new TreeSet<>(Hsp.Comparators.BIT_SCORE_BEST_TO_WORST);
 	
 	int numberOfHits=0;
 	
@@ -45,7 +44,7 @@ class MyBlastVisitor implements BlastVisitor{
 	public void visitHit(BlastHit hit) {
 		numberOfHits++;
 		
-		for(Hsp<?,?> hsp : hit.getHsps()){
+		for(Hsp<?,?,?> hsp : hit.getHsps()){
 			hsps.add(hsp);
 		}
 		

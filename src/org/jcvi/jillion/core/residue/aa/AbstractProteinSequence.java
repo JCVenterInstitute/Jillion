@@ -30,7 +30,7 @@ import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.internal.core.EncodedSequence;
 import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
 
-abstract class AbstractProteinSequence extends AbstractResidueSequence<AminoAcid> implements ProteinSequence {
+abstract class AbstractProteinSequence extends AbstractResidueSequence<AminoAcid, ProteinSequence, ProteinSequenceBuilder> implements ProteinSequence {
 
 	//This class uses the Serialization Proxy Pattern
 	//described in Effective Java 2nd Ed
@@ -69,6 +69,13 @@ abstract class AbstractProteinSequence extends AbstractResidueSequence<AminoAcid
         return encodedAminoAcids.iterator();
     }
     
+    @Override
+    public ProteinSequence asSubtype() {
+        return this;
+    }
+
+
+
     /**
      * {@inheritDoc}
      */

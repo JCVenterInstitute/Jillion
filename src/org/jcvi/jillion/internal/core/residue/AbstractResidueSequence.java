@@ -22,6 +22,7 @@ package org.jcvi.jillion.internal.core.residue;
 
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequence;
+import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
 
 /**
  * {@code AbstractResidueSequence} is an abstract implementation of 
@@ -33,7 +34,7 @@ import org.jcvi.jillion.core.residue.ResidueSequence;
  *
  * @param <R> the type of {@link Residue} in this sequence.
  */
-public abstract class AbstractResidueSequence<R extends Residue> implements ResidueSequence<R>{
+public abstract class AbstractResidueSequence<R extends Residue, T extends ResidueSequence<R, T, B>, B extends ResidueSequenceBuilder<R, T>> implements ResidueSequence<R, T, B>{
 
 	@Override
     public long getUngappedLength(){

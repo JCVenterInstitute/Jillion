@@ -46,7 +46,7 @@ import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
  *
  *
  */
-final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide> implements NucleotideSequence{
+final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder> implements NucleotideSequence{
 
 	//This classes uses the Serialization Proxy Pattern
 	//described in Effective Java 2nd Edition
@@ -235,7 +235,10 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
 		return new NucleotideSequenceBuilder(this);
 	}
 	
-	
+	 @Override
+	    public NucleotideSequence asSubtype(){
+	        return this;
+	    }
 	
 	
 }

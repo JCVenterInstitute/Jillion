@@ -26,6 +26,7 @@ import org.jcvi.jillion.align.SequenceAlignment;
 import org.jcvi.jillion.align.SubstitutionMatrix;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequence;
+import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
 /**
  * {@code AbstractNeedlemanWunschAligner} 
  * implements Needleman-Wunsch (with Gotoh improvements) specific implementations.
@@ -34,14 +35,15 @@ import org.jcvi.jillion.core.residue.ResidueSequence;
  *
  * @param <R> the type of {@link Residue} used in this aligner.
  * @param <S> the {@link Sequence} type input into this aligner.
+ * @param <B> the {@link org.jcvi.jillion.core.SequenceBuilder} for this aligner.
  * @param <A> the {@link SequenceAlignment} type returned by this aligner.
  * @param <P> the {@link PairwiseSequenceAlignment} type returned by this aligner.
  */
-abstract class AbstractNeedlemanWunschAligner <R extends Residue, S extends ResidueSequence<R>, A extends SequenceAlignment<R, S>, P extends PairwiseSequenceAlignment<R, S>> extends AbstractPairwiseAligner<R, S, A, P>{
+abstract class AbstractNeedlemanWunschAligner <R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S>, A extends SequenceAlignment<R, S>, P extends PairwiseSequenceAlignment<R, S>> extends AbstractPairwiseAligner<R, S, B, A, P>{
 
-	protected AbstractNeedlemanWunschAligner(ResidueSequence<R> query,
-			ResidueSequence<R> subject, SubstitutionMatrix<R> matrix, float openGapPenalty,
-			float extendGapPenalty,ResiduePairwiseStrategy<R,S,A,P> pairwiseStrategy) {
+	protected AbstractNeedlemanWunschAligner(S query,
+			S subject, SubstitutionMatrix<R> matrix, float openGapPenalty,
+			float extendGapPenalty,ResiduePairwiseStrategy<R,S,B,A,P> pairwiseStrategy) {
 		super(query, subject, matrix, openGapPenalty, extendGapPenalty, pairwiseStrategy);
 	}
 	/**

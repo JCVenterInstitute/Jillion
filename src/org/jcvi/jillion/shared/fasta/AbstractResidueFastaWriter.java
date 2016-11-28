@@ -27,6 +27,7 @@ import java.nio.charset.Charset;
 
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequence;
+import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
 import org.jcvi.jillion.fasta.FastaRecord;
 import org.jcvi.jillion.fasta.FastaWriter;
 
@@ -40,7 +41,7 @@ import org.jcvi.jillion.fasta.FastaWriter;
  * @param <S> the type of {@link ResidueSequence}
  * @param <F> the Type of {@link FastaRecord}
  */
-public abstract class AbstractResidueFastaWriter<R extends Residue, S extends ResidueSequence<R>, F extends FastaRecord<R,S>> extends  AbstractFastaRecordWriter<R, S, F>{
+public abstract class AbstractResidueFastaWriter<R extends Residue, S extends ResidueSequence<R, S,B>, B extends ResidueSequenceBuilder<R, S>, F extends FastaRecord<R,S>> extends  AbstractFastaRecordWriter<R, S, F>{
 
 	
 	protected AbstractResidueFastaWriter(OutputStream out,
@@ -78,7 +79,7 @@ public abstract class AbstractResidueFastaWriter<R extends Residue, S extends Re
 	 * @param <F> the Type of {@link FastaRecord}
 	 * @param <W> the Type of {@link FastaWriter} that will be built.
 	 */
-	public abstract static class Builder<R extends Residue, S extends ResidueSequence<R>,F extends FastaRecord<R,S>, W extends FastaWriter<R, S, F>> extends AbstractBuilder<R,S,F,W>{
+	public abstract static class Builder<R extends Residue, S extends ResidueSequence<R, S,B>, B extends ResidueSequenceBuilder<R, S>,F extends FastaRecord<R,S>, W extends FastaWriter<R, S, F>> extends AbstractBuilder<R,S,F,W>{
 		protected static final int DEFAULT_RESIDUES_PER_LINE = 60;
 		   
 		public Builder(File outputFile)

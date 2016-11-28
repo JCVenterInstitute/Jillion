@@ -30,6 +30,7 @@ import org.jcvi.jillion.align.SubstitutionMatrix;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequence;
+import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
 import org.jcvi.jillion.internal.align.SequenceAlignmentBuilder;
 /**
  * {@code AbstractPairwiseAligner} is an abstract 
@@ -44,7 +45,7 @@ import org.jcvi.jillion.internal.align.SequenceAlignmentBuilder;
  * @param <A> the {@link SequenceAlignment} type returned by this aligner.
  * @param <P> the {@link PairwiseSequenceAlignment} type returned by this aligner.
  */
-abstract class AbstractPairwiseAligner <R extends Residue, S extends ResidueSequence<R>, A extends SequenceAlignment<R, S>, P extends PairwiseSequenceAlignment<R, S>> {
+abstract class AbstractPairwiseAligner <R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S>, A extends SequenceAlignment<R, S>, P extends PairwiseSequenceAlignment<R, S>> {
 	
 	/**
 	 * The matrix which stores all of our traceback
@@ -74,7 +75,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends ResidueSequ
 	 * The final alignment produced.
 	 */
 	private final P alignment;
-	private final ResiduePairwiseStrategy<R,S,A,P> pairwiseStrategy;
+	private final ResiduePairwiseStrategy<R,S,B,A,P> pairwiseStrategy;
 	/**
 	 * The previous row in our cache.
 	 */
@@ -88,9 +89,9 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends ResidueSequ
 
 	
 	
-	protected AbstractPairwiseAligner(ResidueSequence<R> query, ResidueSequence<R> subject,
+	protected AbstractPairwiseAligner(S query, S subject,
 			SubstitutionMatrix<R> matrix, float openGapPenalty, float extendGapPenalty,
-			ResiduePairwiseStrategy<R,S,A,P> pairwiseStrategy){
+			ResiduePairwiseStrategy<R,S,B,A,P> pairwiseStrategy){
 		checkNotNull(query,subject,matrix);
 		this.pairwiseStrategy = pairwiseStrategy;
 		TracebackDirection initialRowDirection = getInitialRowTracebackValue();
@@ -331,7 +332,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends ResidueSequ
 		int x=currentStartPoint.getX();
 		int y = currentStartPoint.getY();
 		float score = currentStartPoint.getScore();
-		SequenceAlignmentBuilder<R,S,A> alignmentBuilder = pairwiseStrategy.createSequenceAlignmentBuilder(true);
+		SequenceAlignmentBuilder<R,S,B,A> alignmentBuilder = pairwiseStrategy.createSequenceAlignmentBuilder(true);
 		alignmentBuilder.setAlignmentOffsets(x-1, y-1);
 		R gap =  pairwiseStrategy.getGap();
 		List<R> residuesByOrdinal = pairwiseStrategy.getResidueList();
@@ -377,7 +378,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends ResidueSequ
 		return alignment;
 	}
 	
-	private byte[] convertToUngappedByteArray(ResidueSequence<R> sequence) {
+	private byte[] convertToUngappedByteArray(S sequence) {
 		
 		ByteBuffer buf = ByteBuffer.allocate((int)sequence.getUngappedLength());
 		for(R residue : sequence){

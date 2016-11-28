@@ -22,6 +22,8 @@ package org.jcvi.jillion.core.residue.aa;
 
 import java.io.ObjectInputStream;
 
+import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
+
 /**
  * {@code CompactProteinSequence} is 
  * a {@link ProteinSequence} that uses a byte array to store each
@@ -45,4 +47,17 @@ class CompactProteinSequence extends AbstractProteinSequence {
 	private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
 		throw new java.io.InvalidObjectException("Proxy required");
 	}
+
+    @Override
+    public ProteinSequenceBuilder newEmptyBuilder() {
+        return new ProteinSequenceBuilder();
+    }
+
+    @Override
+    public ProteinSequenceBuilder newEmptyBuilder(
+            int initialCapacity) {
+        return new ProteinSequenceBuilder(initialCapacity);
+    }
+	
+	
 }

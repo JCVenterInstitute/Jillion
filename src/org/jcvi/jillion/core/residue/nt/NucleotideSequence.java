@@ -28,7 +28,6 @@ package org.jcvi.jillion.core.residue.nt;
 
 import java.io.Serializable;
 
-import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.ResidueSequence;
 /**
  * {@code NucleotideSequence} an interface to abstract
@@ -47,7 +46,7 @@ import org.jcvi.jillion.core.residue.ResidueSequence;
  * to the sequence that was serialized.
  * @author dkatzel
  */
-public interface NucleotideSequence extends ResidueSequence<Nucleotide>, Serializable{
+public interface NucleotideSequence extends ResidueSequence<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder>, Serializable{
 	/**
      * Two {@link NucleotideSequence}s are equal
      * if they contain the same {@link Nucleotide}s 
@@ -88,4 +87,16 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide>, Seriali
      */
     @Override
     NucleotideSequenceBuilder toBuilder();
+    
+    @Override
+    default NucleotideSequenceBuilder newEmptyBuilder(){
+        return new NucleotideSequenceBuilder();
+    }
+    
+    @Override
+    default NucleotideSequenceBuilder newEmptyBuilder(int initialCapacity){
+        return new NucleotideSequenceBuilder(initialCapacity);
+    }
+   
+   
 }

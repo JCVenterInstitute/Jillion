@@ -25,6 +25,7 @@ import org.jcvi.jillion.align.SubstitutionMatrix;
 import org.jcvi.jillion.core.residue.ResidueSequence;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
+import org.jcvi.jillion.core.residue.aa.ProteinSequenceBuilder;
 
 /**
  * {@code ProteinNeedlemanWunschAligner} can perform 
@@ -43,7 +44,7 @@ import org.jcvi.jillion.core.residue.aa.ProteinSequence;
  Gotoh Osamu. An improved algorithm for matching biological sequences. 
  Journal of Molecular Biology 162:705-708</a>
  */
-final class ProteinNeedlemanWunschAligner extends AbstractNeedlemanWunschAligner<AminoAcid, ProteinSequence, ProteinSequenceAlignment, ProteinPairwiseSequenceAlignment>{
+final class ProteinNeedlemanWunschAligner extends AbstractNeedlemanWunschAligner<AminoAcid, ProteinSequence, ProteinSequenceBuilder,ProteinSequenceAlignment, ProteinPairwiseSequenceAlignment>{
 	/**
 	 * Align the given two {@link ProteinSequence}s
 	 * using the given {@link SubstitutionMatrix} by the Needleman-Wunsch
@@ -66,8 +67,8 @@ final class ProteinNeedlemanWunschAligner extends AbstractNeedlemanWunschAligner
 		return aligner.getPairwiseSequenceAlignment();
 	}
 	
-	private ProteinNeedlemanWunschAligner(ResidueSequence<AminoAcid> query,
-			ResidueSequence<AminoAcid> subject, SubstitutionMatrix<AminoAcid> matrix,
+	private ProteinNeedlemanWunschAligner(ProteinSequence query,
+	        ProteinSequence subject, SubstitutionMatrix<AminoAcid> matrix,
 			float openGapPenalty, float extendGapPenalty) {
 		super(query, subject, matrix, openGapPenalty, extendGapPenalty,
 				ResiduePairwiseStrategy.getAminoAcidStrategy());

@@ -41,7 +41,7 @@ import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
 import org.jcvi.jillion.internal.core.util.ArrayUtil;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
-final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSequence<Nucleotide> implements ReferenceMappedNucleotideSequence{
+final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSequence<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder> implements ReferenceMappedNucleotideSequence{
 
     /**
 	 * 
@@ -498,4 +498,8 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 						.setReferenceHint(reference, startOffset);
 	}
 
+	 @Override
+	    public NucleotideSequence asSubtype(){
+	        return this;
+	    }
 }

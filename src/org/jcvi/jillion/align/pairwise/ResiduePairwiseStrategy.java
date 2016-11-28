@@ -28,10 +28,13 @@ import org.jcvi.jillion.align.ProteinSequenceAlignment;
 import org.jcvi.jillion.align.SequenceAlignment;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequence;
+import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
+import org.jcvi.jillion.core.residue.aa.ProteinSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.align.NucleotideSequenceAlignmentBuilder;
 import org.jcvi.jillion.internal.align.ProteinSequenceAlignmentBuilder;
 import org.jcvi.jillion.internal.align.SequenceAlignmentBuilder;
@@ -46,15 +49,15 @@ import org.jcvi.jillion.internal.align.SequenceAlignmentBuilder;
  * @param <A> the {@link SequenceAlignment} type returned by this aligner.
  * @param <P> the {@link PairwiseSequenceAlignment} type returned by this aligner.
  */
-abstract class ResiduePairwiseStrategy<R extends Residue, S extends ResidueSequence<R>, A extends SequenceAlignment<R,S>,P extends PairwiseSequenceAlignment<R,S>> {
+abstract class ResiduePairwiseStrategy<R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S>, A extends SequenceAlignment<R,S>,P extends PairwiseSequenceAlignment<R,S>> {
 
 	
-	public static ResiduePairwiseStrategy<Nucleotide, NucleotideSequence, NucleotideSequenceAlignment, NucleotidePairwiseSequenceAlignment>
+	public static ResiduePairwiseStrategy<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder, NucleotideSequenceAlignment, NucleotidePairwiseSequenceAlignment>
 		getNucleotideStrategy(){
 			return NucleotidePairwiseStrategy.INSTANCE;
 	}
 	
-	public static ResiduePairwiseStrategy<AminoAcid, ProteinSequence, ProteinSequenceAlignment, ProteinPairwiseSequenceAlignment>
+	public static ResiduePairwiseStrategy<AminoAcid, ProteinSequence, ProteinSequenceBuilder, ProteinSequenceAlignment, ProteinPairwiseSequenceAlignment>
 		getAminoAcidStrategy(){
 			return ProteinPairwiseStrategy.INSTANCE;
 	}
@@ -82,10 +85,10 @@ abstract class ResiduePairwiseStrategy<R extends Residue, S extends ResidueSeque
 	 * @return a new {@link SequenceAlignmentBuilder} that can be built
 	 * via a traceback if specified.
 	 */
-	protected abstract SequenceAlignmentBuilder<R, S,A> createSequenceAlignmentBuilder(boolean builtFromTraceback);
+	protected abstract SequenceAlignmentBuilder<R, S,B, A> createSequenceAlignmentBuilder(boolean builtFromTraceback);
 
 	
-	private static final class NucleotidePairwiseStrategy extends ResiduePairwiseStrategy<Nucleotide, NucleotideSequence, NucleotideSequenceAlignment, NucleotidePairwiseSequenceAlignment>{
+	private static final class NucleotidePairwiseStrategy extends ResiduePairwiseStrategy<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder, NucleotideSequenceAlignment, NucleotidePairwiseSequenceAlignment>{
 
 		private static final NucleotidePairwiseStrategy INSTANCE = new NucleotidePairwiseStrategy();
 		@Override
@@ -105,14 +108,14 @@ abstract class ResiduePairwiseStrategy<R extends Residue, S extends ResidueSeque
 		}
 
 		@Override
-		protected SequenceAlignmentBuilder<Nucleotide, NucleotideSequence, NucleotideSequenceAlignment> createSequenceAlignmentBuilder(
+		protected SequenceAlignmentBuilder<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder, NucleotideSequenceAlignment> createSequenceAlignmentBuilder(
 				boolean builtFromTraceback) {
 			return new NucleotideSequenceAlignmentBuilder(builtFromTraceback);
 		}
 		
 	}
 	
-	private static final class ProteinPairwiseStrategy extends ResiduePairwiseStrategy<AminoAcid, ProteinSequence, ProteinSequenceAlignment, ProteinPairwiseSequenceAlignment>{
+	private static final class ProteinPairwiseStrategy extends ResiduePairwiseStrategy<AminoAcid, ProteinSequence,ProteinSequenceBuilder, ProteinSequenceAlignment, ProteinPairwiseSequenceAlignment>{
 		private static final ProteinPairwiseStrategy INSTANCE = new ProteinPairwiseStrategy();
 
 		@Override
@@ -132,7 +135,7 @@ abstract class ResiduePairwiseStrategy<R extends Residue, S extends ResidueSeque
 		}
 
 		@Override
-		protected SequenceAlignmentBuilder<AminoAcid, ProteinSequence, ProteinSequenceAlignment> createSequenceAlignmentBuilder(
+		protected SequenceAlignmentBuilder<AminoAcid, ProteinSequence, ProteinSequenceBuilder, ProteinSequenceAlignment> createSequenceAlignmentBuilder(
 				boolean builtFromTraceback) {
 			return new ProteinSequenceAlignmentBuilder(builtFromTraceback);
 		}

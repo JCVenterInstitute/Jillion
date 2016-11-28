@@ -769,12 +769,12 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * to the beginning
      * of this builder's mutable sequence.
      * This is the same as calling 
-     * {@link #insert(int, ResidueSequenceBuilder) insert(0,otherBuilder)}
+     * {@link #insert(int, NucleotideSequenceBuilder) insert(0,otherBuilder)}
      * @param otherBuilder {@link NucleotideSequenceBuilder} whose current
      * nucleotides are to be inserted at the beginning.
      * @return this.
      * @throws NullPointerException if otherBuilder is null.
-     * @see #insert(int, ResidueSequenceBuilder)
+     * @see #insert(int, NucleotideSequenceBuilder)
      */
     public NucleotideSequenceBuilder prepend(ResidueSequenceBuilder<Nucleotide, NucleotideSequence> otherBuilder){
         return insert(0, otherBuilder);
@@ -1139,6 +1139,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * {@code false} to keep data compression on.  Defaults to {@code false}. 
      * @return this.
      */
+    @Override
     public NucleotideSequenceBuilder turnOffDataCompression(boolean turnOffDataCompression){
     	codecDecider.forceBasicCompression(turnOffDataCompression);
     	return this;

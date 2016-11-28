@@ -395,4 +395,11 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 		}
 		
 	}
+
+    @Override
+    public ProteinSequenceBuilder turnOffDataCompression(boolean turnOffDataCompression) {
+        // TODO implement me!
+        //no-op for now since we only have 1 implementation
+        return this;
+    }
 }

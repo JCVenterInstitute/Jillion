@@ -26,6 +26,7 @@ import java.util.Comparator;
 import org.jcvi.jillion.align.SequenceAlignment;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequence;
+import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
 
 /**
  * {@code Hsp} is an object representation of a 
@@ -36,7 +37,7 @@ import org.jcvi.jillion.core.residue.ResidueSequence;
  *
  *
  */
-public interface Hsp<R extends Residue, S extends ResidueSequence<R>> extends SequenceAlignment<R,S> {
+public interface Hsp<R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S>> extends SequenceAlignment<R,S> {
 	/**
 	 * Get the Id of the Query sequence in this Hsp.
 	 * @return a String; will never be null.
@@ -97,14 +98,14 @@ public interface Hsp<R extends Residue, S extends ResidueSequence<R>> extends Se
      */
     boolean hasAlignments();
     
-    public enum Comparators implements Comparator<Hsp<?,?>>{
+    public enum Comparators implements Comparator<Hsp<?,?,?>>{
     	/**
     	 * Sort by Bit score from
     	 * lowest (the worst) to highest (the best).
     	 */
         BIT_SCORE_WORST_TO_BEST{
             @Override
-            public int compare(Hsp<?,?> o1, Hsp<?,?> o2) {
+            public int compare(Hsp<?,?,?> o1, Hsp<?,?,?> o2) {
             	return o1.getBitScore().compareTo(o2.getBitScore());
             }
         },
@@ -115,7 +116,7 @@ public interface Hsp<R extends Residue, S extends ResidueSequence<R>> extends Se
     	 */
         BIT_SCORE_BEST_TO_WORST{
             @Override
-            public int compare(Hsp<?,?> o1, Hsp<?,?> o2) {
+            public int compare(Hsp<?,?,?> o1, Hsp<?,?,?> o2) {
             	return o2.getBitScore().compareTo(o1.getBitScore());
             }
         },
@@ -126,7 +127,7 @@ public interface Hsp<R extends Residue, S extends ResidueSequence<R>> extends Se
         
         E_VALUE_BEST_TO_WORST{
             @Override
-            public int compare(Hsp<?,?> o1, Hsp<?,?> o2) {
+            public int compare(Hsp<?,?,?> o1, Hsp<?,?,?> o2) {
             	return o1.getEvalue().compareTo(o2.getEvalue());
             }
         },
@@ -137,7 +138,7 @@ public interface Hsp<R extends Residue, S extends ResidueSequence<R>> extends Se
     	 */
         E_VALUE_WORST_TO_BEST{
             @Override
-            public int compare(Hsp<?,?> o1, Hsp<?,?> o2) {
+            public int compare(Hsp<?,?,?> o1, Hsp<?,?,?> o2) {
             	return o2.getEvalue().compareTo(o1.getEvalue());
             }
         },

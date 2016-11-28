@@ -24,6 +24,7 @@ import org.jcvi.jillion.align.NucleotideSequenceAlignment;
 import org.jcvi.jillion.align.SubstitutionMatrix;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 /**
  * {@code NucleotideSmithWatermanAligner} can perform 
  * a pair-wise alignment of two {@link NucleotideSequence}s
@@ -41,7 +42,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
  Gotoh Osamu. An improved algorithm for matching biological sequences. 
  Journal of Molecular Biology 162:705-708</a>
  */
-final class NucleotideSmithWatermanAligner extends AbstractSmithWatermanAligner<Nucleotide, NucleotideSequence, NucleotideSequenceAlignment, NucleotidePairwiseSequenceAlignment>{
+final class NucleotideSmithWatermanAligner extends AbstractSmithWatermanAligner<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder, NucleotideSequenceAlignment, NucleotidePairwiseSequenceAlignment>{
 	/**
 	 * Align the given two {@link NucleotideSequence}s
 	 * using the given {@link SubstitutionMatrix} by the Smith-Waterman

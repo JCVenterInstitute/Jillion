@@ -22,6 +22,8 @@ package org.jcvi.jillion.core.residue;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
@@ -33,8 +35,9 @@ import org.jcvi.jillion.core.Sequence;
  * @author dkatzel
  *
  * @param <R> the Type of {@link Residue} in this {@link Sequence}.
+ * @param <T> the ResidueSequence implementation, needed for some of the return types to make sure it returns "this" type.
  */
-public interface ResidueSequence<R extends Residue> extends Sequence<R> {
+public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R, T, B>, B extends ResidueSequenceBuilder<R, T>> extends Sequence<R> {
 
 	 /**
      * Get a List of all the offsets into this
@@ -168,7 +171,7 @@ public interface ResidueSequence<R extends Residue> extends Sequence<R> {
      * in the same order. 
      * 
      */
-    default boolean isEqualToIgnoringGaps(ResidueSequence<? extends R> other){
+    default boolean isEqualToIgnoringGaps(ResidueSequence<? extends R, T, B> other){
     	if(other ==null){
     		return false;
     	}
@@ -227,6 +230,76 @@ public interface ResidueSequence<R extends Residue> extends Sequence<R> {
      * @return a new Builder instance, will never be null.
      * @since 5.0
      */
-    ResidueSequenceBuilder<R, ? extends ResidueSequence<R>> toBuilder();
+    B toBuilder();
+    /**
+     * Create a new EMPTY Builder object with the default capacity.
+     * 
+     * @return a new Builder instance, will never be null.
+     * @since 5.3
+     * 
+     * @see #newEmptyBuilder(int)
+     */
+    B newEmptyBuilder();
+    /**
+     * Create a new EMPTY Builder object with the given capacity.
+     * 
+     * @param initialCapacity the initial capacity; can not be &le; 0.
+     * 
+     * @return a new Builder instance, will never be null.
+     * @since 5.3
+     * 
+     * @throws IllegalArgumentException if initialCapacity is less than 1.
+     * 
+     */
+    B newEmptyBuilder(int initialCapacity);
+    
+    /**
+     * Get the actual subtype of this implementation.
+     * Ideally, this method should not have been public
+     * but was required for internal methods to function properly
+     * and it was deemed better to add this method than use reflection to figure it out.
+     * 
+     * @return the type of this instance.
+     * @since 5.3
+     */
+    T asSubtype();
+    /**
+     * Create a new {@link Stream} of {@link Kmer}s
+     * for all the k-mers of this entire sequence of the given kmer size.
+     * 
+     * @param k the size of each kmer.  For example a 3-mer would have k=3.
+     * @return a new Stream of Kmers which will never be null but may be empty
+     * if the sequence length is less than k.
+     * 
+     * @throws IllegalArgumentException if k is less than 1.
+     * @since 5.3
+     * 
+     * @see #kmers(int, Range)
+     */
+    default Stream<Kmer<T>> kmers(int k){
+        return kmers(k, Range.ofLength(getLength()));
+    }
+    /**
+     * Create a new {@link Stream} of {@link Kmer}s
+     * for all the k-mers in the specified sub range of this sequence of the given kmer size.
+     * 
+     * @param k the size of each kmer.  For example a 3-mer would have k=3.
+     * @param range the sub range to use; can not be null or out of range of the sequence.
+     * 
+     * @return a new Stream of Kmers which will never be null but may be empty
+     * if the subrange sequence length is less than k.
+     * 
+     * @throws IllegalArgumentException if k is less than 1.
+     * 
+     * @throws IndexOutOfBoundsException if Range contains
+     * values outside of the possible sequence offsets.
+     * 
+     * 
+     * @since 5.3
+     * 
+     */
+    default Stream<Kmer<T>> kmers(int k, Range range){
+       return StreamSupport.stream(new KmerSpliterator<R, T, B>(k, asSubtype(), range), false);
+    }
 
 }

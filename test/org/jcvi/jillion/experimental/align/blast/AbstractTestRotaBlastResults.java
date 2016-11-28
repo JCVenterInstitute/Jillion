@@ -44,10 +44,10 @@ public abstract class AbstractTestRotaBlastResults {
 		
 		parser.parse(visitor);
 		
-		Iterator<Hsp<?,?>> iter = visitor.hsps.iterator();
+		Iterator<Hsp<?,?,?>> iter = visitor.hsps.iterator();
 		StringBuilder builder = new StringBuilder();
 		for(int i=0; i<20; i++){
-			Hsp<?,?> hsp = iter.next();
+			Hsp<?,?,?> hsp = iter.next();
 			builder.append(String.format("%s %s%n",hsp.getSubjectId(), hsp.getSubjectRange()));
 		}
 		String expected = 

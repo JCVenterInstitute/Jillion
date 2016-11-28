@@ -34,7 +34,7 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * @throws NullPointerException if base is null.
      */
 	@Override
-    ResidueSequenceBuilder<R,S> append(R residue);
+	ResidueSequenceBuilder<R, S> append(R residue);
     /**
      * Appends the given sequence to the end
      * of the builder's mutable sequence.
@@ -44,7 +44,7 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * 
      * @return this.
      */
-    ResidueSequenceBuilder<R,S>  append(Iterable<R> sequence);
+	ResidueSequenceBuilder<R, S>  append(Iterable<R> sequence);
     
     
     
@@ -59,7 +59,7 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * 
      * @throws NullPointerException if sequence is null.
      */
-    ResidueSequenceBuilder<R,S> append(String sequence);
+	ResidueSequenceBuilder<R, S> append(String sequence);
     /**
      * Inserts the given sequence to the builder's mutable sequence
      * starting at the given offset.  If any residues existed
@@ -78,7 +78,7 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * @throws NullPointerException if sequence is null.
      * @throws IllegalArgumentException if offset is invalid.
      */
-    ResidueSequenceBuilder<R,S> insert(int offset, String sequence);
+	ResidueSequenceBuilder<R, S> insert(int offset, String sequence);
    
     /**
      * Get the current length of the mutable
@@ -106,7 +106,7 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * @throws IllegalArgumentException if offset is invalid.
      */
     @Override
-    ResidueSequenceBuilder<R,S> replace(int offset, R replacement);
+    ResidueSequenceBuilder<R, S> replace(int offset, R replacement);
     /**
      * Deletes the nucleotides from the given range of this 
      * partially constructed residue sequence.  If the given
@@ -121,7 +121,7 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * or greater than this residue sequence's current length.
      */
     @Override
-    ResidueSequenceBuilder<R,S> delete(Range range);
+    ResidueSequenceBuilder<R, S> delete(Range range);
     /**
      * Get the number of gaps currently in this sequence.
      * @return the number of gaps; will always be &ge;  0.
@@ -140,7 +140,7 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * @throws NullPointerException if sequence is null.
      * @see #insert(int, String)
      */
-    ResidueSequenceBuilder<R,S> prepend(String sequence);
+    ResidueSequenceBuilder<R, S> prepend(String sequence);
     /**
      * Inserts the given sequence to the builder's mutable sequence
      * starting at the given offset.  If any residues existed
@@ -156,7 +156,7 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * @throws NullPointerException if sequence is null.
      * @throws IllegalArgumentException if offset lt; 0 or &gt; current sequence length.
      */
-    ResidueSequenceBuilder<R,S> insert(int offset, Iterable<R> sequence);
+    ResidueSequenceBuilder<R, S> insert(int offset, Iterable<R> sequence);
     /**
      * Inserts the contents of the given other  {@link ResidueSequenceBuilder}
      *  into this builder's mutable sequence
@@ -178,7 +178,7 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * @throws NullPointerException if otherBuilder is null.
      * @throws IllegalArgumentException if offset lt; 0 or &gt; current sequence length.
      */
-    ResidueSequenceBuilder<R,S> insert(int offset, ResidueSequenceBuilder<R,S> otherBuilder);
+    ResidueSequenceBuilder<R, S> insert(int offset, ResidueSequenceBuilder<R, S> otherBuilder);
     
    
     /**
@@ -197,7 +197,7 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * @throws IllegalArgumentException if offset lt; 0 or &gt; current sequence length.
      */
     @Override
-    ResidueSequenceBuilder<R,S> insert(int offset, R base);
+    ResidueSequenceBuilder<R, S> insert(int offset, R base);
     /**
      * Inserts the given sequence the beginning
      * of the builder's mutable sequence.
@@ -209,7 +209,7 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * @throws NullPointerException if sequence is null.
      * @see #insert(int, Iterable)
      */
-    ResidueSequenceBuilder<R,S> prepend(Iterable<R> sequence);
+    ResidueSequenceBuilder<R, S> prepend(Iterable<R> sequence);
     
     /**
      * Inserts the current contents of the given {@link ResidueSequenceBuilder}
@@ -223,7 +223,7 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * @throws NullPointerException if otherBuilder is null.
      * @see #insert(int, ResidueSequenceBuilder)
      */
-    ResidueSequenceBuilder<R,S> prepend(ResidueSequenceBuilder<R,S> otherBuilder);
+    ResidueSequenceBuilder<R, S> prepend(ResidueSequenceBuilder<R, S> otherBuilder);
     /**
     * {@inheritDoc}
     * <p>
@@ -251,14 +251,14 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * @return this.
      */
     @Override
-	ResidueSequenceBuilder<R,S> trim(Range range);
+    ResidueSequenceBuilder<R, S> trim(Range range);
 	/**
 	 * Create a new deep copy instance of the Builder.
 	 * Any downstream modifications to either this Builder or the returned one
      * are independent of each other.
 	 */
     @Override
-	ResidueSequenceBuilder<R,S> copy();
+    ResidueSequenceBuilder<R, S> copy();
 
     
     /**
@@ -280,10 +280,26 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * @return this.
      */
     @Override
-    ResidueSequenceBuilder<R,S> reverse();
+    ResidueSequenceBuilder<R, S> reverse();
     /**
      * Remove all gaps currently present in this builder.
      * @return this.
      */
-    ResidueSequenceBuilder<R,S> ungap();
+    ResidueSequenceBuilder<R, S> ungap();
+    
+    /**
+     * Turn off more extreme data compression which
+     * will improve cpu performance at the cost
+     * of the built {@link Sequence} taking up more memory.
+     * By default, if this method is not called, then 
+     * the data compression is turned ON which is the equivalent
+     * of calling this method with the parameter set to {@code false}.
+     * 
+     * @param turnOffDataCompression {@code true} to turn off data compression;
+     * {@code false} to keep data compression on.  Defaults to {@code false}. 
+     * @return this.
+     * 
+     * @since 5.3
+     */
+    ResidueSequenceBuilder<R, S> turnOffDataCompression(boolean turnOffDataCompression);
 }

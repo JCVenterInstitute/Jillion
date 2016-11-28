@@ -173,7 +173,7 @@ public final class XmlFileBlastParser implements BlastParser{
         
         private static final String HIT_ACCESSION = "Hit_accession";
         
-        private HspBuilder<?,?> hspBuilder;
+        private HspBuilder<?,?,?> hspBuilder;
         private final BlastVisitor visitor;
         private String tempVal=null;
         private StringBuilder tempBuilder =null;
@@ -269,10 +269,10 @@ public final class XmlFileBlastParser implements BlastParser{
                     }
                     hspBuilder.numGapOpenings(numberOfGapOpenings);
                     if(isNucleotide){
-                    	 ((HspBuilder<Nucleotide,NucleotideSequence>)hspBuilder)
+                    	 ((HspBuilder<Nucleotide,NucleotideSequence, NucleotideSequenceBuilder>)hspBuilder)
                     	 				.gappedAlignments((NucleotideSequence)querySequence, (NucleotideSequence)subjectSequence);
                     }else{
-                    	 ((HspBuilder<AminoAcid,ProteinSequence>)hspBuilder)
+                    	 ((HspBuilder<AminoAcid,ProteinSequence, ProteinSequenceBuilder>)hspBuilder)
      	 								.gappedAlignments((ProteinSequence)querySequence, (ProteinSequence)subjectSequence);
 
                     }

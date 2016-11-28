@@ -61,7 +61,9 @@ import org.junit.runners.Suite.SuiteClasses;
         TestDefaultNucleotideSequenceIteratorSubRange.class,
         TestReferenceEncodedSequenceIteratorSubRange.class,
         
-        TestNucleotideSequencePermuter.class
+        TestNucleotideSequencePermuter.class,
+        
+        TestNucleotideKmers.class
         
     }
 )

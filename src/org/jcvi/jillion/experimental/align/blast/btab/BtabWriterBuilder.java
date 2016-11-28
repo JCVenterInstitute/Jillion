@@ -195,7 +195,7 @@ public final class BtabWriterBuilder {
 		public void write(BlastHit hit) throws IOException {
 				
 				
-				for(Hsp<?,?> hsp : hit.getHsps()){
+				for(Hsp<?,?,?> hsp : hit.getHsps()){
 
 					List<String> fields = new ArrayList<String>(21);
 					fields.add(hsp.getQueryId());
