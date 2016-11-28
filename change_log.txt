@@ -8,6 +8,29 @@ chronological so the most important changes may not always be ordered first.
 
 
 ================
+Jillion 5.3
+================
+New Features
+------------
+
+1. Kmer Support - A new Kmer class was added.  Each Kmer instance has the kmer sequence
+                  and the offset it came from.  NucleotideSequence and ProteinSequence now
+                  have new methods Stream<Kmer> kmers( int k) and Stream<Kmer> kmers( int k, Range r)
+                  to get a Stream of all the kmers of size k from either the whole sequence or a subRange.
+                  
+
+API Changes
+-----------
+
+1. ResidueSequence - Added more Generics to the the class signature to specify 
+                     the sub-interface and builder classes used.  This change shouldn't
+                     affect normal use of these classes but will cause some incompatibility
+                     if you implement your own implementations of Sequences.
+                     
+2. NucleotideSequence and ResidueSequence now have emptyBuilder() and emptyBuilder(int capacity) methods
+   that will return new empty NucleotideSequenceBuilders and ResidueSequenceBuilders respectively.
+
+================
 Jillion 5.2
 ================
 
