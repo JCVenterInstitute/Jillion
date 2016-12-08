@@ -22,6 +22,7 @@ package org.jcvi.jillion.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -56,7 +57,7 @@ public final class Ranges {
      * and the start of another in order
      * to be merged.
      * @return a new list of merged Ranges.
-     * @throws IllegalArgumentException if clusterDistance &lt; 0.
+     * @throws IllegalArgumentException if maxDistanceBetweenAdjacentRanges &lt; 0.
      */
     public static List<Range> merge(Collection<Range> rangesToMerge, int maxDistanceBetweenAdjacentRanges){
         if(maxDistanceBetweenAdjacentRanges <0){
@@ -68,6 +69,143 @@ public final class Ranges {
         mergeAnyRangesThatCanBeCombined(sortedCopy, maxDistanceBetweenAdjacentRanges);
         return sortedCopy;
     }
+    
+    /**
+     * Convert all the set bits in the given BitSet into contiguous ranges.
+     * For example if there are set bits at offsets 0,1,2 and 4,5 then 
+     * the Ranges [0-2] and [4-5] will be returned.
+     * 
+     * @apiNote This is the same as {@link #asRanges(BitSet, int) asRanges(bits, 0)}.
+     * 
+     * @param bits the {@link BitSet} to convert into Ranges; can not be null but may have no bits set.
+     * 
+     * @return a new list of Ranges; will never be null but may be empty.
+     * 
+     * @throws NullPointerException if bits is null
+     * 
+     * @see #asRanges(BitSet, int)
+     * @since 5.3
+     */
+    public static List<Range> asRanges(BitSet bits){
+        return asRanges(bits, 0);
+    }
+    /**
+     * Convert all the set bits in the given BitSet into contiguous ranges.
+     * For example if there are set bits at offsets 0,1,2 and 4,5 then:
+     * <ol>
+     * <li>if maxDistanceBetweenAdjacentRanges <2, then the Ranges [0-2] and [4-5] will be returned</li>
+     * <li>if maxDistanceBetweenAdjacentRanges >=2 then one Range [0-5] is returned</li>
+     * </ol>
+     * 
+     * @param bits the {@link BitSet} to convert into Ranges; can not be null but may have no bits set.
+     * @param maxDistance the maximum distance between the end of one range
+     * and the start of another in order to be merged.
+     * 
+     * @return a new list of Ranges; will never be null but may be empty.
+     * 
+     * @throws IllegalArgumentException if maxDistance &lt; 0.
+     * @throws NullPointerException if bits is null
+     * 
+     * @since 5.3
+     */
+    public static List<Range> asRanges(BitSet bits, int maxDistance){
+        if(maxDistance < 0){
+            throw new IllegalArgumentException("maxDistance can not be negative: " + maxDistance);
+        }
+        if(bits.isEmpty()){
+            return Collections.emptyList();
+        }
+        int i = bits.nextSetBit(0);
+        Range.Builder currentBuilder = new Range.Builder(i,i);
+        
+        List<Range> ret = new ArrayList<>();
+        for (; i >= 0; i = bits.nextSetBit(i+1)) {
+            // operate on index i here
+            if (i == Integer.MAX_VALUE) {
+                break; // or (i+1) would overflow
+            }
+            int delta = i - (int) currentBuilder.getEnd();
+            if( delta -1 > maxDistance){
+                ret.add(currentBuilder.build());
+                currentBuilder = new Range.Builder(i,i);
+            }else{
+                currentBuilder.expandEnd(delta);
+            }
+        }
+        ret.add(currentBuilder.build());
+        return ret;
+    }
+    /**
+     * Convert all offsets in the <strong>sorted</strong> array into contiguous ranges.
+     * For example if the array is <tt> {0,1,2,4,5}</tt> then 
+     * the Ranges [0-2] and [4-5] will be returned.
+     * 
+     * @apiNote This is the same as {@link #asRanges(int[], int) asRanges(sortedOffsets, 0)}.
+     * 
+     * @param sortedOffsets the array of SORTED values to convert into Ranges; can not be null but may be empty.
+     * The array must be sorted from smallest to largest.
+     * 
+     * @return a new list of Ranges; will never be null but may be empty.
+     * 
+     * @throws NullPointerException if bits is null
+     * @throws IllegalArgumentException if sortedOffsets is not sorted from smallest to largest.
+     * 
+     * @see #asRanges(int[], int)
+     * @since 5.3
+     */
+    public static List<Range> asRanges(int[] sortedOffsets){
+        return asRanges(sortedOffsets, 0);
+    }
+    /**
+     * Convert all offsets in the <strong>sorted</strong> array into contiguous ranges.
+     * For example if the array is <tt> {0,1,2,4,5}</tt> then:
+     * <ol>
+     * <li>if maxDistanceBetweenAdjacentRanges <2, then the Ranges [0-2] and [4-5] will be returned</li>
+     * <li>if maxDistanceBetweenAdjacentRanges >=2 then one Range [0-5] is returned</li>
+     * </ol>
+     * 
+     * @param sortedOffsets the array of SORTED values to convert into Ranges; can not be null but may be empty.
+     * The array must be sorted from smallest to largest.
+     * 
+     * @param maxDistance the maximum distance between the end of one range
+     * and the start of another in order to be merged.
+     * 
+     * @return a new list of Ranges; will never be null but may be empty.
+     * 
+     * @throws IllegalArgumentException if maxDistance &lt; 0.
+     * @throws NullPointerException if array is null
+     * @throws IllegalArgumentException if sortedOffsets is not sorted from smallest to largest.
+     * @since 5.3
+     */
+    public static List<Range> asRanges(int[] sortedOffsets, int maxDistance){
+        if(maxDistance < 0){
+            throw new IllegalArgumentException("maxDistance can not be negative: " + maxDistance);
+        }
+        if(sortedOffsets.length ==0){
+            return Collections.emptyList();
+        }
+        int lastOffset = sortedOffsets[0];
+        Range.Builder currentBuilder = new Range.Builder(lastOffset,lastOffset);
+        
+        List<Range> ret = new ArrayList<>();
+        for (int i=1; i<sortedOffsets.length; i++) {
+            lastOffset = sortedOffsets[i];
+            int delta = lastOffset - (int) currentBuilder.getEnd();
+            if(delta <0){
+                //not sorted!
+                throw new IllegalArgumentException("input array must be sorted from smallest to largest");
+            }
+            if( delta -1 > maxDistance){
+                ret.add(currentBuilder.build());
+                currentBuilder = new Range.Builder(lastOffset,lastOffset);
+            }else{
+                currentBuilder.expandEnd(delta);
+            }
+        }
+        ret.add(currentBuilder.build());
+        return ret;
+    }
+    
     /**
      * Combine the given Ranges into fewer ranges that cover the same region.
      * For example 2 ranges [0-2] and [1-4] could be merged into a single

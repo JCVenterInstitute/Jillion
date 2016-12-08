@@ -48,8 +48,9 @@ import org.junit.runners.Suite.SuiteClasses;
          TestRangeComplementFrom.class,
          TestRangeIterator.class,
          TestRangeComparatorShortestToLongest.class,
-         TestRangeComparatorLongestToShortest.class
-         
+         TestRangeComparatorLongestToShortest.class,
+         TestBitSetAsRanges.class,
+         TestIntArrayAsRanges.class
         
          
     }
