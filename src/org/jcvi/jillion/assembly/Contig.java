@@ -25,9 +25,9 @@
  */
 package org.jcvi.jillion.assembly;
 
-import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.ThrowingStream;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 /**
  * A {@code Contig} is a CONTIGuous region of genomic data.
@@ -83,12 +83,14 @@ public interface Contig<T extends AssembledRead>{
     /**
      * Create a {@link Stream} of the {@link AssembledRead}s
      * in this contig.  By default, this method
-     * delegates to {@link #getReadIterator()}'s {@link StreamingIterator#toStream()}
+     * delegates to {@link #getReadIterator()}'s {@link StreamingIterator#toThrowingStream()}
      * method.
-     * @return a new Stream of reads.
+     * @return a new ThrowingStream of reads.
      * @since 5.0
+     * 
+     * @apiNote Jillion Version 5.3 changed the return type to be {@link ThrowingStream} instead of Stream.
      */
-    default Stream<T> reads(){
-    	return getReadIterator().toStream();
+    default ThrowingStream<T> reads(){
+    	return getReadIterator().toThrowingStream();
     }
 }

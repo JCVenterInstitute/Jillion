@@ -27,8 +27,8 @@ package org.jcvi.jillion.core.datastore;
 
 import java.io.Closeable;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
+import org.jcvi.jillion.core.util.ThrowingStream;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 /**
  * A {@code DataStore} is an interface which represents a 
@@ -169,13 +169,14 @@ public interface DataStore<T> extends Closeable{
     /**
      * Create a new {@link Stream} of the records
      * in this DataStore.
-     * @return a new Stream.
+     * @return a new ThrowingStream.
      * @throws DataStoreException if there is a problem creating this stream.
      * 
+     * @apiNote Jillion Version 5.3 changed the return type to be {@link ThrowingStream} instead of Stream.
      * @since 5.0
      */
-    default Stream<T> records() throws DataStoreException{
-    	return iterator().toStream();
+    default ThrowingStream<T> records() throws DataStoreException{
+    	return iterator().toThrowingStream();
     }
     
     /**

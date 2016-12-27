@@ -149,7 +149,14 @@ public interface CasFileVisitor{
     void visitEnd();
     
     void halted();
-    
+    /**
+     * Visit each a match.  This method will be called once
+     * for every read in ALL the input sequence files; even for reads
+     * that don't align!
+     * 
+     * @param callback the {@link CasVisitorCallback} that can be used to halt parsing.
+     * @return a non-null {@link CasMatchVisitor} to actual visit this match; or {@code null} to skip this read.
+     */
     CasMatchVisitor visitMatches(CasVisitorCallback callback);
     
 }

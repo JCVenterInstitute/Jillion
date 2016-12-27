@@ -33,34 +33,33 @@ import org.jcvi.jillion.trace.fastq.FastqRecord;
 import org.jcvi.jillion.trace.fastq.FastqWriter;
 import org.jcvi.jillion.trace.fastq.FastqWriterBuilder;
 
-public class FilterFastqRecordBySize {
+public class TrimFastq {
 
 	public static void main(String[] args) throws IOException, DataStoreException {
 		File fastqFile = new File("/path/to/input.fasta");
 		File outputFile = new File("/path/to/output.fasta");
 		
-		long lengthThreshold = 50; // or whatever size you want
+		long minLength = 30; // or whatever size you want
 		
 		
 		try(FastqFileDataStore datastore = new FastqFileDataStoreBuilder(fastqFile)
 							.hint(DataStoreProviderHint.ITERATION_ONLY)
-							.filterRecords(fastq -> fastq.getLength() >= lengthThreshold)
+							.filterRecords(fastq -> fastq.getLength() >= minLength)
 							.build();
 				
-                FastqWriter writer = new FastqWriterBuilder(outputFile)
-                                            // use same codec as input which was autoDetected
-                                            .qualityCodec(datastore.getQualityCodec()).build();
-                ThrowingStream<FastqRecord> stream = datastore.records()
-                ) {
-                    // our datastore filtered out anything
-                    // that didn't meet our length requirements
-                    // so it's safe to write everything in the stream.
-                    // uses Jillion's custom ThrowingStream which has methods
-                    // that can throw exceptions since our writer will throw an
-                    // IOException
-                    stream.throwingForEach(fastq -> writer.write(fastq));
-                } // streams and datastores will autoclose when end of scope reached.
-	                
+			FastqWriter writer  = new FastqWriterBuilder(outputFile)
+			                                //use same codec as input which was autoDetected
+							.qualityCodec(datastore.getQualityCodec())
+							.build();
+			ThrowingStream<FastqRecord> stream = datastore.records();
+		){
+			//our datastore filtered out anything 
+                        //that didn't meet our length requirements 
+                        //so it's safe to write everything in the stream.
+		        //uses Jillion's custom ThrowingStream which has methods
+		        //that can throw exceptions since our writer will throw an IOException
+			stream.throwingForEach(fastq -> writer.write(fastq));
+		}//streams and datastores will autoclose when end of scope reached.
 		
 	}
 

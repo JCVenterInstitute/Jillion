@@ -39,7 +39,7 @@ public class ComputeN50FromFasta {
 									.hint(DataStoreProviderHint.ITERATION_ONLY)
 									.build();
 			
-		        Stream<NucleotideFastaRecord> stream = datastore.iterator().toStream();
+		        Stream<NucleotideFastaRecord> stream = datastore.records();
 		){
 			OptionalInt n50Value = stream
 						.map(fasta -> fasta.getLength())
@@ -59,7 +59,7 @@ public class ComputeN50FromFasta {
 								.filterRecords(fasta -> fasta.getLength() >= 2000)
 								.build();
 			
-			Stream<NucleotideFastaRecord> stream = datastore.iterator().toStream();
+			Stream<NucleotideFastaRecord> stream = datastore.records();
 		){
 			OptionalInt ng50Value = stream
 						.map(fasta -> fasta.getLength())

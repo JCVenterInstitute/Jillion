@@ -29,6 +29,10 @@ API Changes
                      
 2. NucleotideSequence and ResidueSequence now have emptyBuilder() and emptyBuilder(int capacity) methods
    that will return new empty NucleotideSequenceBuilders and ResidueSequenceBuilders respectively.
+   
+3.  StreamingIterator and DataStore stream() methods now return a new ThrowingStream which has extra methods
+    that can accept functions/consumers that throw checked exceptions.  These exceptions are then propagated
+    up without having to wrap them in runtime exceptions.
 
 ================
 Jillion 5.2

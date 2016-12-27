@@ -41,6 +41,7 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.MapUtil;
+import org.jcvi.jillion.core.util.ThrowingStream;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
@@ -109,8 +110,8 @@ public final class DefaultContig<T extends AssembledRead> implements Contig<T>{
 
 
     @Override
-   	public Stream<T> reads() {
-   		return mapById.values().stream();
+   	public ThrowingStream<T> reads() {
+   		return ThrowingStream.asThrowingStream(mapById.values().stream());
    	}
 	@Override
     public boolean containsRead(String placedReadId) {

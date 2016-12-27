@@ -29,6 +29,7 @@ import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.ThrowingStream;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStore;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
@@ -56,25 +57,17 @@ public class BwaTrimFastqFile {
                                                         .qualityCodec(fastqDataStore.getQualityCodec())
                                                         .build();
               
-            StreamingIterator<FastqRecord> iter = fastqDataStore.iterator();
+            ThrowingStream<FastqRecord> stream = fastqDataStore.records();
             ){
-            while(iter.hasNext()){
-                FastqRecord record = iter.next();
-                Range trimRange = bwaTrimmer.trim(record.getQualitySequence());
+            
+            stream.throwingForEach( fastq ->{
+           
+                Range trimRange = bwaTrimmer.trim(fastq.getQualitySequence());
                 if(trimRange.getLength() >= MIN_LENGTH){
-                    NucleotideSequence trimmedSeq = record.getNucleotideSequence()
-                                                        .toBuilder()
-                                                        .trim(trimRange)
-                                                        .build();
                     
-                    QualitySequence trimmedQual = record.getQualitySequence()
-                                                                .toBuilder()
-                                                                .trim(trimRange)
-                                                                .build();
-                    
-                    writer.write(record.getId(), trimmedSeq, trimmedQual);
+                    writer.write( fastq, trimRange);
                 }
-            }
+            });
         }//autoclose writer
 
     }

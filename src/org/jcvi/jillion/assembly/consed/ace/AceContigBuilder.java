@@ -62,6 +62,7 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.MapUtil;
+import org.jcvi.jillion.core.util.ThrowingStream;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.assembly.DefaultContig;
 /**
@@ -898,7 +899,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
         
         
         @Override
-		public Stream<AceAssembledRead> reads() {
+		public ThrowingStream<AceAssembledRead> reads() {
 			return contig.reads();
 		}
 

@@ -33,9 +33,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.util.ThrowingStream;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
@@ -523,8 +523,8 @@ public final class DataStoreUtil {
 	    
 	    
 	    @Override
-		public Stream<T> records() throws DataStoreException {
-			return map.values().stream();
+		public ThrowingStream<T> records() throws DataStoreException {
+			return ThrowingStream.asThrowingStream(map.values().stream());
 		}
 
 
