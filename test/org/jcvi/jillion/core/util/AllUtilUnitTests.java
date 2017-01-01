@@ -92,7 +92,9 @@ import org.junit.runners.Suite.SuiteClasses;
         
         TestNG50Computations.class,
         TestNG75Computations.class,
-        TestNG90Computations.class
+        TestNG90Computations.class,
+        
+        TestThrowingStream.class
         
     }
     )

@@ -21,7 +21,11 @@
 package org.jcvi.jillion.sam;
 
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
+
+import org.jcvi.jillion.core.io.FileUtil;
+import org.jcvi.jillion.sam.header.SamHeader;
 /**
  * {@code SamWriter} is an interface for
  * writing SAM or BAM encoded files.
@@ -41,4 +45,41 @@ public interface SamWriter extends Closeable{
 	 * @throws NullPointerException if record is null.
 	 */
 	void writeRecord(SamRecord record) throws IOException;
+	
+	/**
+	 * Create a new SamWriter that will write out a sorted BAM file and corresponding index.
+	 * The index file will be named "$outputFile#getName.bam.bai" will also be created in the same directory
+         * as the outputFile. 
+	 * @param outputBam  the output file to write to; can not be null. The file extension must be ".bam".
+	 * 
+	 * @param header the SamHeader; can not be null.  The sort order specified in the header is ignored
+	 * and overridden to be {@link SortOrder#COORDINATE} to be a valid sorted BAM file.
+	 *  
+	 * @return a new SamWriter that will write a sorted BAM file with a corresponding index file.
+	 * @throws IOException if there is a problem creating the writer.
+	 * 
+	 * @since 5.3
+	 * 
+	 * @apiNote This is a convenience method that is the same as:
+	 * <pre>
+	 * new SamFileWriterBuilder(outputBam, header)
+                   .reSortBy(SortOrder.COORDINATE)
+                    //create index with extra metadata
+                   .createBamIndex(true, true)                             
+                   .build();
+	 * </pre>
+	 * 
+	 * @see SamFileWriterBuilder
+	 */
+	public static SamWriter newSortedBamWriter(File outputBam, SamHeader header) throws IOException{
+	    String ext = FileUtil.getExtension(outputBam);
+	    if(!"bam".equals(ext)){
+	        throw new IllegalArgumentException("output file must have a '.bam' extension : " + outputBam);
+	    }
+	    return new SamFileWriterBuilder(outputBam, header)
+                    .reSortBy(SortOrder.COORDINATE)
+                    //create index with extra metadata
+                   .createBamIndex(true, true)                             
+                   .build();
+	}
 }

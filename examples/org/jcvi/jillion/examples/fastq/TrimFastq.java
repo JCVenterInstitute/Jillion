@@ -23,8 +23,10 @@ package org.jcvi.jillion.examples.fastq;
 import java.io.File;
 import java.io.IOException;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
+import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.util.ThrowingStream;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStore;
@@ -32,6 +34,7 @@ import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.jillion.trace.fastq.FastqRecord;
 import org.jcvi.jillion.trace.fastq.FastqWriter;
 import org.jcvi.jillion.trace.fastq.FastqWriterBuilder;
+import org.jcvi.jillion.trim.BwaQualityTrimmer;
 
 public class TrimFastq {
 
@@ -41,6 +44,7 @@ public class TrimFastq {
 		
 		long minLength = 30; // or whatever size you want
 		
+		BwaQualityTrimmer bwaTrimmer = new BwaQualityTrimmer(PhredQuality.valueOf(20));
 		
 		try(FastqFileDataStore datastore = new FastqFileDataStoreBuilder(fastqFile)
 							.hint(DataStoreProviderHint.ITERATION_ONLY)
@@ -58,7 +62,13 @@ public class TrimFastq {
                         //so it's safe to write everything in the stream.
 		        //uses Jillion's custom ThrowingStream which has methods
 		        //that can throw exceptions since our writer will throw an IOException
-			stream.throwingForEach(fastq -> writer.write(fastq));
+			stream.throwingForEach(fastq -> {
+                            Range trimRange = bwaTrimmer.trim(fastq.getQualitySequence());
+                            if (trimRange.getLength() >= minLength) {
+                                writer.write(fastq);
+                            }			
+			});
+			
 		}//streams and datastores will autoclose when end of scope reached.
 		
 	}
