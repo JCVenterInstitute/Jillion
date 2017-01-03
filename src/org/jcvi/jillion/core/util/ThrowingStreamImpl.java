@@ -31,13 +31,13 @@ class ThrowingStreamImpl<T> implements ThrowingStream<T> {
     }
 
     @Override
-    public Stream<T> filter(Predicate<? super T> predicate) {
+    public ThrowingStream<T> filter(Predicate<? super T> predicate) {
         return handleNewStream(() -> delegate.filter(predicate));
     }
 
     @Override
-    public <R> Stream<R> map(Function<? super T, ? extends R> mapper) {
-        return delegate.map(mapper);
+    public <R> ThrowingStream<R> map(Function<? super T, ? extends R> mapper) {
+        return ThrowingStream.asThrowingStream(delegate.map(mapper));
     }
 
     @Override
@@ -56,7 +56,7 @@ class ThrowingStreamImpl<T> implements ThrowingStream<T> {
     }
 
     @Override
-    public <R> Stream<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper) {
+    public <R> ThrowingStream<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper) {
         return ThrowingStream.asThrowingStream(delegate.flatMap(mapper));
     }
 
@@ -79,32 +79,32 @@ class ThrowingStreamImpl<T> implements ThrowingStream<T> {
     }
 
     @Override
-    public Stream<T> distinct() {
+    public ThrowingStream<T> distinct() {
         return handleNewStream(delegate::distinct);
     }
 
     @Override
-    public Stream<T> sorted() {
+    public ThrowingStream<T> sorted() {
         return handleNewStream(delegate::sorted);
     }
 
     @Override
-    public Stream<T> sorted(Comparator<? super T> comparator) {
+    public ThrowingStream<T> sorted(Comparator<? super T> comparator) {
         return handleNewStream(()-> delegate.sorted(comparator));
     }
 
     @Override
-    public Stream<T> peek(Consumer<? super T> action) {
+    public ThrowingStream<T> peek(Consumer<? super T> action) {
         return handleNewStream(() -> delegate.peek(action));
     }
 
     @Override
-    public Stream<T> limit(long maxSize) {
+    public ThrowingStream<T> limit(long maxSize) {
         return handleNewStream( ()->delegate.limit(maxSize));
     }
 
     @Override
-    public Stream<T> skip(long n) {
+    public ThrowingStream<T> skip(long n) {
         return handleNewStream(() ->delegate.skip(n));
     }
 
@@ -212,22 +212,22 @@ class ThrowingStreamImpl<T> implements ThrowingStream<T> {
     }
 
     @Override
-    public Stream<T> sequential() {
+    public ThrowingStream<T> sequential() {
         return handleNewStream(delegate::sequential);
     }
 
     @Override
-    public Stream<T> parallel() {
+    public ThrowingStream<T> parallel() {
         return handleNewStream(delegate::parallel);
     }
 
     @Override
-    public Stream<T> unordered() {
+    public ThrowingStream<T> unordered() {
         return handleNewStream(delegate::unordered);
     }
 
     @Override
-    public Stream<T> onClose(Runnable closeHandler) {
+    public ThrowingStream<T> onClose(Runnable closeHandler) {
         Stream<T> newStream = delegate.onClose(closeHandler);
         if(newStream == delegate){
             return this;
@@ -235,7 +235,7 @@ class ThrowingStreamImpl<T> implements ThrowingStream<T> {
         return ThrowingStream.asThrowingStream(newStream);
     }
     
-    private Stream<T> handleNewStream(Supplier<Stream<T>> supplier){
+    private ThrowingStream<T> handleNewStream(Supplier<Stream<T>> supplier){
         Stream<T> newStream = supplier.get();
         if(newStream == delegate){
             return this;

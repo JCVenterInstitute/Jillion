@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -131,6 +132,15 @@ public abstract class FastaFileParser implements FastaParser{
 	 * @throws IOException if there is a problem creating the {@link InputStream}.
 	 */
 	protected abstract InputStream getInputStream()  throws IOException;
+	/**
+	 * Get the original source file if it is known and exists.
+	 * @return an {@link Optional} that wraps a the file that will be parsed;
+	 * will never return null but may be empty if the file is not known
+	 * or does not exist.  
+	 * 
+	 * @since 5.3
+	 */
+	public abstract Optional<File> getFile();
 	
 	protected void checkNotNull(FastaVisitor visitor) {
 		if(visitor==null){
@@ -378,8 +388,10 @@ public abstract class FastaFileParser implements FastaParser{
 	private static class FileFastaParser extends FastaFileParser{
 		private final InputStreamSupplier fileSupplier;
 		
+		private final File fastaFile;
 		public FileFastaParser(File fastaFile) throws IOException{
 			this.fileSupplier = InputStreamSupplier.forFile(fastaFile);
+			this.fastaFile = fastaFile;
 		}
 		
 		
@@ -388,6 +400,15 @@ public abstract class FastaFileParser implements FastaParser{
 		public FileFastaParser(InputStreamSupplier fileSupplier) {
 		    Objects.requireNonNull(fileSupplier);
                     this.fileSupplier = fileSupplier;
+                    this.fastaFile = null;
+                }
+
+
+
+        
+                @Override
+                public Optional<File> getFile() {
+                    return Optional.ofNullable(fastaFile);
                 }
 
 
@@ -511,6 +532,11 @@ public abstract class FastaFileParser implements FastaParser{
 		public boolean canCreateMemento() {
 			return false;
 		}
+        @Override
+        public Optional<File> getFile() {
+            // no file? if we have a file we shouldn't use this implementation
+            return Optional.empty();
+        }
 		
 		
 		

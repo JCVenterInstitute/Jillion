@@ -23,6 +23,7 @@ package org.jcvi.jillion.examples.sam;
 import java.io.File;
 import java.io.IOException;
 
+import org.jcvi.jillion.sam.SamWriter;
 import org.jcvi.jillion.sam.index.BamIndexFileWriterBuilder;
 
 public class CreateBamIndexFromBam {
@@ -35,10 +36,12 @@ public class CreateBamIndexFromBam {
 		//File bamFile = new File("/usr/local/scratch/dkatzel/jillion.UHR10pgD93_tophat.sorted.bam");
 		File bamFile = new File("/usr/local/scratch/dkatzel/index_test.bam");
 		
-		File outputBaiFile = new BamIndexFileWriterBuilder(bamFile, new File(bamFile.getParentFile(), "jillion.index_test.bam.bai"))
-				.includeMetaData(true) //includes metadata that Picard and samtools use
-				.assumeSorted(true)
-				.build();
+//		File outputBaiFile = new BamIndexFileWriterBuilder(bamFile, new File(bamFile.getParentFile(), "jillion.index_test.bam.bai"))
+//				.includeMetaData(true) //includes metadata that Picard and samtools use
+//				.assumeSorted(true)
+//				.build();
+		
+		File outputBaiFile = SamWriter.writeBamIndexFor(bamFile);
 		
 		System.out.println(outputBaiFile.getAbsolutePath());
 		//output bai file == baiFile

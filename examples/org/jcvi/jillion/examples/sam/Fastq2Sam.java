@@ -43,12 +43,14 @@ import org.jcvi.jillion.sam.header.SamReadGroupBuilder;
 import org.jcvi.jillion.sam.header.SamVersion;
 import org.jcvi.jillion.trace.fastq.FastqDataStore;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
+import org.jcvi.jillion.trace.fastq.FastqFileReader;
+import org.jcvi.jillion.trace.fastq.FastqFileReader.Results;
 import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
 import org.jcvi.jillion.trace.fastq.FastqRecord;
 
 public class Fastq2Sam {
 
-	public static void main(String[] args) throws IOException, DataStoreException, InvalidAttributeException {
+	public static void main(String[] args) throws Exception, DataStoreException, InvalidAttributeException {
 		File fastqFile = new File("/path/to/fastq");
 		File outputFile = new File("/path/to/output/out.bam");
 		
@@ -71,15 +73,18 @@ public class Fastq2Sam {
 								.build();
 		
 		       
-		        FastqDataStore datastore = new FastqFileDataStoreBuilder(fastqFile)
-								.qualityCodec(FastqQualityCodec.SANGER)
-								.hint(DataStoreProviderHint.ITERATION_ONLY)
-								.build();
+//		        FastqDataStore datastore = new FastqFileDataStoreBuilder(fastqFile)
+//								.qualityCodec(FastqQualityCodec.SANGER)
+//								.hint(DataStoreProviderHint.ITERATION_ONLY)
+//								.build();
+//		        
+//		        StreamingIterator<FastqRecord> iter=datastore.iterator();
 		        
-		        StreamingIterator<FastqRecord> iter=datastore.iterator();
+		        Results fastqResults = FastqFileReader.read(fastqFile, FastqQualityCodec.SANGER);
 		){
-			while(iter.hasNext()){
-                            FastqRecord fastq = iter.next();
+//			while(iter.hasNext()){
+//                            FastqRecord fastq = iter.next();
+		    fastqResults.records().throwingForEach(fastq ->{
                             SamRecord samRecord = new SamRecordBuilder(header)
                                     //mark everything as unmapped initially
                                     //but you can use other SamRecordFlags as well to say it mapped
@@ -96,6 +101,7 @@ public class Fastq2Sam {
 
 				samWriter.writeRecord(samRecord);
 			}
+		    );
 		}
 	}
 

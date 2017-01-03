@@ -38,6 +38,7 @@ import org.jcvi.jillion.fasta.FastaDataStore;
  */
 public interface NucleotideFastaDataStore extends FastaDataStore<Nucleotide, NucleotideSequence, NucleotideFastaRecord>{
 
+       
 	@Override
 	default NucleotideSequence getSubSequence(String id, long startOffset) throws DataStoreException {
 		

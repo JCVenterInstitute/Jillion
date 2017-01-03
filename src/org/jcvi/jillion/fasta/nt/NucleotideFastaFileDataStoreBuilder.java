@@ -39,7 +39,7 @@ import org.jcvi.jillion.shared.fasta.AbstractFastaFileDataStoreBuilder;
  * @author dkatzel
  *
  */
-public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFileDataStoreBuilder<Nucleotide, NucleotideSequence, NucleotideFastaRecord, NucleotideFastaDataStore>{
+public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFileDataStoreBuilder<Nucleotide, NucleotideSequence, NucleotideFastaRecord, NucleotideFastaFileDataStore>{
 	/**
 	 * File for fai encoded file
 	 * which may be null or point to non-existent file.
@@ -137,13 +137,13 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 		super(fastaFileStream);
 	}
 	@Override
-	protected NucleotideFastaDataStore createNewInstance(
+	protected NucleotideFastaFileDataStore createNewInstance(
 			FastaParser parser, DataStoreProviderHint providerHint, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter)
 			throws IOException {
 		if(parser.isReadOnceOnly()){
 			return DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter);	
 		}else{
-			NucleotideFastaDataStore delegate;
+		    NucleotideFastaFileDataStore delegate;
 			switch(providerHint){
 				case RANDOM_ACCESS_OPTIMIZE_SPEED: 
 							delegate= DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter);
@@ -207,7 +207,7 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	 * {@inheritDoc}
 	 */
 	@Override
-	public NucleotideFastaDataStore build() throws IOException {
+	public NucleotideFastaFileDataStore build() throws IOException {
 		return super.build();
 	}
 	

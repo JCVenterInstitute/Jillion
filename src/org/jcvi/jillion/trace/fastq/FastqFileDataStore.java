@@ -21,7 +21,10 @@
 package org.jcvi.jillion.trace.fastq;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
+
+import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 
 /**
  * {@link FastqFileDataStore} is a {@link FastqDataStore}
@@ -55,4 +58,49 @@ public interface FastqFileDataStore extends FastqDataStore{
      * @since 5.2
      */
     Optional<File> getFile();
+    
+    /**
+     * Create a {@link FastqFileDataStoreBuilder} of all the records
+     * in the given fasta file.  Warning! This usually stores all the records in memory
+     * use {@link #fromFile(File, DataStoreProviderHint)} or {@link FastqFileDataStoreBuilder}
+     * to handle the file or datastore implementation differently.
+     * 
+     * @param fastqFile the fastq file make a {@link FastqFileDataStoreBuilder} with;
+     * can not be null and must exist.
+     * 
+     * 
+     * @throws IOException if the fastq file does not exist, or can not be read.
+     * @throws NullPointerException if fastqFile is null.
+     * @return a new FastqFileDataStore; will never be null.
+     * @since 5.3
+     * 
+     * @see NucleotideFastaFileDataStoreBuilder
+     * @see #fromFile(File, DataStoreProviderHint)
+     */
+    public static FastqFileDataStore fromFile(File fastqFile) throws IOException{
+        return new FastqFileDataStoreBuilder(fastqFile).build();
+    }
+    /**
+     * Create a {@link FastqFileDataStore} of all the records
+     * in the given fastq file with the given {@link DataStoreProviderHint}
+     * to help jillion choose a datastore implementation.  If filtering records
+     * is desired, pleas use {@link FastqFileDataStoreBuilder}.
+     * 
+     * @param fastqFile the fastq file make a {@link FastqFileDataStore} with;
+     * can not be null and must exist.
+     * 
+     * @param hint the {@link DataStoreProviderHint} to use; can not be null.
+     * @throws IOException if the fasta file does not exist, or can not be read.
+     * @throws NullPointerException if any parameter is null.
+     * @return a new FastqFileDataStore; will never be null.
+     * @since 5.3
+     * 
+     * @see NucleotideFastaFileDataStoreBuilder
+     */
+    public static FastqFileDataStore fromFile(File fastqFile, DataStoreProviderHint hint) throws IOException{
+        FastqFileDataStoreBuilder builder =  new FastqFileDataStoreBuilder(fastqFile);
+        builder.hint(hint);
+        
+        return builder.build();
+    }
 }

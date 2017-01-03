@@ -62,26 +62,29 @@ final class DefaultNucleotideFastaFileDataStore{
 		return new NucleotideFastaDataStoreBuilderVisitorImpl2(filter, recordFilter);
 	}
 	
-	public static NucleotideFastaDataStore create(File fastaFile) throws IOException{
+	public static NucleotideFastaFileDataStore create(File fastaFile) throws IOException{
 		return create(fastaFile,DataStoreFilters.alwaysAccept(), null);
 	}
-	public static NucleotideFastaDataStore create(File fastaFile, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter) throws IOException{
+	public static NucleotideFastaFileDataStore create(File fastaFile, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter) throws IOException{
 		
 		FastaParser parser = FastaFileParser.create(fastaFile);
 		
 		return create(parser, filter, recordFilter);
 	}
 
-	public static NucleotideFastaDataStore create(FastaParser parser,Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter) throws IOException {
+	public static NucleotideFastaFileDataStore create(FastaParser parser,Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter) throws IOException {
 		NucleotideFastaDataStoreBuilderVisitorImpl2 builder = createBuilder(filter, recordFilter);
+		if(parser instanceof FastaFileParser){
+		    ((FastaFileParser)parser).getFile().ifPresent(file -> builder.setSourceFile(file));
+		}
 		parser.parse(builder);
 		return builder.build();
 	}
 	
-	public static NucleotideFastaDataStore create(InputStream in) throws IOException{
+	public static NucleotideFastaFileDataStore create(InputStream in) throws IOException{
 		return create(in,DataStoreFilters.alwaysAccept(), null);
 	}
-	public static NucleotideFastaDataStore create(InputStream in, DataStoreFilter filter, Predicate<NucleotideFastaRecord> recordFilter) throws IOException{
+	public static NucleotideFastaFileDataStore create(InputStream in, DataStoreFilter filter, Predicate<NucleotideFastaRecord> recordFilter) throws IOException{
 		try{
 			NucleotideFastaDataStoreBuilderVisitorImpl2 builder = createBuilder(filter, recordFilter);
 			FastaFileParser.create(in).parse(builder);
@@ -93,13 +96,14 @@ final class DefaultNucleotideFastaFileDataStore{
     
 
     
-    private static final class NucleotideFastaDataStoreBuilderVisitorImpl2 implements FastaVisitor, Builder<NucleotideFastaDataStore>{
+    private static final class NucleotideFastaDataStoreBuilderVisitorImpl2 implements FastaVisitor, Builder<NucleotideFastaFileDataStore>{
 
 		private final Map<String, NucleotideFastaRecord> fastaRecords = new LinkedHashMap<String, NucleotideFastaRecord>();
 		
 		private final Predicate<String> filter;		
 		private final ReusableNucleotideFastaRecordVisitor currentVisitor;
 		
+		private File fastaFile =null;
 		public NucleotideFastaDataStoreBuilderVisitorImpl2(Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter){
 			this.filter = filter;
 			this.currentVisitor = new ReusableNucleotideFastaRecordVisitor(recordFilter);
@@ -114,6 +118,10 @@ final class DefaultNucleotideFastaFileDataStore{
 			return currentVisitor;
 			
 		}
+		
+		public void setSourceFile(File fastaFile){
+		    this.fastaFile = fastaFile;
+		}
 
 		@Override
 		public void visitEnd() {
@@ -124,8 +132,8 @@ final class DefaultNucleotideFastaFileDataStore{
 			//no-op			
 		}
 		@Override
-		public NucleotideFastaDataStore build() {
-			return new AdaptedNucleotideFastaDataStore(fastaRecords);
+		public NucleotideFastaFileDataStore build() {
+			return new AdaptedNucleotideFastaDataStore(fastaRecords, fastaFile);
 		}
 		/**
 		 * {@code ReusableNucleotideFastaRecordVisitor}

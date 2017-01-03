@@ -24,7 +24,7 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 
-public interface NucleotideTrimmer {
+public interface NucleotideTrimmer extends Trimmer<NucleotideSequence>{
     /**
      * Find the Good Range to keep for the given
      * {@link NucleotideSequence}.
@@ -37,6 +37,7 @@ public interface NucleotideTrimmer {
      * 
      * @throws NullPointerException if the given sequence is null.
      */
+    @Override
 	Range trim(NucleotideSequence seq);
 	 /**
 	     * Find the Good Range to keep for the given

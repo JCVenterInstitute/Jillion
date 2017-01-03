@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
@@ -48,7 +49,7 @@ import org.jcvi.jillion.internal.fasta.FastaIndexRecord;
  *
  * @since 5.1
  */
-class FaiNucleotideFastaFileDataStore implements NucleotideFastaDataStore{
+class FaiNucleotideFastaFileDataStore implements NucleotideFastaFileDataStore{
 
 	private final InputStreamSupplier fastaFileSupplier;
 	private final FastaIndex index;
@@ -75,7 +76,11 @@ class FaiNucleotideFastaFileDataStore implements NucleotideFastaDataStore{
 
 	
 	
-	private void throwExceptionIfClosed(){
+	@Override
+    public Optional<File> getFile() {
+        return fastaFileSupplier.getFile();
+    }
+    private void throwExceptionIfClosed(){
 		if(isClosed()){
 			throw new DataStoreClosedException("closed");
 		}

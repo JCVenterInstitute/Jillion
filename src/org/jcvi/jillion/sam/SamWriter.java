@@ -26,6 +26,7 @@ import java.io.IOException;
 
 import org.jcvi.jillion.core.io.FileUtil;
 import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.sam.index.BamIndexFileWriterBuilder;
 /**
  * {@code SamWriter} is an interface for
  * writing SAM or BAM encoded files.
@@ -82,4 +83,39 @@ public interface SamWriter extends Closeable{
                    .createBamIndex(true, true)                             
                    .build();
 	}
+	/**
+         * Write a new Bam index file ( {@code .bai} file) for the given input BAM that
+         * will write a Bam index file to the same directory as the
+         * input bam and name it {@code sortedBamFile.getName() +".bai"}.
+         * 
+         * @apiNote this is the same as
+         * <pre>
+         * {@code 
+         * new BamIndexFileWriterBuilder(sortedBamFile)
+                    .includeMetaData(true) //includes metadata that Picard and samtools use
+                    .assumeSorted(true)
+                    .build()
+         * }
+         * </pre>
+         * @param sortedBamFile the sorted input BAM file to parse and create
+         *                      an index from; can not be null, must exist
+         *                      and end with {@literal ".bam"}.
+         * @throws IOException if there are any problems creating any missing output files or if the
+         * input BAM file does not exist.
+         * 
+         * @throws NullPointerException if inputBamFile is null.
+         * @throws IllegalArgumentException if the file extensions aren't correct.
+         * 
+         * @see BamIndexFileWriterBuilder
+         * 
+         * @since 5.3
+         */
+	public static File writeBamIndexFor(File sortedBamFile) throws IOException{
+	    return new BamIndexFileWriterBuilder(sortedBamFile)
+                    .includeMetaData(true) //includes metadata that Picard and samtools use
+                    .assumeSorted(true)
+                    .build();
+	}
+	
+	
 }

@@ -36,8 +36,39 @@ import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
  * @author dkatzel
  * @see <a href="http://bio-bwa.sourceforge.net/">Burrows Wheeler Aligner webpage</a>
  */
+import org.jcvi.jillion.trace.Trace;
 public class BwaQualityTrimmer implements QualityTrimmer {
 
+        /**
+         * Create a new {@link BwaQualityTrimmer} instance with the
+         * given quality threshold that will trim {@link Trace}s
+         * by their quality sequence.
+         * @apiNote
+         * This can be used to simplify trimming things like fastqs
+         * so you don't have to type {@code fastq.getQualitySequence}.
+         * You can use this method like this:
+         * <pre>
+         * Trimmer<FastqRecord> bwaTrimmer = BwaQualityTrimmer.createFor(PhredQuality.valueOf(20));
+         * ...
+         * FastqRecord fastq = ...
+         * Range trimRange = bwaTrimmer.trim(fastq);
+         * </pre>
+         * 
+         * which is much cleaner than:
+         * <pre>
+         * BwaQualityTrimmer bwaTrimmer = new BwaQualityTrimmer(PhredQuality.valueOf(20));
+         * ...
+         * FastqRecord fastq = ...
+         * Range trimRange = bwaTrimmer.trim(fastq.getQualitySequence());
+         * </pre>
+         * @param threshold
+         * @return
+         */
+        public static <T extends Trace> Trimmer<T> createFor(PhredQuality threshold){
+            BwaQualityTrimmer bwaTrim = new BwaQualityTrimmer(threshold);
+            return t -> bwaTrim.trim(t.getQualitySequence());
+        }
+    
 	private final byte threshold;
 	
 	/**

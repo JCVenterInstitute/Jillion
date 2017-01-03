@@ -18,6 +18,16 @@ New Features
                   have new methods Stream<Kmer> kmers( int k) and Stream<Kmer> kmers( int k, Range r)
                   to get a Stream of all the kmers of size k from either the whole sequence or a subRange.
                   
+2. New Simplified way to read and write basic bioinformatics file formats and reduced boilerplate code.  New Classes and static methods
+   on interfaces were added to turn common usecases into one single lines of code.  For example, iterating over a
+   the records in a fastq file can now be done with a single line of code to get back a ThrowingStream<FastqRecord>.
+   Previously, a FastqFileDataStoreBuilder had to be created, built, and the returned datastore had to get either
+   its streamingIterator method called or stream records method called.  All that boiler plate is no longer required to be written
+   by the user.   New classes and methods detailed in API Changes.  
+   
+3. New static factory methods to some trimmer classes to make trimming Traces easier will allow 
+   the QualityTrimmer or NucleotideTrimmer implementations to take the entire trace object as input instead of
+   trace.getQualitySequence() and/or trace.getNucleotideSequence().  Making it easier to read and write.          
 
 API Changes
 -----------
@@ -33,6 +43,18 @@ API Changes
 3.  StreamingIterator and DataStore stream() methods now return a new ThrowingStream which has extra methods
     that can accept functions/consumers that throw checked exceptions.  These exceptions are then propagated
     up without having to wrap them in runtime exceptions.
+    
+4.  SamValidationException now extends IOException instead of just Exception.  This simplifies catch blocks
+    and makes it work better with ThrowingStream.
+
+5.  New Pair utility class was added to make returning 2-tuples easier.  Pair is Closable so it can be used inside try-with-resource 
+    when it is closed, it will try to close the elements in the pair if they are closable.
+    
+6.  Created new FastqFileReader class with several methods to parse a fastq file and get back a Results
+    object (subclass of Pair) that has both the ThrowingStream<FastqRecord> and the FastqQualityCodec that was used.
+    This removes the need to make a datastore and have to remember to specify DataStoreProviderHint.ITERATION_ONLY.
+    
+7.  Created new Trimmer<T> interface which is now the parent interface to QualityTrimmer and NucleotideTrimmer.
 
 ================
 Jillion 5.2

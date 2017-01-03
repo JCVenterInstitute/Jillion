@@ -1,5 +1,7 @@
 package org.jcvi.jillion.sam;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import org.jcvi.jillion.core.Range;
@@ -15,6 +17,31 @@ import org.jcvi.jillion.sam.header.SamHeader;
  * @since 5.2
  */
 public interface SamFileDataStore extends DataStore<SamRecord>{
+    
+    /**
+     * Create a new SamFileDataStore instance that will parse the given
+     * sam or bam encoded file.  
+     * If there is an accompanying BAI file in the same directory named
+     * {@code samFile.getName() + ".bai"}, then the index will be automatically
+     * detected and used by the Datastore to improve parsing runtime.
+     * All records in the file will be included in this datastore.
+     * If any filtering or non-standard indexes are required, please use
+     * {@link SamFileDataStoreBuilder}.
+     * 
+     * @apiNote this is the same as {@code new SamFileDataStoreBuilder(samOrBamFile).build();}
+     * 
+     * @param samFile the sam or bam file to use; can not be null.
+     * 
+     * @throws IOException if the file does not exist or is not readable.
+     * @throws NullPointerException if samFile is null.
+     * 
+     * @see SamFileDataStoreBuilder
+     * @since 5.3
+     */
+    public static SamFileDataStore fromFile(File samOrBamFile) throws IOException{
+        return new SamFileDataStoreBuilder(samOrBamFile).build();
+                
+    }
     /**
      * Get the <strong>first</strong> record with this query id that is
      * in this datastore.

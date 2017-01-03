@@ -1,5 +1,9 @@
 package org.jcvi.jillion.core.util;
 
+import java.util.Comparator;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.jcvi.jillion.internal.core.util.Sneak;
@@ -66,6 +70,39 @@ public interface ThrowingStream<T> extends Stream<T>{
         });
         
     }
+   
+    @Override
+    ThrowingStream<T> sequential();
+    @Override
+    ThrowingStream<T> parallel();
+    @Override
+    ThrowingStream<T> unordered();
+    @Override
+    ThrowingStream<T> onClose(Runnable closeHandler);
+    
+    @Override
+    ThrowingStream<T> filter(Predicate<? super T> predicate);
+    @Override
+    <R> ThrowingStream<R> map(Function<? super T, ? extends R> mapper);
+    
+    @Override
+    <R> ThrowingStream<R> flatMap(
+            Function<? super T, ? extends Stream<? extends R>> mapper);
+    
+    @Override
+    ThrowingStream<T> distinct();
+    @Override
+    ThrowingStream<T> sorted();
+    @Override
+    ThrowingStream<T> sorted(Comparator<? super T> comparator);
+    @Override
+    ThrowingStream<T> peek(Consumer<? super T> action);
+    @Override
+    ThrowingStream<T> limit(long maxSize);
+    @Override
+    ThrowingStream<T> skip(long n);
+    
+    
 
     
 }

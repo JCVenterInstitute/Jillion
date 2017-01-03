@@ -20,7 +20,9 @@
  ******************************************************************************/
 package org.jcvi.jillion.sam;
 
-public class SamValidationException extends Exception{
+import java.io.IOException;
+
+public class SamValidationException extends IOException{
 
 	private static final long serialVersionUID = 1L;
 
