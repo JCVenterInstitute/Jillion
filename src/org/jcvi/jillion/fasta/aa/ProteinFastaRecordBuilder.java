@@ -34,7 +34,7 @@ import org.jcvi.jillion.shared.fasta.AbstractFastaRecordBuilder;
  * @author dkatzel
  *
  */
-public final class ProteinFastaRecordBuilder extends AbstractFastaRecordBuilder<AminoAcid, ProteinSequence, ProteinFastaRecord>{
+public final class ProteinFastaRecordBuilder extends AbstractFastaRecordBuilder<AminoAcid, ProteinSequence, ProteinFastaRecord, ProteinFastaRecordBuilder>{
 	/**
 	 * Convenience constructor that converts a String into
 	 * a {@link ProteinSequence}.  This is the same
@@ -75,4 +75,13 @@ public final class ProteinFastaRecordBuilder extends AbstractFastaRecordBuilder<
 		return new CommentedProteinFastaRecord(id, sequence,optionalComment);
 	
 	}
+    @Override
+    protected ProteinFastaRecordBuilder getThis() {
+        return this;
+    }
+    @Override
+    protected ProteinFastaRecordBuilder newBuilder(String id,
+            ProteinSequence seq, String comment) {
+        return new ProteinFastaRecordBuilder(id, seq).comment(comment);
+    }
 }

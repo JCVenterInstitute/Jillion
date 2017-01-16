@@ -47,7 +47,6 @@ import org.jcvi.jillion.trace.fastq.FastqFileDataStore;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
 import org.jcvi.jillion.trace.fastq.FastqRecord;
-import org.jcvi.jillion.trace.fastq.FastqRecordBuilder;
 import org.jcvi.jillion.trace.sff.SffFileDataStoreBuilder;
 /**
  * A {@link CasFileVisitor}
@@ -376,10 +375,10 @@ public abstract class AbstractReadCasVisitor extends AbstractCasFileVisitor{
 			FastqRecord record =delegate.next();
 			Matcher matcher= WHITESPACE_PATTERN.matcher(record.getId());
 			if(matcher.matches()){
-				return new FastqRecordBuilder(matcher.group(1)+"_"+matcher.group(2), 
-											record.getNucleotideSequence(),
-											record.getQualitySequence())
-							.build();
+			        return record.toBuilder()
+			                        .id(matcher.group(1)+"_"+matcher.group(2))
+			                        .build();
+				
 			}
 			return record;
 		}

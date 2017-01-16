@@ -42,7 +42,6 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
 import org.jcvi.jillion.trace.fastq.FastqRecord;
-import org.jcvi.jillion.trace.fastq.FastqRecordBuilder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -52,14 +51,14 @@ public abstract class AbstractTestFastQFileDataStore {
     String file = "files/example.fastq";
     ResourceHelper resources = new ResourceHelper(
             TestDefaultFastQFileDataStore.class);
-    FastqRecord solexa_1489 = new FastqRecordBuilder(
+    FastqRecord solexa_1489 = FastqRecordBuilder.create(
             "SOLEXA1:4:1:12:1489#0/1",
             new NucleotideSequenceBuilder("TATTTAAAATCTAATANGTCTTGATTTGAAATTGAAAGAGCAAAAATCTGATTGATTTTATTGAAGAATAATTTGATTTAATATATTCTTAAGTCTGTTT").build(),
             QUALITY_CODEC
                     .decode("abaab]_]aaa`bbabB`Wb__aa\\_]W]a`^[`\\T`aZa_aa`WXa``]_`[`^a^^[`^][a^Raaa\\V\\OQ]aYQ^aa^\\`GRTDP`^T^Lb^aR`S"))
     		.build();
 
-    FastqRecord solexa_1692 = new FastqRecordBuilder(
+    FastqRecord solexa_1692 = FastqRecordBuilder.create(
             "SOLEXA1:4:1:12:1692#0/1",
             new NucleotideSequenceBuilder("ACGCCTGCGTTATGGTNTAACAGGCATTCCGCCCCAGACAAACTCCCCCCCTAACCATGTCTTTCGCAAAAATCAGTCAATAAATGACCTTAACTTTAGA").build(),
             QUALITY_CODEC

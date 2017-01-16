@@ -319,7 +319,7 @@ public final class SplitFastqWriter{
 			Objects.requireNonNull(qualities, "qualities can not be null");
 			
 			
-			write(new FastqRecordBuilder(id, sequence, qualities).comment(optionalComment).build());
+			write(FastqRecordBuilder.create(id, sequence, qualities, optionalComment).build());
 		}
 		
 	}

@@ -62,17 +62,17 @@ public abstract class AbstractTestSortedFastqWriter {
     protected abstract void addSortStrategy(FastqWriterBuilder builder, Comparator<FastqRecord> comparator) throws IOException;
     
     
-    FastqRecord a = new FastqRecordBuilder("AA", NucleotideSequenceTestUtil.create("ACGTACGT"),
+    FastqRecord a = FastqRecordBuilder.create("AA", NucleotideSequenceTestUtil.create("ACGTACGT"),
                                     new QualitySequenceBuilder(new byte[]{20,30,40,50,20,30,40,50}).build())
                         .build();
     
-    FastqRecord aWithComment = new FastqRecordBuilder("AA", NucleotideSequenceTestUtil.create("ACGTACGT"),
+    FastqRecord aWithComment = FastqRecordBuilder.create("AA", NucleotideSequenceTestUtil.create("ACGTACGT"),
     								new QualitySequenceBuilder(new byte[]{20,30,40,50,20,30,40,50})
     												.build())
     								.comment("this is a comment")
     								.build();
     
-    FastqRecord bb = new FastqRecordBuilder("BB", NucleotideSequenceTestUtil.create("TTTTTTTT"),
+    FastqRecord bb = FastqRecordBuilder.create("BB", NucleotideSequenceTestUtil.create("TTTTTTTT"),
             new QualitySequenceBuilder(new byte[]{20,20,20,20,20,20,20,20}).build())
                         .build();
     
@@ -143,11 +143,11 @@ public abstract class AbstractTestSortedFastqWriter {
     public void hundredRecords() throws IOException, DataStoreException{
         List<FastqRecord> expectedOrder = new ArrayList<>(100);
         for(int i=0; i< 50; i++){
-            expectedOrder.add( new FastqRecordBuilder(
+            expectedOrder.add( FastqRecordBuilder.create(
                     String.format("%s_%02d", a.getId(), +i), a.getNucleotideSequence(), a.getQualitySequence()).build());
         }
         for(int i=0; i< 50; i++){
-            expectedOrder.add( new FastqRecordBuilder(
+            expectedOrder.add( FastqRecordBuilder.create(
                     String.format("%s_%02d", bb.getId(), +i), bb.getNucleotideSequence(), bb.getQualitySequence()).build());
             }
         

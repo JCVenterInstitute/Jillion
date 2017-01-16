@@ -17,7 +17,7 @@ public class TestAvgQualityFastqRecord {
     
     @Test
     public void defaultImplDelegatesToQualitySequence(){
-        FastqRecord fastq = new FastqRecordBuilder("id", seq, quals).build();
+        FastqRecord fastq = FastqRecordBuilder.create("id", seq, quals).build();
         
         assertAvgQualityCorrect(fastq);
     }

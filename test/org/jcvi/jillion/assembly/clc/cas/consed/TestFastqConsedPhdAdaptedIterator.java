@@ -61,7 +61,7 @@ public class TestFastqConsedPhdAdaptedIterator extends AbstractTestPhdAdaptedIte
 				fastqRecord.getQualitySequence(), phdDate);
 	}
 	private FastqRecord createFastq(String id, String bases, byte[] quals){
-		return new FastqRecordBuilder("read1",
+		return FastqRecordBuilder.create("read1",
 				new NucleotideSequenceBuilder(bases).build(),
 				new QualitySequenceBuilder(quals).build())
 				.build();

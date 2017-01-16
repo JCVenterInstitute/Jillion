@@ -21,6 +21,8 @@
 package org.jcvi.jillion.trim;
 
 import java.util.Iterator;
+import java.util.Objects;
+import java.util.function.Function;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.PhredQuality;
@@ -67,6 +69,37 @@ public class BwaQualityTrimmer implements QualityTrimmer {
         public static <T extends Trace> Trimmer<T> createFor(PhredQuality threshold){
             BwaQualityTrimmer bwaTrim = new BwaQualityTrimmer(threshold);
             return t -> bwaTrim.trim(t.getQualitySequence());
+        }
+        
+        /**
+         * Create a new {@link BwaQualityTrimmer} instance with the
+         * given quality threshold that will trim {@link Trace}s
+         * by their quality sequence.
+         * @apiNote
+         * This can be used to simplify trimming things like fastqs
+         * so you don't have to type {@code fastq.getQualitySequence}.
+         * You can use this method like this:
+         * <pre>
+         * Trimmer<FastqRecord> bwaTrimmer = BwaQualityTrimmer.createFor(PhredQuality.valueOf(20));
+         * ...
+         * FastqRecord fastq = ...
+         * Range trimRange = bwaTrimmer.trim(fastq);
+         * </pre>
+         * 
+         * which is much cleaner than:
+         * <pre>
+         * BwaQualityTrimmer bwaTrimmer = new BwaQualityTrimmer(PhredQuality.valueOf(20));
+         * ...
+         * FastqRecord fastq = ...
+         * Range trimRange = bwaTrimmer.trim(fastq.getQualitySequence());
+         * </pre>
+         * @param threshold
+         * @return
+         */
+        public static <T> Trimmer<T> createFor(PhredQuality threshold, Function<T, QualitySequence> mapper){
+            Objects.requireNonNull(mapper);
+            BwaQualityTrimmer bwaTrim = new BwaQualityTrimmer(threshold);
+            return t -> bwaTrim.trim(mapper.apply(t));
         }
     
 	private final byte threshold;

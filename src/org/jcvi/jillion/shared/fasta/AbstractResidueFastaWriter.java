@@ -79,7 +79,7 @@ public abstract class AbstractResidueFastaWriter<R extends Residue, S extends Re
 	 * @param <F> the Type of {@link FastaRecord}
 	 * @param <W> the Type of {@link FastaWriter} that will be built.
 	 */
-	public abstract static class Builder<R extends Residue, S extends ResidueSequence<R, S,B>, B extends ResidueSequenceBuilder<R, S>,F extends FastaRecord<R,S>, W extends FastaWriter<R, S, F>> extends AbstractBuilder<R,S,F,W>{
+	public abstract static class Builder<R extends Residue, S extends ResidueSequence<R, S,B>, B extends ResidueSequenceBuilder<R, S>,F extends FastaRecord<R,S>, W extends FastaWriter<R, S, F>, T extends AbstractResidueFastaWriter.Builder<R, S, B, F,W,T>> extends AbstractBuilder<R,S,F,W,T>{
 		protected static final int DEFAULT_RESIDUES_PER_LINE = 60;
 		   
 		public Builder(File outputFile)

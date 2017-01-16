@@ -78,7 +78,7 @@ public abstract class AbstractFastqRecordVisitor implements FastqRecordVisitor{
 	            fastqRecord = new CommentedParsedFastqRecord(id, currentBasecalls , encodedQualities, qualityCodec, turnOffCompression, optionalComment);
 	        }       	
 	    }else{
-	    	 fastqRecord = new FastqRecordBuilder(id, new NucleotideSequenceBuilder(currentBasecalls)
+	    	 fastqRecord = FastqRecordBuilder.create(id, new NucleotideSequenceBuilder(currentBasecalls)
 															.turnOffDataCompression(turnOffCompression)
 															.build(), 
 													currentQualities)

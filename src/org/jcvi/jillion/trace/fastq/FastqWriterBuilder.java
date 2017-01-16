@@ -31,10 +31,12 @@ import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.Comparator;
 import java.util.Objects;
+import java.util.function.Function;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.internal.trace.fastq.ParsedFastqRecord;
@@ -62,6 +64,8 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 	private Comparator<FastqRecord> comparator=null;
 	private Integer inMemoryCacheSize;
 	private File tmpDir;
+	
+	private Function<FastqRecord, FastqRecord> adapterFunction= null;
 	
 	/**
 	 * Create a new {@link FastqWriterBuilder} that will use
@@ -145,6 +149,28 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 		this.writeIdOnQualityLine=true;
 		return this;
 	}
+	/**
+         * Wrap the built FastqWriter wrap the given fastqWriter and intercept any calls
+         * to write() to allow the record to be transformed in some way.  For example,
+         * to change the id or modify or trim the sequences; or even skip the record entirely.
+         * Calling this method multiple times will overwrite the adaptation not nest additional
+         * adapters.  If you need to do that make several calls to 
+         * {@link FastqWriter#adapt(FastqWriter, Function)}
+         * 
+         * @param adapterFunction a Function that is given the input FastqRecord to be written
+         * and will return a possibly new FastqRecord to actually write.  If the function
+         * returns {@code null} then the record is skipped.  If this parameter is null,
+         * then no adapter will be used as if this method was never called at all.
+         * @return this
+         * 
+         * @since 5.3
+         * @see FastqWriter#adapt(FastqWriter, Function)
+         */
+	public FastqWriterBuilder adapt( Function<FastqRecord, FastqRecord> adapterFunction) {
+	        this.adapterFunction = adapterFunction;
+	        return this;
+	}
+	
 	/**
 	 * Change the number of bases per line
 	 * to write for each fastq record.
@@ -274,17 +300,24 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 	
 	@Override
 	public FastqWriter build() {
-	    FastqWriter writer = new FastqRecordWriterImpl(out, charSet, 
-				codec, writeIdOnQualityLine, numberOfBasesPerLine);
-	    if(comparator ==null){
-	        return writer;
+	    FastqWriter innerWriter = buildInnerWriter();
+	    if(adapterFunction ==null){
+	        return innerWriter;
 	    }
-	    if(inMemoryCacheSize ==null){
-	        return new InMemorySortedFastqWriter(writer, comparator);
-	    }
-	    return new TmpDirSortedFastqWriter(writer, comparator, codec, tmpDir,inMemoryCacheSize);
+	    return FastqWriter.adapt(innerWriter, adapterFunction);
 	}
 	
+	private FastqWriter buildInnerWriter(){
+            FastqWriter writer = new FastqRecordWriterImpl(out, charSet, codec,
+                    writeIdOnQualityLine, numberOfBasesPerLine);
+            if (comparator == null) {
+                return writer;
+            }
+            if (inMemoryCacheSize == null) {
+                return new InMemorySortedFastqWriter(writer, comparator);
+            }
+            return new TmpDirSortedFastqWriter(writer, comparator, codec, tmpDir, inMemoryCacheSize);
+	}
 	
 	
 	private static final class FastqRecordWriterImpl implements FastqWriter{
@@ -495,4 +528,8 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 			return builder.toString();
 		}
 	}
+
+
+
+    
 }

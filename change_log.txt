@@ -27,7 +27,10 @@ New Features
    
 3. New static factory methods to some trimmer classes to make trimming Traces easier will allow 
    the QualityTrimmer or NucleotideTrimmer implementations to take the entire trace object as input instead of
-   trace.getQualitySequence() and/or trace.getNucleotideSequence().  Making it easier to read and write.          
+   trace.getQualitySequence() and/or trace.getNucleotideSequence().  Making it easier to read and write.  
+   
+4. Added new adapt( Function<Fastq, Fastq>) method to FastqFileWriterBuilder and static adapt method to FastqWriter that 
+  can modify a FastqRecord before writing it.  Useful for abstracting away changing the record ids or performing additional trimming.      
 
 API Changes
 -----------
@@ -47,8 +50,8 @@ API Changes
 4.  SamValidationException now extends IOException instead of just Exception.  This simplifies catch blocks
     and makes it work better with ThrowingStream.
 
-5.  New Pair utility class was added to make returning 2-tuples easier.  Pair is Closable so it can be used inside try-with-resource 
-    when it is closed, it will try to close the elements in the pair if they are closable.
+5.  New Pair utility class was added to make returning 2-tuples easier.  Pair is Closable so it can be used inside
+	try-with-resource when it is closed, it will try to close the elements in the pair if they are closable.
     
 6.  Created new FastqFileReader class with several methods to parse a fastq file and get back a Results
     object (subclass of Pair) that has both the ThrowingStream<FastqRecord> and the FastqQualityCodec that was used.
@@ -56,6 +59,27 @@ API Changes
     
 7.  Created new Trimmer<T> interface which is now the parent interface to QualityTrimmer and NucleotideTrimmer.
 
+8.  Modified FastaWriterBuilder implementations so that all methods on them return the actual concrete Builder type
+	instead of the abstract  parent builder class.  This lets us chain multiple class specific methods which 
+	wasn't possible before.
+    
+9.  Added FastaWriterBuilder.sort(Comparator) method which uses default in memory cache size currently set to 1024 records.
+
+10. Created new NucleotideFastFileReader class with several methods to parse a fastq file and get back a Results
+    object (subclass of Pair) that has both the ThrowingStream<NucleotideFastaRecord> and the FastqQualityCodec that was used.
+    This removes the need to make a datastore and have to remember to specify DataStoreProviderHint.ITERATION_ONLY.
+    
+11. Created NucleotideFastaFileDataStore interface which has a getFile() method all file based datastores now implement this interface.
+
+12. Added static helper factory methods to NucleotideFastaFileDataStore to simplify creating datastores using Builders with one liners.
+
+13.  Made FastqRecordBuilder an interface.  There are now a few implementations but they are all package private use
+FastqRecordBuilder.create(...) methods to create new instances or the new FastqRecord.toBuilder() method to get the particular
+implementation best for that record.
+
+14. Added getters and setters to FastqRecordBuilder.
+
+15.  Added trim(Range) method to FastqRecordBuilder to simplify one of the most common modifications.
 ================
 Jillion 5.2
 ================

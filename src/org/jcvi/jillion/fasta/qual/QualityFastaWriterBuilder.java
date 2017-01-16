@@ -45,7 +45,7 @@ import org.jcvi.jillion.shared.fasta.AbstractFastaRecordWriter.AbstractBuilder;
  * @author dkatzel
  *
  */
-public final class QualityFastaWriterBuilder extends AbstractBuilder<PhredQuality, QualitySequence, QualityFastaRecord,QualityFastaWriter> {
+public final class QualityFastaWriterBuilder extends AbstractBuilder<PhredQuality, QualitySequence, QualityFastaRecord,QualityFastaWriter, QualityFastaWriterBuilder> {
 
 	/**
 	 * Create a new Builder that will use
@@ -79,6 +79,10 @@ public final class QualityFastaWriterBuilder extends AbstractBuilder<PhredQualit
 	}
 
 	@Override
+    protected QualityFastaWriterBuilder getThis() {
+        return this;
+    }
+    @Override
 	protected QualityFastaWriter create(
 			OutputStream out, int numberOfResiduesPerLine, Charset charSet, String eol) {
 		return new QualitySequenceFastaRecordWriterImpl(out, numberOfResiduesPerLine, charSet, eol);

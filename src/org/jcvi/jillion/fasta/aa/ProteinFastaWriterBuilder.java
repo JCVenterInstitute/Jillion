@@ -45,7 +45,7 @@ import org.jcvi.jillion.shared.fasta.AbstractResidueFastaWriter;
  * @author dkatzel
  *
  */
-public final class ProteinFastaWriterBuilder extends AbstractResidueFastaWriter.Builder<AminoAcid, ProteinSequence, ProteinSequenceBuilder, ProteinFastaRecord,ProteinFastaWriter> {
+public final class ProteinFastaWriterBuilder extends AbstractResidueFastaWriter.Builder<AminoAcid, ProteinSequence, ProteinSequenceBuilder, ProteinFastaRecord,ProteinFastaWriter, ProteinFastaWriterBuilder> {
 	
 	/**
 	 * Create a new Builder that will use
@@ -82,6 +82,10 @@ public final class ProteinFastaWriterBuilder extends AbstractResidueFastaWriter.
 	
 	
 	@Override
+    protected ProteinFastaWriterBuilder getThis() {
+        return this;
+    }
+    @Override
 	protected ProteinFastaWriter createTmpDirSortedWriterWriter(
 			FastaWriter<AminoAcid, ProteinSequence, ProteinFastaRecord> delegate,
 			Comparator<ProteinFastaRecord> comparator, int cacheSize,

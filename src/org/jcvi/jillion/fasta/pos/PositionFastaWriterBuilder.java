@@ -43,7 +43,7 @@ import org.jcvi.jillion.shared.fasta.AbstractFastaRecordWriter.AbstractBuilder;
  * @author dkatzel
  *
  */
-public final class PositionFastaWriterBuilder extends AbstractBuilder<Position, PositionSequence, PositionFastaRecord, PositionFastaWriter> {
+public final class PositionFastaWriterBuilder extends AbstractBuilder<Position, PositionSequence, PositionFastaRecord, PositionFastaWriter, PositionFastaWriterBuilder> {
 		
 		/**
 		 * Create a new Builder that will use
@@ -77,6 +77,10 @@ public final class PositionFastaWriterBuilder extends AbstractBuilder<Position, 
 		}
 
 		@Override
+        protected PositionFastaWriterBuilder getThis() {
+            return this;
+        }
+        @Override
 		protected PositionFastaWriter create(
 				OutputStream out, int numberOfResiduesPerLine, Charset charSet, String eol) {
 			return new PositionSequenceFastaRecordWriterImpl(out, numberOfResiduesPerLine, charSet,eol);

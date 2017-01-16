@@ -32,6 +32,7 @@ import java.nio.charset.Charset;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.function.Function;
 
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -47,6 +48,8 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 	private final boolean hasSymbolSeparator;
 	private final String eol;
 	
+	private Function<F,F> mappingFunction = null;
+	
 	protected AbstractFastaRecordWriter(OutputStream out,
 			int numberOfResiduesPerLine, Charset charSet, String eol) {
 		//wrap in OutputStream Writer to do char encodings
@@ -61,7 +64,7 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		this.hasSymbolSeparator = hasSymbolSeparator();
 		this.eol = eol;
 	}
-
+	
 	@Override
 	public final void close() throws IOException {
 		//just incase the implementation of
@@ -91,35 +94,34 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		
 	}
 
-	private String toFormattedString(String id, T sequence, String comment)
-    {
-    	int bufferSize = computeFormattedBufferSize(id,sequence,comment);
+    private String toFormattedString(String id, T sequence, String comment) {
+        int bufferSize = computeFormattedBufferSize(id, sequence, comment);
         final StringBuilder record = new StringBuilder(bufferSize);
         appendDefline(id, comment, record);
         appendRecordBody(sequence, record);
-        
+
         return record.toString();
     }
 
-	private void appendRecordBody(T sequence,
-			final StringBuilder record) {
-		Iterator<S> iter = sequence.iterator();
-        
-        if(iter.hasNext()){
-        	record.append(getStringRepresentationFor(iter.next()));
+    private void appendRecordBody(T sequence, final StringBuilder record) {
+        Iterator<S> iter = sequence.iterator();
+
+        if (iter.hasNext()) {
+            record.append(getStringRepresentationFor(iter.next()));
         }
-        int count=1;
-        while(iter.hasNext()){
-        	if(numberOfResiduesPerLine != AbstractBuilder.ALL_ON_ONE_LINE && count%numberOfResiduesPerLine==0){
-        		record.append(eol);
-        	}else if(hasSymbolSeparator){
-        		record.append(getSymbolSeparator());
-        	}
-        	record.append(getStringRepresentationFor(iter.next()));
-        	count++;
+        int count = 1;
+        while (iter.hasNext()) {
+            if (numberOfResiduesPerLine != AbstractBuilder.ALL_ON_ONE_LINE
+                    && count % numberOfResiduesPerLine == 0) {
+                record.append(eol);
+            } else if (hasSymbolSeparator) {
+                record.append(getSymbolSeparator());
+            }
+            record.append(getStringRepresentationFor(iter.next()));
+            count++;
         }
         record.append(eol);
-	}
+    }
 
 	protected abstract boolean hasSymbolSeparator();
 
@@ -150,12 +152,14 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
    
     protected abstract int numberOfCharsFor(int numberOfSymbols);
     
-    public abstract static class AbstractBuilder<S, T extends Sequence<S>,F extends FastaRecord<S,T>, W extends FastaWriter<S, T, F>> implements org.jcvi.jillion.core.util.Builder<W>{
+    public abstract static class AbstractBuilder<S, T extends Sequence<S>,F extends FastaRecord<S,T>, W extends FastaWriter<S, T, F>, B extends AbstractBuilder<S,T,F,W, B>> implements org.jcvi.jillion.core.util.Builder<W>{
 		
     	public static final int ALL_ON_ONE_LINE =-1;
     	
 		private static final Charset DEFAULT_CHARSET = IOUtil.UTF_8;
 		private static final String DEFAULT_LINE_SEPARATOR = FastaUtil.getLineSeparator();
+		
+		private static final int DEFAULT_CACHE_SIZE =1024;
 		
 		private final OutputStream out;
 		private int numberOfSymbolsPerLine;
@@ -166,6 +170,9 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		private File tmpDir;
 		
 		private Charset charSet = DEFAULT_CHARSET;
+		
+		private Function<F,F> mappingFunction = null;
+		
 		/**
 		 * Create a new Builder that will use
 		 * the given {@link OutputStream} to write
@@ -181,6 +188,8 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 			this.out = out;
 			numberPerLine(getDefaultNumberOfSymbolsPerLine());
 		}
+		
+		protected abstract B getThis();
 		/**
 		 * Get the number of symbols
 		 * that should be printed on each line
@@ -208,6 +217,12 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 			this.out = new BufferedOutputStream(new FileOutputStream(outputFile));
 			numberPerLine(getDefaultNumberOfSymbolsPerLine());
 		}
+		
+		public final B map(Function<F, F> mapper){
+		    this.mappingFunction = mapper;
+		    return getThis();
+		}
+		
 		/**
 		 * Change the {@link Charset} used
 		 * to write out the fasta record.
@@ -219,12 +234,12 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		 * @return this.
 		 * @throws NullPointerException if charset is null.
 		 */
-		public final AbstractBuilder<S,T,F,W> charset(Charset charset){
+		public final B charset(Charset charset){
 			if(charset ==null){
 				throw new NullPointerException("charset can not be null");
 			}
 			this.charSet=charset;
-			return this;
+			return getThis();
 		}
 		/**
 		 * Change the end of line separator String.
@@ -237,7 +252,7 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		 * then the default '\n' is used.
 		 * @return this.
 		 */
-		public final AbstractBuilder<S,T,F,W> lineSeparator(String eol){
+		public final B lineSeparator(String eol){
 			if(eol==null){
 				this.eol = DEFAULT_LINE_SEPARATOR;
 			}else{
@@ -246,7 +261,7 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 				}
 				this.eol = eol;
 			}
-			return this;
+			return getThis();
 		}
 		/**
 		 * Change the number of bases per line
@@ -262,12 +277,12 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		 * @throws IllegalArgumentException if basesPerLine <1.
 		 * @see #allBasesOnOneLine()
 		 */
-		public final AbstractBuilder<S,T,F,W> numberPerLine(int numberPerLine){
+		public final B numberPerLine(int numberPerLine){
 			if(numberPerLine<1){
 				throw new IllegalArgumentException("number per line must be >=1");
 			}
 			numberOfSymbolsPerLine = numberPerLine;
-			return this;
+			return getThis();
 		}
 		/**
 		 * Write all the bases on one line instead of allowing
@@ -277,9 +292,9 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		 * @return this.
 		 * @see #numberPerLine(int)
 		 */
-		public final AbstractBuilder<S,T,F,W> allBasesOnOneLine(){
+		public final B allBasesOnOneLine(){
 			numberOfSymbolsPerLine = ALL_ON_ONE_LINE;
-			return this;
+			return getThis();
 		}
 		
 		/**
@@ -337,14 +352,38 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		 * 
 		 * @since 5.0
 		 */
-		public AbstractBuilder<S,T,F,W> sortInMemoryOnly(Comparator<F> comparator){
+		public B sortInMemoryOnly(Comparator<F> comparator){
 		    Objects.requireNonNull(comparator);
 		    this.comparator = comparator;
 		    this.inMemoryCacheSize = null;
 		    this.tmpDir = null;
 		    
-		    return this;
+		    return getThis();
 		}
+		/**
+                 * Write out the {@link FastaRecord}s written by this writer
+                 * sorted by the specified {@link Comparator} using a combination of 
+                 * in memory sorting and writing out sorted temporary files 
+                 * using the default in memory cache size (currently 1024 records).
+                 * 
+                 * <p/>
+                 * This is the same as {@link #sort(Comparator, int) sort(comparator, 1024}
+                 * which uses the default temp area to make temp files.
+                 * 
+                 * @param comparator the {@link Comparator} to use to sort the {@link FastaRecord}s;
+                 * can not be null.
+                 * 
+                 * @return this.
+                 * 
+                 * @throws NullPointerException if comparator is null.
+                 * 
+                 * 
+                 * @since 5.3
+                 */
+                public B sort(Comparator<F> comparator){
+                    return sort(comparator, DEFAULT_CACHE_SIZE);
+                }
+                
 		/**
 		 * Write out the {@link FastaRecord}s written by this writer
 		 * sorted by the specified {@link Comparator} using a combination of 
@@ -366,7 +405,7 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		 * 
 		 * @since 5.0
 		 */
-		public AbstractBuilder<S,T,F,W> sort(Comparator<F> comparator, int inMemoryCacheSize){
+		public B sort(Comparator<F> comparator, int inMemoryCacheSize){
 		    return sort(comparator, inMemoryCacheSize, null);
 		}
 		/**
@@ -406,7 +445,7 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		 * 
 		 * @since 5.0
 		 */
-		public AbstractBuilder<S,T,F,W> sort(Comparator<F> comparator, int inMemoryCacheSize, File dir){
+		public B sort(Comparator<F> comparator, int inMemoryCacheSize, File dir){
 		    Objects.requireNonNull(comparator);
 		    if(inMemoryCacheSize <1){
 		        throw new IllegalArgumentException("in memory cache size must be positive");
@@ -423,7 +462,7 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 	            this.comparator = comparator;
 	            this.inMemoryCacheSize = inMemoryCacheSize;
 	            this.tmpDir = dir;
-		    return this;
+		    return getThis();
 		}
 	}
 }

@@ -75,7 +75,7 @@ class InMemorySortedFastqWriter implements FastqWriter{
 	@Override
 	public void write(String id, NucleotideSequence nucleotides,
 			QualitySequence qualities) throws IOException {
-		write(new FastqRecordBuilder(id, nucleotides, qualities).build());
+		write(FastqRecordBuilder.create(id, nucleotides, qualities).build());
 		
 	}
 
@@ -83,7 +83,7 @@ class InMemorySortedFastqWriter implements FastqWriter{
 	public void write(String id, NucleotideSequence sequence,
 			QualitySequence qualities, String optionalComment)
 			throws IOException {
-		write(new FastqRecordBuilder(id, sequence, qualities).comment(optionalComment).build());
+		write(FastqRecordBuilder.create(id, sequence, qualities, optionalComment).build());
 	}
 
 }

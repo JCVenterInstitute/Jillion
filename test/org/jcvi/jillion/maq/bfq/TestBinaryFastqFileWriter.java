@@ -42,7 +42,7 @@ import org.junit.rules.TemporaryFolder;
 
 public class TestBinaryFastqFileWriter {
 
-	private FastqRecord record1 = new FastqRecordBuilder("id",
+	private FastqRecord record1 = FastqRecordBuilder.create("id",
 										new NucleotideSequenceBuilder("ACGT").build(), 
 										new QualitySequenceBuilder(new byte[]{20,30,40,45}).build())
 									.build();
@@ -71,12 +71,12 @@ public class TestBinaryFastqFileWriter {
 		FastqWriter writer = new BfqFileWriterBuilder(out)
 											.build();
 		
-		FastqRecord input = new FastqRecordBuilder("id",
+		FastqRecord input = FastqRecordBuilder.create("id",
 									new NucleotideSequenceBuilder("ACGTT").build(), 
 									new QualitySequenceBuilder(new byte[]{40,50,60,70,80}).build())
 								.build();
 		
-		FastqRecord capped = new FastqRecordBuilder("id",
+		FastqRecord capped = FastqRecordBuilder.create("id",
 				new NucleotideSequenceBuilder("ACGTT").build(), 
 				new QualitySequenceBuilder(new byte[]{40,50,60,63,63}).build())
 			.build();
@@ -95,12 +95,12 @@ public class TestBinaryFastqFileWriter {
 		FastqWriter writer = new BfqFileWriterBuilder(out)
 											.build();
 		
-		FastqRecord input = new FastqRecordBuilder("id",
+		FastqRecord input = FastqRecordBuilder.create("id",
 									new NucleotideSequenceBuilder("ACNT").build(), 
 									new QualitySequenceBuilder(new byte[]{20,20,20,20}).build())
 								.build();
 		
-		FastqRecord expected = new FastqRecordBuilder("id",
+		FastqRecord expected = FastqRecordBuilder.create("id",
 				new NucleotideSequenceBuilder("ACNT").build(), 
 				new QualitySequenceBuilder(new byte[]{20,20,0,20}).build())
 			.build();
@@ -118,12 +118,12 @@ public class TestBinaryFastqFileWriter {
 		FastqWriter writer = new BfqFileWriterBuilder(out)
 											.build();
 		
-		FastqRecord input = new FastqRecordBuilder("id",
+		FastqRecord input = FastqRecordBuilder.create("id",
 									new NucleotideSequenceBuilder("AC-T").build(), 
 									new QualitySequenceBuilder(new byte[]{20,20,20,20}).build())
 								.build();
 		
-		FastqRecord expected = new FastqRecordBuilder("id",
+		FastqRecord expected = FastqRecordBuilder.create("id",
 				new NucleotideSequenceBuilder("ACNT").build(), 
 				new QualitySequenceBuilder(new byte[]{20,20,0,20}).build())
 			.build();
@@ -141,12 +141,12 @@ public class TestBinaryFastqFileWriter {
 		FastqWriter writer = new BfqFileWriterBuilder(out)
 											.build();
 		
-		FastqRecord input = new FastqRecordBuilder("id",
+		FastqRecord input = FastqRecordBuilder.create("id",
 									new NucleotideSequenceBuilder("ACRT").build(), 
 									new QualitySequenceBuilder(new byte[]{20,20,20,20}).build())
 								.build();
 		
-		FastqRecord expected = new FastqRecordBuilder("id",
+		FastqRecord expected = FastqRecordBuilder.create("id",
 				new NucleotideSequenceBuilder("ACNT").build(), 
 				new QualitySequenceBuilder(new byte[]{20,20,0,20}).build())
 			.build();
@@ -166,7 +166,7 @@ public class TestBinaryFastqFileWriter {
 											.build();
 		
 		
-		FastqRecord capped = new FastqRecordBuilder("id2",
+		FastqRecord capped = FastqRecordBuilder.create("id2",
 									new NucleotideSequenceBuilder("ACGTT").build(), 
 									new QualitySequenceBuilder(new byte[]{40,50,60,63,63}).build())
 								.build();

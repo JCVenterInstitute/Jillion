@@ -32,7 +32,7 @@ import org.jcvi.jillion.fasta.FastaRecord;
  * @param <S> the type of {@link Sequence}
  * @param <F> the type of {@link FastaRecord}
  */
-public abstract class AbstractFastaRecordBuilder<T, S extends Sequence<T>, F extends FastaRecord<T, S>> {
+public abstract class AbstractFastaRecordBuilder<T, S extends Sequence<T>, F extends FastaRecord<T, S>, B extends AbstractFastaRecordBuilder<T,S,F,B>> {
 
 	private final String id;
 	private final S sequence;
@@ -48,7 +48,10 @@ public abstract class AbstractFastaRecordBuilder<T, S extends Sequence<T>, F ext
 		this.id = id;
 		this.sequence = sequence;
 	}
+	
+	protected abstract B getThis();
 
+	protected abstract B newBuilder(String id, S seq, String comment);
 	/**
 	 * Add an optional comment to this fasta record.
 	 * This will be the value returned by {@link FastaRecord#getComment()}.
@@ -58,10 +61,28 @@ public abstract class AbstractFastaRecordBuilder<T, S extends Sequence<T>, F ext
 	 * if this value is null, then there is no comment.
 	 * @return this.
 	 */
-	public AbstractFastaRecordBuilder<T,S,F> comment(String comment) {
+	public B comment(String comment) {
 		this.comment = comment;
-		return this;
+		return getThis();
 	}
+	
+	/**
+         * Add an optional comment to this fasta record.
+         * This will be the value returned by {@link FastaRecord#getComment()}.
+         * Calling this method more than once will cause the last value to
+         * overwrite the previous value.
+         * @param comment the comment for this fasta record;
+         * if this value is null, then there is no comment.
+         * @return this.
+         */
+        public B withId(String id) {
+                return newBuilder(id, sequence, comment);
+        }
+        
+        
+        public B withSequence(S sequence) {
+                return newBuilder(id, sequence, comment);
+        }
 
 	/**
 	 * Create a new instance of {@link FastaRecord}

@@ -132,4 +132,17 @@ public interface FastqRecord extends Trace{
     default double getAvgQuality() throws ArithmeticException{
         return getQualitySequence().getAvgQuality();
     }
+    /**
+     * Create a new {@link FastqRecordBuilder}
+     * instance using the values from this FastqRecord.
+     * 
+     * 
+     * @return a new {@link FastqRecordBuilder} instance will never be null.
+     * @implSpec the default implementation is the same as
+     * {@code return new FastqRecordBuilder(this); }
+     * @since 5.3
+     */
+    default FastqRecordBuilder toBuilder(){
+        return new FastqRecordBuilderImpl(this);
+    }
 }

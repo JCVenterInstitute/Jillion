@@ -142,7 +142,7 @@ class TmpDirSortedFastqWriter implements FastqWriter{
     @Override
     public void write(String id, NucleotideSequence nucleotides,
             QualitySequence qualities) throws IOException {
-        write(new FastqRecordBuilder(id, nucleotides, qualities).build());
+        write(FastqRecordBuilder.create(id, nucleotides, qualities).build());
         
     }
 
@@ -150,8 +150,7 @@ class TmpDirSortedFastqWriter implements FastqWriter{
     public void write(String id, NucleotideSequence sequence,
             QualitySequence qualities, String optionalComment)
             throws IOException {
-        write(new FastqRecordBuilder(id, sequence, qualities)
-                    .comment(optionalComment)
+        write(FastqRecordBuilder.create(id, sequence, qualities, optionalComment)
                     .build());
     }
 

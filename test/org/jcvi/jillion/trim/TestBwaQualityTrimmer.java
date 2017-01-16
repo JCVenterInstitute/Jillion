@@ -20,6 +20,9 @@
  ******************************************************************************/
 package org.jcvi.jillion.trim;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -28,19 +31,13 @@ import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.PhredQuality;
-import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.fastq.FastqDataStore;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
 import org.jcvi.jillion.trace.fastq.FastqRecord;
-import org.jcvi.jillion.trace.fastq.FastqRecordBuilder;
-import org.jcvi.jillion.trim.BwaQualityTrimmer;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 public class TestBwaQualityTrimmer {
 
 	private final FastqDataStore inputFastq, outputFastq;
@@ -71,14 +68,10 @@ public class TestBwaQualityTrimmer {
 				FastqRecord input = inputIterator.next();
 				Range trimmedRange = sut.trim(input.getQualitySequence());
 				if(trimmedRange.getLength() >=64){
-					FastqRecord trimmedSequence = new FastqRecordBuilder(input.getId(),
-							new NucleotideSequenceBuilder(input.getNucleotideSequence())
-								.trim(trimmedRange)
-								.build(),
-							new QualitySequenceBuilder(input.getQualitySequence())
-								.trim(trimmedRange)
-								.build())
-						.build();
+					FastqRecord trimmedSequence = input.toBuilder()
+					                                   .trim(trimmedRange)
+					                                   .build();
+					    
 					assertEquals(trimmedSequence.getId(),expectedIterator.next(), trimmedSequence);
 				}
 			}

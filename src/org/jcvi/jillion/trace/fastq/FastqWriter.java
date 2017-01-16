@@ -22,6 +22,7 @@ package org.jcvi.jillion.trace.fastq;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.function.Function;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.QualitySequence;
@@ -111,7 +112,9 @@ public interface FastqWriter extends Closeable{
 	 * @throws IOException if there is a problem writing out the record.
 	 * @throws NullPointerException if either id, nucleotides or qualities are null.
 	 */
-	void write(String id, NucleotideSequence nucleotides, QualitySequence qualities) throws IOException;
+	default void write(String id, NucleotideSequence nucleotides, QualitySequence qualities) throws IOException{
+	    write(id, nucleotides, qualities, null);
+	}
 	/**
 	 * Write the given id and {{@link NucleotideSequence}
 	 * and {@link QualitySequence}
@@ -124,5 +127,26 @@ public interface FastqWriter extends Closeable{
 	 * @throws IOException if there is a problem writing out the record.
 	 * @throws NullPointerException if either id, nucleotides or qualities are null.
 	 */
-	void write(String id, NucleotideSequence sequence, QualitySequence qualities, String optionalComment) throws IOException;
+	default void write(String id, NucleotideSequence sequence, QualitySequence qualities, String optionalComment) throws IOException{
+	    write(FastqRecordBuilder.create(id, sequence, qualities, optionalComment).build());
+	}
+	
+	/**
+	 * Create a new FastqWriter that will wrap the given fastqWriter and intercept any calls
+	 * to write() to allow the record to be transformed in some way.  For example,
+	 * to change the id or modify or trim the sequences; or even skip the record entirely.
+	 * @param delegate the writer to delegate the actual writing to this writer will be called
+	 * after each record is adapted.
+	 * 
+	 * @param adapter a Function that is given the input FastqRecord to be written
+	 * and will return a possibly new FastqRecord to actually write.  If the function
+	 * returns {@code null} then the record is skipped.
+	 * @return a new FastqWriter; will never be null.
+	 * @throws NullPointerException if any parameter is null.
+	 * 
+	 * @since 5.3
+	 */
+	public static FastqWriter adapt(FastqWriter delegate, Function<FastqRecord, FastqRecord> adapter){
+	    return new FastqWriterAdapter(delegate, adapter);
+	}
 }

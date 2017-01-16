@@ -34,18 +34,18 @@ public class TestFastqRecordBuilder {
 	
 	@Test(expected = NullPointerException.class)
 	public void idIsNullShouldThrowNPE(){
-		new FastqRecordBuilder(null, 
+		FastqRecordBuilder.create(null, 
 				createMock(NucleotideSequence.class), createMock(QualitySequence.class));
 	}
 	@Test(expected = NullPointerException.class)
 	public void sequenceIsNullShouldThrowNPE(){
-		new FastqRecordBuilder("id", 
+		FastqRecordBuilder.create("id", 
 				null, createMock(QualitySequence.class));
 	}
 	
 	@Test(expected = NullPointerException.class)
 	public void qualitiesAreNullShouldThrowNPE(){
-		new FastqRecordBuilder("id", 
+		FastqRecordBuilder.create("id", 
 				createMock(NucleotideSequence.class), null);
 	}
 	
@@ -53,7 +53,7 @@ public class TestFastqRecordBuilder {
 	public void length(){
 		NucleotideSequence seq = new NucleotideSequenceBuilder("ACGT").build();
 		QualitySequence qual = new QualitySequenceBuilder(new byte[]{20,20,20,20}).build();
-		FastqRecord sut = new FastqRecordBuilder("id",seq, qual)
+		FastqRecord sut = FastqRecordBuilder.create("id",seq, qual)
 							.build();
 		
 		assertEquals(4, sut.getLength());
@@ -63,7 +63,7 @@ public class TestFastqRecordBuilder {
 	public void noComment(){
 		NucleotideSequence seq = new NucleotideSequenceBuilder("ACGT").build();
 		QualitySequence qual = new QualitySequenceBuilder(new byte[]{20,20,20,20}).build();
-		FastqRecord sut = new FastqRecordBuilder("id",seq, qual)
+		FastqRecord sut = FastqRecordBuilder.create("id",seq, qual)
 							.build();
 		
 		assertEquals("id", sut.getId());
@@ -78,7 +78,7 @@ public class TestFastqRecordBuilder {
 		QualitySequence qual = new QualitySequenceBuilder(new byte[]{20,20,20,20}).build();
 		
 		String comment = "This is a multi-word comment.";
-		FastqRecord sut = new FastqRecordBuilder("id",seq, qual)
+		FastqRecord sut = FastqRecordBuilder.create("id",seq, qual)
 							.comment(comment)
 							.build();
 		
@@ -93,6 +93,6 @@ public class TestFastqRecordBuilder {
 		NucleotideSequence seq = new NucleotideSequenceBuilder("ACGT").build();
 		QualitySequence qual = new QualitySequenceBuilder(new byte[]{20,20})
 									.build();
-		new FastqRecordBuilder("id",seq, qual);
+		FastqRecordBuilder.create("id",seq, qual);
 	}
 }

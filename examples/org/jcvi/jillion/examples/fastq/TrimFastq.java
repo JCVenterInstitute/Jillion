@@ -22,16 +22,12 @@ package org.jcvi.jillion.examples.fastq;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.function.Function;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.qual.PhredQuality;
-import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.core.util.Pair;
-import org.jcvi.jillion.core.util.ThrowingStream;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStore;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
@@ -39,7 +35,6 @@ import org.jcvi.jillion.trace.fastq.FastqFileReader;
 import org.jcvi.jillion.trace.fastq.FastqFileReader.Results;
 import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
 import org.jcvi.jillion.trace.fastq.FastqRecord;
-import org.jcvi.jillion.trace.fastq.FastqRecordBuilder;
 import org.jcvi.jillion.trace.fastq.FastqWriter;
 import org.jcvi.jillion.trace.fastq.FastqWriterBuilder;
 import org.jcvi.jillion.trim.BwaQualityTrimmer;
@@ -87,6 +82,39 @@ public class TrimFastq {
 	                        
 	                }//streams and datastores will autoclose when end of scope reached.
 	    }
+	 
+	 private static void trim_5_3adapter(File fastqFile, File outputFile,
+                 long minLength)
+                 throws IOException, DataStoreException {
+             
+             Trimmer<FastqRecord> bwaTrimmer = BwaQualityTrimmer.createFor(PhredQuality.valueOf(20));
+             
+             Function<FastqRecord, FastqRecord> trimAdapter = (fastq) ->{
+                 Range trimRange = bwaTrimmer.trim(fastq);
+                 
+                 if(trimRange.getLength() < minLength){
+                     return null;
+                 }
+                 return fastq.toBuilder().trim(trimRange).build();
+             };
+             
+             try(   Results parsedFastqs = FastqFileReader.read(fastqFile);
+                     
+                     FastqWriter writer = new FastqWriterBuilder(outputFile)
+                                                     // use same codec as input which was autoDetected
+                                                     .qualityCodec(parsedFastqs.getCodec())
+                                                     .adapt(trimAdapter)
+                                                     .build();
+                     ){
+                             
+                             //uses Jillion's custom ThrowingStream which has methods
+                             //that can throw exceptions since our writer will throw an IOException
+                             parsedFastqs.records()
+                                   .filter(fastq -> fastq.getLength() >= minLength)   
+                                   .throwingForEach(fastq -> writer.write(fastq)) ;
+                             
+                     }//streams and datastores will autoclose when end of scope reached.
+         }
 	
     private static void trim_5_2(File fastqFile, File outputFile,
             long minLength)
@@ -146,7 +174,9 @@ public class TrimFastq {
                             if (trimRange.getLength() < minLength) {
                                 continue;
                             }            
-                            FastqRecord trimmedFastq = new FastqRecordBuilder(fastq.getId(),
+                            //this doesn't compile anymore because 5.3 made this class into an interface
+                            //but kept here for comparison purposes
+                          /*  FastqRecord trimmedFastq = new FastqRecordBuilder(fastq.getId(),
                                                             new NucleotideSequenceBuilder(fastq.getNucleotideSequence())
                                                                     .trim(trimRange)
                                                                     .build(),
@@ -157,6 +187,7 @@ public class TrimFastq {
                                                             .build();
                             
                             writer.write(trimmedFastq);
+                            */
                         }
                         
                 }//streams and datastores will autoclose when end of scope reached.

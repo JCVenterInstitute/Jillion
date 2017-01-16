@@ -35,7 +35,7 @@ import org.jcvi.jillion.shared.fasta.AbstractFastaRecordBuilder;
  * @author dkatzel
  *
  */
-public final class QualityFastaRecordBuilder extends AbstractFastaRecordBuilder<PhredQuality, QualitySequence,QualityFastaRecord> {
+public final class QualityFastaRecordBuilder extends AbstractFastaRecordBuilder<PhredQuality, QualitySequence,QualityFastaRecord,QualityFastaRecordBuilder> {
 	/**
 	 * Pattern used to pull out individual quality
 	 * values from the body of a string (or fasta file).
@@ -82,6 +82,15 @@ public final class QualityFastaRecordBuilder extends AbstractFastaRecordBuilder<
 		}
 		return new CommentedQualityFastaRecord(id, sequence, comment);
 	}
+    @Override
+    protected QualityFastaRecordBuilder getThis() {
+        return this;
+    }
+    @Override
+    protected QualityFastaRecordBuilder newBuilder(String id,
+            QualitySequence seq, String comment) {
+        return new QualityFastaRecordBuilder(id, seq).comment(comment);
+    }
 	
 	
 }

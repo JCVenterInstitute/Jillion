@@ -20,11 +20,16 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.trace.fastq;
 
+import java.util.Objects;
+import java.util.Optional;
+
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
 import org.jcvi.jillion.trace.fastq.FastqRecord;
+import org.jcvi.jillion.trace.fastq.FastqRecordBuilder;
 
 public class ParsedFastqRecord implements FastqRecord {
 
@@ -97,6 +102,11 @@ public class ParsedFastqRecord implements FastqRecord {
     
     
     @Override
+    public FastqRecordBuilder toBuilder() {
+        return new ParsedFastqRecordBuilder(this);
+    }
+
+    @Override
     public double getAvgQuality() throws ArithmeticException {
         
         //this implementation gets the 
@@ -164,4 +174,106 @@ public class ParsedFastqRecord implements FastqRecord {
                                 + nucleotideSequenceString + ", qualities=" + getQualitySequence() + "]";
         }
 
+	
+	private static final class ParsedFastqRecordBuilder implements FastqRecordBuilder{
+	    private String id;
+	    private String encodedQualities;
+	    private final FastqQualityCodec qualityCodec;
+	    
+	    private String nucleotideSequenceString;
+	    private final boolean turnOffCompression;
+	    
+	    private String comment;
+	    
+	    private boolean lengthsModified=false;
+	    
+        public ParsedFastqRecordBuilder(FastqRecord record) {
+            ParsedFastqRecord r = (ParsedFastqRecord) record;
+            this.id = r.id;
+            this.encodedQualities = r.encodedQualities;
+            this.qualityCodec = r.qualityCodec;
+            this.nucleotideSequenceString = r.nucleotideSequenceString;
+            this.turnOffCompression = r.turnOffCompression;           
+            this.comment = r.getComment();
+            
+        }
+
+        @Override
+        public FastqRecordBuilder comment(String comments) {
+            this.comment = comments;
+            return this;
+        }
+
+        @Override
+        public FastqRecord build() {
+            if(lengthsModified){
+                assertValidLength();
+            }
+            if(comment ==null){
+                return new ParsedFastqRecord(id, nucleotideSequenceString, encodedQualities, qualityCodec, turnOffCompression);
+            }
+            return new CommentedParsedFastqRecord(id, nucleotideSequenceString, encodedQualities, qualityCodec, turnOffCompression,comment);
+        }
+
+        @Override
+        public Optional<String> comment() {
+            return Optional.ofNullable(comment);
+        }
+
+        @Override
+        public String id() {
+            return id;
+        }
+
+        @Override
+        public FastqRecordBuilder id(String id) {
+            this.id = Objects.requireNonNull(id);
+            return this;
+            
+        }
+
+        @Override
+        public NucleotideSequence basecalls() {
+            return new NucleotideSequenceBuilder(nucleotideSequenceString).build();
+        }
+
+        @Override
+        public FastqRecordBuilder basecalls(NucleotideSequence basecalls) {
+            this.nucleotideSequenceString = basecalls.toString();
+            lengthsModified=true;
+            return this;
+        }
+
+        @Override
+        public QualitySequence qualities() {
+            return qualityCodec.decode(encodedQualities);
+        }
+
+        @Override
+        public FastqRecordBuilder qualities(QualitySequence qualities) {
+            this.encodedQualities = qualityCodec.encode(qualities);
+            lengthsModified=true;
+            return this;
+        }
+
+        @Override
+        public FastqRecordBuilder trim(Range trimRange) {
+            this.encodedQualities =  this.encodedQualities.substring((int) trimRange.getBegin(), (int) trimRange.getEnd()+1);
+            this.nucleotideSequenceString = this.nucleotideSequenceString.substring((int) trimRange.getBegin(), (int) trimRange.getEnd()+1);
+            lengthsModified=true;
+            return this;
+        }
+        
+        private void assertValidLength() {
+            long basecallLength = nucleotideSequenceString.length();
+            long qualityLength = encodedQualities.length();
+            
+            if (basecallLength != qualityLength) {
+                throw new IllegalArgumentException(String.format(
+                        "basecalls and qualities must have the same length! %d vs %d",
+                        basecallLength, qualityLength));
+            }
+        }
+	    
+	}
 }

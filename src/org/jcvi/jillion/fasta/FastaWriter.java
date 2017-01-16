@@ -40,7 +40,9 @@ public interface FastaWriter<S, T extends Sequence<S>, F extends FastaRecord<S, 
 	 * @throws IOException if there is a problem writing out the record.
 	 * @throws NullPointerException if record is null.
 	 */
-	void write(F record) throws IOException;
+	default void write(F record) throws IOException{
+	    write(record.getId(), record.getSequence(), record.getComment());
+	}
 	/**
 	 * Write the given id and {@link Sequence}
 	 * out as a {@link FastaRecord} without a comment.
@@ -49,7 +51,9 @@ public interface FastaWriter<S, T extends Sequence<S>, F extends FastaRecord<S, 
 	 * @throws IOException if there is a problem writing out the record.
 	 * @throws NullPointerException if either id or sequence are null.
 	 */
-	void write(String id, T sequence) throws IOException;
+	default void write(String id, T sequence) throws IOException{
+	    write(id, sequence, null);
+	}
 	/**
 	 * Write the given id and {@link Sequence}
 	 * out as a {@link FastaRecord} without a comment.
@@ -61,4 +65,14 @@ public interface FastaWriter<S, T extends Sequence<S>, F extends FastaRecord<S, 
 	 * @throws NullPointerException if either id or sequence are null.
 	 */
 	void write(String id, T sequence, String optionalComment) throws IOException;
+	
+	
+	public static <S, T extends Sequence<S>, F extends FastaRecord<S, T>> FastaWriter<S,T,F> adapt(FastaWriter<S,T,F> delegate, FastaRecordAdapter<S,T,F> adapter){
+	    return new FastaWriterAdapterImpl<S,T,F>(delegate, adapter);
+	}
+	@FunctionalInterface
+	public interface FastaRecordAdapter<S, T extends Sequence<S>, F extends FastaRecord<S, T>>{
+	    F adapt(String id, T sequence, String optionalComment);
+	}
+	
 }

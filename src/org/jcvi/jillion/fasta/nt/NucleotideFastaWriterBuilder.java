@@ -54,7 +54,7 @@ import org.jcvi.jillion.shared.fasta.AbstractResidueFastaWriter;
  * @author dkatzel
  *
  */
-public final class NucleotideFastaWriterBuilder extends AbstractResidueFastaWriter.Builder<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder, NucleotideFastaRecord,NucleotideFastaWriter> {
+public final class NucleotideFastaWriterBuilder extends AbstractResidueFastaWriter.Builder<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder, NucleotideFastaRecord,NucleotideFastaWriter, NucleotideFastaWriterBuilder> {
 		private boolean nonRedundant;
 		private Integer expectedCapacity;
 		
@@ -92,7 +92,13 @@ public final class NucleotideFastaWriterBuilder extends AbstractResidueFastaWrit
 		public NucleotideFastaWriterBuilder(OutputStream out) {
 			super(out);
 		}
-		/**
+		
+		
+		@Override
+        protected NucleotideFastaWriterBuilder getThis() {
+            return this;
+        }
+        /**
 		 * Write out the Fasta as a
 		 * non-redundant database (like BLAST's nr).
 		 * Identical sequences will have their deflines merged
