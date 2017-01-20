@@ -34,13 +34,14 @@ public class TestAlnUtil {
 		assertTrue(AlnUtil.validHeader("CLUSTALW (1.82) multiple sequence alignment"));
 		
 		assertTrue(AlnUtil.validHeader("CLUSTAL 2.0.11 multiple sequence alignment"));
-		
+		assertTrue(AlnUtil.validHeader("MUSCLE (3.8) multiple sequence alignment"));
 	}
 	
 	@Test
 	public void invalidHeader(){
 		assertFalse(AlnUtil.validHeader("FOSB_MOUSE      MFQAFPGDYDSGSRCSSSPSAESQYLSSVDSFGSPPTAAASQECAGLGEMPGSFVPTVTA 60"));
 		assertFalse(AlnUtil.validHeader(""));
+		assertFalse(AlnUtil.validHeader("CLUSTAL multiLine\nheader"));
 	}
 	@Test(expected = NullPointerException.class)
 	public void nullHeaderShouldThrowNPE(){

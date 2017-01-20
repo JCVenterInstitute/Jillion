@@ -20,13 +20,14 @@
  ******************************************************************************/
 package org.jcvi.jillion.experimental.align;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.Objects;
 
 import org.jcvi.jillion.assembly.util.consensus.ConsensusCaller;
 import org.jcvi.jillion.assembly.util.consensus.ConsensusCollectors;
-import org.jcvi.jillion.assembly.util.consensus.MostFrequentBasecallConsensusCaller;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -41,7 +42,7 @@ public final class AlnUtil {
 	 * Checks to see if the given header string
 	 * is valid. A valid header is a single line
 	 * that starts with the text
-	 * "CLUSTAL".
+	 * "CLUSTAL" or "MUSCLE".
 	 * @param header the header to validate; can not be null.
 	 * @return {@code true}
 	 * if the header is valid,
@@ -56,10 +57,10 @@ public final class AlnUtil {
 		 }
 		 //check is one line?
 		 TextLineParser parser=null;
-		 try{
-			 parser = new TextLineParser(IOUtil.toInputStream(header));
-			 parser.nextLine();
-			 if(parser.hasNextLine()){
+		 try(BufferedReader reader = new BufferedReader(new StringReader(header))){
+			
+			 reader.readLine();
+			 if(reader.read() !=-1){
 				 return false;
 			 }
 		 }catch(IOException e){
@@ -70,8 +71,9 @@ public final class AlnUtil {
 		 }
 		 
 	    	//first line of aln must say either "CLUSTAL W" or "CLUSTALW"
-			//other info in first line is ignored.
-	    	return header.startsWith("CLUSTAL");
+		 //muscle non-strict starts with "MUSCLE"
+		 //other info in first line is ignored.
+	    	return header.startsWith("CLUSTAL") || header.startsWith("MUSCLE");
 			
 		}
 	 /**
