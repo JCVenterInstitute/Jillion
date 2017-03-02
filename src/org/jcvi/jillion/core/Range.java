@@ -777,6 +777,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
     }
     
 
+    @Override
+    public boolean intersects(Rangeable target) {
+        if(target instanceof Range){
+            return intersects((Range)target);
+        }
+        return Rangeable.super.intersects(target);
+    }
     /**
      * Checks to see if the given {@link Range} intersects this one.
      * An empty range will never intersect any other range
@@ -784,12 +791,13 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
      * @param target The {@link Range} to check.
      * @return <code>true</code> if the coordinates of the two ranges overlap
      * each other in at least one point.
+     * @throws NullPointerException if target is null.
      */
     public boolean intersects(Range target)
     {
         if (target == null)
         {
-            throw new IllegalArgumentException("Null Range used in intersection operation.");
+            throw new NullPointerException("Null Range used in intersection operation.");
         }
         if(isEmpty()){
             return false;

@@ -330,12 +330,9 @@ public enum IupacTranslationTables implements TranslationTable{
 		//no-op
 	}
 	private Codon translate(Triplet triplet){
-		Codon ret= map.get(triplet);
-		if(ret==null){
-			//not in map
-			return new Codon.Builder(triplet, AminoAcid.Unknown_Amino_Acid).build();
-		}
-		return ret;
+	    return  map.computeIfAbsent(triplet, 
+		        t -> new Codon.Builder(t, AminoAcid.Unknown_Amino_Acid).build());
+		
 	}
 
 	public int getTableNumber(){

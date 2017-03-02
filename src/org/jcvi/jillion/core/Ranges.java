@@ -27,6 +27,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
+
+import org.jcvi.jillion.core.util.iter.IteratorUtil;
 /**
  * {@code Ranges} is a helper class
  * for operating on a collection
@@ -289,11 +292,15 @@ public final class Ranges {
      * @return a new Range that covers the entire span of
      * input ranges.
      */
-    public static Range createInclusiveRange(Collection<Range> ranges){
-        if(ranges.isEmpty()){
+    public static Range createInclusiveRange(Collection<Range> ranges){       
+        return createInclusiveRange(ranges.iterator());
+    }
+    
+    private static Range createInclusiveRange(Iterator<Range> iter){
+        if(!iter.hasNext()){
             return new Range.Builder().build();
         }
-        Iterator<Range> iter =ranges.iterator();
+        
         Range firstRange =iter.next();
         long currentLeft = firstRange.getBegin();
         long currentRight = firstRange.getEnd();
@@ -309,7 +316,78 @@ public final class Ranges {
         return Range.of(currentLeft, currentRight);
     }
     
+    /**
+     * Return a single
+     * Range that covers the entire span
+     * of the given Ranges.
+     * <p>
+     * For example: passing in 2 Ranges [0,10] and [20,30]
+     * will return [0,30]
+     * @param ranges a collection of ranges
+     * @return a new Range that covers the entire span of
+     * input ranges.
+     */
+    public static <T> Range createInclusiveRange(Collection<T> collection, Function<T, Range> mapper){
+        return createInclusiveRange(IteratorUtil.map(collection.iterator(), mapper));
+    }
+    
     private static Range createInclusiveRange(Range... ranges){
     	return createInclusiveRange(Arrays.asList(ranges));
+    }
+    /**
+     * Check if the target Range intersects any range in the given list.
+     * 
+     * @param ranges the list of Ranges to check; can not be null but may be empty.
+     * @param target the intersection target Range.
+     * 
+     * @return {@code true} if the target intersects any Range; {@code false} otherwise.
+     * 
+     * @apiNote this is the same as:
+     * <pre>
+     * for(Range r : ranges){
+     *     if(r.intersects(target)){
+     *         return true;
+     *     }
+     * }
+     * return false;
+     * </pre>
+     * @since 5.3
+     * 
+     * @throws NullPointerException if any paramter is null or any Range in the given list is null.
+     */
+    public static boolean intersects(Collection<Range> ranges, Range target) {
+        for(Range r : ranges){
+            if(r.intersects(target)){
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * Check if the target Range intersects any range in the given list.
+     * 
+     * @param ts the collection of objects to check; can not be null but may be empty.
+     * @param mapper the Mapper function to convert the type in the input collection into a Range.
+     * if the mapper returns a null Range, then that element is skipped.
+     * @param target the intersection target Range.
+     * 
+     * @return {@code true} if the target intersects any Range; {@code false} otherwise.
+     * 
+     * @since 5.3
+     * 
+     * @throws NullPointerException if any paramter is null or any Range in the given list is null.
+     */
+    public static <T> boolean intersects(Collection<T> ts, Function<T, Range> mapper, Range target) {
+        for(T t : ts){
+            Range r = mapper.apply(t);
+            if(r ==null){
+                continue;
+            }
+            if(r.intersects(target)){
+                return true;
+            }
+        }
+        return false;
     }
 }

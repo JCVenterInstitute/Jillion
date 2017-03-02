@@ -167,7 +167,7 @@ public interface DataStore<T> extends Closeable{
     StreamingIterator<DataStoreEntry<T>> entryIterator() throws DataStoreException;
     
     /**
-     * Create a new {@link Stream} of the records
+     * Create a new {@link ThrowingStream} of the records
      * in this DataStore.
      * @return a new ThrowingStream.
      * @throws DataStoreException if there is a problem creating this stream.
@@ -177,6 +177,18 @@ public interface DataStore<T> extends Closeable{
      */
     default ThrowingStream<T> records() throws DataStoreException{
     	return iterator().toThrowingStream();
+    }
+    
+    /**
+     * Create a new {@link ThrowingStream} of the {@link DataStoreEntry}s
+     * in this {@link DataStore}.
+     * @return a new ThrowingStream.
+     * @throws DataStoreException if there is a problem creating this stream.
+     * 
+     * @since 5.3
+     */
+    default ThrowingStream<DataStoreEntry<T>> entries() throws DataStoreException{
+        return entryIterator().toThrowingStream();
     }
     
     /**

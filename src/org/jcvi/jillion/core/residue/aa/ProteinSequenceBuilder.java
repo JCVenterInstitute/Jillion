@@ -89,6 +89,25 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 		builder = new GrowableByteArray((int)sequence.getLength());
 		append(sequence);
 	}
+	
+    /**
+     * Creates a new ProteinSequenceBuilder instance which currently contains
+     * the given sequence.
+     * 
+     * @param sequence
+     *            the initial protein sequence.
+     *            
+     *@param range the subrange to use
+     * @throws NullPointerException
+     *             if sequence is null.
+     */
+    public ProteinSequenceBuilder(ProteinSequence sequence, Range range) {
+        builder = new GrowableByteArray((int) range.getLength());
+        Iterator<AminoAcid> iter = sequence.iterator(range);
+        while(iter.hasNext()){
+            append(iter.next());
+        }
+    }
 	private ProteinSequenceBuilder(ProteinSequenceBuilder copy){
 		builder = copy.builder.copy();
 	}

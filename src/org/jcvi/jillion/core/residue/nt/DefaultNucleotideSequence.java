@@ -235,6 +235,11 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
 		return new NucleotideSequenceBuilder(this);
 	}
 	
+	@Override
+        public NucleotideSequenceBuilder toBuilder(Range range) {
+                return new NucleotideSequenceBuilder(this, range);
+        }
+	
 	 @Override
 	    public NucleotideSequence asSubtype(){
 	        return this;

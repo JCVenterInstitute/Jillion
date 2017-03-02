@@ -23,6 +23,10 @@ package org.jcvi.jillion.core.util.iter;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.function.Function;
+
+import org.jcvi.jillion.core.Range;
 
 
 public final class IteratorUtil {
@@ -389,5 +393,32 @@ public final class IteratorUtil {
 			
 		}
     	
+    }
+    /**
+     * Map the values in the given iterator to a different type.
+     * @param iter the input {@link Iterator}; can not be null.
+     * @param mapper a function that converts the types in the input iterator into
+     * the return type. Can not be null but if the input iterator contains nulls, this mapper must support nulls as well.
+     * @return a new Iterator of the return type.
+     * 
+     * @throws NullPointerException if any parameter is null.
+     * @since 5.3
+     */
+    public static <T, R> Iterator<R> map(Iterator<T> iter, Function<T, R> mapper) {
+        Objects.requireNonNull(iter);
+        Objects.requireNonNull(mapper);
+        
+        return new Iterator<R>() {
+
+            @Override
+            public boolean hasNext() {
+                return iter.hasNext();
+            }
+
+            @Override
+            public R next() {
+                return mapper.apply(iter.next());
+            }
+        };
     }
 }

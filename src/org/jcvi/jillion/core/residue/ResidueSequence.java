@@ -232,6 +232,14 @@ public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R,
      */
     B toBuilder();
     /**
+     * Create a new Builder object that is initialized
+     * to the just the given Range of the current sequence.  Any changes made to the returned Builder
+     * will <strong>NOT</strong> affect this immutable Sequence.
+     * @return a new Builder instance, will never be null.
+     * @since 5.3
+     */
+    B toBuilder(Range range);
+    /**
      * Create a new EMPTY Builder object with the default capacity.
      * 
      * @return a new Builder instance, will never be null.
