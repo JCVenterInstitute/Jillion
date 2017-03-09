@@ -405,17 +405,9 @@ public class TestRange{
         assertFalse(this.range.startsBefore(emptyRange));
     }
 
-    @Test public void testIntersects_null()
-    {
-        try
-        {
-            this.range.intersects(null);
-            fail();
-        }
-        catch (IllegalArgumentException e)
-        {
-            // We expect this
-        }
+    @Test(expected= NullPointerException.class)
+    public void testIntersectsWithNullShouldThrowNPE(){
+        this.range.intersects(null);
     }
 
   
