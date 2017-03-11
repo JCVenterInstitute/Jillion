@@ -54,6 +54,9 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 	
 	private static final Charset DEFAULT_CHARSET = IOUtil.UTF_8;
 	private  static final FastqQualityCodec DEFAULT_CODEC = FastqQualityCodec.SANGER;
+	
+	private static final int  DEFAULT_CACHE_SIZE = 10_000;
+	
 	private final OutputStream out;
 	private int numberOfBasesPerLine=ALL_ON_ONE_LINE;
 	private boolean writeIdOnQualityLine=false;
@@ -216,6 +219,32 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 	    
 	    return this;
 	}
+	/**
+         * Write out the {@link FastqRecord}s written by this writer
+         * sorted by the specified {@link Comparator} using a combination of 
+         * in memory sorting and writing out sorted temporary files.  With a default
+         * number of records to keep in memory at any time.  (Currently 10,000 records).
+         * 
+         * <p/>
+         * This is the same as {@link #sort(Comparator, int) sort(comparator, 10_000)}
+         * which uses the default temp area to make temp files.
+         * 
+         * @param comparator the {@link Comparator} to use to sort the {@link FastqRecord}s;
+         * can not be null.
+         * 
+         * @return this.
+         * 
+         * @throws NullPointerException if comparator is null.
+         * 
+         * @see #sort(Comparator, int)
+         * @see #sort(Comparator, int, File)
+         * @see #sortInMemoryOnly(Comparator)
+         * 
+         * @since 5.3
+         */
+        public FastqWriterBuilder sort(Comparator<FastqRecord> comparator){
+            return sort(comparator, DEFAULT_CACHE_SIZE);
+        }
 	/**
 	 * Write out the {@link FastqRecord}s written by this writer
 	 * sorted by the specified {@link Comparator} using a combination of 
