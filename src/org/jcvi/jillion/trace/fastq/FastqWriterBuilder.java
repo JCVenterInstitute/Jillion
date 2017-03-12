@@ -413,7 +413,7 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 		        ParsedFastqRecord parsedRecord = (ParsedFastqRecord) record;
 		        FastqQualityCodec recordCodec = parsedRecord.getQualityCodec();
 		        String formattedString;
-		        if(codec.equals(recordCodec)){
+		        if(codec == recordCodec){
 		            //same quality encoding can use encoded qualities as is
 		            formattedString=  toFormattedString(parsedRecord.getId(),
 		                    encodeNucleotides(parsedRecord.getNucleotideString(), trimRange),
@@ -544,8 +544,10 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 		private String toFormattedString(String id, CharSequence sequence,
 				CharSequence encodedQualities, String optionalComment) {
 			boolean hasComment = optionalComment != null;
-	
-			StringBuilder builder = new StringBuilder("@").append(id);
+			int CRlength = CR.length();
+//			int numChars = 2 + (hasComment? optionalComment.length():0) + (writeIdOnQualityLine? 2*id.length() : id.length())  + sequence.length() *2 + CRlength*4;
+			
+			StringBuilder builder = new StringBuilder(sequence.length()*8).append("@").append(id);
 			if (hasComment) {
 				builder.append(' ').append(optionalComment);
 			}

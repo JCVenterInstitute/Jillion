@@ -2,7 +2,9 @@ package org.jcvi.jillion.trace.fastq;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.util.Pair;
 import org.jcvi.jillion.core.util.ThrowingStream;
@@ -77,7 +79,7 @@ public final class FastqFileReader {
         FastqFileDataStore datastore = new FastqFileDataStoreBuilder(fastqFile)
                                                 .hint(DataStoreProviderHint.ITERATION_ONLY)
                                                 .build();
-        return new Results(datastore.records(), datastore.getQualityCodec());
+        return new Results(datastore);
     }
     /**
      * Get a {@link ThrowingStream} of all the fastq records and the {@link FastqQualityCodec}
@@ -103,7 +105,7 @@ public final class FastqFileReader {
         FastqFileDataStore datastore = new FastqFileDataStoreBuilder(fastqParser)
                                                 .hint(DataStoreProviderHint.ITERATION_ONLY)
                                                 .build();
-        return new Results(datastore.records(), datastore.getQualityCodec());
+        return new Results(datastore);
     }
     /**
      * Get a {@link ThrowingStream} of all the fastq records and the {@link FastqQualityCodec}
@@ -130,7 +132,7 @@ public final class FastqFileReader {
                                                 .qualityCodec(codec)
                                                 .hint(DataStoreProviderHint.ITERATION_ONLY)
                                                 .build();
-        return new Results(datastore.records(), datastore.getQualityCodec());
+        return new Results(datastore);
     }
     /**
      * Get a {@link ThrowingStream} of all the fastq records and the {@link FastqQualityCodec}
@@ -159,7 +161,7 @@ public final class FastqFileReader {
                                                 .qualityCodec(codec)
                                                 .hint(DataStoreProviderHint.ITERATION_ONLY)
                                                 .build();
-        return new Results(datastore.records(), datastore.getQualityCodec());
+        return new Results(datastore);
     }
     
     /**
@@ -173,8 +175,14 @@ public final class FastqFileReader {
      */
     public static final class Results extends Pair<ThrowingStream<FastqRecord>, FastqQualityCodec>{
 
-        private Results(ThrowingStream<FastqRecord> first, FastqQualityCodec second) {
-            super(first, second);
+        private Results(FastqFileDataStore datastore) {
+            super(() -> {try {
+                return datastore.records();
+            } catch (DataStoreException e) {
+                throw new UncheckedIOException(e);
+            }}, 
+                    
+                    ()-> datastore.getQualityCodec());
         }
         /**
          * Get a {@link ThrowingStream} of all the {@link FastqRecord}s contained
@@ -192,5 +200,8 @@ public final class FastqFileReader {
         public FastqQualityCodec getCodec(){
             return getSecond();
         }
+
+        
+        
     }
 }

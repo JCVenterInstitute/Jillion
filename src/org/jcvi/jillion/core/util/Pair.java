@@ -1,6 +1,8 @@
 package org.jcvi.jillion.core.util;
 
 import java.io.Closeable;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 import org.jcvi.jillion.core.io.IOUtil;
 
@@ -11,20 +13,29 @@ import org.jcvi.jillion.core.io.IOUtil;
  */
 public class Pair<T,U> implements AutoCloseable{
 
-    private final T first;
-    private final U second;
+    private final Supplier<T> first;
+    private final Supplier<U> second;
     
     public Pair(T first, U second) {
-        this.first = first;
-        this.second = second;
+        this.first = () -> first;
+        this.second = () ->second;
+    }
+    
+    
+
+    public Pair(Supplier<T> first, Supplier<U> second) {
+        this.first = Objects.requireNonNull(first);
+        this.second = Objects.requireNonNull(second);
     }
 
+
+
     public T getFirst() {
-        return first;
+        return first.get();
     }
 
     public U getSecond() {
-        return second;
+        return second.get();
     }
 
     @Override
