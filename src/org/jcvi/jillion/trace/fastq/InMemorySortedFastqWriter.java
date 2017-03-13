@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
@@ -41,10 +42,10 @@ class InMemorySortedFastqWriter implements FastqWriter{
 		Objects.requireNonNull(writer);
 		Objects.requireNonNull(comparator);
 		this.writer = writer;
-		sorted = new TreeSet<FastqRecord>(comparator);
+		sorted = new ConcurrentSkipListSet<FastqRecord>(comparator);
 	}
 	@Override
-	public void close() throws IOException {
+	public synchronized void close() throws IOException {
 		if(closed){
 			return;
 		}

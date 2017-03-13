@@ -21,7 +21,6 @@
 package org.jcvi.jillion.trace.fastq;
 
 import java.io.BufferedOutputStream;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -36,7 +35,6 @@ import java.util.function.Function;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
-import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.internal.trace.fastq.ParsedFastqRecord;
@@ -351,11 +349,12 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 	
 	private static final class FastqRecordWriterImpl implements FastqWriter{
 		
-		
 		private final Writer writer;
 		private final FastqQualityCodec codec;
 		private final boolean writeIdOnQualityLine;
 		private final int numberOfBasesPerLine;
+		
+		private final StringBuilder tempBuilder = new StringBuilder(2000);
 		
 		private FastqRecordWriterImpl(OutputStream out, Charset charset,
 				FastqQualityCodec codec, boolean writeIdOnQualityLine,
@@ -367,11 +366,13 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 			//which would be incorrect.  This way
 			//the char encoding headers (if any) will
 			//only appear at the beginning of the inputstream
-			this.writer =  new BufferedWriter(new OutputStreamWriter(out,charset));
+			this.writer =  new OutputStreamWriter(out,charset);
 			this.codec = codec;
 			this.writeIdOnQualityLine = writeIdOnQualityLine;
 			this.numberOfBasesPerLine = numberOfBasesPerLine;
 		}
+		
+	
 		
 		
 		@Override
@@ -423,6 +424,7 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 		            String reEncodedQualities = reEncodeTrimmedQualities(parsedRecord, recordCodec, trimRange);
 		            
 		            formattedString = toFormattedString(parsedRecord.getId(), encodeNucleotides(parsedRecord.getNucleotideString(), trimRange),
+		                    //trimRange is null here because we already trimmed it during reencoding.
 		                    formatEncodedQualities(reEncodedQualities, null), parsedRecord.getComment());
 		        }
 		        
@@ -487,7 +489,9 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 						String.format("nucleotide and quality sequences must be same length: %d vs %d",nucLength, qualLength));
 			}
 			final String formattedString =toFormattedString(id, encodeNucleotides(sequence.toString(), null), encodeQualities(qualities), optionalComment);
-			
+			//should be threadsafe 
+			//because each call to Writer.write()
+			//synchonizes so each call to write should be atomic.
 			writer.write(formattedString);
 	
 		}
@@ -541,22 +545,22 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 			
 			return builder;
         }
-		private String toFormattedString(String id, CharSequence sequence,
+		private synchronized String toFormattedString(String id, CharSequence sequence,
 				CharSequence encodedQualities, String optionalComment) {
+		        tempBuilder.setLength(0);
 			boolean hasComment = optionalComment != null;
-			int CRlength = CR.length();
 //			int numChars = 2 + (hasComment? optionalComment.length():0) + (writeIdOnQualityLine? 2*id.length() : id.length())  + sequence.length() *2 + CRlength*4;
 			
-			StringBuilder builder = new StringBuilder(sequence.length()*8).append("@").append(id);
+			tempBuilder.append("@").append(id);
 			if (hasComment) {
-				builder.append(' ').append(optionalComment);
+			    tempBuilder.append(' ').append(optionalComment);
 			}
-			builder.append(CR).append(sequence).append(CR).append('+');
+			tempBuilder.append(CR).append(sequence).append(CR).append('+');
 			if (writeIdOnQualityLine) {
-				builder.append(id);
+			    tempBuilder.append(id);
 			}
-			builder.append(CR).append(encodedQualities).append(CR);
-			return builder.toString();
+			tempBuilder.append(CR).append(encodedQualities).append(CR);
+			return tempBuilder.toString();
 		}
 	}
 

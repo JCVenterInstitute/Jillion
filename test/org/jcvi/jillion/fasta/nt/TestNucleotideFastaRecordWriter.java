@@ -28,8 +28,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -276,4 +280,61 @@ public class TestNucleotideFastaRecordWriter {
                 assertEquals(record1, iter.next());
             }
         }
+	
+	
+	@Test
+	public void multiThreadWriter() throws Exception{
+	    //use ExecutorService to reuse the same threads over and over again
+	    //for better performance.
+	    ExecutorService es = Executors.newFixedThreadPool(2);
+	    //run this test many times 
+	    //don't think this is really necessary since
+	    //we use latches to run the writes at as close to exactly 
+	    //the same time as possible but you never know... couldn't hurt.
+	    for(int i=0; i< 200; i++){
+    	        ByteArrayOutputStream out = new ByteArrayOutputStream();
+                try(NucleotideFastaWriter sut = new NucleotideFastaWriterBuilder(out).build()){
+                    
+                    CountDownLatch latch = new CountDownLatch(2);
+                    CountDownLatch doneLatch = new CountDownLatch(2);
+                    
+                    es.submit(()-> {
+                        try{
+                            latch.countDown();
+                            latch.await();
+                            sut.write(record1);                        
+                        }catch(Exception e){
+                            throw new RuntimeException(e);
+                        }finally{
+                            doneLatch.countDown();
+                        }
+                    });
+                    
+                    es.submit( ()-> {
+                        try{
+                            latch.countDown();
+                            latch.await();
+                            sut.write(record2);
+                        }catch(Exception e){
+                            throw new RuntimeException(e);
+                        }finally{
+                            doneLatch.countDown();
+                        }
+                    });
+                    
+                    doneLatch.await();
+                }
+                
+                
+                //verify
+                try(NucleotideFastaDataStore datastore = new NucleotideFastaFileDataStoreBuilder(new ByteArrayInputStream(out.toByteArray()))
+                        .build();
+                        ){
+                    assertEquals(record1, datastore.get(record1.getId()));
+                    assertEquals(record2, datastore.get(record2.getId()));
+                }
+                
+                
+    	}
+	}
 }

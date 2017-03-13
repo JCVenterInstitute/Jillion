@@ -62,7 +62,7 @@ class TmpDirSortedFastqWriter implements FastqWriter{
     }
 
     @Override
-    public void close() throws IOException {
+    public synchronized void close() throws IOException {
         if(isClosed){
             return;
         }
@@ -108,7 +108,7 @@ class TmpDirSortedFastqWriter implements FastqWriter{
         }
         
     }
-    private void writeToCache(FastqRecord record) throws IOException{
+    private synchronized void writeToCache(FastqRecord record) throws IOException{
         cache.add(record);
         if(cache.size() >=cacheSize ){
             writeCacheToTmpFile();

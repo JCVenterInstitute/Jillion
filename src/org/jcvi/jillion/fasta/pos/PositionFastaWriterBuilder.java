@@ -126,10 +126,6 @@ public final class PositionFastaWriterBuilder extends AbstractBuilder<Position, 
 				return " ";
 			}
 
-			@Override
-			protected int numberOfCharsFor(int numberOfSymbols) {
-				return 5*numberOfSymbols;
-			}
 		}
 		
 		

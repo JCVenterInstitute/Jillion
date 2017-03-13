@@ -32,7 +32,6 @@ import java.nio.charset.Charset;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Objects;
-import java.util.function.Function;
 
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -47,8 +46,14 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 	private final int numberOfResiduesPerLine;
 	private final boolean hasSymbolSeparator;
 	private final String eol;
+	/**
+	 * Lock object used to synchronize the recordBuffer.
+	 * This is a performance improvement to re-use the same
+	 * StringBuilder as a buffer for every record we write.
+	 */
+	private final Object lock = new Object();
 	
-	private Function<F,F> mappingFunction = null;
+	private final StringBuilder recordBuffer = new StringBuilder(2000);
 	
 	protected AbstractFastaRecordWriter(OutputStream out,
 			int numberOfResiduesPerLine, Charset charSet, String eol) {
@@ -95,12 +100,16 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 	}
 
     private String toFormattedString(String id, T sequence, String comment) {
-        int bufferSize = computeFormattedBufferSize(id, sequence, comment);
-        final StringBuilder record = new StringBuilder(bufferSize);
-        appendDefline(id, comment, record);
-        appendRecordBody(sequence, record);
-
-        return record.toString();
+       // int bufferSize = computeFormattedBufferSize(id, sequence, comment);
+        String ret;
+        synchronized(lock){
+            recordBuffer.setLength(0);
+            appendDefline(id, comment, recordBuffer);
+            appendRecordBody(sequence, recordBuffer);
+            ret = recordBuffer.toString();
+        
+        }
+        return ret;
     }
 
     private void appendRecordBody(T sequence, final StringBuilder record) {
@@ -138,19 +147,7 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
         record.append(eol);
 	}
     
-    private int computeFormattedBufferSize(String id, T sequence, String comment) {
-    	//extra bytes for '>' and end of line length
-		int defLineSize = 1 + eol.length() + id.length();
-		if(comment!=null){
-			//extra byte for the space
-			defLineSize +=1 + comment.length();
-		}
-		int seqLength=(int)sequence.getLength();
-		int numberOfLines = numberOfResiduesPerLine == AbstractBuilder.ALL_ON_ONE_LINE ? 1 : seqLength/numberOfResiduesPerLine +1;
-		return defLineSize + numberOfCharsFor(seqLength)+ numberOfLines*eol.length();
-	}
-   
-    protected abstract int numberOfCharsFor(int numberOfSymbols);
+ 
     
     public abstract static class AbstractBuilder<S, T extends Sequence<S>,F extends FastaRecord<S,T>, W extends FastaWriter<S, T, F>, B extends AbstractBuilder<S,T,F,W, B>> implements org.jcvi.jillion.core.util.Builder<W>{
 		
@@ -171,7 +168,6 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		
 		private Charset charSet = DEFAULT_CHARSET;
 		
-		private Function<F,F> mappingFunction = null;
 		
 		/**
 		 * Create a new Builder that will use
@@ -218,10 +214,6 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 			numberPerLine(getDefaultNumberOfSymbolsPerLine());
 		}
 		
-		public final B map(Function<F, F> mapper){
-		    this.mappingFunction = mapper;
-		    return getThis();
-		}
 		
 		/**
 		 * Change the {@link Charset} used

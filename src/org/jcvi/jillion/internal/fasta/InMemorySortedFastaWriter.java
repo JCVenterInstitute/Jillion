@@ -42,10 +42,14 @@ public abstract class InMemorySortedFastaWriter<S, T extends Sequence<S>, F exte
 		Objects.requireNonNull(writer);
 		Objects.requireNonNull(comparator);
 		this.writer = writer;
+		//TODO make performance better
+		//is it worth just using a list unsorted
+		//and then make a copy to a sorted array to write out?
+		//would be faster than using concurrentskip list but take 2x the memory
 		sorted = new TreeSet<F>(comparator);
 	}
 	@Override
-	public void close() throws IOException {
+	public synchronized void close() throws IOException {
 		if(closed){
 			return;
 		}
@@ -67,7 +71,7 @@ public abstract class InMemorySortedFastaWriter<S, T extends Sequence<S>, F exte
 	}
 
 	@Override
-	public void write(F record) throws IOException {
+	public synchronized void write(F record) throws IOException {
 		checkNotClosed();
 		sorted.add(record);
 		

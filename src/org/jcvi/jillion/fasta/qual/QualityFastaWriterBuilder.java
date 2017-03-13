@@ -131,11 +131,6 @@ public final class QualityFastaWriterBuilder extends AbstractBuilder<PhredQualit
 		protected String getSymbolSeparator() {
 			return " ";
 		}
-
-		@Override
-		protected int numberOfCharsFor(int numberOfSymbols) {
-			return 3*numberOfSymbols;
-		}
 	}
 	
 	private static final class InMemorySortedPositionFastaWriter extends InMemorySortedFastaWriter<PhredQuality, QualitySequence, QualityFastaRecord> implements QualityFastaWriter{

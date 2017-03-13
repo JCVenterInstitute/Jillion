@@ -52,11 +52,6 @@ public abstract class AbstractResidueFastaWriter<R extends Residue, S extends Re
 	protected String getStringRepresentationFor(R symbol) {
 		return symbol.getCharacter().toString();
 	}
-
-	@Override
-	protected int numberOfCharsFor(int numberOfSymbols) {
-		return numberOfSymbols;
-	}
 	
 	
 	@Override

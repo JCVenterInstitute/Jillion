@@ -61,14 +61,15 @@ public abstract class TmpDirSortedFastaWriter<S, T extends Sequence<S>, F extend
     }
 
     @Override
-    public void close() throws IOException {
+    public synchronized void close() throws IOException {
         if(isClosed){
             return;
         }
+        isClosed=true;
         //we might have records in our inmemory cache
         //as well as temp files.
         //they are each sorted so we can merge them
-        isClosed=true;
+       
         List<StreamingIterator<F>> iters = new ArrayList<>();
         try{
             iters.add(IteratorUtil.createPeekableStreamingIterator(cache.iterator()));
@@ -102,9 +103,8 @@ public abstract class TmpDirSortedFastaWriter<S, T extends Sequence<S>, F extend
            }
            tmpFiles.clear();
         }
-        
     }
-    private void writeToCache(F record) throws IOException{
+    private synchronized void writeToCache(F record) throws IOException{
         cache.add(record);
         if(cache.size() >=cacheSize ){
             writeCacheToTmpFile();
