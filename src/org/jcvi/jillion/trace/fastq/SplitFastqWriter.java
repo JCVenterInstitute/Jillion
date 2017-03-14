@@ -21,14 +21,15 @@
 package org.jcvi.jillion.trace.fastq;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.internal.core.util.Sneak;
 /**
  * Utility class that creates {@link FastqWriter} instances
  * that split the {@link FastqRecord} objects being written out
@@ -244,7 +245,7 @@ public final class SplitFastqWriter{
 
 		private volatile boolean closed = false;
 		
-		private final Map<K, FastqWriter> writers = new HashMap<>();
+		private final Map<K, FastqWriter> writers = new ConcurrentHashMap<>();
 		
 		private final Function<FastqRecord, K> deconvolutionFunction;
 		private final DeconvolveFastqRecordWriterFactory<K> supplier;
@@ -286,21 +287,16 @@ public final class SplitFastqWriter{
 			    //skip
 			    return;
 			}
-			//since we might throw an IOException
-                        //if we call the supplier
-                        //we do a check then act
-                        //which is not threadsafe
-                        //but this writer isn't threadsafe anyway
-                        //so I don't think it matters.
-                        //if we used computIfAbsent(key, supplier)
-                        //we would have to wrap any exception thrown by supplier
-                        //in a runtime exception
-                        FastqWriter writer = writers.get(key);
-                        if(writer==null){
-                            writer = supplier.create(key);
-                            writers.put(key, writer);
-                        }
-			writer.write(record);
+			
+			//now threadsafe AND can throw IOException
+			writers.computeIfAbsent(key, k-> {
+			 try{
+			     return supplier.create(k);   
+			 }catch(IOException e){
+			     throw Sneak.sneakyThrow(e);
+			 }
+			}).write(record);
+			
 		}
 		
 	
@@ -365,13 +361,13 @@ public final class SplitFastqWriter{
 		}
 
 		@Override
-		public void write(FastqRecord record) throws IOException {
+		public synchronized void write(FastqRecord record) throws IOException {
 			updateCurrentWriterIfNeeded();
 			currentWriter.write(record);
 			currentRecordCount++;
 		}
 
-		private void updateCurrentWriterIfNeeded() throws IOException {
+		private synchronized void updateCurrentWriterIfNeeded() throws IOException {
 			checkNotClosed();
 			if (currentRecordCount == recordsPerFile) {
 				if(currentWriter !=null){
@@ -384,15 +380,13 @@ public final class SplitFastqWriter{
 		}
 
 		@Override
-		public void write(String id, NucleotideSequence sequence, QualitySequence qualities) throws IOException {
-			updateCurrentWriterIfNeeded();
-			currentWriter.write(id, sequence,qualities);
-			currentRecordCount++;
+		public synchronized void write(String id, NucleotideSequence sequence, QualitySequence qualities) throws IOException {
+			write(id, sequence, qualities, null);
 
 		}
 
 		@Override
-		public void write(String id, NucleotideSequence sequence, QualitySequence qualities, String optionalComment) throws IOException {
+		public synchronized void write(String id, NucleotideSequence sequence, QualitySequence qualities, String optionalComment) throws IOException {
 			updateCurrentWriterIfNeeded();
 			currentWriter.write(id, sequence,qualities, optionalComment);
 			currentRecordCount++;
@@ -432,7 +426,7 @@ public final class SplitFastqWriter{
 			}
 		}
 		
-		private FastqWriter getCurrentWriter() throws IOException{
+		private synchronized FastqWriter getCurrentWriter() throws IOException{
 			checkNotClosed();
 			FastqWriter writer=  writers[currentIndex];
 			if(writer ==null){
@@ -446,7 +440,7 @@ public final class SplitFastqWriter{
 		}
 
 		@Override
-		public void close() throws IOException {
+		public synchronized void close() throws IOException {
 			if (!closed) {
 				for(FastqWriter writer : writers){
 					IOUtil.closeAndIgnoreErrors(writer);

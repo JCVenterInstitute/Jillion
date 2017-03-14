@@ -29,11 +29,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.JoinedStringBuilder;
+import org.jcvi.jillion.core.util.ThrowingStream;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.ResourceHelper;
@@ -93,7 +96,10 @@ public class TestSplitFastqRollover {
 	public void splitInto10Files() throws IOException, DataStoreException{
 		assertRolloverWorksFor(30);
 	}
-
+	@Test
+        public void multiThreadedWrite() throws IOException, DataStoreException{
+                assertMultiThreadedRolloverWorksFor(30);
+        }
 
 	private void assertRolloverWorksFor(long readsPerFile) throws IOException,
 			DataStoreException {
@@ -122,6 +128,29 @@ public class TestSplitFastqRollover {
 		outputMatchesExpected(actualFiles);
 	}
 	
+	private void assertMultiThreadedRolloverWorksFor(long readsPerFile) throws IOException{
+	    try(FastqWriter writer = createWriter((int)readsPerFile);
+	        ThrowingStream<FastqRecord> stream = datastore.records().parallel();
+	    ){
+	        stream.throwingForEach(fastq -> writer.write(fastq));
+	    }
+
+
+	    List<File> actualFiles = getOutputFiles();
+
+	    double tmp = datastore.getNumberOfRecords()/ (double)readsPerFile;
+	    int remainder = datastore.getNumberOfRecords() % readsPerFile ==0?0 :1;
+	    int expectedNumberPerFile = (int)(tmp + remainder);
+	    assertEquals(JoinedStringBuilder.create(actualFiles)
+	            .transform(File::getName)
+	            .glue(",")
+	            .build(), 
+
+	            expectedNumberPerFile, actualFiles.size());
+
+	    multiThreadOutputMatchesExpected(actualFiles);
+	}
+	
 	private FastqWriter createWriter(int numberOfFiles){		
 		//which makes sorting easy
 		return SplitFastqWriter.rollover(numberOfFiles, 
@@ -131,9 +160,21 @@ public class TestSplitFastqRollover {
 	}
 	
 	
+	private void multiThreadOutputMatchesExpected(List<File> sortedFiles) throws IOException{
+	    Set<String> expectedIds = datastore.ids().collect(Collectors.toSet());
+	    
+	    for(File f : sortedFiles){
+	        try(ThrowingStream<FastqRecord> results = FastqFileReader.read(f).records()){
+	            results.forEach(fastq ->{
+	                assertTrue(fastq.getId(), expectedIds.remove(fastq.getId()));
+	            });
+	        }
+	    }
+	    
+	    assertEquals(Collections.emptySet(), expectedIds);
+	}
 	
-	
-	private void outputMatchesExpected(List<File> sortedFiles) throws IOException, DataStoreException{
+	private void outputMatchesExpected(List<File> sortedFiles) throws IOException{
 		int numFiles = sortedFiles.size();
 		List<StreamingIterator<FastqRecord>> actualIters = new ArrayList<>(numFiles);
 		

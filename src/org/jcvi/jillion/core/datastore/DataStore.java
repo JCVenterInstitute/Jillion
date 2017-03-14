@@ -83,6 +83,24 @@ public interface DataStore<T> extends Closeable{
      * @throws DataStoreClosedException if this {@link DataStore} is closed.
      */
     StreamingIterator<String> idIterator() throws DataStoreException;
+    
+    
+    /**
+     * Get the ids of all the records as a {@link ThrowingStream}.
+     * @apiNote this is the same as {@code idIterator().toThrowingStream()}.
+     * 
+     * @return a new ThrowingStream; will never be null, and never contain
+     * null elements but may be empty.
+     * 
+     * @throws DataStoreException if there is a 
+     * problem creating this iterator.
+     * @throws DataStoreClosedException if this {@link DataStore} is closed.
+     * 
+     * @since 5.3
+     */
+    default ThrowingStream<String> ids() throws DataStoreException{
+        return idIterator().toThrowingStream();
+    }
     /**
      * Get the record in this {@link DataStore} with the given id.
      * @param id the id of the object to fetch; may not be null.

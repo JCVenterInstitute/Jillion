@@ -29,11 +29,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.JoinedStringBuilder;
+import org.jcvi.jillion.core.util.ThrowingStream;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.AfterClass;
@@ -91,6 +94,11 @@ public class TestSplitFastqRoundRobin {
 	public void splitInto10Files() throws IOException, DataStoreException{
 		assertRoundRobinWorksFor(10);
 	}
+	
+	@Test
+        public void multiThreadedWrite() throws IOException, DataStoreException{
+                assertMultiThreadedRoundRobinWorksFor(10);
+        }
 
 
 	private void assertRoundRobinWorksFor(int numFiles) throws IOException,
@@ -126,7 +134,38 @@ public class TestSplitFastqRoundRobin {
 	}
 	
 	
-	
+	private void assertMultiThreadedRoundRobinWorksFor(long numFiles) throws IOException{
+            try(FastqWriter writer = createWriter((int)numFiles);
+                ThrowingStream<FastqRecord> stream = datastore.records().parallel();
+            ){
+                stream.throwingForEach(fastq -> writer.write(fastq));
+            }
+
+
+            List<File> actualFiles = getOutputFiles();
+
+            assertEquals(JoinedStringBuilder.create(actualFiles)
+                    .transform(File::getName)
+                    .glue(",")
+                    .build(), 
+                    
+                    numFiles, actualFiles.size());
+
+            multiThreadOutputMatchesExpected(actualFiles);
+        }
+        private void multiThreadOutputMatchesExpected(List<File> sortedFiles) throws IOException{
+            Set<String> expectedIds = datastore.ids().collect(Collectors.toSet());
+            
+            for(File f : sortedFiles){
+                try(ThrowingStream<FastqRecord> results = FastqFileReader.read(f).records()){
+                    results.forEach(fastq ->{
+                        assertTrue(fastq.getId(), expectedIds.remove(fastq.getId()));
+                    });
+                }
+            }
+            
+            assertEquals(Collections.emptySet(), expectedIds);
+        }
 	
 	private void outputMatchesExpected(List<File> sortedFiles) throws IOException, DataStoreException{
 		int numFiles = sortedFiles.size();

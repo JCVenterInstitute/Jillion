@@ -103,4 +103,5 @@ public interface FastqFileDataStore extends FastqDataStore{
         
         return builder.build();
     }
+   
 }
