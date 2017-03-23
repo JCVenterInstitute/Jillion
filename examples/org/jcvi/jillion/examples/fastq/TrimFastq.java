@@ -22,6 +22,8 @@ package org.jcvi.jillion.examples.fastq;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Function;
 
 import org.jcvi.jillion.core.Range;
@@ -60,7 +62,7 @@ public class TrimFastq {
 	            throws IOException, DataStoreException {
 	        
 	        Trimmer<FastqRecord> bwaTrimmer = BwaQualityTrimmer.createFor(PhredQuality.valueOf(20));
-	        
+	        Set<String> ids = new HashSet<>();
 	        try(   Results parsedFastqs = FastqFileReader.read(fastqFile);
 	                
 	                FastqWriter writer = new FastqWriterBuilder(outputFile)
@@ -71,7 +73,8 @@ public class TrimFastq {
 	                        //uses Jillion's custom ThrowingStream which has methods
 	                        //that can throw exceptions since our writer will throw an IOException
 	                        parsedFastqs.records()
-	                              .filter(fastq -> fastq.getLength() >= minLength)	 
+	                              .filter(fastq -> fastq.getLength() >= minLength)
+	                              .filter(fastq -> ids.contains(fastq.getId()))
 	                              .throwingForEach(fastq -> {
                 	                            Range trimRange = bwaTrimmer.trim(fastq);
                 	                            

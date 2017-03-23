@@ -2,11 +2,16 @@ package org.jcvi.jillion.sam;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Supplier;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.sam.header.SamHeader;
 /**
@@ -111,4 +116,43 @@ public interface SamFileDataStore extends DataStore<SamRecord>{
      * or if the datastore is closed.
      */
     StreamingIterator<SamRecord> getAlignedRecords(String referenceName, Range alignmentRange) throws DataStoreException;
+    
+    /**
+     * Get all the {@link SamRecord}s that aligned to the
+     * given reference within the alignment Ranges given. 
+     * Only {@link SamRecord}s that align to the reference AND the alignment INTERSECTS with at least one of
+     * these ranges will be included in the returned Stream. Please note
+     * to match the output of {@code samtools view} if a record intersects multiple ranges
+     * given, then it will be returned multiple times.
+     * 
+     * @param referenceName the name of the reference to look for.
+     * This name should be in the {@link SamHeader#getReferenceSequences()}.
+     * 
+     * @param alignmentRanges the {@link Range}s along this reference to find alignments for. 
+     * Please Note: to keep compatibility with samtools, the same record could be returned
+     * multiple times if it intersects multiple ranges given.
+     * 
+     * @return a new {@link StreamingIterator} of all the Records that align to the given reference
+     * inside the alignment range.
+     * 
+     * @throws DataStoreException if there is a problem parsing the file
+     * or if the datastore is closed.
+     * 
+     * @since 5.3
+     */
+    default StreamingIterator<SamRecord> getAlignedRecords(String referenceName, Range... alignmentRanges) throws DataStoreException{
+        //to keep with samtools just call each range one after another which causes duplicate records to be returned
+        List<Supplier<StreamingIterator<SamRecord>>> suppliers = new ArrayList<>(alignmentRanges.length);
+        for(Range r : alignmentRanges){
+            Objects.requireNonNull(r, "range can not be null");
+            suppliers.add( () -> {
+                try {
+                    return getAlignedRecords(referenceName, r);
+                } catch (DataStoreException e) {
+                   throw new UncheckedIOException(e);
+                }
+            });
+        }
+        return IteratorUtil.chainStreamingSuppliers(suppliers);
+    }
 }

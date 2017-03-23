@@ -20,13 +20,17 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.util.iter;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.sam.SamRecord;
 
 
 public final class IteratorUtil {
@@ -420,5 +424,24 @@ public final class IteratorUtil {
                 return mapper.apply(iter.next());
             }
         };
+    }
+    @SafeVarargs
+    public static <T> StreamingIterator<T> chainStreamingSuppliers(Supplier<? extends StreamingIterator<? extends T>>... suppliers) {
+        return chainStreamingSuppliers(Arrays.asList(suppliers));
+    }
+        
+    public static <T> StreamingIterator<T> chainStreamingSuppliers(Collection<? extends Supplier<? extends StreamingIterator<? extends T>>> suppliers) {
+        return new ChainedStreamingIteratorFromSuppliers<>(suppliers);
+        
+    }
+    
+    @SafeVarargs
+    public static <T> Iterator<T> chainSuppliers(Supplier<? extends Iterator<? extends T>>... suppliers) {
+        return chainSuppliers(Arrays.asList(suppliers));
+    }
+        
+    public static <T> Iterator<T> chainSuppliers(Collection<? extends Supplier<? extends Iterator<? extends T>>> suppliers) {
+        return ChainedIteratorOfSuppliers.create(suppliers);
+        
     }
 }

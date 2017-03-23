@@ -28,9 +28,13 @@ import java.util.stream.Stream;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.util.GenomeStatistics;
+import org.jcvi.jillion.core.util.ThrowingStream;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaFileReader;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
+import org.jcvi.jillion.trace.fastq.FastqFileReader;
+import org.jcvi.jillion.trace.fastq.FastqFileReader.Results;
 
 public class ComputeN50FromFasta {
 
@@ -51,6 +55,19 @@ public class ComputeN50FromFasta {
 			}
 		}
 	}
+	
+    public void computeN50_5_3(File fastaFile) throws IOException {
+        try (ThrowingStream<NucleotideFastaRecord> fastas = NucleotideFastaFileReader
+                .records(fastaFile);) {
+            OptionalInt n50Value = fastas.map(fasta -> fasta.getLength())
+                    .collect(GenomeStatistics.n50Collector());
+
+            // return value is optional because there might not be any records!
+            if (n50Value.isPresent()) {
+                System.out.println("N50 = " + n50Value.getAsInt());
+            }
+        }
+    }
 	
 	public void computeFilteredNG50(File fastaFile, long extimatedGenomeSize) throws IOException, DataStoreException{
 		try(NucleotideFastaDataStore datastore = new NucleotideFastaFileDataStoreBuilder(fastaFile)

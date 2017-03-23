@@ -53,6 +53,15 @@ public class TestRange{
 
     }
     
+    @Test
+    public void ofSingleWithCoordinateSystem(){
+        Range r = Range.of(CoordinateSystem.RESIDUE_BASED, 10);
+        
+        assertEquals(1, r.getLength());
+        assertEquals(9, r.getBegin());
+        assertEquals(9, r.getEnd());
+    }
+    
     @Test(expected = NullPointerException.class)
     public void getBeinNullCoordinateSystemShouldThrowNPE(){
     	range.getBegin(null);

@@ -24,6 +24,7 @@ import org.jcvi.jillion.core.util.iter.TestAbstractBlockingClosableIteratorExcep
 import org.jcvi.jillion.core.util.iter.TestArrayIterator;
 import org.jcvi.jillion.core.util.iter.TestByteArrayIterator;
 import org.jcvi.jillion.core.util.iter.TestChainedIterator;
+import org.jcvi.jillion.core.util.iter.TestChainedIteratorSupplier;
 import org.jcvi.jillion.core.util.iter.TestCharArrayIterator;
 import org.jcvi.jillion.core.util.iter.TestEmptyIterator;
 import org.jcvi.jillion.core.util.iter.TestIntArrayIterator;
@@ -83,6 +84,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestUnsignedIntArray.class,
         
         TestArrayIterator.class,
+        
+        TestChainedIteratorSupplier.class,
         
         TestGenomeStatistics.class,
         

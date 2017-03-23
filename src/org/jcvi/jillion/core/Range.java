@@ -39,6 +39,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.core.util.Caches;
 import org.jcvi.jillion.internal.core.util.JillionUtil;
@@ -444,6 +445,26 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
         return new Range.Builder(1)
         			.shift(singleCoordinate)
         			.build();
+    }
+    
+    /**
+     * Factory method to build a {@link Range} object.
+     * of length 1 with the given coordinate in 
+     * the  given coordinate system.
+     * @param coordinateSystem the {@link CoordinateSystem} to use; can not be null.
+     * 
+     * @param singleCoordinate only coordinate in this range.
+     * @return a {@link Range}; never null but might 
+     * not be a new instance.
+     * 
+     * @throws NullPointerException if {@link CoordinateSystem} is null.
+     * 
+     * @since 5.3
+     */
+    public static Range of(CoordinateSystem coordinateSystem, long singleCoordinate){
+        return new Range.Builder(1)
+                                .shift(coordinateSystem.getStart(singleCoordinate))
+                                .build();
     }
 
     /**
@@ -3143,5 +3164,7 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
         
         
     }
+
+ 
     
 }
