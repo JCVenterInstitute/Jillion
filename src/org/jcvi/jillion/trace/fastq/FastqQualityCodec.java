@@ -80,6 +80,15 @@ public enum FastqQualityCodec {
 	}
 	;
 
+    /**
+     * Get the default codec most often used.
+     * @return {@link #SANGER}
+     * 
+     * @since 5.3
+     */
+    public static FastqQualityCodec getDefault(){
+        return SANGER;
+    }
 	/**
 	 * Decode the given FASTQ quality encoded String
 	 * into the equivalent {@link QualitySequence}.

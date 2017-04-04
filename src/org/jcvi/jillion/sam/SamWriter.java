@@ -23,8 +23,10 @@ package org.jcvi.jillion.sam;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.io.FileUtil;
+import org.jcvi.jillion.core.util.ThrowingStream;
 import org.jcvi.jillion.sam.header.SamHeader;
 import org.jcvi.jillion.sam.index.BamIndexFileWriterBuilder;
 /**
@@ -116,6 +118,45 @@ public interface SamWriter extends Closeable{
                     .assumeSorted(true)
                     .build();
 	}
+	
+	
+	public static void writeSorted( File inputSamOrBam, File outputBam) throws IOException{
+	    try(SamFileDataStore datastore = SamFileDataStore.fromFile(inputSamOrBam)){
+	        writeSorted(datastore, outputBam);
+	    }
+	}
+	public static void writeSorted( File inputSamOrBam, File outputBam, Predicate<SamRecord> filter) throws IOException{
+            try(SamFileDataStore datastore = SamFileDataStore.fromFile(inputSamOrBam)){
+                writeSorted(datastore, outputBam, filter);
+            }
+        }
+	
+	
+	public static void writeSorted( SamFileDataStore datastore, File outputBam) throws IOException{
+            try (SamWriter writer = SamWriter.newSortedBamWriter(outputBam, datastore.getHeader());
+    
+                 ThrowingStream<SamRecord> stream = datastore.records()) {
+    
+                stream.throwingForEach(record -> writer.writeRecord(record));
+
+            }
+	}
+	
+	public static void writeSorted( SamFileDataStore datastore, File outputBam, Predicate<SamRecord> filter) throws IOException{
+            if(filter ==null){
+                writeSorted(datastore, outputBam);
+                return;
+            }
+	    try (SamWriter writer = SamWriter.newSortedBamWriter(outputBam, datastore.getHeader());
+    
+                 ThrowingStream<SamRecord> stream = datastore.records()) {
+    
+                stream
+                .filter(filter)
+                .throwingForEach(record -> writer.writeRecord(record));
+
+            }
+        }
 	
 	
 }

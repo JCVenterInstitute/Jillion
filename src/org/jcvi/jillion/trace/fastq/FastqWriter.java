@@ -20,13 +20,23 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace.fastq;
 
+import java.io.BufferedWriter;
 import java.io.Closeable;
+import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.ThrowingStream;
+import org.jcvi.jillion.internal.core.util.Sneak;
+import org.jcvi.jillion.trace.fastq.FastqFileReader.Results;
+import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback;
 /**
  * {@code FastqWriter} is an interface
  * that handles writing out {@link FastqRecord}s.
@@ -148,5 +158,144 @@ public interface FastqWriter extends Closeable{
 	 */
 	public static FastqWriter adapt(FastqWriter delegate, Function<FastqRecord, FastqRecord> adapter){
 	    return new FastqWriterAdapter(delegate, adapter);
+	}
+	/**
+	 * Write the contents of the given datastore to the given output file.  
+	 * The output fastq file written will use the same {@link FastqQualityCodec}
+	 * as was used in the input fastq of the datastore.
+	 * 
+	 * @apiNote this is the same as
+	 * {@link #write(FastqFileDataStore, File, FastqQualityCodec) write(datastore, outputFile, datastore.getQualityCodec())}.
+	 * 
+	 * @param datastore the {@link FastqFileDataStore} to write out; can not be null.
+	 * @param outputFile the output file to write the resulting Fastq file to.
+	 * 
+	 * @throws IOException if there are any problems writing out the file.
+	 * @throws NullPointerException if any parameter is null.
+	 * 
+	 * @since 5.3
+	 */
+	public static void write(FastqFileDataStore datastore, File outputFile) throws IOException{
+	    write(datastore, outputFile, datastore.getQualityCodec());
+	}
+	
+	/**
+         * Write the contents of the given datastore to the given output file.  
+         * The output fastq file written will use the same {@link FastqQualityCodec}
+         * as was used in the input fastq of the datastore.
+         * 
+         * 
+         * 
+         * @param datastore the {@link FastqFileDataStore} to write out; can not be null.
+         * @param outputFile the output file to write the resulting Fastq file to.
+         * @param coec the {@link FastqQualityCodec} to use when writing out the output fastq file.
+         * 
+         * @throws IOException if there are any problems writing out the file.
+         * @throws NullPointerException if any parameter is null.
+         * 
+         * @since 5.3
+         */
+	public static void write(FastqFileDataStore datastore, File outputFile, FastqQualityCodec codec) throws IOException{
+	    Objects.requireNonNull(datastore);
+	    
+	    try(FastqWriter writer = new FastqWriterBuilder(outputFile)
+	                                    .qualityCodec(codec)
+	                                    .build();
+	            
+	        ThrowingStream<FastqRecord> stream = datastore.records();
+	            ){
+	        stream.throwingForEach(writer::write);
+	    }
+	}
+	
+	public static void copy(FastqParser in, OutputStream out) throws IOException{
+	    
+            try(Results results = FastqFileReader.read(in);
+                    
+                    FastqWriter writer = new FastqWriterBuilder(out)
+                                            .qualityCodec(results.getCodec())
+                                            .build();
+                    
+                ThrowingStream<FastqRecord> stream = results.records();
+                    ){
+                stream.throwingForEach(writer::write);
+            }
+	}
+	
+	public static void copy(FastqParser in, OutputStream out, Predicate<FastqRecord> filter) throws IOException{
+            
+            try(Results results = FastqFileReader.read(in);
+                    
+                    FastqWriter writer = new FastqWriterBuilder(out)
+                                            .qualityCodec(results.getCodec())
+                                            .build();
+                    
+                ThrowingStream<FastqRecord> stream = results.records();
+                    ){
+                stream.filter(filter)
+                        .throwingForEach(writer::write);
+            }
+        }
+	
+	public static void copyById(FastqParser in, OutputStream out, Predicate<String> idFilter) throws IOException{
+	    
+	    try(BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out))){
+	        in.parse(new AbstractFastqVisitor() {
+               
+	            StringBuilder builder = new StringBuilder(2000);
+                    
+                    @Override
+                    public FastqRecordVisitor visitDefline(FastqVisitorCallback callback,
+                            String id, String optionalComment) {
+                        if(idFilter.test(id)){
+                            builder.setLength(0);
+                            builder.append('@').append(id);
+                            if(optionalComment !=null){
+                                builder.append(' ').append(optionalComment);
+                            }
+                            builder.append('\n');
+                            return new FastqRecordVisitor() {
+                                
+                                @Override
+                                public void visitQualities(QualitySequence qualities) {
+                                    visitEncodedQualities(FastqQualityCodec.getDefault().encode(qualities));
+                                    
+                                }
+                                
+                                @Override
+                                public void visitNucleotides(String nucleotides) {
+                                    builder.append(nucleotides).append('\n');
+                                    
+                                }
+                                
+                                @Override
+                                public void visitEnd() {
+                                    try {
+                                        writer.write(builder.toString());
+                                    } catch (IOException e) {
+                                        Sneak.sneakyThrow(e);
+                                    }
+                                    
+                                }
+                                
+                                @Override
+                                public void visitEncodedQualities(String encodedQualities) {
+                                    builder.append('+').append(encodedQualities).append('\n');
+                                    
+                                }
+                                
+                                @Override
+                                public void halted() {
+                                    // TODO Auto-generated method stub
+                                    
+                                }
+                            };
+                        }
+                        return null;
+                    }
+                    
+                  
+                });
+	    }
 	}
 }

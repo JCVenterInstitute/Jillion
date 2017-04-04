@@ -21,6 +21,13 @@
 package org.jcvi.jillion.core.qual;
 
 import java.util.Arrays;
+import java.util.DoubleSummaryStatistics;
+import java.util.Iterator;
+import java.util.Optional;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
@@ -109,5 +116,47 @@ public interface QualitySequence extends Sequence<PhredQuality>{
      */
     default QualitySequenceBuilder toBuilder(){
         return new QualitySequenceBuilder(this);
+    }
+    
+    /**
+     * Get the Java 8 {@link DoubleSummaryStatistics} of all the
+     * quality values in this sequence.
+     * 
+     * @return an Optional which will be empty if the sequence length is 0
+     * or else a non-null {@link DoubleSummaryStatistics}.
+     * 
+     * @since 5.3
+     */
+    default Optional<DoubleSummaryStatistics> getSummaryStats(){
+        if(getLength() <=0){
+            return Optional.empty();
+        }
+        return Optional.of(StreamSupport.stream(this.spliterator(), false)
+                    .collect(Collectors.summarizingDouble(PhredQuality::getQualityScore)));
+                    
+    }
+    
+    /**
+     * Get the Java 8 {@link DoubleSummaryStatistics} of just the
+     * quality values in this sequence within the specified sub Range.
+     * 
+     * @param subRange the subrange
+     * @return an Optional which will be empty if the sequence length is 0
+     * or else a non-null {@link DoubleSummaryStatistics}.
+     * 
+     * @since 5.3
+     * 
+     * @throws NullPointerException  if range is null.
+     * @throws IndexOutOfBoundsException if Range contains values outside of the possible sequence offsets.
+     */
+    default Optional<DoubleSummaryStatistics> getSummaryStats(Range subRange){
+        Iterator<PhredQuality> iter = this.iterator(subRange);
+        if(!iter.hasNext()){
+            return Optional.empty();
+        }
+       
+        return Optional.of(StreamSupport.stream(Spliterators.spliteratorUnknownSize(iter, Spliterator.ORDERED), false)
+                    .collect(Collectors.summarizingDouble(PhredQuality::getQualityScore)));
+                    
     }
 }

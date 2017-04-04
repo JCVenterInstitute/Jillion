@@ -39,7 +39,9 @@ import org.junit.runners.Suite.SuiteClasses;
         TestDefaultQualitySequence.class,
         TestRunLengthEncodedQualitySequenceImpl.class,
         TestQualitySequenceBuilder.class,
-        TestReallyLongRunLength.class
+        TestReallyLongRunLength.class,
+        
+        TestQualityStatisticsSummary.class
     }
     )
 public class AllPhredQualityTests {
