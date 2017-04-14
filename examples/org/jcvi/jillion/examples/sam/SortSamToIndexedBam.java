@@ -59,6 +59,14 @@ public class SortSamToIndexedBam {
                 
             }
     }
+    /**
+     * Jillion 5.3 added {@link org.jcvi.jillion.core.util.ThrowingStream}  so you 
+     * can use Streams with lambdas that throw exceptions as well as static
+     * helper methods on some interfaces such as SamWriter.
+     */
+    private static void using_version_5_3_helperMethod(File inputBam, File outputBam) throws IOException{
+       SamWriter.writeSorted(inputBam, outputBam);
+    }
     
     /**
      * Jillion 5.2 added {@link SamFileDataStore} so you don't have

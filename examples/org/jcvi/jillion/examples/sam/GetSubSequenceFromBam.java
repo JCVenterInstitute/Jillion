@@ -26,8 +26,7 @@ public class GetSubSequenceFromBam {
           //this is the same as : samtools view aln.sorted.bam chr2:20,100,000-20,200,000 
 
             Stream<SamRecord> aligned = datastore.getAlignedRecords("chr2", 
-                                                    Range.of(CoordinateSystem.RESIDUE_BASED, 20),
-                                                    Range.of(CoordinateSystem.RESIDUE_BASED, 100_000, 20_200_00)
+                                                    Range.of(CoordinateSystem.RESIDUE_BASED, 20_100_000, 20_200_00)
                                                     )
                                                 .toStream();
                 

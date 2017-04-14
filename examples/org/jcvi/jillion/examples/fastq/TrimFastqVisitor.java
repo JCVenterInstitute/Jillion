@@ -79,20 +79,30 @@ public class TrimFastqVisitor {
     }
     
     public static void useDataStore(Trimmer<FastqRecord> bwaTrimmer, Set<String> ids, File fastqFile,
-            File outputFile, int numRecordsToWriter, long minLength) throws IOException{
+            File outputFile, int numRecordsToWrite, long minLength) throws IOException{
         
         try(FastqFileDataStore datastore = new FastqFileDataStoreBuilder(fastqFile)
-                                                    .hint(DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_MEMORY)                                                    
+                                                    .hint(DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_MEMORY)
+                                                    .filter(ids::contains)
                                                     .build();
                 
                 FastqWriter writer = new FastqWriterBuilder(outputFile)
                                                 .qualityCodec(datastore.getQualityCodec())
+                                                .sort(Comparator.comparing(FastqRecord::getId))
                                                 .build();
-                ThrowingStream<String> idStream = datastore.idIterator().toThrowingStream()
-                                                            .sorted()
-                                                            .limit(100);
+                ThrowingStream<FastqRecord> records = datastore.records()
             ){
-            idStream.throwingForEach(id -> writer.write(datastore.get(id)));
+            records
+            .filter(record -> ids.contains(record.getId()) && record.getLength() >= minLength)
+            .flatMap(fastq ->{
+                Range trimRange = bwaTrimmer.trim(fastq);
+                if (trimRange.getLength() >= minLength) {
+                    return Stream.of(fastq.toBuilder().trim(trimRange).build());
+                }
+                return Stream.empty();
+            })
+            .limit(numRecordsToWrite)
+            .throwingForEach(fastq -> writer.write(fastq));
             
         }
     }
