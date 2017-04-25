@@ -34,6 +34,7 @@ import org.jcvi.jillion.core.util.iter.TestPeekableStreamingIterator;
 import org.jcvi.jillion.core.util.iter.TestShortArrayIterator;
 import org.jcvi.jillion.core.util.iter.TestSingleElementIterator;
 import org.jcvi.jillion.core.util.iter.TestStreamingIterator;
+import org.jcvi.jillion.internal.core.util.TestBoundedPriorityQueue;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -97,7 +98,9 @@ import org.junit.runners.Suite.SuiteClasses;
         TestNG75Computations.class,
         TestNG90Computations.class,
         
-        TestThrowingStream.class
+        TestThrowingStream.class,
+        
+        TestBoundedPriorityQueue.class
         
     }
     )

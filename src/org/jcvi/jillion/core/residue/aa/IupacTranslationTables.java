@@ -22,9 +22,12 @@ package org.jcvi.jillion.core.residue.aa;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.jcvi.jillion.core.residue.Frame;
+import org.jcvi.jillion.core.residue.aa.TranslationVisitor.FoundStartResult;
+import org.jcvi.jillion.core.residue.aa.TranslationVisitor.FoundStopResult;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.Triplet;
@@ -277,11 +280,63 @@ public enum IupacTranslationTables implements TranslationTable{
 		}
 		return builder.build();
 	}
+	
+	
+	@Override
+        public void translate(Iterable<Nucleotide> sequence, Frame frame, TranslationVisitor visitor) {
+                if(sequence ==null){
+                        throw new NullPointerException("sequence can not be null");
+                }
+                if(frame ==null){
+                        throw new NullPointerException("frame can not be null");
+                }
+                if(visitor ==null){
+                    throw new NullPointerException("frame can not be null");
+                }
+                //Brian says legacy PFGRC and (BioJava and BioPerl?)
+                //don't correctly handle the 'not first starts'
+                //so if translation table says codon is a start
+                //and we've already seen a start, then make it not the start?
+                Iterator<Nucleotide> iter = sequence.iterator();
+                handleFrame(iter, frame);
+                boolean seenStart=false;
+                long currentOffset=frame.ordinal();
+               
+                while(iter.hasNext()){
+                        Triplet triplet =getNextTriplet(iter);
+                        
+                        if(triplet !=null){
+                                Codon codon =translate(triplet);
+                                if(codon.isStart()){
+                                    FoundStartResult result = visitor.foundStart(currentOffset, codon);
+                                    if(result ==FoundStartResult.STOP){
+                                        break;
+                                    }
+                                    seenStart = result != FoundStartResult.FIND_ADDITIONAL_STARTS;
+                                }else if(seenStart){
+                                    if(codon.isStop()){
+                                        FoundStopResult result = visitor.foundStop(currentOffset, codon);
+                                        if(result == FoundStopResult.STOP){
+                                            break;
+                                        }
+                                        
+                                    }else{
+                                        visitor.visitCodon(currentOffset, codon);
+                                    }
+                                }
+                        }
+                        currentOffset+=3;
+                }
+                visitor.end();
+        }
 	@Override
 	public ProteinSequence translate(Iterable<Nucleotide> sequence, Frame frame, int length) {
 		return translate(sequence, frame, length,true);
 	}
 
+	
+	
+	
 	private Triplet getNextTriplet(Iterator<Nucleotide> iter){
 		
 		Nucleotide first= getNextNucleotide(iter);

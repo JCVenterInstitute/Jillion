@@ -26,6 +26,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 public interface TranslationTable {
 
+        void translate(Iterable<Nucleotide> sequence, Frame frame, TranslationVisitor visitor);
 	/**
 	 * Convenience method for {@link #translate(NucleotideSequence, Frame)}
 	 * using {@link Frame#ZERO}.
