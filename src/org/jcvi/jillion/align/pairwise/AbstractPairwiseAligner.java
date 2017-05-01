@@ -560,11 +560,12 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends ResidueSequ
 			int colOrdinal = initialColDirection.ordinal();
 			
 			byte rowValue = (byte)(rowOrdinal<<6 | rowOrdinal<<4);
-			
+			//top row only
 			for(int i=1; i<matrix[0].length; i++){
 				matrix[0][i] = rowValue;
 			}
-			byte colValue = (byte)(colOrdinal<<2 | colOrdinal);
+			//first column, must set 2 values since we pack 4 points per cell
+			byte colValue = (byte)(colOrdinal<<6| colOrdinal<<2);
 			for(int i=1; i<matrix.length; i++){
 				matrix[i][0] = colValue;
 			}

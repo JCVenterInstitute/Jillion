@@ -166,7 +166,44 @@ public final class PairwiseAlignmentBuilder<R extends Residue, S extends Residue
 		return (A) ProteinNeedlemanWunschAligner.align((ProteinSequence)query, (ProteinSequence)subject, (AminoAcidSubstitutionMatrix)matrix, gapOpen, gapExtension);
 
 	}
-	
+
+    /**
+     * Helper method to programmatically use Local or Global Alignment.
+     * 
+     * @param useLocal
+     *            flag to say which kind of alignment to use. If set to
+     *            {@code true}, this is the same as
+     *            {@link #useGlobalAlignment()}, If set to {@code false}, this is
+     *            the same as {@link #useLocalAlignment()}
+     * @return this
+     * 
+     * @since 5.3
+     */
+    public PairwiseAlignmentBuilder<R,S,A> useGlobalAlignment(boolean useGlobal) {
+        if(useGlobal){
+            return useGlobalAlignment();
+        }
+        return useLocalAlignment();
+    }
+
+    /**
+     * Helper method to programmatically use Local or Global Alignment.
+     * 
+     * @param useLocal
+     *            flag to say which kind of alignment to use. If set to
+     *            {@code true}, this is the same as
+     *            {@link #useLocalAlignment()}, If set to {@code false}, this is
+     *            the same as {@link #useGlobalAlignment()}
+     * @return this
+     * 
+     * @since 5.3
+     */
+    public PairwiseAlignmentBuilder<R,S,A> useLocalAlignment(boolean useLocal) {
+        if(useLocal){            
+            return useLocalAlignment();
+        }
+        return useGlobalAlignment();
+    }
 	
 	
 }

@@ -22,6 +22,9 @@ package org.jcvi.jillion.align.pairwise;
 
 import static org.junit.Assert.assertEquals;
 
+import org.jcvi.jillion.align.NucleotideSubstitutionMatrices;
+import org.jcvi.jillion.align.NucleotideSubstitutionMatrix;
+import org.jcvi.jillion.align.NucleotideSubstitutionMatrixBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.align.NucleotideSequenceAlignmentBuilder;
@@ -122,5 +125,45 @@ public class TestNucleotideNeedlemanWunschAligner extends AbstractTestNucleotide
 		NucleotidePairwiseSequenceAlignment expected = this.createExpectedAlignment("ACGTACGT----", "ACGTACGTNNNN",14);
 		assertEquals(expected, actual);
 		
+	}
+	
+	@Test
+        public void wikipediaExample(){
+                NucleotideSequence seq1 = new NucleotideSequenceBuilder("GCATGCT").build();
+                NucleotideSequence seq2 = new NucleotideSequenceBuilder("GATTACA").build();
+                
+                NucleotideSubstitutionMatrix matrix = new NucleotideSubstitutionMatrixBuilder(-1)
+                                                                .setMatch(1)
+                                                                .build();
+                
+                NucleotidePairwiseSequenceAlignment actual = PairwiseAlignmentBuilder.createNucleotideAlignmentBuilder(seq1, seq2, matrix)
+                                                                                                                                .gapPenalty(-1,-1)
+                                                                                                                                .useGlobalAlignment()
+                                                                                                                                .build();
+        
+                NucleotidePairwiseSequenceAlignment expected = this.createExpectedAlignment("GCA-TGCT", 
+                                                                                            "G-ATTACA",0);
+               
+                assertEquals(expected, actual);
+                
+        }
+	
+	@Test
+	public void regressionAlignment(){
+	    NucleotideSequence A = new NucleotideSequenceBuilder("AATCGGATATAG").build();
+            NucleotideSequence B = new NucleotideSequenceBuilder("CGATA").build();
+            
+            NucleotideSubstitutionMatrix matrix = NucleotideSubstitutionMatrices.getIdentityMatrix();
+            
+            NucleotidePairwiseSequenceAlignment actual = PairwiseAlignmentBuilder.createNucleotideAlignmentBuilder(A,B, matrix)
+                                                                .useGlobalAlignment(true)
+                                                                .gapPenalty(-1)
+                                                                .build();
+            
+            NucleotidePairwiseSequenceAlignment expected = this.createExpectedAlignment("AATCGGATATAG", 
+                    "---C-G--ATA-",
+                    2);
+
+                assertEquals(expected, actual);
 	}
 }
