@@ -26,13 +26,13 @@ import java.io.IOException;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaFileParser;
 import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.aa.ProteinFastaDataStore;
+import org.jcvi.jillion.fasta.aa.ProteinFastaFileDataStore;
 import org.jcvi.jillion.fasta.aa.ProteinFastaRecord;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.internal.fasta.AbstractLargeFastaFileDataStore;
@@ -48,7 +48,7 @@ import org.jcvi.jillion.internal.fasta.AbstractLargeFastaFileDataStore;
  * {@link DataStoreUtil#createNewCachedDataStore(Class, org.jcvi.jillion.core.datastore.DataStore, int)}.
  * @author dkatzel
  */
-public final class LargeProteinFastaFileDataStore extends AbstractLargeFastaFileDataStore<AminoAcid, ProteinSequence, ProteinFastaRecord> implements ProteinFastaDataStore{
+public final class LargeProteinFastaFileDataStore extends AbstractLargeFastaFileDataStore<AminoAcid, ProteinSequence, ProteinFastaRecord> implements ProteinFastaFileDataStore{
 	
 	
 	
@@ -77,7 +77,7 @@ public final class LargeProteinFastaFileDataStore extends AbstractLargeFastaFile
      * @param parser the {@link FastaParser} instance to use, can not be null.
      * @throws NullPointerException if fastaFile is null.
      */
-	public static ProteinFastaDataStore create(FastaParser parser){
+	public static ProteinFastaFileDataStore create(FastaParser parser){
 		return create(parser, DataStoreFilters.alwaysAccept(),null);
 	}
 	/**
@@ -86,7 +86,7 @@ public final class LargeProteinFastaFileDataStore extends AbstractLargeFastaFile
      * @param parser the {@link FastaParser} instance to use, can not be null.
      * @throws NullPointerException if fastaFile is null.
      */
-	public static ProteinFastaDataStore create(FastaParser parser, Predicate<String> filter,  Predicate<ProteinFastaRecord> recordFilter){
+	public static ProteinFastaFileDataStore create(FastaParser parser, Predicate<String> filter,  Predicate<ProteinFastaRecord> recordFilter){
 		return new LargeProteinFastaFileDataStore(parser,filter, recordFilter);
 	}
    

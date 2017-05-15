@@ -25,6 +25,7 @@
  */
 package org.jcvi.jillion.trace.fastq;
 
+import org.jcvi.jillion.core.Defline;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.trace.Trace;
@@ -34,7 +35,7 @@ import org.jcvi.jillion.trace.Trace;
  * @author dkatzel
  *
  */
-public interface FastqRecord extends Trace{
+public interface FastqRecord extends Trace, Defline{
     
 	/**
      * 

@@ -21,8 +21,9 @@
 package org.jcvi.jillion.core.residue.aa;
 
 import java.io.Serializable;
+import java.util.Objects;
+import java.util.function.Function;
 
-import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.ResidueSequence;
 
 /**
@@ -42,4 +43,27 @@ public interface ProteinSequence extends ResidueSequence<AminoAcid, ProteinSeque
 
 	@Override
 	ProteinSequenceBuilder toBuilder();
+	/**
+	 * Convert this sequence into a String using the user defined function 
+	 * to write out each AminoAcid.
+	 * @param toStringFunction  The Function to convert each amino acid
+	 * into a string.  If the function returns {@code null},
+	 * then that amino acid is not included in the resulting output String.
+	 * @return a new String; will never be null, but may be empty
+	 * if either this sequence is empty or the provided function always returns null.
+	 * 
+	 * @throws NullPointerException if toStringFunction is null.
+	 * 
+	 * @apiNote for example, to print each amino acid by its 3 letter code
+	 * instead of the one letter code:
+	 * <pre>
+	 * {@code sequence.toString(AminoAcid::get3LetterAbbreviation)}
+	 * </pre>
+	 * 
+	 * @since 5.3
+	 */
+	@Override
+	default String toString(Function<AminoAcid, String> toStringFunction){
+	    return ResidueSequence.super.toString(toStringFunction);
+	}
 }

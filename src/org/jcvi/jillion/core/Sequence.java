@@ -26,6 +26,9 @@
 package org.jcvi.jillion.core;
 
 import java.util.Iterator;
+import java.util.Objects;
+import java.util.function.Function;
+
 
 /**
  * {@code Sequence} is an interface for an
@@ -90,4 +93,33 @@ public interface Sequence<T> extends Iterable<T>{
      * @since 5.1
      */
     SequenceBuilder<T, ? extends Sequence<T>> toBuilder();
+    
+    
+    /**
+     * Convert this sequence into a String using the user defined function 
+     * to write out each element in this sequence..
+     * @param toStringFunction  The Function to convert each element
+     * into a string.  If the function returns {@code null},
+     * then that element is not included in the resulting output String.
+     * @return a new String; will never be null, but may be empty
+     * if either this sequence is empty or the provided function always returns null.
+     * 
+     * @throws NullPointerException if toStringFunction is null.
+     * 
+     * 
+     * 
+     * @since 5.3
+     */
+    default String toString(Function<T, String> toStringFunction){
+        Objects.requireNonNull(toStringFunction);
+        
+        StringBuilder builder = new StringBuilder((int) getLength()*3);
+        for(T aa : this){
+            String r = toStringFunction.apply(aa);
+            if(r !=null){
+                builder.append(r);
+            }
+        }
+        return builder.toString();
+    }
 }

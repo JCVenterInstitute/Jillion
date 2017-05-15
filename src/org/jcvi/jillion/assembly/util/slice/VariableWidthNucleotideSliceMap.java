@@ -23,12 +23,16 @@ package org.jcvi.jillion.assembly.util.slice;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jcvi.jillion.assembly.AssemblyUtil;
+import org.jcvi.jillion.core.DirectedRange;
+import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -98,16 +102,25 @@ public final class VariableWidthNucleotideSliceMap implements VariableWidthSlice
 		private final int widthPerSlice;
 		private final NucleotideSequence trimmedGappedReferenceSequence;
 
-		private final List<Range> gappedExons;
+		private final List<DirectedRange> gappedExons;
 		
 		
 		public Builder(NucleotideSequence gappedReferenceSequence, int ungappedWidthPerSlice){
-			this(gappedReferenceSequence, ungappedWidthPerSlice, Range.ofLength(gappedReferenceSequence.getLength()));
+			this(gappedReferenceSequence, ungappedWidthPerSlice, DirectedRange.create(Range.ofLength(gappedReferenceSequence.getLength())));
 		}
 		public Builder(NucleotideSequence gappedReferenceSequence, int ungappedWidthPerSlice, Range...gappedExons){
-			this.gappedExons = Arrays.asList(gappedExons);
+		    this(gappedReferenceSequence, ungappedWidthPerSlice, Arrays.stream(gappedExons)
+		            .map(DirectedRange::create)
+		            .collect(Collectors.toList()));
+		}
+		
+		public Builder(NucleotideSequence gappedReferenceSequence, int ungappedWidthPerSlice, DirectedRange...gappedExons){
+		    this(gappedReferenceSequence, ungappedWidthPerSlice, Arrays.asList(gappedExons));
+		}
+		private Builder(NucleotideSequence gappedReferenceSequence, int ungappedWidthPerSlice, List<DirectedRange> gappedExons){
+		    this.gappedExons = gappedExons;
 			//sort list incase it's out of order
-			Collections.sort(this.gappedExons, Range.Comparators.ARRIVAL);
+			Collections.sort(this.gappedExons, Comparator.comparing(DirectedRange::asRange, Range.Comparators.ARRIVAL));
 			
 			this.trimmedGappedReferenceSequence = getSplicedSequenceFor(gappedReferenceSequence, 0);
 
@@ -144,28 +157,49 @@ public final class VariableWidthNucleotideSliceMap implements VariableWidthSlice
 														.shift(startOffset)
 														.build();
 			//check to make sure we intersect the exons somewhere...
-			Optional<Range> intersect =gappedExons.stream()
-											.filter(exon -> exon.intersects(gappedFullReferenceRange))
+			Optional<DirectedRange> intersect =gappedExons.stream()
+											.filter(exon -> exon.asRange().intersects(gappedFullReferenceRange))
 											.findAny();
 			if(!intersect.isPresent()){
 				//sequence doesn't intersect any exons 
 				return new NucleotideSequenceBuilder().build();
 				
 			}
-			List<Range> gappedIntrons = gappedFullReferenceRange.complement(this.gappedExons);
-			
-			NucleotideSequenceBuilder trimmedGappedReferenceBuilder =new NucleotideSequenceBuilder(gappedReferenceSequence);
-			//iterate backwards to avoid having to shift coordinates
-			for(int i= gappedIntrons.size()-1; i>=0; i--){
-				//have to re-shift by start offset to get into read coord space
-				Range refRangeToDelete = gappedIntrons.get(i);
-				Range seqRangeToDelete = new Range.Builder(refRangeToDelete)
-													.shift(-startOffset)
-													.build();
-				trimmedGappedReferenceBuilder.delete(seqRangeToDelete);
+			long seqLength = gappedReferenceSequence.getLength();
+			Range fullSeqRange = Range.ofLength(seqLength);
+			NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder((int) seqLength);
+			//gappedExons should be sorted
+			for(DirectedRange dr : gappedExons){
+			    Range seqRange = new Range.Builder(dr.asRange())
+                                                                  .shift(-startOffset)
+                                                                  .build();
+			    Range seqRangeToKeep = seqRange.intersection(fullSeqRange);
+			    
+			    if(seqRangeToKeep.isEmpty()){
+			        continue;
+			    }
+			    NucleotideSequenceBuilder exon = gappedReferenceSequence.toBuilder(seqRangeToKeep);
+			    if(dr.getDirection() == Direction.REVERSE){
+			        exon.reverseComplement();
+			    }
+			    builder.append(exon);
 			}
+			return builder.build();
 			
-			return trimmedGappedReferenceBuilder.build();
+//			List<Range> gappedIntrons = gappedFullReferenceRange.complementOf(this.gappedExons);
+//			
+//			NucleotideSequenceBuilder trimmedGappedReferenceBuilder =new NucleotideSequenceBuilder(gappedReferenceSequence);
+//			//iterate backwards to avoid having to shift coordinates
+//			for(int i= gappedIntrons.size()-1; i>=0; i--){
+//				//have to re-shift by start offset to get into read coord space
+//				Range refRangeToDelete = gappedIntrons.get(i);
+//				Range seqRangeToDelete = new Range.Builder(refRangeToDelete)
+//													.shift(-startOffset)
+//													.build();
+//				trimmedGappedReferenceBuilder.delete(seqRangeToDelete);
+//			}
+//			
+//			return trimmedGappedReferenceBuilder.build();
 		}
 		private NucleotideSequence computeNumberOfGappedBasesReferenceSlice(int ungappedWidthPerSlice, Iterator<Nucleotide> iter){
 			NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(ungappedWidthPerSlice *2);
@@ -214,7 +248,7 @@ public final class VariableWidthNucleotideSliceMap implements VariableWidthSlice
 			//we need to subtract the gapped length of our introns
 			
 			Range upstreamOfRead = 	Range.ofLength(offset);
-			List<Range> upstreamIntrons = upstreamOfRead.complement(gappedExons);
+			List<Range> upstreamIntrons = upstreamOfRead.complementOf(gappedExons);
 			if(upstreamIntrons.isEmpty()){
 				//the splicedStartOffset doesn't take into account any bases 
 				//BEFORE THE exons so we have to still adjust it to get it into

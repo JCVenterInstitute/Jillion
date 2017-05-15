@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 
+import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -35,6 +36,9 @@ public class CodonSliceMapBuilder{
 	private VariableWidthNucleotideSliceMap.Builder builder;
 	private final RnaEdit rnaEdit;
 	
+	public static CodonSliceMapBuilder create(NucleotideSequence fullgappedSequence, Collection<DirectedRange> ungappedExons){
+	    return new CodonSliceMapBuilder(ungappedExons, fullgappedSequence);
+	}
 	
 	public CodonSliceMapBuilder(NucleotideSequence fullgappedSequence, Range ungappedExon){
 		this.builder = new VariableWidthNucleotideSliceMap.Builder(fullgappedSequence, 3,ungappedExon);
@@ -45,6 +49,18 @@ public class CodonSliceMapBuilder{
 									ungappedExons.toArray(new Range[ungappedExons.size()]));
 		this.rnaEdit = null;
 	}
+	//order of parameters different to differentiate after type erasure...
+	private CodonSliceMapBuilder(Collection<DirectedRange> ungappedExons, NucleotideSequence fullgappedSequence){
+	    //convert ungapped to gapped
+	    DirectedRange[] gappedExons = new DirectedRange[ungappedExons.size()];
+	    int i=0;
+	    for(DirectedRange r : ungappedExons){
+	        gappedExons[i++] = DirectedRange.create(fullgappedSequence.toGappedRange(r.getRange()), r.getDirection());
+	    }
+	    
+            this.builder = new VariableWidthNucleotideSliceMap.Builder(fullgappedSequence, 3, gappedExons);
+            this.rnaEdit = null;
+    }
 	
 	public CodonSliceMapBuilder(NucleotideSequence fullgappedSequence, Range ungappedExon, RnaEdit rnaEdit){
 		this.rnaEdit = rnaEdit;

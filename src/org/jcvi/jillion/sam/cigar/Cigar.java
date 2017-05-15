@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -38,6 +39,8 @@ import org.jcvi.jillion.core.util.iter.IteratorUtil;
  *
  */
 public final class Cigar implements Iterable<CigarElement>{
+    
+        private static Pattern REMOVE_WHITESPACE = Pattern.compile("\\s+");
 	/**
 	 * Singleton instance of an empty {@link Cigar}.
 	 */
@@ -87,7 +90,8 @@ public final class Cigar implements Iterable<CigarElement>{
 	 * @throws IllegalArgumentException if the cigarString is invalild.
 	 */
 	public static Cigar parse(String cigarString){
-		String trimmedString = cigarString.trim();
+	    //some tools like exonerate have whitespace
+		String trimmedString = REMOVE_WHITESPACE.matcher(cigarString).replaceAll("");
 		if(trimmedString.isEmpty()){
 			throw new IllegalArgumentException("cigar string can not be null");
 		}

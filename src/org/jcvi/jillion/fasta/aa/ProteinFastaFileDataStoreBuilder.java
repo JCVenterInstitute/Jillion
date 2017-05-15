@@ -44,7 +44,7 @@ import org.jcvi.jillion.shared.fasta.AbstractFastaFileDataStoreBuilder;
  * @author dkatzel
  *
  */
-public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDataStoreBuilder<AminoAcid, ProteinSequence, ProteinFastaRecord, ProteinFastaDataStore> {
+public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDataStoreBuilder<AminoAcid, ProteinSequence, ProteinFastaRecord, ProteinFastaFileDataStore> {
     /**
      * Create a new Builder instance
      * that will build a {@link ProteinFastaDataStore} using
@@ -107,7 +107,7 @@ public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDat
 	 * @throws IOException if there is a problem creating the datastore from the file.
 	 */
 	@Override
-	protected ProteinFastaDataStore createNewInstance(FastaParser parser, DataStoreProviderHint hint, Predicate<String> filter,  Predicate<ProteinFastaRecord> recordFilter)
+	protected ProteinFastaFileDataStore createNewInstance(FastaParser parser, DataStoreProviderHint hint, Predicate<String> filter,  Predicate<ProteinFastaRecord> recordFilter)
 			throws IOException {
 		if(parser.isReadOnceOnly()){
 			return DefaultProteinFastaDataStore.create(parser,filter, recordFilter);
@@ -155,7 +155,7 @@ public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDat
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ProteinFastaDataStore build() throws IOException {
+	public ProteinFastaFileDataStore build() throws IOException {
 		return super.build();
 	}
 	

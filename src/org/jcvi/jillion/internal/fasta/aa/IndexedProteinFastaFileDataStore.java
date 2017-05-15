@@ -29,19 +29,17 @@ import java.util.function.Predicate;
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaFileParser;
 import org.jcvi.jillion.fasta.FastaParser;
-import org.jcvi.jillion.fasta.FastaRecord;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.fasta.FastaVisitorCallback.FastaVisitorMemento;
 import org.jcvi.jillion.fasta.aa.AbstractProteinFastaRecordVisitor;
-import org.jcvi.jillion.fasta.aa.ProteinFastaDataStore;
+import org.jcvi.jillion.fasta.aa.ProteinFastaFileDataStore;
 import org.jcvi.jillion.fasta.aa.ProteinFastaRecord;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 
@@ -70,7 +68,7 @@ public final class IndexedProteinFastaFileDataStore{
 	 * @throws IOException if the input fasta file does not exist or could not be read.
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
-	public static ProteinFastaDataStore create(File fastaFile) throws IOException{
+	public static ProteinFastaFileDataStore create(File fastaFile) throws IOException{
 		return create(fastaFile, DataStoreFilters.alwaysAccept(), null);
 	}
 	
@@ -86,7 +84,7 @@ public final class IndexedProteinFastaFileDataStore{
 	 * @throws IOException if the input fasta file does not exist or could not be read.
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
-	public static ProteinFastaDataStore create(File fastaFile, Predicate<String> filter,  Predicate<ProteinFastaRecord> recordFilter) throws IOException{
+	public static ProteinFastaFileDataStore create(File fastaFile, Predicate<String> filter,  Predicate<ProteinFastaRecord> recordFilter) throws IOException{
 		FastaParser parser = FastaFileParser.create(fastaFile);
 		return create(parser, filter, recordFilter);
 	}
@@ -103,7 +101,7 @@ public final class IndexedProteinFastaFileDataStore{
 	 * @throws IOException if the input fasta file does not exist or could not be read.
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
-	public static ProteinFastaDataStore create(FastaParser parser, Predicate<String> filter,  Predicate<ProteinFastaRecord> recordFilter) throws IOException{
+	public static ProteinFastaFileDataStore create(FastaParser parser, Predicate<String> filter,  Predicate<ProteinFastaRecord> recordFilter) throws IOException{
 
 		IndexedProteinFastaDataStoreBuilderVisitor builder = new IndexedProteinFastaDataStoreBuilderVisitor(parser, filter, recordFilter);
 		builder.initialize();
@@ -114,7 +112,7 @@ public final class IndexedProteinFastaFileDataStore{
 	
 	
 	
-	private static final class IndexedProteinFastaDataStoreBuilderVisitor implements FastaVisitor, Builder<ProteinFastaDataStore> {
+	private static final class IndexedProteinFastaDataStoreBuilderVisitor implements FastaVisitor, Builder<ProteinFastaFileDataStore> {
 	
 		private final Predicate<String> filter;
 		private final  Predicate<ProteinFastaRecord> recordFilter;
@@ -175,13 +173,13 @@ public final class IndexedProteinFastaFileDataStore{
 		}
 
 		@Override
-		public ProteinFastaDataStore build() {
+		public ProteinFastaFileDataStore build() {
 			return new Impl(parser, filter, recordFilter, mementos);
 		}
 	
 	}
 	
-	public static final class Impl implements ProteinFastaDataStore {
+	public static final class Impl implements ProteinFastaFileDataStore {
 		private volatile boolean closed =false;
 		private final FastaParser parser;
 		private final Predicate<String> filter;

@@ -23,6 +23,7 @@
  */
 package org.jcvi.jillion.fasta;
 
+import org.jcvi.jillion.core.Defline;
 import org.jcvi.jillion.core.Sequence;
 
 
@@ -34,22 +35,8 @@ import org.jcvi.jillion.core.Sequence;
  * @author jsitz
  * @author dkatzel
  */
-public interface FastaRecord<S,T extends Sequence<S>>
-{
-
+public interface FastaRecord<S,T extends Sequence<S>> extends Defline{
 	 /**
-     * Get the Id of this record.
-     * @return A <code>String</code>.
-     */
-    String getId();
-
-    /**
-     * Get the comment (if any) associated with this record.
-     * @return A <code>String</code> of the comment
-     * or {@code null} if there is no comment.
-     */
-    String getComment();
-    /**
      * Get the Sequence associated with this record.
      * @return a Sequence, never null.
      */

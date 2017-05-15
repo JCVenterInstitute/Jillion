@@ -36,7 +36,7 @@ import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.fasta.aa.AbstractProteinFastaRecordVisitor;
-import org.jcvi.jillion.fasta.aa.ProteinFastaDataStore;
+import org.jcvi.jillion.fasta.aa.ProteinFastaFileDataStore;
 import org.jcvi.jillion.fasta.aa.ProteinFastaRecord;
 import org.jcvi.jillion.internal.fasta.AdaptedFastaDataStore;
 
@@ -45,41 +45,41 @@ public final class DefaultProteinFastaDataStore{
 	private DefaultProteinFastaDataStore(){		
 		//can not instantiate
 	}
-	public static ProteinFastaDataStore create(File fastaFile) throws IOException{
+	public static ProteinFastaFileDataStore create(File fastaFile) throws IOException{
 		DefaultProteinFastaDataStoreBuilder builder = createBuilder();
 		return parseFile(fastaFile, builder);
 	}
 	
-	public static ProteinFastaDataStore create(InputStream in) throws IOException{
+	public static ProteinFastaFileDataStore create(InputStream in) throws IOException{
 		DefaultProteinFastaDataStoreBuilder builder = createBuilder();
 		return parseFile(in, builder);
 	}
-	public static ProteinFastaDataStore create(File fastaFile, Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter) throws IOException{
+	public static ProteinFastaFileDataStore create(File fastaFile, Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter) throws IOException{
 		DefaultProteinFastaDataStoreBuilder builder = createBuilder(filter, recordFilter);
 		return parseFile(fastaFile, builder);
 	}
-	public static ProteinFastaDataStore create(FastaParser parser, Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter) throws IOException{
+	public static ProteinFastaFileDataStore create(FastaParser parser, Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter) throws IOException{
 		DefaultProteinFastaDataStoreBuilder builder = createBuilder(filter, recordFilter);
 		return create(parser, builder);
 	}
-	public static ProteinFastaDataStore create(FastaParser parser) throws IOException{
+	public static ProteinFastaFileDataStore create(FastaParser parser) throws IOException{
 		DefaultProteinFastaDataStoreBuilder builder = createBuilder();
 		return create(parser, builder);
 	}
-	public static ProteinFastaDataStore create(InputStream in, Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter) throws IOException{
+	public static ProteinFastaFileDataStore create(InputStream in, Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter) throws IOException{
 		DefaultProteinFastaDataStoreBuilder builder = createBuilder(filter, recordFilter);
 		return parseFile(in, builder);
 	}
-	private static ProteinFastaDataStore parseFile(InputStream in, DefaultProteinFastaDataStoreBuilder visitor) throws IOException{
+	private static ProteinFastaFileDataStore parseFile(InputStream in, DefaultProteinFastaDataStoreBuilder visitor) throws IOException{
 		FastaParser parser = FastaFileParser.create(in);
 		return create(parser, visitor);
 	}
-	private static ProteinFastaDataStore create(FastaParser parser,
+	private static ProteinFastaFileDataStore create(FastaParser parser,
 			DefaultProteinFastaDataStoreBuilder builder) throws IOException {
 		parser.parse(builder);
 		return builder.build();
 	}
-	private static ProteinFastaDataStore parseFile(File fastaFile, DefaultProteinFastaDataStoreBuilder visitor) throws IOException{
+	private static ProteinFastaFileDataStore parseFile(File fastaFile, DefaultProteinFastaDataStoreBuilder visitor) throws IOException{
 		FastaParser parser = FastaFileParser.create(fastaFile);
 		return create(parser, visitor);
 	}
@@ -89,7 +89,7 @@ public final class DefaultProteinFastaDataStore{
 	private static DefaultProteinFastaDataStoreBuilder createBuilder(Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter){
 		return new DefaultProteinFastaDataStoreBuilder(filter, recordFilter);
 	}
-	private static final class DefaultProteinFastaDataStoreBuilder implements FastaVisitor, Builder<ProteinFastaDataStore>{
+	private static final class DefaultProteinFastaDataStoreBuilder implements FastaVisitor, Builder<ProteinFastaFileDataStore>{
 
 		private final Map<String, ProteinFastaRecord> fastaRecords = new LinkedHashMap<String, ProteinFastaRecord>();
 		
@@ -129,8 +129,8 @@ public final class DefaultProteinFastaDataStore{
 			//no-op			
 		}
 		@Override
-		public ProteinFastaDataStore build() {
-			return DataStoreUtil.adapt(ProteinFastaDataStore.class, new AdaptedFastaDataStore<>(fastaRecords));
+		public ProteinFastaFileDataStore build() {
+			return DataStoreUtil.adapt(ProteinFastaFileDataStore.class, new AdaptedFastaDataStore<>(fastaRecords));
 		}
 		
 	}

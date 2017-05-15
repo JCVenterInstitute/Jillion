@@ -66,6 +66,12 @@ public class TestCigar {
 		TestUtil.assertEqualAndHashcodeSame(cigar1, cigar2);
 	}
 	@Test
+        public void withWhiteSpace(){
+                Cigar cigar1 = Cigar.parse("8 M 2 I 4 0 M 1 D 3 M");
+                Cigar cigar2 = Cigar.parse("8M2I40M1D3M");
+                TestUtil.assertEqualAndHashcodeSame(cigar1, cigar2);
+        }
+	@Test
 	public void diffValuesEqual(){
 		Cigar cigar1 = Cigar.parse("8M2I40M1D3M");
 		Cigar cigar2 = Cigar.parse("6H5M");
