@@ -187,7 +187,8 @@
 	            <junit haltonfailure="no" showoutput="yes"
 					errorproperty="unit.test.failed"
 					failureproperty="unit.test.failed"
-					fork="true">
+					fork="true"
+					maxmemory="2g">
 	                <formatter type="xml"/>
 	                <test name="${test}"/>
 	                <classpath refid="test.classpath"/>
@@ -204,7 +205,8 @@
 	        	haltonfailure="no" showoutput="yes"
 				errorproperty="unit.test.failed"
 				failureproperty="unit.test.failed"
-				fork="true">
+				fork="true"
+				maxmemory="2g">
 	            <formatter type="xml"/>
 	            <test name="${test}"/>
 	            <classpath refid="test.classpath"/>

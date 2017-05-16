@@ -103,7 +103,8 @@
 			            <goal>test</goal>
 			          </goals>
 			          <phase>prepare-package</phase> <!--  only run these during before building jar since they take so long-->
-					<configuration>
+				  <configuration>
+				    <argLine>-Xmx2g</argLine>
 						<includes>
 							<include>org/jcvi/jillion/SlowUnitTests.java</include>
 						</includes>
