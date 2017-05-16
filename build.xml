@@ -11,8 +11,10 @@
 	<property name="bin" value ="bin_ant"/>
 	<property name="reports" value ="reports"/>
 	<property name="src" value ="src"/>
-	<property name="test" value ="test"/>
-	<property name ="test-lib" value="test-lib"/>
+	<property name="test-src" value ="test"/>
+	<property name="test-lib" value="test-lib"/>
+	<!-- name of individual test to run -->
+	<property name="test" value="org.jcvi.jillion.AllUnitTests" />
 	
 	<property name="jacoco.report.dir" location="${reports}/jacoco"/>
 	<property name="jacoco.output.file" location="${reports}/jacoco.exec"/>
@@ -109,14 +111,14 @@
 		<javac debug="true" 
 			source="${jdk.version}" target="${jdk.version}"
 			destdir="${bin}"  classpathref="test.classpath" includeantruntime="false">
-					<src path="${test}"/>
+					<src path="${test-src}"/>
 		
 			
 			
 	  	</javac>
 		
 		<copy todir="${bin}">
-			<fileset dir="${test}" excludes="**/*.java"/>
+			<fileset dir="${test-src}" excludes="**/*.java"/>
 		</copy>
 
 	 </target>
@@ -187,8 +189,7 @@
 					failureproperty="unit.test.failed"
 					fork="true">
 	                <formatter type="xml"/>
-
-	                <test name="org.jcvi.jillion.AllUnitTests"/>
+	                <test name="${test}"/>
 	                <classpath refid="test.classpath"/>
 	            </junit>
 	        </jacoco:coverage>
@@ -205,7 +206,7 @@
 				failureproperty="unit.test.failed"
 				fork="true">
 	            <formatter type="xml"/>
-	            <test name="org.jcvi.jillion.AllUnitTests"/>
+	            <test name="${test}"/>
 	            <classpath refid="test.classpath"/>
 	        </junit>
 	    </target>
