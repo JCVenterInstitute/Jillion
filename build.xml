@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Jillion" default="unit.tests" basedir="." 
 	xmlns:jacoco="antlib:org.jacoco.ant"
-	
 	>
 	
 	<!--Used to set the required version of Java that RUNS the jars -->
 	<property name="jdk.version" value="1.8" />
-	<property name="version" value="5.0" />
+
+	<!-- read the version from the pom.xml -->
+	<delete file="version.txt" quiet="true" failonerror="false" />
+	<xslt in="pom.xml" out="version.txt" style="version.xsl" /> 
+	<loadfile srcFile="version.txt"
+		  property="version"
+		  failonerror="false" />
+	<delete file="version.txt" quiet="true" failonerror="false" />
+	<!-- fallback value -->
+	<property name="version" value="5.3-SNAPSHOT" />
+	
 	<property name="project-name" value="Jillion" />
 	<property name="bin" value ="bin_ant"/>
 	<property name="reports" value ="reports"/>
