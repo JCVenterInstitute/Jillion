@@ -24,17 +24,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.jcvi.jillion.sam.header.SamHeader;
 
 public class ReplayableMockSamVisitor implements SamVisitor{
 	private boolean expectationMode=true;
-	private Iterator<SamRecord> expectedIterator;
+	private Iterator<String> expectedIterator;
 	
-	private final List<SamRecord> expected = new ArrayList<>();
+	private final List<String> expected = new LinkedList<>();
 
 	private SamHeader expectedHeader;
 	
@@ -64,10 +64,10 @@ public class ReplayableMockSamVisitor implements SamVisitor{
 	public void visitRecord(SamVisitorCallback callback, SamRecord record,
 			VirtualFileOffset start, VirtualFileOffset end) {
 		if(expectationMode){
-			expected.add(record);
+			expected.add(record.getQueryName());
 		}else{
 			assertTrue(expectedIterator.hasNext());
-			assertEquals(expectedIterator.next(), record);
+			assertEquals(expectedIterator.next(), record.getQueryName());
 		}
 	}
 
