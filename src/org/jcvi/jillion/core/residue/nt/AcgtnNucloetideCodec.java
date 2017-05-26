@@ -20,10 +20,12 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.nt;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Ranges;
 
 /**
  * {@code AcgtnNucloetideCodec} is a special version
@@ -120,5 +122,12 @@ final class AcgtnNucloetideCodec extends AbstractTwoBitEncodedNucleotideCodec{
     public int getGappedOffsetFor(byte[] encodedGlyphs, int ungappedOffset) {
         return ungappedOffset;
     }
+
+	@Override
+	public List<Range> getNRanges(byte[] encodedData) {
+		//the sentinel is N
+		return Ranges.asRanges(getSentinelOffsets(encodedData).toArray());
+		
+	}
 
 }

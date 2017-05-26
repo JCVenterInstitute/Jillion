@@ -21,7 +21,12 @@
 package org.jcvi.jillion.core.residue.nt;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 /**
  * Encodes each Nucleotide as 4 bits.
  * @author dkatzel
@@ -83,4 +88,48 @@ final class BasicNucleotideCodec extends AbstractNucleotideCodec{
 	protected int getNucleotidesPerGroup() {
 		return 2;
 	}
+	
+	
+	@Override
+	public List<Range> getNRanges(byte[] encodedData){
+    	List<Range> ranges = new ArrayList<>();
+    	Iterator<Nucleotide> iter = iterator(encodedData);
+    	int offset=0;
+    	Range.Builder currentBuilder = null;
+    	while(iter.hasNext()){
+    		Nucleotide n = iter.next();
+    		if(n == Nucleotide.Unknown){
+    			if(currentBuilder == null){
+    				currentBuilder = new Range.Builder(1)
+    										.shift(offset);
+    			}else{
+    				//do we grow or make a new one?
+    				if(currentBuilder.getEnd() == offset -1){
+    					//grow
+    					currentBuilder.expandEnd(1);
+    				}else{
+    					//new range
+    					ranges.add(currentBuilder.build());
+    					
+    					currentBuilder = new Range.Builder(1)
+								.shift(offset);
+    				}
+    			}
+    		}
+    		offset++;
+    	}
+    	if(currentBuilder !=null){
+    		ranges.add(currentBuilder.build());
+			
+    	}
+    	return ranges;
+    }
+	
+	@Override
+	public List<Integer> getGapOffsets(byte[] encodedData) {
+		GrowableIntArray array = this.getSentinelOffsets(encodedData);
+		
+		return array.toBoxedList();
+	}
+    
 }

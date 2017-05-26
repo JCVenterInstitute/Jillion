@@ -216,6 +216,11 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
         public NucleotideSequenceBuilder toBuilder(Range range) {
             return delegate.toBuilder();
         }
+
+        @Override
+        public List<Range> getRangesOfNs() {
+            return delegate.getRangesOfNs();
+        }
 		
 		
 		

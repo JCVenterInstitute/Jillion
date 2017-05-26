@@ -244,6 +244,14 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
 	    public NucleotideSequence asSubtype(){
 	        return this;
 	    }
+
+
+
+
+	@Override
+	public List<Range> getRangesOfNs() {
+		return codec.getNRanges(data);
+	}
 	
 	
 }

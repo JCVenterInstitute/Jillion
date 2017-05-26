@@ -30,6 +30,7 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.util.iter.SingleElementIterator;
 import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
 import org.jcvi.jillion.internal.core.util.ArrayUtil;
+import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
 
 /**
@@ -209,11 +210,9 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
 	        return sentinelStrategy.getNext(buf);
 	    }
         
-		/**
-	    * {@inheritDoc}
-	    */
-	    @Override
-	    public List<Integer> getGapOffsets(byte[] encodedGlyphs) {
+		
+		
+	    protected GrowableIntArray getSentinelOffsets(byte[] encodedGlyphs){
 	    	ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
 			ValueSizeStrategy offsetStrategy = ValueSizeStrategy.values()[buf.get()];
 	        //need to skip length since we don't care about it
@@ -221,18 +220,18 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
 			offsetStrategy.getNext(buf);
 			ValueSizeStrategy sentinelStrategy = VALUE_SIZE_STRATEGIES[buf.get()];
             if(sentinelStrategy == ValueSizeStrategy.NONE){
-            	return Collections.<Integer>emptyList();
-            }else{            	
-            	//there are gaps
+            	return new GrowableIntArray();
+        	}else{            	
+            	//there are sentinels
             	int numberOfSentinels = sentinelStrategy.getNext(buf);
-            	int[] sentinelOffsets = new int[numberOfSentinels];
+            	GrowableIntArray sentinelOffsets = new GrowableIntArray(numberOfSentinels);
             	for(int i = 0; i< numberOfSentinels; i++){
-            		sentinelOffsets[i] = offsetStrategy.getNext(buf);            	
+            		sentinelOffsets.append(offsetStrategy.getNext(buf));            	
             	}
-            	return ArrayUtil.asList(sentinelOffsets);
+            	return sentinelOffsets;
             }
 	    }
-		
+	    
 		@Override
 		public int getNumberOfGapsUntil(byte[] encodedGlyphs, int gappedOffset) {
 			ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);

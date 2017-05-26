@@ -27,7 +27,11 @@ package org.jcvi.jillion.core.residue.nt;
 
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.ResidueSequence;
 /**
  * {@code NucleotideSequence} an interface to abstract
@@ -99,4 +103,5 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
     }
    
    
+    List<Range> getRangesOfNs();
 }

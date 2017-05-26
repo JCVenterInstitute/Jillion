@@ -175,4 +175,7 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
      * same Nucleotide sequence; will never be null.
      */
     String toString(byte[] encodedData);
+    
+    
+    List<Range> getNRanges(byte[] encodedData);
 }

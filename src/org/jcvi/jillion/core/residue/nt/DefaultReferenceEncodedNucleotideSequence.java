@@ -27,6 +27,7 @@ package org.jcvi.jillion.core.residue.nt;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
@@ -34,6 +35,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.util.iter.ArrayIterator;
 import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
@@ -508,4 +510,25 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 	    public NucleotideSequence asSubtype(){
 	        return this;
 	    }
+
+	@Override
+	public List<Range> getRangesOfNs() {
+		// TODO speed this up using reference info?
+		//for now just do the good not optimal way of looping through eveything.
+		
+		//reference based probably is a read so it shouldn't be too long
+		BitSet bits = new BitSet();
+		int offset =0;
+		Iterator<Nucleotide> iter = iterator();
+		while(iter.hasNext()){
+			if(iter.next() == Nucleotide.Unknown){
+				bits.set(offset);
+			}
+			offset++;
+		}
+		return Ranges.asRanges(bits);
+	}
+	 
+	 
+	 
 }

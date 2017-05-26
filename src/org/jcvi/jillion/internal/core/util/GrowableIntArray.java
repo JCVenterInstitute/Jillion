@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.stream.IntStream;
 
 import org.jcvi.jillion.core.Range;
@@ -476,5 +477,22 @@ public final class GrowableIntArray implements Iterable<Integer>{
 	 */
 	public IntStream stream() {
 		return Arrays.stream(data, 0, currentLength);		
+	}
+	/**
+	 * Create a new List of Integers with the same data
+	 * as the current array values. The returned list
+	 * IS A COPY so any modifications to the returned list 
+	 * or the backing GrowableIntArray will not affect the other.
+	 * 
+	 * @return a new modifable list; will never be null but may be empty.
+	 * 
+	 * @since 5.3
+	 */
+	public List<Integer> toBoxedList() {
+		if(currentLength ==0){
+			//return new list to make it mutable
+			return new ArrayList<>();
+		}
+		return ArrayUtil.asList(toArray());
 	}
 }
