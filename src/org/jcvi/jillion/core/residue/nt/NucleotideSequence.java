@@ -28,8 +28,6 @@ package org.jcvi.jillion.core.residue.nt;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.ResidueSequence;
@@ -103,5 +101,45 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
     }
    
    
+    /**
+     * Get the list of contiguous spans of Ns.  the returned list
+     * will be in sorted order.
+     * @return a List which may be empty.
+     * 
+     * @since 5.3
+     */
     List<Range> getRangesOfNs();
+    /**
+     * Create a new NucleotideSequence of the given sequence.
+     * 
+     * @param sequence the Sequence of Nucleotides to turn into a NucleotideSequence object;
+     * can not be null and can not contain any null values.
+     * @return a new NucleotideSequence object; may be empty.
+     * 
+     * @throws NullPointerException if sequence is null or any element is null.
+     * 
+     * @since 5.3
+     */
+    public static NucleotideSequence of(Iterable<Nucleotide> sequence) {
+        return new NucleotideSequenceBuilder(sequence)
+                .turnOffDataCompression(true)
+                .build();
+    }
+    
+    /**
+     * Create a new NucleotideSequence of the given sequence.
+     * 
+     * @param sequence the Sequence of Nucleotides to turn into a NucleotideSequence object;
+     * can not be null.
+     * @return a new NucleotideSequence object; may be empty.
+     * 
+     * @throws NullPointerException if sequence is null.
+     * 
+     * @since 5.3
+     */
+    public static NucleotideSequence of(String sequence) {
+        return new NucleotideSequenceBuilder(sequence)
+                .turnOffDataCompression(true)
+                .build();
+    }
 }

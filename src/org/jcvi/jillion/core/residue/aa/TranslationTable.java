@@ -21,15 +21,14 @@
 package org.jcvi.jillion.core.residue.aa;
 
 import org.jcvi.jillion.core.residue.Frame;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 public interface TranslationTable {
 
-        void translate(Iterable<Nucleotide> sequence, Frame frame, TranslationVisitor visitor);
+        void translate(NucleotideSequence sequence, Frame frame, TranslationVisitor visitor);
 	/**
 	 * Convenience method for {@link #translate(NucleotideSequence, Frame)}
-	 * using {@link Frame#ZERO}.
+	 * using {@link Frame#ONE}.
 	 * 
 	 * @param sequence the sequence to translate; can not be null and can not contain gaps.
 	 * @param substituteStarts should the start codons be substituted with the translated amino acid.
@@ -41,7 +40,7 @@ public interface TranslationTable {
 	
 	/**
 	 * Convenience method for {@link #translate(NucleotideSequence, Frame)}
-	 * using {@link Frame#ZERO}.
+	 * using {@link Frame#ONE}.
 	 * 
 	 * @param sequence the sequence to translate; can not be null and can not contain gaps.
 	 * @param substituteStarts should the start codons be substituted with the translated amino acid.
@@ -103,7 +102,7 @@ public interface TranslationTable {
 	 * @throws NullPointerException if either parameter is null.
 	 * @throws IllegalArgumentException if the sequence contains gaps.
 	 */
-	ProteinSequence translate(Iterable<Nucleotide> sequence, Frame frame, int length);
+	ProteinSequence translate(NucleotideSequence sequence, Frame frame, int length);
 	
 	/**
 	 * Translate the given <strong>ungapped</strong> {@link NucleotideSequence} into
@@ -127,5 +126,5 @@ public interface TranslationTable {
 	 * @throws NullPointerException if either parameter is null.
 	 * @throws IllegalArgumentException if the sequence contains gaps.
 	 */
-	ProteinSequence translate(Iterable<Nucleotide> sequence, Frame frame, int length, boolean substituteStarts);
+	ProteinSequence translate(NucleotideSequence sequence, Frame frame, int length, boolean substituteStarts);
 }

@@ -22,7 +22,6 @@ package org.jcvi.jillion.core.residue.aa;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.jcvi.jillion.core.residue.Frame;
@@ -228,11 +227,11 @@ public enum IupacTranslationTables implements TranslationTable{
 
 	@Override
 	public ProteinSequence translate(NucleotideSequence sequence) {
-		return translate(sequence, Frame.ZERO,true);
+		return translate(sequence, Frame.ONE,true);
 	}
 	@Override
 	public ProteinSequence translate(NucleotideSequence sequence, boolean substituteStart) {
-		return translate(sequence, Frame.ZERO, substituteStart);
+		return translate(sequence, Frame.ONE, substituteStart);
 	}
 
 	@Override
@@ -244,7 +243,7 @@ public enum IupacTranslationTables implements TranslationTable{
 		return translate(sequence, frame, (int)sequence.getLength(), substituteStart);
 	}
 	@Override
-	public ProteinSequence translate(Iterable<Nucleotide> sequence, Frame frame, int length, boolean substituteStart) {
+	public ProteinSequence translate(NucleotideSequence sequence, Frame frame, int length, boolean substituteStart) {
 		if(sequence ==null){
 			throw new NullPointerException("sequence can not be null");
 		}
@@ -255,9 +254,9 @@ public enum IupacTranslationTables implements TranslationTable{
 		//don't correctly handle the 'not first starts'
 		//so if translation table says codon is a start
 		//and we've already seen a start, then make it not the start?
-		Iterator<Nucleotide> iter = sequence.iterator();
+
 		ProteinSequenceBuilder builder = new ProteinSequenceBuilder(length/3);
-		handleFrame(iter, frame);
+		Iterator<Nucleotide> iter = handleFrame(sequence, frame);
 		boolean seenStart=!substituteStart;
 		long currentOffset=0;
 		
@@ -283,7 +282,7 @@ public enum IupacTranslationTables implements TranslationTable{
 	
 	
 	@Override
-        public void translate(Iterable<Nucleotide> sequence, Frame frame, TranslationVisitor visitor) {
+        public void translate(NucleotideSequence sequence, Frame frame, TranslationVisitor visitor) {
                 if(sequence ==null){
                         throw new NullPointerException("sequence can not be null");
                 }
@@ -297,8 +296,7 @@ public enum IupacTranslationTables implements TranslationTable{
                 //don't correctly handle the 'not first starts'
                 //so if translation table says codon is a start
                 //and we've already seen a start, then make it not the start?
-                Iterator<Nucleotide> iter = sequence.iterator();
-                handleFrame(iter, frame);
+                Iterator<Nucleotide> iter = handleFrame(sequence, frame);
                 boolean seenStart=false;
                 long currentOffset=frame.ordinal();
                
@@ -330,7 +328,7 @@ public enum IupacTranslationTables implements TranslationTable{
                 visitor.end();
         }
 	@Override
-	public ProteinSequence translate(Iterable<Nucleotide> sequence, Frame frame, int length) {
+	public ProteinSequence translate(NucleotideSequence sequence, Frame frame, int length) {
 		return translate(sequence, frame, length,true);
 	}
 
@@ -362,15 +360,36 @@ public enum IupacTranslationTables implements TranslationTable{
 
 	@SuppressWarnings("fallthrough")
 	@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SF_SWITCH_FALLTHROUGH")
-	private void handleFrame(Iterator<Nucleotide> iter, Frame frame) {
+	private Iterator<Nucleotide> handleFrame(NucleotideSequence sequence, Frame frame) {
+	    Iterator<Nucleotide> iter;
+	    if(frame.onReverseStrand()){
+	        iter = sequence.toBuilder().reverseComplement().iterator();
+	      //switch uses fall through
+                //so frame 2 skips first 2 bp           
+                switch(frame){
+                        case NEGATIVE_THREE:
+                                        if(iter.hasNext()){
+                                                iter.next();
+                                        }
+                        case NEGATIVE_TWO:
+                                        if(iter.hasNext()){
+                                                iter.next();
+                                        }
+                                        break;
+                        default:
+                                        //no-op
+                                break;
+                }
+	    }else{
+	        iter = sequence.iterator();
 		//switch uses fall through
 		//so frame 2 skips first 2 bp		
 		switch(frame){
-			case TWO:
+			case THREE:
 					if(iter.hasNext()){
 						iter.next();
 					}
-			case ONE:
+			case TWO:
 					if(iter.hasNext()){
 						iter.next();
 					}
@@ -379,6 +398,8 @@ public enum IupacTranslationTables implements TranslationTable{
 					//no-op
 				break;
 		}
+	    }
+	    return iter;
 	}
 
 	protected void updateTable(Map<Triplet, Codon> map){

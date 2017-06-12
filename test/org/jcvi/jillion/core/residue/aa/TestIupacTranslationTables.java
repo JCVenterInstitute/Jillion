@@ -188,13 +188,13 @@ public class TestIupacTranslationTables {
 	public void translateFrame1(){
 		NucleotideSequence seq = new NucleotideSequenceBuilder("n"+dnaString).build();
 		
-		assertEquals(expectedAa, table.translate(seq, Frame.ONE));
+		assertEquals(expectedAa, table.translate(seq, Frame.TWO));
 	}
 	
 	@Test
 	public void translateFrame2(){
 		NucleotideSequence seq = new NucleotideSequenceBuilder("nn"+dnaString).build();
 		
-		assertEquals(expectedAa, table.translate(seq, Frame.TWO));
+		assertEquals(expectedAa, table.translate(seq, Frame.THREE));
 	}
 }

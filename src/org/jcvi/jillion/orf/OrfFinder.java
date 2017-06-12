@@ -1,8 +1,10 @@
 package org.jcvi.jillion.orf;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.Frame;
@@ -15,15 +17,37 @@ import org.jcvi.jillion.core.residue.aa.TranslationVisitor;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 public class OrfFinder {
-    public List<Orf> find(NucleotideSequence seq){
-        return find(seq, IupacTranslationTables.STANDARD);
+    
+    public enum FinderOptions{
+        SEARCH_FORWARD,
+        SEARCH_REVERSE
     }
-    public List<Orf> find(NucleotideSequence seq, TranslationTable translationTable){
+    
+    public List<Orf> find(NucleotideSequence seq){
+        return find(seq, IupacTranslationTables.STANDARD,FinderOptions.SEARCH_FORWARD, FinderOptions.SEARCH_REVERSE);
+    }
+    public List<Orf> find(NucleotideSequence seq, TranslationTable translationTable, FinderOptions...finderOptions){
         List<Orf> orfs = new ArrayList<>();
-        for(Frame f : Frame.values()){
-            OrfVisitor visitor = new OrfVisitor(f);
-            translationTable.translate(seq, f, visitor);
-            visitor.getOrf().ifPresent(orf -> orfs.add(orf));
+        
+        Set<FinderOptions> options = EnumSet.noneOf(FinderOptions.class);
+        for(FinderOptions o : finderOptions){
+            options.add(o);
+        }
+        
+        if(options.contains(FinderOptions.SEARCH_FORWARD)){
+            for(Frame f : Frame.forwardFrames()){
+                OrfVisitor visitor = new OrfVisitor(f);
+                translationTable.translate(seq, f, visitor);
+                visitor.getOrf().ifPresent(orf -> orfs.add(orf));
+            }
+        }
+        if(options.contains(FinderOptions.SEARCH_REVERSE)){
+            NucleotideSequence reverseSeq = seq.toBuilder().reverseComplement().build();
+            for(Frame f : Frame.reverseFrames()){
+                OrfVisitor visitor = new OrfVisitor(f);
+                translationTable.translate(reverseSeq, f.getOppositeFrame(), visitor);
+                visitor.getOrf().ifPresent(orf -> orfs.add(orf));
+            }
         }
         
         return orfs;
