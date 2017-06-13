@@ -48,6 +48,18 @@ public class ResourceHelper{
     public ResourceHelper(Class<?> clazz){
     	this.clazz = clazz;
     }
+    /**
+     * Construct a new instance using the given's object's class.
+     * 
+     * @apiNote this is the same as {@code new ResourceHelper( classInstance.getClass()); }.
+     * 
+     * @param classInstance the object whose class to use; can not be null.
+     * 
+     * @throws NullPointerException if classInstance is null.
+     */
+    public ResourceHelper(Object classInstance){
+        this(classInstance.getClass());
+    }
    
   
     /**
