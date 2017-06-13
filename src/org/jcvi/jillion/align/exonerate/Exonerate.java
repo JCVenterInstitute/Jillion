@@ -14,6 +14,7 @@ import org.jcvi.jillion.align.exonerate.vulgar.VulgarProtein2Genome;
 import org.jcvi.jillion.align.exonerate.vulgar.VulgarElement;
 import org.jcvi.jillion.align.exonerate.vulgar.VulgarOperation;
 import org.jcvi.jillion.core.DirectedRange;
+import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.io.InputStreamSupplier;
 import org.jcvi.jillion.core.io.PushBackBufferedReader;
@@ -106,11 +107,13 @@ public class Exonerate {
 
                      */
                     String queryId = fields[1];
-                    DirectedRange queryRange = DirectedRange.parse(Long.parseLong(fields[2]), Long.parseLong(fields[3]));
+                    DirectedRange queryRange = DirectedRange.parse(Long.parseLong(fields[2]), Long.parseLong(fields[3]),
+                            CoordinateSystem.SPACE_BASED);
                     String queryStrand = fields[4];
                     
                     String targetId = fields[5];
-                    DirectedRange targetRange = DirectedRange.parse(Long.parseLong(fields[6]), Long.parseLong(fields[7]));
+                    DirectedRange targetRange = DirectedRange.parse(Long.parseLong(fields[6]), Long.parseLong(fields[7]),
+                            CoordinateSystem.SPACE_BASED);
                     String targetStrand = fields[8];
                     
                     float score = Float.parseFloat(fields[9]);
@@ -131,7 +134,7 @@ public class Exonerate {
                     System.out.println(vulgarElements);
                     
                     VulgarProtein2Genome v = new VulgarProtein2Genome(queryId, targetId, vulgarElements, score,
-                            queryStrand, targetStrand);
+                            queryStrand, queryRange, targetStrand, targetRange);
                     
                   
                     

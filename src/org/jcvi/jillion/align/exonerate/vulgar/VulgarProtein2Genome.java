@@ -5,18 +5,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.function.ToIntFunction;
 
-import org.jcvi.jillion.align.BlosumMatrices;
-import org.jcvi.jillion.align.pairwise.PairwiseAlignmentBuilder;
-import org.jcvi.jillion.align.pairwise.PairwiseSequenceAlignment;
+import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.Sequence;
-import org.jcvi.jillion.core.residue.Residue;
-import org.jcvi.jillion.core.residue.ResidueSequence;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.IupacTranslationTables;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
@@ -35,19 +30,24 @@ public class VulgarProtein2Genome {
     private final float score;
     
     private Direction queryStrand, targetStrand;
+    private final DirectedRange queryRange, targetRange;
     
     public VulgarProtein2Genome(String queryId, String targetId, List<VulgarElement> elements, float score,
-            String queryStrand, String targetStrand) {
+            String queryStrand, DirectedRange queryRange, String targetStrand, DirectedRange targetRange) {
         this.elements = elements;
         this.queryId = Objects.requireNonNull(queryId);
         this.targetId = Objects.requireNonNull(targetId);
         this.score = score;
+        this.queryRange = Objects.requireNonNull(queryRange);
+        this.targetRange = Objects.requireNonNull(targetRange);
         
         targetExons = computeTargetExons();
         queryRanges = computeQueryRanges();
         
         this.queryStrand = parseStrand(queryStrand);
         this.targetStrand = parseStrand(targetStrand);
+        
+      
     }
     
     private Direction parseStrand(String strand){
@@ -111,14 +111,14 @@ public class VulgarProtein2Genome {
 
 
     private List<Range> computeQueryRanges() {
-        return computeRanges(VulgarElement::getQueryLength);
+        return computeRanges(queryRange.getBegin(), VulgarElement::getQueryLength);
     }
 
 
 
-    private List<Range> computeRanges(ToIntFunction<VulgarElement> function) {
+    private List<Range> computeRanges(long startOffset, ToIntFunction<VulgarElement> function) {
         List<Range> exons = new ArrayList<Range>();
-        int currentOffset=0;
+        long currentOffset=startOffset;
         for(VulgarElement e : elements){
             int len = function.applyAsInt(e);
             if(e.getOp() == VulgarOperation.Match || e.getOp() == VulgarOperation.Split_Codon){
@@ -129,7 +129,7 @@ public class VulgarProtein2Genome {
         return Ranges.merge(exons);
     }
     private List<Range> computeTargetExons() {
-        return computeRanges(VulgarElement::getTargetLength);
+        return computeRanges(targetRange.getBegin(), VulgarElement::getTargetLength);
     }
     //this functional interface is created and used
     //instead of Function<String, Sequence>
@@ -154,12 +154,13 @@ public class VulgarProtein2Genome {
         NucleotideSequence cds =getExonSequence(target, targetExons);
         ProteinSequence translated = IupacTranslationTables.STANDARD.translate(cds);
         
-       
-        System.out.println(query.toString(AminoAcid::get3LetterAbbreviation));
+        
+        System.out.println(query.toBuilder(queryRange.asRange()).build().toString(AminoAcid::get3LetterAbbreviation));
         System.out.println(translated.toString(AminoAcid::get3LetterAbbreviation));
         
         //assume no gaps
-        Iterator<AminoAcid> queryIter = query.iterator();
+        
+        Iterator<AminoAcid> queryIter = query.iterator(queryRange.asRange());
         Iterator<AminoAcid> subIter = translated.iterator();
         int matches=0, misMatches=0;
         while(queryIter.hasNext() && subIter.hasNext()){
@@ -180,7 +181,7 @@ public class VulgarProtein2Genome {
         }
         System.out.println("matches = " + matches);
         System.out.println("misMatches = " + misMatches);
-        double ident = matches /(double)(matches + misMatches);
+        double ident = matches /(double)(matches + misMatches) *100;
         System.out.println("percent ident = " + ident);
         return new AlignmentResult(ident, matches, misMatches);
     }
