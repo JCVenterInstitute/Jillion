@@ -20,9 +20,10 @@
  ******************************************************************************/
 package org.jcvi.jillion.fasta.nt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertTrue;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -31,6 +32,7 @@ import java.util.Arrays;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
@@ -96,9 +98,25 @@ public class TestFaiWriter {
 		assertTrue(expectedFai.length() > 0);
 		
 		File actual = new File(outputFasta.getParentFile(), outputFasta.getName() +".fai");
-		TestUtil.assertContentsAreEqual(expectedFai, actual);
+		assertFaiFilesMatch(expectedFai, actual);
 	}
 	
+	
+	private void assertFaiFilesMatch(File expected, File actual) throws IOException{
+	    //because different platforms can have different end of line characters
+	    //we must check line by line to see if they match ignoring end of line chars
+	    
+	    try(BufferedReader expectedReader = IOUtil.createNewBufferedReader(expected, IOUtil.UTF_8_NAME);
+	            BufferedReader actualReader = IOUtil.createNewBufferedReader(expected, IOUtil.UTF_8_NAME)
+	            ){
+	        String expectedLine;
+	        while( (expectedLine = expectedReader.readLine()) != null){
+	            assertEquals(expectedLine, actualReader.readLine());
+	        }
+	        
+	        assertNull(actualReader.readLine());
+	    }
+	}
 	
 	@Test
 	public void createNonRedundantFaiFile() throws IOException, DataStoreException{
