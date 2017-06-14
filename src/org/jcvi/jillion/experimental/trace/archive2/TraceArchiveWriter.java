@@ -187,14 +187,11 @@ public final class TraceArchiveWriter implements Closeable{
 			throws FileNotFoundException, IOException {
 		String pathToTraceFile = String.format("./traces/%s.ztr", traceName);
 		recordBuilder.put(TraceInfoField.TRACE_FILE, pathToTraceFile);
-		InputStream in = null;
-		OutputStream out = null;
-		try{
-			in = new FileInputStream(traceFile);
-			out = new FileOutputStream(new File(rootDir, pathToTraceFile));
+
+		try(InputStream in = new FileInputStream(traceFile);
+                    OutputStream out = new FileOutputStream(new File(rootDir, pathToTraceFile))){
+		    
 			IOUtil.copy(in, out);
-		}finally{
-			IOUtil.closeAndIgnoreErrors(in,out);
 		}
 	}
 	
@@ -205,12 +202,10 @@ public final class TraceArchiveWriter implements Closeable{
 		} catch (NoSuchAlgorithmException e) {
 			throw new IOException("could not compute MD5",e);
 		}
-		InputStream in = new FileInputStream(f);
-		try{
+		
+		try(InputStream in = new FileInputStream(f)){
 			byte[] bytes =IOUtil.toByteArray(in);
 			return toPaddedHexString(md5.digest(bytes));
-		}finally{
-			IOUtil.closeAndIgnoreErrors(in);
 		}
 	}
 	private String toPaddedHexString(byte[] digest){
@@ -243,13 +238,11 @@ public final class TraceArchiveWriter implements Closeable{
 		
 	}
 	private File createTraceInfoFile(TraceArchiveInfo info)
-			throws FileNotFoundException, IOException {
+			throws IOException {
 		File xmlFile = new File(rootDir, "TRACEINFO.XML");
-		OutputStream out = new FileOutputStream(xmlFile);
-		try{
+		
+		try(OutputStream out = new FileOutputStream(xmlFile)){
 			TraceInfoWriterUtil.writeTraceInfoXML(out, info, volumeName, volumeDate, volumeVersion);
-		}finally{
-			IOUtil.closeAndIgnoreErrors(out);
 		}
 		return xmlFile;
 	}
@@ -260,17 +253,15 @@ public final class TraceArchiveWriter implements Closeable{
 	}
 	private void createMd5File(File xmlFile, File readMeFile)
 			throws FileNotFoundException, IOException {
-		PrintWriter md5Writer = new PrintWriter(new File(rootDir, "MD5"), IOUtil.UTF_8_NAME);
-		try{
-		md5Writer.println(createMd5For(xmlFile) +"\tTRACEINFO.XML");
-		md5Writer.println(createMd5For(readMeFile) +"\tREADME");
-		}finally{
-			md5Writer.close();
+		try(PrintWriter md5Writer = new PrintWriter(new File(rootDir, "MD5"), IOUtil.UTF_8_NAME)){
+
+        		md5Writer.println(createMd5For(xmlFile) +"\tTRACEINFO.XML");
+        		md5Writer.println(createMd5For(readMeFile) +"\tREADME");
 		}
 	}
 	private void writeReadmeText(File readMeFile) throws IOException {
-		PrintWriter writer = new PrintWriter(readMeFile, IOUtil.UTF_8_NAME);
-		try{
+		
+		try(PrintWriter writer = new PrintWriter(readMeFile, IOUtil.UTF_8_NAME)){
 			//must synchronize data formatter since 
 			//it is badly designed and not multithreaded.
 			synchronized(DATE_TIME_FORMATTER){
@@ -278,8 +269,6 @@ public final class TraceArchiveWriter implements Closeable{
 						DATE_TIME_FORMATTER.format(DateUtil.getCurrentDate()),
 						traceNamesSeen.size());
 			}
-		}finally{
-			writer.close();
 		}
 		
 		
@@ -287,34 +276,36 @@ public final class TraceArchiveWriter implements Closeable{
 	private void handleSeqFasta(TraceArchiveRecordBuilder recordBuilder, String traceName, Chromatogram chromo)
 			throws FileNotFoundException, IOException {
 		String fastaFilePath = String.format("./fasta/%s.fasta", traceName);
-		NucleotideFastaWriter writer = new NucleotideFastaWriterBuilder(new File(rootDir, fastaFilePath))
-														.build();
+		try(NucleotideFastaWriter writer = new NucleotideFastaWriterBuilder(new File(rootDir, fastaFilePath))
+														.build()){
 		writer.write(traceName, chromo.getNucleotideSequence());
-		writer.close();
-		
 		recordBuilder.put(TraceInfoField.BASE_FILE, fastaFilePath);
+		}
+		
+		
 	}
 	
 	private void handleQualFasta(TraceArchiveRecordBuilder recordBuilder, String traceName, Chromatogram chromo)
 			throws FileNotFoundException, IOException {
 		String qualFastaFilePath = String.format("./qual/%s.qual", traceName);
-		QualityFastaWriter writer = new QualityFastaWriterBuilder(new File(rootDir, qualFastaFilePath))
-														.build();
-		writer.write(traceName, chromo.getQualitySequence());
-		writer.close();
+		try(QualityFastaWriter writer = new QualityFastaWriterBuilder(new File(rootDir, qualFastaFilePath))
+														.build()){
 		
-		recordBuilder.put(TraceInfoField.QUAL_FILE, qualFastaFilePath);
+		    writer.write(traceName, chromo.getQualitySequence());
+		    recordBuilder.put(TraceInfoField.QUAL_FILE, qualFastaFilePath);
+		}
 	}
 	
 	private void handlePeakFasta(TraceArchiveRecordBuilder recordBuilder, String traceName, Chromatogram chromo)
 			throws FileNotFoundException, IOException {
 		String peakFastaFilePath = String.format("./peak/%s.peak", traceName);
-		PositionFastaWriter writer = new PositionFastaWriterBuilder(new File(rootDir, peakFastaFilePath))
-														.build();
+		try(PositionFastaWriter writer = new PositionFastaWriterBuilder(new File(rootDir, peakFastaFilePath))
+														.build()){
 		writer.write(traceName, chromo.getPeakSequence());
-		writer.close();
+		
 		
 		recordBuilder.put(TraceInfoField.PEAK_FILE, peakFastaFilePath);
+		}
 	}
 	
 	private Chromatogram parseChromatogram(String traceName, File traceFile) throws IOException {

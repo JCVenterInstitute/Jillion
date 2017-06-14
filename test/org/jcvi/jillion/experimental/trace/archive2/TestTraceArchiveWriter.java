@@ -38,6 +38,7 @@ import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogram;
 import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogramBuilder;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 public class TestTraceArchiveWriter {
@@ -46,8 +47,8 @@ public class TestTraceArchiveWriter {
 	private final File rootInputDir;
 	private TraceArchiveWriter.TraceArchiveRecordCallback mockCallback;
 	
-	@ClassRule
-	public static TemporaryFolder outputDir = new TemporaryFolder();
+	@Rule
+	public TemporaryFolder outputDir = new TemporaryFolder();
 	
 	
 	
@@ -55,7 +56,7 @@ public class TestTraceArchiveWriter {
 		ResourceHelper resources = new ResourceHelper(TestTraceArchiveWriter.class);
 		rootInputDir = resources.getFile("files/exampleTraceArchive");
 		
-		writeTraceArchive();
+		
 	}
 	
 	private void writeTraceArchive() throws IOException, TraceArchiveRecordDataException{
@@ -96,7 +97,10 @@ public class TestTraceArchiveWriter {
 	}
 	
 	@Test
-	public void  parseTraceInfo() throws IOException, DataStoreException{
+	public void  parseTraceInfo() throws IOException, DataStoreException, TraceArchiveRecordDataException{
+	    writeTraceArchive();
+	    
+	    
 		TraceArchiveInfo actualInfo = XmlTraceArchiveInfoFactory.create(new File(outputDir.getRoot(),"TRACEINFO.XML"));
 		assertEquals(2, actualInfo.getRecordList().size());
 	
