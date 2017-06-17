@@ -31,7 +31,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.LongSupplier;
-import java.util.function.Supplier;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
@@ -103,6 +104,22 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
         ensureRangeWithinSequence(ungappedRange, this::getUngappedLength);
         return codec.toGappedRange(data, ungappedRange);
     }
+
+
+
+    @Override
+    public Stream<Range> findMatches(Pattern pattern) {
+        return codec.matches(data, pattern);
+    }
+
+
+
+
+    @Override
+    public Stream<Range> findMatches(Pattern pattern, Range subSequenceRange) {
+        return codec.matches(data, pattern, subSequenceRange);
+    }
+
 
 
 
@@ -189,6 +206,8 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
     public String toString() {
         return codec.toString(data);
     }
+    
+   
     /**
     * {@inheritDoc}
     */

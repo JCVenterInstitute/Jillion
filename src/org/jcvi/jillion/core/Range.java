@@ -39,6 +39,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jcvi.jillion.core.Range.Builder;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.core.util.Caches;
@@ -3106,9 +3107,18 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
         public boolean isEmpty() {
             return end-begin < 0;
         }
-    	
-    	
-    	
+        public boolean startsAfter(Range other) {
+            return begin > other.getEnd();
+        }
+        public boolean startsBefore(Range other) {
+            return begin < other.getBegin();
+        }
+        public boolean endsAfter(Range other) {
+            return end > other.getEnd();
+        }
+        public boolean endsBefore(Range other) {
+            return end > other.getBegin();
+        }
     }
     
     private static final class CacheKey{
@@ -3163,6 +3173,17 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
         
         
         
+    }
+    /**
+     * Create a new Range.Builder instance
+     * initialized to this Range's values.
+     * 
+     * @return a new Range.Builder will never be null.
+     * 
+     * @since 5.3
+     */
+    public Builder toBuilder() {
+        return new Range.Builder(this);
     }
 
  

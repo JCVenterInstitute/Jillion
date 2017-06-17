@@ -64,8 +64,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestNucleotideSequencePermuter.class,
         
         TestNucleotideKmers.class,
-        TestNucleotideRangesOfNs.class
-        
+        TestNucleotideRangesOfNs.class,
+        TestNucleotideSequenceMatches.class
     }
 )
 public class AllNucleotideUnitTests {

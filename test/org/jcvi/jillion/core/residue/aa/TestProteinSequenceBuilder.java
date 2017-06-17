@@ -301,5 +301,13 @@ public class TestProteinSequenceBuilder {
 		assertEquals("IKFTWMKAILSEDDEH", AminoAcidUtil.asString(seq));
 	}
 	
+	@Test
+	public void insertMultipleViaString(){
+	    ProteinSequenceBuilder builder =new ProteinSequenceBuilder("IKFTW");
+	    builder.insert(2, "AAAA");
+	    
+	    assertEquals("IKAAAAFTW", builder.build().toString());
+	}
+	
 	
 }

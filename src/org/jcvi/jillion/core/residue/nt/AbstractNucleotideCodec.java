@@ -21,15 +21,12 @@
 package org.jcvi.jillion.core.residue.nt;
 
 import java.nio.ByteBuffer;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.util.iter.SingleElementIterator;
 import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
-import org.jcvi.jillion.internal.core.util.ArrayUtil;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
 

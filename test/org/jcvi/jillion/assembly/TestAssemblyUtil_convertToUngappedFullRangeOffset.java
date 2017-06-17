@@ -27,6 +27,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.Iterator;
 import java.util.List;
 import java.util.SortedMap;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.easymock.EasyMockSupport;
 import org.jcvi.jillion.core.Direction;
@@ -136,8 +138,19 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
 		public List<Integer> getGapOffsets() {
 			return delegate.getGapOffsets();
 		}
+		
 
 		@Override
+        public Stream<Range> findMatches(Pattern pattern) {
+            return delegate.findMatches(pattern);
+        }
+
+        @Override
+        public Stream<Range> findMatches(Pattern pattern, Range subSequenceRange) {
+            return delegate.findMatches(pattern, subSequenceRange);
+        }
+
+        @Override
 		public int getNumberOfGaps() {
 			return delegate.getNumberOfGaps();
 		}

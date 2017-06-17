@@ -333,6 +333,29 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     	}
         return append(new NewValues(sequence));
     }
+    
+    /**
+     * Appends the given sequence to the end
+     * of the builder's mutable sequence.
+     * Any whitespace in the input string will be ignored.
+     *  This method is able to parse both
+     * '*' (consed) and '-' (TIGR) as gap characters. 
+     * 
+     * @param sequence the nucleotide sequence to be appended
+     * to the end our builder; any nulls are ignored.
+     * 
+     * @return this.
+     * 
+     * @throws NullPointerException if sequence is null.
+     * 
+     * @since 5.3
+     */
+    public NucleotideSequenceBuilder append(Nucleotide[] sequence){
+        if(sequence ==null){
+                throw new NullPointerException(NULL_SEQUENCE_ERROR_MSG);
+        }
+        return append(new NewValues(sequence));
+    }
     /**
      * Inserts the given sequence to the builder's mutable sequence
      * starting at the given offset.  If any nucleotides existed
@@ -625,6 +648,30 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @throws IllegalArgumentException if offset &lt; 0 or &gt; current sequence length.
      */
     public NucleotideSequenceBuilder insert(int offset, Iterable<Nucleotide> sequence){
+        assertInsertionParametersValid(offset, sequence);   
+        NewValues newValues = new NewValues(sequence);
+        return insert(offset, newValues);
+    }
+    /**
+     * Inserts the given sequence to the builder's mutable sequence
+     * starting at the given offset.  If any nucleotides existed
+     * downstream of this offset before this insert method
+     * was executed, then those nucleotides will be shifted by n
+     * bases where n is the length of the given sequence to insert.
+     * 
+     * @param offset the <strong>gapped</strong> offset into this mutable sequence
+     * to begin insertion.  If the offset = the current length then this insertion
+     * is treated as an append.
+     * @param sequence the nucleotide sequence to be 
+     * inserted at the given offset; any nulls are ignored.
+     * 
+     * @return this
+     * @throws NullPointerException if sequence is null.
+     * @throws IllegalArgumentException if offset &lt; 0 or &gt; current sequence length.
+     * 
+     * @since 5.3
+     */
+    public NucleotideSequenceBuilder insert(int offset, Nucleotide[] sequence) {
         assertInsertionParametersValid(offset, sequence);   
         NewValues newValues = new NewValues(sequence);
         return insert(offset, newValues);
@@ -1631,6 +1678,21 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
             //only one value so we
             //don't need to sort
     	}
+    	
+        public NewValues(Nucleotide[] sequence) {
+            nOffsets = new GrowableIntArray();
+            gapOffsets = new GrowableIntArray();
+            data = new GrowableByteArray(sequence.length);
+
+            int offset = 0;
+            for (int i = 0; i < sequence.length; i++) {
+                Nucleotide n = sequence[i];
+                if (n != null) {
+                    handle(n, offset);
+                    offset++;
+                }
+            }
+        }
     	public NewValues(String sequence){
     		nOffsets = new GrowableIntArray(12);
 			gapOffsets = new GrowableIntArray(12);
@@ -1640,15 +1702,15 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
             //convert sequence to char[] which 
             //will run faster than sequence.charAt(i)
             char[] chars = sequence.toCharArray();
-            
-    		for(int i=0; i<chars.length; i++){
-    			char c = chars[i];    			
-				Nucleotide n = Nucleotide.parseOrNull(c);
-				if(n !=null){
-    				handle(n, offset);
-                	offset++;
-    			}
-    		}
+
+            for (int i = 0; i < chars.length; i++) {
+                char c = chars[i];
+                Nucleotide n = Nucleotide.parseOrNull(c);
+                if (n != null) {
+                    handle(n, offset);
+                    offset++;
+                }
+            }
     		
     	}
     	public NewValues(char[] sequence){
@@ -1805,6 +1867,10 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     	
     	
     }
+
+
+
+    
 
 
 

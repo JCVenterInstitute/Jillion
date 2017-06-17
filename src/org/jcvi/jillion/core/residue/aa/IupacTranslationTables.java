@@ -222,6 +222,9 @@ public enum IupacTranslationTables implements TranslationTable{
 								starts[i] =='M');
 			
 		}
+		
+		//add gap
+		insertIntoTable('-','-','-', AminoAcid.Gap, false);
 	}
 	
 
@@ -352,9 +355,9 @@ public enum IupacTranslationTables implements TranslationTable{
 			return null;
 		}
 		Nucleotide n = iter.next();
-		if(n.isGap()){
-			throw new IllegalArgumentException("sequence can not contain gaps");
-		}
+//		if(n.isGap()){
+//			throw new IllegalArgumentException("sequence can not contain gaps");
+//		}
 		return n;
 	}
 

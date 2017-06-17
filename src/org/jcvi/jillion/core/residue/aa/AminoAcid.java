@@ -68,7 +68,7 @@ public enum AminoAcid implements Residue{
     Selenocysteine("Selenocysteine", "Sec", 'U'),
     
     Pyrrolysine("Pyrrolysine", "Ply",'O'),
-    Gap("Gap", "Gap", '-'){
+    Gap("Gap", "---", '-'){
 
 		@Override
 		public boolean isGap() {

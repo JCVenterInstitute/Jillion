@@ -28,6 +28,8 @@ package org.jcvi.jillion.core.residue.nt;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.ResidueSequence;
@@ -99,10 +101,68 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
     default NucleotideSequenceBuilder newEmptyBuilder(int initialCapacity){
         return new NucleotideSequenceBuilder(initialCapacity);
     }
-   
+    /**
+     * Find all the Ranges in this sequence that match the given regular expression {@link Pattern}.
+     * @param regex the regular expression pattern to look for.  All bases must be in uppercase.
+     * @return a {@link Stream} of {@link Range} objects of the matches on this sequence.
+     * 
+     * @apiNote this is the same as {@code  findMatches(Pattern.compile(regex)); }
+     * 
+     * @since 5.3
+     * 
+     * @see #findMatches(Pattern)
+     */
+    default Stream<Range> findMatches(String regex){
+        return findMatches(Pattern.compile(regex));
+    }
+    /**
+     * Find the Ranges in this sequence within the specified sub sequence range
+     *  that match the given regular expression.
+     *  
+     * @param regex the pattern to look for.  All bases must be in uppercase.
+     * @param subSequenceRange the Range in the sequence to look for matches in.
+     * @return a {@link Stream} of {@link Range} objects of the matches on this sequence.
+     * 
+     * @apiNote this is the same as {@code  findMatches(Pattern.compile(regex), subSequenceRange); }
+     * 
+     * @since 5.3
+     * 
+     * @see #findMatches(Pattern, Range)
+     */
+    default Stream<Range> findMatches(String regex, Range subSequenceRange){
+        return findMatches(Pattern.compile(regex), subSequenceRange);
+    }
+    /**
+     * Find all the Ranges in this sequence that match the given regular expression {@link Pattern}.
+     * @param pattern the pattern to look for.  All bases must be in uppercase.
+     * @return a {@link Stream} of {@link Range} objects of the matches on this sequence.
+     * 
+     * @since 5.3
+     */
+    Stream<Range> findMatches(Pattern pattern);
+    /**
+     * Find the Ranges in this sequence within the specified sub sequence range
+     *  that match the given regular expression {@link Pattern}.  
+     *   <strong>NOTE</strong> All the Range
+     *  coordinates returned in the Stream will be relative to the entire sequence.
+     *  @apiNote This should return the same result as :
+     *  <pre>
+     *  sut.findMatches(pattern)
+     *     .filter(r-> r.isSubRangeOf(subSequenceRange))
+                   
+     *  </pre>
+     *  But will be more efficient.
+     *  
+     * @param pattern the pattern to look for.  All bases must be in uppercase.
+     * @param subSequenceRange the Range in the sequence to look for matches in.
+     * @return a {@link Stream} of {@link Range} objects of the matches on this sequence.
+     * 
+     * @since 5.3
+     */
+    Stream<Range> findMatches(Pattern pattern, Range subSequenceRange);
    
     /**
-     * Get the list of contiguous spans of Ns.  the returned list
+     * Get the list of contiguous spans of Ns; the returned list
      * will be in sorted order.
      * @return a List which may be empty.
      * 

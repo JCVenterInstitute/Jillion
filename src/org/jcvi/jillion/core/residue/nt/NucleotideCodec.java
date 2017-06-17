@@ -22,9 +22,14 @@ package org.jcvi.jillion.core.residue.nt;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.core.GlyphCodec;
+import org.jcvi.jillion.internal.core.io.StreamUtil;
 
 /**
  * @author dkatzel
@@ -176,6 +181,40 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
      */
     String toString(byte[] encodedData);
     
+    default String toString(byte[] encodedData, Range subRange){
+        StringBuilder builder = new StringBuilder((int) subRange.getLength());
+        Iterator<Nucleotide> iter = iterator(encodedData, subRange);
+        while(iter.hasNext()){
+            builder.append(iter.next());
+        }
+        return builder.toString();
+    }
     
     List<Range> getNRanges(byte[] encodedData);
+    
+    default Stream<Range> matches(byte[] encodedData, String regex){
+      //override if something better!
+        return matches(encodedData, Pattern.compile(regex));
+    }
+    
+    default Stream<Range> matches(byte[] encodedData, Pattern pattern){
+        //override if something better!
+        Matcher matcher = pattern.matcher(toString(encodedData));
+        
+        return StreamUtil.newGeneratedStream(() -> matcher.find()
+                ? Optional.of(Range.of(matcher.start(), matcher.end() - 1))
+                : Optional.empty());
+       
+    }
+    
+    default Stream<Range> matches(byte[] encodedData, Pattern pattern, Range range){
+        //override if something better!
+        Matcher matcher = pattern.matcher(toString(encodedData, range));
+        
+        return StreamUtil.newGeneratedStream(() -> matcher.find()
+                ? Optional.of(new Range.Builder(matcher.start(), matcher.end() - 1).shift(range.getBegin()).build())
+                : Optional.empty());
+       
+    }
+    
 }

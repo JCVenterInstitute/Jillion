@@ -196,6 +196,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 				numberOfGaps++;
 			}
 			array[i]=(aa.getOrdinalAsByte());
+			i++;
 		}		
 		builder.insert(offset, array);
 		return this;

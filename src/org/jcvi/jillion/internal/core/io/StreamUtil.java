@@ -23,6 +23,16 @@ package org.jcvi.jillion.internal.core.io;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.Optional;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+import org.jcvi.jillion.core.Range;
 /**
  * Utility class for working
  * with Java 8 Streams.
@@ -52,5 +62,30 @@ public final class StreamUtil {
 				throw new UncheckedIOException(e);
 			}
     	};
+    }
+    
+    /**
+     * Create a new Stream that gets the elements from the provided generator.  The Stream is done
+     * when the generator returns {@link Optional#empty()}.
+     * @param generatingFunction
+     * @return
+     */
+    public static <T> Stream<T> newGeneratedStream(Supplier<Optional<T>> generatingFunction){
+        Spliterator<T> spliterator = new Spliterators.AbstractSpliterator<T>(
+                Long.MAX_VALUE, 
+                Spliterators.AbstractSpliterator.ORDERED| Spliterators.AbstractSpliterator.NONNULL) {
+
+            public boolean tryAdvance(Consumer<? super T> action) {
+                Optional<T> r = generatingFunction.get();
+                if (!r.isPresent()) {
+                    return false;
+                }
+                action.accept(r.get());
+                return true;
+            }
+        };
+                
+                
+        return StreamSupport.stream(spliterator, false);
     }
 }

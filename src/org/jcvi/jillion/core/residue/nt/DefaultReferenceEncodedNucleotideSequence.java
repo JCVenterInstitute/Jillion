@@ -31,13 +31,18 @@ import java.util.BitSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.util.iter.ArrayIterator;
+import org.jcvi.jillion.internal.core.io.StreamUtil;
 import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
 import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
 import org.jcvi.jillion.internal.core.util.ArrayUtil;
@@ -174,6 +179,29 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
     }
     
     
+    @Override
+    public Stream<Range> findMatches(Pattern pattern) {
+        //override if something better!
+        Matcher matcher = pattern.matcher(toString());
+        
+        
+        return StreamUtil.newGeneratedStream(() -> matcher.find()
+                ? Optional.of(Range.of(matcher.start(), matcher.end() - 1))
+                : Optional.empty());
+    }
+    
+    
+
+    @Override
+    public Stream<Range> findMatches(Pattern pattern, Range subSequenceRange) {
+        //override if something better!
+        Matcher matcher = pattern.matcher(toString(subSequenceRange));
+        
+        return StreamUtil.newGeneratedStream(() -> matcher.find()
+                ? Optional.of(new Range.Builder(matcher.start(), matcher.end() - 1).shift(subSequenceRange.getBegin()).build())
+                : Optional.empty());
+    }
+
     private int computeNumberOfBytesToStore(int numSnps,ValueSizeStrategy snpSizeStrategy) {
     	int numBytesPerSnpIndex = snpSizeStrategy.getNumberOfBytesPerValue();
     	int numBytesRequiredToStoreSnps = (numSnps+1)/2;
@@ -484,6 +512,14 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
     	 for(int i=0; i< array.length; i++){
     		 builder.append(array[i]);
     	 }
+         return builder.toString();
+     }
+     private String toString(Range range){
+         Nucleotide[] array = asNucleotideArray(range);
+         StringBuilder builder = new StringBuilder(array.length);
+         for(int i=0; i< array.length; i++){
+                 builder.append(array[i]);
+         }
          return builder.toString();
      }
 
