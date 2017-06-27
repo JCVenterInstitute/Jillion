@@ -50,7 +50,7 @@
 	             classpath="${analysis}/jacoco/jacocoant.jar"/>
 	
     <taskdef resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties"
-         classpath="${analysis}/checkstyle-6.11.2-all.jar"/>
+         classpath="${analysis}/checkstyle-7.8.2-all.jar"/>
 
     <taskdef name="testability" classname="com.google.ant.TestabilityTask">
         <classpath>
