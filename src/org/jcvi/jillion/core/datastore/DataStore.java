@@ -26,10 +26,12 @@
 package org.jcvi.jillion.core.datastore;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.util.function.Function;
 
 import org.jcvi.jillion.core.util.ThrowingStream;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.util.streams.ThrowingBiConsumer;
 /**
  * A {@code DataStore} is an interface which represents a 
  * repository of entity records which can be  fetched by
@@ -226,6 +228,38 @@ public interface DataStore<T> extends Closeable{
      */
     default <E, D extends DataStore<E>> D adapt(Class<D> datastoreInterface, Function<T, E> adapter){
         return DataStoreUtil.adapt(datastoreInterface, this, adapter);
+    }
+    /**
+     * Iterate through all the records in the datastore
+     * and call the given consumer on each one.
+     * 
+     * @param consumer a BiConsumer that takes the id of the record as the first parameter
+     * and the record as the second parameter.
+     * 
+     * @throws IOException if there is a problem iterating through the datastore.
+     * 
+     * @implNote By default, this is the same as calling:
+     * <pre>
+     *  try(StreamingIterator{@code <DataStoreEntry<T>>} iter = entryIterator()){
+            while(iter.hasNext()){
+                {@code DataStoreEntry<T>} entry = iter.next();
+                consumer.accept(entry.getKey(), entry.getValue());
+            }
+        }
+     * </pre>
+     * 
+     * But datastore implementations may override this method
+     * to create a more efficient traversal.
+     * 
+     * @since 5.3
+     */
+    default <E extends Throwable> void  forEach(ThrowingBiConsumer<String, T, E> consumer) throws IOException, E{
+        try(StreamingIterator<DataStoreEntry<T>> iter = entryIterator()){
+            while(iter.hasNext()){
+                DataStoreEntry<T> entry = iter.next();
+                consumer.accept(entry.getKey(), entry.getValue());
+            }
+        }
     }
     
 }

@@ -21,6 +21,7 @@
 package org.jcvi.jillion.fasta.pos;
 
 import java.io.IOException;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
@@ -29,6 +30,7 @@ import org.jcvi.jillion.core.pos.Position;
 import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaParser;
+import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.internal.fasta.AbstractLargeFastaFileDataStore;
 
@@ -82,5 +84,18 @@ final class LargePositionFastaFileDataStore extends AbstractLargeFastaFileDataSt
 			throw new DataStoreException("error iterating over fasta file", e);
 		}
 	}
+    @Override
+    protected FastaRecordVisitor createRecordVisitor(String id, String comment,
+            Consumer<PositionFastaRecord> callback) {
+        return new AbstractPositionSequenceFastaRecordVisitor(id, comment) {
+            
+            @Override
+            protected void visitRecord(PositionFastaRecord fastaRecord) {
+                callback.accept(fastaRecord);
+            }
+        };
+    }
+	
+	
 }
 

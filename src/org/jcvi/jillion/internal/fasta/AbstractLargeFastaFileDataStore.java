@@ -21,6 +21,7 @@
 package org.jcvi.jillion.internal.fasta;
 
 import java.io.IOException;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.Sequence;
@@ -29,6 +30,7 @@ import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.util.streams.ThrowingBiConsumer;
 import org.jcvi.jillion.fasta.FastaDataStore;
 import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.FastaRecord;
@@ -36,6 +38,7 @@ import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
+import org.jcvi.jillion.internal.core.util.Sneak;
 
 public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F extends FastaRecord<T, S>> implements FastaDataStore<T,S,F>{
 
@@ -104,6 +107,82 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
         }finally{
         	IOUtil.closeAndIgnoreErrors(iter);
         }
+    }
+
+    protected abstract FastaRecordVisitor createRecordVisitor(String id, String comment, Consumer<F> callback);
+    
+    @Override
+    public <E extends Throwable> void forEach(ThrowingBiConsumer<String, F, E> consumer) throws IOException, E {
+        checkNotYetClosed();
+        if(recordFilter ==null){
+            parser.parse(new FastaVisitor() {
+                
+                @Override
+                public void visitEnd() {
+                    
+                }
+                
+                @Override
+                public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
+                        String id, String optionalComment) {
+                    if(filter.test(id)){
+                        return createRecordVisitor(id, optionalComment, r->{
+                           try{
+                               consumer.accept(id, r);
+                           }catch(Throwable t){
+                               Sneak.sneakyThrow(t);
+                           }
+                        });
+                          
+                    }
+                    
+                    return null;
+                }
+                
+                @Override
+                public void halted() {
+                   
+                    
+                }
+            });
+        }
+        else{
+            parser.parse(new FastaVisitor() {
+                
+                @Override
+                public void visitEnd() {
+                    
+                }
+                
+                @Override
+                public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
+                        String id, String optionalComment) {
+                    if(filter.test(id)){
+                        return createRecordVisitor(id, optionalComment, 
+                                r-> {
+                                    if(recordFilter.test(r)){
+                                        try{
+                                            consumer.accept(id, r);
+                                        }catch(Throwable t){
+                                            Sneak.sneakyThrow(t);
+                                        }
+                                    }
+                                });
+                                
+                          
+                    }
+                    
+                    return null;
+                }
+                
+                @Override
+                public void halted() {
+                   
+                    
+                }
+            });
+        }
+
     }
 
     @Override

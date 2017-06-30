@@ -37,6 +37,7 @@ import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.fasta.FastaRecord;
 import org.jcvi.jillion.fasta.FastaWriter;
+import org.jcvi.jillion.internal.core.io.OutputStreamFactory;
 import org.jcvi.jillion.internal.fasta.FastaUtil;
 
 
@@ -201,6 +202,10 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		 * will be overwritten.
 		 * @param outputFile the File to use;
 		 * can not be null.
+		 * 
+		 * Since 5.3, if the file extension is either {@code ".gz" or ".zip"}
+		 * then the writer will automatically compress the output for you.
+		 * 
 		 * @throws NullPointerException if outputFile is null.
 		 * @throws IOException if the file exists but 
 		 * is a directory rather than a regular file, 
@@ -208,9 +213,8 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		 * or cannot be opened for any other reason.
 		 */
 		public AbstractBuilder(File outputFile) throws IOException{
-			//create parent dirs if do not yet exist
-			IOUtil.mkdirs(outputFile.getParentFile());
-			this.out = new BufferedOutputStream(new FileOutputStream(outputFile));
+			
+			this.out = OutputStreamFactory.create(outputFile);
 			numberPerLine(getDefaultNumberOfSymbolsPerLine());
 		}
 		

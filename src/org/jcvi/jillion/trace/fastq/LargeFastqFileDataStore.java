@@ -28,13 +28,16 @@ package org.jcvi.jillion.trace.fastq;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.util.streams.ThrowingBiConsumer;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
+import org.jcvi.jillion.internal.core.util.Sneak;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
 /**
  * {@code LargeFastqFileDataStore} is a {@link FastqDataStore} implementation
@@ -205,6 +208,39 @@ final class LargeFastqFileDataStore implements FastqFileDataStore {
     }
     
     
+    @Override
+    public <E extends Throwable> void forEach(ThrowingBiConsumer<String, FastqRecord, E> consumer)
+            throws IOException, E {
+        //we can be faster by avoiding the blocking iterators
+        parser.parse(new AbstractFastqVisitor() {
+
+            @Override
+            public FastqRecordVisitor visitDefline(
+                    FastqVisitorCallback callback, String id,
+                    String optionalComment) {
+                if (filter.test(id)) {
+                    //don't waste CPU time saving a few bytes of memory
+                    //since we are only iterating through
+                    //and will probably throw the read away after reading it once.
+                    return new AbstractFastqRecordVisitor(id,optionalComment,qualityCodec, true) {
+                            
+                            @Override
+                            protected void visitRecord(FastqRecord record) {
+                                if(recordFilter ==null || recordFilter.test(record)){
+                                    try {
+                                        consumer.accept(id, record);
+                                    } catch (Throwable t) {
+                                        Sneak.sneakyThrow(t);
+                                    }
+                                }
+                            }
+                    };
+                }
+                return null;
+            }
+            
+        });
+    }
     @Override
 	public synchronized StreamingIterator<DataStoreEntry<FastqRecord>> entryIterator()
 			throws DataStoreException {

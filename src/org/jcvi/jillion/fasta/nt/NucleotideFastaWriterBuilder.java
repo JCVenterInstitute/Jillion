@@ -69,6 +69,10 @@ public final class NucleotideFastaWriterBuilder extends AbstractResidueFastaWrit
 		 * will be overwritten.  If this file or
 		 * any parent directories do not exist,
 		 * then they will be created.
+		 * 
+		 * Since 5.3, if the file extension is either {@code ".gz" or ".zip"}
+		 * then the writer will automatically compress the output for you.
+		 * 
 		 * @param outputFile the File to use;
 		 * can not be null.
 		 * @throws NullPointerException if outputFile is null.

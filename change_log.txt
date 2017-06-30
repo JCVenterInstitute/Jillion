@@ -30,7 +30,11 @@ New Features
    trace.getQualitySequence() and/or trace.getNucleotideSequence().  Making it easier to read and write.  
    
 4. Added new adapt( Function<Fastq, Fastq>) method to FastqFileWriterBuilder and static adapt method to FastqWriter that 
-  can modify a FastqRecord before writing it.  Useful for abstracting away changing the record ids or performing additional trimming.      
+  can modify a FastqRecord before writing it.  Useful for abstracting away changing the record ids or performing additional trimming. 
+  
+5. FastqWriterBuilders and FastaWriterBuilders constructors that take File will now parse the output file's 
+   extension and if it's "gz" or "zip" will automatically compress the output accordingly.  Currently does not handle nested 
+   compressions or tar but those may be supported in future versions.    
 
 API Changes
 -----------
@@ -80,6 +84,9 @@ implementation best for that record.
 14. Added getters and setters to FastqRecordBuilder.
 
 15.  Added trim(Range) method to FastqRecordBuilder to simplify one of the most common modifications.
+
+16.  Added DataStore.forEach( BiConsumer<String, T>) that will call the given consumer once for each record in the datastore.
+     This method will often be more efficient than using Iterators. 
 ================
 Jillion 5.2
 ================

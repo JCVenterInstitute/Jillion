@@ -30,8 +30,10 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.jcvi.jillion.core.datastore.DataStore;
@@ -99,7 +101,16 @@ public abstract class AbstractTestFastQFileDataStore {
             //pass
         }
     }
-    
+    @Test
+    public void forEach() throws IOException{
+        Map<String, FastqRecord> map = new HashMap<>();
+        sut.forEach(map::put);
+        
+        assertEquals(2, map.size());
+        
+        assertFastQRecordsEqual(solexa_1489, map.get(solexa_1489.getId()));
+        assertFastQRecordsEqual(solexa_1692, map.get(solexa_1692.getId()));
+    }
     @Test
     public void idIterator() throws DataStoreException{
         List<String> expectedIds = Arrays.asList(solexa_1489.getId(),solexa_1692.getId());

@@ -32,14 +32,18 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.ThrowingStream;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.util.streams.ThrowingBiConsumer;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.internal.core.util.Caches;
+import org.jcvi.jillion.internal.core.util.Sneak;
 /**
  * Utility class containing static
  * factory methods to  adapt {@link DataStore}s
@@ -523,6 +527,18 @@ public final class DataStoreUtil {
 	    
 	    
 	    @Override
+        public <E extends Throwable> void forEach(ThrowingBiConsumer<String, T, E> consumer) throws IOException, E {
+           map.forEach((k,v) ->{
+               try{
+                   consumer.accept(k, v);
+               }catch(Throwable e){
+                   Sneak.sneakyThrow(e);
+               }
+           });
+        }
+
+
+        @Override
 		public ThrowingStream<T> records() throws DataStoreException {
 			return ThrowingStream.asThrowingStream(map.values().stream());
 		}

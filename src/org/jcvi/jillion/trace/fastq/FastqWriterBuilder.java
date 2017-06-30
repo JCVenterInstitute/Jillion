@@ -37,6 +37,7 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.Builder;
+import org.jcvi.jillion.internal.core.io.OutputStreamFactory;
 import org.jcvi.jillion.internal.trace.fastq.ParsedFastqRecord;
 /**
  * {@code FastqWriterBuilder}
@@ -90,6 +91,10 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 	 * that previously existed in this file
 	 * will be overwritten.  If the path for the given
 	 * File does not yet exist, then it will be created.
+	 * 
+	 * Since 5.3, if the file extension is either {@code ".gz" or ".zip"}
+	 * then the writer will automatically compress the output for you.
+	 * 
 	 * @param outputFile the File to use;
 	 * can not be null.
 	 * @throws NullPointerException if outputFile is null.
@@ -97,8 +102,7 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 	 * or cannot be opened for any other reason.
 	 */
 	public FastqWriterBuilder(File outputFile) throws IOException{
-		IOUtil.mkdirs(outputFile.getParentFile());
-		this.out =new BufferedOutputStream(new FileOutputStream(outputFile));
+		this.out =OutputStreamFactory.create(outputFile);
 	}
 	/**
 	 * Change the {@link Charset} used

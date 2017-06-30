@@ -27,19 +27,22 @@ package org.jcvi.jillion.internal.fasta.qual;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaFileParser;
 import org.jcvi.jillion.fasta.FastaParser;
+import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.qual.QualityFastaDataStore;
 import org.jcvi.jillion.fasta.qual.QualityFastaRecord;
+import org.jcvi.jillion.fasta.qual.QualityFastaRecordBuilder;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.internal.fasta.AbstractLargeFastaFileDataStore;
+import org.jcvi.jillion.internal.fasta.AbstractResuseableFastaRecordVisitor;
 /**
  * {@code LargeQualityFastaFileDataStore} is an implementation
  * of {@link QualityFastaDataStore} which does not
@@ -81,6 +84,24 @@ public final class LargeQualityFastaFileDataStore extends AbstractLargeFastaFile
         
         return DataStoreStreamingIterator.create(this,iter);
 	}
+	
+    @Override
+    protected FastaRecordVisitor createRecordVisitor(String id, String comment,
+            Consumer<QualityFastaRecord> callback) {
+        return new AbstractResuseableFastaRecordVisitor(){
+
+            @Override
+            public void visitRecord(String id, String optionalComment,
+                    String fullBody) {
+                QualityFastaRecord record = new QualityFastaRecordBuilder(id,fullBody)
+                        .comment(optionalComment)                        
+                        .build();
+                callback.accept(record);
+                
+            }
+            
+        };
+    }
    
 	
 }

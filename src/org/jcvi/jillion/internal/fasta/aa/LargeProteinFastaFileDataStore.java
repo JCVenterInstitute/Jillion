@@ -23,6 +23,7 @@ package org.jcvi.jillion.internal.fasta.aa;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
@@ -31,6 +32,8 @@ import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaFileParser;
 import org.jcvi.jillion.fasta.FastaParser;
+import org.jcvi.jillion.fasta.FastaRecordVisitor;
+import org.jcvi.jillion.fasta.aa.AbstractProteinFastaRecordVisitor;
 import org.jcvi.jillion.fasta.aa.ProteinFastaDataStore;
 import org.jcvi.jillion.fasta.aa.ProteinFastaFileDataStore;
 import org.jcvi.jillion.fasta.aa.ProteinFastaRecord;
@@ -101,6 +104,18 @@ public final class LargeProteinFastaFileDataStore extends AbstractLargeFastaFile
 		return DataStoreStreamingIterator.create(this,LargeProteinFastaIterator.createNewIteratorFor(parser, filter, recordFilter));
 	       
 	}
+    @Override
+    protected FastaRecordVisitor createRecordVisitor(String id, String comment,
+            Consumer<ProteinFastaRecord> callback) {
+        return new AbstractProteinFastaRecordVisitor(id, comment) {
+            
+            @Override
+            protected void visitRecord(ProteinFastaRecord fastaRecord) {
+                callback.accept(fastaRecord);
+                
+            }
+        };
+    }
    
    
 }

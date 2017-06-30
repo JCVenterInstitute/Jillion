@@ -94,4 +94,32 @@ public class TestMapDataStoreAdapter {
         }
         assertFalse(idIter.hasNext());
     }
+    
+    @Test
+    public void foreach() throws IOException{
+        Map<String, Integer> actual = new HashMap<>();
+        sut.forEach((k,v) ->{
+            actual.put(k, v);
+        });
+        
+        assertEquals(MAP, actual);
+    }
+    
+    @Test
+    public void throwingForeach() throws IOException{
+        Map<String, Integer> actual = new HashMap<>();
+        try{
+            sut.forEach((k,v) ->{
+                if(!actual.isEmpty()){
+                    throw new IOException("foo");
+                }
+                actual.put(k, v);
+            });
+            fail("should have thrown exception");
+        }catch(IOException expected){
+            assertEquals("foo", expected.getMessage());
+        }
+        assertEquals(1, actual.size());
+        assertEquals(Integer.valueOf(1), actual.get("key1"));
+    }
 }

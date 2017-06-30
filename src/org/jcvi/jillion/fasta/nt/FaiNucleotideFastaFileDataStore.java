@@ -37,6 +37,7 @@ import org.jcvi.jillion.core.io.InputStreamSupplier;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.util.streams.ThrowingBiConsumer;
 import org.jcvi.jillion.internal.fasta.DefaultFastaIndex;
 import org.jcvi.jillion.internal.fasta.FastaIndex;
 import org.jcvi.jillion.internal.fasta.FastaIndexRecord;
@@ -130,6 +131,11 @@ class FaiNucleotideFastaFileDataStore implements NucleotideFastaFileDataStore{
 
 
 	@Override
+    public <E extends Throwable> void  forEach(ThrowingBiConsumer<String, NucleotideFastaRecord, E> consumer)
+            throws IOException, E {
+       delegate.forEach(consumer);
+    }
+    @Override
 	public StreamingIterator<String> idIterator() throws DataStoreException {
 		return delegate.idIterator();
 	}

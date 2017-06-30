@@ -31,6 +31,7 @@ import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.util.streams.ThrowingBiConsumer;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback.FastqVisitorMemento;
 
@@ -198,6 +199,13 @@ final class IndexedFastqFileDataStore{
         	if(closed){
         		throw new DataStoreClosedException("datastore is closed");
         	}
+        }
+        
+        
+        @Override
+        public <E extends Throwable> void forEach(ThrowingBiConsumer<String, FastqRecord, E> consumer) throws IOException, E {
+            throwExceptionIfClosed();
+            LargeFastqFileDataStore.create(parser, qualityCodec, filter, recordFilter).forEach(consumer);
         }
         @Override
         public StreamingIterator<FastqRecord> iterator() throws DataStoreException {

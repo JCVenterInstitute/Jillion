@@ -28,6 +28,7 @@ package org.jcvi.jillion.fasta.nt;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
@@ -37,6 +38,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaFileParser;
 import org.jcvi.jillion.fasta.FastaParser;
+import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.internal.fasta.AbstractLargeFastaFileDataStore;
 /**
@@ -90,6 +92,18 @@ final class LargeNucleotideSequenceFastaFileDataStore extends AbstractLargeFasta
     
 	
 	@Override
+    protected FastaRecordVisitor createRecordVisitor(String id,
+            String comment, Consumer<NucleotideFastaRecord> consumer) {
+        return new AbstractNucleotideFastaRecordVisitor(id,comment) {
+            
+            @Override
+            protected void visitRecord(NucleotideFastaRecord fastaRecord) {
+                consumer.accept(fastaRecord);
+            }
+        };
+    }
+   
+    @Override
     public Optional<File> getFile() {
         return Optional.ofNullable(fastaFile);
     }
