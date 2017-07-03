@@ -11,7 +11,9 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.util.streams.ThrowingConsumer;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
+import org.jcvi.jillion.internal.core.util.Sneak;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
 import org.jcvi.jillion.sam.header.SamHeader;
 
@@ -230,6 +232,65 @@ class DefaultSamFileDataStore implements SamFileDataStore {
     }
 
     @Override
+    public <E extends Throwable> void forEachAlignedRecord(String referenceName,
+            ThrowingConsumer<SamRecord, E> consumer) throws DataStoreException, E {
+        Objects.requireNonNull(referenceName);
+        verifyNotClosed();
+        try{
+        parser.parse(referenceName, new AbstractSamVisitor() {
+
+            @Override
+            public void visitRecord(SamVisitorCallback callback,
+                    SamRecord record, VirtualFileOffset start,
+                    VirtualFileOffset end) {
+                if(filter !=null && !filter.test(record)){
+                    return;
+                }
+                try{
+                    consumer.accept(record);
+                }catch(Throwable t){
+                    Sneak.sneakyThrow(t);
+                }
+            }
+            
+        });
+        }catch (IOException e) {
+            throw new DataStoreException("error parsing sam/bam file to get header", e);
+        }
+        
+    }
+    
+    @Override
+    public <E extends Throwable> void forEachAlignedRecord(String referenceName, Range alignmentRange,
+            ThrowingConsumer<SamRecord, E> consumer) throws DataStoreException, E {
+        Objects.requireNonNull(referenceName);
+        Objects.requireNonNull(alignmentRange);
+        verifyNotClosed();
+        try{
+        parser.parse(referenceName,alignmentRange, new AbstractSamVisitor() {
+
+            @Override
+            public void visitRecord(SamVisitorCallback callback,
+                    SamRecord record, VirtualFileOffset start,
+                    VirtualFileOffset end) {
+                if(filter !=null && !filter.test(record)){
+                    return;
+                }
+                try{
+                    consumer.accept(record);
+                }catch(Throwable t){
+                    Sneak.sneakyThrow(t);
+                }
+            }
+            
+        });
+        }catch (IOException e) {
+            throw new DataStoreException("error parsing sam/bam file to get header", e);
+        }
+        
+    }
+
+    @Override
     public StreamingIterator<SamRecord> getAlignedRecords(String referenceName)
             throws DataStoreException {
         Objects.requireNonNull(referenceName);
@@ -286,6 +347,8 @@ class DefaultSamFileDataStore implements SamFileDataStore {
         }
         
     }
+    
+    
     
     private class SingleReferenceFilteredVisitor extends AbstractBlockingStreamingIterator<SamRecord>{
         private final String refname;

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -13,6 +14,7 @@ import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.util.streams.ThrowingConsumer;
 import org.jcvi.jillion.sam.header.SamHeader;
 /**
  * DataStore wrapper around a single SAM or BAM file.
@@ -97,6 +99,17 @@ public interface SamFileDataStore extends DataStore<SamRecord>{
      * or if the datastore is closed.
      */
     StreamingIterator<SamRecord> getAlignedRecords(String referenceName) throws DataStoreException;
+    
+    
+    <E extends Throwable> void forEachAlignedRecord(String referenceName, ThrowingConsumer<SamRecord, E> consumer) throws DataStoreException, E;
+    <E extends Throwable> void forEachAlignedRecord(String referenceName, Range alignmentRange, ThrowingConsumer<SamRecord, E> consumer) throws DataStoreException, E;
+    
+    default <E extends Throwable> void forEachAlignedRecord(String referenceName, Collection<Range> alignmentRanges, ThrowingConsumer<SamRecord, E> consumer) throws DataStoreException, E{
+        for(Range r : alignmentRanges){
+            forEachAlignedRecord(referenceName, r, consumer);
+        }
+    }
+    
     /**
      * Get all the {@link SamRecord}s that aligned to the
      * given reference within the alignment Range given. 

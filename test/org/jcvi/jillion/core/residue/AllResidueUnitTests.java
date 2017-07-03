@@ -29,7 +29,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-
+        TestFrame.class,
        AllNucleotideUnitTests.class,
        AllAminoAcidUnitTests.class
     }

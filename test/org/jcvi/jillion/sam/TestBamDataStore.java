@@ -201,6 +201,22 @@ public class TestBamDataStore {
                                     .toStream()
                                     .collect(Collectors.toList()));
     }
+    
+    @Test
+    public void forEachGetAlignmentsByReferenceAndRange() throws IOException, DataStoreException{
+        //only 1 ref in file called 'ref'
+        Range range = Range.of(27, 200);
+        
+        List<SamRecord> expected =  sut.getAlignedRecords("ref", range)
+                                    .toStream()
+                                    .collect(Collectors.toList());
+        
+        List<SamRecord> actual = new ArrayList<>();
+        
+        sut.forEachAlignedRecord("ref", range, actual::add);
+        
+        assertEquals(expected, actual);
+    }
 
     @Test
     public void getFilteredAlignmentsByReferenceAndRange() throws IOException, DataStoreException{

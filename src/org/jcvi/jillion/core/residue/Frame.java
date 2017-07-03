@@ -20,8 +20,14 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.RandomAccess;
+import java.util.stream.Stream;
+
+import org.jcvi.jillion.core.util.iter.IteratorUtil;
 
 public enum Frame{
     ONE(1),
@@ -58,8 +64,10 @@ public enum Frame{
     private int frame;
     
     private static final Frame[] VALUES = values();
-    private static final List<Frame> FORWARDS = Arrays.asList(ONE, TWO, THREE);
-    private static final List<Frame> REVERSE = Arrays.asList(NEGATIVE_ONE, NEGATIVE_TWO, NEGATIVE_THREE);
+    //need ArrayList to get the rollover iterator to work
+    //since we need marker interface RandomAccess
+    private static final ArrayList<Frame> FORWARDS = new ArrayList<>(Arrays.asList(ONE, TWO, THREE));
+    private static final ArrayList<Frame> REVERSE = new ArrayList<>(Arrays.asList(NEGATIVE_ONE, NEGATIVE_TWO, NEGATIVE_THREE));
     
     public  final int getFrame() {
         return frame;
@@ -67,10 +75,29 @@ public enum Frame{
     Frame(int frame){
         this.frame = frame;
     }
+    
+    public Frame shift(int amount){
+        
+        if(amount <1){
+            throw new IllegalArgumentException("amount must be positive");
+        }
+        int shift = amount %3;
+        Iterator<Frame> rollOverIter;
+        if(ordinal() < 3){
+            rollOverIter = IteratorUtil.rollover(FORWARDS, ordinal()+1);
+        }else{
+            rollOverIter = IteratorUtil.rollover(REVERSE, ordinal()-2);
+        }
+        Frame f = this;
+        for(int i=0; i< shift; i++){
+            f = rollOverIter.next();
+        }
+        return f;
+    }
     /**
      * Parse a {@link Frame} from the given int value.
-     * Valid values are <code>0</code> to <code>2</code>
-     * inclusive.
+     * Valid values are <code>-3</code> to <code>3</code>
+     * inclusive excluding 0.
      * @param frame the frame number as an int (1, 2, 3, -1, -2, -3).
      * 
      * @return a {@link Frame}

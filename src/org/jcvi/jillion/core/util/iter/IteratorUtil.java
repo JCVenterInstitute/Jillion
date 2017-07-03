@@ -26,11 +26,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.RandomAccess;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
-import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.sam.SamRecord;
 
 
 public final class IteratorUtil {
@@ -442,6 +440,35 @@ public final class IteratorUtil {
         
     public static <T> Iterator<T> chainSuppliers(Collection<? extends Supplier<? extends Iterator<? extends T>>> suppliers) {
         return ChainedIteratorOfSuppliers.create(suppliers);
+        
+    }
+    /**
+     *  Create a new Iterator that will iterate over the given list and start over again
+     *  when it reaches the end of the list.  This iterator will never end if the list is not empty.
+     * @param randomAccessList a list that implements the RandomAccess marker interface.
+     * 
+     * @return a new Iterator that starts at the beginning of the list.
+     * 
+     * @since 5.3
+     */
+    public static <T, L extends List<T> & RandomAccess> Iterator<T> rollover(L randomAccessList){
+        return new RollOverListIterator<T>(randomAccessList);
+        
+    }
+    /**
+     *  Create a new Iterator that will iterate over the given list and start over again
+     *  when it reaches the end of the list.  This iterator will never end if the list is not empty.
+     * @param randomAccessList a list that implements the RandomAccess marker interface.
+     * 
+     * @param startOffset the offset to start iterating from.  If this value is beyond the list size,
+     * then the start location will roll over accordingly.
+     * 
+     * @return a new Iterator that starts at the specified offset.
+     * 
+     * @since 5.3
+     */
+    public static <T, L extends List<T> & RandomAccess> Iterator<T> rollover(L randomAccessList, int startOffset){
+        return new RollOverListIterator<T>(randomAccessList, startOffset);
         
     }
 }

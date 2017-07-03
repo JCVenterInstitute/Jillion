@@ -6,6 +6,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import org.jcvi.jillion.core.util.streams.ThrowingConsumer;
 import org.jcvi.jillion.internal.core.util.Sneak;
 /**
  * An extension of {@link Stream} but with additional methods
@@ -27,17 +28,6 @@ public interface ThrowingStream<T> extends Stream<T>{
      */
     public static <T> ThrowingStream<T> asThrowingStream( Stream<T> stream){
         return new ThrowingStreamImpl<>(stream);
-    }
-    /**
-     * A {@link java.util.function.Consumer} that can throw an exception.
-     * @author dkatzel
-     *
-     * @param <T> the type the consumer accepts.
-     * @param <E> the exception that can be thrown.
-     */
-    interface ThrowingConsumer<T, E extends Exception>{
-        void accept(T t) throws E;
-       
     }
     /**
      * Iterate over each element remaining in the stream and call the given
