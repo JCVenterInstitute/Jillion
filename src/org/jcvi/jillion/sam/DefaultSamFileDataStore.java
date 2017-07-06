@@ -11,6 +11,7 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.util.streams.ThrowingBiConsumer;
 import org.jcvi.jillion.core.util.streams.ThrowingConsumer;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.internal.core.util.Sneak;
@@ -235,6 +236,7 @@ class DefaultSamFileDataStore implements SamFileDataStore {
     public <E extends Throwable> void forEachAlignedRecord(String referenceName,
             ThrowingConsumer<SamRecord, E> consumer) throws DataStoreException, E {
         Objects.requireNonNull(referenceName);
+        Objects.requireNonNull(consumer);
         verifyNotClosed();
         try{
         parser.parse(referenceName, new AbstractSamVisitor() {
@@ -260,6 +262,35 @@ class DefaultSamFileDataStore implements SamFileDataStore {
         
     }
     
+    @Override
+    public <E extends Throwable> void forEach(
+            ThrowingBiConsumer<String, SamRecord, E> consumer)
+            throws IOException, E {
+        Objects.requireNonNull(consumer);
+        verifyNotClosed();
+        try{
+        parser.parse(new AbstractSamVisitor() {
+
+            @Override
+            public void visitRecord(SamVisitorCallback callback,
+                    SamRecord record, VirtualFileOffset start,
+                    VirtualFileOffset end) {
+                if(filter !=null && !filter.test(record)){
+                    return;
+                }
+                try{
+                    consumer.accept(record.getQueryName(), record);
+                }catch(Throwable t){
+                    Sneak.sneakyThrow(t);
+                }
+            }
+            
+        });
+        }catch (IOException e) {
+            throw new DataStoreException("error parsing sam/bam file to get header", e);
+        }
+    }
+
     @Override
     public <E extends Throwable> void forEachAlignedRecord(String referenceName, Range alignmentRange,
             ThrowingConsumer<SamRecord, E> consumer) throws DataStoreException, E {

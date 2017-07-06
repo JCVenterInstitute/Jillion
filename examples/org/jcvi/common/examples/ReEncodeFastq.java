@@ -23,7 +23,9 @@ package org.jcvi.common.examples;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
@@ -48,7 +50,7 @@ public class ReEncodeFastq {
 	public static void main(String[] args) throws DataStoreException, IOException {
 		File outFile = new File("out.fastq");
 		File fastqFile = new File("path/to/fastq");
-		List<String> idsToInclude = new ArrayList<String>();//put names here
+		Set<String> idsToInclude = new HashSet<String>();//put names here
 		
 		DataStoreFilter filter = DataStoreFilters.newIncludeFilter(idsToInclude);
 		//for an example, we will tell the parser that
@@ -59,6 +61,8 @@ public class ReEncodeFastq {
 										.hint(DataStoreProviderHint.ITERATION_ONLY)
 										.qualityCodec(FastqQualityCodec.SANGER)
 										.filter(filter)
+										.filter(id -> idsToInclude.contains(id))
+										.filter(idsToInclude::contains)
 										.build();
 		
 		//note that we are re-encoding it in illumina format

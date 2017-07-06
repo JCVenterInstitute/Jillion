@@ -23,6 +23,7 @@ package org.jcvi.jillion.internal.core.io;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -71,6 +72,17 @@ public final class StreamUtil {
      * @return
      */
     public static <T> Stream<T> newGeneratedStream(Supplier<Optional<T>> generatingFunction){
+       return newGeneratedStream(generatingFunction, false);
+    }
+    /**
+     * Create a Stream that gets the elements from the provided generator.  The Stream is done
+     * when the generator returns {@link Optional#empty()}.
+     * @param generatingFunction
+     * @param parallel should the returned Stream be parallel.
+     * @return
+     */
+    public static <T> Stream<T> newGeneratedStream(Supplier<Optional<T>> generatingFunction, boolean parallel){
+        Objects.requireNonNull(generatingFunction);
         Spliterator<T> spliterator = new Spliterators.AbstractSpliterator<T>(
                 Long.MAX_VALUE, 
                 Spliterators.AbstractSpliterator.ORDERED| Spliterators.AbstractSpliterator.NONNULL) {
@@ -86,6 +98,6 @@ public final class StreamUtil {
         };
                 
                 
-        return StreamSupport.stream(spliterator, false);
+        return StreamSupport.stream(spliterator, parallel);
     }
 }

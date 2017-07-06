@@ -100,10 +100,72 @@ public interface SamFileDataStore extends DataStore<SamRecord>{
      */
     StreamingIterator<SamRecord> getAlignedRecords(String referenceName) throws DataStoreException;
     
-    
+    /**
+     * Get all the {@link SamRecord}s that aligned to the
+     * given reference and for each one, call the given consumer's call back method.
+     * 
+     * @param referenceName the name of the reference to look for.
+     * This name should be in the {@link SamHeader#getReferenceSequences()}; can not be null.
+     * @param consuemr a {@link ThrowingConsumer} instance that will be called for each aligned record. Can not be null.
+     * 
+     * @implNote this will probably be faster than using {@link #getAlignedRecords(String)}
+     * since most iterator implementations use multiple blocking threads.
+     * 
+     * @throws DataStoreException if there is a problem parsing the file
+     * or if the datastore is closed.
+     * 
+     * @throws NullPointerException if either parameter is null.
+     * @since 5.3
+     */
     <E extends Throwable> void forEachAlignedRecord(String referenceName, ThrowingConsumer<SamRecord, E> consumer) throws DataStoreException, E;
+    /**
+     * Get all the {@link SamRecord}s that aligned to the
+     * given reference and for each one, call the given consumer's call back method.
+     * 
+     * @param referenceName the name of the reference to look for.
+     * This name should be in the {@link SamHeader#getReferenceSequences()}; can not be null.
+     * @param alignmentRange the {@link Range} along this reference to find alignments for.; can not be null.
+     * 
+     * @param consuemr a {@link ThrowingConsumer} instance that will be called for each aligned record. Can not be null.
+     * 
+     * @implNote this will probably be faster than using {@link #getAlignedRecords(String, Range)}
+     * since most iterator implementations use multiple blocking threads.
+     * 
+     * @throws DataStoreException if there is a problem parsing the file
+     * or if the datastore is closed.
+     * 
+     * @throws NullPointerException if either parameter is null.
+     * @since 5.3
+     */
     <E extends Throwable> void forEachAlignedRecord(String referenceName, Range alignmentRange, ThrowingConsumer<SamRecord, E> consumer) throws DataStoreException, E;
-    
+    /**
+     * Get all the {@link SamRecord}s that aligned to the
+     * given reference within the alignment Ranges given. 
+     * Only {@link SamRecord}s that align to the reference AND the alignment INTERSECTS with at least one of
+     * these ranges will passed to the callback Consumer. Please note
+     * to match the output of {@code samtools view} if a record intersects multiple ranges
+     * given, then it will be returned multiple times.
+     * 
+     * @param referenceName the name of the reference to look for.
+     * This name should be in the {@link SamHeader#getReferenceSequences()}; can not be null.
+     * 
+     * @param alignmentRanges the {@link Range}s along this reference to find alignments for. 
+     * Please Note: to keep compatibility with samtools, the same record could be returned
+     * multiple times if it intersects multiple ranges given; can not be null.
+     * 
+     * @param consuemr a {@link ThrowingConsumer} instance that will be called for each aligned record. Can not be null.
+     * 
+     * @implNote this will probably be faster than using {@link #getAlignedRecords(String, Range)}
+     * since most iterator implementations use multiple blocking threads.
+     * 
+     * 
+     * @throws DataStoreException if there is a problem parsing the file
+     * or if the datastore is closed.
+     * 
+     * @throws NullPointerException if any parameter is null.
+     * 
+     * @since 5.3
+     */
     default <E extends Throwable> void forEachAlignedRecord(String referenceName, Collection<Range> alignmentRanges, ThrowingConsumer<SamRecord, E> consumer) throws DataStoreException, E{
         for(Range r : alignmentRanges){
             forEachAlignedRecord(referenceName, r, consumer);

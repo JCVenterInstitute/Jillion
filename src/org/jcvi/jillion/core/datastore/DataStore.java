@@ -27,7 +27,10 @@ package org.jcvi.jillion.core.datastore;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.jcvi.jillion.core.util.ThrowingStream;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;

@@ -20,9 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace.fastq;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -33,6 +31,7 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.io.BufferSize;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -102,7 +101,7 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 	 * or cannot be opened for any other reason.
 	 */
 	public FastqWriterBuilder(File outputFile) throws IOException{
-		this.out =OutputStreamFactory.create(outputFile);
+		this.out =OutputStreamFactory.create(outputFile, BufferSize.kb(64));
 	}
 	/**
 	 * Change the {@link Charset} used

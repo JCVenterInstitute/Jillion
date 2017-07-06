@@ -222,6 +222,39 @@ public interface FastqWriter extends Closeable{
             }
 	}
 	
+    public static void copy(FastqParser in, FastqQualityCodec codec,
+            OutputStream out) throws IOException {
+
+        try (FastqWriter writer = new FastqWriterBuilder(out)
+                                        .qualityCodec(codec).build()) {
+            FastqFileReader.forEach(in, codec,  (id, fastq) -> writer.write(fastq));
+
+        }
+    }
+    
+    public static void copy(FastqParser in, FastqQualityCodec codec,
+            File out) throws IOException {
+
+        try (FastqWriter writer = new FastqWriterBuilder(out)
+                                        .qualityCodec(codec).build()) {
+            FastqFileReader.forEach(in, codec,  (id, fastq) -> writer.write(fastq));
+
+        }
+    }
+	public static void copy(FastqParser in, File out) throws IOException{
+            
+            try(Results results = FastqFileReader.read(in);
+                    
+                    FastqWriter writer = new FastqWriterBuilder(out)
+                                            .qualityCodec(results.getCodec())
+                                            .build();
+                    
+                ThrowingStream<FastqRecord> stream = results.records();
+                    ){
+                stream.throwingForEach(writer::write);
+            }
+        }
+	
 	public static void copy(FastqParser in, OutputStream out, Predicate<FastqRecord> filter) throws IOException{
             
             try(Results results = FastqFileReader.read(in);
@@ -236,6 +269,43 @@ public interface FastqWriter extends Closeable{
                         .throwingForEach(writer::write);
             }
         }
+
+	public static void copy(FastqParser in, File out, Predicate<FastqRecord> filter) throws IOException{
+            
+            try(Results results = FastqFileReader.read(in);
+                    
+                    FastqWriter writer = new FastqWriterBuilder(out)
+                                            .qualityCodec(results.getCodec())
+                                            .build();
+                    
+                ThrowingStream<FastqRecord> stream = results.records();
+                    ){
+                stream.filter(filter)
+                        .throwingForEach(writer::write);
+            }
+        }
+	
+    public static void copy(FastqParser in, FastqQualityCodec codec,
+            OutputStream out, Predicate<FastqRecord> filter)
+            throws IOException {
+
+        try (FastqWriter writer = new FastqWriterBuilder(out)
+                                        .qualityCodec(codec).build()) {
+            FastqFileReader.forEach(in, codec, filter,  (id, record) -> writer.write(record));
+
+        }
+    }
+
+    public static void copy(FastqParser in, FastqQualityCodec codec,
+            File out, Predicate<FastqRecord> filter)
+            throws IOException {
+
+        try (FastqWriter writer = new FastqWriterBuilder(out)
+                                        .qualityCodec(codec).build()) {
+            FastqFileReader.forEach(in, codec, filter,  (id, record) -> writer.write(record));
+
+        }
+    }
 	
 	public static void copyById(FastqParser in, OutputStream out, Predicate<String> idFilter) throws IOException{
 	    

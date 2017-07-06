@@ -48,8 +48,8 @@ public class SortSamToIndexedBam {
      * can use Streams with lambdas that throw exceptions as well as static
      * helper methods on some interfaces such as SamWriter.
      */
-    private static void using_version_5_3(File inputBam, File outputBam) throws IOException{
-        try(SamFileDataStore datastore = SamFileDataStore.fromFile(inputBam);
+    private static void using_version_5_3(File inputSam, File outputBam) throws IOException{
+        try(SamFileDataStore datastore = SamFileDataStore.fromFile(inputSam);
             SamWriter writer = SamWriter.newSortedBamWriter(outputBam, datastore.getHeader());
                     
             ThrowingStream<SamRecord> stream = datastore.records();

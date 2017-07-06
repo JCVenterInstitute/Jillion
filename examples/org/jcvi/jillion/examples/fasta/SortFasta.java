@@ -53,6 +53,26 @@ public class SortFasta {
         }
     }
     
+    private static void sort_4_0(File inputFasta, File sortedOutputFasta) throws IOException{
+        NucleotideFastaDataStore dataStore = new NucleotideFastaFileDataStoreBuilder(inputFasta)
+                                                .hint(DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_MEMORY)
+                                                .build();
+        
+        SortedSet<String> sortedIds = new TreeSet<String>();
+        try(StreamingIterator<String> iter = dataStore.idIterator()){
+            while (iter.hasNext()) {
+                sortedIds.add(iter.next());
+            }
+        }
+        
+        try(NucleotideFastaWriter out = new NucleotideFastaWriterBuilder(sortedOutputFasta)
+                                                     .build()){
+            for (String id : sortedIds) {
+                out.write(dataStore.get(id));
+            }
+        }
+    }
+    
     private static void sort_5_3(File inputFasta, File sortedOutputFasta) throws IOException{
         
         
@@ -64,6 +84,19 @@ public class SortFasta {
                 ){
             
             stream.throwingForEach(writer::write);
+            
+        }
+    }
+    
+private static void sort_5_3_foreach(File inputFasta, File sortedOutputFasta) throws IOException{
+        
+        
+        try(NucleotideFastaWriter writer = new NucleotideFastaWriterBuilder(sortedOutputFasta)
+                                                    .sort(Comparator.comparing(NucleotideFastaRecord::getId))
+                                                    .build();
+          ){
+            NucleotideFastaFileReader.forEach(inputFasta, (id, record)-> writer.write(record));
+            
             
         }
     }

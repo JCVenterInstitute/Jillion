@@ -60,9 +60,11 @@ public class TrimFastq {
 	 private static void trim_5_3(File fastqFile, File outputFile,
 	            long minLength)
 	            throws IOException, DataStoreException {
-	        
+	     Set<String> ids = new HashSet<>();
+	     //populate ids Set for ids to include
+	     
 	        Trimmer<FastqRecord> bwaTrimmer = BwaQualityTrimmer.createFor(PhredQuality.valueOf(20));
-	        Set<String> ids = new HashSet<>();
+	        
 	        try(   Results parsedFastqs = FastqFileReader.read(fastqFile);
 	                
 	                FastqWriter writer = new FastqWriterBuilder(outputFile)

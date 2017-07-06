@@ -24,6 +24,7 @@ import org.jcvi.jillion.align.NucleotideSubstitutionMatrices;
 import org.jcvi.jillion.align.NucleotideSubstitutionMatrix;
 import org.jcvi.jillion.align.pairwise.NucleotidePairwiseSequenceAlignment;
 import org.jcvi.jillion.align.pairwise.PairwiseAlignmentBuilder;
+import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 
@@ -35,11 +36,29 @@ public class AlignWholeSubstring {
 		
 		NucleotideSubstitutionMatrix matrix = NucleotideSubstitutionMatrices.getNuc44();
 		
-		NucleotidePairwiseSequenceAlignment alignment = PairwiseAlignmentBuilder.createNucleotideAlignmentBuilder(A,B, matrix)
-																			.gapPenalty(0)
-																			.build();
+		align(A, B, matrix, false);
+		align(A, B, matrix, true);
 		
-		System.out.println(alignment);
+		
+		
+		
 	}
+
+    private static void align(NucleotideSequence A, NucleotideSequence B,
+            NucleotideSubstitutionMatrix matrix, boolean global) {
+        System.out.println(A);
+        System.out.println(B);
+        NucleotidePairwiseSequenceAlignment alignment = PairwiseAlignmentBuilder.createNucleotideAlignmentBuilder(A,B, matrix)
+                .useGlobalAlignment(global)
+                .gapPenalty(-1)
+                .build();
+		
+		System.out.println(alignment.getPercentIdentity());
+		System.out.printf("%20s %s%n", alignment.getQueryRange().getRange(),  alignment.getGappedQueryAlignment());
+		System.out.printf("%20s %s%n", alignment.getSubjectRange().getRange(), alignment.getGappedSubjectAlignment());
+		System.out.println(alignment);
+    }
+	
+	
 
 }

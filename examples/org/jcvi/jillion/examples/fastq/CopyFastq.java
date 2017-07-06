@@ -38,10 +38,9 @@ public class CopyFastq {
     }
 
     private static void copyByFilter(File inputFastq, File output) throws IOException{
-        try(OutputStream out = new BufferedOutputStream(new FileOutputStream(output))){
-            
-            FastqWriter.copy(FastqFileParser.create(inputFastq), out, fastq -> fastq.getLength() > 40);
-        }
+        FastqWriter.copy(FastqFileParser.create(inputFastq), output, 
+                fastq -> fastq.getLength() > 40);
+        
     }
 
     private static void copyById(File inputFastq, File output) throws IOException{
