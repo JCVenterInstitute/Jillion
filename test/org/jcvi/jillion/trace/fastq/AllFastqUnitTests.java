@@ -80,7 +80,9 @@ import org.junit.runners.Suite.SuiteClasses;
         AllSolexaUnitTests.class,
         AllFastqUtilUnitTests.class,
         
-        TestAvgQualityFastqRecord.class
+        TestAvgQualityFastqRecord.class,
+        
+        TestFastqReader.class
     }
     )
 public class AllFastqUnitTests {
