@@ -87,6 +87,12 @@ implementation best for that record.
 
 16.  Added DataStore.forEach( BiConsumer<String, T>) that will call the given consumer once for each record in the datastore.
      This method will often be more efficient than using Iterators. 
+     
+     
+Bug Fixes
+---------
+
+1. Adapted FastqRecordWriter now fixed to actually write adapted record
 ================
 Jillion 5.2
 ================

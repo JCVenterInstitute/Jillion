@@ -82,7 +82,8 @@ import org.junit.runners.Suite.SuiteClasses;
         
         TestAvgQualityFastqRecord.class,
         
-        TestFastqReader.class
+        TestFastqReader.class,
+        TestFastqWriterMethods.class
     }
     )
 public class AllFastqUnitTests {

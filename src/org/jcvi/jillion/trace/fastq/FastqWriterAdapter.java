@@ -54,7 +54,7 @@ final class FastqWriterAdapter implements FastqWriter{
     public void write(FastqRecord record) throws IOException {
         FastqRecord newRecord = adapterFunction.apply(record);
         if(newRecord !=null){
-            delegate.write(record);
+            delegate.write(newRecord);
         }
         
     }

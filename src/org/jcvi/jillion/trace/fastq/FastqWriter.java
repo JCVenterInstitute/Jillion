@@ -36,7 +36,6 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.ThrowingStream;
 import org.jcvi.jillion.internal.core.util.Sneak;
 import org.jcvi.jillion.trace.fastq.FastqFileReader.Results;
-import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback;
 /**
  * {@code FastqWriter} is an interface
  * that handles writing out {@link FastqRecord}s.
@@ -186,7 +185,7 @@ public interface FastqWriter extends Closeable{
          * 
          * 
          * 
-         * @param datastore the {@link FastqFileDataStore} to write out; can not be null.
+         * @param datastore the {@link FastqDataStore} to write out; can not be null.
          * @param outputFile the output file to write the resulting Fastq file to.
          * @param coec the {@link FastqQualityCodec} to use when writing out the output fastq file.
          * 
@@ -195,7 +194,7 @@ public interface FastqWriter extends Closeable{
          * 
          * @since 5.3
          */
-	public static void write(FastqFileDataStore datastore, File outputFile, FastqQualityCodec codec) throws IOException{
+	public static void write(FastqDataStore datastore, File outputFile, FastqQualityCodec codec) throws IOException{
 	    Objects.requireNonNull(datastore);
 	    
 	    try(FastqWriter writer = new FastqWriterBuilder(outputFile)
@@ -350,7 +349,7 @@ public interface FastqWriter extends Closeable{
                                 
                                 @Override
                                 public void visitEncodedQualities(String encodedQualities) {
-                                    builder.append('+').append(encodedQualities).append('\n');
+                                    builder.append("+\n").append(encodedQualities).append('\n');
                                     
                                 }
                                 
