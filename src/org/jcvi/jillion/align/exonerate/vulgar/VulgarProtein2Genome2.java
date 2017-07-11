@@ -154,24 +154,28 @@ public class VulgarProtein2Genome2 {
         //target = nuc
         AlignmentFragment.Builder currentBuilder = new AlignmentFragment.Builder(Frame.ONE,
                 this.targetStrand , targetRange.getBegin(), queryRange.getBegin());
-        
+        boolean inSplitCodon= false;
         for(VulgarElement e : elements){
-            queryOffset+=e.getQueryLength();
             targetOffset+=e.getTargetLength();
             if(e.getOp() == VulgarOperation.Match || e.getOp() == VulgarOperation.Split_Codon){
+              //only increase the amino acid range on the 5' side of a split codon
+                int queryLength;
+                if(inSplitCodon){
+                    queryLength = 0; 
+                    queryOffset+=1;
+                }else{
+                    queryLength = e.getQueryLength();
+                    queryOffset+=e.getQueryLength();
+                }
+               
                 if(currentBuilder ==null){
+                    
                     currentBuilder = new AlignmentFragment.Builder(currentFrame,
-                            this.targetStrand , targetRange.getBegin()+ targetOffset - e.getTargetLength(), queryRange.getBegin()+queryOffset - e.getQueryLength());
+                            this.targetStrand , targetRange.getBegin()+ e.getTargetLength() - e.getTargetLength(), queryRange.getBegin()+queryOffset - queryLength);
                 }
                     
-                currentBuilder.add(e.getTargetLength(), e.getQueryLength());
-                
-               
-                
-                if(e.getOp() == VulgarOperation.Gap){
-                    queryGaps.add(new Range.Builder(e.getTargetLength()/3).shift(queryOffset).build());
-                    targetGaps.add(new Range.Builder(e.getQueryLength()*3).shift(targetOffset).build());
-                }
+                currentBuilder.add(e.getTargetLength(), queryLength);
+                inSplitCodon=false;
             }else if(e.getOp() == VulgarOperation.Gap){
                 fragments.add(currentBuilder.build());
                 
@@ -180,7 +184,16 @@ public class VulgarProtein2Genome2 {
                 currentBuilder = new AlignmentFragment.Builder(currentFrame,
                         this.targetStrand , targetRange.getBegin()+ targetOffset, queryRange.getBegin()+queryOffset);
                 
-            }else if(e.getOp() == VulgarOperation.Splice_5 || e.getOp() == VulgarOperation.Splice_3){
+            }else if(e.getOp() == VulgarOperation.Splice_5){
+                inSplitCodon=true;
+                if(currentBuilder !=null){
+                    //only increase the amino acid range on the 5' side of a split codon
+                    currentBuilder.add(0, 1);
+//                    
+//                    fragments.add(currentBuilder.build());
+//                    currentBuilder =null;
+                }
+            }else if(e.getOp() == VulgarOperation.Splice_3){
                 if(currentBuilder !=null){
                     fragments.add(currentBuilder.build());
                     currentBuilder =null;
