@@ -1,11 +1,10 @@
 Jillion 5 requires Java 8 and uses new Java 8 language features such as default methods, lambda expressions and the new `Stream` and `Collector` API.
-if you are still stuck on Java 7, then you must use Jilion 4.
 
-#How to install
+# How to install
 ## Using downloadable jar
 Just include the downloadable jar on your classpath.  Jillion does not require any other dependencies (other than the JVM)
 
-##Building from source
+## Building from source
 Jillion 5+ uses Maven to build and package a jar file.  From the root folder where the `pom.xml` file is type on the command line
 ```
 % mvn clean install
@@ -15,10 +14,24 @@ This will build jillion, run all the unit and integration tests and install it i
 Jillion is now ready to use.
 
 
+ 
 
-#5.2 Release Notes
+# Bug Reports:
+ 
+ Please report any bugs to the Issue section Jillion's github page:
+ 
+ https://github.com/JCVenterInstitute/Jillion/issues
+ 
+ Please include the version and git hash revision number for SNAPSHOTs if you know it in any bug reports.
+ 
+ Thank you,
+ 
+ Danny Katzel
+ 
 
-##New Features
+# 5.2 Release Notes
+
+## New Features
 1. Added new method to fastq writer to automatically trim given a Range. 
 This saves users the trouble of creating SequenceBuilders and trimming themselves.
     
@@ -50,7 +63,7 @@ This saves users the trouble of creating SequenceBuilders and trimming themselve
 
 11. AbiChromatogramParser - Added support for ABI 3500 abi files.
 
-##API Changes
+## API Changes
 1. Added Trace.getLength() 
 
 2. Added default methods to Rangeable for getLength() getBegin(), getEnd() and isEmpty() since 
@@ -83,14 +96,14 @@ This saves users the trouble of creating SequenceBuilders and trimming themselve
 
 9.  Added new StreamingIterator.empty() method
 
-##Bug Fixes
+## Bug Fixes
 1.  BlastParser - fixed bug in XML Blast Parser when it sometimes accidentally set percent identity to be (1 - percent identity).
  
 ---
 
-#5.1 Release Notes
+# 5.1 Release Notes
 
-##New Features
+## New Features
 1. Added new methods to `FastaDataStore` getSequence( id) which gets just the sequence
    and is equivalent to get(id).getSequence().
 2. Added new methods `FastaDataStore.getSubSequence( id, offset)` which gets just the sequence
@@ -110,14 +123,14 @@ This saves users the trouble of creating SequenceBuilders and trimming themselve
 7. Improved JavaDoc
 8. `BlosumMatrices` class added support for Blosum30 and 40.
 
-##API Changes
+## API Changes
 1. `FastqFileParser.canAccept()` renamed to `canParse()` to match the other parsers.
 2. Created new abstract class AbstractReadCasVisitor which is now the parent class of AbstractAlignedReadCasVisitor.  The new class handles iterating over the input read files to link cas alignments to their read names, sequences and qualities.
    Now you can extend that class if you want that extra information without realigning to gapped references.
 3. To Fix OSGi issues, Some classes that were in jillion.internal were moved to jillion.shared since all internal classes can't be exported by OSGI.  These classes should not be considered part of the public API and should only be for internal use.
 4. Moved FastaUtil to internal package since it should not be used outside of Jillion classes.  Heavily refactored it.
 
-##Bug Fixes
+## Bug Fixes
 1.  PositionSequence - sanger `PositionSequence.iterator(Range)`
     had off by 1 bug that did not include the last base in the range.    
 2.  StreamingIterator - abstract class that many StreamingIterators extend to use background thread
@@ -125,14 +138,14 @@ This saves users the trouble of creating SequenceBuilders and trimming themselve
 
 ---
 
-#5.0 Release Notes
+# 5.0 Release Notes
 
-##Jillion 5 License change. 
+## Jillion 5 License change. 
 Jillion 5 is now LGPL 2.1.  Previous versions of Jillion were GPL 3.  
 This change follows similar bioinformatics libraries such as BioJava which should allow 
 users to switch their code to use Jillion instead without any worries about license issues.
 
-##Jillion 5 is now OSGI compliant module. 
+## Jillion 5 is now OSGI compliant module. 
 All classes except for those under org.jcvi.jillion.internal.* are exported.
 
 This release notes do not cover all changes, there are too many to list.
@@ -330,55 +343,4 @@ Bug Fixes
 
 6. AceFileParser - more lenient Consensus Tag timestamp parsers to support CLC Workbench ace output
     which doesn't follow the ace file spec regarding timestamp resolution.
- 
- 
-#Jillion installation instructions
-
-
-Use Download Jar:
-=================
-Down load the latest Jillion jar file and then put it in your classpath.
-
-
-##To build from Source:
-
- Jillion has both a Maven POM file as well as an Apache ANT file that can both be used
- to build source and test files. So use which ever is easier for you to (Maven is recommended).
- 
- Jillion 5 requires Java 8 or higher to run.
-
-To Build with Maven
--------------------
- Once Java  and Maven are installed on your system,
- from the root directory of a Jillion check-out type:
- 
- %mvn clean install
- 
- This will build jillion, run all the unit and integration tests and installs it in your local repository.
- Jillion is now ready to use.
- 
-To Build with Ant
------------------
- Once Java  and Ant are installed on your system,
- from the root directory of a Jillion check-out type:
- 
- %ant release
- 
- This will compile all source files and create a new file in the root directory 
- named "Jillion-${version}.jar"
- 
- Then put the build jar in your classpath.
-
-# Bug Reports:
- 
- Please report any bugs to the Bug Tracker on Jillion's sourceforge page:
- 
- https://sourceforge.net/p/jillion/bugs/
- 
- Please include the version and SVN revision number if you know it in any bug reports.
- 
- Thank you,
- 
- Danny Katzel
- 
  
