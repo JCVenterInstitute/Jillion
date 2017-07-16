@@ -20,15 +20,13 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace.fastq;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.Objects;
 import java.util.function.Predicate;
 
-import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
-import org.jcvi.jillion.core.util.Pair;
 import org.jcvi.jillion.core.util.ThrowingStream;
 import org.jcvi.jillion.core.util.streams.ThrowingBiConsumer;
 /**
@@ -459,24 +457,20 @@ public final class FastqFileReader {
      * @author dkatzel
      * @since 5.3
      */
-    public static final class Results extends Pair<ThrowingStream<FastqRecord>, FastqQualityCodec>{
+    public static final class Results implements Closeable{
 
+        private final FastqFileDataStore datastore;
+        
         private Results(FastqFileDataStore datastore) {
-            super(() -> {try {
-                return datastore.records();
-            } catch (DataStoreException e) {
-                throw new UncheckedIOException(e);
-            }}, 
-                    
-                    ()-> datastore.getQualityCodec());
+            this.datastore = datastore;
         }
         /**
          * Get a {@link ThrowingStream} of all the {@link FastqRecord}s contained
          * in the file.  Any filtering the user desires must be done through the stream methods.
          * @return a new {@link ThrowingStream} will never be null.
          */
-        public ThrowingStream<FastqRecord> records(){
-            return getFirst();
+        public ThrowingStream<FastqRecord> records() throws IOException{
+            return datastore.records();
         }
         /**
          * Get the {@link FastqQualityCodec} that was used to encode
@@ -484,9 +478,16 @@ public final class FastqFileReader {
          * @return the {@link FastqQualityCodec}; will never be null.
          */
         public FastqQualityCodec getCodec(){
-            return getSecond();
+            return datastore.getQualityCodec();
         }
 
+        public <E extends Throwable> void forEach(ThrowingBiConsumer<String, FastqRecord, E> consumer) throws E, IOException{
+            datastore.forEach(consumer);
+        }
+        @Override
+        public void close() throws IOException {
+           datastore.close();
+        }
         
         
     }
