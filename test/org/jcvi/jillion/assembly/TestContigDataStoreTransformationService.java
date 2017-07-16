@@ -28,6 +28,7 @@ import java.util.Collections;
 
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
@@ -76,7 +77,7 @@ public class TestContigDataStoreTransformationService {
 	
 	@SuppressWarnings("unchecked")
 	private ContigDataStore<?,?> toDataStore(Contig<?> contig){
-		return DataStoreUtil.adapt(ContigDataStore.class, Collections.singletonMap(contig.getId(), contig));
+		return DataStore.of( Collections.singletonMap(contig.getId(), contig), ContigDataStore.class);
 	}
 	
 	

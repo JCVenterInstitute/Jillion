@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.jcvi.jillion.core.DirectedRange;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
+import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.util.MapUtil;
 
 public final class DefaultScaffoldDataStore {
@@ -47,7 +47,7 @@ public final class DefaultScaffoldDataStore {
 			for(Entry<String, ScaffoldBuilder> entry : builders.entrySet()){
 				scaffolds.put(entry.getKey(), entry.getValue().build());
 			}
-			return DataStoreUtil.adapt(ScaffoldDataStore.class, scaffolds);
+			return DataStore.of(scaffolds,ScaffoldDataStore.class);
 		}
 
 		@Override

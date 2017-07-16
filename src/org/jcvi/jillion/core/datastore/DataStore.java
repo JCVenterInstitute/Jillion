@@ -27,10 +27,10 @@ package org.jcvi.jillion.core.datastore;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.Map.Entry;
-import java.util.Optional;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Map;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import org.jcvi.jillion.core.util.ThrowingStream;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
@@ -265,4 +265,284 @@ public interface DataStore<T> extends Closeable{
         }
     }
     
+    
+    /**
+     * Create a new {@link DataStore} instance using the data of the given {@link Map}.
+     * The entries in the given map are copied into a new private map so any future
+     * manipulations to the input map will not affect the returned {@link DataStore}.
+     * The order of entries return by the {@link DataStore#idIterator()}
+     * and {@link DataStore#iterator()} are determined by the iteration
+     * order of input Map <strong>at the time this method is called</strong>.
+     * 
+     * @param map the map to adapt into a {@link DataStore}.
+     * @return a new DataStore instance.
+     * @throws NullPointerException if map is null, or if any keys or values in the map
+     * are null.
+     * @param <T> The type of Records in the DataStore.
+     * 
+     * @since 5.3
+     */
+    public static <T> DataStore<T> of(Map<String, T> map){
+        return DataStoreUtil.adapt(map);
+    }
+    
+    /**
+     * Create a new {@link DataStore} instance of the given
+     * type D using the data of the given map.
+     * The entries in the given map are copied into a new private map so any future
+     * manipulations to the input map will not affect the returned {@link DataStore}.
+     * The order of entries return by the {@link DataStore#idIterator()}
+     * and {@link DataStore#iterator()} are determined by the iteration
+     * order of input Map <strong>at the time this method is called</strong>.
+     * <p>
+     * This factory method uses the Java Dynamic Proxy classes
+     * to create a new implementation of the given interface
+     * which uses the map as a backing store.  This factory class
+     * can only implement methods that conform to the DataStore interface,
+     * if the given DataStore interface has extension methods that are not
+     * part of the core DataStore interface then trying to call
+     * those methods will throw an illegalArgumentException.
+     * @param datastoreInterface the interface to proxy; can not be null.
+     * @param map the map to adapt into a datastore; can not be null.
+     * @return a new DataStore instance which implements the given datastoreInterface and contains
+     * the records in the input Map.
+     * @throws NullPointerException if datastoreInterface is null, map is null, or if any keys or values in the map
+     * are null.
+     * @throws IllegalArgumentException if the given datastoreInterface is not a public interface 
+     * or violates the constraints set by {@link Proxy#getProxyClass(ClassLoader, Class...)}
+     * @see Proxy#getProxyClass(ClassLoader, Class...)
+     * @param <T> the type of record in the returned dataStore and the type of the values in the given Map.
+     * @param <D> the type of DataStore to return (created using a dynamic proxy)
+     * 
+     * @since 5.3
+     */
+    public static <T, D extends DataStore<T>> D of(Map<String, T> map, Class<D> datastoreInterface){
+        return DataStoreUtil.adapt(datastoreInterface, map);
+    }
+    
+    /**
+     * Create a new Dynamic Proxy wrapping the given DataStore.  The returned
+     * object is similar to the wrapped dataStore except
+     * all {@link DataStore#get(String)} results are cached
+     * in an Least Recently Used (LRU) SoftReference cache of the specified size
+     * and an additional interface, {@link CacheableDataStore} has been added
+     * to the list of interfaces the returned {@link DataStore} implements.  This will
+     * keep the Most recent {@code cacheSize} records in memory as long as the JVM doesn't
+     * need the memory for other things.
+     * @param <D> interface of DataStore to proxy
+     * @param c class object of D
+     * @param delegate instance of DataStore
+     * @param cacheSize the size of the cache used to keep most recently
+     * "gotten" objects.
+     * @return a proxy instance of type D which wraps the given delegate
+     * and caches all results returned by get in an LRU cache.
+     * @see #clearCacheFrom(DataStore)
+     * @see #isACachedDataStore(DataStore)
+     * 
+     * @since 5.3
+     */
+    public static <D extends DataStore<?>> D cache(Class<D> c,D delegate, int cacheSize){
+        return DataStoreUtil.createNewCachedDataStore(c, delegate, cacheSize);
+    }
+    
+    /**
+     * Create a new DataStore instance of the given
+     * type T using the data of the given DataStore which
+     * contains records of the correct type.
+     * This factory method uses the Java Proxy classes
+     * to create a new implementation of the given interface
+     * which then delegates all calls to the given datastore.  This factory class
+     * can only implement methods that conform to the DataStore interface,
+     * if the given interface has extension methods that do
+     * not exist in the given delegated DataStore, then trying to call
+     * those methods will throw an illegalArgumentException.
+     * @param datastoreInterface the interface to proxy;
+     * can not be null.
+     * @param delegate the original {@link DataStore} to adapt into a different type of {@link DataStore};
+     * can not be null.
+     * @param callback an instance of {@link AdapterCallback} used to adapt
+     * records of type {@literal <F>} into records of type {@literal <T>};
+     * can not be null.
+     * @return a new DataStore instance which implements the given datastoreInterface.
+     * @throws NullPointerException if datastoreInterface is null, delegate is null, or if callback is null.
+     *
+     * @param <F> the "From" type.  This is the type that the original datastore has its type as
+     * @param <T> the "To" type.  This is the type that we want to convert the type F into which may
+     * require method calls or new object creation.
+     * @param <D> the Database interface type we want the returned datastore to mimic.
+     * 
+     * @since 5.3
+     */
+    public static <F, T, D extends DataStore<T>> D adapt(Class<D> datastoreInterface, DataStore<F> delegate, Function<F, T> callback){
+        return DataStoreUtil.adapt(datastoreInterface, delegate, callback);
+    }
+    
+    /**
+     * Create a new {@link DataStore} instance of the given
+     * type D using which wraps the given DataStore
+     * in a new Dynamic Proxy class which mimics the desired DataStore.
+     * This is useful to convert a {@code DataStore<T>} into a different
+     * DataStore subinterface which has the same {@link DataStore#get(String)} signature.
+     * All method calls on the returned proxy Datastore are derived by delegating to the input DataStore.
+     * Closing the input DataStore will also close this Proxy DataStore and vice versa.
+     * The order of entries return by the {@link DataStore#idIterator()}
+     * and {@link DataStore#iterator()} are determined by the 
+     * the iteration
+     * order of input DataStore.
+     * <p>
+     * This factory method uses the Java Dynamic Proxy classes
+     * to create a new implementation of the given interface
+     * which wraps the input DataStore as a backing store.  This factory class
+     * can only implement methods that conform to the input DataStore interface,
+     * if the return DataStore interface has extension methods that are not
+     * part of the input DataStore interface then trying to call
+     * those methods will throw an illegalArgumentException.
+     * @param datastoreInterface the interface to proxy;
+     * can not be null.
+     * @param delegate the original {@link DataStore} to adapt into a different type of {@link DataStore}.
+     * @throws NullPointerException if datastoreInterface is null, delegate is null.
+     * @return a new DataStore instance which implements the given datastoreInterface and contains
+     * the records in the input DataStore.
+     * @throws NullPointerException if datastoreInterface is null, map is null, or if any keys or values in the map
+     * are null.
+     * @throws IllegalArgumentException if the given datastoreInterface is not a public interface 
+     * or violates the constraints set by {@link Proxy#getProxyClass(ClassLoader, Class...)}
+     * @see Proxy#getProxyClass(ClassLoader, Class...)
+     * @param <T> the type of record both the input and output dataStores.
+     * @param <D> the type of DataStore to return (created using a dynamic proxy)
+     * 
+     * @since 5.3
+     */
+     public static <T, D extends DataStore<T>> D adapt(Class<D> datastoreInterface, DataStore<T> delegate){
+        return DataStoreUtil.adapt(datastoreInterface, delegate);
+    }
+     
+     /**
+      * Create a new DataStore that contains the entire contents of each of the 
+      * input DataStores.  The order of the input DataStores is the order
+      * that these DataStores will be chained together.  This results in the following
+      * contract: 
+      * <ul>
+      * <li> Calls to {@link DataStore#get(String)} or {@link DataStore#contains(String)}
+      * will check each DataStore for the given record until the record is found
+      * or all DataStores are checked.</li>
+      * <li> Calls to {@link DataStore#getNumberOfRecords()}
+      * will return a combined total over all the datastores.</li>
+      * <li> Calls to {@link DataStore#iterator()} and {@link DataStore#idIterator()}
+      * will chain the iterators of each DataStore one after the other.  When the first datastore's
+      * iterator is finished, then {@link StreamingIterator#next()} will move onto the iterator
+      * from the next DataStore etc.  </li>
+      * <li>Closing the returned DataStore will close all the input DataStores</li>
+      * </ul>
+      * <p>
+      * This is a useful method for combining several different DataStore objects to appear
+      * as a single DataStore.  For example combining several sequence input files (possibly in different
+      * file formats) which have been parsed into DataStores can be adapted into a single 
+      * chained DataStore for processing.  The fact that the sequence data comes from multiple
+      * files (objects) has been abstracted away.
+      * <p>
+      * This factory method uses the Java Proxy classes
+      * to create a new implementation of the given interface
+      * which then delegates all calls to the given datastore.  This factory class
+      * can only implement methods that conform to the DataStore interface,
+      * if the given interface has extension methods that do
+      * not exist in the given delegated DataStore, then trying to call
+      * those methods will throw an illegalArgumentException.
+      * @param datastores the datastores to chain together; can not be null or empty.
+      * @param <T> the type of record both the input and output dataStores.
+      * @param <D> the type of DataStore to return (created using a dynamic proxy)
+      * @return a new instance of type D.
+      * 
+      * @since 5.3
+      */
+     public static <T,D extends DataStore<T>> DataStore<T> chain(Collection<D> datastores){
+                return DataStoreUtil.chain(datastores);
+         }
+     
+     /**
+      * Create a new DataStore that contains the entire contents of each of the 
+      * input DataStores.  The order of the input DataStores is the order
+      * that these DataStores will be chained together.  This results in the following
+      * contract: 
+      * <ul>
+      * <li> Calls to {@link DataStore#get(String)} or {@link DataStore#contains(String)}
+      * will check each DataStore for the given record until the record is found
+      * or all DataStores are checked.</li>
+      * <li> Calls to {@link DataStore#getNumberOfRecords()}
+      * will return a combined total over all the datastores.</li>
+      * <li> Calls to {@link DataStore#iterator()} and {@link DataStore#idIterator()}
+      * will chain the iterators of each DataStore one after the other.  When the first datastore's
+      * iterator is finished, then {@link StreamingIterator#next()} will move onto the iterator
+      * from the next DataStore etc.  </li>
+      * <li>Closing the returned DataStore will close all the input DataStores</li>
+      * </ul>
+      * <p>
+      * This is a useful method for combining several different DataStore objects to appear
+      * as a single DataStore.  For example combining several sequence input files (possibly in different
+      * file formats) which have been parsed into DataStores can be adapted into a single 
+      * chained DataStore for processing.  The fact that the sequence data comes from multiple
+      * files (objects) has been abstracted away.
+      * <p>
+      * This factory method uses the Java Proxy classes
+      * to create a new implementation of the given interface
+      * which then delegates all calls to the given datastore.  This factory class
+      * can only implement methods that conform to the DataStore interface,
+      * if the given interface has extension methods that do
+      * not exist in the given delegated DataStore, then trying to call
+      * those methods will throw an illegalArgumentException.
+      * @param datastores the datastores to chain together; can not be null or empty.
+      * @param <T> the type of record both the input and output dataStores.
+      * @param <D> the type of DataStore to return (created using a dynamic proxy)
+      * @return a new instance of type D.
+      * 
+      * @since 5.3
+      */
+     @SafeVarargs
+    public static <T,D extends DataStore<T>> DataStore<T> chain(D...datastores){
+                return DataStoreUtil.chain(Arrays.asList(datastores));
+         }
+     /**
+      * Create a new DataStore that contains the entire contents of each of the 
+      * input DataStores.  The order of the input DataStores is the order
+      * that these DataStores will be chained together.  This results in the following
+      * contract: 
+      * <ul>
+      * <li> Calls to {@link DataStore#get(String)} or {@link DataStore#contains(String)}
+      * will check each DataStore for the given record until the record is found
+      * or all DataStores are checked.</li>
+      * <li> Calls to {@link DataStore#getNumberOfRecords()}
+      * will return a combined total over all the datastores.</li>
+      * <li> Calls to {@link DataStore#iterator()} and {@link DataStore#idIterator()}
+      * will chain the iterators of each DataStore one after the other.  When the first datastore's
+      * iterator is finished, then {@link StreamingIterator#next()} will move onto the iterator
+      * from the next DataStore etc.  </li>
+      * <li>Closing the returned DataStore will close all the input DataStores</li>
+      * </ul>
+      * <p>
+      * This is a useful method for combining several different DataStore objects to appear
+      * as a single DataStore.  For example combining several sequence input files (possibly in different
+      * file formats) which have been parsed into DataStores can be adapted into a single 
+      * chained DataStore for processing.  The fact that the sequence data comes from multiple
+      * files (objects) has been abstracted away.
+      * <p>
+      * This factory method uses the Java Proxy classes
+      * to create a new implementation of the given interface
+      * which then delegates all calls to the given datastore.  This factory class
+      * can only implement methods that conform to the DataStore interface,
+      * if the given interface has extension methods that do
+      * not exist in the given delegated DataStore, then trying to call
+      * those methods will throw an illegalArgumentException.
+      * @param datastoreInterface the interface to proxy;
+      * can not be null.
+      * @param datastores the datastores to chain together; can not be null or empty.
+      * @param <T> the type of record both the input and output dataStores.
+      * @param <D> the type of DataStore to return (created using a dynamic proxy)
+      * @return a new instance of type D.
+      * 
+      * @since 5.3
+      */
+     public static <T,D extends DataStore<T>> D chain(Class<D> datastoreInterface,Collection<D> datastores){
+        return DataStoreUtil.chain(datastoreInterface, datastores);
+         }
+     
 }

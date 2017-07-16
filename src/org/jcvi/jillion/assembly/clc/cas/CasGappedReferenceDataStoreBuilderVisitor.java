@@ -211,7 +211,7 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
         	}
         }
         
-        builtDataStore = new CasGappedReferenceDataStoreImpl(DataStoreUtil.adapt(gappedSequenceMap), 
+        builtDataStore = new CasGappedReferenceDataStoreImpl(DataStore.of(gappedSequenceMap), 
         													refIndexToIdMap);
 		
 	}

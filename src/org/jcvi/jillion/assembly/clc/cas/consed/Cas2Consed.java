@@ -46,6 +46,7 @@ import org.jcvi.jillion.assembly.consed.phd.PhdWriter;
 import org.jcvi.jillion.assembly.util.GapQualityValueStrategy;
 import org.jcvi.jillion.assembly.util.consensus.NextGenReferenceConsensusRecaller;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
@@ -188,15 +189,10 @@ public class Cas2Consed extends  AbstractAlignedReadCasVisitor{
 											.build();
 				Iterator<Entry<String, AceContigBuilder>> referenceEntryIter = contigBuilders.entrySet().iterator();
 				
-				QualitySequenceDataStore qualityDataStore = DataStoreUtil.adapt(
+				QualitySequenceDataStore qualityDataStore = DataStore.adapt(
 						QualitySequenceDataStore.class,
 						phdDataStore,
-						new AdapterCallback<Phd, QualitySequence>() {
-							@Override
-							public QualitySequence get(Phd from) {
-								return from.getQualitySequence();
-							}						
-						});
+						from -> from.getQualitySequence());
 				while(referenceEntryIter.hasNext()){
 					Entry<String, AceContigBuilder> refEntry = referenceEntryIter.next();
 					AceContigBuilder contigBuilder = refEntry.getValue();

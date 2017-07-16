@@ -51,6 +51,7 @@ import org.jcvi.jillion.assembly.util.CoverageRegion;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.jcvi.jillion.core.Ranges;
+import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.FileUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -438,7 +439,7 @@ public final class ConsedUtil {
          if(phdballDir.exists()){
         	 datastores.add(new PhdDirDataStore(phdballDir));
          }
-         return DataStoreUtil.chain(PhdDataStore.class, datastores);
+         return DataStore.chain(PhdDataStore.class, datastores);
     }
     
     public static enum ClipPointsType{
