@@ -20,8 +20,11 @@
  ******************************************************************************/
 package org.jcvi.jillion.fasta.qual;
 
+import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.fasta.FastaDataStore;
 
 /**
@@ -31,6 +34,11 @@ import org.jcvi.jillion.fasta.FastaDataStore;
  *
  *
  */
-public interface QualityFastaDataStore extends FastaDataStore<PhredQuality, QualitySequence, QualityFastaRecord>{
+public interface QualityFastaDataStore extends FastaDataStore<PhredQuality, QualitySequence, QualityFastaRecord, QualitySequenceDataStore>{
+
+    @Override
+    default QualitySequenceDataStore asSequenceDataStore(){
+        return DataStore.adapt(QualitySequenceDataStore.class, this, QualityFastaRecord::getSequence);
+    }
 
 }

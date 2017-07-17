@@ -51,7 +51,7 @@ public class TestTraceNucleotideDataStoreAdapter extends EasyMockSupport{
 		
 		Map<String,Trace> map = new HashMap<String, Trace>();
 		map.put(id, mockTrace);
-		DataStore<Trace> datastore = DataStoreUtil.adapt(map);
+		DataStore<Trace> datastore = DataStore.of(map);
 		
 		sut = TraceNucleotideDataStoreAdapter.adapt(datastore);
 		

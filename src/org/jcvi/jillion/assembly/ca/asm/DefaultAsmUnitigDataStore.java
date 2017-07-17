@@ -31,7 +31,6 @@ import java.util.Set;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
@@ -164,7 +163,7 @@ final class DefaultAsmUnitigDataStore {
 		}
 
 		public AsmUnitigDataStore build(){
-			return DataStoreUtil.adapt(AsmUnitigDataStore.class, contigs);
+			return DataStore.of(contigs, AsmUnitigDataStore.class);
 		}
 	}
 }

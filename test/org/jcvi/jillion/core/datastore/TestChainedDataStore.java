@@ -58,7 +58,7 @@ public class TestChainedDataStore{
 	    }
 
 		protected <T, D extends DataStore<T>> D createSut(Class<D> clazz, D...dataStores) {
-			return DataStoreUtil.chain(clazz, Arrays.asList(dataStores));
+			return DataStore.chain(clazz, dataStores);
 			
 		}
 	    

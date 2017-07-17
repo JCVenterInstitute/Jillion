@@ -90,15 +90,7 @@ public class AsmFileUnitigDataStoreBuilder implements Builder<AsmUnitigDataStore
 	
 	private static NucleotideSequenceDataStore adaptFrgDataStore(
 			FragmentDataStore frgDataStore) {
-		return DataStoreUtil.adapt(NucleotideSequenceDataStore.class, frgDataStore, 
-				new DataStoreUtil.AdapterCallback<Fragment, NucleotideSequence>() {
-
-			@Override
-			public NucleotideSequence get(Fragment from) {
-				return from.getNucleotideSequence();
-			}
-	
-		});
+		return DataStore.adapt(NucleotideSequenceDataStore.class, frgDataStore, Fragment::getNucleotideSequence);
 	}
 
 	@Override

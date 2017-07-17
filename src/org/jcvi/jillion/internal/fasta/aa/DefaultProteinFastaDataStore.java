@@ -27,8 +27,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
+import org.jcvi.jillion.core.residue.aa.AminoAcid;
+import org.jcvi.jillion.core.residue.aa.ProteinSequence;
+import org.jcvi.jillion.core.residue.aa.ProteinSequenceDataStore;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.fasta.FastaFileParser;
 import org.jcvi.jillion.fasta.FastaParser;
@@ -130,9 +135,22 @@ public final class DefaultProteinFastaDataStore{
 		}
 		@Override
 		public ProteinFastaFileDataStore build() {
-			return DataStoreUtil.adapt(ProteinFastaFileDataStore.class, new AdaptedFastaDataStore<>(fastaRecords));
+			return new AdaptedProteinFastaDataStore(fastaRecords);
 		}
 		
 	}
 	
+	private static final class AdaptedProteinFastaDataStore extends AdaptedFastaDataStore<AminoAcid, ProteinSequence, ProteinFastaRecord, ProteinSequenceDataStore> implements ProteinFastaFileDataStore{
+
+        public AdaptedProteinFastaDataStore(
+                Map<String, ProteinFastaRecord> map) {
+            super(map);
+        }
+
+        @Override
+        public ProteinSequenceDataStore asSequenceDataStore(){
+            return DataStore.adapt(ProteinSequenceDataStore.class, this, ProteinFastaRecord::getSequence);
+        }
+	    
+	}
 }

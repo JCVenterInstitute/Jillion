@@ -29,6 +29,7 @@ import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.InputStreamSupplier;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
+import org.jcvi.jillion.core.residue.aa.ProteinSequenceDataStore;
 import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.internal.fasta.aa.DefaultProteinFastaDataStore;
 import org.jcvi.jillion.internal.fasta.aa.IndexedProteinFastaFileDataStore;
@@ -44,7 +45,7 @@ import org.jcvi.jillion.shared.fasta.AbstractFastaFileDataStoreBuilder;
  * @author dkatzel
  *
  */
-public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDataStoreBuilder<AminoAcid, ProteinSequence, ProteinFastaRecord, ProteinFastaFileDataStore> {
+public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDataStoreBuilder<AminoAcid, ProteinSequence, ProteinFastaRecord, ProteinSequenceDataStore, ProteinFastaFileDataStore> {
     /**
      * Create a new Builder instance
      * that will build a {@link ProteinFastaDataStore} using

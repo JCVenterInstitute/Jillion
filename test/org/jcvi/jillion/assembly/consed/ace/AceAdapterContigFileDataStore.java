@@ -37,13 +37,10 @@ import org.jcvi.jillion.assembly.tigr.contig.TigrContigVisitor;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
-import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.qual.QualityFastaDataStore;
-import org.jcvi.jillion.fasta.qual.QualityFastaRecord;
 
 public class AceAdapterContigFileDataStore implements AceFileDataStore{
 
@@ -66,7 +63,7 @@ public class AceAdapterContigFileDataStore implements AceFileDataStore{
 			
 			@Override
 			public void visitEnd() {
-				datastore.dataStore = DataStoreUtil.adapt(datastore.map);
+				datastore.dataStore = DataStore.of(datastore.map);
 			    datastore.map.clear();
 				
 			}
@@ -74,17 +71,8 @@ public class AceAdapterContigFileDataStore implements AceFileDataStore{
 			@Override
 			public TigrContigVisitor visitContig(TigrContigVisitorCallback callback,
 					String contigId) {
-				final QualitySequenceDataStore qualitySequences = DataStoreUtil.adapt(QualitySequenceDataStore.class, 
-						fullLengthQualityDataStore, 
-						new DataStoreUtil.AdapterCallback<QualityFastaRecord, QualitySequence>() {
-
-							@Override
-							public QualitySequence get(
-									QualityFastaRecord from) {
-								return from.getSequence();
-							}
-					
-				});
+				final QualitySequenceDataStore qualitySequences =fullLengthQualityDataStore.asSequenceDataStore();
+				
 				return new AbstractAceAdaptedContigVisitor(contigId,qualitySequences, phdDate) {
 					
 					@Override

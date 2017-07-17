@@ -139,7 +139,7 @@ public final class DataStoreUtil {
      * @param <D> the type of DataStore to return (created using a dynamic proxy)
      */
 	public static <T, D extends DataStore<T>> D adapt(Class<D> datastoreInterface, Map<String, T> map){
-    	return adapt(datastoreInterface, adapt(map));
+    	return adapt(datastoreInterface, DataStore.of(map));
     }
 	/**
      * Create a new {@link DataStore} instance of the given

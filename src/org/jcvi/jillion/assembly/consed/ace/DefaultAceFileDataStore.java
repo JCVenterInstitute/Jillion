@@ -103,7 +103,7 @@ final class DefaultAceFileDataStore implements AceFileDataStore{
 		if(!builder.completed){
 			throw new IllegalStateException("did not completely parse ace file");
 		}
-		this.delegate = DataStoreUtil.adapt(builder.map);
+		this.delegate = DataStore.of(builder.map);
 		this.totalNumberOfReads = builder.totalNumberOfReads;
 		this.wholeAssemblyTags = builder.wholeAssemblyTags;
 		this.consensusTags = builder.consensusTags;

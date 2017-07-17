@@ -24,7 +24,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
@@ -75,7 +80,21 @@ public class DefaultQualityFastaFileDataStoreBuilder implements FastaVisitor, Bu
 	}
 	@Override
 	public QualityFastaDataStore build() {
-		return DataStoreUtil.adapt(QualityFastaDataStore.class,new AdaptedFastaDataStore<>(fastaRecords));
+		return new AdaptedQualityDataStore(fastaRecords);
 	}
 	
+	
+	private static final class AdaptedQualityDataStore extends AdaptedFastaDataStore<PhredQuality , QualitySequence, QualityFastaRecord, QualitySequenceDataStore> implements QualityFastaDataStore{
+
+	    
+        public AdaptedQualityDataStore(Map<String, QualityFastaRecord> map) {
+            super(map);
+        }
+
+        @Override
+        public QualitySequenceDataStore asSequenceDataStore(){
+            return DataStore.adapt(QualitySequenceDataStore.class, this, QualityFastaRecord::getSequence);
+        }
+	    
+	}
 }

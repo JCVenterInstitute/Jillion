@@ -27,7 +27,6 @@ import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaDataStore;
 import org.jcvi.jillion.fasta.FastaRecord;
@@ -45,13 +44,13 @@ import org.jcvi.jillion.fasta.FastaRecord;
  * 
  * @since 5.1
  */
-public class AdaptedFastaDataStore<S,  T extends Sequence<S>, F extends FastaRecord<S,T>> implements FastaDataStore<S, T, F>{
+public abstract class AdaptedFastaDataStore<S,  T extends Sequence<S>, F extends FastaRecord<S,T>, D extends DataStore<T>> implements FastaDataStore<S, T, F, D>{
 
 	private final DataStore<F> delegate;
 	
 	
 	public AdaptedFastaDataStore(Map<String, F> map) {
-		this(DataStoreUtil.adapt(map));
+		this(DataStore.of(map));
 	}
 	public AdaptedFastaDataStore(DataStore<F> delegate) {
 		this.delegate = delegate;
@@ -96,5 +95,7 @@ public class AdaptedFastaDataStore<S,  T extends Sequence<S>, F extends FastaRec
 	public void close() throws IOException {
 		delegate.close();
 	}
+    @Override
+    public abstract D asSequenceDataStore();
 
 }

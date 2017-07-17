@@ -25,7 +25,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
+import org.jcvi.jillion.core.pos.Position;
+import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
@@ -87,8 +91,22 @@ final class DefaultPositionFastaFileDataStore {
 		}
 		@Override
 		public PositionFastaDataStore build() {
-			return DataStoreUtil.adapt(PositionFastaDataStore.class,new AdaptedFastaDataStore<>(fastaRecords));
+			return new AdaptedPositionFastaDataStore(fastaRecords);
 		}
 		
+	}
+	
+	private static class AdaptedPositionFastaDataStore extends AdaptedFastaDataStore<Position, PositionSequence, PositionFastaRecord, PositionSequenceDataStore> implements PositionFastaDataStore{
+
+        public AdaptedPositionFastaDataStore(
+                Map<String, PositionFastaRecord> map) {
+            super(map);
+        }
+
+        @Override
+        public PositionSequenceDataStore asSequenceDataStore(){
+            return DataStore.adapt(PositionSequenceDataStore.class, this, PositionFastaRecord::getSequence);
+        }
+	    
 	}
 }

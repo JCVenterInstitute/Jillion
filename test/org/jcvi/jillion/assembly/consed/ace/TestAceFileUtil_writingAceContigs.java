@@ -35,15 +35,17 @@ import org.jcvi.jillion.assembly.consed.ace.AceFileUtil;
 import org.jcvi.jillion.assembly.consed.ace.DefaultAceFileDataStore;
 import org.jcvi.jillion.assembly.consed.phd.ArtificalPhdDataStore;
 import org.jcvi.jillion.assembly.consed.phd.PhdDataStore;
+import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
 import org.jcvi.jillion.fasta.qual.QualityFastaDataStore;
 import org.jcvi.jillion.fasta.qual.QualityFastaFileDataStoreBuilder;
+import org.jcvi.jillion.fasta.qual.QualityFastaRecord;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
 /**
@@ -62,9 +64,12 @@ public class TestAceFileUtil_writingAceContigs {
         File qualFile = RESOURCES.getFile("files/flu_644151.qual");
 
         final Date phdDate = new Date(0L);
-        NucleotideSequenceDataStore nucleotideDataStore = FastaRecordDataStoreAdapter.adapt(NucleotideSequenceDataStore.class, new NucleotideFastaFileDataStoreBuilder(seqFile).build()); 
+        NucleotideSequenceDataStore nucleotideDataStore = DataStore.adapt(NucleotideSequenceDataStore.class, 
+                                                                            new NucleotideFastaFileDataStoreBuilder(seqFile).build(),
+                                                                            NucleotideFastaRecord::getSequence); 
         final QualityFastaDataStore qualityFastaDataStore = new QualityFastaFileDataStoreBuilder(qualFile).build();
-        QualitySequenceDataStore qualityDataStore = FastaRecordDataStoreAdapter.adapt(QualitySequenceDataStore.class, qualityFastaDataStore); 
+        QualitySequenceDataStore qualityDataStore = DataStore.adapt(QualitySequenceDataStore.class, qualityFastaDataStore,
+                                                                        QualityFastaRecord::getSequence);
         
         PhdDataStore phdDataStore = new ArtificalPhdDataStore(nucleotideDataStore, qualityDataStore, phdDate);
        

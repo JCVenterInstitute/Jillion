@@ -23,10 +23,12 @@ package org.jcvi.jillion.fasta.nt;
 import java.util.Objects;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.jillion.fasta.FastaDataStore;
 
 /**
@@ -36,10 +38,15 @@ import org.jcvi.jillion.fasta.FastaDataStore;
  *
  *
  */
-public interface NucleotideFastaDataStore extends FastaDataStore<Nucleotide, NucleotideSequence, NucleotideFastaRecord>{
+public interface NucleotideFastaDataStore extends FastaDataStore<Nucleotide, NucleotideSequence, NucleotideFastaRecord, NucleotideSequenceDataStore>{
 
        
 	@Override
+    default NucleotideSequenceDataStore asSequenceDataStore(){
+        return DataStore.adapt(NucleotideSequenceDataStore.class, this, NucleotideFastaRecord::getSequence);
+    }
+
+    @Override
 	default NucleotideSequence getSubSequence(String id, long startOffset) throws DataStoreException {
 		
 		if(startOffset < 0){

@@ -43,6 +43,7 @@ import org.jcvi.jillion.assembly.clc.cas.CasMatch;
 import org.jcvi.jillion.assembly.clc.cas.CasMatchVisitor;
 import org.jcvi.jillion.assembly.clc.cas.CasParser;
 import org.jcvi.jillion.assembly.clc.cas.CasUtil;
+import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.FileUtil;
@@ -542,7 +543,7 @@ public class TestCasParserTestDouble {
 			}
 			
 		});
-		return DataStoreUtil.chain(NucleotideSequenceDataStore.class, datastores);
+		return DataStore.chain(NucleotideSequenceDataStore.class, datastores);
 	}
 	
 	

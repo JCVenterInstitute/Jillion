@@ -54,7 +54,7 @@ public class TestCachedDataStore {
     @Before
     public void setup(){
         delegate = createMock(DataStoreSubInterface.class);
-        cache = DataStoreUtil.createNewCachedDataStore(DataStoreSubInterface.class, delegate, 2);
+        cache = DataStore.cache(DataStoreSubInterface.class, delegate, 2);
         
     }
     

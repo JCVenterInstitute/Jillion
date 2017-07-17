@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.InputStreamSupplier;
 import org.jcvi.jillion.fasta.FastaDataStore;
@@ -42,7 +43,7 @@ import org.jcvi.jillion.fasta.FastaRecord;
  * @param <F> the {@link FastaRecord} type.
  * @param <D> the {@link FastaDataStore} type.
  */
-public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>, F extends FastaRecord<T,S>, D extends FastaDataStore<T,S, F>> {
+public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>, F extends FastaRecord<T,S>,SD extends DataStore<S>, D extends FastaDataStore<T,S, F, SD>> {
 
 	private final FastaParser parser;
 	private Predicate<String> filter = id->true;
@@ -132,7 +133,7 @@ public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>
 	 * 
 	 * @see #filterRecord(Predicate)
 	 */
-	protected AbstractFastaFileDataStoreBuilder<T, S, F, D> filter(Predicate<String> filter) {
+	protected AbstractFastaFileDataStoreBuilder<T, S, F, SD, D> filter(Predicate<String> filter) {
 		if(filter==null){
 			throw new NullPointerException("filter can not be null");
 		}
@@ -173,7 +174,7 @@ public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>
      * @since 5.0
      * @see #filter(Predicate)
      */
-        protected AbstractFastaFileDataStoreBuilder<T, S, F, D> filterRecords(Predicate<F> filter) {
+        protected AbstractFastaFileDataStoreBuilder<T, S, F, SD, D> filterRecords(Predicate<F> filter) {
                 if(filter==null){
                         throw new NullPointerException("filter can not be null");
                 }
@@ -197,7 +198,7 @@ public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>
 	 * @throws NullPointerException if hint is null.
 	 * @see DataStoreProviderHint
 	 */
-	protected AbstractFastaFileDataStoreBuilder<T, S, F, D> hint(DataStoreProviderHint hint) {
+	protected AbstractFastaFileDataStoreBuilder<T, S, F, SD, D> hint(DataStoreProviderHint hint) {
 		if(hint==null){
 			throw new NullPointerException("hint can not be null");
 		}

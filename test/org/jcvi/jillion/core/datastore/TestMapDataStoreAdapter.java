@@ -51,7 +51,7 @@ public class TestMapDataStoreAdapter {
     private DataStore<Integer> sut;
     @Before
     public void setup(){
-        sut = DataStoreUtil.adapt(MAP);
+        sut = DataStore.of(MAP);
     }
     
     @Test

@@ -41,7 +41,7 @@ import org.jcvi.jillion.core.datastore.DataStoreException;
  * @param <T> the type of {@link Sequence} of in the fasta.
  * @param <F> the type of {@link FastaRecord} in the datastore.
  */
-public interface FastaDataStore<S, T extends Sequence<S>,F extends FastaRecord<S,T>> extends DataStore<F>{
+public interface FastaDataStore<S, T extends Sequence<S>,F extends FastaRecord<S,T>, D extends DataStore<T>> extends DataStore<F>{
 
     /**
      * Get the just full {@link Sequence} of the given record.
@@ -135,4 +135,18 @@ public interface FastaDataStore<S, T extends Sequence<S>,F extends FastaRecord<S
 					.trim(includeRange)
 					.build();
 	}
+	
+	/**
+	 * Return a new DataStore is a "view" of just the Sequences from this datastore.  This Fasta DataStore
+	 * is the backing datastore so all calls to the returned Sequence Datastore will delegate to this fasta datastore
+	 * and then get adapted to return just the sequence.  When this fasta datastore closes, the returned
+	 * datastore will also close and vice versa.  Closing this datastore will close the other as well.
+	 * 
+	 * @return A new DataStore instance which is a linked view of this Fasta DataStore
+	 * but adapted so that all the records will just be the sequences.
+	 * 
+	 * @since 5.3
+	 */
+	D asSequenceDataStore();
+	
 }

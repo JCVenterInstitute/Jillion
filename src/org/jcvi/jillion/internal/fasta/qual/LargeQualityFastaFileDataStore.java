@@ -33,6 +33,7 @@ import java.util.function.Predicate;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaFileParser;
 import org.jcvi.jillion.fasta.FastaParser;
@@ -56,7 +57,7 @@ import org.jcvi.jillion.internal.fasta.AbstractResuseableFastaRecordVisitor;
  *
  *
  */
-public final class LargeQualityFastaFileDataStore extends AbstractLargeFastaFileDataStore<PhredQuality, QualitySequence, QualityFastaRecord> implements QualityFastaDataStore{
+public final class LargeQualityFastaFileDataStore extends AbstractLargeFastaFileDataStore<PhredQuality, QualitySequence, QualityFastaRecord, QualitySequenceDataStore> implements QualityFastaDataStore{
 
     
     public static QualityFastaDataStore create(File fastaFile) throws IOException{

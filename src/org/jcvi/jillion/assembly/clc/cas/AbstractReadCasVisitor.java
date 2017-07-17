@@ -28,9 +28,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
@@ -40,7 +40,6 @@ import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
 import org.jcvi.jillion.trace.Trace;
 import org.jcvi.jillion.trace.TraceDataStore;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStore;
@@ -244,11 +243,8 @@ public abstract class AbstractReadCasVisitor extends AbstractCasFileVisitor{
 															.build();
 			
 			@SuppressWarnings("unchecked")
-			TraceDataStore<Trace> fakeQualities = DataStoreUtil.adapt(TraceDataStore.class, datastore, 
-					new DataStoreUtil.AdapterCallback<NucleotideFastaRecord, Trace>() {
-
-						@Override
-						public Trace get(final NucleotideFastaRecord from) {
+			TraceDataStore<Trace> fakeQualities = DataStore.adapt(TraceDataStore.class, datastore, 
+					from ->{
 						        int numberOfQualities =(int) from.getSequence().getLength();
 								byte[] qualities = new byte[numberOfQualities];
 								Arrays.fill(qualities, PhredQuality.valueOf(30).getQualityScore());
@@ -273,7 +269,7 @@ public abstract class AbstractReadCasVisitor extends AbstractCasFileVisitor{
 							};
 						}
 				
-			});
+			);
 			return fakeQualities.iterator();
         } catch (IOException e) {
 			throw new DataStoreException("error reading fasta file "+ fastaFile.getAbsolutePath(),e);

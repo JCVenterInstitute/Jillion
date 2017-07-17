@@ -45,7 +45,7 @@ import org.jcvi.jillion.internal.fasta.AbstractLargeFastaFileDataStore;
  * {@link DataStoreUtil#createNewCachedDataStore(Class, org.jcvi.jillion.core.datastore.DataStore, int)}.
  * @author dkatzel
  */
-final class LargePositionFastaFileDataStore extends AbstractLargeFastaFileDataStore<Position, PositionSequence, PositionFastaRecord> implements PositionFastaDataStore{
+final class LargePositionFastaFileDataStore extends AbstractLargeFastaFileDataStore<Position, PositionSequence, PositionFastaRecord, PositionSequenceDataStore> implements PositionFastaDataStore{
     /**
      * Construct a {@link PositionFastaDataStore}
      * for the given Fasta file.

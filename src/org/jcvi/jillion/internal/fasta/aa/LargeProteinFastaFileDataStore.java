@@ -29,6 +29,7 @@ import java.util.function.Predicate;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
+import org.jcvi.jillion.core.residue.aa.ProteinSequenceDataStore;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaFileParser;
 import org.jcvi.jillion.fasta.FastaParser;
@@ -51,7 +52,7 @@ import org.jcvi.jillion.internal.fasta.AbstractLargeFastaFileDataStore;
  * {@link DataStoreUtil#createNewCachedDataStore(Class, org.jcvi.jillion.core.datastore.DataStore, int)}.
  * @author dkatzel
  */
-public final class LargeProteinFastaFileDataStore extends AbstractLargeFastaFileDataStore<AminoAcid, ProteinSequence, ProteinFastaRecord> implements ProteinFastaFileDataStore{
+public final class LargeProteinFastaFileDataStore extends AbstractLargeFastaFileDataStore<AminoAcid, ProteinSequence, ProteinFastaRecord, ProteinSequenceDataStore> implements ProteinFastaFileDataStore{
 	
 	
 	

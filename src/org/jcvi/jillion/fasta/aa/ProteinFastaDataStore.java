@@ -23,9 +23,11 @@ package org.jcvi.jillion.fasta.aa;
 import java.io.File;
 import java.io.IOException;
 
+import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
+import org.jcvi.jillion.core.residue.aa.ProteinSequenceDataStore;
 import org.jcvi.jillion.fasta.FastaDataStore;
 
 /**
@@ -35,8 +37,12 @@ import org.jcvi.jillion.fasta.FastaDataStore;
  * @author dkatzel
  *
  */
-public interface ProteinFastaDataStore extends FastaDataStore<AminoAcid, ProteinSequence, ProteinFastaRecord> {
+public interface ProteinFastaDataStore extends FastaDataStore<AminoAcid, ProteinSequence, ProteinFastaRecord, ProteinSequenceDataStore> {
 
+    @Override
+    default ProteinSequenceDataStore asSequenceDataStore(){
+        return DataStore.adapt(ProteinSequenceDataStore.class, this, ProteinFastaRecord::getSequence);
+    }
     /**
      * Create a {@link ProteinFastaDataStore} of all the records
      * in the given fasta file.  Warning! This usually stores all the records in memory

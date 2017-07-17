@@ -163,7 +163,7 @@ final class DefaultAsmContigDataStore {
 		}
 
 		public AsmContigDataStore build(){
-			return DataStoreUtil.adapt(AsmContigDataStore.class, contigs);
+			return DataStore.of(contigs, AsmContigDataStore.class);
 		}
 	}
 }

@@ -32,6 +32,7 @@ import org.jcvi.jillion.assembly.consed.phd.Phd;
 import org.jcvi.jillion.assembly.consed.phd.PhdBuilder;
 import org.jcvi.jillion.assembly.consed.phd.PhdDataStore;
 import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
@@ -73,7 +74,7 @@ public final class HighLowAceContigPhdDatastore implements PhdDataStore{
         FullLengthPhdParser2 visitor = new FullLengthPhdParser2(builder);
         
         builder.parser.parse(visitor);
-        delegate = DataStoreUtil.adapt(PhdDataStore.class, visitor.getPhds());
+        delegate = DataStore.of(visitor.getPhds(),PhdDataStore.class);
         
     }
    

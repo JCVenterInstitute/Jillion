@@ -26,11 +26,12 @@ import java.util.Optional;
 
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
 import org.jcvi.jillion.internal.fasta.AdaptedFastaDataStore;
 
-public class AdaptedNucleotideFastaDataStore extends AdaptedFastaDataStore<Nucleotide, NucleotideSequence, NucleotideFastaRecord> implements NucleotideFastaFileDataStore{
+public class AdaptedNucleotideFastaDataStore extends AdaptedFastaDataStore<Nucleotide, NucleotideSequence, NucleotideFastaRecord, NucleotideSequenceDataStore> implements NucleotideFastaFileDataStore{
 
     private final File fastaFile;
 	public AdaptedNucleotideFastaDataStore(Map<String, NucleotideFastaRecord> map, File fastaFile) {
@@ -40,6 +41,10 @@ public class AdaptedNucleotideFastaDataStore extends AdaptedFastaDataStore<Nucle
     @Override
     public Optional<File> getFile() {
         return Optional.ofNullable(fastaFile);
+    }
+    @Override
+    public NucleotideSequenceDataStore asSequenceDataStore(){
+        return NucleotideFastaFileDataStore.super.asSequenceDataStore();
     }
 
 	
