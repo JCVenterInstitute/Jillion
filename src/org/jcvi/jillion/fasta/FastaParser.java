@@ -20,9 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.fasta;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.jcvi.jillion.fasta.FastaVisitorCallback.FastaVisitorMemento;
 /**

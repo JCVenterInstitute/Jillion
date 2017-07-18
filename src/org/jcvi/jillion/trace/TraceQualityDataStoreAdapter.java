@@ -26,8 +26,6 @@
 package org.jcvi.jillion.trace;
 
 import org.jcvi.jillion.core.datastore.DataStore;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
-import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 /**
  * {@code TraceQualityDataStoreAdapter} adapts a {@link TraceDataStore} into
@@ -48,13 +46,6 @@ public final class TraceQualityDataStoreAdapter<T extends Trace>{
 	 * @throws NullPointerException if delegate is null.
 	 */
     public static <T extends Trace> QualitySequenceDataStore adapt(DataStore<T> delegate){
-    	return DataStoreUtil.adapt(QualitySequenceDataStore.class, delegate, new DataStoreUtil.AdapterCallback<T, QualitySequence>() {
-
-			@Override
-			public QualitySequence get(T from) {
-				return from.getQualitySequence();
-			}
-		
-        });
+    	return DataStore.adapt(QualitySequenceDataStore.class, delegate, from -> from.getQualitySequence());
     }
 }

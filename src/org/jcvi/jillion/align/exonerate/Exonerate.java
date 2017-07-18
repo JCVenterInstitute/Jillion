@@ -29,24 +29,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.jcvi.jillion.align.exonerate.Exonerate.FragmentType;
-import org.jcvi.jillion.align.exonerate.vulgar.VulgarProtein2Genome;
 import org.jcvi.jillion.align.exonerate.vulgar.VulgarElement;
 import org.jcvi.jillion.align.exonerate.vulgar.VulgarOperation;
+import org.jcvi.jillion.align.exonerate.vulgar.VulgarProtein2Genome;
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
-import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.io.InputStreamSupplier;
 import org.jcvi.jillion.core.io.PushBackBufferedReader;
 import org.jcvi.jillion.core.residue.Frame;
-import org.jcvi.jillion.core.residue.aa.ProteinSequence;
-import org.jcvi.jillion.core.residue.aa.ProteinSequenceDataStore;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
-import org.jcvi.jillion.fasta.FastaRecord;
-import org.jcvi.jillion.fasta.aa.ProteinFastaDataStore;
-import org.jcvi.jillion.fasta.aa.ProteinFastaFileDataStore;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStore;
 
 public class Exonerate {
 

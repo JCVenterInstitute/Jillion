@@ -38,7 +38,6 @@ import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.stream.Stream;
 
 import org.jcvi.jillion.assembly.AssemblyUtil;
 import org.jcvi.jillion.assembly.Contig;

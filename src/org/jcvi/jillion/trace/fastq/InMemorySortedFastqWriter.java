@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 import org.jcvi.jillion.core.io.IOUtil;

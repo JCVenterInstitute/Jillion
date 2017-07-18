@@ -50,7 +50,7 @@ public class TestMapDataStoreAdapterProxy {
 	}
 	@Before
 	public void createSut(){
-		sut = DataStoreUtil.adapt(NucleotideSequenceDataStore.class, map);
+		sut = DataStore.of(map, NucleotideSequenceDataStore.class);
 	}
 	@Test
 	public void instanceOf(){

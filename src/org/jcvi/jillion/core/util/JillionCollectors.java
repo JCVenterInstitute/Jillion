@@ -24,13 +24,11 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collector;
 
 import org.jcvi.jillion.core.datastore.DataStore;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.internal.core.util.BoundedPriorityQueue;
 
 public class JillionCollectors {
@@ -64,7 +62,7 @@ public class JillionCollectors {
     	return Collector.of(() -> new LinkedHashMap<String, T>(), 
     			(m, r) -> m.put(Objects.requireNonNull(idFunction.apply(r)), r), 
     			(left, right) -> { left.putAll(right); return left;},
-    			m-> DataStoreUtil.adapt(cls, m));
+    			m-> DataStore.of(m, cls));
     }
    
 }

@@ -22,7 +22,6 @@ package org.jcvi.jillion.assembly.clc.cas.consed;
 
 import java.io.File;
 import java.util.Date;
-import java.util.Iterator;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.FileUtil;

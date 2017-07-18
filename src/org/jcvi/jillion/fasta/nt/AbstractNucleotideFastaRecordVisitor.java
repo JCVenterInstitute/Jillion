@@ -21,7 +21,6 @@
 package org.jcvi.jillion.fasta.nt;
 
 import org.jcvi.jillion.fasta.AbstractFastaRecordVisitor;
-import org.jcvi.jillion.fasta.FastaRecordVisitor;
 /**
  * Abstract
  * implementation of {@link FastaRecordVisitor} that will collect

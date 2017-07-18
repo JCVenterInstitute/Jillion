@@ -38,7 +38,6 @@ import org.jcvi.jillion.internal.trace.chromat.ztr.data.RunLengthEncodedData;
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.ShrinkToEightBitData;
 import org.jcvi.jillion.internal.trace.chromat.ztr.data.ZLibData;
 import org.jcvi.jillion.trace.chromat.Chromatogram;
-import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogram;
 
 
 /**

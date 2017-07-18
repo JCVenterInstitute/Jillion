@@ -39,8 +39,6 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jcvi.jillion.core.Range.Builder;
-import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.core.util.Caches;
 import org.jcvi.jillion.internal.core.util.JillionUtil;

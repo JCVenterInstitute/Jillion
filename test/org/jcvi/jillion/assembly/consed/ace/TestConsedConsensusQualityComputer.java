@@ -33,6 +33,7 @@ import org.jcvi.jillion.assembly.consed.ace.AceFileUtil;
 import org.jcvi.jillion.assembly.consed.ace.PhdInfo;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
@@ -49,7 +50,7 @@ public class TestConsedConsensusQualityComputer {
 							.addRead("read1", new NucleotideSequenceBuilder("ACGT").build(), 0, Direction.FORWARD, Range.of(0,3), new PhdInfo("read1", "read1.phd", phdDate), 4)
 							.build();
 		QualitySequence read1Qualities = new QualitySequenceBuilder(new byte[]{20,30,40,50}).build();
-		QualitySequenceDataStore qualityDataStore = DataStoreUtil.adapt(QualitySequenceDataStore.class, Collections.singletonMap("read1",read1Qualities ));
+		QualitySequenceDataStore qualityDataStore = DataStore.of(Collections.singletonMap("read1",read1Qualities ), QualitySequenceDataStore.class);
 		
 		QualitySequence actualConsensusQualities = AceFileUtil.computeConsensusQualities(contig, qualityDataStore);
 		
@@ -62,7 +63,7 @@ public class TestConsedConsensusQualityComputer {
 							.addRead("read1", new NucleotideSequenceBuilder("ACGT").build(), 0, Direction.REVERSE, Range.of(0,3), new PhdInfo("read1", "read1.phd", phdDate), 4)
 							.build();
 		QualitySequence read1Qualities = new QualitySequenceBuilder(new byte[]{20,30,40,50}).build();
-		QualitySequenceDataStore qualityDataStore = DataStoreUtil.adapt(QualitySequenceDataStore.class, Collections.singletonMap("read1",read1Qualities ));
+		QualitySequenceDataStore qualityDataStore = DataStore.of(Collections.singletonMap("read1",read1Qualities ), QualitySequenceDataStore.class);
 		
 		QualitySequence actualConsensusQualities = AceFileUtil.computeConsensusQualities(contig, qualityDataStore);
 		
@@ -85,7 +86,7 @@ public class TestConsedConsensusQualityComputer {
 		qualMap.put("read1", new QualitySequenceBuilder(new byte[]{20,30,40,50}).build());
 		qualMap.put("read2", new QualitySequenceBuilder(new byte[]{20,20,20,20}).build());
 
-		QualitySequenceDataStore qualityDataStore = DataStoreUtil.adapt(QualitySequenceDataStore.class, qualMap);
+		QualitySequenceDataStore qualityDataStore = DataStore.of(qualMap, QualitySequenceDataStore.class);
 		
 		QualitySequence actualConsensusQualities = AceFileUtil.computeConsensusQualities(contig, qualityDataStore);
 		QualitySequence expected = new QualitySequenceBuilder(new byte[]{40,50,60,70})
@@ -104,7 +105,7 @@ public class TestConsedConsensusQualityComputer {
 		qualMap.put("read1", new QualitySequenceBuilder(new byte[]{20,30,40,50}).build());
 		qualMap.put("read2", new QualitySequenceBuilder(new byte[]{50,50,50,50}).build());
 
-		QualitySequenceDataStore qualityDataStore = DataStoreUtil.adapt(QualitySequenceDataStore.class, qualMap);
+		QualitySequenceDataStore qualityDataStore = DataStore.of(qualMap, QualitySequenceDataStore.class);
 		
 		QualitySequence actualConsensusQualities = AceFileUtil.computeConsensusQualities(contig, qualityDataStore);
 		QualitySequence expected = new QualitySequenceBuilder(new byte[]{70,80,90,90})
@@ -122,7 +123,7 @@ public class TestConsedConsensusQualityComputer {
 			qualMap.put(id, new QualitySequenceBuilder(new byte[]{20,30,40,50}).build());
 		}
 		AceContig contig = builder.build();
-		QualitySequenceDataStore qualityDataStore = DataStoreUtil.adapt(QualitySequenceDataStore.class, qualMap);
+		QualitySequenceDataStore qualityDataStore = DataStore.of(qualMap, QualitySequenceDataStore.class);
 		
 		QualitySequence actualConsensusQualities = AceFileUtil.computeConsensusQualities(contig, qualityDataStore);
 		QualitySequence expected = new QualitySequenceBuilder(new byte[]{20,30,40,50})
@@ -140,7 +141,7 @@ public class TestConsedConsensusQualityComputer {
 			qualMap.put(id, new QualitySequenceBuilder(new byte[]{20,30,40,50}).build());
 		}
 		AceContig contig = builder.build();
-		QualitySequenceDataStore qualityDataStore = DataStoreUtil.adapt(QualitySequenceDataStore.class, qualMap);
+		QualitySequenceDataStore qualityDataStore = DataStore.of(qualMap, QualitySequenceDataStore.class);
 		
 		QualitySequence actualConsensusQualities = AceFileUtil.computeConsensusQualities(contig, qualityDataStore);
 		
@@ -163,7 +164,7 @@ public class TestConsedConsensusQualityComputer {
 		
 		
 		AceContig contig = builder.build();
-		QualitySequenceDataStore qualityDataStore = DataStoreUtil.adapt(QualitySequenceDataStore.class, qualMap);
+		QualitySequenceDataStore qualityDataStore = DataStore.of(qualMap, QualitySequenceDataStore.class);
 		
 		QualitySequence actualConsensusQualities = AceFileUtil.computeConsensusQualities(contig, qualityDataStore);
 		QualitySequence expected = new QualitySequenceBuilder(new byte[]{20,30,45,55})
@@ -190,7 +191,7 @@ public class TestConsedConsensusQualityComputer {
 		
 		
 		AceContig contig = builder.build();
-		QualitySequenceDataStore qualityDataStore = DataStoreUtil.adapt(QualitySequenceDataStore.class, qualMap);
+		QualitySequenceDataStore qualityDataStore = DataStore.of(qualMap, QualitySequenceDataStore.class);
 		
 		QualitySequence actualConsensusQualities = AceFileUtil.computeConsensusQualities(contig, qualityDataStore);
 		QualitySequence expected = new QualitySequenceBuilder(new byte[]{70,70,75,75})
@@ -216,7 +217,7 @@ public class TestConsedConsensusQualityComputer {
 		qualMap.put("read3", new QualitySequenceBuilder(new byte[]{10,10,10,10}).build());
 		qualMap.put("read4", new QualitySequenceBuilder(new byte[]{10,10,10,10}).build());
 
-		QualitySequenceDataStore qualityDataStore = DataStoreUtil.adapt(QualitySequenceDataStore.class, qualMap);
+		QualitySequenceDataStore qualityDataStore = DataStore.of(qualMap, QualitySequenceDataStore.class);
 		
 		QualitySequence actualConsensusQualities = AceFileUtil.computeConsensusQualities(contig, qualityDataStore);
 		QualitySequence expected = new QualitySequenceBuilder(new byte[]{40,50,60,70})
@@ -242,7 +243,7 @@ public class TestConsedConsensusQualityComputer {
 		qualMap.put("read3", new QualitySequenceBuilder(new byte[]{60,60,60,60}).build());
 		qualMap.put("read4", new QualitySequenceBuilder(new byte[]{70,70,70,70}).build());
 		
-		QualitySequenceDataStore qualityDataStore = DataStoreUtil.adapt(QualitySequenceDataStore.class, qualMap);
+		QualitySequenceDataStore qualityDataStore = DataStore.of(qualMap, QualitySequenceDataStore.class);
 		
 		QualitySequence actualConsensusQualities = AceFileUtil.computeConsensusQualities(contig, qualityDataStore);
 		
@@ -267,7 +268,7 @@ public class TestConsedConsensusQualityComputer {
 		qualMap.put("read3", new QualitySequenceBuilder(new byte[]{60,60,60,60}).build());
 		qualMap.put("read4", new QualitySequenceBuilder(new byte[]{70,70,70,70}).build());
 		
-		QualitySequenceDataStore qualityDataStore = DataStoreUtil.adapt(QualitySequenceDataStore.class, qualMap);
+		QualitySequenceDataStore qualityDataStore = DataStore.of(qualMap, QualitySequenceDataStore.class);
 		
 		QualitySequence actualConsensusQualities = AceFileUtil.computeConsensusQualities(contig, qualityDataStore);
 		

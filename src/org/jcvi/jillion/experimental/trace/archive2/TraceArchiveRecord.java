@@ -26,8 +26,8 @@
 package org.jcvi.jillion.experimental.trace.archive2;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 public interface TraceArchiveRecord {
     /**

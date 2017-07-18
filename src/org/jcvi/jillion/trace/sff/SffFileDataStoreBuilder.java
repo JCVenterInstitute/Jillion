@@ -27,8 +27,6 @@ import java.io.IOException;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
-import org.jcvi.jillion.core.util.Builder;
-import org.jcvi.jillion.trace.fastq.FastqRecord;
 /**
  * {@code SffFileDataStoreBuilder}
  * is a {@link Builder} that can create new instances

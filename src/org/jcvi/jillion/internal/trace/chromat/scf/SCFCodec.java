@@ -32,7 +32,6 @@ import java.io.OutputStream;
 
 import org.jcvi.jillion.trace.chromat.Chromatogram;
 import org.jcvi.jillion.trace.chromat.ChromatogramFileVisitor;
-import org.jcvi.jillion.trace.chromat.scf.ScfChromatogram;
 import org.jcvi.jillion.trace.chromat.scf.ScfDecoderException;
 
 /**

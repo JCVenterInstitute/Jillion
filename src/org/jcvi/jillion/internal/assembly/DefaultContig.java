@@ -29,7 +29,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import org.jcvi.jillion.assembly.AbstractContigBuilder;
 import org.jcvi.jillion.assembly.AssembledRead;

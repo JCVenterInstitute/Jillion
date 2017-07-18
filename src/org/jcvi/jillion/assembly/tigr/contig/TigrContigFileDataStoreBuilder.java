@@ -24,18 +24,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.jcvi.jillion.assembly.AssembledRead;
-import org.jcvi.jillion.assembly.consed.ace.AceContig;
-import org.jcvi.jillion.assembly.consed.ace.AceFileDataStore;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
 
 public class TigrContigFileDataStoreBuilder {
 	private final File contigFile;
@@ -111,28 +105,14 @@ public class TigrContigFileDataStoreBuilder {
 
     @SuppressWarnings("unchecked")
 	private DataStore<Long> adapt(NucleotideFastaDataStore fullLengthSequenceDataStore){
-    	return (DataStore<Long>)DataStoreUtil.adapt(DataStore.class, fullLengthSequenceDataStore, 
-    			new DataStoreUtil.AdapterCallback<NucleotideFastaRecord, Long>() {
-
-					@Override
-					public Long get(NucleotideFastaRecord from) {
-						return from.getSequence().getUngappedLength();
-					}
-    		
-		});
+    	return (DataStore<Long>)DataStore.adapt(DataStore.class, fullLengthSequenceDataStore, 
+    			from -> from.getSequence().getUngappedLength());
     }
     
     @SuppressWarnings("unchecked")
 	private DataStore<Long> adapt(NucleotideSequenceDataStore fullLengthSequenceDataStore){
-    	return (DataStore<Long>)DataStoreUtil.adapt(DataStore.class, fullLengthSequenceDataStore, 
-    			new DataStoreUtil.AdapterCallback<NucleotideSequence, Long>() {
-
-					@Override
-					public Long get(NucleotideSequence from) {
-						return from.getUngappedLength();
-					}
-    		
-		});
+    	return (DataStore<Long>)DataStore.adapt(DataStore.class, fullLengthSequenceDataStore, 
+    			from-> from.getUngappedLength());
     }
 	
 	/**

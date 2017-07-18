@@ -20,14 +20,10 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.io;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.ZipInputStream;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.core.io.MagicNumberInputStream;

@@ -23,7 +23,6 @@ package org.jcvi.jillion.align.pairwise;
 import org.jcvi.jillion.align.SequenceAlignment;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequence;
-import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
 /**
  * {@code PairwiseSequenceAlignment} is a {@link SequenceAlignment}
  * between two {@link org.jcvi.jillion.core.Sequence}s.

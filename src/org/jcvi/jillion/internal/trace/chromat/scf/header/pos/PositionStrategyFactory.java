@@ -27,8 +27,8 @@ package org.jcvi.jillion.internal.trace.chromat.scf.header.pos;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import org.jcvi.jillion.internal.trace.chromat.scf.header.SCFHeader;
 /**

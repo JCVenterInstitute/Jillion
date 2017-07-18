@@ -31,7 +31,6 @@ import java.util.function.Function;
 
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.trace.fastq.SplitFastqWriter.FastqWriterFactory;
 /**
  * Utility class that creates {@link FastaWriter} instances
  * that split the {@link FastaRecord} objects being written out

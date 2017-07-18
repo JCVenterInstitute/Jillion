@@ -22,7 +22,6 @@ package org.jcvi.jillion.fasta.nt;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;

@@ -26,7 +26,6 @@
 package org.jcvi.jillion.internal.core.util;
 
 import java.util.Deque;
-import java.util.Queue;
 
 /**
  * {@code LIFOQueue} is a Last In First Out {@link Queue} that

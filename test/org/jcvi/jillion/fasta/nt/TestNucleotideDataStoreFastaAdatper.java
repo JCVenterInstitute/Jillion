@@ -47,7 +47,7 @@ public class TestNucleotideDataStoreFastaAdatper extends AbstractTestSequenceFas
     @Test
     public void adaptFasta() throws IOException, DataStoreException{
         NucleotideSequenceDataStore sut=
-        		FastaRecordDataStoreAdapter.adapt(NucleotideSequenceDataStore.class, createDataStore(
+        		FastaRecordDataStoreAdapter.wrap(NucleotideSequenceDataStore.class, createDataStore(
         		RESOURCES.getFile(FASTA_FILE_PATH)));
     
         assertEquals(

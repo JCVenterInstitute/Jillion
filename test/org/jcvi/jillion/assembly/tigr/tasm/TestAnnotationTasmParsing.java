@@ -27,6 +27,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collections;
 
+import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
@@ -38,7 +39,7 @@ public class TestAnnotationTasmParsing {
 	 
 	 private final TasmContigDataStore datastore;
 	 public TestAnnotationTasmParsing() throws FileNotFoundException, IOException{
-		 NucleotideFastaDataStore empty = DataStoreUtil.adapt(NucleotideFastaDataStore.class, Collections.<String,NucleotideFastaRecord>emptyMap());
+		 NucleotideFastaDataStore empty = DataStore.of(Collections.<String,NucleotideFastaRecord>emptyMap(), NucleotideFastaDataStore.class);
 		 datastore = new TasmContigFileDataStoreBuilder(RESOURCES.getFile("files/annotation.tasm"),empty)
 		 							.build();
 			

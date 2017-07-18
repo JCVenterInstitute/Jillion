@@ -23,10 +23,8 @@ package org.jcvi.jillion.fasta.nt;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
-import org.jcvi.jillion.core.util.ThrowingStream;
 /**
  * A {@link NucleotideFastaDataStore} where all the {@link NucleotideFastaRecord}s
  * in this datastore belong to the same fasta file.

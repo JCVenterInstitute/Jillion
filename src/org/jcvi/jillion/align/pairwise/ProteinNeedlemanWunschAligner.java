@@ -22,7 +22,6 @@ package org.jcvi.jillion.align.pairwise;
 
 import org.jcvi.jillion.align.ProteinSequenceAlignment;
 import org.jcvi.jillion.align.SubstitutionMatrix;
-import org.jcvi.jillion.core.residue.ResidueSequence;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 import org.jcvi.jillion.core.residue.aa.ProteinSequenceBuilder;

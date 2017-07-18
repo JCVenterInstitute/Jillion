@@ -25,9 +25,6 @@
  */
 package org.jcvi.jillion.internal.trace.chromat.scf.header;
 
-import org.jcvi.jillion.internal.trace.chromat.scf.section.Section;
-import org.jcvi.jillion.trace.chromat.scf.ScfChromatogram;
-
 /**
  * An SCF Header  describes the location and
  * size of the different {@link Section}s of an {@link ScfChromatogram}.

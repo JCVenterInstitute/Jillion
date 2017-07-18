@@ -27,8 +27,6 @@ package org.jcvi.jillion.trace.chromat;
 
 import java.util.Arrays;
 
-import org.jcvi.jillion.trace.Trace;
-
 
 /**
  * This is a wrapper around a short array so that

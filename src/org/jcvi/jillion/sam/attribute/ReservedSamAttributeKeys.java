@@ -20,8 +20,8 @@
  ******************************************************************************/
 package org.jcvi.jillion.sam.attribute;
 
-import org.jcvi.jillion.sam.header.SamReadGroup;
 import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.sam.header.SamReadGroup;
 
 /**
  * {@code ReservedSamAttributeKeys}

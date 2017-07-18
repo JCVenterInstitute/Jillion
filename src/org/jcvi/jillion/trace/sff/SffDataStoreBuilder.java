@@ -27,7 +27,6 @@ import java.util.Map;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
@@ -64,7 +63,7 @@ final class SffDataStoreBuilder{
 
 	public SffFileDataStore build() {
 		return new DefaultSffFileDataStore(keySequence, flowSequence, 
-				DataStoreUtil.adapt(SffFileDataStore.class,map));
+				DataStore.of(map, SffFileDataStore.class));
 	}
 
 	public SffDataStoreBuilder addFlowgram(SffFlowgram flowgram) {

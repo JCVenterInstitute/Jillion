@@ -52,7 +52,7 @@ public class TestPrimerDetector_ActualData {
     public void setup() throws IOException, DataStoreException{
         primerDataStore = 
         
-        		FastaRecordDataStoreAdapter.adapt(NucleotideSequenceDataStore.class,
+        		FastaRecordDataStoreAdapter.wrap(NucleotideSequenceDataStore.class,
         				new NucleotideFastaFileDataStoreBuilder(
                         RESOURCES.getFile("files/primers.fasta"))
                         .build());

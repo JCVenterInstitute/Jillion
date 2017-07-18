@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
+import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
@@ -84,7 +84,7 @@ public final class GappedNucleotideAlignmentDataStore {
             	}
 	            builders.clear();
             }
-            return DataStoreUtil.adapt(NucleotideSequenceDataStore.class, map);
+            return DataStore.of(map, NucleotideSequenceDataStore.class);
         }
 
        

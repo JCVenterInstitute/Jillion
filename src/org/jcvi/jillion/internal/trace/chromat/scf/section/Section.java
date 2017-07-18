@@ -25,9 +25,6 @@
  */
 package org.jcvi.jillion.internal.trace.chromat.scf.section;
 
-import org.jcvi.jillion.trace.chromat.scf.ScfChromatogram;
-
-
 /**
  * SCF files are broken down into different Sections.
  * Each Section contains different parts of the

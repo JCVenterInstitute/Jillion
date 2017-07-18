@@ -21,7 +21,6 @@
 package org.jcvi.jillion.core.util.iter;
 
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 public interface PeekableIterator<T> extends Iterator<T> {
 	/**

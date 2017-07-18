@@ -27,10 +27,8 @@ package org.jcvi.jillion.internal.trace.chromat.scf.section;
 
 import java.io.DataInputStream;
 
-import org.jcvi.jillion.internal.trace.chromat.scf.header.DefaultSCFHeader;
 import org.jcvi.jillion.internal.trace.chromat.scf.header.SCFHeader;
 import org.jcvi.jillion.trace.chromat.ChromatogramFileVisitor;
-import org.jcvi.jillion.trace.chromat.scf.ScfChromatogram;
 import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramBuilder;
 /**
  * <code>SectionDecoder</code> is an interface that parses

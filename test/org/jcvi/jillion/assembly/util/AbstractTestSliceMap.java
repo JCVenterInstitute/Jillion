@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.Contig;
+import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
@@ -51,7 +52,7 @@ public abstract class AbstractTestSliceMap {
         qualities.put("read_0", new QualitySequenceBuilder(new byte[]{10,12,14,16,18,20,22,24}).build());
         qualities.put("read_1", new QualitySequenceBuilder(new byte[]{1,2,3,4,5,6,7,8}).build());
         qualities.put("read_2", new QualitySequenceBuilder(new byte[]{15,16,17,18}).build());
-        qualityDataStore = DataStoreUtil.adapt(QualitySequenceDataStore.class, qualities);
+        qualityDataStore = DataStore.of(qualities, QualitySequenceDataStore.class);
     }
     @Test
     public void allSlicesSameDepth(){

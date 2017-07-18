@@ -21,8 +21,6 @@
 package org.jcvi.jillion.assembly.consed.ace;
 
 import org.jcvi.jillion.assembly.AssembledReadBuilder;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.util.Builder;
 
 /**
  * {@code AceAssembledReadBuilder} is a {@link Builder}

@@ -21,7 +21,6 @@
 package org.jcvi.jillion.core.residue.aa;
 
 import java.io.Serializable;
-import java.util.Objects;
 import java.util.function.Function;
 
 import org.jcvi.jillion.core.residue.ResidueSequence;

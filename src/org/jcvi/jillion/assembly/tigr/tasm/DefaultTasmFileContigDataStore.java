@@ -27,7 +27,6 @@ import java.util.Map;
 
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
 /**
  * {@code DefaultTasmFileContigDataStore}
  * is a {@link TasmContigDataStore}
@@ -42,7 +41,7 @@ final class DefaultTasmFileContigDataStore {
 	public static TasmContigDataStore create(File tasmFile, DataStore<Long> fullLengthSequenceDataStore, DataStoreFilter filter) throws IOException{
 		Visitor visitor = new Visitor(filter,fullLengthSequenceDataStore);
 		TasmFileParser.create(tasmFile).parse(visitor);
-		return DataStoreUtil.adapt(TasmContigDataStore.class, visitor.contigs);
+		return DataStore.of(visitor.contigs, TasmContigDataStore.class);
 	}
 	
 	private DefaultTasmFileContigDataStore(){

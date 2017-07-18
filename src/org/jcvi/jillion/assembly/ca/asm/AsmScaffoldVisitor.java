@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.ca.asm;
 
-import org.jcvi.jillion.assembly.ca.asm.AsmVisitor.AsmVisitorCallback;
 import org.jcvi.jillion.assembly.ca.asm.AsmVisitor.LinkOrientation;
 /**
  * {@code AsmScaffoldVisitor} is a visitor interface

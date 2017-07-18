@@ -21,7 +21,6 @@
 package org.jcvi.jillion.assembly.consed.nav;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.Range.CoordinateSystem;
 
 /**
  * {@code NavigationElement} is an interface

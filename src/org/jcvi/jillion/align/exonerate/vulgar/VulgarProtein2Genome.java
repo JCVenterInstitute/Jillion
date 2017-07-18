@@ -32,7 +32,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.ToIntFunction;
-import java.util.stream.Collectors;
 
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Direction;

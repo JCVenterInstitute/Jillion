@@ -22,7 +22,6 @@ package org.jcvi.jillion.core.util.iter;
 
 import java.io.Closeable;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Stream;

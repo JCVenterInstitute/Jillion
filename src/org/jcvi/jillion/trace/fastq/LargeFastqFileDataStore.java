@@ -28,7 +28,6 @@ package org.jcvi.jillion.trace.fastq;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
-import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;

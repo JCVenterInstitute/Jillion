@@ -27,8 +27,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -104,7 +104,7 @@ final class DefaultPhdDataStore{
 		}
 		
 		public PhdDataStore build(){
-			return DataStoreUtil.adapt(PhdDataStore.class, phds);
+			return DataStore.of(phds, PhdDataStore.class);
 		}
 		
 		}

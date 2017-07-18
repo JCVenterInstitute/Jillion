@@ -25,11 +25,9 @@ import java.io.IOException;
 
 import org.jcvi.jillion.assembly.ca.asm.AsmContigDataStore;
 import org.jcvi.jillion.assembly.ca.asm.IndexedAsmFileContigDataStore;
-import org.jcvi.jillion.assembly.ca.frg.Fragment;
 import org.jcvi.jillion.assembly.ca.frg.FragmentDataStore;
+import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 
 public class TestIndexedAsmFileContigDataStore extends AbstractTestAsmContigDataStore{
@@ -37,15 +35,8 @@ public class TestIndexedAsmFileContigDataStore extends AbstractTestAsmContigData
 	@Override
 	protected AsmContigDataStore createDataStore(File asmFile,
 			FragmentDataStore frgDataStore) throws IOException {
-		return IndexedAsmFileContigDataStore.create(asmFile, DataStoreUtil.adapt(NucleotideSequenceDataStore.class, frgDataStore, 
-				new DataStoreUtil.AdapterCallback<Fragment, NucleotideSequence>() {
-
-					@Override
-					public NucleotideSequence get(Fragment from) {
-						return from.getNucleotideSequence();
-					}
-			
-		}),
+		return IndexedAsmFileContigDataStore.create(asmFile, DataStore.adapt(NucleotideSequenceDataStore.class, frgDataStore, 
+				from ->from.getNucleotideSequence()),
 		DataStoreFilters.alwaysAccept());
 	}
 

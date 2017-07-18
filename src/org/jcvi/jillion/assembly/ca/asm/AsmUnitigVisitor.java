@@ -22,12 +22,7 @@ package org.jcvi.jillion.assembly.ca.asm;
 
 import java.util.List;
 
-import org.jcvi.jillion.assembly.ca.asm.AsmVisitor.AsmVisitorCallback;
-import org.jcvi.jillion.assembly.ca.asm.AsmVisitor.UnitigStatus;
 import org.jcvi.jillion.core.DirectedRange;
-import org.jcvi.jillion.core.Direction;
-import org.jcvi.jillion.core.qual.QualitySequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 /**
  * {@code AsmUnitigVisitor} is a visitor interface

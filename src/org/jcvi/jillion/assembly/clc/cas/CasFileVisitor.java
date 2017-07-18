@@ -25,9 +25,6 @@
  */
 package org.jcvi.jillion.assembly.clc.cas;
 
-import org.jcvi.jillion.core.io.FileVisitor;
-import org.jcvi.jillion.fasta.FastaFileParser;
-import org.jcvi.jillion.trace.fastq.FastqVisitor;
 /**
  * {@code CasFileVisitor} is a {@link FileVisitor} implementation
  * for visiting CLC Bio's .cas assembly files.

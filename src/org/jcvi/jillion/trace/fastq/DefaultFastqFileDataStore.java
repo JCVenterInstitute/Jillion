@@ -31,7 +31,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
+import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.util.Builder;
 /**
  * {@code DefaultFastqFileDataStore} is the default implementation
@@ -135,7 +135,7 @@ final class DefaultFastqFileDataStore{
 		}
 		@Override
 		public FastqFileDataStore build() {
-			return new FastqFileDataStoreImpl(DataStoreUtil.adapt(FastqDataStore.class, map),
+			return new FastqFileDataStoreImpl(DataStore.of(map, FastqDataStore.class),
 			                                    qualityCodec, fastqFile);
 		}
 

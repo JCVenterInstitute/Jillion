@@ -21,7 +21,6 @@
 package org.jcvi.jillion.internal.core.util;
 
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.jcvi.jillion.core.Range;

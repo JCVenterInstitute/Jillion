@@ -22,8 +22,6 @@ package org.jcvi.jillion.core.residue.aa;
 
 import java.io.ObjectInputStream;
 
-import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
-
 /**
  * {@code CompactProteinSequence} is 
  * a {@link ProteinSequence} that uses a byte array to store each

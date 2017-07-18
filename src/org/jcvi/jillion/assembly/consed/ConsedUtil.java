@@ -52,7 +52,6 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.datastore.DataStore;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.FileUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 

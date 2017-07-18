@@ -26,8 +26,6 @@
 package org.jcvi.jillion.trace;
 
 import org.jcvi.jillion.core.datastore.DataStore;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 /**
  * {@code TraceNucleotideDataStoreAdapter} adapts a {@link TraceDataStore} into
@@ -49,13 +47,6 @@ public final class TraceNucleotideDataStoreAdapter <T extends Trace> {
 	 * @throws NullPointerException if delegate is null.
 	 */
 	public static <T extends Trace> NucleotideSequenceDataStore adapt(DataStore<T> delegate){
-        return DataStoreUtil.adapt(NucleotideSequenceDataStore.class, delegate, new DataStoreUtil.AdapterCallback<T, NucleotideSequence>() {
-
-			@Override
-			public NucleotideSequence get(T from) {
-				return from.getNucleotideSequence();
-			}
-		
-        });
+        return DataStore.adapt(NucleotideSequenceDataStore.class, delegate, from ->from.getNucleotideSequence());
     }
 }

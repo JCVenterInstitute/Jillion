@@ -22,7 +22,6 @@ package org.jcvi.jillion.internal.core.io;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.InputStream;
 /**
  * Reads lines from an {@link InputStream}.  The main
  * differences between {@link LineParser} and other similar JDK classes are: 

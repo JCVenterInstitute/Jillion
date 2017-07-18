@@ -33,7 +33,7 @@ import org.jcvi.jillion.assembly.util.consensus.ConicConsensusCaller;
 import org.jcvi.jillion.assembly.util.consensus.MostFrequentBasecallConsensusCaller;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
+import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
@@ -128,7 +128,7 @@ public class TestAceContigBuilderRecallConsensus {
 		//read2 has a lower quality
 		qualityMap.put("read2", new QualitySequenceBuilder(new byte[]{15,20,10,25}).build());
 		
-		QualitySequenceDataStore qualities = DataStoreUtil.adapt(QualitySequenceDataStore.class, qualityMap);
+		QualitySequenceDataStore qualities = DataStore.of(qualityMap, QualitySequenceDataStore.class);
 		
 		sut.recallConsensus(new ConicConsensusCaller(PhredQuality.valueOf(30)), qualities, GapQualityValueStrategy.LOWEST_FLANKING);
 		//should pick the A because read1 is higher quality

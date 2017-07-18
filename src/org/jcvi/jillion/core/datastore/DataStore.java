@@ -221,7 +221,7 @@ public interface DataStore<T> extends Closeable{
      * in the adapted datastore; can not be null.
      * @return a new DataStore; will never be null.
      * 
-     * @implNote this is the same as calling {@code DataStoreUtil.adapt(datastoreInterface, this, adapter);}
+     * @implNote this is the same as calling {@code DataStore.adapt(datastoreInterface, this, adapter);}
      * 
      * @throws NullPointerException if any parameter is null.
      * 

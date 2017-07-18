@@ -23,13 +23,11 @@ package org.jcvi.jillion.assembly.ca.asm;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.jillion.assembly.ca.frg.Fragment;
 import org.jcvi.jillion.assembly.ca.frg.FragmentDataStore;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.jillion.core.util.Builder;

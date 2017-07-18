@@ -28,11 +28,8 @@ import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
 
 public class TasmContigFileDataStoreBuilder {
 	private final File tasmFile;
@@ -108,28 +105,14 @@ public class TasmContigFileDataStoreBuilder {
 
     @SuppressWarnings("unchecked")
 	private DataStore<Long> adapt(NucleotideFastaDataStore fullLengthSequenceDataStore){
-    	return (DataStore<Long>)DataStoreUtil.adapt(DataStore.class, fullLengthSequenceDataStore, 
-    			new DataStoreUtil.AdapterCallback<NucleotideFastaRecord, Long>() {
-
-					@Override
-					public Long get(NucleotideFastaRecord from) {
-						return from.getSequence().getUngappedLength();
-					}
-    		
-		});
+    	return (DataStore<Long>)DataStore.adapt(DataStore.class, fullLengthSequenceDataStore, 
+    			from ->from.getSequence().getUngappedLength());
     }
     
     @SuppressWarnings("unchecked")
 	private DataStore<Long> adapt(NucleotideSequenceDataStore fullLengthSequenceDataStore){
-    	return (DataStore<Long>)DataStoreUtil.adapt(DataStore.class, fullLengthSequenceDataStore, 
-    			new DataStoreUtil.AdapterCallback<NucleotideSequence, Long>() {
-
-					@Override
-					public Long get(NucleotideSequence from) {
-						return from.getUngappedLength();
-					}
-    		
-		});
+    	return (DataStore<Long>)DataStore.adapt(DataStore.class, fullLengthSequenceDataStore, 
+    			from -> from.getUngappedLength());
     }
 	
 	/**

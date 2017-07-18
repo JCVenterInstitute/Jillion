@@ -25,7 +25,6 @@
  */
 package org.jcvi.jillion.internal.core.util;
 import java.util.Deque;
-import java.util.Queue;
 
 
 /**

@@ -76,13 +76,13 @@ public class TestDefaultAceFileWriter {
 
 		final Date phdDate = new Date(0L);
 		NucleotideSequenceDataStore nucleotideDataStore = FastaRecordDataStoreAdapter
-				.adapt(NucleotideSequenceDataStore.class,
+				.wrap(NucleotideSequenceDataStore.class,
 						new NucleotideFastaFileDataStoreBuilder(seqFile)
 								.build());
 		final QualityFastaDataStore qualityFastaDataStore = new QualityFastaFileDataStoreBuilder(
 				qualFile).build();
 		QualitySequenceDataStore qualityDataStore = FastaRecordDataStoreAdapter
-				.adapt(QualitySequenceDataStore.class, qualityFastaDataStore);
+				.wrap(QualitySequenceDataStore.class, qualityFastaDataStore);
 
 		PhdDataStore phdDataStore = new ArtificalPhdDataStore(
 				nucleotideDataStore, qualityDataStore, phdDate);
@@ -110,13 +110,13 @@ public class TestDefaultAceFileWriter {
 
 		final Date phdDate = new Date(0L);
 		NucleotideSequenceDataStore nucleotideDataStore = FastaRecordDataStoreAdapter
-				.adapt(NucleotideSequenceDataStore.class,
+				.wrap(NucleotideSequenceDataStore.class,
 						new NucleotideFastaFileDataStoreBuilder(seqFile)
 								.build());
 		final QualityFastaDataStore qualityFastaDataStore = new QualityFastaFileDataStoreBuilder(
 				qualFile).build();
 		QualitySequenceDataStore qualityDataStore = FastaRecordDataStoreAdapter
-				.adapt(QualitySequenceDataStore.class, qualityFastaDataStore);
+				.wrap(QualitySequenceDataStore.class, qualityFastaDataStore);
 
 		PhdDataStore phdDataStore = new ArtificalPhdDataStore(
 				nucleotideDataStore, qualityDataStore, phdDate);
@@ -145,13 +145,13 @@ public class TestDefaultAceFileWriter {
 
 		final Date phdDate = new Date(0L);
 		NucleotideSequenceDataStore nucleotideDataStore = FastaRecordDataStoreAdapter
-				.adapt(NucleotideSequenceDataStore.class,
+				.wrap(NucleotideSequenceDataStore.class,
 						new NucleotideFastaFileDataStoreBuilder(seqFile)
 								.build());
 		final QualityFastaDataStore qualityFastaDataStore = new QualityFastaFileDataStoreBuilder(
 				qualFile).build();
 		QualitySequenceDataStore qualityDataStore = FastaRecordDataStoreAdapter
-				.adapt(QualitySequenceDataStore.class, qualityFastaDataStore);
+				.wrap(QualitySequenceDataStore.class, qualityFastaDataStore);
 
 		PhdDataStore phdDataStore = new ArtificalPhdDataStore(
 				nucleotideDataStore, qualityDataStore, phdDate);
@@ -228,13 +228,13 @@ public class TestDefaultAceFileWriter {
 
 		final Date phdDate = new Date(0L);
 		NucleotideSequenceDataStore nucleotideDataStore = FastaRecordDataStoreAdapter
-				.adapt(NucleotideSequenceDataStore.class,
+				.wrap(NucleotideSequenceDataStore.class,
 						new NucleotideFastaFileDataStoreBuilder(seqFile)
 								.build());
 		final QualityFastaDataStore qualityFastaDataStore = new QualityFastaFileDataStoreBuilder(
 				qualFile).build();
 		QualitySequenceDataStore qualityDataStore = FastaRecordDataStoreAdapter
-				.adapt(QualitySequenceDataStore.class, qualityFastaDataStore);
+				.wrap(QualitySequenceDataStore.class, qualityFastaDataStore);
 
 		PhdDataStore phdDataStore = new ArtificalPhdDataStore(
 				nucleotideDataStore, qualityDataStore, phdDate);

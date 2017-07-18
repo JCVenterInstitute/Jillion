@@ -29,8 +29,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.jcvi.jillion.assembly.GappedReferenceBuilder;
+import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
@@ -143,6 +143,6 @@ final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 		for(Entry<String, GappedReferenceBuilder> entry : builders.entrySet()){
 			map.put(entry.getKey(), entry.getValue().build());
 		}
-		return DataStoreUtil.adapt(NucleotideSequenceDataStore.class, map);
+		return DataStore.of(map, NucleotideSequenceDataStore.class);
 	}
 }

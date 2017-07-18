@@ -47,8 +47,8 @@ public final class FastaRecordDataStoreAdapter{
      * @param datastoreOfFastaRecords the DataStore of F to wrap.
      * @return a new {@code DataStore<T>} which wraps the given datastore. 
      */
-    public static <S,T extends Sequence<S>,F extends FastaRecord<S,T>, D extends DataStore<T>> D adapt(Class<D> datastoreToMimic, DataStore<F> datastoreOfFastaRecords){
-    	return DataStoreUtil.adapt(datastoreToMimic, datastoreOfFastaRecords,
+    public static <S,T extends Sequence<S>,F extends FastaRecord<S,T>, D extends DataStore<T>> D wrap(Class<D> datastoreToMimic, DataStore<F> datastoreOfFastaRecords){
+    	return DataStore.adapt(datastoreToMimic, datastoreOfFastaRecords,
     			FastaRecord::getSequence      	   
            );
     }

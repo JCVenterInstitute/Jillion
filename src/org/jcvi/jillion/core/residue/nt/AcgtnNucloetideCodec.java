@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.nt;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 

@@ -515,19 +515,19 @@ public class TestCasParserTestDouble {
 						String extension =FileUtil.getExtension(readFile);
 						if("fasta".equals(extension)){
 							NucleotideFastaDataStore datastore = new NucleotideFastaFileDataStoreBuilder(readFile).build();
-							datastores.add(DataStoreUtil.adapt(NucleotideSequenceDataStore.class, datastore, 
+							datastores.add(DataStore.adapt(NucleotideSequenceDataStore.class, datastore, 
 									record -> record.getSequence()));
 						}else if("fastq".equals(extension)){
 							FastqDataStore datastore = new FastqFileDataStoreBuilder(readFile)
 																.qualityCodec(FastqQualityCodec.SANGER)
 																.build();
-							datastores.add(DataStoreUtil.adapt(NucleotideSequenceDataStore.class, datastore, 
+							datastores.add(DataStore.adapt(NucleotideSequenceDataStore.class, datastore, 
 									record -> record.getNucleotideSequence()));
 						}else if("sff".equals(extension)){
 							SffFileDataStore datastore = new SffFileDataStoreBuilder(
 									readFile)
 							.build();
-							datastores.add(DataStoreUtil.adapt(
+							datastores.add(DataStore.adapt(
 									NucleotideSequenceDataStore.class,
 									datastore,
 									record -> record.getNucleotideSequence()));

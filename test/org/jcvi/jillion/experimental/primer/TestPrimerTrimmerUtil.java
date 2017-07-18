@@ -23,6 +23,7 @@ package org.jcvi.jillion.experimental.primer;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
@@ -39,6 +40,6 @@ public final class TestPrimerTrimmerUtil {
         for(int i=0; i<primers.length; i++){
             map.put("primer_"+i, primers[i]);
         }
-        return DataStoreUtil.adapt(NucleotideSequenceDataStore.class,map);
+        return DataStore.of(map, NucleotideSequenceDataStore.class);
     }
 }

@@ -21,7 +21,6 @@
 package org.jcvi.jillion.fasta.qual;
 
 import org.jcvi.jillion.fasta.AbstractFastaRecordVisitor;
-import org.jcvi.jillion.fasta.FastaRecordVisitor;
 /**
  * {@code AbstractQualityFastaRecordVisitor} is an abstract
  * implementation of {@link FastaRecordVisitor} that will collect

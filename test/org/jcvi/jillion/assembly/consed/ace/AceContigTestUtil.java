@@ -37,6 +37,7 @@ import org.jcvi.jillion.assembly.consed.ace.AceContigVisitor;
 import org.jcvi.jillion.assembly.consed.ace.AceFileParser;
 import org.jcvi.jillion.assembly.consed.ace.AceFileVisitor;
 import org.jcvi.jillion.assembly.consed.ace.AceFileVisitorCallback;
+import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -99,7 +100,7 @@ public final class AceContigTestUtil {
 		
 		
 		AceFileParser.create(aceFile).parse(visitor2);
-		return DataStoreUtil.adapt(NucleotideSequenceDataStore.class, fullSequences);
+		return DataStore.of(fullSequences, NucleotideSequenceDataStore.class);
 	}
     
     public static  void assertContigsEqual(Contig<? extends AssembledRead> expected, Contig<? extends AssembledRead> actual) {

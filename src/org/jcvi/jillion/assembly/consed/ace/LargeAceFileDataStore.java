@@ -31,7 +31,6 @@ import org.jcvi.jillion.assembly.consed.ConsedUtil;
 import org.jcvi.jillion.assembly.consed.ConsedUtil.ClipPointsType;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;

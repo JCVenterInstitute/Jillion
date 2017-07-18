@@ -32,8 +32,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.jcvi.jillion.core.io.IOUtil;
@@ -87,7 +85,8 @@ public final class DataStoreUtil {
 		 */
 		T get(F from);
 		
-		default T apply(F from){
+		@Override
+        default T apply(F from){
 			return get(from);
 		}
 	}
@@ -582,7 +581,8 @@ public final class DataStoreUtil {
 			isClosed = true;
 		}
 
-		public final boolean isClosed() {
+		@Override
+        public final boolean isClosed() {
 			return isClosed;
 		}
 		

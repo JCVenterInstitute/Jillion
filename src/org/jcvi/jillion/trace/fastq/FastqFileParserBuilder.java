@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.util.Objects;
 
 import org.jcvi.jillion.core.io.InputStreamSupplier;
-import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback.FastqVisitorMemento;
 /**
  * Creates a {@link FastqParser}
  * that parses the given fastq encoded file

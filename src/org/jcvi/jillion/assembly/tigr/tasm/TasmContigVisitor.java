@@ -22,7 +22,6 @@ package org.jcvi.jillion.assembly.tigr.tasm;
 
 import java.util.Date;
 
-import org.jcvi.jillion.assembly.tigr.tasm.TasmVisitor.TasmVisitorCallback;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;

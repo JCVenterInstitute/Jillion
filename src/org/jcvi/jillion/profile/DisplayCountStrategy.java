@@ -22,7 +22,6 @@ package org.jcvi.jillion.profile;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.math.BigDecimal;
 import java.text.DecimalFormat;
 
 import org.jcvi.jillion.core.residue.nt.Nucleotide;

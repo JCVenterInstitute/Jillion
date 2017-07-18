@@ -26,8 +26,6 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStore;
-import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.pos.Position;
 import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.util.Builder;
