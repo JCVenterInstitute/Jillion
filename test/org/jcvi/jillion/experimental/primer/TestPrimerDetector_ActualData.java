@@ -31,8 +31,7 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
-import org.jcvi.jillion.fasta.FastaRecordDataStoreAdapter;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStore;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,15 +49,8 @@ public class TestPrimerDetector_ActualData {
     
     @Before
     public void setup() throws IOException, DataStoreException{
-        primerDataStore = 
-        
-        		FastaRecordDataStoreAdapter.wrap(NucleotideSequenceDataStore.class,
-        				new NucleotideFastaFileDataStoreBuilder(
-                        RESOURCES.getFile("files/primers.fasta"))
-                        .build());
-        sequence = new NucleotideFastaFileDataStoreBuilder(
-                                RESOURCES.getFile("files/fullLength.fasta"))
-        					.build()
+        primerDataStore =  NucleotideFastaFileDataStore.fromFile(RESOURCES.getFile("files/primers.fasta")).asSequenceDataStore();
+        sequence =  NucleotideFastaFileDataStore.fromFile(RESOURCES.getFile("files/fullLength.fasta"))
         					.get("SAJJA07T27G07MP1F").getSequence();
     }    
   

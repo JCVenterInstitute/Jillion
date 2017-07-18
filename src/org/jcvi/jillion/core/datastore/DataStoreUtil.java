@@ -486,8 +486,8 @@ public final class DataStoreUtil {
 			//http://amitstechblog.wordpress.com/2011/07/24/java-proxies-and-undeclaredthrowableexception/
 			//for a more complete description.
 			try{
-				return method.invoke(delegate, args);
-			}catch(InvocationTargetException e){
+			   return method.invoke(delegate, args);
+			}catch(InvocationTargetException e){			       
 				throw e.getCause();
 			}
 		}

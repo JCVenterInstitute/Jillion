@@ -26,10 +26,10 @@
 package org.jcvi.jillion.assembly.ca.frg;
 
 
-import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.trace.TraceDataStore;
 
-public interface FragmentDataStore extends DataStore<Fragment>{
+public interface FragmentDataStore extends TraceDataStore<Fragment>{
 
     boolean containsLibrary(String libraryId) throws DataStoreException;
     Library getLibrary(String libraryId) throws DataStoreException;

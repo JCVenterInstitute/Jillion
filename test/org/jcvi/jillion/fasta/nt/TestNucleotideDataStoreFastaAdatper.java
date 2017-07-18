@@ -25,17 +25,15 @@
  */
 package org.jcvi.jillion.fasta.nt;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
-import org.jcvi.jillion.fasta.FastaRecordDataStoreAdapter;
-import org.jcvi.jillion.fasta.nt.DefaultNucleotideFastaFileDataStore;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
 import org.junit.Test;
-import static org.junit.Assert.*;
 public class TestNucleotideDataStoreFastaAdatper extends AbstractTestSequenceFastaDataStoreWithNoComment{
 
     @Override
@@ -47,8 +45,7 @@ public class TestNucleotideDataStoreFastaAdatper extends AbstractTestSequenceFas
     @Test
     public void adaptFasta() throws IOException, DataStoreException{
         NucleotideSequenceDataStore sut=
-        		FastaRecordDataStoreAdapter.wrap(NucleotideSequenceDataStore.class, createDataStore(
-        		RESOURCES.getFile(FASTA_FILE_PATH)));
+        		NucleotideFastaFileDataStore.fromFile(RESOURCES.getFile(FASTA_FILE_PATH)).asSequenceDataStore();
     
         assertEquals(
                 sut.get("hrv-61"), hrv_61.getSequence());

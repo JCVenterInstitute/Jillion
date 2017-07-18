@@ -25,7 +25,7 @@
  */
 package org.jcvi.jillion.trace.fastq;
 
-import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.trace.TraceDataStore;
 /**
  * {@code FastqDataStore} is a
  * marker-interface for a {@link DataStore}
@@ -33,6 +33,6 @@ import org.jcvi.jillion.core.datastore.DataStore;
  * @author dkatzel
  *
  */
-public interface FastqDataStore extends DataStore<FastqRecord>{
+public interface FastqDataStore extends TraceDataStore<FastqRecord>{
 
 }

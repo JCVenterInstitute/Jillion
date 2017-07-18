@@ -20,7 +20,14 @@
  ******************************************************************************/
 package org.jcvi.jillion.testutils.assembly.cas;
 
-import static org.easymock.EasyMock.*;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.expectLastCall;
+import static org.easymock.EasyMock.getCurrentArguments;
+import static org.easymock.EasyMock.isA;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -45,15 +52,10 @@ import org.jcvi.jillion.assembly.clc.cas.CasParser;
 import org.jcvi.jillion.assembly.clc.cas.CasUtil;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.FileUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
-import org.jcvi.jillion.testutils.assembly.cas.CasParserTestDouble;
-import org.jcvi.jillion.testutils.assembly.cas.FastaRecordWriter;
-import org.jcvi.jillion.testutils.assembly.cas.FastqRecordWriter;
-import org.jcvi.jillion.testutils.assembly.cas.SffRecordWriter;
 import org.jcvi.jillion.trace.fastq.FastqDataStore;
 import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
 import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
@@ -515,22 +517,17 @@ public class TestCasParserTestDouble {
 						String extension =FileUtil.getExtension(readFile);
 						if("fasta".equals(extension)){
 							NucleotideFastaDataStore datastore = new NucleotideFastaFileDataStoreBuilder(readFile).build();
-							datastores.add(DataStore.adapt(NucleotideSequenceDataStore.class, datastore, 
-									record -> record.getSequence()));
+							datastores.add(datastore.asSequenceDataStore());
 						}else if("fastq".equals(extension)){
 							FastqDataStore datastore = new FastqFileDataStoreBuilder(readFile)
 																.qualityCodec(FastqQualityCodec.SANGER)
 																.build();
-							datastores.add(DataStore.adapt(NucleotideSequenceDataStore.class, datastore, 
-									record -> record.getNucleotideSequence()));
+							datastores.add(datastore.asSequenceDataStore());
 						}else if("sff".equals(extension)){
 							SffFileDataStore datastore = new SffFileDataStoreBuilder(
 									readFile)
 							.build();
-							datastores.add(DataStore.adapt(
-									NucleotideSequenceDataStore.class,
-									datastore,
-									record -> record.getNucleotideSequence()));
+							datastores.add(datastore.asSequenceDataStore());
 						}
 						else{
 							throw new IllegalStateException("unknown extension " + extension + " file = " + readFile.getName());

@@ -27,11 +27,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.internal.core.datastore.AbstractMapBackedDataStore;
 
 final class DefaultPhdDataStore{
 
@@ -104,11 +104,18 @@ final class DefaultPhdDataStore{
 		}
 		
 		public PhdDataStore build(){
-			return DataStore.of(phds, PhdDataStore.class);
+			return new Impl(phds);
 		}
 		
 		}
 
 
+	private static final class Impl extends AbstractMapBackedDataStore<Phd> implements PhdDataStore{
+
+        public Impl(Map<String, Phd> map) {
+            super(map);
+        }
+	    
+	}
 	
 }

@@ -23,20 +23,15 @@ package org.jcvi.jillion.assembly.ca.asm;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.jillion.assembly.ca.asm.AsmContigDataStore;
-import org.jcvi.jillion.assembly.ca.asm.IndexedAsmFileContigDataStore;
 import org.jcvi.jillion.assembly.ca.frg.FragmentDataStore;
-import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 
 public class TestIndexedAsmFileContigDataStore extends AbstractTestAsmContigDataStore{
 
 	@Override
 	protected AsmContigDataStore createDataStore(File asmFile,
 			FragmentDataStore frgDataStore) throws IOException {
-		return IndexedAsmFileContigDataStore.create(asmFile, DataStore.adapt(NucleotideSequenceDataStore.class, frgDataStore, 
-				from ->from.getNucleotideSequence()),
+		return IndexedAsmFileContigDataStore.create(asmFile, frgDataStore.asSequenceDataStore(),
 		DataStoreFilters.alwaysAccept());
 	}
 

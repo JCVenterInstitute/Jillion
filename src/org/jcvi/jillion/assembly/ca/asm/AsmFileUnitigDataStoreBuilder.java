@@ -23,7 +23,6 @@ package org.jcvi.jillion.assembly.ca.asm;
 import java.io.File;
 import java.io.IOException;
 
-import org.jcvi.jillion.assembly.ca.frg.Fragment;
 import org.jcvi.jillion.assembly.ca.frg.FragmentDataStore;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
@@ -66,7 +65,7 @@ public class AsmFileUnitigDataStoreBuilder implements Builder<AsmUnitigDataStore
 			throw new NullPointerException("frgDataStore can not be null");
 		}
 		this.asmFile = asmFile;
-		this.fullLengthSequences = adaptFrgDataStore(frgDataStore);
+		this.fullLengthSequences = frgDataStore.asSequenceDataStore();
 	}
 
 	
@@ -87,10 +86,6 @@ public class AsmFileUnitigDataStoreBuilder implements Builder<AsmUnitigDataStore
 		return this;
 	}
 	
-	private static NucleotideSequenceDataStore adaptFrgDataStore(
-			FragmentDataStore frgDataStore) {
-		return DataStore.adapt(NucleotideSequenceDataStore.class, frgDataStore, Fragment::getNucleotideSequence);
-	}
 
 	@Override
 	public AsmUnitigDataStore build() {

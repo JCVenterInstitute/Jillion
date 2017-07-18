@@ -32,7 +32,6 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.FastaRecordDataStoreAdapter;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +46,7 @@ public class TestFastaSequenceDataStoreAdapter {
 	
 	@Before
 	public void createDataStore() throws IOException{
-		sut = FastaRecordDataStoreAdapter.wrap(NucleotideSequenceDataStore.class, DefaultNucleotideFastaFileDataStore.create(fastaFile));
+		sut = NucleotideFastaFileDataStore.fromFile(fastaFile).asSequenceDataStore();
 	}
 	@Test
 	public void numberOfRecords() throws DataStoreException{
