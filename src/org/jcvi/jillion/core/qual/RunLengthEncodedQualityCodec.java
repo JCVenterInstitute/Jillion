@@ -33,6 +33,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.OptionalDouble;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
@@ -245,12 +247,12 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
    
    
     @Override
-	public double getAvgQuality(byte[] encodedData) {
+	public OptionalDouble getAvgQuality(byte[] encodedData) {
     	ByteBuffer buf = ByteBuffer.wrap(encodedData);
         int length=buf.getInt();  
         //short circuit if empty
         if(length ==0){
-        	throw new ArithmeticException("sequence length is 0");
+        	return OptionalDouble.empty();
         }
        
         byte guard = buf.get();
@@ -284,17 +286,17 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
 	       
 	        currentOffset=endOffset;
         }
-        return sum/ (double)length;
+        return OptionalDouble.of(sum/ (double)length);
 	}
 
 
 	@Override
-	public PhredQuality getMinQuality(byte[] encodedData) {
+	public Optional<PhredQuality> getMinQuality(byte[] encodedData) {
 		ByteBuffer buf = ByteBuffer.wrap(encodedData);
         int length=buf.getInt();  
         //short circuit if empty
         if(length ==0){
-        	return null;
+        	return Optional.empty();
         }
        
         byte guard = buf.get();
@@ -330,17 +332,17 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
 	       
 	        currentOffset=endOffset;
         }
-        return PhredQuality.valueOf(min);
+        return Optional.of(PhredQuality.valueOf(min));
 	}
 
 
 	@Override
-	public PhredQuality getMaxQuality(byte[] encodedData) {
+	public Optional<PhredQuality> getMaxQuality(byte[] encodedData) {
 		ByteBuffer buf = ByteBuffer.wrap(encodedData);
         int length=buf.getInt();  
         //short circuit if empty
         if(length ==0){
-        	return null;
+        	return Optional.empty();
         }
        
         byte guard = buf.get();
@@ -376,7 +378,7 @@ final class RunLengthEncodedQualityCodec implements QualitySymbolCodec{
 	       
 	        currentOffset=endOffset;
         }
-        return PhredQuality.valueOf(max);
+        return Optional.of(PhredQuality.valueOf(max));
 	}
 
 

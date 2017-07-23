@@ -21,7 +21,10 @@
 package org.jcvi.jillion.internal.trace.fastq;
 
 import java.util.Arrays;
+import java.util.DoubleSummaryStatistics;
 import java.util.Iterator;
+import java.util.Optional;
+import java.util.OptionalDouble;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.PhredQuality;
@@ -47,6 +50,7 @@ class ParsedQualitySequence implements QualitySequence{
 
     private final FastqQualityCodec codec;
     private final String encodedQualities;
+    private DoubleSummaryStatistics stats;
     /**
      * cached hashcode.
      */
@@ -111,51 +115,53 @@ class ParsedQualitySequence implements QualitySequence{
         return ret;
     }
 
-    @Override
-    public double getAvgQuality() throws ArithmeticException {
-        long total = 0; 
-        char[] chars = encodedQualities.toCharArray();
-        if(chars.length ==0){
-            return 0D;
+    private void computeSummaryStatsIfNeeded(){
+        //no synchronization here,
+        //in the unlikely event 2 threads enter at the sametime,
+        //they will get the same value anyway
+        //not worth the performance penalty
+        if(stats !=null){
+            return;
         }
+        if(encodedQualities.isEmpty()){
+            stats = new DoubleSummaryStatistics();
+            return;
+        }
+        DoubleSummaryStatistics stats2 = new DoubleSummaryStatistics();
+        char[] chars = encodedQualities.toCharArray();
         for(int i=0; i< chars.length; i++){
-           total += chars[i];
+            stats2.accept(chars[i]);
         }
         
-        double avg = ((double)total)/chars.length;
-        return avg - codec.getOffset();
+        stats = stats2;
+    }
+    @Override
+    public OptionalDouble getAvgQuality() throws ArithmeticException {
+        computeSummaryStatsIfNeeded();
+        if(stats.getCount() ==0){
+            return OptionalDouble.empty();
+        }
+        return OptionalDouble.of(stats.getAverage() - codec.getOffset());
     }
 
     @Override
-    public PhredQuality getMinQuality() {
-        char min = 256; //should be bigger than any encoded quality
-        char[] chars = encodedQualities.toCharArray();
-        if(chars.length ==0){
-            return null;
+    public Optional<PhredQuality> getMinQuality() {
+        computeSummaryStatsIfNeeded();
+        double value = stats.getMin();
+        if(Double.POSITIVE_INFINITY == value){
+            return Optional.empty();
         }
-        for(int i=0; i< chars.length; i++){
-            char c = chars[i];
-            if(c < min){
-                min = c;
-            }
-        }
-        return codec.decode(min);
+        return Optional.of(codec.decode((char)value));
     }
 
     @Override
-    public PhredQuality getMaxQuality() {
-        char max = 0;
-        char[] chars = encodedQualities.toCharArray();
-        if(chars.length ==0){
-            return null;
+    public Optional<PhredQuality> getMaxQuality() {
+        computeSummaryStatsIfNeeded();
+        double value = stats.getMax();
+        if(Double.NEGATIVE_INFINITY == value){
+            return Optional.empty();
         }
-        for(int i=0; i< chars.length; i++){
-            char c = chars[i];
-            if(c > max){
-                max = c;
-            }
-        }
-        return codec.decode(max);
+        return Optional.of(codec.decode((char)value));
     }
 
     @Override

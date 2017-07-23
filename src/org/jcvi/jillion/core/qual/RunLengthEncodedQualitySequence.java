@@ -22,6 +22,8 @@ package org.jcvi.jillion.core.qual;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Optional;
+import java.util.OptionalDouble;
 
 import org.jcvi.jillion.core.Range;
 
@@ -94,25 +96,26 @@ class RunLengthEncodedQualitySequence implements QualitySequence{
 	/**
 	 * {@inheritDoc}
 	 */
-	public byte[] toArray(){
+	@Override
+    public byte[] toArray(){
 		return RunLengthEncodedQualityCodec.INSTANCE.toQualityValueArray(encodedData);
         
     }
 
 	@Override
-	public double getAvgQuality() {
+	public OptionalDouble getAvgQuality() {
 		return RunLengthEncodedQualityCodec.INSTANCE.getAvgQuality(encodedData);
 	}
 
 
 	@Override
-	public PhredQuality getMinQuality() {
+	public Optional<PhredQuality> getMinQuality() {
 		return RunLengthEncodedQualityCodec.INSTANCE.getMinQuality(encodedData);
 	}
 
 
 	@Override
-	public PhredQuality getMaxQuality() {
+	public Optional<PhredQuality> getMaxQuality() {
 		return RunLengthEncodedQualityCodec.INSTANCE.getMaxQuality(encodedData);
 	}
 }

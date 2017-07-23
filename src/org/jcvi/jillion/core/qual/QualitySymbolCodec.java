@@ -21,6 +21,8 @@
 package org.jcvi.jillion.core.qual;
 
 import java.util.Collection;
+import java.util.Optional;
+import java.util.OptionalDouble;
 
 import org.jcvi.jillion.internal.core.GlyphCodec;
 
@@ -35,9 +37,9 @@ interface QualitySymbolCodec extends GlyphCodec<PhredQuality>{
 	 
 	 byte[] toQualityValueArray(byte[] encodedData);
 	 
-	 double getAvgQuality(byte[] encodedData);
+	 OptionalDouble getAvgQuality(byte[] encodedData);
 	    
-    PhredQuality getMinQuality(byte[] encodedData);
+    Optional<PhredQuality> getMinQuality(byte[] encodedData);
     
-    PhredQuality getMaxQuality(byte[] encodedData);
+    Optional<PhredQuality> getMaxQuality(byte[] encodedData);
 }

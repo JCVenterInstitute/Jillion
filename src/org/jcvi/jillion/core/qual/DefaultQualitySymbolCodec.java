@@ -27,6 +27,8 @@ package org.jcvi.jillion.core.qual;
 
 import java.nio.ByteBuffer;
 import java.util.Collection;
+import java.util.Optional;
+import java.util.OptionalDouble;
 
 /**
  * {@code DefaultQualitySymbolCodec} stores 
@@ -68,22 +70,22 @@ enum DefaultQualitySymbolCodec implements QualitySymbolCodec{
 	}
 
 	@Override
-	public double getAvgQuality(byte[] encodedData) {
+	public OptionalDouble getAvgQuality(byte[] encodedData) {
 	
 		if(encodedData.length==0){
-			throw new ArithmeticException("length is 0");
+			return OptionalDouble.empty();
 		}
 		long sum = 0;
 		for(int i=0; i<encodedData.length; i++){
 			sum +=encodedData[i];
 		}
-		return sum/ (double) encodedData.length;
+		return OptionalDouble.of(sum/ (double) encodedData.length);
 	}
 
 	@Override
-	public PhredQuality getMinQuality(byte[] encodedData) {
+	public Optional<PhredQuality> getMinQuality(byte[] encodedData) {
 		if(encodedData.length ==0){
-			return null;
+			return Optional.empty();
 		}
 		byte min = PhredQuality.MAX_VALUE;
 		
@@ -93,13 +95,13 @@ enum DefaultQualitySymbolCodec implements QualitySymbolCodec{
 				min = current;
 			}
 		}
-		return PhredQuality.valueOf(min);
+		return Optional.of(PhredQuality.valueOf(min));
 	}
 
 	@Override
-	public PhredQuality getMaxQuality(byte[] encodedData) {
+	public Optional<PhredQuality> getMaxQuality(byte[] encodedData) {
 		if(encodedData.length ==0){
-			return null;
+			return Optional.empty();
 		}
 		byte max = PhredQuality.MIN_VALUE;
 		
@@ -109,7 +111,7 @@ enum DefaultQualitySymbolCodec implements QualitySymbolCodec{
 				max = current;
 			}
 		}
-		return PhredQuality.valueOf(max);
+		return Optional.of(PhredQuality.valueOf(max));
 	}
     
     

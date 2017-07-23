@@ -22,6 +22,7 @@ package org.jcvi.jillion.internal.trace.fastq;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.OptionalDouble;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.QualitySequence;
@@ -107,7 +108,7 @@ public class ParsedFastqRecord implements FastqRecord {
     }
 
     @Override
-    public double getAvgQuality() throws ArithmeticException {
+    public OptionalDouble getAvgQuality() throws ArithmeticException {
         
         //this implementation gets the 
         //average ASCII value
@@ -118,14 +119,14 @@ public class ParsedFastqRecord implements FastqRecord {
         long total =0;
         char[] chars = encodedQualities.toCharArray();
         if(chars.length ==0){
-            throw new ArithmeticException("length of fastq record is 0");
+            return OptionalDouble.empty();
         }
         for(int i=0; i< chars.length; i++){
             total+= chars[i];
         }
         double avg = total/chars.length;
         
-        return avg - qualityCodec.getOffset();
+        return OptionalDouble.of(avg - qualityCodec.getOffset());
     }
 
     @Override

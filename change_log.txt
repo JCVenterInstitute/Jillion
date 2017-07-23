@@ -88,6 +88,23 @@ implementation best for that record.
 16.  Added DataStore.forEach( BiConsumer<String, T>) that will call the given consumer once for each record in the datastore.
      This method will often be more efficient than using Iterators. 
      
+17. FastqRecord.getAvgQuality() now returns an OptionalDouble instead of a double.  
+    If the sequence is empty, then the returned Optional is also empty.  
+    Previously an empty string threw an Arithmetic error.
+    
+18. QualitySequence.getMinQuality() and getMaxQuality() now return an Optional<PhredQuality> instead of a PhredQuality.  
+    If the sequence is empty, then the returned Optional is also empty.  
+    Previously an empty sequence returned null.
+    
+19. QualitySequence.getAvgQuality() now returns an OptionalDouble instead of a double.  
+    If the sequence is empty, then the returned Optional is also empty.  
+    Previously an empty string threw an Arithmetic error.
+    
+Performance Improvements
+
+1.  QualitySequence.getAvgQuality()/ getMinQuality()/ getMaxQuality()
+   Most implementations now cache the computation and performs all the calculations at once.
+   Previously the computations were performed separately.
      
 Bug Fixes
 ---------

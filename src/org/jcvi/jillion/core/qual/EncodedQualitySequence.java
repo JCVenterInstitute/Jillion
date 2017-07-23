@@ -20,6 +20,9 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.qual;
 
+import java.util.Optional;
+import java.util.OptionalDouble;
+
 import org.jcvi.jillion.internal.core.EncodedSequence;
 
 /**
@@ -32,8 +35,8 @@ import org.jcvi.jillion.internal.core.EncodedSequence;
 final class EncodedQualitySequence extends EncodedSequence<PhredQuality> implements QualitySequence{
 
    
-   
-
+        private Stats stats;
+        
 	public EncodedQualitySequence(QualitySymbolCodec codec, byte[] data) {
 		super(codec, data);
 	}
@@ -60,28 +63,71 @@ final class EncodedQualitySequence extends EncodedSequence<PhredQuality> impleme
     /**
 	 * {@inheritDoc}
 	 */
-	public byte[] toArray(){
+	@Override
+    public byte[] toArray(){
        return ((QualitySymbolCodec)getCodec()).toQualityValueArray(data);
     }
 
 
 	@Override
-	public double getAvgQuality() {
-		return ((QualitySymbolCodec)getCodec()).getAvgQuality(data);
+	public OptionalDouble getAvgQuality() {
+	   
+	    computeStatsIfNeeded();
+	    if(stats.avg < 0){
+	        return OptionalDouble.empty();
+            }
+		return OptionalDouble.of(stats.avg);
 	}
 
 
 	@Override
-	public PhredQuality getMinQuality() {
-		return ((QualitySymbolCodec)getCodec()).getMinQuality(data);
+	public Optional<PhredQuality> getMinQuality() {
+	    computeStatsIfNeeded();
+	    byte value = stats.min;
+	    if(value < 0){
+	        return Optional.empty();
+	    }
+	    return Optional.of(PhredQuality.valueOf(value));
 	}
 
 
 	@Override
-	public PhredQuality getMaxQuality() {
-		return ((QualitySymbolCodec)getCodec()).getMaxQuality(data);
+	public Optional<PhredQuality> getMaxQuality() {
+	    computeStatsIfNeeded();
+            byte value = stats.max;
+            if(value < 0){
+                return Optional.empty();
+            }
+            return Optional.of(PhredQuality.valueOf(value));
 	}
 
+	private void computeStatsIfNeeded(){
+	    if(stats !=null){
+	        return;
+	    }
+	   
+	    byte[] array = toArray();
+	    if(array.length==0){
+	        stats= new Stats((byte)-1, (byte)-1, -1);
+	        return;
+	    }
+	    byte min = Byte.MAX_VALUE;
+	    byte max = Byte.MIN_VALUE;
+	    long total = 0L;
+	    
+	    for(int i=0; i< array.length; i++){
+	        byte v = array[i];
+	        if( v < min){
+	            min = v;
+	        }
+	        if(v > max){
+	            max = v;
+	        }
+	        total +=v;
+	    }
+	    
+	    stats = new Stats(min, max, total/ (double)array.length);
+	}
 
     @Override
     public QualitySequenceBuilder toBuilder() {
@@ -96,5 +142,16 @@ final class EncodedQualitySequence extends EncodedSequence<PhredQuality> impleme
     }
 	
 	
-	
+
+    private static class Stats{
+        private final byte min, max;
+        private final double avg;
+        
+        protected Stats(byte min, byte max, double avg) {
+            this.min = min;
+            this.max = max;
+            this.avg = avg;
+        }
+        
+    }
 }

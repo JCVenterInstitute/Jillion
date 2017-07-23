@@ -85,7 +85,7 @@ public class TestQualityFastaDataStoreUsingLambdas {
 	public void withRecordFilter() throws IOException, DataStoreException{
 		QualityFastaFileDataStoreBuilder builder = new QualityFastaFileDataStoreBuilder(qualFile);
 		hinter.accept(builder);
-		builder.filterRecords(record-> record.getSequence().getAvgQuality() > 25);
+		builder.filterRecords(record-> record.getSequence().getAvgQuality().getAsDouble() > 25);
 		
 		try(QualityFastaDataStore sut = builder.build();
 				
@@ -94,7 +94,7 @@ public class TestQualityFastaDataStoreUsingLambdas {
 			//some records are filtered out
 			assertEquals(293, sut.getNumberOfRecords());
 			while(iter.hasNext()){
-				assertTrue(iter.next().getSequence().getAvgQuality() > 25);
+				assertTrue(iter.next().getSequence().getAvgQuality().getAsDouble() > 25);
 			}
 		}
 	}

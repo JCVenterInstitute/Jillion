@@ -25,6 +25,8 @@
  */
 package org.jcvi.jillion.trace.fastq;
 
+import java.util.OptionalDouble;
+
 import org.jcvi.jillion.core.Defline;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -70,6 +72,7 @@ public interface FastqRecord extends Trace, Defline{
 	@Override
     QualitySequence getQualitySequence();
 
+    @Override
     /**
      * Get the comment (if any) associated with this record.
      * @return A <code>String</code> of the comment
@@ -112,6 +115,7 @@ public interface FastqRecord extends Trace, Defline{
      * 
      * @since 5.0
      */
+    @Override
     default long getLength(){
     	return getNucleotideSequence().getLength();
     }
@@ -130,7 +134,7 @@ public interface FastqRecord extends Trace, Defline{
      * implementations may optimize this computation.
      * @since 5.2
      */
-    default double getAvgQuality() throws ArithmeticException{
+    default OptionalDouble getAvgQuality(){
         return getQualitySequence().getAvgQuality();
     }
     /**

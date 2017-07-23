@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.DoubleSummaryStatistics;
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.OptionalDouble;
 import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Collectors;
@@ -91,21 +92,21 @@ public interface QualitySequence extends Sequence<PhredQuality>{
      * @return the avg quality score as a double.
      * @throws ArithmeticException if the sequence length is 0.
      */
-    double getAvgQuality() throws ArithmeticException;
+    OptionalDouble getAvgQuality();
     /**
      * Get the min {@link PhredQuality} in the 
      * Sequence.
-     * @return a {@link PhredQuality} or {@code null}
+     * @return an Optional {@link PhredQuality} that is empty
      * if the sequence is empty.
      */
-    PhredQuality getMinQuality();
+    Optional<PhredQuality> getMinQuality();
     /**
      * Get the min {@link PhredQuality} in the 
      * Sequence.
-     * @return a {@link PhredQuality} or {@code null}
+     * @return an Optional {@link PhredQuality} that is empty
      * if the sequence is empty.
      */
-    PhredQuality getMaxQuality();
+    Optional<PhredQuality> getMaxQuality();
     /**
      * Create a new Builder object that is initialized
      * to the current sequence.  Any changes made to the returned Builder
@@ -114,6 +115,7 @@ public interface QualitySequence extends Sequence<PhredQuality>{
      * @return a new Builder instance, will never be null.
      * @since 5.0
      */
+    @Override
     default QualitySequenceBuilder toBuilder(){
         return new QualitySequenceBuilder(this);
     }

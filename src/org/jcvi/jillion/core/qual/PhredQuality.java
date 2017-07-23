@@ -34,7 +34,7 @@ import org.jcvi.jillion.internal.core.util.JillionUtil;
  * a Phred quality score.
  * <p>
  * PhredQuality uses the flyweight pattern to reuse the same
- * objects for the same quality score.  So  
+ * objects for the same quality score.
  * @author dkatzel
  *
  *
