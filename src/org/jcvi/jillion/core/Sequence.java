@@ -27,7 +27,10 @@ package org.jcvi.jillion.core;
 
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Function;
+
+import org.jcvi.jillion.core.util.streams.ThrowingIndexedConsumer;
 
 
 /**
@@ -83,6 +86,70 @@ public interface Sequence<T> extends Iterable<T>{
      * values outside of the possible sequence offsets.
      */
     Iterator<T> iterator(Range range);
+    /**
+     * Iterate over each element in the sequence subrange.
+     * and call the given consumer.
+     * 
+     * @param range the subrange to iterate over.
+     * 
+     * @param consumer the {@link ThrowingIndexedConsumer} that will be called
+     * for each element in the range. Note: the index first parameter will be the index
+     * in the full sequence, not the subrange so for example, if the Range is 10..100,
+     * the consumer will accept values where the index is 10..100 not 0..90.
+     * 
+     * @throws E the exception that may be thrown by the consumer.
+     * 
+     * @throws NullPointerException if any parameter is null.
+     * @throws IndexOutOfBoundsException if range contains
+     * values outside of the possible sequence offsets.
+     * 
+     * @since 5.3
+     */
+    default <E extends Throwable> void forEach(Range range, ThrowingIndexedConsumer<T,E> consumer ) throws E{
+        Objects.requireNonNull(range);
+        Objects.requireNonNull(consumer);
+        Iterator<T> iter = iterator(range);
+        
+        long offset=range.getBegin();
+        while(iter.hasNext()){
+            consumer.accept(offset++, iter.next());
+        }
+    }
+    
+    /**
+     * Iterate over each element in the sequence subrange.
+     * and call the given consumer.
+     * 
+     * @param range the subrange to iterate over.
+     * 
+     * @param consumer the {@link Consumer} that will be called
+     * for each element in the range.
+     * 
+     * @throws E the exception that may be thrown by the consumer.
+     * 
+     * @throws NullPointerException if any parameter is null.
+     * @throws IndexOutOfBoundsException if range contains
+     * values outside of the possible sequence offsets.
+     * 
+     * @since 5.3
+     */
+    default <E extends Throwable> void forEach(Range range, Consumer<T> consumer ) throws E{
+        Objects.requireNonNull(range);
+        Objects.requireNonNull(consumer);
+        Iterator<T> iter = iterator(range);
+       
+        while(iter.hasNext()){
+            consumer.accept(iter.next());
+        }
+    }
+    default <E extends Throwable> void forEach(ThrowingIndexedConsumer<T,E> consumer ) throws E{
+        Objects.requireNonNull(consumer);
+        Iterator<T> iter = iterator();
+        long offset=0;
+        while(iter.hasNext()){
+            consumer.accept(offset++, iter.next());
+        }
+    }
     
     
     /**
