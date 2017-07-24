@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.function.LongConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -726,6 +727,7 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
      * @return The left-hand (starting) coordinate.
      * 
      */
+    @Override
     public abstract long getBegin();
     /**
      * Fetch the first coordinate using the given 
@@ -749,6 +751,7 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
      *
      * @return The right-hand (ending) coordinate.
      */
+    @Override
     public abstract long getEnd();
     
     
@@ -774,6 +777,7 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
      * @return <code>true</code> if the range is empty, <code>false</code>
      * otherwise.
      */
+    @Override
     public boolean isEmpty(){
     	return false;
     }
@@ -1187,12 +1191,52 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
         }
         return list;
     }
-   
+    /**
+     * Loop over each offset value in this range using the given
+     * coordinate system.  This method is preferred
+     * over {@link Iterable#forEach(java.util.function.Consumer)} because
+     * that method must autobox the primitive longs into Long objects;
+     * in addition, the coordinate system couldn't be specified.
+     * 
+     * 
+     * @apiNote this will automatically convert the coordinates of each offset
+     * into the given coordinate system.  For example if the range is from offsets 0 - 9,
+     * then calling this method with a {@value CoordinateSystem#RESIDUE_BASED}
+     * will call the consumer for 1..10.
+     *  
+     * @param cs the CoordinateSystem to use; can not be null.
+     * @param consumer the {@link LongConsumer} to call for each offset; can not be null.
+     * 
+     * @throws NullPointerException if either parameter is null.
+     */
+    public void forEachValue(CoordinateSystem cs, LongConsumer consumer){
+        Objects.requireNonNull(cs);
+        Objects.requireNonNull(consumer);
+        
+        long begin = getBegin(cs);
+        long end = getEnd(cs);
+        for(long l = begin; l <=end; l++){
+            consumer.accept(l);
+        }
+    }
+    
+    /**
+     * Convenience method for {@link #forEachValue(CoordinateSystem, LongConsumer)}
+     * with {@value CoordinateSystem#ZERO_BASED} coordinate system.
+     * 
+     * @param consumer the {@link LongConsumer} to call for each offset; can not be null.
+     * 
+     * @throws NullPointerException if consumer is null.
+     */
+    public void forEachValue(LongConsumer consumer){
+       forEachValue(CoordinateSystem.ZERO_BASED, consumer);
+    }
     /**
      * Get the length of this range.
      * @return the length;
      * will always be &ge; 0.
      */
+    @Override
     public long getLength() {
     	 return getEnd() - getBegin() + 1;
     }
@@ -2940,7 +2984,8 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
     	 * Get the current begin value.
     	 * @return the begin value in 0-based coordinate system.
     	 */
-    	public long getBegin() {
+    	@Override
+        public long getBegin() {
 			return begin;
 		}
     	/**
@@ -2964,7 +3009,8 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
     	 * Get the current end value.
     	 * @return the end value in 0-based coordinate system.
     	 */
-		public long getEnd() {
+		@Override
+        public long getEnd() {
 			return end;
 		}
 		/**
@@ -2991,7 +3037,8 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 		 * @return the length; will never be negative.
 		 * 
 		 */
-		public long getLength(){
+		@Override
+        public long getLength(){
 			return end-begin+1;
 		}
 		/**

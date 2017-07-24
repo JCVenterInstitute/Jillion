@@ -34,6 +34,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -1361,7 +1362,7 @@ public class TestRange{
     public void unsignedIntWithUnsignedShortLength(){
     	Range r = new Range.Builder(Short.MAX_VALUE+1).shift(Integer.MAX_VALUE+1L).build();
     	assertEquals(Integer.MAX_VALUE+1L, r.getBegin());
-    	assertEquals(Integer.MAX_VALUE+1L+(long)Short.MAX_VALUE, r.getEnd());
+    	assertEquals(Integer.MAX_VALUE+1L+Short.MAX_VALUE, r.getEnd());
     	assertEquals(Short.MAX_VALUE+1, r.getLength());
     	assertRangeEquals(r);
     }
@@ -1711,4 +1712,31 @@ public class TestRange{
                 range.toString( (b,e, cs) -> b + " .. " + e + " in system: " + cs, CoordinateSystem.RESIDUE_BASED)
                 );
     } 
+    
+    @Test
+    public void forEachPrimitive(){
+        List<Long> seen = new ArrayList<>();
+        range.forEachValue(l -> seen.add(l));
+        //1.10
+        List<Long> expected = Arrays.asList(1L,2L,3L,4L,5L,6L,7L,8L,9L,10L);
+        assertEquals(expected, seen);
+    }
+    
+    @Test
+    public void forEachPrimitiveResidueCoordinates(){
+        List<Long> seen = new ArrayList<>();
+        range.forEachValue(CoordinateSystem.RESIDUE_BASED, position -> seen.add(position));
+        //1.10 => 2..11
+        List<Long> expected = Arrays.asList(2L,3L,4L,5L,6L,7L,8L,9L,10L, 11L);
+        assertEquals(expected, seen);
+    }
+    
+    @Test
+    public void forEachPrimitiveSpaceBased(){
+        List<Long> seen = new ArrayList<>();
+        range.forEachValue(CoordinateSystem.SPACE_BASED, position -> seen.add(position));
+        //1.10 => 1..11
+        List<Long> expected = Arrays.asList(1L,2L,3L,4L,5L,6L,7L,8L,9L,10L, 11L);
+        assertEquals(expected, seen);
+    }
 }

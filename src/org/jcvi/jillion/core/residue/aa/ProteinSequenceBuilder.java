@@ -369,7 +369,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 		if(list.getNumberOfGaps() !=0){
 			List<Integer> gapOffsets =list.getGapOffsets();
 			for(int i=gapOffsets.size()-1; i>=0; i--){
-				builder.remove(i);
+				builder.remove(gapOffsets.get(i));
 			}
 		}
 		numberOfGaps=0;

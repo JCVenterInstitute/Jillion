@@ -100,6 +100,10 @@ implementation best for that record.
     If the sequence is empty, then the returned Optional is also empty.  
     Previously an empty string threw an Arithmetic error.
     
+20. Added new methods to Range forEachValue(LongConsumer) and forEachValue(CoordinateSystem, LongConsumer)
+    that use a primitive consumer of longs.  This should be used in preference to Iterable.forEach(Consumer)
+    which autoboxes and can only use zero based (array offset) coordinates.
+    
 Performance Improvements
 
 1.  QualitySequence.getAvgQuality()/ getMinQuality()/ getMaxQuality()
@@ -110,6 +114,7 @@ Bug Fixes
 ---------
 
 1. Adapted FastqRecordWriter now fixed to actually write adapted record
+2. ProteinSequenceBuilder ungap now correctly ungaps the sequence.
 ================
 Jillion 5.2
 ================

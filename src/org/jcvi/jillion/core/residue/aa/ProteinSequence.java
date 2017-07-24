@@ -65,4 +65,7 @@ public interface ProteinSequence extends ResidueSequence<AminoAcid, ProteinSeque
 	default String toString(Function<AminoAcid, String> toStringFunction){
 	    return ResidueSequence.super.toString(toStringFunction);
 	}
+    public static ProteinSequence of(String seq) {
+        return new ProteinSequenceBuilder(seq).build();
+    }
 }

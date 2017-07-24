@@ -255,6 +255,8 @@ public class TestProteinSequenceBuilder {
 		assertTrue(sut.getGapOffsets().isEmpty());
 		assertEquals(4, sut.getGappedOffsetFor(4));
 		assertEquals(4, sut.getUngappedOffsetFor(4));
+		
+		assertEquals("IKFTW", sut.toString());
 	}
 	@Test
 	public void gapsInSequence(){
