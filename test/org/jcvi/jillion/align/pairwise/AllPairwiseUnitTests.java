@@ -33,7 +33,9 @@ import org.junit.runners.Suite.SuiteClasses;
     	TestProteinSmithWaterman.class,
     	
     	TestNucleotideNeedlemanWunschAligner.class,
-    	TestProteinNeedlemanWunschAligner.class
+    	TestProteinNeedlemanWunschAligner.class,
+    	
+    	TestMultipleLocalAlignment.class
     }
     )
 public class AllPairwiseUnitTests {

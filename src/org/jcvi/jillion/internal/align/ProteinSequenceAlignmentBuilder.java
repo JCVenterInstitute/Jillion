@@ -28,106 +28,95 @@ import org.jcvi.jillion.core.residue.aa.ProteinSequenceBuilder;
 
 public class ProteinSequenceAlignmentBuilder extends AbstractSequenceAlignmentBuilder<AminoAcid, ProteinSequence, ProteinSequenceBuilder, ProteinSequenceAlignment>{
 
-	public ProteinSequenceAlignmentBuilder() {
-		super();
-	}
+    public ProteinSequenceAlignmentBuilder() {
+        super();
+    }
 
-	public ProteinSequenceAlignmentBuilder(boolean builtFromTraceback) {
-		super(builtFromTraceback);
-	}
+    public ProteinSequenceAlignmentBuilder(boolean builtFromTraceback) {
+        super(builtFromTraceback);
+    }
 
-	@Override
-	protected ProteinSequenceBuilder createSequenceBuilder() {
-		return new ProteinSequenceBuilder();
-	}
+    public ProteinSequenceAlignmentBuilder(boolean builtFromTraceback,
+            Integer subjectShiftAmount) {
+        super(builtFromTraceback, subjectShiftAmount);
+    }
 
-	@Override
-	protected ProteinSequenceAlignment createAlignment(
-			double percentIdentity, int alignmentLength, int numMismatches,
-			int numGap, ProteinSequence queryAlignment,
-			ProteinSequence subjectAlignment,
-			Range queryRange, Range subjectRange) {
-		return new AminoAcidSequenceAlignmentImpl(
-				percentIdentity, alignmentLength, numMismatches,
-				numGap, queryAlignment, subjectAlignment,
-				queryRange, subjectRange);
-	}
+    @Override
+    protected ProteinSequenceBuilder createSequenceBuilder() {
+        return new ProteinSequenceBuilder();
+    }
 
-	@Override
-	protected Iterable<AminoAcid> parse(String sequence) {
-		return new ProteinSequenceBuilder(sequence);
-	}
-	
+    @Override
+    protected ProteinSequenceAlignment createAlignment(double percentIdentity,
+            int alignmentLength, int numMismatches, int numGap,
+            ProteinSequence queryAlignment, ProteinSequence subjectAlignment,
+            Range queryRange, Range subjectRange) {
+        return new AminoAcidSequenceAlignmentImpl(percentIdentity,
+                alignmentLength, numMismatches, numGap, queryAlignment,
+                subjectAlignment, queryRange, subjectRange);
+    }
 
-	
-	
-	
-	@Override
-	public ProteinSequenceAlignmentBuilder addMatches(
-			String matchedSequence) {
-		super.addMatches(matchedSequence);
-		return this;
-	}
+    @Override
+    protected Iterable<AminoAcid> parse(String sequence) {
+        return new ProteinSequenceBuilder(sequence);
+    }
 
-	@Override
-	public ProteinSequenceAlignmentBuilder addMatch(
-			AminoAcid match) {
-		super.addMatch(match);
-		return this;
-	}
+    @Override
+    public ProteinSequenceAlignmentBuilder addMatches(String matchedSequence) {
+        super.addMatches(matchedSequence);
+        return this;
+    }
 
-	@Override
-	public ProteinSequenceAlignmentBuilder addMatches(
-			Iterable<AminoAcid> matches) {
-		super.addMatches(matches);
-		return this;
-	}
+    @Override
+    public ProteinSequenceAlignmentBuilder addMatch(AminoAcid match) {
+        super.addMatch(match);
+        return this;
+    }
 
-	@Override
-	public ProteinSequenceAlignmentBuilder addMismatch(
-			AminoAcid query, AminoAcid subject) {
-		super.addMismatch(query, subject);
-		return this;
-	}
+    @Override
+    public ProteinSequenceAlignmentBuilder addMatches(
+            Iterable<AminoAcid> matches) {
+        super.addMatches(matches);
+        return this;
+    }
 
-	@Override
-	public ProteinSequenceAlignmentBuilder addGap(
-			AminoAcid query, AminoAcid subject) {
-		super.addGap(query, subject);
-		return this;
-	}
+    @Override
+    public ProteinSequenceAlignmentBuilder addMismatch(AminoAcid query,
+            AminoAcid subject) {
+        super.addMismatch(query, subject);
+        return this;
+    }
 
-	@Override
-	public ProteinSequenceAlignmentBuilder addGap(
-			char query, char subject) {
-		super.addGap(query, subject);
-		return this;
-	}
-	@Override
-	protected AminoAcid parse(char aa) {
-		return AminoAcid.parse(aa);
-	}
+    @Override
+    public ProteinSequenceAlignmentBuilder addGap(AminoAcid query,
+            AminoAcid subject) {
+        super.addGap(query, subject);
+        return this;
+    }
 
+    @Override
+    public ProteinSequenceAlignmentBuilder addGap(char query, char subject) {
+        super.addGap(query, subject);
+        return this;
+    }
 
+    @Override
+    protected AminoAcid parse(char aa) {
+        return AminoAcid.parse(aa);
+    }
 
+    private final class AminoAcidSequenceAlignmentImpl extends
+            AbstractSequenceAlignmentImpl implements ProteinSequenceAlignment {
 
+        public AminoAcidSequenceAlignmentImpl(double percentIdentity,
+                int alignmentLength, int numMismatches, int numGap,
+                ProteinSequence queryAlignment,
+                ProteinSequence subjectAlignment, Range queryRange,
+                Range subjectRange) {
+            super(percentIdentity, alignmentLength, numMismatches, numGap,
+                    queryAlignment, subjectAlignment, queryRange, subjectRange);
+        }
 
-	private final class AminoAcidSequenceAlignmentImpl extends AbstractSequenceAlignmentImpl implements ProteinSequenceAlignment{
-		
-
-		public AminoAcidSequenceAlignmentImpl(double percentIdentity,
-				int alignmentLength, int numMismatches, int numGap,
-				ProteinSequence queryAlignment,
-				ProteinSequence subjectAlignment,
-				Range queryRange, Range subjectRange) {
-			super(percentIdentity, alignmentLength, numMismatches, numGap, queryAlignment,
-					subjectAlignment,
-					queryRange, subjectRange);
-		}
-
-		
-		
-		
-	}
+    }
 
 }

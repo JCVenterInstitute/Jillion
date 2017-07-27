@@ -85,7 +85,7 @@ abstract class ResiduePairwiseStrategy<R extends Residue, S extends ResidueSeque
 	 * @return a new {@link SequenceAlignmentBuilder} that can be built
 	 * via a traceback if specified.
 	 */
-	protected abstract SequenceAlignmentBuilder<R, S,B, A> createSequenceAlignmentBuilder(boolean builtFromTraceback);
+	protected abstract SequenceAlignmentBuilder<R, S,B, A> createSequenceAlignmentBuilder(boolean builtFromTraceback, Integer subjectShiftAmount);
 
 	
 	private static final class NucleotidePairwiseStrategy extends ResiduePairwiseStrategy<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder, NucleotideSequenceAlignment, NucleotidePairwiseSequenceAlignment>{
@@ -109,8 +109,8 @@ abstract class ResiduePairwiseStrategy<R extends Residue, S extends ResidueSeque
 
 		@Override
 		protected SequenceAlignmentBuilder<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder, NucleotideSequenceAlignment> createSequenceAlignmentBuilder(
-				boolean builtFromTraceback) {
-			return new NucleotideSequenceAlignmentBuilder(builtFromTraceback);
+				boolean builtFromTraceback, Integer subjectShiftAmount) {
+			return new NucleotideSequenceAlignmentBuilder(builtFromTraceback, subjectShiftAmount);
 		}
 		
 	}
@@ -136,8 +136,8 @@ abstract class ResiduePairwiseStrategy<R extends Residue, S extends ResidueSeque
 
 		@Override
 		protected SequenceAlignmentBuilder<AminoAcid, ProteinSequence, ProteinSequenceBuilder, ProteinSequenceAlignment> createSequenceAlignmentBuilder(
-				boolean builtFromTraceback) {
-			return new ProteinSequenceAlignmentBuilder(builtFromTraceback);
+				boolean builtFromTraceback, Integer subjectShiftAmount) {
+			return new ProteinSequenceAlignmentBuilder(builtFromTraceback, subjectShiftAmount);
 		}
 		
 	}

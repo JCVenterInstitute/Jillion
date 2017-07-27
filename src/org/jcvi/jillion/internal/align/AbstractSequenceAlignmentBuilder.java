@@ -51,6 +51,8 @@ public abstract class AbstractSequenceAlignmentBuilder
 	private int numGaps=0;
 	private Integer queryStart, subjectStart;
 	private final boolean builtFromTraceback;
+	
+	private Integer subjectShiftAmount;
 	/**
 	 * Constructs a new instance of a {@link SequenceAlignmentBuilder}.
 	 * @param builtFromTraceback this alignment
@@ -61,10 +63,24 @@ public abstract class AbstractSequenceAlignmentBuilder
 	 * 
 	 */
 	public AbstractSequenceAlignmentBuilder(boolean builtFromTraceback){
-		querySequenceBuilder = createSequenceBuilder();
-		subjectSequenceBuilder = createSequenceBuilder();
-		this.builtFromTraceback = builtFromTraceback;
+		this(builtFromTraceback, null);
 	}
+	/**
+         * Constructs a new instance of a {@link SequenceAlignmentBuilder}.
+         * @param builtFromTraceback this alignment
+         * will be built from data collected from some kind
+         * of traceback algorithm.  This will change the behavior of
+         * how the query and subject alignment ranges are computed.
+         * @see #setAlignmentOffsets(int, int)
+         * 
+         */
+        public AbstractSequenceAlignmentBuilder(boolean builtFromTraceback, Integer subjectShiftAmount){
+                querySequenceBuilder = createSequenceBuilder();
+                subjectSequenceBuilder = createSequenceBuilder();
+                this.builtFromTraceback = builtFromTraceback;
+                this.subjectShiftAmount = null;
+                this.subjectShiftAmount = subjectShiftAmount;
+        }
 	public AbstractSequenceAlignmentBuilder(){
 		this(false);		 
 	}
@@ -150,9 +166,13 @@ public abstract class AbstractSequenceAlignmentBuilder
 		if(subjectStart ==null){
 			subjectStart=0;
 		}
+		long shiftedSubjectStart= subjectStart;
+		if(subjectShiftAmount !=null){
+		    shiftedSubjectStart += subjectShiftAmount;
+		}
 		if(builtFromTraceback){
 			queryRange = Range.of(queryStart-querySequenceBuilder.getUngappedLength()+1, queryStart);
-			subjectRange = Range.of(subjectStart-subjectSequenceBuilder.getUngappedLength()+1, subjectStart);
+			subjectRange = Range.of(shiftedSubjectStart-subjectSequenceBuilder.getUngappedLength()+1, shiftedSubjectStart);
 			//we built these sequence backwards
 			//since they were built from a traceback
 			//so reverse (but not complement) the sequences
@@ -161,7 +181,7 @@ public abstract class AbstractSequenceAlignmentBuilder
 			subjectSequenceBuilder.reverse();
 		}else{
 			queryRange = new Range.Builder(querySequenceBuilder.getUngappedLength()).shift(queryStart).build();
-			subjectRange = new Range.Builder(subjectSequenceBuilder.getUngappedLength()).shift(subjectStart).build();
+			subjectRange = new Range.Builder(subjectSequenceBuilder.getUngappedLength()).shift(shiftedSubjectStart).build();
 		
 		}
 		return createAlignment(percentIdentity, alignmentLength, numMisMatches, numGaps, 

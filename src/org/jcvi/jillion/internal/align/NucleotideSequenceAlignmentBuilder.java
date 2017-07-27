@@ -28,103 +28,84 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 
 public class NucleotideSequenceAlignmentBuilder extends AbstractSequenceAlignmentBuilder<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder, NucleotideSequenceAlignment>{
 
-	public NucleotideSequenceAlignmentBuilder() {
-		super();
-	}
+    public NucleotideSequenceAlignmentBuilder() {
+        super();
+    }
 
+    public NucleotideSequenceAlignmentBuilder(boolean builtFromTraceback) {
+        super(builtFromTraceback);
+    }
 
+    public NucleotideSequenceAlignmentBuilder(boolean builtFromTraceback,
+            Integer subjectShiftAmount) {
+        super(builtFromTraceback, subjectShiftAmount);
+    }
 
+    @Override
+    protected NucleotideSequenceBuilder createSequenceBuilder() {
+        return new NucleotideSequenceBuilder();
+    }
 
-	public NucleotideSequenceAlignmentBuilder(boolean builtFromTraceback) {
-		super(builtFromTraceback);
-	}
+    @Override
+    protected Nucleotide parse(char base) {
+        return Nucleotide.parse(base);
+    }
 
+    @Override
+    public NucleotideSequenceAlignmentBuilder addMatch(Nucleotide match) {
+        super.addMatch(match);
+        return this;
+    }
 
+    @Override
+    public NucleotideSequenceAlignmentBuilder addMatches(
+            Iterable<Nucleotide> matches) {
+        super.addMatches(matches);
+        return this;
+    }
 
+    @Override
+    public NucleotideSequenceAlignmentBuilder addMismatch(Nucleotide query,
+            Nucleotide subject) {
+        super.addMismatch(query, subject);
+        return this;
+    }
 
-	@Override
-	protected NucleotideSequenceBuilder createSequenceBuilder() {
-		return new NucleotideSequenceBuilder();
-	}
+    @Override
+    public NucleotideSequenceAlignmentBuilder addGap(Nucleotide query,
+            Nucleotide subject) {
+        super.addGap(query, subject);
+        return this;
+    }
 
-	
-	
+    private final class NucleotideSequenceAlignmentImpl
+            extends AbstractSequenceAlignmentImpl
+            implements NucleotideSequenceAlignment {
 
-	@Override
-	protected Nucleotide parse(char base) {
-		return Nucleotide.parse(base);
-	}
+        public NucleotideSequenceAlignmentImpl(double percentIdentity,
+                int alignmentLength, int numMismatches, int numGap,
+                NucleotideSequence queryAlignment,
+                NucleotideSequence subjectAlignment, Range queryRange,
+                Range subjectRange) {
+            super(percentIdentity, alignmentLength, numMismatches, numGap,
+                    queryAlignment, subjectAlignment, queryRange, subjectRange);
+        }
 
+    }
 
+    @Override
+    protected NucleotideSequenceAlignment createAlignment(
+            double percentIdentity, int alignmentLength, int numMismatches,
+            int numGap, NucleotideSequence queryAlignment,
+            NucleotideSequence subjectAlignment, Range queryRange,
+            Range subjectRange) {
+        return new NucleotideSequenceAlignmentImpl(percentIdentity,
+                alignmentLength, numMismatches, numGap, queryAlignment,
+                subjectAlignment, queryRange, subjectRange);
+    }
 
-
-	@Override
-	public NucleotideSequenceAlignmentBuilder addMatch(
-			Nucleotide match) {
-		super.addMatch(match);
-		return this;
-	}
-
-	@Override
-	public NucleotideSequenceAlignmentBuilder addMatches(
-			Iterable<Nucleotide> matches) {
-		super.addMatches(matches);
-		return this;
-	}
-
-	@Override
-	public NucleotideSequenceAlignmentBuilder addMismatch(
-			Nucleotide query, Nucleotide subject) {
-		super.addMismatch(query, subject);
-		return this;
-	}
-
-	@Override
-	public NucleotideSequenceAlignmentBuilder addGap(
-			Nucleotide query, Nucleotide subject) {
-		super.addGap(query, subject);
-		return this;
-	}
-
-
-
-	private final class NucleotideSequenceAlignmentImpl extends AbstractSequenceAlignmentImpl implements NucleotideSequenceAlignment{
-		
-
-		public NucleotideSequenceAlignmentImpl(double percentIdentity,
-				int alignmentLength, int numMismatches, int numGap,
-				NucleotideSequence queryAlignment,
-				NucleotideSequence subjectAlignment,
-				Range queryRange, Range subjectRange) {
-			super(percentIdentity, alignmentLength, numMismatches, numGap, queryAlignment,
-					subjectAlignment,
-					queryRange, subjectRange);
-		}
-
-		
-		
-		
-	}
-
-
-
-	@Override
-	protected NucleotideSequenceAlignment createAlignment(
-			double percentIdentity, int alignmentLength, int numMismatches,
-			int numGap, NucleotideSequence queryAlignment,
-			NucleotideSequence subjectAlignment,
-			Range queryRange, Range subjectRange) {
-		return new NucleotideSequenceAlignmentImpl(percentIdentity, alignmentLength, 
-				numMismatches, numGap, queryAlignment, subjectAlignment,
-				queryRange,subjectRange);
-	}
-
-
-
-
-	@Override
-	protected Iterable<Nucleotide> parse(String sequence) {
-		return new NucleotideSequenceBuilder(sequence)
-					.build();
-	}
+    @Override
+    protected Iterable<Nucleotide> parse(String sequence) {
+        return new NucleotideSequenceBuilder(sequence).build();
+    }
 }

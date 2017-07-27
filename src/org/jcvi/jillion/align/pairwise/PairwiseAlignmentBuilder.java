@@ -20,9 +20,15 @@
  ******************************************************************************/
 package org.jcvi.jillion.align.pairwise;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+
 import org.jcvi.jillion.align.AminoAcidSubstitutionMatrix;
 import org.jcvi.jillion.align.NucleotideSubstitutionMatrix;
 import org.jcvi.jillion.align.SubstitutionMatrix;
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequence;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
@@ -166,7 +172,83 @@ public final class PairwiseAlignmentBuilder<R extends Residue, S extends Residue
 		return (A) ProteinNeedlemanWunschAligner.align((ProteinSequence)query, (ProteinSequence)subject, (AminoAcidSubstitutionMatrix)matrix, gapOpen, gapExtension);
 
 	}
-
+	/**
+         * Find several alignments.  If this Builder is configured to
+         * use local alignments then this method will try to find several alignments by
+         * recursively performing alignments on smaller and smaller subject sequences. 
+         * <strong>Note</strong> this algorithm will find both good and poor alignments
+         * so it is recommended that the returned Stream is filtered using a {@link java.util.function.Predicate}
+         * that requires a minimum Score value.
+         * 
+         * if this Builder is configured to use global alignments, then 
+         * the returned list will be of size 1 with the same result as {@link #build()}.
+         * 
+         * 
+         * @return a Stream will never be null.
+         */
+	public Stream<A> findMultiple(){
+            if(!local){
+                return Stream.of(build());
+            }
+            List<A> list = new ArrayList<>();
+            if(query instanceof NucleotideSequence){
+                findMultiple((NucleotideSequence) subject, 0, list::add);
+            }else{
+                findMultiple((ProteinSequence)subject, 0, list::add);
+            }
+            return list.stream();
+	}
+	
+	private void findMultiple(NucleotideSequence currentSubject, int currentShift, Consumer<A> consumer){
+	    if(currentSubject.getLength()< query.getLength()){
+	        return;
+	    }
+	    @SuppressWarnings("unchecked")
+            A alignment = (A) NucleotideSmithWatermanAligner.align((NucleotideSequence)query, currentSubject, (NucleotideSubstitutionMatrix)matrix, gapOpen, gapExtension, currentShift);
+	   
+	    consumer.accept(alignment);
+	    long endOfAlignment = alignment.getSubjectRange().getEnd()+1 - currentShift;
+	    long startOfAlignment = alignment.getSubjectRange().getBegin() - currentShift;
+	    //downstream
+	    findMultiple(currentSubject.toBuilder()
+                                .delete(Range.ofLength(endOfAlignment))
+                                .build(),
+                                (int)(currentShift+endOfAlignment),
+                                consumer);
+	    //upstream
+	    findMultiple(currentSubject.toBuilder()
+                    .trim(Range.ofLength(startOfAlignment))
+                    .build(),
+                    currentShift,
+                    consumer);
+	    
+	}
+	private void findMultiple(ProteinSequence currentSubject, int currentShift, Consumer<A> consumer){
+            if(currentSubject.getLength()< query.getLength()){
+                return;
+            }
+            @SuppressWarnings("unchecked")
+            A alignment = (A) ProteinSmithWatermanAligner.align((ProteinSequence)query, currentSubject, (AminoAcidSubstitutionMatrix)matrix, gapOpen, gapExtension, currentShift);
+           
+            consumer.accept(alignment);
+            long endOfAlignment = alignment.getSubjectRange().getEnd()+1 - currentShift;
+            long startOfAlignment = alignment.getSubjectRange().getBegin() - currentShift;
+            //downstream
+            findMultiple(currentSubject.toBuilder()
+                                .delete(Range.ofLength(endOfAlignment))
+                                .build(),
+                                (int)(currentShift+endOfAlignment),
+                                consumer);
+            //upstream
+            findMultiple(currentSubject.toBuilder()
+                    .trim(Range.ofLength(startOfAlignment))
+                    .build(),
+                    currentShift,
+                    consumer);
+            
+        }
+	
+	
     /**
      * Helper method to programmatically use Local or Global Alignment.
      * 

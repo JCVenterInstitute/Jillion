@@ -47,7 +47,19 @@ abstract class AbstractSmithWatermanAligner<R extends Residue, S extends Residue
 			float extendGapPenalty, ResiduePairwiseStrategy<R,S,B,A,P> pairwiseStrategy) {
 		super(query, subject, matrix, openGapPenalty, extendGapPenalty, pairwiseStrategy);
 	}
-	/**
+	
+	
+	protected AbstractSmithWatermanAligner(S query, S subject,
+            SubstitutionMatrix<R> matrix, float openGapPenalty,
+            float extendGapPenalty,
+            ResiduePairwiseStrategy<R, S, B, A, P> pairwiseStrategy,
+            Integer subjectShiftAmount) {
+        super(query, subject, matrix, openGapPenalty, extendGapPenalty,
+                pairwiseStrategy, subjectShiftAmount);
+    }
+
+
+    /**
 	 * All initial gap scores are set to {@literal 0}.
 	 * </p>
 	 * {@inheritDoc}

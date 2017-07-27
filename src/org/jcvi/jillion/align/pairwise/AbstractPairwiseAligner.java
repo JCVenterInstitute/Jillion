@@ -86,14 +86,23 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends ResidueSequ
 	private static final int CURRENT_ROW=1;
 	
 	
-
+	private Integer subjectShiftAmount;
 	
 	
 	protected AbstractPairwiseAligner(S query, S subject,
 			SubstitutionMatrix<R> matrix, float openGapPenalty, float extendGapPenalty,
 			ResiduePairwiseStrategy<R,S,B,A,P> pairwiseStrategy){
+	    this(query, subject, matrix, openGapPenalty, extendGapPenalty, pairwiseStrategy, null);
+	}
+	protected AbstractPairwiseAligner(S query, S subject,
+                SubstitutionMatrix<R> matrix, float openGapPenalty, float extendGapPenalty,
+                ResiduePairwiseStrategy<R,S,B,A,P> pairwiseStrategy,
+                Integer subjectShiftAmount){
+	    
 		checkNotNull(query,subject,matrix);
 		this.pairwiseStrategy = pairwiseStrategy;
+		this.subjectShiftAmount = subjectShiftAmount;
+		
 		TracebackDirection initialRowDirection = getInitialRowTracebackValue();
 		if(initialRowDirection ==null){
 			throw new NullPointerException("initialRowDirection can not be null");
@@ -332,7 +341,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends ResidueSequ
 		int x=currentStartPoint.getX();
 		int y = currentStartPoint.getY();
 		float score = currentStartPoint.getScore();
-		SequenceAlignmentBuilder<R,S,B,A> alignmentBuilder = pairwiseStrategy.createSequenceAlignmentBuilder(true);
+		SequenceAlignmentBuilder<R,S,B,A> alignmentBuilder = pairwiseStrategy.createSequenceAlignmentBuilder(true,subjectShiftAmount);
 		alignmentBuilder.setAlignmentOffsets(x-1, y-1);
 		R gap =  pairwiseStrategy.getGap();
 		List<R> residuesByOrdinal = pairwiseStrategy.getResidueList();

@@ -59,17 +59,22 @@ final class ProteinSmithWatermanAligner  extends AbstractSmithWatermanAligner<Am
 	 * representing the global alignment, will never be null.
 	 * @throws NullPointerException if query, subject or matrix are null.
 	 */
+    public static ProteinPairwiseSequenceAlignment align(ProteinSequence query,
+            ProteinSequence subject, SubstitutionMatrix<AminoAcid> matrix,
+            float openGapPenalty, float extendGapPenalty){
+        return align(query, subject, matrix, openGapPenalty, extendGapPenalty, null);
+    }
 	public static ProteinPairwiseSequenceAlignment align(ProteinSequence query,
 			ProteinSequence subject, SubstitutionMatrix<AminoAcid> matrix,
-			float openGapPenalty, float extendGapPenalty){
-		ProteinSmithWatermanAligner aligner = new ProteinSmithWatermanAligner(query, subject, matrix, openGapPenalty, extendGapPenalty);
+			float openGapPenalty, float extendGapPenalty , Integer subjectShiftAmount){
+		ProteinSmithWatermanAligner aligner = new ProteinSmithWatermanAligner(query, subject, matrix, openGapPenalty, extendGapPenalty,subjectShiftAmount);
 		return aligner.getPairwiseSequenceAlignment();
 	}
 	private ProteinSmithWatermanAligner(ProteinSequence query,
 			ProteinSequence subject, SubstitutionMatrix<AminoAcid> matrix,
-			float openGapPenalty, float extendGapPenalty) {
+			float openGapPenalty, float extendGapPenalty, Integer subjectShiftAmount) {
 		super(query, subject, matrix, openGapPenalty, extendGapPenalty,
-				ResiduePairwiseStrategy.getAminoAcidStrategy());
+				ResiduePairwiseStrategy.getAminoAcidStrategy(), subjectShiftAmount);
 	}
 
 }

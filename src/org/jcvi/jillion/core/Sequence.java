@@ -189,4 +189,13 @@ public interface Sequence<T> extends Iterable<T>{
         }
         return builder.toString();
     }
+    /**
+     * Does this sequence have a length of zero.
+     * @return {@code true} if the length is zero; {@code false} otherwise.
+     * 
+     * @since 5.3
+     */
+    default boolean isEmpty(){
+        return getLength() ==0;
+    }
 }
