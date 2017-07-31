@@ -150,7 +150,7 @@ public final class PaddedSamTransformationService implements AssemblyTransformat
 			//an identical RNAME, POS set to 1 and FLAG to 516 (filtered and unmapped)
 			return referenceNames.contains(record.getQueryName()) 
 					&& record.getStartPosition() == 1
-					&& record.getFlags().isReferenceSequence();
+					&& record.getFlags().maybeReferenceSequence();
 				
 		}
 		@Override
