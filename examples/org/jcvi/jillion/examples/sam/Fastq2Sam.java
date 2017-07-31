@@ -29,7 +29,7 @@ import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.sam.SamFileWriterBuilder;
 import org.jcvi.jillion.sam.SamRecordBuilder;
-import org.jcvi.jillion.sam.SamRecordFlags;
+import org.jcvi.jillion.sam.SamRecordFlag;
 import org.jcvi.jillion.sam.SamRecord;
 import org.jcvi.jillion.sam.SamWriter;
 import org.jcvi.jillion.sam.SortOrder;
@@ -90,7 +90,7 @@ public class Fastq2Sam {
                                     //but you can use other SamRecordFlags as well to say it mapped
                                     //or to provide info about its mate etc
                                     .setFlags(
-                                            EnumSet.of(SamRecordFlags.READ_UNMAPPED))
+                                            EnumSet.of(SamRecordFlag.READ_UNMAPPED))
                                     .setQueryName(fastq.getId())
                                     .setQualities(fastq.getQualitySequence())
                                     .setSequence(fastq.getNucleotideSequence())

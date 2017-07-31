@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.sam;
 
-import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -55,7 +54,7 @@ public class SamRecordBuilder implements SamAttributed{
 	String queryName= SamRecord.UNAVAILABLE;
 	String referenceName = null;
 	String nextReferenceName = null;
-	EnumSet<SamRecordFlags> flags;
+	SamRecordFlags flags;
 	int startPosition =0;
 	int nextPosition= 0;
 	byte mappingQuality= -1;
@@ -235,6 +234,19 @@ public class SamRecordBuilder implements SamAttributed{
 		return this;
 	}
 	/**
+         * Set the {@link SamRecordFlags} of this 
+         * record This method call is required.  This method call makes a defensive copy
+         * of the input Set.
+         * @param flags the {@link SamRecordFlags} relevant
+         * to this record; can not be null.
+         * @return this;
+         * @throws NullPointerException if flags is null.
+         */
+        public SamRecordBuilder setFlags(int flags) {
+            this.flags = SamRecordFlags.valueOf(flags);
+            return this;
+        }
+	/**
 	 * Set the {@link SamRecordFlags} of this 
 	 * record This method call is required.  This method call makes a defensive copy
 	 * of the input Set.
@@ -243,9 +255,9 @@ public class SamRecordBuilder implements SamAttributed{
 	 * @return this;
 	 * @throws NullPointerException if flags is null.
 	 */
-	public SamRecordBuilder setFlags(Set<SamRecordFlags> flags) {
+	public SamRecordBuilder setFlags(Set<SamRecordFlag> flags) {
 		//make defensive copy
-		this.flags = EnumSet.copyOf(flags);
+		this.flags = SamRecordFlags.valueOf(flags);
 		return this;
 	}
 	/**

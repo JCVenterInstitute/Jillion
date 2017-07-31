@@ -48,8 +48,12 @@ class IndexedBamFileParser extends BamFileParser{
 		}
 	}
 
-	@Override
-	public void parse(String referenceName, SamVisitor visitor) throws IOException {
+   
+
+    @Override
+    protected void _parse(String referenceName, boolean shouldCreateMementos,
+            SamVisitor visitor) throws IOException {
+       
 		Objects.requireNonNull(referenceName);
 		Objects.requireNonNull(visitor);
 		
@@ -73,9 +77,9 @@ class IndexedBamFileParser extends BamFileParser{
 		try(BgzfInputStream in = BgzfInputStream.create(bamFile, start)){
 			if(BEGINING_OF_FILE.equals(start)){
 				this.parseBamFromBeginning(visitor, 
+				        shouldCreateMementos,
 						recordMatchPredicate,
-						endPredicate,
-						in);
+						endPredicate, in);
 			}else{
 				//assume anything in this interval matches?
 				AtomicBoolean keepParsing = new AtomicBoolean(true);
@@ -83,13 +87,15 @@ class IndexedBamFileParser extends BamFileParser{
 						recordMatchPredicate,
 						endPredicate,
 						in,
-						keepParsing);
+						keepParsing, shouldCreateMementos ? new BamCallback(keepParsing) :new MementoLessBamCallback(keepParsing));
 			}
 		}
 	}
-
-	@Override
-	public void parse(String referenceName, Range alignmentRange, SamVisitor visitor) throws IOException {
+    @Override
+    protected void _parse(String referenceName, Range alignmentRange,
+            boolean shouldCreateMementos, SamVisitor visitor)
+            throws IOException {
+       
 		Objects.requireNonNull(referenceName);
 		Objects.requireNonNull(visitor);
 		
@@ -124,7 +130,8 @@ class IndexedBamFileParser extends BamFileParser{
 					recordBinFilter,
 					(vfs)-> vfs.compareTo(end) <=0,
 					in,
-					keepParsing);
+					keepParsing,
+					shouldCreateMementos ? new BamCallback(keepParsing) :new MementoLessBamCallback(keepParsing));
 		}
 	}
 

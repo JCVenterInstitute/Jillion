@@ -104,11 +104,22 @@ implementation best for that record.
     that use a primitive consumer of longs.  This should be used in preference to Iterable.forEach(Consumer)
     which autoboxes and can only use zero based (array offset) coordinates.
     
+21. Renamed SamRecordFlags to SamRecordFlag (no ending "S").
+
+22. Created new SamRecordFlags (with "S") which stores flag bits as int.  This is now cached and used as a flyweight for
+    better performance over storing duplicate Set<SamRecordFlag> over and over again.
+
+23.  Added new SamParserOptions class to specify how to parse the sam/bam file including which
+    reference, alignment range and if to add memento support or not.
+    
 Performance Improvements
 
 1.  QualitySequence.getAvgQuality()/ getMinQuality()/ getMaxQuality()
    Most implementations now cache the computation and performs all the calculations at once.
    Previously the computations were performed separately.
+   
+2. BAM reading performance improvements by caching and costly computations for sam record flags and sequence storage.  
+   Benchmarkings show 30% performance improvements reading BAM files.
      
 Bug Fixes
 ---------

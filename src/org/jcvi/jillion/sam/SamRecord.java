@@ -21,7 +21,6 @@
 package org.jcvi.jillion.sam;
 
 import java.util.Collection;
-import java.util.Set;
 
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
@@ -96,7 +95,7 @@ public interface SamRecord extends SamAttributed {
 	 * @see #getDirection()
 	 * 
 	 */
-	Set<SamRecordFlags> getFlags();
+	SamRecordFlags getFlags();
 
 	int getStartPosition();
 
@@ -114,11 +113,14 @@ public interface SamRecord extends SamAttributed {
 
 	Collection<SamAttribute> getAttributes();
 
-	int hashCode();
+	@Override
+    int hashCode();
 
-	boolean equals(Object obj);
+	@Override
+    boolean equals(Object obj);
 
-	String toString();
+	@Override
+    String toString();
 
 	/**
 	 * Did this record map to one of the references.

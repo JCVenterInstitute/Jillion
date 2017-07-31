@@ -23,7 +23,6 @@ package org.jcvi.jillion.sam;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.Set;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
@@ -109,11 +108,11 @@ class PresortedSamFileWriter implements SamWriter {
 		}
 		StringBuilder builder = new StringBuilder(4096);
 		appendMandatoryField(builder, record.getQueryName(),true);
-		Set<SamRecordFlags> flags = record.getFlags();
+		SamRecordFlags flags = record.getFlags();
 		if(flags ==null){
 			appendMandatoryField(builder, (Integer)null);
 		}else{
-			appendMandatoryField(builder, SamRecordFlags.asBits(flags));
+			appendMandatoryField(builder, flags.asInt());
 		}
 		appendMandatoryField(builder, record.getReferenceName());
 		appendMandatoryField(builder, record.getStartPosition());

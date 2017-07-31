@@ -77,6 +77,8 @@ public interface SamVisitor {
 		 */
 		void haltParsing();
 	}
+	
+	
 	/**
 	 * Visit the {@link SamHeader} of this SAM or BAM file.
 	 * The {@link SamHeader} should contain all the information

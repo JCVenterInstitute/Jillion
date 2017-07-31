@@ -164,7 +164,7 @@ public class TestSamParserFactory {
 		
 		visitRecord(visitor, createRecordBuilder(expectedHeader)
 								.setQueryName("r001")
-								.setFlags(SamRecordFlags.parseFlags(163))
+								.setFlags(SamRecordFlag.parseFlags(163))
 								.setReferenceName(ref)
 								.setStartPosition(7)
 								.setMappingQuality(30)
@@ -177,7 +177,7 @@ public class TestSamParserFactory {
 		
 		visitRecord(visitor, createRecordBuilder(expectedHeader)
 				.setQueryName("r002")
-				.setFlags(SamRecordFlags.parseFlags(0))
+				.setFlags(SamRecordFlag.parseFlags(0))
 				.setReferenceName(ref)
 				.setStartPosition(9)
 				.setMappingQuality(30)
@@ -187,7 +187,7 @@ public class TestSamParserFactory {
 		
 		visitRecord(visitor, createRecordBuilder(expectedHeader)
 				.setQueryName("r003")
-				.setFlags(SamRecordFlags.parseFlags(0))
+				.setFlags(SamRecordFlag.parseFlags(0))
 				.setReferenceName(ref)
 				.setStartPosition(9)
 				.setMappingQuality(30)
@@ -198,7 +198,7 @@ public class TestSamParserFactory {
 		
 		visitRecord(visitor, createRecordBuilder(expectedHeader)
 				.setQueryName("r004")
-				.setFlags(SamRecordFlags.parseFlags(0))
+				.setFlags(SamRecordFlag.parseFlags(0))
 				.setReferenceName(ref)
 				.setStartPosition(16)
 				.setMappingQuality(30)
@@ -208,7 +208,7 @@ public class TestSamParserFactory {
 		
 		visitRecord(visitor, createRecordBuilder(expectedHeader)
 				.setQueryName("r003")
-				.setFlags(SamRecordFlags.parseFlags(2064))
+				.setFlags(SamRecordFlag.parseFlags(2064))
 				.setReferenceName(ref)
 				.setStartPosition(29)
 				.setMappingQuality(17)
@@ -219,7 +219,7 @@ public class TestSamParserFactory {
 		
 		visitRecord(visitor, createRecordBuilder(expectedHeader)
 				.setQueryName("r001")
-				.setFlags(SamRecordFlags.parseFlags(83))
+				.setFlags(SamRecordFlag.parseFlags(83))
 				.setReferenceName(ref)
 				.setStartPosition(37)
 				.setMappingQuality(30)
@@ -252,7 +252,7 @@ public class TestSamParserFactory {
 		
 		visitRecord(visitor, createRecordBuilder(expectedHeader)
 								.setQueryName("r001")
-								.setFlags(SamRecordFlags.parseFlags(163))
+								.setFlags(SamRecordFlag.parseFlags(163))
 								.setReferenceName(ref)
 								.setStartPosition(7)
 								.setMappingQuality(30)
@@ -265,7 +265,7 @@ public class TestSamParserFactory {
 		
 		visitRecord(visitor, createRecordBuilder(expectedHeader)
 				.setQueryName("r002")
-				.setFlags(SamRecordFlags.parseFlags(0))
+				.setFlags(SamRecordFlag.parseFlags(0))
 				.setReferenceName(ref)
 				.setStartPosition(9)
 				.setMappingQuality(30)
@@ -275,7 +275,7 @@ public class TestSamParserFactory {
 		
 		visitRecord(visitor, createRecordBuilder(expectedHeader)
 				.setQueryName("r003")
-				.setFlags(SamRecordFlags.parseFlags(0))
+				.setFlags(SamRecordFlag.parseFlags(0))
 				.setReferenceName(ref)
 				.setStartPosition(9)
 				.setMappingQuality(30)
@@ -286,7 +286,7 @@ public class TestSamParserFactory {
 		
 		visitRecord(visitor, createRecordBuilder(expectedHeader)
 				.setQueryName("r004")
-				.setFlags(SamRecordFlags.parseFlags(0))
+				.setFlags(SamRecordFlag.parseFlags(0))
 				.setReferenceName(ref)
 				.setStartPosition(16)
 				.setMappingQuality(30)

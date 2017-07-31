@@ -21,6 +21,7 @@
 package org.jcvi.jillion.sam;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.sam.SamVisitor.SamVisitorCallback.SamVisitorMemento;
@@ -116,6 +117,28 @@ public interface SamParser {
 	 * @since 5.0
 	 */
 	void parse(String referenceName, Range alignmentRange, SamVisitor visitor) throws IOException;
+	
+	/**
+         * Parse the Sam or Bam file and 
+         * but only visit the {@link SamRecord}s
+         * that map to the given reference and the read
+         * alignment intersects the reference
+         * to the provided Range. 
+         * 
+         * 
+         * @param options the name of the Reference to visit
+         * the mapped records of; can not be null.
+         *          
+         * 
+         * @param visitor the {@link SamVisitor}
+         * to call the visit methods on;
+         * can not be null.
+         * @throws IOException if there is a problem parsing the sam or bam file.
+         * @throws NullPointerException if any parameters are null.
+         * 
+         * @since 5.3
+         */
+        void parse(SamParserOptions options, SamVisitor visitor) throws IOException;
 	/**
 	 * Get the {@link SamHeader}
 	 * for this SAM or BAM file.
@@ -130,4 +153,42 @@ public interface SamParser {
 	 * @throws IOException if there is a problem (re)parsing the header.
 	 */
 	SamHeader getHeader() throws IOException;
+	
+
+        public static class SamParserOptions{
+            private final boolean createMementos;
+            private final String referenceName;
+            private final Range referenceRange;
+            
+            public SamParserOptions(){
+                this(false, null, null);
+            }
+            
+            private SamParserOptions(boolean createMementos, String referenceName, Range range){
+                this.createMementos = createMementos;
+                this.referenceName = referenceName;
+                this.referenceRange = range;
+            }
+            public SamParserOptions reference(String referenceName){
+                return new SamParserOptions(createMementos, referenceName,null);
+             }
+            public SamParserOptions reference(String referenceName, Range referenceRange){
+                return new SamParserOptions(createMementos, referenceName,referenceRange);
+             }
+            public SamParserOptions createMementos(boolean createMementos){
+               return new SamParserOptions(createMementos, referenceName, referenceRange);
+            }
+
+            public boolean shouldCreateMementos() {
+                return createMementos;
+            }
+
+            public Optional<String> getReferenceName() {
+                return Optional.ofNullable(referenceName);
+            }
+            public Optional<Range> getReferenceRange() {
+                return Optional.ofNullable(referenceRange);
+            }
+            
+        }
 }

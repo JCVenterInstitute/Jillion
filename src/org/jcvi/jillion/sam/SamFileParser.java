@@ -37,6 +37,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
 import org.jcvi.jillion.internal.sam.SamUtil;
+import org.jcvi.jillion.sam.SamVisitor.SamVisitorCallback;
 import org.jcvi.jillion.sam.SamVisitor.SamVisitorCallback.SamVisitorMemento;
 import org.jcvi.jillion.sam.attribute.InvalidAttributeException;
 import org.jcvi.jillion.sam.attribute.ReservedAttributeValidator;
@@ -56,6 +57,10 @@ final class SamFileParser extends AbstractSamFileParser{
 	
 	private static final Pattern TYPED_TAG_VALUE_PATTERN = Pattern.compile("([A-Za-z][A-Za-z0-9]):(([AifZHB]):)?(.+)");
 	
+	@FunctionalInterface
+	private static interface CallbackSupplier{
+	    SamVisitorCallback create(AtomicBoolean keepParsing, long currentOffset);
+	}
 	
 	private final File samFile;
 	private final SamAttributeValidator validator;
@@ -88,7 +93,29 @@ final class SamFileParser extends AbstractSamFileParser{
 		return true;
 	}
 
-	
+	       @Override
+	       public void parse(SamParserOptions options, SamVisitor visitor)
+	               throws IOException {
+	               Predicate<SamRecord> predicate;
+	           if(options.getReferenceName().isPresent()){
+//	               verifyReferenceInHeader(options.getReferenceName().get());
+	               
+	               if(options.getReferenceRange().isPresent()){
+	                   predicate = SamUtil.alignsToReference(options.getReferenceName().get(), options.getReferenceRange().get());
+	               }else{
+	                   predicate = SamUtil.alignsToReference(options.getReferenceName().get());
+	               }
+	               
+	           }else{
+	               predicate = record -> true;
+	           }
+	           CallbackSupplier supplier = options.shouldCreateMementos() ? 
+	                   (keepParsing, pos)-> new SamCallback(keepParsing, pos) :
+	                       (keepParsing, pos)-> new MementoLessSamCallback(keepParsing) ;
+	                       
+	           accept(visitor, predicate, supplier);
+	           
+	       }
 	@Override
 	public void parse(SamVisitor visitor, SamVisitorMemento memento) throws IOException {
 		Objects.requireNonNull(visitor);
@@ -139,18 +166,22 @@ final class SamFileParser extends AbstractSamFileParser{
 	}
 	@Override
 	public void parse(String referenceName, SamVisitor visitor) throws IOException {
-		accept(visitor, SamUtil.alignsToReference(referenceName));		
+	    parse(new SamParserOptions().reference(referenceName), 
+	            visitor);	
 	}
 	@Override
 	public void parse(String referenceName, Range alignmentRange, SamVisitor visitor) throws IOException {
-		accept(visitor, SamUtil.alignsToReference(referenceName, alignmentRange));		
+	    parse(new SamParserOptions().reference(referenceName, alignmentRange), 
+                    visitor);		
 	}
 	@Override
 	public void parse(SamVisitor visitor) throws IOException {
-		accept(visitor, (record)->true);
+		parse(new SamParserOptions(), visitor);
 	}
 	
-	private void accept(SamVisitor visitor, Predicate<SamRecord> filter) throws IOException {
+	
+	
+	private void accept(SamVisitor visitor, Predicate<SamRecord> filter, CallbackSupplier callbackSupplier) throws IOException {
 		if(visitor ==null){
 			throw new NullPointerException("visitor can not be null");
 		}
@@ -160,11 +191,11 @@ final class SamFileParser extends AbstractSamFileParser{
 			parser= new TextLineParser(samFile);
 			AtomicBoolean keepParsing = new AtomicBoolean(true);
 			
-			SamCallback callback = new SamCallback(keepParsing, parser.getPosition());
+			SamVisitorCallback callback = callbackSupplier.create(keepParsing, parser.getPosition());
 			SamHeader header = parseHeader(parser).build();
 			visitor.visitHeader(callback, header);
 			while(keepParsing.get() && parser.hasNextLine()){
-				callback = new SamCallback(keepParsing, parser.getPosition());
+				callback = callbackSupplier.create(keepParsing, parser.getPosition());
 				String line = parser.nextLine().trim();
 				if(line.isEmpty()){
 					//skip blanks?
@@ -196,7 +227,7 @@ final class SamFileParser extends AbstractSamFileParser{
 		SamRecordBuilder builder = new SamRecordBuilder(header, validator);
 		
 		builder.setQueryName(fields[0]);
-		builder.setFlags(SamRecordFlags.parseFlags(Integer.parseInt(fields[1])));
+		builder.setFlags(Integer.parseInt(fields[1]));
 		builder.setReferenceName(fields[2]);
 		builder.setStartPosition(Integer.parseInt(fields[3]));
 		builder.setMappingQuality(Byte.parseByte(fields[4]));
@@ -260,6 +291,23 @@ final class SamFileParser extends AbstractSamFileParser{
 	}
 
 	
+	private final class MementoLessSamCallback extends AbstractCallback{
+
+            public MementoLessSamCallback(AtomicBoolean keepParsing) {
+                super(keepParsing);
+            }
+    
+            @Override
+            public boolean canCreateMemento() {
+                return false;
+            }
+    
+            @Override
+            public SamVisitorMemento createMemento() {
+                throw new UnsupportedOperationException();
+            }        
+	    
+	}
 	private final class SamCallback extends AbstractCallback{
 		private final long currentPosition;
 		

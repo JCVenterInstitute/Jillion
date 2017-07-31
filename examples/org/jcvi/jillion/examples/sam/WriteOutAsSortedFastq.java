@@ -23,15 +23,12 @@ package org.jcvi.jillion.examples.sam;
 import java.io.File;
 import java.io.IOException;
 import java.util.Comparator;
-import java.util.Set;
-import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.util.ThrowingStream;
 import org.jcvi.jillion.sam.SamFileDataStore;
 import org.jcvi.jillion.sam.SamFileDataStoreBuilder;
-import org.jcvi.jillion.sam.SamParser;
-import org.jcvi.jillion.sam.SamParserFactory;
 import org.jcvi.jillion.sam.SamRecord;
+import org.jcvi.jillion.sam.SamRecordFlag;
 import org.jcvi.jillion.sam.SamRecordFlags;
 import org.jcvi.jillion.trace.fastq.FastqRecord;
 import org.jcvi.jillion.trace.fastq.FastqWriter;
@@ -60,11 +57,11 @@ public class WriteOutAsSortedFastq {
                ){
            
            stream.throwingForEach(record ->{
-               Set<SamRecordFlags> flags = record.getFlags();
+               SamRecordFlags flags = record.getFlags();
 
-               if(flags.contains(SamRecordFlags.FIRST_MATE_OF_PAIR)){
+               if(flags.contains(SamRecordFlag.FIRST_MATE_OF_PAIR)){
                    r1Writer.write(record.getQueryName(), record.getSequence(), record.getQualities());
-               }else if(flags.contains(SamRecordFlags.SECOND_MATE_OF_PAIR)){
+               }else if(flags.contains(SamRecordFlag.SECOND_MATE_OF_PAIR)){
                    r2Writer.write(record.getQueryName(), record.getSequence(), record.getQualities());
                }
            });

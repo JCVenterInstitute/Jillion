@@ -44,6 +44,7 @@ import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 import org.jcvi.jillion.sam.SamParser;
 import org.jcvi.jillion.sam.SamParserFactory;
 import org.jcvi.jillion.sam.SamRecord;
+import org.jcvi.jillion.sam.SamRecordFlag;
 import org.jcvi.jillion.sam.SamRecordFlags;
 import org.jcvi.jillion.sam.SamVisitor;
 import org.jcvi.jillion.sam.VirtualFileOffset;
@@ -114,7 +115,6 @@ public final class PaddedSamTransformationService implements AssemblyTransformat
 	
 	private static final class SamTransformerVisitor implements SamVisitor{
 
-		private static final Set<SamRecordFlags> FILTERED_AND_UNMAPPED = SamRecordFlags.parseFlags(516);
 		private final AssemblyTransformer transformer;
 		private Map<String,GrowableIntArray> gapOffsetMap;
 		private Map<String, NucleotideSequence> paddedReferenceSequences;
@@ -150,7 +150,7 @@ public final class PaddedSamTransformationService implements AssemblyTransformat
 			//an identical RNAME, POS set to 1 and FLAG to 516 (filtered and unmapped)
 			return referenceNames.contains(record.getQueryName()) 
 					&& record.getStartPosition() == 1
-					&& record.getFlags().equals(FILTERED_AND_UNMAPPED);
+					&& record.getFlags().isReferenceSequence();
 				
 		}
 		@Override
@@ -199,13 +199,13 @@ public final class PaddedSamTransformationService implements AssemblyTransformat
 					//if the read is mated SAM doesn't put the /1 or /2 ?
 					//what happens in CASAVA 1.8 reads?
 					String readName = record.getQueryName();
-					Set<SamRecordFlags> flags = record.getFlags();
+					SamRecordFlags flags = record.getFlags();
 					//from the SAMv1 spec
 					//The leftmost segment has a plus sign and the rightmost has a
 					//minus sign. The sign of segments in the middle is undefined. 
 					//It is set as 0 for single-segment
 					//template or when the information is unavailable.
-					if(flags.contains(SamRecordFlags.HAS_MATE_PAIR)){
+					if(flags.contains(SamRecordFlag.HAS_MATE_PAIR)){
 						if(record.getObservedTemplateLength() >=0){
 							//first read
 							readName +="/1";

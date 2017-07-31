@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
@@ -44,7 +43,7 @@ import org.jcvi.jillion.sam.header.SamHeader;
 class SamRecordImpl implements SamRecord {
 	private final SamHeader header;
 	private final String queryName, referenceName, nextReferenceName;
-	private final Set<SamRecordFlags> flags;
+	private final SamRecordFlags flags;
 	private final int startPosition, nextOffset;
 	private final byte mappingQuality;
 	private final Cigar cigar;
@@ -57,7 +56,7 @@ class SamRecordImpl implements SamRecord {
 	SamRecordImpl(SamRecordBuilder builder) {
 		this.header = builder.header;
 		this.queryName = builder.queryName;
-		this.flags = Collections.unmodifiableSet(builder.flags);
+		this.flags = builder.flags;
 		this.referenceName = builder.referenceName;
 		this.startPosition = builder.startPosition;
 		this.mappingQuality = builder.mappingQuality;
@@ -82,14 +81,14 @@ class SamRecordImpl implements SamRecord {
 	public boolean isPrimary(){
 		return 
 				!(
-					flags.contains(SamRecordFlags.SECONDARY_ALIGNMENT)
-				|| flags.contains(SamRecordFlags.SUPPLEMENTARY_ALIGNMENT )
+					flags.contains(SamRecordFlag.SECONDARY_ALIGNMENT)
+				|| flags.contains(SamRecordFlag.SUPPLEMENTARY_ALIGNMENT )
 					);
 	}
 	
 	@Override
 	public boolean useForAnalysis(){
-		return !flags.contains(SamRecordFlags.SECONDARY_ALIGNMENT);
+		return !flags.contains(SamRecordFlag.SECONDARY_ALIGNMENT);
 	}
 
 	protected SamHeader getHeader() {
@@ -119,7 +118,7 @@ class SamRecordImpl implements SamRecord {
 	}
 
 	@Override
-	public Set<SamRecordFlags> getFlags() {
+	public SamRecordFlags getFlags() {
 		return flags;
 	}
 
@@ -323,7 +322,7 @@ class SamRecordImpl implements SamRecord {
 	 */
 	@Override
 	public boolean mapped() {
-		return !flags.contains(SamRecordFlags.READ_UNMAPPED);
+		return !flags.contains(SamRecordFlag.READ_UNMAPPED);
 	}
 	/**
 	 * Get the {@link Direction} that this read mapped in.
@@ -334,7 +333,7 @@ class SamRecordImpl implements SamRecord {
 	 */
 	@Override
 	public Direction getDirection(){
-		return flags.contains(SamRecordFlags.REVERSE_COMPLEMENTED) ? Direction.REVERSE : Direction.FORWARD;
+		return flags.contains(SamRecordFlag.REVERSE_COMPLEMENTED) ? Direction.REVERSE : Direction.FORWARD;
 				
 	}
 	/**

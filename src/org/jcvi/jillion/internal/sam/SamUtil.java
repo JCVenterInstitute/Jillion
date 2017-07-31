@@ -44,7 +44,6 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.sam.SamRecord;
-import org.jcvi.jillion.sam.SamRecordFlags;
 import org.jcvi.jillion.sam.attribute.SamAttribute;
 import org.jcvi.jillion.sam.attribute.SamAttributeKey;
 import org.jcvi.jillion.sam.attribute.SamAttributeType;
@@ -155,8 +154,21 @@ public final class SamUtil {
 		 };
 		 
 	 private static final Nucleotide[] BAM_ENCODED_BASES;
-	 private static final byte[] BAM_ENCODED_BASES_TO_ORDINAL;
-		
+	
+	 private static final byte[] BAM_ORDINAL_TO_ENCODED_BASES;
+	 
+	 //dkatzel - 7/2017 - the PAIR_OF matrices
+	 //are caches to save time doing costly repetitive bit shifting and byte manipulation.
+	 //BAM files store nucleotides 2 per byte
+	 //since BAMs will have millions of records
+	 //and each sequence will be hundreds of bases long
+	 //we'd be doing billions of bit shifts just reading the file once or twice!
+	 //
+	 //This changes it to an array lookup and improves BAM reading performance 
+	 //by about 20%.
+	 
+	 private static final Nucleotide[][] PAIR_OF_BAM_ENCODED_BASES;
+         private static final byte[][] PAIR_OF_BASES_TO_BAM_ENCODE; 
 		
 		static{
 			//`=ACMGRSVTWYHKDBN'
@@ -180,13 +192,32 @@ public final class SamUtil {
 			BAM_ENCODED_BASES[14] = Nucleotide.NotAdenine;
 			BAM_ENCODED_BASES[15] = Nucleotide.Unknown;
 			
-			BAM_ENCODED_BASES_TO_ORDINAL = new byte[16];
+			BAM_ORDINAL_TO_ENCODED_BASES = new byte[16];
 			for(int i=0; i<16; i++){
 				Nucleotide n = BAM_ENCODED_BASES[i];
 				if(n !=null){
-					BAM_ENCODED_BASES_TO_ORDINAL[n.ordinal()] = (byte)i;
+					BAM_ORDINAL_TO_ENCODED_BASES[n.ordinal()] = (byte)i;
 				}
 			}
+			
+			PAIR_OF_BAM_ENCODED_BASES = new Nucleotide[256][2];
+			
+			for(int i=1; i<BAM_ENCODED_BASES.length; i++){
+			    int shiftedI = i<<4;
+			    for(int j=1; j<BAM_ENCODED_BASES.length; j++){
+			        int value = shiftedI | j;
+			        PAIR_OF_BAM_ENCODED_BASES[value] = new Nucleotide[]{BAM_ENCODED_BASES[i], BAM_ENCODED_BASES[j]};
+			    }
+			}
+			
+			Nucleotide[] ordinals = Nucleotide.values();
+                        PAIR_OF_BASES_TO_BAM_ENCODE = new byte[ordinals.length][ordinals.length];
+                        
+                        for(Nucleotide a : ordinals){
+                            for(Nucleotide b : ordinals){
+                                PAIR_OF_BASES_TO_BAM_ENCODE[a.ordinal()][b.ordinal()] = (byte)(BAM_ORDINAL_TO_ENCODED_BASES[a.ordinal()]<<4 | BAM_ORDINAL_TO_ENCODED_BASES[b.ordinal()]);
+                            }
+                        }
 		}
 			
 		 
@@ -211,12 +242,16 @@ public final class SamUtil {
 		//often throw the results away
 		//so we don't care if temporarily we take up more memory
 		builder.turnOffDataCompression(true);
-		
-		//first fully populate all but last byte
-		for(int i=0; i<seqBytes.length-1; i++){
-			byte value = seqBytes[i];
-			builder.append(BAM_ENCODED_BASES[(value>>4) & 0x0F]);
-			builder.append(BAM_ENCODED_BASES[value & 0x0F]);			
+		if(seqBytes.length >1){
+        		Nucleotide[] array = new Nucleotide[(seqBytes.length-1)*2];
+        		//first fully populate all but last byte
+        		for(int i=0, j=0; i<seqBytes.length-1; i++){
+        		    Nucleotide[] pair = PAIR_OF_BAM_ENCODED_BASES[seqBytes[i] & 0xFF];
+        		    array[j++] = pair[0];
+        		    array[j++] = pair[1];
+                   
+        		}
+        		builder.append(array);
 		}
 		byte lastByte = seqBytes[seqBytes.length-1];
 		//for last byte we should always include high nibble
@@ -455,7 +490,7 @@ public final class SamUtil {
 		//name length is null terminated
 		bin |= (record.getQueryName().length() +1);
 		
-		long flagsAndNumCigarOps = SamRecordFlags.asBits(record.getFlags()) <<16;
+		long flagsAndNumCigarOps = record.getFlags().asInt() <<16;
 		flagsAndNumCigarOps |= cigar.getNumberOfElements();
 		//cast should be fine since our masks
 		//makes sure we only have lower 4 bytes of data
@@ -514,15 +549,16 @@ public final class SamUtil {
 		//write all but last byte which 
 		//will use all bits
 		for(int i=0; i<data.length -1; i++){
-			int value = BAM_ENCODED_BASES_TO_ORDINAL[iter.next().ordinal()] <<4;
-			value |= BAM_ENCODED_BASES_TO_ORDINAL[iter.next().ordinal()];
-			data[i] = (byte)value;			
+//			int value = BAM_ENCODED_BASES_TO_ORDINAL[iter.next().ordinal()] <<4;
+//			value |= BAM_ENCODED_BASES_TO_ORDINAL[iter.next().ordinal()];
+//			data[i] = (byte)value;	
+		        data[i] = PAIR_OF_BASES_TO_BAM_ENCODE[iter.next().ordinal()][iter.next().ordinal()];
 		}
 		//last byte will def use higher order bits
-		int value = BAM_ENCODED_BASES_TO_ORDINAL[iter.next().ordinal()] <<4;
+		int value = BAM_ORDINAL_TO_ENCODED_BASES[iter.next().ordinal()] <<4;
 		//only include lower bits if we are even
 		if(seqLength%2==0){
-			value |= BAM_ENCODED_BASES_TO_ORDINAL[iter.next().ordinal()];
+			value |= BAM_ORDINAL_TO_ENCODED_BASES[iter.next().ordinal()];
 		}
 		data[data.length -1] = (byte)value;
 		buf.put(data);
