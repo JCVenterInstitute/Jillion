@@ -48,8 +48,9 @@ public class TestInputStreamSupplierForFile {
     
     private final InputStreamSupplier sut;
     private final InputStream correctDecoding;
-    
-    @Parameters
+    private final String inputType;
+
+    @Parameters(name="{2}")
     public static List<Object[]> implementations() throws IOException{
         helper = new ResourceHelper(TestInputStreamSupplierForFile.class);
         originalFile = helper.getFile("files/lorem_ipsum.txt");
@@ -57,14 +58,19 @@ public class TestInputStreamSupplierForFile {
         
         List<Object[]> list = new ArrayList<>();
         //raw
-        list.add(new Object[]{InputStreamSupplier.forFile(originalFile), new FileInputStream(originalFile)});
+        list.add(new Object[]{InputStreamSupplier.forFile(originalFile),
+                              new FileInputStream(originalFile),
+                              "raw"});
         //.zip
         File zipFile = helper.getFile("files/lorem_ipsum.zip");
-        list.add(new Object[]{InputStreamSupplier.forFile(zipFile), getZippedInputStream(zipFile)});
+        list.add(new Object[]{InputStreamSupplier.forFile(zipFile),
+                              getZippedInputStream(zipFile),
+                              "zip"});
         //gzip
         File gzipFile = helper.getFile("files/lorem_ipsum.txt.gz");
-        list.add(new Object[]{InputStreamSupplier.forFile(gzipFile), new GZIPInputStream(new FileInputStream(gzipFile))
-                });
+        list.add(new Object[]{InputStreamSupplier.forFile(gzipFile),
+                              new GZIPInputStream(new FileInputStream(gzipFile)),
+                              "gzip"});
         
         return list;
     }
@@ -75,9 +81,10 @@ public class TestInputStreamSupplierForFile {
         return zipIn;
     }
     
-    public TestInputStreamSupplierForFile(InputStreamSupplier sut, InputStream correctDecoding){
+    public TestInputStreamSupplierForFile(InputStreamSupplier sut, InputStream correctDecoding, String inputType){
         this.sut = sut;
         this.correctDecoding = correctDecoding;
+        this.inputType = inputType;
     }
    
     @Test
@@ -124,4 +131,5 @@ public class TestInputStreamSupplierForFile {
         byte[] actual = getBytes(sut.get(Range.of(start, end))); 
         assertArrayEquals(expected, actual);
     }
+
 }
