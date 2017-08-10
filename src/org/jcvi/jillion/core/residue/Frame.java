@@ -25,6 +25,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.Triplet;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 
 public enum Frame{
@@ -126,5 +129,98 @@ public enum Frame{
     
     public Frame getOppositeFrame(){
         return VALUES[ (this.ordinal() +3)%VALUES.length];
+    }
+    
+    public Iterator<Triplet> asTriplets(NucleotideSequence sequence){
+        Iterator<Nucleotide> iter = handleFrame(sequence, this);
+        return new Iterator<Triplet>() {
+
+            Triplet next;
+            {
+                next = getNextTriplet(iter);
+            }
+            @Override
+            public boolean hasNext() {
+                return next !=null;
+            }
+
+            @Override
+            public Triplet next() {
+                if(!hasNext()){
+                    throw new NullPointerException();
+                }
+                Triplet ret = next;
+                next = getNextTriplet(iter);
+                return ret;
+            }
+        };
+    }
+
+    private Triplet getNextTriplet(Iterator<Nucleotide> iter) {
+
+        Nucleotide first = getNextNucleotide(iter);
+        Nucleotide second = getNextNucleotide(iter);
+        Nucleotide third = getNextNucleotide(iter);
+        if (first == null || second == null || third == null) {
+            // no more bases
+            return null;
+        }
+        return Triplet.create(first, second, third);
+    }
+
+    private Nucleotide getNextNucleotide(Iterator<Nucleotide> iter) {
+        if (!iter.hasNext()) {
+            return null;
+        }
+        Nucleotide n = iter.next();
+        // if(n.isGap()){
+        // throw new IllegalArgumentException("sequence can not contain gaps");
+        // }
+        return n;
+    }
+    
+    
+    @SuppressWarnings("fallthrough")
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SF_SWITCH_FALLTHROUGH")
+    private Iterator<Nucleotide> handleFrame(NucleotideSequence sequence, Frame frame) {
+        Iterator<Nucleotide> iter;
+        if(frame.onReverseStrand()){
+            iter = sequence.toBuilder().reverseComplement().iterator();
+          //switch uses fall through
+            //so frame 2 skips first 2 bp           
+            switch(frame){
+                    case NEGATIVE_THREE:
+                                    if(iter.hasNext()){
+                                            iter.next();
+                                    }
+                    case NEGATIVE_TWO:
+                                    if(iter.hasNext()){
+                                            iter.next();
+                                    }
+                                    break;
+                    default:
+                                    //no-op
+                            break;
+            }
+        }else{
+            iter = sequence.iterator();
+            //switch uses fall through
+            //so frame 2 skips first 2 bp           
+            switch(frame){
+                    case THREE:
+                                    if(iter.hasNext()){
+                                            iter.next();
+                                    }
+                    case TWO:
+                                    if(iter.hasNext()){
+                                            iter.next();
+                                    }
+                                    break;
+                    default:
+                                    //no-op
+                            break;
+            }
+        }
+        return iter;
     }
 }

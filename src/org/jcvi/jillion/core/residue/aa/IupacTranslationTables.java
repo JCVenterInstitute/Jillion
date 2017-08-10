@@ -27,7 +27,6 @@ import java.util.Map;
 import org.jcvi.jillion.core.residue.Frame;
 import org.jcvi.jillion.core.residue.aa.TranslationVisitor.FoundStartResult;
 import org.jcvi.jillion.core.residue.aa.TranslationVisitor.FoundStopResult;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.Triplet;
 import org.jcvi.jillion.core.util.MapUtil;
@@ -259,12 +258,14 @@ public enum IupacTranslationTables implements TranslationTable{
 		//and we've already seen a start, then make it not the start?
 
 		ProteinSequenceBuilder builder = new ProteinSequenceBuilder(length/3);
-		Iterator<Nucleotide> iter = handleFrame(sequence, frame);
+		
+		Iterator<Triplet> iter = frame.asTriplets(sequence);
+		
 		boolean seenStart=!substituteStart;
 		long currentOffset=0;
 		
 		while(iter.hasNext() && currentOffset <length){
-			Triplet triplet =getNextTriplet(iter);
+			Triplet triplet =iter.next();
 			currentOffset+=3;
 			if(triplet !=null){
 				Codon codon =translate(triplet);
@@ -299,12 +300,12 @@ public enum IupacTranslationTables implements TranslationTable{
                 //don't correctly handle the 'not first starts'
                 //so if translation table says codon is a start
                 //and we've already seen a start, then make it not the start?
-                Iterator<Nucleotide> iter = handleFrame(sequence, frame);
+                Iterator<Triplet> iter = frame.asTriplets(sequence);
                 boolean seenStart=false;
                 long currentOffset=frame.ordinal();
                
                 while(iter.hasNext()){
-                        Triplet triplet =getNextTriplet(iter);
+                        Triplet triplet =iter.next();
                         
                         if(triplet !=null){
                                 Codon codon =translate(triplet);
@@ -338,72 +339,6 @@ public enum IupacTranslationTables implements TranslationTable{
 	
 	
 	
-	private Triplet getNextTriplet(Iterator<Nucleotide> iter){
-		
-		Nucleotide first= getNextNucleotide(iter);
-		Nucleotide second= getNextNucleotide(iter);
-		Nucleotide third= getNextNucleotide(iter);
-		if(first==null || second ==null || third ==null){
-			//no more bases
-			return null;
-		}
-		return Triplet.create(first, second, third);
-	}
-	
-	private Nucleotide getNextNucleotide(Iterator<Nucleotide> iter){
-		if(!iter.hasNext()){
-			return null;
-		}
-		Nucleotide n = iter.next();
-//		if(n.isGap()){
-//			throw new IllegalArgumentException("sequence can not contain gaps");
-//		}
-		return n;
-	}
-
-	@SuppressWarnings("fallthrough")
-	@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SF_SWITCH_FALLTHROUGH")
-	private Iterator<Nucleotide> handleFrame(NucleotideSequence sequence, Frame frame) {
-	    Iterator<Nucleotide> iter;
-	    if(frame.onReverseStrand()){
-	        iter = sequence.toBuilder().reverseComplement().iterator();
-	      //switch uses fall through
-                //so frame 2 skips first 2 bp           
-                switch(frame){
-                        case NEGATIVE_THREE:
-                                        if(iter.hasNext()){
-                                                iter.next();
-                                        }
-                        case NEGATIVE_TWO:
-                                        if(iter.hasNext()){
-                                                iter.next();
-                                        }
-                                        break;
-                        default:
-                                        //no-op
-                                break;
-                }
-	    }else{
-	        iter = sequence.iterator();
-		//switch uses fall through
-		//so frame 2 skips first 2 bp		
-		switch(frame){
-			case THREE:
-					if(iter.hasNext()){
-						iter.next();
-					}
-			case TWO:
-					if(iter.hasNext()){
-						iter.next();
-					}
-					break;
-			default:
-					//no-op
-				break;
-		}
-	    }
-	    return iter;
-	}
 
 	protected void updateTable(Map<Triplet, Codon> map){
 		//no-op
