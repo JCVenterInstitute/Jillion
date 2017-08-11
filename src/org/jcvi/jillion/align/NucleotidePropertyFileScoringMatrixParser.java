@@ -68,7 +68,7 @@ final class NucleotidePropertyFileScoringMatrixParser extends AbstractSubstituti
 
 	@Override
 	protected int getNumberOfValues() {
-		return Nucleotide.getDnaValues().size();
+		return Nucleotide.getAllValues().size();
 	}
 
 	@Override

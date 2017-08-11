@@ -49,7 +49,7 @@ public final class NucleotideSubstitutionMatrixBuilder  implements Builder<Nucle
 		 * is called.
 		 */
 		public NucleotideSubstitutionMatrixBuilder(float defaultScore){
-			int size = Nucleotide.getDnaValues().size();
+			int size = Nucleotide.getAllValues().size();
 			
 			matrix = new float[size][size];
 			for(int i=0; i<size; i++){

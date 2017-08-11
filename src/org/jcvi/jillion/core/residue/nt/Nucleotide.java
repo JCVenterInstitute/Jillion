@@ -144,6 +144,7 @@ try{
     public static final List<Nucleotide> DNA_VALUES = Collections.unmodifiableList(Arrays.asList(DNA_VALUES_ARRAY));
 
     public static final List<Nucleotide> RNA_VALUES = Collections.unmodifiableList(Arrays.asList(RNA_VALUES_ARRAY));
+    public static final List<Nucleotide> ALL_VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
 
 
     private static int computeOffsetFor(char c){
@@ -218,8 +219,12 @@ try{
     public static List<Nucleotide> getDnaValues(){
         return DNA_VALUES;
     }
+    public static List<Nucleotide> getAllValues(){
+        return ALL_VALUES;
+    }
 
-    public static List<Nucleotide> getrnaValues(){
+
+    public static List<Nucleotide> getRnaValues(){
         return RNA_VALUES;
     }
     /**
