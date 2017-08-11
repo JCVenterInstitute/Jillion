@@ -46,7 +46,7 @@ final class SingleNucleotideSlice implements VariableWidthSlice<Nucleotide, Nucl
 	static{
 		SEQ_MAP = new EnumMap<>(Nucleotide.class);
 		
-		for(Nucleotide n : Nucleotide.VALUES){
+		for(Nucleotide n : Nucleotide.getDnaValues()){
 			SEQ_MAP.put(n, new NucleotideSequenceBuilder(1).append(n).build());
 		}
 	}
@@ -173,7 +173,7 @@ final class SingleNucleotideSlice implements VariableWidthSlice<Nucleotide, Nucl
 			StringBuilder b = new StringBuilder("{");
 			for(int i=0; i<counts.length; i++){
 				if(counts[i] >0){
-					b.append(Nucleotide.VALUES.get(i)).append(':').append(counts[i]).append(' ');
+					b.append(Nucleotide.getDnaValues().get(i)).append(':').append(counts[i]).append(' ');
 				}
 			}
 			b.append('}');

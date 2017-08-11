@@ -49,7 +49,7 @@ public final class NucleotideSubstitutionMatrixBuilder  implements Builder<Nucle
 		 * is called.
 		 */
 		public NucleotideSubstitutionMatrixBuilder(float defaultScore){
-			int size = Nucleotide.VALUES.size();
+			int size = Nucleotide.getDnaValues().size();
 			
 			matrix = new float[size][size];
 			for(int i=0; i<size; i++){
@@ -79,7 +79,7 @@ public final class NucleotideSubstitutionMatrixBuilder  implements Builder<Nucle
 		 * @return this
 		 */
 		public NucleotideSubstitutionMatrixBuilder ambiguityScore(float ambiguityScore){
-			List<Nucleotide> values = Nucleotide.VALUES;
+			List<Nucleotide> values = Nucleotide.getDnaValues();
 			for(int i=0; i< values.size(); i++){
 				Nucleotide n = values.get(i);
 				if(n.isAmbiguity()){

@@ -25,6 +25,8 @@
  */
 package org.jcvi.jillion.core.residue.nt;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -102,7 +104,8 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
      */
     private transient int hash;
     
-    
+    private Boolean isDna;
+
     @Override
 	public SortedMap<Integer, Nucleotide> getDifferenceMap() {
     	if(encodedSnpsInfo==null){
@@ -119,26 +122,31 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
             int index = i/2;
         	if(i%2==0){
         		int temp1 = snps[index]>>4;
-				differenceMap.put(offset, Nucleotide.VALUES.get(temp1 & 0x0F));
+				differenceMap.put(offset, Nucleotide.getDnaValues().get(temp1 & 0x0F));
         	}else{
-        		differenceMap.put(offset,Nucleotide.VALUES.get(snps[index] & 0x0F));
+        		differenceMap.put(offset,Nucleotide.getDnaValues().get(snps[index] & 0x0F));
         	}
 			
         }
 		return differenceMap;
 	}
 
-    public DefaultReferenceEncodedNucleotideSequence(NucleotideSequence reference,
+    DefaultReferenceEncodedNucleotideSequence(NucleotideSequence reference,
             String toBeEncoded, int startOffset){
     	this(reference, new NucleotideSequenceBuilder(toBeEncoded), startOffset);
     }
-
-	public DefaultReferenceEncodedNucleotideSequence(NucleotideSequence reference,
-            NucleotideSequenceBuilder toBeEncoded, int startOffset){
+    DefaultReferenceEncodedNucleotideSequence(NucleotideSequence reference,
+                                              NucleotideSequenceBuilder toBeEncoded, int startOffset){
+        this(reference, toBeEncoded, startOffset, toBeEncoded.getNumUs() > 0);
+    }
+	DefaultReferenceEncodedNucleotideSequence(NucleotideSequence reference,
+            NucleotideSequenceBuilder toBeEncoded, int startOffset, boolean isRna){
     
         this.startOffset = startOffset;
         this.length = (int)toBeEncoded.getLength();
         this.reference = reference;
+        this.isDna = !isRna;
+
         SortedMap<Integer, Nucleotide> differentGlyphMap = populateFields(reference, toBeEncoded, startOffset);
         int numSnps = differentGlyphMap.size();
         if(numSnps ==0){
@@ -163,6 +171,9 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
         
         	snpSizeStrategy.put(buffer, entry.getKey().intValue());
         	byte ordinal = entry.getValue().getOrdinalAsByte();
+        	if(isRna && ordinal == Nucleotide.Uracil.getOrdinalAsByte()){
+        	    ordinal = Nucleotide.Thymine.getOrdinalAsByte();
+            }
         	int index = i/2;
         	if(i%2==0){
         		snpValues[index] = (byte)(ordinal<<4 & 0xF0);
@@ -177,8 +188,24 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
         encodedSnpsInfo = buffer.array();
     
     }
-    
-    
+
+    //dkatzel Aug 2017 - this is a backwards compatible change
+    //to object serialization if we are reading an object
+    // that was serialized prior to adding the dna/rna flag
+    // assume it's DNA since that was all that was supported before
+    private void readObject (ObjectInputStream s) throws  ClassNotFoundException, IOException
+    {
+        s.defaultReadObject( );
+
+        if(isDna == null){
+            isDna = true;
+        }
+    }
+    @Override
+    public boolean isDna() {
+        return isDna;
+    }
+
     @Override
     public Stream<Range> findMatches(Pattern pattern) {
         //override if something better!
@@ -284,7 +311,7 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 		if(range==null){
 			throw new NullPointerException("range can not be null");
 		}
-		//make sure begining of range is in bounds
+		//make sure beginning of range is in bounds
 		if(range.getBegin() < 0){
 			throw new IndexOutOfBoundsException();
 		}
@@ -322,11 +349,19 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 	            int index = sizeStrategy.getNext(buf); 
 				int snpIndex = i/2;
 				if(i%2==0){
-					array[index]= Nucleotide.VALUES.get(snps[snpIndex]>>4 &0x0F);
+					array[index]= Nucleotide.getDnaValues().get(snps[snpIndex]>>4 &0x0F);
 				}else{
-					array[index]= Nucleotide.VALUES.get(snps[snpIndex] & 0x0F);
+					array[index]= Nucleotide.getDnaValues().get(snps[snpIndex] & 0x0F);
 				}
 	        }
+	        if(isRna()){
+	        	//replace T's with Us
+				for(int i=0; i< array.length; i++){
+					if(array[i] == Nucleotide.Thymine){
+						array[i] = Nucleotide.Uracil;
+					}
+				}
+			}
         }
 		return array;
 	}
@@ -351,9 +386,9 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 				if(index ==nextValue){
 					int snpIndex = i/2;
 					if(i%2==0){
-						return Nucleotide.VALUES.get(snps[snpIndex]>>4 &0x0F);
+						return Nucleotide.getDnaValues().get(snps[snpIndex]>>4 &0x0F);
 					}else{
-						return Nucleotide.VALUES.get(snps[snpIndex] & 0x0F);
+						return Nucleotide.getDnaValues().get(snps[snpIndex] & 0x0F);
 					}
 
 	            }
@@ -419,9 +454,9 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 		    	 int snpIndex = i/2;
 		    	 final Nucleotide snp;
 					if(i%2==0){
-						snp= Nucleotide.VALUES.get(snpArray[snpIndex]>>4 &0x0F);
+						snp= Nucleotide.getDnaValues().get(snpArray[snpIndex]>>4 &0x0F);
 					}else{
-						snp= Nucleotide.VALUES.get(snpArray[snpIndex] & 0x0F);
+						snp= Nucleotide.getDnaValues().get(snpArray[snpIndex] & 0x0F);
 					}
 		    	 if(Nucleotide.Gap == snp){
 		    		 gaps.append(snps.get(i));

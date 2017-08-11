@@ -91,7 +91,7 @@ public class NoConsensusCompactedSlice implements Slice{
     
     @Override
 	public Map<Nucleotide, Integer> getNucleotideCounts() {
-		int[] counts = new int[Nucleotide.VALUES.size()];
+		int[] counts = new int[Nucleotide.getDnaValues().size()];
 		for(int i=0; i < elements.length; i++){
 			int ordinal =(elements[i] >>>8) &0xF;
 			counts[ordinal]++;
@@ -99,7 +99,7 @@ public class NoConsensusCompactedSlice implements Slice{
 		Map<Nucleotide, Integer> map = new EnumMap<Nucleotide, Integer>(Nucleotide.class);
 		for(int i=0; i < counts.length; i++){
 			int count = counts[i];
-			map.put(Nucleotide.VALUES.get(i), count);
+			map.put(Nucleotide.getDnaValues().get(i), count);
 		}
 		return map;
 	}

@@ -81,7 +81,7 @@ final class BasicNucleotideCodec extends AbstractNucleotideCodec{
 
 		@Override
 		protected Nucleotide getGlyphFor(byte b) {
-			return Nucleotide.VALUES.get(b);
+			return Nucleotide.getDnaValues().get(b);
 		}
 	    
 	@Override

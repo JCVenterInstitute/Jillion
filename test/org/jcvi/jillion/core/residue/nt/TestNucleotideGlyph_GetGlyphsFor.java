@@ -32,7 +32,7 @@ public class TestNucleotideGlyph_GetGlyphsFor {
 
     @Test
     public void convertGlyph(){
-        for(Nucleotide g: Nucleotide.VALUES){
+        for(Nucleotide g: Nucleotide.getDnaValues()){
             final Character uppercase = g.getCharacter();
             assertEquals(g, Nucleotide.parse(uppercase));
             assertEquals(g, Nucleotide.parse(Character.toLowerCase(uppercase)));

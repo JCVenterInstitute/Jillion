@@ -27,6 +27,7 @@ package org.jcvi.jillion.core.residue.nt;
 
 
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -180,7 +181,7 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
      * 
      * @since 5.3
      */
-    public static NucleotideSequence of(Iterable<Nucleotide> sequence) {
+    static NucleotideSequence of(Iterable<Nucleotide> sequence) {
         return new NucleotideSequenceBuilder(sequence)
                 .turnOffDataCompression(true)
                 .build();
@@ -197,9 +198,16 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
      * 
      * @since 5.3
      */
-    public static NucleotideSequence of(String sequence) {
+    static NucleotideSequence of(String sequence) {
         return new NucleotideSequenceBuilder(sequence)
                 .turnOffDataCompression(true)
                 .build();
     }
+
+    boolean isDna();
+
+    default boolean isRna(){
+        return !isDna();
+    }
+
 }

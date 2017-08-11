@@ -126,14 +126,14 @@ public final class DefaultSlice implements Slice{
     
     @Override
 	public Map<Nucleotide, Integer> getNucleotideCounts() {
-    	int[] counts = new int[Nucleotide.VALUES.size()];
+    	int[] counts = new int[Nucleotide.getDnaValues().size()];
     	for(SliceElement element : elements.values()){
     		counts[element.getBase().ordinal()]++;
     	}
     	Map<Nucleotide, Integer> map = new EnumMap<Nucleotide, Integer>(Nucleotide.class);
 		for(int i=0; i < counts.length; i++){
 			int count = counts[i];
-			map.put(Nucleotide.VALUES.get(i), count);
+			map.put(Nucleotide.getDnaValues().get(i), count);
 		}
 		return map;
 	}

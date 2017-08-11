@@ -60,7 +60,7 @@ public class TestSliceBuilder {
 	
 	private Map<Nucleotide, Integer> createEmptyCountMap(){
 		EnumMap<Nucleotide, Integer> map = new EnumMap<Nucleotide, Integer>(Nucleotide.class);
-		for(Nucleotide n : Nucleotide.VALUES){
+		for(Nucleotide n :Nucleotide.getDnaValues()){
 			map.put(n, Integer.valueOf(0));
 		}
 		return map;

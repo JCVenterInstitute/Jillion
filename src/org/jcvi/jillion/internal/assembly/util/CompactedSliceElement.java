@@ -101,7 +101,7 @@ public final class CompactedSliceElement implements SliceElement{
     @Override
     public Nucleotide getBase() {
         int ordinal= dirAndNucleotide & 0xF;
-        return Nucleotide.VALUES.get(ordinal);
+        return Nucleotide.getDnaValues().get(ordinal);
     }
 
     /**
