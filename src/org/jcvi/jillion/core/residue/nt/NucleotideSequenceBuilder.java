@@ -838,15 +838,25 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     * but may be empty.
     */
     @Override
-    public NucleotideSequence build() {    
-    		
+    public NucleotideSequence build() {
+        if(codecDecider.numUs >0 && codecDecider.numTs >0){
+            byte[] encodedBytes= UandTNucleotideCodec.INSTANCE.encode(codecDecider.currentLength,
+                    codecDecider.gapOffsets.toArray(), iterator(false));
+            return new DefaultNucleotideSequence(UandTNucleotideCodec.INSTANCE, encodedBytes, true, false);
+        }
+
         	if(codecDecider.hasAlignedReference()){
         		return new DefaultReferenceEncodedNucleotideSequence(
         				codecDecider.alignedReference.reference, this, codecDecider.alignedReference.offset);
         	
         	}
-        	
-        	return codecDecider.encode(iterator(true));
+        	boolean convertUs2Ts;
+        	if(codecDecider.numUs >0 && codecDecider.numTs >0){
+                convertUs2Ts=false;
+            }else{
+                convertUs2Ts=true;
+            }
+        	return codecDecider.encode(iterator(convertUs2Ts));
 
     }
 
@@ -1364,7 +1374,9 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
        // private int numberOfGaps=0;
         private int numberOfNonNAmbiguities=0;
         private int numUs=0;
-
+        //we have to keep track of Ts AND Us because some weird sequences
+        //used for medical research use oligos with both!!
+        private int numTs=0;
        // private int numberOfNs=0;
         private int currentLength=0;
         private AlignedReference alignedReference=null;
@@ -1383,10 +1395,10 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         	int numberOfGaps = gapOffsets.getCurrentLength();
             int numberOfNs = nOffsets.getCurrentLength();
             boolean hasUs = numUs >0;
-
-			if(forceBasicCodec || numberOfNonNAmbiguities>0 || (numberOfGaps>0 && numberOfNs >0)){
+            boolean hasTs = numTs >0;
+			if(forceBasicCodec || numberOfNonNAmbiguities>0 || (numberOfGaps>0 && numberOfNs >0) || (hasUs && hasTs)){
                 byte[] encodedBytes= BasicNucleotideCodec.INSTANCE.encode(currentLength, gapOffsets.toArray(), iterator);
-                return new DefaultNucleotideSequence(BasicNucleotideCodec.INSTANCE, encodedBytes, hasUs);
+                return new DefaultNucleotideSequence(BasicNucleotideCodec.INSTANCE, encodedBytes, hasUs, (hasUs && !hasTs));
 			}
 			//if we get this far then we don't have any non-N ambiguities
 			//AND we have either only gaps or only Ns
@@ -1395,15 +1407,15 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
             		Math.max(numberOfGaps, numberOfNs));
             if(fourBitBufferSize < twoBitBufferSize){
                 byte[] encodedBytes= BasicNucleotideCodec.INSTANCE.encode(currentLength, gapOffsets.toArray(), iterator);
-                return new DefaultNucleotideSequence(BasicNucleotideCodec.INSTANCE, encodedBytes,hasUs);
+                return new DefaultNucleotideSequence(BasicNucleotideCodec.INSTANCE, encodedBytes,hasUs, (hasUs && !hasTs));
             }
             if(numberOfGaps==0 ){
                 byte[] encodedBytes= AcgtnNucloetideCodec.INSTANCE.encode(currentLength, nOffsets.toArray(), iterator);
-                return new DefaultNucleotideSequence(AcgtnNucloetideCodec.INSTANCE, encodedBytes,hasUs);
+                return new DefaultNucleotideSequence(AcgtnNucloetideCodec.INSTANCE, encodedBytes,hasUs, (hasUs && !hasTs));
             }
             
             byte[] encodedBytes= AcgtGapNucleotideCodec.INSTANCE.encode(currentLength, gapOffsets.toArray(), iterator);
-            return new DefaultNucleotideSequence(AcgtGapNucleotideCodec.INSTANCE, encodedBytes, hasUs);
+            return new DefaultNucleotideSequence(AcgtGapNucleotideCodec.INSTANCE, encodedBytes, hasUs, (hasUs && !hasTs));
        
 		}
 		CodecDecider(NewValues newValues){
@@ -1411,13 +1423,14 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 			currentLength = newValues.getLength();
 			numberOfNonNAmbiguities = newValues.getnumberOfNonNAmiguities();
 			numUs = newValues.numUs;
-
+            numTs = newValues.numTs;
 			gapOffsets = newValues.getGapOffsets().copy();
         }
         CodecDecider copy(){
         	CodecDecider copy = new CodecDecider();
         	copy.numberOfNonNAmbiguities = numberOfNonNAmbiguities;
         	copy.numUs = numUs;
+        	copy.numTs = numTs;
         	copy.currentLength= currentLength;
         	copy.nOffsets = nOffsets.copy();
         	copy.alignedReference = alignedReference;
@@ -1437,6 +1450,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         	 
              numberOfNonNAmbiguities=0;
              numUs=0;
+             numTs=0;
              currentLength=0;
              alignedReference=null;
         }
@@ -1467,6 +1481,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 			currentLength += other.getLength();
 			numberOfNonNAmbiguities += otherDecider.numberOfNonNAmbiguities;
             numUs+=otherDecider.numUs;
+            numTs+=otherDecider.numTs;
 
         }
         public void append(NewValues newValues) {
@@ -1476,6 +1491,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 			currentLength += newValues.getLength();
 			numberOfNonNAmbiguities += newValues.getnumberOfNonNAmiguities();
 			numUs +=newValues.numUs;
+			numTs +=newValues.numTs;
 			
         }
         
@@ -1511,7 +1527,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 			currentLength += insertLength;
 			numberOfNonNAmbiguities += newValues.getnumberOfNonNAmiguities();
 			numUs += newValues.numUs;
-			
+            numTs +=newValues.numTs;
         }
         
         private GrowableIntArray prepend(GrowableIntArray src, GrowableIntArray original, int insertionLength){
@@ -1578,6 +1594,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 			currentLength -= newValues.getLength();
 			numberOfNonNAmbiguities -= newValues.getnumberOfNonNAmiguities();
 			numUs -= newValues.numUs;
+            numTs -=newValues.numTs;
         }
        
 		
@@ -1699,6 +1716,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     	private final GrowableByteArray data;
     	private int numberOfACGTs;
     	private int numUs;
+        private int numTs;
 
     	private final GrowableIntArray nOffsets;
     	private final GrowableIntArray gapOffsets;
@@ -1850,10 +1868,17 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 							break;
 				case 12:
 				case 13:
-				case 14:
-				case 15: numberOfACGTs++;
-						break;
-                case 16 : numUs++; break;
+				case 14:numberOfACGTs++; break;
+				case 15: {
+                    numberOfACGTs++;
+                    numTs++;
+                    break;
+                }
+                case 16 : {
+                    numberOfACGTs++;
+                    numUs++;
+                    break;
+                }
 				default: break;
 			}
 
@@ -1879,9 +1904,17 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 			case 11:gapOffsets.append(offset); break;
 			case 12:
 			case 13:
-			case 14:
-			case 15:numberOfACGTs++; break;
-			case 16 : numUs++; break;
+			case 14:numberOfACGTs++; break;
+			case 15:{
+			    numberOfACGTs++;
+			    numTs++;
+			    break;
+            }
+			case 16 : {
+                numberOfACGTs++;
+                numUs++;
+                break;
+            }
 			default: break;
 			}
 		

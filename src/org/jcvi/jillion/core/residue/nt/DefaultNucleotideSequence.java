@@ -80,11 +80,14 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
     private transient int hash;
 
     private transient boolean isDna;
+
+    private transient boolean changeTs;
     
-    DefaultNucleotideSequence(NucleotideCodec codec, byte[] data, boolean hasUracil) {
+    DefaultNucleotideSequence(NucleotideCodec codec, byte[] data, boolean hasUracil, boolean changeTs) {
 		this.codec = codec;
 		this.data = data;
 		this.isDna = !hasUracil;
+		this.changeTs = changeTs;
 	}
 
 
@@ -228,7 +231,7 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
 
 	private Iterator<Nucleotide> iteratorWrapper(Iterator<Nucleotide> iter){
         //the codec will always have Ts and no Us
-        if(isDna){
+        if(isDna || !changeTs){
             return iter;
         }
         return IteratorUtil.map(iter, n -> n==Nucleotide.Thymine? Nucleotide.Uracil : n);
@@ -252,10 +255,10 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
 		}
 		
 		private Object readResolve(){
-			DefaultNucleotideSequence seq = (DefaultNucleotideSequence) new NucleotideSequenceBuilder(bases)
+			return new NucleotideSequenceBuilder(bases)
 																				.build();
-			
-			return new DefaultNucleotideSequence(seq.codec, seq.data, seq.isRna());
+//
+//			return new DefaultNucleotideSequence(seq.codec, seq.data, seq.isRna());
 		}
 	}
 

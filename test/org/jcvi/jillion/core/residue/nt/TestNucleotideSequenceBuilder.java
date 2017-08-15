@@ -629,7 +629,13 @@ public class TestNucleotideSequenceBuilder {
         assertBuiltDnaSequenceEquals("GTAC", sut);
 
     }
-   
+    @Test
+    public void seqWithBothUsAndTs(){
+        NucleotideSequence seq =  new NucleotideSequenceBuilder("ACGUACGT").build();
+        assertEquals("ACGUACGT", seq.toString());
+
+
+    }
     
     @Test
     public void reverseEvenNumberOfBases(){
