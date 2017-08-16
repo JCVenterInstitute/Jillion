@@ -23,16 +23,18 @@ package org.jcvi.jillion.internal.core.util;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.stream.LongStream;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.util.streams.ThrowingIntIndexedLongConsumer;
 import org.jcvi.jillion.internal.core.util.iter.PrimitiveArrayIterators;
 /**
  * A {@code GrowableLongArray} is a utility class
  * that wraps a long[] that will dynamically
  * grow as needed when data is
  * appended, inserted, replaced and removed etc.
- * This is similar to an {@link ArrayList}
+ * This is similar to an {@link java.util.ArrayList}
  * or {@link StringBuilder}
  * for primitive longs.
  * This class is not Thread-safe.
@@ -477,4 +479,38 @@ public final class GrowableLongArray implements Iterable<Long>{
 	public LongStream stream() {
 		return Arrays.stream(data, 0, currentLength);		
 	}
+
+	/**
+	 * Iterate over each element in the list and call the given consumer
+	 * which captures the offset and the value.
+	 * @param consumer the consumer of each element; can not be null.
+	 * @param <E> the Throwable that might be thrown by the consumer.
+	 * @throws E the Throwable from the consumer.
+	 *
+	 * @since 5.3
+	 *
+	 * @throws NullPointerException if consumer is null.
+	 */
+	public <E extends Throwable> void forEachIndexed(ThrowingIntIndexedLongConsumer<E> consumer) throws E{
+		Objects.requireNonNull(consumer);
+		for(int i=0; i< currentLength; i++){
+			consumer.accept(i, data[i]);
+		}
+	}
+
+    /**
+     * Iterate over the elements in the given range of this array and call the given consumer
+     * which captures the offset and the value.
+     * @param consumer the consumer of each element; can not be null.
+     * @param <E> the Throwable that might be thrown by the consumer.
+     * @throws E the Throwable from the consumer.
+     *
+     * @since 5.3
+     */
+    public <E extends Throwable> void forEachIndexed(Range range, ThrowingIntIndexedLongConsumer<E> consumer) throws E{
+        int end = (int) Math.min(currentLength, range.getEnd()+1);
+        for(int i=(int) range.getBegin(); i< end; i++){
+            consumer.accept(i, data[i]);
+        }
+    }
 }

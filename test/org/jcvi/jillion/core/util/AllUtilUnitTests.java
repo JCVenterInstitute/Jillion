@@ -72,7 +72,8 @@ import org.junit.runners.Suite.SuiteClasses;
         
         TestGrowableIntArray.class,
         TestGrowableLongArray.class,
-        
+		TestGrowableBitArray.class,
+
         TestByteArrayIterator.class,
         TestShortArrayIterator.class,
         TestCharArrayIterator.class,

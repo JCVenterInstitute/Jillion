@@ -12,6 +12,8 @@ import java.util.List;
  * Special codec to handle the weird sequences used in some therapeutics that
  * have both Ts and Us.  This codec stores everything as bytes no bit packing
  * since U is ordinal 17.
+ *
+ * @since 5.3
  */
 final class UandTNucleotideCodec  extends AbstractNucleotideCodec{
 

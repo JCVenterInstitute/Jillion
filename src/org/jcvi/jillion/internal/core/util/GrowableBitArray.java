@@ -22,14 +22,18 @@ package org.jcvi.jillion.internal.core.util;
 
 
 import java.util.Arrays;
+import java.util.BitSet;
+import java.util.stream.IntStream;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.util.streams.ThrowingIntIndexedBooleanConsumer;
+
 /**
  * A {@code GrowableBitArray} is a utility class
  * that wraps an array that will dynamically
  * grow as needed when data is
  * appended, inserted, replaced and removed etc.
- * This is similar to an {@link ArrayList}
+ * This is similar to an {@link java.util.ArrayList}
  * or {@link StringBuilder}
  * for primitive bits.
  * This class is not Thread-safe.
@@ -69,6 +73,31 @@ public final class GrowableBitArray {
 		}
 		data = new boolean[initialCapacity];		
 	}
+
+    /**
+     * Creates a new {@link GrowableBitArray}
+     * where the backing byte array is an exact
+     * copy of the input BitSet and the initial
+     * capacity is set to the BitSet's logical length.
+     *
+     * @param bs the input BitSet whose "on" values to set
+     * to the backing array.
+     * @throws NullPointerException if the BitSet is null.
+     *
+     * @since 5.3
+     */
+	public GrowableBitArray(BitSet bs){
+	    data = new boolean[bs.length()];
+        currentLength=data.length;
+
+        for (int i = bs.nextSetBit(0); i >= 0; i = bs.nextSetBit(i+1)) {
+            data[i] = true;
+            if (i == Integer.MAX_VALUE) {
+                break; // or (i+1) would overflow
+            }
+
+        }
+    }
 	/**
 	 * Creates a new {@link GrowableBitArray}
 	 * where the backing byte array is an exact
@@ -240,4 +269,67 @@ public final class GrowableBitArray {
 	public boolean[] toArray(){
 		return Arrays.copyOf(data,currentLength);
 	}
+
+    /**
+     * Get an {@link IntStream} of all the array offsets
+     * for the bits that are set to true.
+     * @return an IntStream that may be empty if all values are set to false.
+     *
+     * @since 5.3
+     */
+	public IntStream onBitsAsStream(){
+       GrowableIntArray ons = new GrowableIntArray();
+        forEachIndexed((i, v) -> {
+            if(v){
+                ons.append(i);
+            }
+        });
+
+       return ons.stream();
+    }
+
+    /**
+     * Create a new BitSet with the same "on" values
+     * as currently stored in this growable array.
+     * The returned BitSet is a completely separate and detached object;
+     * any changes to this array or the returned BitSet are NOT reflected in the other.
+     * @return a new BitSet; will never be null.
+     *
+     * @since 5.3
+     */
+    public BitSet asBitSet(){
+	    BitSet bs = new BitSet(currentLength);
+	    onBitsAsStream().forEach(bs::set);
+	    return bs;
+    }
+    /**
+     * Iterate over each element in the array and call the given consumer
+     * which captures the offset and the value.
+     * @param consumer the consumer of each element; can not be null.
+     * @param <E> the Throwable that might be thrown by the consumer.
+     * @throws E the Throwable from the consumer.
+     *
+     * @since 5.3
+     */
+    public <E extends Throwable> void forEachIndexed(ThrowingIntIndexedBooleanConsumer<E> consumer) throws E{
+        for(int i=0; i< currentLength; i++){
+            consumer.accept(i, data[i]);
+        }
+    }
+
+    /**
+     * Iterate over the elements in the given range of this array and call the given consumer
+     * which captures the offset and the value.
+     * @param consumer the consumer of each element; can not be null.
+     * @param <E> the Throwable that might be thrown by the consumer.
+     * @throws E the Throwable from the consumer.
+     *
+     * @since 5.3
+     */
+    public <E extends Throwable> void forEachIndexed(Range range, ThrowingIntIndexedBooleanConsumer<E> consumer) throws E{
+        int end = (int) Math.min(currentLength, range.getEnd()+1);
+        for(int i=(int) range.getBegin(); i< end; i++){
+            consumer.accept(i, data[i]);
+        }
+    }
 }

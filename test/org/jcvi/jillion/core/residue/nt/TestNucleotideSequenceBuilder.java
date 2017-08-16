@@ -1057,7 +1057,35 @@ public class TestNucleotideSequenceBuilder {
         assertEquals(Range.of(2,6), sut.toUngappedRange(r));
     }
     
-    
-    
+    @Test
+    public void convertDnaToRna(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT-TTG---GT")
+                                            .convertToRna();
+
+        assertBuiltRnaSequenceEquals("ACGU-UUG---GU", sut);
+    }
+
+    @Test
+    public void convertDnaToDna(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT-TTG---GT")
+                .convertToDna();
+
+        assertBuiltDnaSequenceEquals("ACGT-TTG---GT", sut);
+    }
+
+    @Test
+    public void convertRnaToDna(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGU-UUG---GU")
+                .convertToDna();
+
+        assertBuiltDnaSequenceEquals("ACGT-TTG---GT", sut);
+    }
+    @Test
+    public void convertRnaToRna(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGU-UUG---GU")
+                .convertToRna();
+
+        assertBuiltRnaSequenceEquals("ACGU-UUG---GU", sut);
+    }
     
 }

@@ -816,12 +816,12 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * to the beginning
      * of this builder's mutable sequence.
      * This is the same as calling 
-     * {@link #insert(int, NucleotideSequenceBuilder) insert(0,otherBuilder)}
+     * {@link #insert(int, ResidueSequenceBuilder) insert(0,otherBuilder)}
      * @param otherBuilder {@link NucleotideSequenceBuilder} whose current
      * nucleotides are to be inserted at the beginning.
      * @return this.
      * @throws NullPointerException if otherBuilder is null.
-     * @see #insert(int, NucleotideSequenceBuilder)
+     * @see #insert(int, ResidueSequenceBuilder)
      */
     public NucleotideSequenceBuilder prepend(ResidueSequenceBuilder<Nucleotide, NucleotideSequence> otherBuilder){
         return insert(0, otherBuilder);
@@ -858,6 +858,49 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
             }
         	return codecDecider.encode(iterator(convertUs2Ts));
 
+    }
+
+    /**
+     * Replace all Uracils in this current sequence
+     * into Thymines.
+     *
+     * @return this.
+     *
+     * @since 5.3
+     */
+    public NucleotideSequenceBuilder convertToDna(){
+        if(codecDecider.numUs ==0){
+            return this;
+        }
+        codecDecider.numTs +=codecDecider.numUs;
+        codecDecider.numUs=0;
+        this.data.forEachIndexed((i, v)->{
+            if(v == Nucleotide.Uracil.getOrdinalAsByte()){
+                this.data.replace(i, Nucleotide.Thymine.getOrdinalAsByte());
+            }
+        });
+        return this;
+    }
+    /**
+     * Replace all Thymines in this current sequence
+     * into Uracils.
+     *
+     * @return this.
+     *
+     * @since 5.3
+     */
+    public NucleotideSequenceBuilder convertToRna(){
+        if(codecDecider.numTs ==0){
+            return this;
+        }
+        codecDecider.numUs +=codecDecider.numTs;
+        codecDecider.numTs=0;
+        this.data.forEachIndexed((i, v)->{
+            if(v == Nucleotide.Thymine.getOrdinalAsByte()){
+                this.data.replace(i, Nucleotide.Uracil.getOrdinalAsByte());
+            }
+        });
+        return this;
     }
 
     private Iterator<Nucleotide> iterator(boolean convertRnaToDna) {
@@ -1286,7 +1329,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * Get the corresponding gapped Range (where the start and end values
      * of the range are in gapped coordinate space) for the given
      * ungapped {@link Range}.
-     * @param ungappedRegion the Range of ungapped coordinates; can not be null.
+     * @param ungappedRange the Range of ungapped coordinates; can not be null.
      * @return a new Range never null.
      * @throws NullPointerException if the gappedRange is null.
      * 

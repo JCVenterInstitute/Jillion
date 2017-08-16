@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.stream.IntStream;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.util.streams.ThrowingIntIndexedByteConsumer;
 import org.jcvi.jillion.internal.core.util.iter.PrimitiveArrayIterators;
 /**
  * A {@code GrowableByteArray} is a utility class
@@ -501,5 +502,36 @@ public final class GrowableByteArray implements Iterable<Byte>{
 			copy[i] = data[i];
 		}
 		return Arrays.stream(copy, 0, currentLength);		
+	}
+
+	/**
+	 * Iterate over each element in the array and call the given consumer
+	 * which captures the offset and the value.
+	 * @param consumer the consumer of each element; can not be null.
+	 * @param <E> the Throwable that might be thrown by the consumer.
+	 * @throws E the Throwable from the consumer.
+	 *
+	 * @since 5.3
+	 */
+    public <E extends Throwable> void forEachIndexed(ThrowingIntIndexedByteConsumer<E> consumer) throws E{
+		for(int i=0; i< currentLength; i++){
+			consumer.accept(i, data[i]);
+		}
+    }
+
+	/**
+	 * Iterate over the elements in the given range of this array and call the given consumer
+	 * which captures the offset and the value.
+	 * @param consumer the consumer of each element; can not be null.
+	 * @param <E> the Throwable that might be thrown by the consumer.
+	 * @throws E the Throwable from the consumer.
+	 *
+	 * @since 5.3
+	 */
+	public <E extends Throwable> void forEachIndexed(Range range, ThrowingIntIndexedByteConsumer<E> consumer) throws E{
+		int end = (int) Math.min(currentLength, range.getEnd()+1);
+		for(int i=(int) range.getBegin(); i< end; i++){
+			consumer.accept(i, data[i]);
+		}
 	}
 }

@@ -485,4 +485,47 @@ public class TestGrowableIntArray {
 		GrowableIntArray sut = new GrowableIntArray(new int[]{10, 20,30,30,35, 40,50});
 		assertEquals(0, sut.getCount(-1));
 	}
+
+	@Test
+	public void forEachIndexed(){
+		GrowableIntArray sut = new GrowableIntArray(new int[]{10, 20,30,30,35, 40,50});
+		List<Integer> expected = new ArrayList<>();
+		for(Integer b : sut){
+			expected.add(b);
+		}
+
+		List<Integer> actual = new ArrayList<>();
+		for(int i=0; i< expected.size(); i++){
+			actual.add(null);
+		}
+
+		sut.forEachIndexed((i, c)-> actual.set(i, c));
+
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	public void forEachIndexedRange(){
+		GrowableIntArray sut = new GrowableIntArray(new int[]{10, 20,30,30,35, 40,50});
+		List<Integer> expected = new ArrayList<>();
+		Range r = Range.of(2,5);
+		for(int i=0; i<sut.getCurrentLength(); i++){
+			if(r.intersects(Range.of(i))){
+				expected.add(sut.get(i));
+			}else{
+				expected.add(null);
+			}
+
+		}
+
+
+		List<Integer> actual = new ArrayList<>();
+		for(int i=0; i< expected.size(); i++){
+			actual.add(null);
+		}
+
+		sut.forEachIndexed(r, (i, c)-> actual.set(i, c));
+
+		assertEquals(expected, actual);
+	}
 }

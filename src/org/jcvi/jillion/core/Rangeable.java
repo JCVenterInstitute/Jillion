@@ -118,8 +118,8 @@ public interface Rangeable {
     default boolean intersects(Rangeable target) {
         return asRange().intersects(target.asRange());
     }
-    
-    
+
+
     /**
      * Get the List of Ranges that represents the 
      * {@code this - other}.  This is similar to the 
@@ -154,4 +154,5 @@ public interface Rangeable {
         List<Range> otherRanges = others.stream().map(Rangeable::asRange).collect(Collectors.toList());
         return asRange().complement(otherRanges);
     }
+
 }
