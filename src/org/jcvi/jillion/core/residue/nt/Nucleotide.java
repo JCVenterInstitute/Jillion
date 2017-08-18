@@ -73,7 +73,7 @@ public enum Nucleotide implements Residue {
     private static final Nucleotide[] VALUES_ARRAY = values();
     private static final Nucleotide[] DNA_VALUES_ARRAY, RNA_VALUES_ARRAY;
 
-
+    private static final Set<Nucleotide> GAP_BASES_FOR = EnumSet.of(Gap);
 
     static {
 
@@ -386,7 +386,7 @@ try{
      */
     public Set<Nucleotide> getBasesFor(){
     	if(this== Gap){
-    		return EnumSet.of(Gap);
+    		return GAP_BASES_FOR;
     	}
     	return AMBIGUITY_TO_CONSTIUENT.get(this);
     }
