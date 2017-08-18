@@ -25,15 +25,8 @@
  */
 package org.jcvi.jillion.core.residue.nt;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.jcvi.jillion.core.residue.Residue;
 /**
@@ -104,7 +97,7 @@ public enum Nucleotide implements Residue {
 
 
         CONSTIUENT_TO_AMBIGUITY = new EnumMap<Nucleotide, Set<Nucleotide>>(Nucleotide.class);
-        for (Nucleotide n : EnumSet.of(Adenine, Cytosine, Guanine, Thymine)) {
+        for (Nucleotide n : EnumSet.of(Adenine, Cytosine, Guanine, Thymine, Uracil)) {
             CONSTIUENT_TO_AMBIGUITY.put(n, EnumSet.noneOf(Nucleotide.class));
         }
         for (Entry<Nucleotide, Set<Nucleotide>> entry : AMBIGUITY_TO_CONSTIUENT.entrySet()) {
@@ -115,6 +108,9 @@ public enum Nucleotide implements Residue {
                 }
             }
         }
+        //add U explicitly
+        CONSTIUENT_TO_AMBIGUITY.put(Nucleotide.Uracil, CONSTIUENT_TO_AMBIGUITY.get(Nucleotide.Thymine));
+
         for (Nucleotide value : VALUES_ARRAY) {
             char uppercase = value.c.charValue();
 
@@ -349,9 +345,23 @@ try{
         if(unambiguiousBases ==null){
             throw new NullPointerException("unambiguousBases can not be null");
         }
+        Collection<Nucleotide> bases = unambiguiousBases;
+        //check for Us, for simplicity replace with T
+        boolean hadU=false;
+        if(unambiguiousBases.contains(Nucleotide.Uracil)){
+            bases = EnumSet.copyOf(unambiguiousBases);
+            bases.remove(Nucleotide.Uracil);
+            bases.add(Nucleotide.Thymine);
+            hadU=true;
+        }
         for(Entry<Nucleotide, Set<Nucleotide>> entry : AMBIGUITY_TO_CONSTIUENT.entrySet()){
-            if(unambiguiousBases.containsAll(entry.getValue())){
-                return entry.getKey();
+            if(bases.containsAll(entry.getValue())){
+                Nucleotide ret= entry.getKey();
+                //switch back to U if needed
+                if(hadU && ret == Nucleotide.Thymine){
+                    return Nucleotide.Uracil;
+                }
+                return ret;
             }
         }
         return Gap;        

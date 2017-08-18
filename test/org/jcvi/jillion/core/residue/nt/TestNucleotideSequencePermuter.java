@@ -51,6 +51,12 @@ public class TestNucleotideSequencePermuter {
 		assertEquals(Collections.singleton(seq), NucleotideSequencePermuter.permuteAmbiguities(seq));
 	}
 	@Test
+	public void noAmbiguitiesWithUsShouldReturnSameSequence(){
+		NucleotideSequence seq = create("AAUA");
+
+		assertEquals(Collections.singleton(seq), NucleotideSequencePermuter.permuteAmbiguities(seq));
+	}
+	@Test
 	public void oneAmbiguityThatCouldBe2BasesShouldReturn2Sequences(){
 		NucleotideSequence seq = create("AAMA");
 		
@@ -75,6 +81,12 @@ public class TestNucleotideSequencePermuter {
 		
 		assertEquals(setOf("AAAA", "AACA","AAGA","AATA"), NucleotideSequencePermuter.permuteAmbiguities(seq));
 	}
+    @Test
+    public void oneAmbiguityWithUThatCouldBe4BasesShouldReturn4Sequences(){
+        NucleotideSequence seq = create("AUNA");
+
+        assertEquals(setOf("AUAA", "AUCA","AUGA","AUUA"), NucleotideSequencePermuter.permuteAmbiguities(seq));
+    }
 	
 	@Test
 	public void oneAmbiguityThatCouldBe3BasesShouldReturn3Sequences(){

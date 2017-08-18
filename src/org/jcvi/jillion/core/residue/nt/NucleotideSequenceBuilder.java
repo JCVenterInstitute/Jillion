@@ -583,7 +583,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
             throw new IndexOutOfBoundsException(
                     String.format("offset can not start beyond current length (%d) : %d", getLength(),offset));
         }
-		return Nucleotide.getDnaValues().get(data.get(offset));
+		return Nucleotide.getByOrdinal(data.get(offset));
 	}
 	public int getNumGaps(){
         return codecDecider.getNumberOfGaps();
