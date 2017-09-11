@@ -153,53 +153,55 @@ public class VulgarProtein2Genome2 {
         //target = nuc
         AlignmentFragment.Builder currentBuilder = new AlignmentFragment.Builder(Frame.ONE,
                 this.targetStrand , targetRange.getBegin(), queryRange.getBegin());
-        
+        boolean spliced=false;
         for(VulgarElement e : elements){
-            queryOffset+=e.getQueryLength();
+        	queryOffset+=e.getQueryLength();
             targetOffset+=e.getTargetLength();
             if(e.getOp() == VulgarOperation.Match || e.getOp() == VulgarOperation.Split_Codon){
+            	if(spliced){
+            		currentFrame = currentFrame.shift(e.getTargetLength());
+            		spliced=false;
+            	}
                 if(currentBuilder ==null){
                     currentBuilder = new AlignmentFragment.Builder(currentFrame,
                             this.targetStrand , targetRange.getBegin()+ targetOffset - e.getTargetLength(), queryRange.getBegin()+queryOffset - e.getQueryLength());
                 }
                     
                 currentBuilder.add(e.getTargetLength(), e.getQueryLength());
-                
-               
+                               
                 
                 if(e.getOp() == VulgarOperation.Gap){
                     queryGaps.add(new Range.Builder(e.getTargetLength()/3).shift(queryOffset).build());
                     targetGaps.add(new Range.Builder(e.getQueryLength()*3).shift(targetOffset).build());
                 }
+             
+                
             }else if(e.getOp() == VulgarOperation.Gap){
                 fragments.add(currentBuilder.build());
-                
               
-                
                 currentBuilder = new AlignmentFragment.Builder(currentFrame,
                         this.targetStrand , targetRange.getBegin()+ targetOffset, queryRange.getBegin()+queryOffset);
                 
             }else if(e.getOp() == VulgarOperation.Splice_5 || e.getOp() == VulgarOperation.Splice_3){
+            	if(e.getOp() == VulgarOperation.Splice_3){
+            		spliced=true;
+            	}
                 if(currentBuilder !=null){
                     fragments.add(currentBuilder.build());
                     currentBuilder =null;
+                    spliced=false;
+                    currentFrame = Frame.ONE;
                 }
             }else if(e.getOp() == VulgarOperation.Frameshift){
-                currentFrame = currentFrame.shift(e.getTargetLength());
                 if(currentBuilder !=null){
                     fragments.add(currentBuilder.build());
                 }
                 currentBuilder = new AlignmentFragment.Builder(currentFrame,
                         this.targetStrand , targetRange.getBegin()+ targetOffset, queryRange.getBegin()+queryOffset);
-            }
-           
-            
+            }       
         }
         fragments.add(currentBuilder.build());
-        
-      
-        
-      
+             
     }
     
     public List<AlignmentFragment> getAlignmentFragments(){
