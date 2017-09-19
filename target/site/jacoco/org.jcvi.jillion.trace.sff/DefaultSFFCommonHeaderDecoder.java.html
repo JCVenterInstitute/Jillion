@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DefaultSFFCommonHeaderDecoder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.trace.sff</a> &gt; <span class="el_source">DefaultSFFCommonHeaderDecoder.java</span></div><h1>DefaultSFFCommonHeaderDecoder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Oct 6, 2008
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.trace.sff;
+
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+
+<span class="pc" id="L38">enum DefaultSFFCommonHeaderDecoder implements SffCommonHeaderDecoder {</span>
+	/**
+	 * Singleton instance.
+	 */
+<span class="fc" id="L42">	INSTANCE</span>
+	;
+<span class="fc" id="L44">    private static final byte[] MAGIC_NUMBER = &quot;.sff&quot;.getBytes(IOUtil.UTF_8);</span>
+<span class="fc" id="L45">    private static final byte[] ACCEPTED_VERSION = new byte[]{0,0,0,1};</span>
+    /**
+     * Currently SFF only has 1 format code which has a value of &lt;code&gt;1&lt;/code&gt;.
+     */
+    private static final byte FORMAT_CODE = 1;
+    
+    private static final byte FIXED_HEADER_SIZE = 31;
+    
+    @Override
+	public SffCommonHeader decodeHeader(ByteBuffer buf) throws SffDecoderException {
+
+    	try{
+<span class="nc" id="L57">			verifyMagicNumber(buf);</span>
+<span class="nc" id="L58">			verifyVersion1(buf);</span>
+<span class="nc" id="L59">			 BigInteger indexOffset = IOUtil.getUnsignedLong(buf);</span>
+<span class="nc" id="L60">			 long indexLength = IOUtil.getUnsignedInt(buf);</span>
+<span class="nc" id="L61">            long numReads = IOUtil.getUnsignedInt(buf);</span>
+            //skip header length
+<span class="nc" id="L63">            buf.position(2+buf.position());</span>
+<span class="nc" id="L64">            int keyLength = IOUtil.getUnsignedShort(buf);</span>
+<span class="nc" id="L65">            int flowsPerRead = IOUtil.getUnsignedShort(buf);</span>
+<span class="nc" id="L66">            verifyFlowgramFormatCode(buf);</span>
+<span class="nc" id="L67">            byte[] flowBuffer = new byte[flowsPerRead];</span>
+<span class="nc" id="L68">            byte[] keySequenceBuffer = new byte[keyLength];</span>
+            //gather read to read both buffers in one
+            //native I/O op
+<span class="nc" id="L71">            buf.get(flowBuffer);</span>
+<span class="nc" id="L72">            buf.get(keySequenceBuffer);</span>
+            
+<span class="nc" id="L74">            NucleotideSequence flow = new NucleotideSequenceBuilder(</span>
+            								new String(flowBuffer, IOUtil.UTF_8))
+<span class="nc" id="L76">            						.build();</span>
+<span class="nc" id="L77">            NucleotideSequence keySequence = new NucleotideSequenceBuilder(</span>
+											new String(keySequenceBuffer, IOUtil.UTF_8))
+<span class="nc" id="L79">									.build();</span>
+<span class="nc" id="L80">            int bytesReadSoFar = FIXED_HEADER_SIZE+flowsPerRead+keyLength;</span>
+<span class="nc" id="L81">            int padding =SffUtil.caclulatePaddedBytes(bytesReadSoFar);</span>
+<span class="nc" id="L82">            buf.position(padding+ buf.position());</span>
+
+<span class="nc" id="L84">            return new DefaultSffCommonHeader(indexOffset, indexLength,</span>
+            numReads, flowsPerRead, flow,
+            keySequence);
+            
+<span class="nc" id="L88">    	}catch(IOException e){</span>
+<span class="nc" id="L89">    		throw new SffDecoderException(&quot;error reading sff header&quot;, e);</span>
+    	}
+	}
+	private void verifyMagicNumber(ByteBuffer fixedLengthHeader)
+			throws SffDecoderException {
+<span class="nc" id="L94">		byte[] actualMagicNumber = new byte[4];</span>
+<span class="nc" id="L95">		fixedLengthHeader.get(actualMagicNumber);</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">		if(!Arrays.equals(MAGIC_NUMBER, actualMagicNumber)){</span>
+<span class="nc" id="L97">			throw new SffDecoderException(&quot;magic number does not match expected&quot;);</span>
+		}
+<span class="nc" id="L99">	}</span>
+	@Override
+    public SffCommonHeader decodeHeader(DataInputStream in) throws SffDecoderException{
+
+        try{
+<span class="fc" id="L104">            verifyMagicNumber(in);</span>
+<span class="fc" id="L105">            verifyVersion1(in);</span>
+<span class="fc" id="L106">            BigInteger indexOffset = IOUtil.readUnsignedLong(in);</span>
+<span class="fc" id="L107">            long indexLength = IOUtil.readUnsignedInt(in);</span>
+<span class="fc" id="L108">            long numReads = IOUtil.readUnsignedInt(in);</span>
+            //skip header length
+<span class="fc" id="L110">            IOUtil.readUnsignedShort(in);</span>
+<span class="fc" id="L111">            int keyLength = IOUtil.readUnsignedShort(in);</span>
+<span class="fc" id="L112">            int flowsPerRead = IOUtil.readUnsignedShort(in);</span>
+<span class="fc" id="L113">            verifyFlowgramFormatCode(in);</span>
+<span class="fc" id="L114">            NucleotideSequence flow = readFlow(in,flowsPerRead);</span>
+<span class="fc" id="L115">            NucleotideSequence keySequence = readKeySequence(in, keyLength);</span>
+<span class="fc" id="L116">            int bytesReadSoFar = 31+flowsPerRead+keyLength;</span>
+<span class="fc" id="L117">            int padding =SffUtil.caclulatePaddedBytes(bytesReadSoFar);</span>
+<span class="fc" id="L118">            IOUtil.blockingSkip(in, padding);</span>
+
+<span class="fc" id="L120">            return new DefaultSffCommonHeader(indexOffset, indexLength,</span>
+            numReads, flowsPerRead, flow,
+            keySequence);
+
+        }
+<span class="fc" id="L125">        catch(IOException e){</span>
+<span class="fc" id="L126">            throw new SffDecoderException(&quot;error decoding sff file&quot;,e);</span>
+        }
+
+    }
+    private NucleotideSequence readFlow(DataInputStream in, int flowsPerRead) throws IOException, SffDecoderException {
+<span class="fc" id="L131">        byte[] flow = new byte[flowsPerRead];</span>
+        try{
+<span class="fc" id="L133">        	IOUtil.blockingRead(in, flow);</span>
+<span class="fc" id="L134">        }catch(IOException e){</span>
+<span class="fc" id="L135">        	throw new SffDecoderException(&quot;error decoding flow&quot;,e);</span>
+<span class="fc" id="L136">        }</span>
+<span class="fc" id="L137">        return new NucleotideSequenceBuilder(new String(flow,IOUtil.UTF_8))</span>
+<span class="fc" id="L138">        		.build();</span>
+    }
+    private NucleotideSequence readKeySequence(DataInputStream in, int keyLength) throws IOException, SffDecoderException {
+<span class="fc" id="L141">        byte[] keySequence = new byte[keyLength];</span>
+        try{
+<span class="fc" id="L143">        	IOUtil.blockingRead(in, keySequence);</span>
+<span class="fc" id="L144">        }catch(IOException e){</span>
+<span class="fc" id="L145">        	throw new SffDecoderException(&quot;error decoding keySequence&quot;,e);</span>
+<span class="fc" id="L146">        }       </span>
+<span class="fc" id="L147">        return new NucleotideSequenceBuilder(new String(keySequence,IOUtil.UTF_8))</span>
+<span class="fc" id="L148">        			.build();</span>
+    }
+    private void verifyFlowgramFormatCode(DataInputStream in) throws IOException, SffDecoderException {
+        //currently only 1 format code
+<span class="fc bfc" id="L152" title="All 2 branches covered.">        if(in.readByte() != FORMAT_CODE){</span>
+<span class="fc" id="L153">            throw new SffDecoderException(&quot;unknown flowgram format code&quot;);</span>
+        }
+<span class="fc" id="L155">    }</span>
+    private void verifyFlowgramFormatCode(ByteBuffer in) throws IOException, SffDecoderException {
+        //currently only 1 format code
+<span class="nc bnc" id="L158" title="All 2 branches missed.">        if(in.get() != FORMAT_CODE){</span>
+<span class="nc" id="L159">            throw new SffDecoderException(&quot;unknown flowgram format code&quot;);</span>
+        }
+
+<span class="nc" id="L162">    }</span>
+    private void verifyVersion1(DataInputStream in) throws IOException, SffDecoderException {
+<span class="fc" id="L164">        byte[] versionArray = new byte[4];</span>
+<span class="fc" id="L165">        IOUtil.blockingRead(in, versionArray);</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">        if(!Arrays.equals(versionArray, ACCEPTED_VERSION)){</span>
+<span class="fc" id="L167">            throw new SffDecoderException(&quot;version not compatible with decoder&quot;);</span>
+        }
+
+<span class="fc" id="L170">    }</span>
+    private void verifyVersion1(ByteBuffer buf) throws IOException, SffDecoderException {
+<span class="nc" id="L172">        byte[] versionArray = new byte[4];</span>
+<span class="nc" id="L173">        buf.get(versionArray);</span>
+<span class="nc bnc" id="L174" title="All 2 branches missed.">        if(!Arrays.equals(versionArray, ACCEPTED_VERSION)){</span>
+<span class="nc" id="L175">            throw new SffDecoderException(&quot;version not compatible with decoder&quot;);</span>
+        }
+
+<span class="nc" id="L178">    }</span>
+    private void verifyMagicNumber(DataInputStream in) throws IOException,
+            SffDecoderException {
+<span class="fc" id="L181">        byte[] actualMagicNumber = new byte[4];</span>
+<span class="fc" id="L182">        IOUtil.blockingRead(in, actualMagicNumber);</span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">        if(!Arrays.equals(actualMagicNumber, MAGIC_NUMBER)){</span>
+<span class="fc" id="L184">            throw new SffDecoderException(&quot;magic number does not match expected&quot;);</span>
+        }
+<span class="fc" id="L186">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

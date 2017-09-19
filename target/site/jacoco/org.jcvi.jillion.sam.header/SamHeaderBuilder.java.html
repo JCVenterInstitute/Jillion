@@ -1,0 +1,439 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SamHeaderBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.sam.header</a> &gt; <span class="el_source">SamHeaderBuilder.java</span></div><h1>SamHeaderBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.sam.header;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.jcvi.jillion.sam.SamRecord;
+import org.jcvi.jillion.sam.SamValidationException;
+import org.jcvi.jillion.sam.SortOrder;
+import org.jcvi.jillion.sam.attribute.SamAttribute;
+import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
+
+/**
+ * {@code Builder}
+ * is the builder class used to construct
+ * a {@link SamHeader}
+ * @author dkatzel
+ *
+ */
+public final class SamHeaderBuilder{
+	//default to unknown if not specified
+<span class="fc" id="L47">	private SortOrder sortOrder = SortOrder.UNKNOWN;</span>
+	private SamVersion version;
+	
+<span class="fc" id="L50">	private final Map&lt;String, SamReferenceSequence&gt; referenceSequences = new LinkedHashMap&lt;String, SamReferenceSequence&gt;();</span>
+	
+<span class="fc" id="L52">	private final Map&lt;String, SamReadGroup&gt; readGroups = new HashMap&lt;String, SamReadGroup&gt;();</span>
+	
+<span class="fc" id="L54">	private final Map&lt;String, SamProgram&gt; programs = new HashMap&lt;String, SamProgram&gt;();</span>
+	
+<span class="fc" id="L56">	private final List&lt;String&gt; comments = new ArrayList&lt;String&gt;();</span>
+	
+	/**
+	 * Create a new Builder instance with 
+	 * the default values
+	 * of &quot;unknown&quot; sort order
+	 * and nothing or empty for everything else.
+	 * 
+	 * Use the methods on the builder
+	 * to add/set values for the header.
+	 */
+<span class="fc" id="L67">	public SamHeaderBuilder(){</span>
+		//use defaults
+<span class="fc" id="L69">	}</span>
+	
+<span class="fc" id="L71">	public SamHeaderBuilder(SamHeader copy) {</span>
+<span class="fc" id="L72">		this.sortOrder = copy.getSortOrder();</span>
+<span class="fc" id="L73">		this.version = copy.getVersion();</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">		for(SamReferenceSequence ref :copy.getReferenceSequences()){</span>
+<span class="fc" id="L75">			referenceSequences.put(ref.getName(), ref);</span>
+<span class="fc" id="L76">		}</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">		for(SamReadGroup readGroup :copy.getReadGroups()){</span>
+<span class="fc" id="L78">			readGroups.put(readGroup.getId(), readGroup);</span>
+<span class="fc" id="L79">		}</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">		for(SamProgram prog :copy.getPrograms()){</span>
+<span class="fc" id="L81">			programs.put(prog.getId(), prog);</span>
+<span class="fc" id="L82">		}</span>
+<span class="fc" id="L83">		comments.addAll(copy.getComments());</span>
+<span class="fc" id="L84">	}</span>
+
+	public SamHeaderBuilder setVersion(SamVersion version){
+<span class="fc" id="L87">		this.version = version;</span>
+<span class="fc" id="L88">		return this;</span>
+	}
+	/**
+	 * Add a {@link ReferenceSequence}
+	 * to this header.  The order that the references are added
+	 * defines the alignment sorting order
+	 * for some {@link SortOrder} implementations.
+	 * @param refSeq the {@link ReferenceSequence} to add;
+	 * can not be null.
+	 * @return this
+	 * @throws NullPointerException if refSeq is null.
+	 * @throws IllegalArgumentException if a {@link ReferenceSequence}
+	 * with the same name has already been added to this builder.
+	 */
+	public SamHeaderBuilder addReferenceSequence(SamReferenceSequence refSeq){
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">		if(refSeq ==null){</span>
+<span class="nc" id="L104">			throw new NullPointerException(&quot;reference sequence can not be null&quot;);</span>
+		}
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">		if(referenceSequences.containsKey(refSeq.getName())){</span>
+<span class="nc" id="L107">			throw new IllegalArgumentException(&quot;reference sequence with same name already in header : &quot;+ refSeq.getName());</span>
+		}
+<span class="fc" id="L109">		referenceSequences.put(refSeq.getName(), refSeq);</span>
+		
+<span class="fc" id="L111">		return this;</span>
+	}
+	
+	/**
+	 * Add a {@link ReadGroup}
+	 * to this header. Each record added
+	 * must have a unique Id.
+	 * @param readGroup the {@link ReadGroup} to add;
+	 * can not be null.
+	 * @return this
+	 * @throws NullPointerException if readGroup is null.
+	 * @throws IllegalArgumentException if a {@link ReadGroup}
+	 * with the same id has already been added to this builder.
+	 */
+	public SamHeaderBuilder addReadGroup(SamReadGroup readGroup){
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">		if(readGroup ==null){</span>
+<span class="nc" id="L127">			throw new NullPointerException(&quot;read group can not be null&quot;);</span>
+		}
+<span class="pc bpc" id="L129" title="1 of 2 branches missed.">		if(readGroups.containsKey(readGroup.getId())){</span>
+<span class="nc" id="L130">			throw new IllegalArgumentException(&quot;read group with same id already in header : &quot;+ readGroup.getId());</span>
+		}
+<span class="fc" id="L132">		readGroups.put(readGroup.getId(), readGroup);</span>
+		
+<span class="fc" id="L134">		return this;</span>
+	}
+	/**
+	 * Add a {@link SamProgram}
+	 * to this header. Each record added
+	 * must have a unique Id.
+	 * @param program the {@link SamProgram} to add;
+	 * can not be null.
+	 * @return this
+	 * @throws NullPointerException if program is null.
+	 * @throws IllegalArgumentException if a {@link SamProgram}
+	 * with the same id has already been added to this builder.
+	 */
+	public SamHeaderBuilder addProgram(SamProgram program){
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">		if(program ==null){</span>
+<span class="nc" id="L149">			throw new NullPointerException(&quot;program can not be null&quot;);</span>
+		}
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">		if(programs.containsKey(program.getId())){</span>
+<span class="nc" id="L152">			throw new IllegalArgumentException(&quot;program with same id already in header : &quot;+ program.getId());</span>
+		}
+<span class="fc" id="L154">		programs.put(program.getId(), program);</span>
+		
+<span class="fc" id="L156">		return this;</span>
+	}
+	/**
+	 * Add a comment line to the list of comments.
+	 * @param commentLine the comment line to add;
+	 * can not be null.
+	 * @return this.
+	 * @throws NullPointerException if commentLine is null.
+	 */
+	public SamHeaderBuilder addComment(String commentLine){
+<span class="pc bpc" id="L166" title="1 of 2 branches missed.">		if(commentLine ==null){</span>
+<span class="nc" id="L167">			throw new NullPointerException(&quot;commentLine can not be null&quot;);</span>
+		}
+<span class="fc" id="L169">		comments.add(commentLine);</span>
+<span class="fc" id="L170">		return this;</span>
+	}
+	/**
+	 * Set the {@link SortOrder}.
+	 * @param order the SortOrder;
+	 * if this value is set to {@code null}
+	 * then the value will be changed to
+	 * {@link SortOrder#UNKNOWN}.
+	 * @return this.
+	 */
+	public SamHeaderBuilder setSortOrder(SortOrder order){
+<span class="pc bpc" id="L181" title="1 of 2 branches missed.">		if(order ==null){</span>
+<span class="nc" id="L182">			this.sortOrder = SortOrder.UNKNOWN;</span>
+		}else{
+<span class="fc" id="L184">			this.sortOrder = order;</span>
+		}
+<span class="fc" id="L186">		return this;</span>
+		
+	}
+	/**
+	 * Build a new SamHeader.
+	 * @return
+	 * @throws IllegalStateException if a {@link SamProgram}'s
+	 * previous program id is not also included in this header.
+	 */
+	public SamHeader build(){
+		//confirm all program's previous are known?
+<span class="fc bfc" id="L197" title="All 2 branches covered.">		for(SamProgram program : programs.values()){</span>
+<span class="fc" id="L198">			String prevId = program.getPreviousProgramId();</span>
+<span class="pc bpc" id="L199" title="3 of 4 branches missed.">			if(prevId !=null &amp;&amp; !programs.containsKey(prevId)){						</span>
+<span class="nc" id="L200">				throw new IllegalStateException(&quot;known previous program &quot; + prevId + &quot;referenced in &quot; + program.getId());</span>
+			}
+<span class="fc" id="L202">		}</span>
+<span class="fc" id="L203">		return new SamHeaderImpl(this);</span>
+	}
+
+	public boolean hasReferenceSequence(String name) {
+<span class="fc" id="L207">		return referenceSequences.containsKey(name);</span>
+	}
+
+	public SortOrder getSortOrder() {
+<span class="nc" id="L211">		return sortOrder;</span>
+	}
+	
+	private static final class SamHeaderImpl implements SamHeader {
+
+	        private final SortOrder sortOrder;
+	        private final SamVersion version;
+	        
+	        private final Map&lt;String, SamReferenceSequence&gt; referenceSequences;
+	        private final Map&lt;String, Integer&gt; referenceIndexMap;
+	        
+	        private final SamReferenceSequence[] indexedReferenceSequences;
+	        
+	        private final Map&lt;String, SamReadGroup&gt; readGroups;
+	        
+	        private final Map&lt;String, SamProgram&gt; programs;
+	        
+	        private final List&lt;String&gt; comments;
+	        
+	        
+<span class="fc" id="L231">	        SamHeaderImpl(SamHeaderBuilder builder){</span>
+<span class="fc" id="L232">	                this.sortOrder = builder.sortOrder;</span>
+<span class="fc" id="L233">	                this.version =  builder.version;</span>
+<span class="fc" id="L234">	                this.referenceSequences =  Collections.unmodifiableMap(new LinkedHashMap&lt;String, SamReferenceSequence&gt;(builder.referenceSequences));</span>
+	        
+<span class="fc" id="L236">	                this.readGroups =  Collections.unmodifiableMap(new HashMap&lt;String, SamReadGroup&gt;(builder.readGroups));</span>
+<span class="fc" id="L237">	                this.programs =  Collections.unmodifiableMap(new HashMap&lt;String, SamProgram&gt;(builder.programs));</span>
+	                
+<span class="fc" id="L239">	                this.comments = Collections.unmodifiableList(new ArrayList&lt;String&gt;(builder.comments));</span>
+<span class="fc" id="L240">	                referenceIndexMap = new LinkedHashMap&lt;String, Integer&gt;();</span>
+	               
+<span class="fc" id="L242">	                int i=0;</span>
+<span class="fc" id="L243">	                Collection&lt;SamReferenceSequence&gt; refSeqs = referenceSequences.values();</span>
+<span class="fc" id="L244">	                this.indexedReferenceSequences = new SamReferenceSequence[refSeqs.size()];</span>
+	                        
+<span class="fc bfc" id="L246" title="All 2 branches covered.">                        for(SamReferenceSequence refSeq : refSeqs){</span>
+<span class="fc" id="L247">                            indexedReferenceSequences[i] = refSeq;</span>
+<span class="fc" id="L248">	                    referenceIndexMap.put(refSeq.getName(), Integer.valueOf(i));	                       </span>
+<span class="fc" id="L249">	                    i++;</span>
+<span class="fc" id="L250">	                }</span>
+<span class="fc" id="L251">	        }</span>
+	        
+	    @Override
+	        public String toString() {
+<span class="nc" id="L255">	                return &quot;SamHeader [sortOrder=&quot; + sortOrder + &quot;, version=&quot; + version</span>
+	                                + &quot;, referenceSequences=&quot; + referenceSequences
+	                                + &quot;, referenceIndexMap=&quot; + referenceIndexMap + &quot;, readGroups=&quot;
+	                                + readGroups + &quot;, programs=&quot; + programs + &quot;, comments=&quot;
+	                                + comments + &quot;]&quot;;
+	        }
+
+
+
+	        @Override
+	    public SortOrder getSortOrder() {
+<span class="fc" id="L266">	                return sortOrder;</span>
+	        }
+
+
+
+	        @Override
+	    public SamVersion getVersion() {
+<span class="fc" id="L273">	                return version;</span>
+	        }
+
+	     
+
+	        @Override
+	    public SamReferenceSequence getReferenceSequence(String name){
+<span class="fc" id="L280">	                return referenceSequences.get(name);</span>
+	        }
+	     
+
+	        @Override
+	    public SamProgram getSamProgram(String id){
+<span class="fc" id="L286">	                return programs.get(id);</span>
+	        }
+
+
+	        @Override
+	    public SamReadGroup getReadGroup(String id){
+<span class="fc" id="L292">	                return readGroups.get(id);</span>
+	        }
+	        @Override
+	    public Collection&lt;SamReadGroup&gt; getReadGroups(){
+<span class="fc" id="L296">	                return readGroups.values();</span>
+	        }
+	        @Override
+	    public Collection&lt;SamProgram&gt; getPrograms(){
+<span class="fc" id="L300">	                return programs.values();</span>
+	        }
+	        @Override
+	    public Collection&lt;SamReferenceSequence&gt; getReferenceSequences(){
+<span class="fc" id="L304">	                return referenceSequences.values();</span>
+	        }
+
+	        
+	    @Override
+	        public int hashCode() {
+<span class="nc" id="L310">	                final int prime = 31;</span>
+<span class="nc" id="L311">	                int result = 1;</span>
+<span class="nc" id="L312">	                result = prime * result</span>
+<span class="nc" id="L313">	                                + comments.hashCode();</span>
+<span class="nc" id="L314">	                result = prime * result</span>
+<span class="nc" id="L315">	                                +  programs.hashCode();</span>
+<span class="nc" id="L316">	                result = prime * result</span>
+<span class="nc" id="L317">	                                +  readGroups.hashCode();</span>
+<span class="nc" id="L318">	                result = prime</span>
+	                                * result
+	                                + referenceSequences
+<span class="nc" id="L321">	                                                .hashCode();</span>
+<span class="nc" id="L322">	                result = prime * result</span>
+<span class="nc" id="L323">	                                +  sortOrder.hashCode();</span>
+<span class="nc bnc" id="L324" title="All 2 branches missed.">	                result = prime * result + (version==null? 0:version.hashCode());</span>
+<span class="nc" id="L325">	                return result;</span>
+	        }
+
+	    
+	    private &lt;T&gt; boolean collectionMatch(Iterable&lt;T&gt; expected, Iterable&lt;T&gt; actual){
+<span class="fc" id="L330">	        Iterator&lt;T&gt; expectedIter = expected.iterator();</span>
+<span class="fc" id="L331">	        Iterator&lt;T&gt; actualIter = actual.iterator();</span>
+	        
+<span class="fc bfc" id="L333" title="All 2 branches covered.">	        while(expectedIter.hasNext()){</span>
+<span class="pc bpc" id="L334" title="1 of 2 branches missed.">	           if(!actualIter.hasNext()){</span>
+<span class="nc" id="L335">	               return false;</span>
+	           }
+<span class="pc bpc" id="L337" title="1 of 2 branches missed.">	           if(!expectedIter.next().equals(actualIter.next())){</span>
+<span class="nc" id="L338">	               return false;</span>
+	           }
+	        }
+	        
+<span class="pc bpc" id="L342" title="1 of 2 branches missed.">	        if(actualIter.hasNext()){</span>
+<span class="nc" id="L343">	            return false;</span>
+	        }
+<span class="fc" id="L345">	        return true;</span>
+	    }
+	    @Override
+	        public boolean equals(Object obj) {
+<span class="pc bpc" id="L349" title="1 of 2 branches missed.">	                if (this == obj) {</span>
+<span class="nc" id="L350">	                        return true;</span>
+	                }
+	                
+<span class="pc bpc" id="L353" title="1 of 2 branches missed.">	                if (!(obj instanceof SamHeader)) {</span>
+<span class="nc" id="L354">	                        return false;</span>
+	                }
+	                //all this collectionMatch() checks 
+	                //because the getters return unmodifiableCollections
+	                //which don't delegate equals() checks
+	                //so we have to iterate through the whole thing
+	                //to see if the same elements are present
+	                //in the same order...
+<span class="fc" id="L362">	                SamHeader other = (SamHeader) obj;</span>
+<span class="pc bpc" id="L363" title="1 of 2 branches missed.">	                 if (!comments.equals(other.getComments())) {</span>
+<span class="nc" id="L364">	                        return false;</span>
+	                }
+<span class="pc bpc" id="L366" title="1 of 2 branches missed.">	                 if (!collectionMatch(programs.values(),other.getPrograms())) {</span>
+<span class="nc" id="L367">	                        return false;</span>
+	                }
+<span class="pc bpc" id="L369" title="1 of 2 branches missed.">	                if (!collectionMatch(readGroups.values(),other.getReadGroups())) {</span>
+<span class="nc" id="L370">	                        return false;</span>
+	                }
+<span class="pc bpc" id="L372" title="1 of 2 branches missed.">	                 if (!collectionMatch(referenceSequences.values(),other.getReferenceSequences())) {</span>
+<span class="nc" id="L373">	                        return false;</span>
+	                }
+<span class="pc bpc" id="L375" title="1 of 2 branches missed.">	                if (sortOrder != other.getSortOrder()) {</span>
+<span class="nc" id="L376">	                        return false;</span>
+	                }
+<span class="pc bpc" id="L378" title="1 of 2 branches missed.">	                if(version==null){</span>
+<span class="nc bnc" id="L379" title="All 2 branches missed.">	                    if(other.getVersion() !=null){</span>
+<span class="nc" id="L380">	                        return false;</span>
+	                    }
+<span class="pc bpc" id="L382" title="1 of 2 branches missed.">	                }else if (!version.equals(other.getVersion())) {</span>
+<span class="nc" id="L383">	                        return false;</span>
+	                }
+<span class="fc" id="L385">	                return true;</span>
+	        }
+
+
+
+	        @Override
+	    public List&lt;String&gt; getComments() {
+<span class="fc" id="L392">	                return comments;</span>
+	        }
+
+
+	        /**
+	         * Validate the given {@link SamRecord} using the given
+	         * {@link SamAttributeValidator}.
+	         * &lt;br/&gt;
+	         * A {@link SamRecord} is invalid if:
+	         * &lt;ul&gt;
+	         * &lt;li&gt;The {@link SamRecord#getReferenceName()} is not null
+	         * and this SamHeader does not have the {@link ReferenceSequence} via 
+	         * {@link #hasReferenceSequence(String)}.&lt;/li&gt;
+	         * &lt;li&gt;The {@link SamRecord#getNextName()} is not null
+	         * and this SamHeader does not have the {@link ReferenceSequence} via 
+	         * {@link #hasReferenceSequence(String)}.&lt;/li&gt;
+	         * &lt;li&gt;Any of the {@link SamAttribute}s in the {@link SamRecord}
+	         * fail the validation of the given {@link SamAttributeValidator}&lt;/li&gt;
+	         * &lt;/ul&gt;
+	         * @param record the {@link SamRecord} to validate;
+	         * can not be null.
+	         * @param attributeValidator the {@link SamAttributeValidator};
+	         * can not be null.
+	         * @throws SamValidationException if there is a validation problem.
+	         * @throws NullPointerException if either parameter is null.
+	         */
+	        @Override
+	    public void validateRecord(SamRecord record, SamAttributeValidator attributeValidator) throws SamValidationException{
+	                //reference names must be present in a SQ-SN tag
+<span class="fc" id="L421">	                String refName =record.getReferenceName();</span>
+<span class="pc bpc" id="L422" title="1 of 4 branches missed.">	                if(refName !=null &amp;&amp; this.getReferenceSequence(refName) ==null){</span>
+<span class="nc" id="L423">	                        throw new SamValidationException(&quot;unknown reference &quot;+ refName);</span>
+	                }
+<span class="fc" id="L425">	                String nextRefName = record.getNextName();</span>
+<span class="pc bpc" id="L426" title="2 of 6 branches missed.">	                if(nextRefName !=null &amp;&amp;  !&quot;=&quot;.equals(nextRefName) &amp;&amp; this.getReferenceSequence(nextRefName)==null){</span>
+<span class="nc" id="L427">	                        throw new SamValidationException(&quot;unknown next reference &quot;+ nextRefName);</span>
+	                }
+<span class="fc bfc" id="L429" title="All 2 branches covered.">	                for(SamAttribute attribute : record.getAttributes()){                   </span>
+<span class="fc" id="L430">	                                attributeValidator.validate(this, record, attribute);</span>
+	                        
+<span class="fc" id="L432">	                }</span>
+	                
+<span class="fc" id="L434">	        }</span>
+	    
+
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

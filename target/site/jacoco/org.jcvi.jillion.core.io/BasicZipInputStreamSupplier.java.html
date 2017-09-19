@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>BasicZipInputStreamSupplier.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.core.io</a> &gt; <span class="el_source">BasicZipInputStreamSupplier.java</span></div><h1>BasicZipInputStreamSupplier.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.core.io;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.zip.ZipInputStream;
+/**
+ * {@link InputStreamSupplier} that assumes the wrapped zip file
+ * only contains a single entry.
+ * 
+ * @author dkatzel
+ * 
+ * @since 5.2
+ *
+ */
+class BasicZipInputStreamSupplier extends AbstractFileInputStreamSupplier {
+
+    public BasicZipInputStreamSupplier(File file) {
+<span class="fc" id="L41">        super(file);</span>
+<span class="fc" id="L42">    }</span>
+
+    @Override
+    public InputStream get() throws IOException {
+<span class="fc" id="L46">        ZipInputStream in =new ZipInputStream(new BufferedInputStream(new FileInputStream(file)));</span>
+        //assume first record is the entry we care about?
+<span class="fc" id="L48">        in.getNextEntry();</span>
+<span class="fc" id="L49">        return in;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

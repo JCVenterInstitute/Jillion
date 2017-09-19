@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>NucleotideFastaFileReader.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.fasta.nt</a> &gt; <span class="el_source">NucleotideFastaFileReader.java</span></div><h1>NucleotideFastaFileReader.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.fasta.nt;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.function.Predicate;
+
+import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
+import org.jcvi.jillion.core.util.ThrowingStream;
+import org.jcvi.jillion.core.util.streams.ThrowingBiConsumer;
+
+<span class="nc" id="L31">public class NucleotideFastaFileReader {</span>
+    /**
+     * Get a {@link ThrowingStream} of all the {@link NucleotideFastaRecord}s
+     * in the given fasta file. 
+     * @param fastaFile the fasta file to parse; can not be null.
+     * @return a new {@link ThrowingStream} of {@link NucleotideFastaRecord}s.
+     * @throws IOException if there is a problem parsing the fasta file.
+     * 
+     * @throws NullPointerException if fastaFile is null.
+     * 
+     * @see #records(File, Predicate)
+     * @see NucleotideFastaFileDataStoreBuilder
+     */
+    public static ThrowingStream&lt;NucleotideFastaRecord&gt; records(File fastaFile) throws IOException{
+<span class="nc" id="L45">        return new NucleotideFastaFileDataStoreBuilder(fastaFile)</span>
+<span class="nc" id="L46">                        .hint(DataStoreProviderHint.ITERATION_ONLY)</span>
+<span class="nc" id="L47">                        .build()</span>
+<span class="nc" id="L48">                        .records();</span>
+    }
+    
+    /**
+     * Get a {@link ThrowingStream} of all the {@link NucleotideFastaRecord}s
+     * in the given fasta file. 
+     * @param fastaFile the fasta file to parse; can not be null.
+     * @return a new {@link ThrowingStream} of {@link NucleotideFastaRecord}s.
+     * @throws IOException if there is a problem parsing the fasta file.
+     * 
+     * @throws NullPointerException if fastaFile is null.
+     * 
+     * @see #records(File, Predicate)
+     * @see NucleotideFastaFileDataStoreBuilder
+     */
+    public static &lt;E extends Throwable&gt;void forEach(File fastaFile, ThrowingBiConsumer&lt;String, NucleotideFastaRecord, E&gt; consumer) throws IOException, E{
+<span class="nc" id="L64">        new NucleotideFastaFileDataStoreBuilder(fastaFile)</span>
+<span class="nc" id="L65">                        .hint(DataStoreProviderHint.ITERATION_ONLY)</span>
+<span class="nc" id="L66">                        .build()</span>
+<span class="nc" id="L67">                        .forEach(consumer);</span>
+<span class="nc" id="L68">    }</span>
+    /**
+     * Parse the given Fasta File and for each record that passes the given filters
+     * call the provided consumer.
+     * The filters are chained so that only ids that pass
+     * the filter will be parsed and given to the recordFilter.  Only
+     * records that pass the recordFilter will be passed to the consumer.
+     * 
+     *  
+     * @param fastaFile the fasta file to parse; can not be null.
+     * @param idFilter a Predicate of Ids to include in the for each.  If this
+     * predicate is null, then all records will be parsed.
+     * @param recordFilter a Predicate to include/exclude parsed records.  If this
+     * predicate is null, then all parsed records will be provided to the consumer.
+     * 
+     * @param consumer the consumer that will be called for each record that passes the filter.
+     * 
+     * @throws IOException if there is a problem parsing the fasta file.
+     * 
+     * @throws NullPointerException if fastaFile is null.
+     * 
+     * @see NucleotideFastaFileDataStoreBuilder
+     */
+    public static &lt;E extends Throwable&gt; void forEach(File fastaFile, Predicate&lt;String&gt; idFilter, Predicate&lt;NucleotideFastaRecord&gt; recordFilter,
+                        ThrowingBiConsumer&lt;String, NucleotideFastaRecord, E&gt; consumer) throws IOException, E{
+        
+        
+<span class="nc" id="L95">        new NucleotideFastaFileDataStoreBuilder(fastaFile)</span>
+<span class="nc bnc" id="L96" title="All 2 branches missed.">                        .hint(DataStoreProviderHint.ITERATION_ONLY)</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">                        .filter(idFilter==null? s-&gt; true: idFilter)</span>
+<span class="nc" id="L98">                        .filterRecords(recordFilter ==null ? r -&gt; true : recordFilter)</span>
+<span class="nc" id="L99">                        .build()</span>
+<span class="nc" id="L100">                        .forEach(consumer);</span>
+<span class="nc" id="L101">    }</span>
+    /**
+     * Get a {@link ThrowingStream} of all the {@link NucleotideFastaRecord}s
+     * in the given fasta file.  
+     * 
+     * @param fastaFile the fasta file to parse; can not be null.
+     * @param idFilter only include records that make the given filter return {@code true};
+     * can not be null.
+     * 
+     * @return a new {@link ThrowingStream} of {@link NucleotideFastaRecord}s.
+     * 
+     * @throws IOException if there is a problem parsing the fasta file.
+     * 
+     * @throws NullPointerException if either parameter is null.
+     * 
+     * @see #records(File, Predicate)
+     * @see NucleotideFastaFileDataStoreBuilder
+     */
+    public static ThrowingStream&lt;NucleotideFastaRecord&gt; records(File fastaFile, Predicate&lt;String&gt; idFilter) throws IOException{
+<span class="nc" id="L120">        return new NucleotideFastaFileDataStoreBuilder(fastaFile)</span>
+<span class="nc" id="L121">                        .hint(DataStoreProviderHint.ITERATION_ONLY)</span>
+<span class="nc" id="L122">                        .filter(idFilter)</span>
+<span class="nc" id="L123">                        .build()</span>
+<span class="nc" id="L124">                        .records();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

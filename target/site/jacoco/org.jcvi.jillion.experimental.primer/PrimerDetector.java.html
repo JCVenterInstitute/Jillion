@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>PrimerDetector.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.experimental.primer</a> &gt; <span class="el_source">PrimerDetector.java</span></div><h1>PrimerDetector.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.experimental.primer;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.jcvi.jillion.align.NucleotideSubstitutionMatrix;
+import org.jcvi.jillion.align.NucleotideSubstitutionMatrixBuilder;
+import org.jcvi.jillion.align.pairwise.NucleotidePairwiseSequenceAlignment;
+import org.jcvi.jillion.align.pairwise.PairwiseAlignmentBuilder;
+import org.jcvi.jillion.core.DirectedRange;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
+/**
+ * {@code PrimerDetector} scans a {@link NucleotideSequence}
+ * against a {@link NucleotideSequenceDataStore} of primer/vector sequences
+ * to find all primer hits.
+ * @author dkatzel
+ *
+ */
+public class PrimerDetector {
+	
+	
+   
+    
+    private final int minLength;
+    private final double minPercentIdentity;
+    private final boolean alsoCheckReverseCompliment;
+    private final Integer maxNumMismatches;
+   // private int gapOpenPenalty=-2;
+<span class="pc" id="L59">    private int gapOpenPenalty=-17;</span>
+<span class="pc" id="L60">    private int gapExtendPenalty=-5;</span>
+    /*
+    private static final NucleotideSubstitutionMatrix MATRIX = new NucleotideSubstitutionMatrixBuilder(-1)
+																.setMatch(4)
+																.ambiguityScore(2)
+																.build();
+*/
+<span class="fc" id="L67">    private static final NucleotideSubstitutionMatrix MATRIX = new NucleotideSubstitutionMatrixBuilder(-14)</span>
+<span class="fc" id="L68">								.setMatch(5)</span>
+<span class="fc" id="L69">								.ambiguityScore(2)</span>
+<span class="fc" id="L70">								.build();</span>
+    /**
+     * Create a new {@link PrimerDetector} with that will only find
+     * primers with the given minimum length match and min percent identity.
+     * 
+     * @param minLength the min length of a primer alignment match to report.
+     * @param minPercentIdentity the minimum percent identity.
+     * 
+     */
+    public PrimerDetector(int minLength, double minPercentIdentity) {
+<span class="fc" id="L80">        this(minLength, minPercentIdentity, true);</span>
+<span class="fc" id="L81">    }</span>
+    
+    private PrimerDetector(int minLength, int maxAllowedMismatches,
+    		boolean alsoCheckReverseCompliment,
+<span class="nc" id="L85">    		int gapOpenPenalty) {</span>
+<span class="nc" id="L86">    	this.minLength = minLength;</span>
+<span class="nc" id="L87">        this.minPercentIdentity = 0D;</span>
+<span class="nc" id="L88">        this.alsoCheckReverseCompliment = alsoCheckReverseCompliment;</span>
+<span class="nc" id="L89">        this.maxNumMismatches = maxAllowedMismatches;</span>
+<span class="nc" id="L90">        this.gapOpenPenalty = gapOpenPenalty;</span>
+<span class="nc" id="L91">    }</span>
+<span class="fc" id="L92">    public PrimerDetector(int minLength, double minPercentIdentity, boolean alsoCheckReverseCompliment) {</span>
+<span class="fc" id="L93">        this.minLength = minLength;</span>
+<span class="fc" id="L94">        this.minPercentIdentity = minPercentIdentity;</span>
+<span class="fc" id="L95">        this.alsoCheckReverseCompliment = alsoCheckReverseCompliment;</span>
+<span class="fc" id="L96">        this.maxNumMismatches = null;</span>
+<span class="fc" id="L97">    }</span>
+
+    public List&lt;DirectedRange&gt; detect(NucleotideSequence sequence,
+            NucleotideSequenceDataStore primersDataStore) {
+    	
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">    	if(sequence.getLength() ==0){</span>
+    		//obviously an empty sequence can't have any hits
+<span class="nc" id="L104">    		return Collections.emptyList();</span>
+    	}
+    	
+<span class="fc" id="L107">        List&lt;DirectedRange&gt; ranges = new ArrayList&lt;DirectedRange&gt;();</span>
+<span class="fc" id="L108">        StreamingIterator&lt;NucleotideSequence&gt; iter =null; </span>
+        try{
+<span class="fc" id="L110">        	iter =primersDataStore.iterator();</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">        while(iter.hasNext()){</span>
+<span class="fc" id="L112">        	NucleotideSequence primer = iter.next();</span>
+<span class="pc bpc" id="L113" title="1 of 2 branches missed.">            if(primer.getLength()&gt;=minLength){</span>
+               
+<span class="fc" id="L115">            	NucleotidePairwiseSequenceAlignment forwardAlignment =PairwiseAlignmentBuilder.createNucleotideAlignmentBuilder(primer, sequence, MATRIX)</span>
+<span class="fc" id="L116">																					.gapPenalty(gapOpenPenalty, gapExtendPenalty)</span>
+<span class="fc" id="L117">																					.build();</span>
+            	
+                final NucleotidePairwiseSequenceAlignment reverseAlignment;
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">                if(alsoCheckReverseCompliment){</span>
+<span class="fc" id="L121">                	NucleotideSequence reversePrimer = new NucleotideSequenceBuilder(primer)</span>
+<span class="fc" id="L122">												.reverseComplement()</span>
+<span class="fc" id="L123">												.build();</span>
+<span class="fc" id="L124">					reverseAlignment =  PairwiseAlignmentBuilder.createNucleotideAlignmentBuilder(reversePrimer, sequence, MATRIX)</span>
+<span class="fc" id="L125">																.gapPenalty(gapOpenPenalty, gapExtendPenalty)</span>
+<span class="fc" id="L126">																.build();</span>
+<span class="fc" id="L127">                }else{</span>
+<span class="nc" id="L128">                    reverseAlignment = NullAlignment.INSTANCE;</span>
+                }
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">                if(maxNumMismatches ==null){</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">                	boolean forwardValid = forwardAlignment.getPercentIdentity() &gt; minPercentIdentity</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">                					&amp;&amp; forwardAlignment.getAlignmentLength() &gt;= minLength;</span>
+					
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">                	boolean reverseValid = reverseAlignment.getPercentIdentity() &gt; minPercentIdentity</span>
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        					&amp;&amp; reverseAlignment.getAlignmentLength() &gt;= minLength;	</span>
+        					
+<span class="fc bfc" id="L137" title="All 4 branches covered.">      	           if(forwardValid || reverseValid){</span>
+      	        	  final Direction direction;
+	                   final NucleotidePairwiseSequenceAlignment bestAlignment;
+<span class="fc bfc" id="L140" title="All 4 branches covered.">		               if(forwardValid &amp;&amp; !reverseValid){</span>
+<span class="fc" id="L141">		            	   bestAlignment = forwardAlignment;</span>
+<span class="fc" id="L142">	                   		direction = Direction.FORWARD;</span>
+<span class="pc bpc" id="L143" title="1 of 4 branches missed.">		               }else if(!forwardValid &amp;&amp; reverseValid){</span>
+<span class="fc" id="L144">		            	   bestAlignment = reverseAlignment;</span>
+<span class="fc" id="L145">	                   	direction = Direction.REVERSE;</span>
+		               }else{
+		            	   //forward AND reverse both valid
+<span class="fc bfc" id="L148" title="All 2 branches covered.">		                    if(reverseAlignment.getScore() &gt; forwardAlignment.getScore()){</span>
+<span class="fc" id="L149">		                    	bestAlignment = reverseAlignment;</span>
+<span class="fc" id="L150">		                    	direction = Direction.REVERSE;</span>
+		                    }else{
+<span class="fc" id="L152">		                    	bestAlignment = forwardAlignment;</span>
+<span class="fc" id="L153">		                    	direction = Direction.FORWARD;</span>
+		                    }	                	
+		                }
+<span class="fc" id="L156">	               DirectedRange range = DirectedRange.create(</span>
+<span class="fc" id="L157">                   		bestAlignment.getSubjectRange().asRange(), direction);</span>
+<span class="fc" id="L158">                   ranges.add(range);</span>
+      	           }
+<span class="fc" id="L160">                }else{</span>
+<span class="nc" id="L161">                	int maxAllowedMismatches = maxNumMismatches;</span>
+<span class="nc bnc" id="L162" title="All 4 branches missed.">                	boolean forwardIsCandidate = forwardAlignment.getAlignmentLength() &gt;= minLength &amp;&amp; forwardAlignment.getNumberOfMismatches() &lt;= maxAllowedMismatches;</span>
+<span class="nc bnc" id="L163" title="All 4 branches missed.">                	boolean reverseIsCandidate = reverseAlignment.getAlignmentLength() &gt;= minLength &amp;&amp; reverseAlignment.getNumberOfMismatches() &lt;= maxAllowedMismatches;</span>
+                	
+<span class="nc bnc" id="L165" title="All 4 branches missed.">                	if(forwardIsCandidate &amp;&amp; reverseIsCandidate){</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">                		if(reverseAlignment.getScore() &gt; forwardAlignment.getScore()){</span>
+<span class="nc" id="L167">                			DirectedRange range = DirectedRange.create(</span>
+<span class="nc" id="L168">	                    			reverseAlignment.getSubjectRange().asRange(), Direction.REVERSE);</span>
+<span class="nc" id="L169">		                    ranges.add(range);</span>
+<span class="nc" id="L170">                		}else{</span>
+<span class="nc" id="L171">                			DirectedRange range = DirectedRange.create(</span>
+<span class="nc" id="L172">	                    			forwardAlignment.getSubjectRange().asRange(), Direction.FORWARD);</span>
+<span class="nc" id="L173">		                    ranges.add(range);</span>
+<span class="nc" id="L174">                		}</span>
+<span class="nc bnc" id="L175" title="All 2 branches missed.">                	}else if(forwardIsCandidate){</span>
+<span class="nc" id="L176">                		DirectedRange range = DirectedRange.create(</span>
+<span class="nc" id="L177">                    			forwardAlignment.getSubjectRange().asRange(), Direction.FORWARD);</span>
+<span class="nc" id="L178">	                    ranges.add(range);</span>
+<span class="nc bnc" id="L179" title="All 2 branches missed.">                	}else if(reverseIsCandidate){</span>
+<span class="nc" id="L180">                		DirectedRange range = DirectedRange.create(</span>
+<span class="nc" id="L181">                    			reverseAlignment.getSubjectRange().asRange(), Direction.REVERSE);</span>
+<span class="nc" id="L182">	                    ranges.add(range);</span>
+                	}
+	                   
+
+                }
+            }
+<span class="fc" id="L188">        }</span>
+<span class="fc" id="L189">        return ranges;</span>
+<span class="nc" id="L190">        } catch (DataStoreException e) {</span>
+<span class="nc" id="L191">			throw new IllegalStateException(&quot;error iterating over nucleotide sequences&quot;,e);</span>
+		}finally{
+<span class="pc" id="L193">        	IOUtil.closeAndIgnoreErrors(iter);</span>
+        }
+    }
+    
+    public List&lt;PrimerHit&gt; detect(NucleotideSequence sequence,
+            NucleotideFastaDataStore primersDataStore) {
+<span class="nc" id="L199">        List&lt;PrimerHit&gt; hits = new ArrayList&lt;PrimerHit&gt;();</span>
+<span class="nc" id="L200">        StreamingIterator&lt;NucleotideFastaRecord&gt; iter =null; </span>
+        try{
+<span class="nc" id="L202">        	iter =primersDataStore.iterator();</span>
+<span class="nc bnc" id="L203" title="All 2 branches missed.">        while(iter.hasNext()){</span>
+<span class="nc" id="L204">        	NucleotideFastaRecord fasta = iter.next();</span>
+<span class="nc" id="L205">        	NucleotideSequence primer = fasta.getSequence();</span>
+<span class="nc bnc" id="L206" title="All 2 branches missed.">            if(primer.getLength()&gt;=minLength){</span>
+
+<span class="nc" id="L208">            	NucleotidePairwiseSequenceAlignment forwardAlignment =PairwiseAlignmentBuilder.createNucleotideAlignmentBuilder(primer, sequence, MATRIX)</span>
+<span class="nc" id="L209">																		.gapPenalty(gapOpenPenalty, -1)</span>
+<span class="nc" id="L210">																		.build();</span>
+
+                final NucleotidePairwiseSequenceAlignment reverseAlignment;
+<span class="nc bnc" id="L213" title="All 2 branches missed.">                if(alsoCheckReverseCompliment){</span>
+<span class="nc" id="L214">                	NucleotideSequence reversePrimer = new NucleotideSequenceBuilder(primer)</span>
+<span class="nc" id="L215">												.reverseComplement()</span>
+<span class="nc" id="L216">												.build();</span>
+					
+<span class="nc" id="L218">					reverseAlignment =PairwiseAlignmentBuilder.createNucleotideAlignmentBuilder(reversePrimer, sequence, MATRIX)</span>
+<span class="nc" id="L219">							.gapPenalty(gapOpenPenalty, -1)</span>
+<span class="nc" id="L220">							.build();</span>
+
+<span class="nc" id="L222">                }else{</span>
+<span class="nc" id="L223">                    reverseAlignment = NullAlignment.INSTANCE;</span>
+                }
+<span class="nc bnc" id="L225" title="All 2 branches missed.">                if(maxNumMismatches ==null){</span>
+                	
+<span class="nc bnc" id="L227" title="All 4 branches missed.">	                if(forwardAlignment.getPercentIdentity() &gt; minPercentIdentity || reverseAlignment.getPercentIdentity() &gt; minPercentIdentity){</span>
+	                    final Direction direction;
+	                    final NucleotidePairwiseSequenceAlignment bestAlignment;
+<span class="nc bnc" id="L230" title="All 2 branches missed.">	                    if(reverseAlignment.getScore() &gt; forwardAlignment.getScore()){</span>
+<span class="nc" id="L231">	                    	bestAlignment = reverseAlignment;</span>
+<span class="nc" id="L232">	                    	direction = Direction.REVERSE;</span>
+	                    }else{
+<span class="nc" id="L234">	                    	bestAlignment = forwardAlignment;</span>
+<span class="nc" id="L235">	                    	direction = Direction.FORWARD;</span>
+	                    }
+<span class="nc" id="L237">	                	DirectedRange range = DirectedRange.create(</span>
+<span class="nc" id="L238">	                    		bestAlignment.getSubjectRange().asRange(), direction);</span>
+<span class="nc" id="L239">	                    hits.add(new PrimerHit(fasta.getId(), range));</span>
+<span class="nc" id="L240">	                }</span>
+                }else{
+<span class="nc" id="L242">                	int maxAllowedMismatches = maxNumMismatches;</span>
+<span class="nc" id="L243">                	int numberOfMissingForwardBases = Math.max(0, minLength - forwardAlignment.getAlignmentLength());</span>
+<span class="nc" id="L244">                	int numberOfMissingReverseBases = Math.max(0, minLength - reverseAlignment.getAlignmentLength());</span>
+                	
+<span class="nc" id="L246">                	int numberOfForwardMismatchesAndMissingBases = forwardAlignment.getNumberOfMismatches() + numberOfMissingForwardBases;</span>
+<span class="nc" id="L247">                	int numberOfReverseMismatchesAndMissingBases = reverseAlignment.getNumberOfMismatches() + numberOfMissingReverseBases;</span>
+                	
+<span class="nc bnc" id="L249" title="All 2 branches missed.">                	boolean forwardIsCandidate =  numberOfForwardMismatchesAndMissingBases &lt;= maxAllowedMismatches;</span>
+<span class="nc bnc" id="L250" title="All 2 branches missed.">                	boolean reverseIsCandidate = numberOfReverseMismatchesAndMissingBases &lt;= maxAllowedMismatches;</span>
+                	
+<span class="nc bnc" id="L252" title="All 4 branches missed.">                	if(forwardIsCandidate &amp;&amp; reverseIsCandidate){</span>
+<span class="nc bnc" id="L253" title="All 2 branches missed.">                		if(reverseAlignment.getScore() &gt; forwardAlignment.getScore()){</span>
+<span class="nc" id="L254">                			DirectedRange range = DirectedRange.create(</span>
+<span class="nc" id="L255">	                    			new Range.Builder(reverseAlignment.getSubjectRange().asRange())</span>
+<span class="nc" id="L256">	                    			.expandBegin(numberOfMissingReverseBases)</span>
+<span class="nc" id="L257">	                    			.build(), </span>
+	                    			
+	                    			Direction.REVERSE);
+<span class="nc" id="L260">                			hits.add(new PrimerHit(fasta.getId(), range));</span>
+<span class="nc" id="L261">                		}else{</span>
+<span class="nc" id="L262">                			DirectedRange range = DirectedRange.create(</span>
+<span class="nc" id="L263">                					new Range.Builder(forwardAlignment.getSubjectRange().asRange())</span>
+<span class="nc" id="L264">                					.expandEnd(numberOfMissingForwardBases)</span>
+<span class="nc" id="L265">                					.build(), </span>
+                					Direction.FORWARD);
+<span class="nc" id="L267">                			hits.add(new PrimerHit(fasta.getId(), range));</span>
+<span class="nc" id="L268">                		}</span>
+<span class="nc bnc" id="L269" title="All 2 branches missed.">                	}else if(forwardIsCandidate){</span>
+<span class="nc" id="L270">                		DirectedRange range = DirectedRange.create(</span>
+<span class="nc" id="L271">                				new Range.Builder(forwardAlignment.getSubjectRange().asRange())</span>
+<span class="nc" id="L272">                				.expandEnd(numberOfMissingForwardBases)</span>
+<span class="nc" id="L273">                				.build(),</span>
+                				Direction.FORWARD);
+<span class="nc" id="L275">                		hits.add(new PrimerHit(fasta.getId(), range));</span>
+<span class="nc bnc" id="L276" title="All 2 branches missed.">                	}else if(reverseIsCandidate){</span>
+<span class="nc" id="L277">                		DirectedRange range = DirectedRange.create(</span>
+<span class="nc" id="L278">                				new Range.Builder(reverseAlignment.getSubjectRange().asRange())</span>
+<span class="nc" id="L279">                				.expandBegin(numberOfMissingReverseBases)</span>
+<span class="nc" id="L280">                				.build(), Direction.REVERSE);</span>
+<span class="nc" id="L281">                		hits.add(new PrimerHit(fasta.getId(), range));</span>
+                	}
+	                   
+
+                }
+            }
+<span class="nc" id="L287">        }</span>
+<span class="nc" id="L288">        return hits;</span>
+<span class="nc" id="L289">        } catch (DataStoreException e) {</span>
+<span class="nc" id="L290">			throw new IllegalStateException(&quot;error iterating over nucleotide sequences&quot;,e);</span>
+		}finally{
+<span class="nc" id="L292">        	IOUtil.closeAndIgnoreErrors(iter);</span>
+        }
+    }
+
+   
+
+	public static final class PrimerHit{
+    	private final String id;
+    	private final DirectedRange directedRange;
+    	
+<span class="nc" id="L302">		private PrimerHit(String id, DirectedRange directedRange) {</span>
+<span class="nc" id="L303">			this.id = id;</span>
+<span class="nc" id="L304">			this.directedRange = directedRange;</span>
+<span class="nc" id="L305">		}</span>
+
+		public String getId() {
+<span class="nc" id="L308">			return id;</span>
+		}
+
+		public DirectedRange getDirectedRange() {
+<span class="nc" id="L312">			return directedRange;</span>
+		}
+
+		@Override
+		public String toString() {
+<span class="nc" id="L317">			return &quot;PrimerHit [id=&quot; + id + &quot;, directedRange=&quot; + directedRange</span>
+					+ &quot;]&quot;;
+		}
+    }
+	
+	public static PrimerDetector create(int minLength, int maxAllowedMismatches){
+<span class="nc" id="L323">		return new PrimerDetector(minLength, maxAllowedMismatches, true, -200);</span>
+	}
+	/**
+	 * {@code NullAlignment} is a Null Object singleton
+	 * implementation of a {@link NucleotidePairwiseSequenceAlignment}
+	 * when we want to represent that no alignment exist.
+	 * @author dkatzel
+	 *
+	 */
+<span class="nc" id="L332">    private enum  NullAlignment implements NucleotidePairwiseSequenceAlignment{</span>
+
+<span class="nc" id="L334">    	INSTANCE</span>
+    	;
+		@Override
+		public float getScore() {
+<span class="nc" id="L338">			return 0;</span>
+		}
+
+		@Override
+		public double getPercentIdentity() {
+<span class="nc" id="L343">			return 0;</span>
+		}
+
+		@Override
+		public int getAlignmentLength() {
+<span class="nc" id="L348">			return 0;</span>
+		}
+
+		@Override
+		public int getNumberOfMismatches() {
+<span class="nc" id="L353">			return 0;</span>
+		}
+
+		@Override
+		public int getNumberOfGapOpenings() {
+<span class="nc" id="L358">			return 0;</span>
+		}
+
+		@Override
+		public NucleotideSequence getGappedQueryAlignment() {
+<span class="nc" id="L363">			return null;</span>
+		}
+
+		@Override
+		public NucleotideSequence getGappedSubjectAlignment() {
+<span class="nc" id="L368">			return null;</span>
+		}
+
+		@Override
+		public DirectedRange getQueryRange() {
+<span class="nc" id="L373">			return null;</span>
+		}
+
+		@Override
+		public DirectedRange getSubjectRange() {
+<span class="nc" id="L378">			return null;</span>
+		}
+    	
+    };
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

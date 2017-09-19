@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>RawFileInputStreamSupplier.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.core.io</a> &gt; <span class="el_source">RawFileInputStreamSupplier.java</span></div><h1>RawFileInputStreamSupplier.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.core.io;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Optional;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
+/**
+ * An {@link InputStreamSupplier}
+ * that creates {@link InputStream}s from 
+ * normal files (not compressed etc).
+ * 
+ * 
+ * @author dkatzel
+ *
+ */
+class RawFileInputStreamSupplier implements InputStreamSupplier {
+    private final File file;
+    
+<span class="fc" id="L44">    RawFileInputStreamSupplier(File file){</span>
+        //assume since this class is package private
+        //that the file is not null, exists and is readable.
+<span class="fc" id="L47">        this.file = file;</span>
+<span class="fc" id="L48">    }</span>
+    
+    @Override
+    public InputStream get() throws IOException {
+<span class="fc" id="L52">        return new BufferedInputStream(new FileInputStream(file));</span>
+    }
+    
+    
+    @Override
+    public Optional&lt;File&gt; getFile() {
+<span class="fc" id="L58">        return Optional.of(file);</span>
+    }
+
+    /**
+     * Uses {@link RandomAccessFileInputStream} to start
+     * the stream directly from the start offset without
+     * having to read/skip all the beginning bytes.
+     */
+    @Override
+    public InputStream get(long startOffset) throws IOException{
+<span class="fc" id="L68">        return new RandomAccessFileInputStream(file, startOffset);</span>
+    }
+
+	@Override
+	public InputStream get(Range range) throws IOException {
+<span class="fc" id="L73">		 return new RandomAccessFileInputStream(file, range.getBegin(), range.getLength());</span>
+	}
+    
+    
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

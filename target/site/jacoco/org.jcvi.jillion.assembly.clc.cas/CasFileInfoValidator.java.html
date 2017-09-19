@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CasFileInfoValidator.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.clc.cas</a> &gt; <span class="el_source">CasFileInfoValidator.java</span></div><h1>CasFileInfoValidator.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly.clc.cas;
+
+import java.io.File;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
+import org.jcvi.jillion.trace.fastq.FastqDataStore;
+import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
+import org.jcvi.jillion.trace.fastq.FastqRecord;
+import org.jcvi.jillion.trace.sff.SffFileDataStore;
+import org.jcvi.jillion.trace.sff.SffFileDataStoreBuilder;
+import org.jcvi.jillion.trace.sff.SffFlowgram;
+import org.jcvi.jillion.trace.sff.SffUtil;
+
+final class CasFileInfoValidator {
+	
+<span class="nc" id="L47">	private CasFileInfoValidator(){</span>
+		//can not instantiate
+<span class="nc" id="L49">	}</span>
+	
+	private static ActualFileInfo getActualFileInfoFor(File file) throws DataStoreException, IOException{
+<span class="fc" id="L52">        ReadFileType readType = ReadFileType.getTypeFromFile(file);</span>
+<span class="pc bpc" id="L53" title="3 of 4 branches missed.">           switch(readType){</span>
+	            case FASTQ: 
+<span class="nc" id="L55">	            	return getFastqInfo(file);</span>
+	            case SFF:
+<span class="nc" id="L57">	            	return getSffInfo(file);</span>
+	            case FASTA:
+<span class="fc" id="L59">                       return getFastaInfo(file);</span>
+	            default: 
+<span class="nc" id="L61">	            	throw new IllegalArgumentException(&quot;unsupported type &quot;+ file.getName());</span>
+	            }
+        
+   }
+	
+	/**
+	 * Validate that the information contained in the
+	 * given {@link CasFileInfo} is still correct
+	 * for the referenced file(s) and throw
+	 * an exception if it's not.
+	 * @param dirOfCas the directory that the cas file is located.
+	 * @param expected the {@link CasFileInfo} of the file(s) to check
+	 * and verify; can not be null.
+	 * @throws DataStoreException if there is a problem parsing the files.
+	 * @throws IOException if the files don't exist or contains multiple encodings
+	 * @throws IllegalStateException if there is a validation error.
+	 */
+	public static void validateFileInfo(File dirOfCas, CasFileInfo expected) throws DataStoreException, IOException{
+<span class="fc" id="L79">		ActualFileInfo actualInfo = new ActualFileInfo();</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">		for(String fileName : expected.getFileNames()){</span>
+<span class="fc" id="L81">			File file = CasUtil.getFileFor(dirOfCas, fileName);</span>
+<span class="fc" id="L82">			actualInfo.add(getActualFileInfoFor(file));</span>
+<span class="fc" id="L83">		}</span>
+<span class="fc" id="L84">		actualInfo.assertMatches(dirOfCas, expected);</span>
+<span class="fc" id="L85">	}</span>
+
+	private static ActualFileInfo getFastaInfo(File fastaFile) throws IOException, DataStoreException {
+<span class="pc" id="L88">		try(NucleotideFastaDataStore datastore = new NucleotideFastaFileDataStoreBuilder(fastaFile)</span>
+<span class="fc" id="L89">															.hint(DataStoreProviderHint.ITERATION_ONLY)</span>
+<span class="fc" id="L90">															.build();</span>
+				
+<span class="fc" id="L92">			StreamingIterator&lt;NucleotideFastaRecord&gt; iter = datastore.iterator();</span>
+			){
+<span class="fc" id="L94">			ActualFileInfo actual = new ActualFileInfo();</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">			while(iter.hasNext()){</span>
+<span class="fc" id="L96">				actual.add(iter.next().getSequence());</span>
+			}
+<span class="fc" id="L98">			return actual;</span>
+<span class="pc bpc" id="L99" title="12 of 16 branches missed.">		}</span>
+
+	}
+	
+	private static ActualFileInfo getFastqInfo(File fastqFile) throws IOException, DataStoreException {
+<span class="nc" id="L104">		try(FastqDataStore datastore = new FastqFileDataStoreBuilder(fastqFile)</span>
+<span class="nc" id="L105">															.hint(DataStoreProviderHint.ITERATION_ONLY)</span>
+<span class="nc" id="L106">															.build();</span>
+				
+<span class="nc" id="L108">			StreamingIterator&lt;FastqRecord&gt; iter = datastore.iterator();</span>
+			){
+<span class="nc" id="L110">			ActualFileInfo actual = new ActualFileInfo();</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">			while(iter.hasNext()){</span>
+<span class="nc" id="L112">				actual.add(iter.next().getNucleotideSequence());</span>
+			}
+<span class="nc" id="L114">			return actual;</span>
+<span class="nc bnc" id="L115" title="All 16 branches missed.">		}</span>
+
+	}
+	
+	private static ActualFileInfo getSffInfo(File sffFile) throws IOException, DataStoreException {
+<span class="nc" id="L120">		try(SffFileDataStore datastore = new SffFileDataStoreBuilder(sffFile)</span>
+<span class="nc" id="L121">															.hint(DataStoreProviderHint.ITERATION_ONLY)</span>
+<span class="nc" id="L122">															.build();</span>
+				
+<span class="nc" id="L124">			StreamingIterator&lt;SffFlowgram&gt; iter = datastore.iterator();</span>
+			){
+<span class="nc" id="L126">			ActualFileInfo actual = new ActualFileInfo();</span>
+<span class="nc bnc" id="L127" title="All 2 branches missed.">			while(iter.hasNext()){</span>
+				//cas files only count the trimmed
+				//part of the sequence
+<span class="nc" id="L130">				SffFlowgram flowgram = iter.next();</span>
+<span class="nc" id="L131">				Range trimRange = SffUtil.computeTrimRangeFor(flowgram);</span>
+<span class="nc" id="L132">				actual.add(flowgram.getNucleotideSequence().toBuilder()</span>
+<span class="nc" id="L133">											.trim(trimRange)</span>
+<span class="nc" id="L134">											.build());</span>
+<span class="nc" id="L135">			}</span>
+<span class="nc" id="L136">			return actual;</span>
+<span class="nc bnc" id="L137" title="All 16 branches missed.">		}</span>
+
+	}
+
+	
+	
+	
+<span class="fc" id="L144">	private static final class ActualFileInfo{</span>
+<span class="fc" id="L145">		long numberOfRecords = 0;</span>
+<span class="fc" id="L146">		BigInteger numberOfResidues = BigInteger.valueOf(0);</span>
+		
+		public void add(NucleotideSequence seq){
+<span class="fc" id="L149">			numberOfRecords ++;</span>
+<span class="fc" id="L150">			numberOfResidues = numberOfResidues.add(BigInteger.valueOf(seq.getLength()));</span>
+<span class="fc" id="L151">		}</span>
+		
+		public void add(ActualFileInfo other){
+<span class="fc" id="L154">			this.numberOfRecords += other.numberOfRecords;</span>
+<span class="fc" id="L155">			this.numberOfResidues = this.numberOfResidues.add(other.numberOfResidues);</span>
+<span class="fc" id="L156">		}</span>
+		
+		public void assertMatches(File dirOfCas, CasFileInfo expected) throws IOException{
+<span class="pc bpc" id="L159" title="1 of 2 branches missed.">			if(numberOfRecords !=expected.getNumberOfSequences()){</span>
+<span class="nc" id="L160">	    		throw new IllegalStateException(</span>
+<span class="nc" id="L161">	    				&quot;file(s) &quot;+getActualFilePaths(dirOfCas, expected) +&quot; have wrong number of sequences: &quot; +</span>
+<span class="nc" id="L162">	    						numberOfRecords + &quot; instead of &quot; + expected.getNumberOfSequences() + &quot;. Usually this is caused by the input files getting updated after the cas was created&quot;);</span>
+	    	}
+			
+<span class="pc bpc" id="L165" title="1 of 2 branches missed.">			if(!numberOfResidues.equals(expected.getNumberOfResidues())){</span>
+<span class="nc" id="L166">	    		throw new IllegalStateException(</span>
+<span class="nc" id="L167">	    				&quot;file(s) &quot;+getActualFilePaths(dirOfCas, expected) +&quot; have wrong number of residues: &quot; +</span>
+<span class="nc" id="L168">	    						numberOfResidues + &quot; instead of &quot; + expected.getNumberOfResidues() + &quot;. Usually this is caused by the input files getting updated after the cas was created&quot;);</span>
+	    	}
+<span class="fc" id="L170">		}</span>
+	}
+	
+	private static List&lt;String&gt; getActualFilePaths(File dirOfCas, CasFileInfo info) throws IOException{
+<span class="nc" id="L174">		List&lt;String&gt; fileNames = info.getFileNames();</span>
+<span class="nc" id="L175">		List&lt;String&gt; list = new ArrayList&lt;&gt;(fileNames.size());</span>
+<span class="nc bnc" id="L176" title="All 2 branches missed.">		for(String filename : fileNames){</span>
+<span class="nc" id="L177">			list.add(CasUtil.getFileFor(dirOfCas, filename).getCanonicalPath());</span>
+<span class="nc" id="L178">		}</span>
+<span class="nc" id="L179">		return list;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

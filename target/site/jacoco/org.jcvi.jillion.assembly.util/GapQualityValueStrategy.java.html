@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>GapQualityValueStrategy.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.util</a> &gt; <span class="el_source">GapQualityValueStrategy.java</span></div><h1>GapQualityValueStrategy.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly.util;
+
+import java.util.List;
+
+import org.jcvi.jillion.assembly.AssembledRead;
+import org.jcvi.jillion.assembly.AssemblyUtil;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+
+/**
+ * {@code GapQualityValueStrategies} are different 
+ * strategy implementations on how to assign
+ * quality values to gaps in a sequence.  Usually,
+ * sequence machines create ungapped sequences along 
+ * with associated quality scores.  Once a sequence has been 
+ * assembled, there might be gaps introduced that won't have a corresponding
+ * quality value associated with them.  This class
+ * has different implementations that can compute the quality values
+ * for these gaps differently.
+ * 
+ * @author dkatzel
+ *
+ *
+ */
+<span class="pc" id="L49">public enum GapQualityValueStrategy{</span>
+    /**
+     * {@code LOWEST_FLANKING} will find the lowest
+     * non-gap quality value that flanks the gap.
+     */
+<span class="fc" id="L54">    LOWEST_FLANKING{</span>
+       
+
+        @Override
+        protected PhredQuality computeQualityValueForGap(
+                PhredQuality leftFlankingQuality, PhredQuality rightFlankingQuality) {
+<span class="fc bfc" id="L60" title="All 2 branches covered.">            if(leftFlankingQuality.compareTo(rightFlankingQuality)&lt;0){</span>
+<span class="fc" id="L61">                return leftFlankingQuality;</span>
+            }
+<span class="fc" id="L63">            return rightFlankingQuality;</span>
+        }
+    },
+    /**
+     * {@code ALWAYS_ZERO} will always give a gap a {@link PhredQuality} value 
+     * of {@code 0}.
+     */
+<span class="fc" id="L70">    ALWAYS_ZERO{</span>
+        @Override
+        protected PhredQuality computeQualityValueForGap(
+                PhredQuality leftFlankingQuality, PhredQuality rightFlankingQuality) {
+<span class="fc" id="L74">            return PhredQuality.valueOf(0);</span>
+        }
+
+    }
+    ;
+    /**
+     * Get the entire {@link QualitySequence} for the given gapped 
+     * valid Range sequence, the &quot;raw&quot; corresponding quality sequence,
+     *  the validRange of this sequence
+     * into the &quot;raw&quot; sequence, and the sequence's direction
+     * that only includes the valid range portion (provided the
+     * {@link AssembledRead#getReadInfo()} ) and gap qualities
+     * have been inserted at the appropriate locations.
+     * @param validRangeSequence the gapped {@link NucleotideSequence}
+     * containing only the valid bases.  This is usually
+     * a read's sequence returned by {@link AssembledRead#getNucleotideSequence()}.
+     * Can not be null.
+     * @param rawQualities the raw {@link QualitySequence} as provided
+     * by the sequencing machine. These qualities are &quot;full length&quot;
+     * meaning they contain the qualities of the bases that have been
+     * trimmed off and are also in the original orientation from the
+     * sequence machine.  This means if the read is reverse complemented,
+     * then the qualities &lt;strong&gt;will not&lt;/strong&gt; be complemented.
+     * Can not be null.
+     * @param validRange a {@link Range} that explains &lt;strong&gt;in ungapped coordinates&lt;/strong&gt;
+     * where this valid range sequence &quot;goes&quot; into the raw sequence.
+     * @param direction the read's direction which will tell us if the nucleotide
+     * sequence and raw quality sequence are in the same orientation or not.
+     * @return a new {@link QualitySequence} instance; will never be null.
+     * @throws NullPointerException if any parameters are null.
+     */
+    public QualitySequence getGappedValidRangeQualitySequenceFor(NucleotideSequence validRangeSequence, QualitySequence rawQualities, Range validRange, Direction direction){
+<span class="fc" id="L106">    	QualitySequenceBuilder complementedRawQualities = new QualitySequenceBuilder(rawQualities);</span>
+    	
+<span class="fc" id="L108">    	QualitySequenceBuilder gappedValidRangeQualities = complementedRawQualities.copy().trim(validRange);</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">    	if(direction == Direction.REVERSE){</span>
+<span class="fc" id="L110">    		gappedValidRangeQualities.reverse();</span>
+<span class="fc" id="L111">    		complementedRawQualities.reverse();</span>
+    	}
+<span class="fc" id="L113">    	List&lt;Integer&gt; gapOffsets=validRangeSequence.getGapOffsets();</span>
+		
+<span class="fc" id="L115">    	int rawShiftOffset = (int)validRange.getBegin();</span>
+    	//TODO we currently don't support any gap value strategy
+    	//that interpolates across consecutive gap runs
+    	//so we removed those parameters from #computeQualityValueForGap()
+    	//they were very expensive to compute
+    	//if we want to add it back
+    	//a good idea might be to cluster the gapOffsets
+    	//into Ranges, then we can compute the left and right ungapped
+    	//flanks once and call computeQualityValueForGap() range.length() times
+<span class="fc bfc" id="L124" title="All 2 branches covered.">    	for(Integer gapOffset : gapOffsets){</span>
+<span class="fc" id="L125">    		int offset = gapOffset.intValue();</span>
+<span class="fc" id="L126">    		int leftFlank = validRangeSequence.getUngappedOffsetFor(offset);</span>
+<span class="fc" id="L127">    		int rightFlank = leftFlank+1;</span>
+    		
+<span class="fc" id="L129">    		 PhredQuality leftQuality =complementedRawQualities.get(rawShiftOffset+leftFlank);</span>
+<span class="fc" id="L130">             PhredQuality rightQuality =complementedRawQualities.get(rawShiftOffset+rightFlank);</span>
+             
+<span class="fc" id="L132">             PhredQuality gappedQuality = computeQualityValueForGap(leftQuality, </span>
+             		rightQuality);
+<span class="fc" id="L134">             gappedValidRangeQualities.insert(offset, gappedQuality);</span>
+<span class="fc" id="L135">    	}</span>
+<span class="fc" id="L136">    	return gappedValidRangeQualities.build();</span>
+    }
+    
+    /**
+     * Get the gapped valid range {@link QualitySequence} for the given read
+     * that only includes the valid range portion (provided the
+     * {@link AssembledRead#getReadInfo()} ) and gap qualities
+     * have been inserted at the appropriate locations.
+     * &lt;p&gt;
+     * This is a convience method for 
+     * {@link #getGappedValidRangeQualitySequenceFor(NucleotideSequence, QualitySequence, Range, Direction)
+     * getGappedValidRangeQualitySequenceFor(read.getNucleotideSequence(), 
+    			rawQualities, 
+    			read.getReadInfo().getValidRange(), 
+    			read.getDirection());}.
+     * @param read the read, can not be null.
+     * @param rawQualities the raw {@link QualitySequence} as provided
+     * by the sequencing machine. These qualities are &quot;full length&quot;
+     * meaning they contain the qualities of the bases that have been
+     * trimmed off and are also in the original orientation from the
+     * sequence machine.  This means if the read is reverse complemented,
+     * then the qualities &lt;strong&gt;will not&lt;/strong&gt; be complemented.
+     * Can not be null.
+     * @return a new {@link QualitySequence} instance; will never be null.
+     * @throws NullPointerException if any parameters are null.
+     */
+    public QualitySequence getGappedValidRangeQualitySequenceFor(AssembledRead read,
+            QualitySequence rawQualities){
+<span class="fc bfc" id="L164" title="All 2 branches covered.">    	if(read ==null){</span>
+<span class="fc" id="L165">    		throw new NullPointerException(&quot;read can not be null&quot;);</span>
+    	}
+<span class="fc bfc" id="L167" title="All 2 branches covered.">    	if(rawQualities ==null){</span>
+<span class="fc" id="L168">    		throw new NullPointerException(&quot;qualities can not be null&quot;);</span>
+    	}
+<span class="fc" id="L170">    	return getGappedValidRangeQualitySequenceFor(read.getNucleotideSequence(), </span>
+    			rawQualities, 
+<span class="fc" id="L172">    			read.getReadInfo().getValidRange(), </span>
+<span class="fc" id="L173">    			read.getDirection());</span>
+    	
+    }
+
+   
+   
+    protected abstract PhredQuality computeQualityValueForGap(PhredQuality leftFlankingQuality, PhredQuality rightFlankingQuality);
+    
+   
+    
+
+    protected PhredQuality getQualityForNonGapBase(AssembledRead placedRead, QualitySequence uncomplementedQualities,
+            int gappedReadIndexForNonGapBase) {
+<span class="nc" id="L186">        int ungappedFullRangeIndex = AssemblyUtil.convertToUngappedFullRangeOffset(placedRead, gappedReadIndexForNonGapBase);            </span>
+        
+<span class="nc" id="L188">        return uncomplementedQualities.get(ungappedFullRangeIndex);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

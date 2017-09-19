@@ -115,6 +115,10 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
     default Stream<Range> findMatches(String regex){
         return findMatches(Pattern.compile(regex));
     }
+    default Stream<Range> findMatches(String regex,boolean nested){
+    	return findMatches(Pattern.compile(regex),nested);
+    }
+    
     /**
      * Find the Ranges in this sequence within the specified sub sequence range
      *  that match the given regular expression.
@@ -132,6 +136,9 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
     default Stream<Range> findMatches(String regex, Range subSequenceRange){
         return findMatches(Pattern.compile(regex), subSequenceRange);
     }
+    default Stream<Range> findMatches(String regex, Range subSequenceRange,boolean nested){
+    	return findMatches(Pattern.compile(regex),subSequenceRange,nested);
+    }
     /**
      * Find all the Ranges in this sequence that match the given regular expression {@link Pattern}.
      * @param pattern the pattern to look for.  All bases must be in uppercase.
@@ -140,6 +147,7 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
      * @since 5.3
      */
     Stream<Range> findMatches(Pattern pattern);
+    Stream<Range> findMatches(Pattern pattern,boolean nested);
     /**
      * Find the Ranges in this sequence within the specified sub sequence range
      *  that match the given regular expression {@link Pattern}.  
@@ -160,6 +168,7 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
      * @since 5.3
      */
     Stream<Range> findMatches(Pattern pattern, Range subSequenceRange);
+    Stream<Range> findMatches(Pattern pattern, Range subSequenceRange,boolean nested);
    
     /**
      * Get the list of contiguous spans of Ns; the returned list

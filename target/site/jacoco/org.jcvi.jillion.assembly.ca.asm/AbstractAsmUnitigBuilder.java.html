@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AbstractAsmUnitigBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.ca.asm</a> &gt; <span class="el_source">AbstractAsmUnitigBuilder.java</span></div><h1>AbstractAsmUnitigBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly.ca.asm;
+
+import java.util.List;
+import java.util.Map;
+
+import org.jcvi.jillion.core.DirectedRange;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+/**
+ * {@code AbstractAsmUnitigBuilder} is a {@link AsmUnitigVisitor}
+ * that will populate an {@link AsmUnitigBuilder} instance
+ * when its visit methods are called.
+ * @author dkatzel
+ *
+ */
+public abstract class AbstractAsmUnitigBuilder implements AsmUnitigVisitor{
+
+	private final Map&lt;String, Range&gt; validRanges;
+	private final DataStore&lt;NucleotideSequence&gt; fullLengthSequenceDatastore;
+	
+	private final AsmUnitigBuilder builder;
+	
+	
+	
+	public AbstractAsmUnitigBuilder(
+			String id,
+			NucleotideSequence consensus,
+			DataStore&lt;NucleotideSequence&gt; fullLengthSequenceDatastore,
+<span class="fc" id="L53">			Map&lt;String, Range&gt; validRanges) {</span>
+<span class="fc" id="L54">		this.fullLengthSequenceDatastore = fullLengthSequenceDatastore;</span>
+<span class="fc" id="L55">		this.validRanges = validRanges;</span>
+		
+<span class="fc" id="L57">		builder = DefaultAsmUnitig.createBuilder(id, consensus);</span>
+<span class="fc" id="L58">	}</span>
+
+
+
+	@Override
+	public void visitReadLayout(char readType, String externalReadId,
+			DirectedRange readRange, List&lt;Integer&gt; gapOffsets) {
+		try {
+<span class="fc" id="L66">            NucleotideSequence fullLengthSequence = fullLengthSequenceDatastore.get(externalReadId);</span>
+<span class="fc" id="L67">            Range clearRange = validRanges.get(externalReadId);</span>
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">            if(clearRange==null){</span>
+<span class="nc" id="L69">                throw new IllegalStateException(&quot;do not have clear range information for read &quot;+ externalReadId);</span>
+            }
+           
+<span class="fc" id="L72">            NucleotideSequenceBuilder validBases = new NucleotideSequenceBuilder(fullLengthSequence)</span>
+<span class="fc" id="L73">            											.trim(clearRange);</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">            if(readRange.getDirection() == Direction.REVERSE){</span>
+<span class="fc" id="L75">                validBases.reverseComplement();</span>
+            }
+<span class="fc" id="L77">            validBases = AsmUtil.computeGappedSequence(validBases, gapOffsets);</span>
+<span class="fc" id="L78">            builder.addRead(externalReadId, validBases.toString(),</span>
+<span class="fc" id="L79">                    (int)readRange.asRange().getBegin(),readRange.getDirection(),</span>
+                    clearRange, 
+<span class="fc" id="L81">                    (int)fullLengthSequence.getLength(),</span>
+                    false);
+<span class="nc" id="L83">        } catch (DataStoreException e) {</span>
+<span class="nc" id="L84">            throw new IllegalStateException(</span>
+            		&quot;error getting read id &quot;+ externalReadId 
+                    + &quot; from frg file&quot;, e);
+<span class="fc" id="L87">        }</span>
+		
+<span class="fc" id="L89">	}</span>
+
+
+
+	@Override
+	public void halted() {
+		// TODO Auto-generated method stub
+		
+<span class="nc" id="L97">	}</span>
+
+
+
+	@Override
+	public void visitEnd() {
+<span class="fc" id="L103">		visitUnitig(builder);</span>
+		
+<span class="fc" id="L105">	}</span>
+	protected abstract void visitUnitig(AsmUnitigBuilder builder);
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

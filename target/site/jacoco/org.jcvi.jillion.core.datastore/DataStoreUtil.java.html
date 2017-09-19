@@ -1,0 +1,790 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DataStoreUtil.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.core.datastore</a> &gt; <span class="el_source">DataStoreUtil.java</span></div><h1>DataStoreUtil.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.core.datastore;
+
+import java.io.IOException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.function.Function;
+
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.util.ThrowingStream;
+import org.jcvi.jillion.core.util.iter.IteratorUtil;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.util.streams.ThrowingBiConsumer;
+import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
+import org.jcvi.jillion.internal.core.util.Caches;
+import org.jcvi.jillion.internal.core.util.Sneak;
+/**
+ * Utility class containing static
+ * factory methods to  adapt {@link DataStore}s
+ * into another types of {@link DataStore}s.
+ * @author dkatzel
+ *
+ */
+public final class DataStoreUtil {
+
+<span class="nc" id="L54">	private DataStoreUtil(){</span>
+		//can not instantiate
+<span class="nc" id="L56">	}</span>
+	
+	/**
+	 * {@code AdapterCallback} is a callback
+	 * method that can convert one type into 
+	 * another.   The {@link DataStoreUtil#adapt(Class, DataStore, Function)}
+	 * factory method will call
+	 * {@link AdapterCallback#get(Object)} to adapt the records
+	 * in the original {@link DataStore} on all calls
+	 * to {@link DataStore#get(String)} and the {@link StreamingIterator#next()}
+	 * calls to the iterator returned by {@link DataStore#iterator()}.
+	 * 
+	 * 
+	 * @author dkatzel
+	 *
+	 * @param &lt;F&gt; the &quot;From&quot; type.  This is the type that the original datastore has its type as
+     * @param &lt;T&gt; the &quot;To&quot; type.  This is the type that we want to convert the type F into which may
+     * require method calls or new object creation.
+	 */
+	public interface AdapterCallback&lt;F,T&gt; extends Function&lt;F, T&gt;{
+		/**
+		 * Get the adapted type from the original type.
+		 * @param from the object to adapt;
+		 * will never be null.
+		 * @return an instance of the adapted type,
+		 * can not be null.  If this implementation
+		 * returns null, then the adapted
+		 * DataStore
+		 * will throw a NullPointerException.
+		 */
+		T get(F from);
+		
+		@Override
+        default T apply(F from){
+<span class="nc" id="L90">			return get(from);</span>
+		}
+	}
+	
+	
+	/**
+     * Create a new {@link DataStore} instance using the data of the given {@link Map}.
+     * The entries in the given map are copied into a new private map so any future
+     * manipulations to the input map will not affect the returned {@link DataStore}.
+     * The order of entries return by the {@link DataStore#idIterator()}
+     * and {@link DataStore#iterator()} are determined by the iteration
+     * order of input Map &lt;strong&gt;at the time this method is called&lt;/strong&gt;.
+     * @param map the map to adapt into a {@link DataStore}.
+     * @return a new DataStore instance.
+     * @throws NullPointerException if map is null, or if any keys or values in the map
+     * are null.
+     * @param &lt;T&gt; The type of Records in the DataStore.
+     */
+    public static &lt;T&gt; DataStore&lt;T&gt; adapt(Map&lt;String, T&gt; map){
+<span class="fc" id="L109">    	return new MapDataStoreAdapter&lt;T&gt;(map);</span>
+    }
+    
+    /**
+     * Create a new {@link DataStore} instance of the given
+     * type D using the data of the given map.
+     * The entries in the given map are copied into a new private map so any future
+     * manipulations to the input map will not affect the returned {@link DataStore}.
+     * The order of entries return by the {@link DataStore#idIterator()}
+     * and {@link DataStore#iterator()} are determined by the iteration
+     * order of input Map &lt;strong&gt;at the time this method is called&lt;/strong&gt;.
+     * &lt;p&gt;
+     * This factory method uses the Java Dynamic Proxy classes
+     * to create a new implementation of the given interface
+     * which uses the map as a backing store.  This factory class
+     * can only implement methods that conform to the DataStore interface,
+     * if the given DataStore interface has extension methods that are not
+     * part of the core DataStore interface then trying to call
+     * those methods will throw an illegalArgumentException.
+     * @param datastoreInterface the interface to proxy; can not be null.
+     * @param map the map to adapt into a datastore; can not be null.
+     * @return a new DataStore instance which implements the given datastoreInterface and contains
+     * the records in the input Map.
+     * @throws NullPointerException if datastoreInterface is null, map is null, or if any keys or values in the map
+     * are null.
+     * @throws IllegalArgumentException if the given datastoreInterface is not a public interface 
+     * or violates the constraints set by {@link Proxy#getProxyClass(ClassLoader, Class...)}
+     * @see Proxy#getProxyClass(ClassLoader, Class...)
+     * @param &lt;T&gt; the type of record in the returned dataStore and the type of the values in the given Map.
+     * @param &lt;D&gt; the type of DataStore to return (created using a dynamic proxy)
+     */
+	public static &lt;T, D extends DataStore&lt;T&gt;&gt; D adapt(Class&lt;D&gt; datastoreInterface, Map&lt;String, T&gt; map){
+<span class="fc" id="L141">    	return adapt(datastoreInterface, DataStore.of(map));</span>
+    }
+	/**
+     * Create a new {@link DataStore} instance of the given
+     * type D using which wraps the given DataStore
+     * in a new Dynamic Proxy class which mimics the desired DataStore.
+     * This is useful to convert a {@code DataStore&lt;T&gt;} into a different
+     * DataStore subinterface which has the same {@link DataStore#get(String)} signature.
+     * All method calls on the returned proxy Datastore are derived by delegating to the input DataStore.
+     * Closing the input DataStore will also close this Proxy DataStore and vice versa.
+     * The order of entries return by the {@link DataStore#idIterator()}
+     * and {@link DataStore#iterator()} are determined by the 
+     * the iteration
+     * order of input DataStore.
+     * &lt;p&gt;
+     * This factory method uses the Java Dynamic Proxy classes
+     * to create a new implementation of the given interface
+     * which wraps the input DataStore as a backing store.  This factory class
+     * can only implement methods that conform to the input DataStore interface,
+     * if the return DataStore interface has extension methods that are not
+     * part of the input DataStore interface then trying to call
+     * those methods will throw an illegalArgumentException.
+     * @param datastoreInterface the interface to proxy;
+     * can not be null.
+     * @param delegate the original {@link DataStore} to adapt into a different type of {@link DataStore}.
+     * @throws NullPointerException if datastoreInterface is null, delegate is null.
+     * @return a new DataStore instance which implements the given datastoreInterface and contains
+     * the records in the input DataStore.
+     * @throws NullPointerException if datastoreInterface is null, map is null, or if any keys or values in the map
+     * are null.
+     * @throws IllegalArgumentException if the given datastoreInterface is not a public interface 
+     * or violates the constraints set by {@link Proxy#getProxyClass(ClassLoader, Class...)}
+     * @see Proxy#getProxyClass(ClassLoader, Class...)
+     * @param &lt;T&gt; the type of record both the input and output dataStores.
+     * @param &lt;D&gt; the type of DataStore to return (created using a dynamic proxy)
+     */
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+	public static final &lt;T, D extends DataStore&lt;T&gt;&gt; D adapt(Class&lt;D&gt; datastoreInterface, DataStore&lt;T&gt; delegate){
+<span class="fc" id="L180">    	return (D) Proxy.newProxyInstance(datastoreInterface.getClassLoader(), new Class&lt;?&gt;[]{datastoreInterface},</span>
+    			new DataStoreInvocationHandler&lt;T&gt;(delegate));
+    }
+    
+    /**
+     * Create a new DataStore instance of the given
+     * type T using the data of the given DataStore which
+     * contains records of the correct type.
+     * This factory method uses the Java Proxy classes
+     * to create a new implementation of the given interface
+     * which then delegates all calls to the given datastore.  This factory class
+     * can only implement methods that conform to the DataStore interface,
+     * if the given interface has extension methods that do
+     * not exist in the given delegated DataStore, then trying to call
+     * those methods will throw an illegalArgumentException.
+     * @param datastoreInterface the interface to proxy;
+     * can not be null.
+     * @param delegate the original {@link DataStore} to adapt into a different type of {@link DataStore};
+     * can not be null.
+     * @param callback an instance of {@link AdapterCallback} used to adapt
+     * records of type {@literal &lt;F&gt;} into records of type {@literal &lt;T&gt;};
+     * can not be null.
+     * @return a new DataStore instance which implements the given datastoreInterface.
+     * @throws NullPointerException if datastoreInterface is null, delegate is null, or if callback is null.
+     *
+     * @param &lt;F&gt; the &quot;From&quot; type.  This is the type that the original datastore has its type as
+     * @param &lt;T&gt; the &quot;To&quot; type.  This is the type that we want to convert the type F into which may
+     * require method calls or new object creation.
+     * @param &lt;D&gt; the Database interface type we want the returned datastore to mimic.
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+	public static final &lt;F, T, D extends DataStore&lt;T&gt;&gt; D adapt(Class&lt;D&gt; datastoreInterface, DataStore&lt;F&gt; delegate, Function&lt;F, T&gt; callback){
+<span class="fc" id="L212">    	return (D) Proxy.newProxyInstance(datastoreInterface.getClassLoader(), new Class&lt;?&gt;[]{datastoreInterface},</span>
+    			new DataStoreInvocationHandler&lt;T&gt;(new AdaptedDataStore&lt;F, T&gt;(delegate, callback)));
+    }
+    
+    
+    /**
+     * Create a new DataStore that contains the entire contents of each of the 
+     * input DataStores.  The order of the input DataStores is the order
+     * that these DataStores will be chained together.  This results in the following
+     * contract: 
+     * &lt;ul&gt;
+     * &lt;li&gt; Calls to {@link DataStore#get(String)} or {@link DataStore#contains(String)}
+     * will check each DataStore for the given record until the record is found
+     * or all DataStores are checked.&lt;/li&gt;
+     * &lt;li&gt; Calls to {@link DataStore#getNumberOfRecords()}
+     * will return a combined total over all the datastores.&lt;/li&gt;
+     * &lt;li&gt; Calls to {@link DataStore#iterator()} and {@link DataStore#idIterator()}
+     * will chain the iterators of each DataStore one after the other.  When the first datastore's
+     * iterator is finished, then {@link StreamingIterator#next()} will move onto the iterator
+     * from the next DataStore etc.  &lt;/li&gt;
+     * &lt;li&gt;Closing the returned DataStore will close all the input DataStores&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;p&gt;
+     * This is a useful method for combining several different DataStore objects to appear
+     * as a single DataStore.  For example combining several sequence input files (possibly in different
+     * file formats) which have been parsed into DataStores can be adapted into a single 
+     * chained DataStore for processing.  The fact that the sequence data comes from multiple
+     * files (objects) has been abstracted away.
+     * &lt;p&gt;
+     * This factory method uses the Java Proxy classes
+     * to create a new implementation of the given interface
+     * which then delegates all calls to the given datastore.  This factory class
+     * can only implement methods that conform to the DataStore interface,
+     * if the given interface has extension methods that do
+     * not exist in the given delegated DataStore, then trying to call
+     * those methods will throw an illegalArgumentException.
+     * @param datastores the datastores to chain together; can not be null or empty.
+     * @param &lt;T&gt; the type of record both the input and output dataStores.
+     * @param &lt;D&gt; the type of DataStore to return (created using a dynamic proxy)
+     * @return a new instance of type D.
+     */
+    public static &lt;T,D extends DataStore&lt;T&gt;&gt; DataStore&lt;T&gt; chain(Collection&lt;D&gt; datastores){
+<span class="nc" id="L254">	       return new WrapperDataStore&lt;T,D&gt;(datastores);</span>
+	}
+    /**
+     * Create a new DataStore that contains the entire contents of each of the 
+     * input DataStores.  The order of the input DataStores is the order
+     * that these DataStores will be chained together.  This results in the following
+     * contract: 
+     * &lt;ul&gt;
+     * &lt;li&gt; Calls to {@link DataStore#get(String)} or {@link DataStore#contains(String)}
+     * will check each DataStore for the given record until the record is found
+     * or all DataStores are checked.&lt;/li&gt;
+     * &lt;li&gt; Calls to {@link DataStore#getNumberOfRecords()}
+     * will return a combined total over all the datastores.&lt;/li&gt;
+     * &lt;li&gt; Calls to {@link DataStore#iterator()} and {@link DataStore#idIterator()}
+     * will chain the iterators of each DataStore one after the other.  When the first datastore's
+     * iterator is finished, then {@link StreamingIterator#next()} will move onto the iterator
+     * from the next DataStore etc.  &lt;/li&gt;
+     * &lt;li&gt;Closing the returned DataStore will close all the input DataStores&lt;/li&gt;
+     * &lt;/ul&gt;
+     * &lt;p&gt;
+     * This is a useful method for combining several different DataStore objects to appear
+     * as a single DataStore.  For example combining several sequence input files (possibly in different
+     * file formats) which have been parsed into DataStores can be adapted into a single 
+     * chained DataStore for processing.  The fact that the sequence data comes from multiple
+     * files (objects) has been abstracted away.
+     * &lt;p&gt;
+     * This factory method uses the Java Proxy classes
+     * to create a new implementation of the given interface
+     * which then delegates all calls to the given datastore.  This factory class
+     * can only implement methods that conform to the DataStore interface,
+     * if the given interface has extension methods that do
+     * not exist in the given delegated DataStore, then trying to call
+     * those methods will throw an illegalArgumentException.
+     * @param datastoreInterface the interface to proxy;
+     * can not be null.
+     * @param datastores the datastores to chain together; can not be null or empty.
+     * @param &lt;T&gt; the type of record both the input and output dataStores.
+     * @param &lt;D&gt; the type of DataStore to return (created using a dynamic proxy)
+     * @return a new instance of type D.
+     */
+    public static &lt;T,D extends DataStore&lt;T&gt;&gt; D chain(Class&lt;D&gt; datastoreInterface,Collection&lt;D&gt; datastores){
+<span class="fc" id="L295">	       DataStore&lt;T&gt; wrappedDataStore = new WrapperDataStore&lt;T,D&gt;(datastores);</span>
+<span class="fc" id="L296">	       return adapt(datastoreInterface, wrappedDataStore);</span>
+	}
+    
+    
+    /**
+     * Create a new Dynamic Proxy wrapping the given DataStore.  The returned
+     * object is similar to the wrapped dataStore except
+     * all {@link DataStore#get(String)} results are cached
+     * in an Least Recently Used (LRU) SoftReference cache of the specified size
+     * and an additional interface, {@link CacheableDataStore} has been added
+     * to the list of interfaces the returned {@link DataStore} implements.  This will
+     * keep the Most recent {@code cacheSize} records in memory as long as the JVM doesn't
+     * need the memory for other things.
+     * @param &lt;D&gt; interface of DataStore to proxy
+     * @param c class object of D
+     * @param delegate instance of DataStore
+     * @param cacheSize the size of the cache used to keep most recently
+     * &quot;gotten&quot; objects.
+     * @return a proxy instance of type D which wraps the given delegate
+     * and caches all results returned by get in an LRU cache.
+     * @see #clearCacheFrom(DataStore)
+     * @see #isACachedDataStore(DataStore)
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public static &lt;D extends DataStore&lt;?&gt;&gt; D createNewCachedDataStore(Class&lt;D&gt; c,D delegate, int cacheSize){
+<span class="fc" id="L321">        return (D) Proxy.newProxyInstance(c.getClassLoader(), new Class&lt;?&gt;[]{c, CacheableDataStore.class}, </span>
+                new CachedDataStoreInvocationHandler&lt;D&gt;(delegate,cacheSize));
+    }
+    
+    
+    /**
+     * Clears the cache from a DataStore created by this utility
+     * class if it has a cache; This method does nothing
+     * if the given datastore is not a {@link CacheableDataStore}.
+     * @param cachedDataStore a DataStore that was created by this
+     * utility (implements {@link CacheableDataStore}.
+     * @see DataStoreUtil#isACachedDataStore(DataStore)
+     */
+    public static void clearCacheFrom(DataStore&lt;?&gt; cachedDataStore){
+<span class="pc bpc" id="L335" title="1 of 2 branches missed.">        if(isACachedDataStore(cachedDataStore)){</span>
+<span class="fc" id="L336">            ((CacheableDataStore&lt;?&gt;)cachedDataStore).clearCache();</span>
+        }
+<span class="fc" id="L338">    }</span>
+    /**
+     * Is the given DataStore a Cached DataStore created by
+     * {@link DataStoreUtil#createNewCachedDataStore(Class, DataStore, int)}.
+     * @param cachedDataStore a DataStore that may or may not have
+     * been created by this
+     * utility (implements {@link CacheableDataStore}.
+     * @return {@code true} if this is a {@link CacheableDataStore};
+     * {@code false} otherwise.
+     */
+    public static boolean isACachedDataStore(DataStore&lt;?&gt; cachedDataStore){
+<span class="fc" id="L349">        return cachedDataStore instanceof CacheableDataStore;</span>
+    }
+    private static class AdaptedDataStore&lt;F, T&gt; implements DataStore&lt;T&gt;{
+    	private final DataStore&lt;F&gt; delegate;
+    	private final Function&lt;F,T&gt; callback;
+    	
+<span class="fc" id="L355">		public AdaptedDataStore(DataStore&lt;F&gt; delegate,Function&lt;F,T&gt; callback) {</span>
+<span class="fc" id="L356">			this.delegate = delegate;</span>
+<span class="fc" id="L357">			this.callback =callback;</span>
+<span class="fc" id="L358">		}</span>
+
+		@Override
+		public void close() throws IOException {
+<span class="fc" id="L362">			delegate.close();</span>
+			
+<span class="fc" id="L364">		}</span>
+
+		@Override
+		public StreamingIterator&lt;String&gt; idIterator() throws DataStoreException {
+<span class="fc" id="L368">			return delegate.idIterator();</span>
+		}
+
+		@Override
+		public T get(String id) throws DataStoreException {
+<span class="fc" id="L373">			F original = delegate.get(id);</span>
+<span class="fc bfc" id="L374" title="All 2 branches covered.">			if(original==null){</span>
+<span class="fc" id="L375">				return null;</span>
+			}
+<span class="fc" id="L377">			return getResultFromCallback(original);</span>
+		}
+
+		private T getResultFromCallback(F original) {
+<span class="fc" id="L381">			T ret= callback.apply(original);</span>
+<span class="pc bpc" id="L382" title="1 of 2 branches missed.">			if(ret==null){</span>
+<span class="nc" id="L383">				throw new NullPointerException(&quot;return value of call back can not be null&quot;);</span>
+				
+			}
+<span class="fc" id="L386">			return ret;</span>
+		}
+
+		@Override
+		public StreamingIterator&lt;DataStoreEntry&lt;T&gt;&gt; entryIterator()
+				throws DataStoreException {
+<span class="nc" id="L392">			return new StreamingIterator&lt;DataStoreEntry&lt;T&gt;&gt;(){</span>
+<span class="nc" id="L393">				StreamingIterator&lt;DataStoreEntry&lt;F&gt;&gt; delegateIterator = delegate.entryIterator();</span>
+
+				@Override
+				public boolean hasNext() {
+<span class="nc" id="L397">					return delegateIterator.hasNext();</span>
+				}
+
+				@Override
+				public void close() {
+<span class="nc" id="L402">					delegateIterator.close();</span>
+<span class="nc" id="L403">				}</span>
+
+				@Override
+				public DataStoreEntry&lt;T&gt; next() {
+<span class="nc" id="L407">					DataStoreEntry&lt;F&gt; next = delegateIterator.next();</span>
+<span class="nc" id="L408">					String key = next.getKey();</span>
+<span class="nc" id="L409">					T ret= callback.apply(next.getValue());</span>
+<span class="nc" id="L410">					return new DataStoreEntry&lt;T&gt;(key, ret);</span>
+				}
+
+				@Override
+				public void remove() {
+<span class="nc" id="L415">					throw new UnsupportedOperationException(&quot;remove not supported&quot;);					</span>
+				}
+				
+				
+			};
+			
+		}
+
+		@Override
+		public boolean contains(String id) throws DataStoreException {
+<span class="nc" id="L425">			return delegate.contains(id);</span>
+		}
+
+		@Override
+		public long getNumberOfRecords() throws DataStoreException {
+<span class="fc" id="L430">			return delegate.getNumberOfRecords();</span>
+		}
+
+		@Override
+		public boolean isClosed() {
+<span class="fc" id="L435">			return delegate.isClosed();</span>
+		}
+
+		@Override
+		public StreamingIterator&lt;T&gt; iterator() throws DataStoreException {
+<span class="fc" id="L440">			return new StreamingIterator&lt;T&gt;() {</span>
+<span class="fc" id="L441">				private final StreamingIterator&lt;F&gt; iter = delegate.iterator();</span>
+
+				@Override
+				public boolean hasNext() {
+<span class="fc" id="L445">					return iter.hasNext();</span>
+				}
+
+				@Override
+				public void close(){
+<span class="fc" id="L450">					iter.close();</span>
+					
+<span class="fc" id="L452">				}</span>
+
+				@Override
+				public T next() {
+<span class="fc" id="L456">					return getResultFromCallback(iter.next());</span>
+				}
+
+				@Override
+				public void remove() {
+<span class="nc" id="L461">					iter.remove();					</span>
+<span class="nc" id="L462">				}</span>
+				
+			};
+		}
+    }
+	
+	private static class DataStoreInvocationHandler&lt;T&gt; implements InvocationHandler{
+		private final DataStore&lt;T&gt; delegate;
+
+<span class="fc" id="L471">		public DataStoreInvocationHandler(DataStore&lt;T&gt; delegate) {</span>
+<span class="fc" id="L472">			this.delegate = delegate;</span>
+<span class="fc" id="L473">		}</span>
+
+		@Override
+		public Object invoke(Object proxy, Method method, Object[] args)
+				throws Throwable {
+			//we need to wrap the call of invoke and catch any
+			//InvocationTargetExceptions which the dynamic
+			//proxy uses to wrap undeclared thrown checked exceptions.
+			//By rethrowing the cause (the checked exception)
+			//we rethrow the original exception and
+			//maintain the contract of the object
+			//being proxied.
+			//see
+			//http://amitstechblog.wordpress.com/2011/07/24/java-proxies-and-undeclaredthrowableexception/
+			//for a more complete description.
+			try{
+<span class="fc" id="L489">			   return method.invoke(delegate, args);</span>
+<span class="fc" id="L490">			}catch(InvocationTargetException e){			       </span>
+<span class="fc" id="L491">				throw e.getCause();</span>
+			}
+		}
+		
+		
+	}
+	
+	
+	/**
+	 * {@code MapDataStoreAdapter} is a utility class
+	 * that can adapt a {@code Map&lt;String,T&gt;} into a {@code DataStore&lt;T&gt;}.
+	 * 
+	 * @author dkatzel
+	 *
+	 * @param &lt;T&gt; the type of values returned by the datastore.
+	 */
+	private static final class MapDataStoreAdapter&lt;T&gt; implements DataStore&lt;T&gt;{
+		private volatile boolean isClosed;
+	    
+<span class="fc" id="L510">	    private final Map&lt;String, T&gt; map = new LinkedHashMap&lt;String, T&gt;();</span>
+	    
+	    
+<span class="fc" id="L513">	    private MapDataStoreAdapter(Map&lt;String, T&gt; map){</span>
+<span class="fc bfc" id="L514" title="All 2 branches covered.">	    	for(Entry&lt;String, T&gt; entry : map.entrySet()){</span>
+<span class="fc" id="L515">	    		String key = entry.getKey();</span>
+<span class="pc bpc" id="L516" title="1 of 2 branches missed.">	    		if(key==null){</span>
+<span class="nc" id="L517">	    			throw new NullPointerException(&quot;null keys not allowed&quot;);</span>
+	    		}
+<span class="fc" id="L519">	    		T value = entry.getValue();</span>
+<span class="pc bpc" id="L520" title="1 of 2 branches missed.">	    		if(value==null){</span>
+<span class="nc" id="L521">	    			throw new NullPointerException(&quot;null values not allowed&quot;);</span>
+	    		}
+<span class="fc" id="L523">	    		this.map.put(key, value);</span>
+<span class="fc" id="L524">	    	}</span>
+<span class="fc" id="L525">	    }</span>
+	    
+	    
+	    @Override
+        public &lt;E extends Throwable&gt; void forEach(ThrowingBiConsumer&lt;String, T, E&gt; consumer) throws IOException, E {
+<span class="fc" id="L530">           map.forEach((k,v) -&gt;{</span>
+               try{
+<span class="fc" id="L532">                   consumer.accept(k, v);</span>
+<span class="fc" id="L533">               }catch(Throwable e){</span>
+<span class="nc" id="L534">                   Sneak.sneakyThrow(e);</span>
+<span class="fc" id="L535">               }</span>
+<span class="fc" id="L536">           });</span>
+<span class="fc" id="L537">        }</span>
+
+
+        @Override
+		public ThrowingStream&lt;T&gt; records() throws DataStoreException {
+<span class="nc" id="L542">			return ThrowingStream.asThrowingStream(map.values().stream());</span>
+		}
+
+
+		@Override
+	    public boolean contains(String id) throws DataStoreException {
+<span class="pc bpc" id="L548" title="1 of 2 branches missed.">	    	if(id ==null){</span>
+<span class="nc" id="L549">	    		throw new NullPointerException(&quot;id can not be null&quot;);</span>
+	    	}
+<span class="fc" id="L551">	    	throwExceptionIfClosed();</span>
+<span class="fc" id="L552">	        return map.containsKey(id);</span>
+	    }
+	    @Override
+	    public T get(String id) throws DataStoreException {
+<span class="pc bpc" id="L556" title="1 of 2 branches missed.">	    	if(id ==null){</span>
+<span class="nc" id="L557">	    		throw new NullPointerException(&quot;id can not be null&quot;);</span>
+	    	}
+<span class="fc" id="L559">	    	throwExceptionIfClosed();</span>
+<span class="fc" id="L560">	        return map.get(id);</span>
+	    }
+	    @Override
+	    public StreamingIterator&lt;String&gt; idIterator() throws DataStoreException {
+<span class="fc" id="L564">	    	throwExceptionIfClosed();</span>
+<span class="fc" id="L565">	    	return DataStoreStreamingIterator.create(this, map.keySet().iterator());</span>
+	    }
+	    @Override
+	    public long getNumberOfRecords() throws DataStoreException {
+<span class="fc" id="L569">	    	throwExceptionIfClosed();</span>
+<span class="fc" id="L570">	        return map.size();</span>
+	    }
+
+		private final void throwExceptionIfClosed() {
+<span class="fc bfc" id="L574" title="All 2 branches covered.">			if (isClosed) {</span>
+<span class="fc" id="L575">				throw new DataStoreClosedException(&quot;DataStore is closed&quot;);</span>
+			}
+<span class="fc" id="L577">		}</span>
+
+		@Override
+		public final void close() throws IOException {
+<span class="fc" id="L581">			isClosed = true;</span>
+<span class="fc" id="L582">		}</span>
+
+		@Override
+        public final boolean isClosed() {
+<span class="fc" id="L586">			return isClosed;</span>
+		}
+		
+		@Override
+		public StreamingIterator&lt;T&gt; iterator() {
+<span class="fc" id="L591">			throwExceptionIfClosed();</span>
+<span class="fc" id="L592">			return DataStoreStreamingIterator.create(this, map.values().iterator());</span>
+			 
+		}
+		@Override
+		public StreamingIterator&lt;DataStoreEntry&lt;T&gt;&gt; entryIterator()
+				throws DataStoreException {
+<span class="fc" id="L598">			return IteratorUtil.createStreamingIterator(map.entrySet().iterator(),</span>
+<span class="fc" id="L599">					new IteratorUtil.TypeAdapter&lt;Entry&lt;String,T&gt;, DataStoreEntry&lt;T&gt;&gt;() {</span>
+
+						@Override
+						public DataStoreEntry&lt;T&gt; adapt(Entry&lt;String, T&gt; from) {
+<span class="fc" id="L603">							return new DataStoreEntry&lt;T&gt;(from.getKey(), from.getValue());</span>
+						}
+					
+				}
+					);
+		}
+		
+		
+	}
+	
+	
+		
+	private static class WrapperDataStore&lt;T, D extends DataStore&lt;T&gt;&gt; implements DataStore&lt;T&gt;{
+
+		private final List&lt;D&gt; delegates;
+		
+		
+<span class="fc" id="L620">		public WrapperDataStore(Collection&lt;D&gt; delegates) {</span>
+			
+<span class="fc bfc" id="L622" title="All 2 branches covered.">			if(delegates.isEmpty()){</span>
+<span class="fc" id="L623">				throw new IllegalArgumentException(&quot;must be at least one DataStore&quot;);</span>
+			}
+<span class="fc" id="L625">			this.delegates = new ArrayList&lt;D&gt;(delegates);</span>
+<span class="fc bfc" id="L626" title="All 2 branches covered.">			for(DataStore&lt;T&gt; delegate : delegates){</span>
+<span class="fc bfc" id="L627" title="All 2 branches covered.">				if(delegate==null){</span>
+<span class="fc" id="L628">					throw new NullPointerException(&quot;DataStore can not be null&quot;);</span>
+				}
+<span class="fc" id="L630">			}</span>
+<span class="fc" id="L631">		}</span>
+
+		@Override
+		public void close() throws IOException {
+<span class="fc bfc" id="L635" title="All 2 branches covered.">			for(DataStore&lt;T&gt; delegate : delegates){</span>
+<span class="fc" id="L636">				IOUtil.closeAndIgnoreErrors(delegate);</span>
+<span class="fc" id="L637">			}</span>
+			
+<span class="fc" id="L639">		}</span>
+
+		@Override
+		public StreamingIterator&lt;DataStoreEntry&lt;T&gt;&gt; entryIterator()
+				throws DataStoreException {
+<span class="nc" id="L644">			List&lt;StreamingIterator&lt;DataStoreEntry&lt;T&gt;&gt;&gt; iterators = new ArrayList&lt;StreamingIterator&lt;DataStoreEntry&lt;T&gt;&gt;&gt;();</span>
+<span class="nc bnc" id="L645" title="All 2 branches missed.">			for(DataStore&lt;T&gt; delegate : delegates){</span>
+<span class="nc" id="L646">				iterators.add(delegate.entryIterator());</span>
+<span class="nc" id="L647">			}</span>
+<span class="nc" id="L648">			return IteratorUtil.createChainedStreamingIterator(iterators);</span>
+		}
+
+		@Override
+		public StreamingIterator&lt;String&gt; idIterator() throws DataStoreException {
+<span class="nc" id="L653">			List&lt;StreamingIterator&lt;String&gt;&gt; iterators = new ArrayList&lt;StreamingIterator&lt;String&gt;&gt;();</span>
+<span class="nc bnc" id="L654" title="All 2 branches missed.">			for(DataStore&lt;T&gt; delegate : delegates){</span>
+<span class="nc" id="L655">				iterators.add(delegate.idIterator());</span>
+<span class="nc" id="L656">			}</span>
+<span class="nc" id="L657">			return IteratorUtil.createChainedStreamingIterator(iterators);</span>
+		}
+
+		@Override
+		public T get(String id) throws DataStoreException {
+<span class="pc bpc" id="L662" title="1 of 2 branches missed.">			if(id ==null){</span>
+<span class="nc" id="L663">	    		throw new NullPointerException(&quot;id can not be null&quot;);</span>
+	    	}
+<span class="fc bfc" id="L665" title="All 2 branches covered.">			for(DataStore&lt;T&gt; delegate : delegates){</span>
+<span class="fc" id="L666">				T ret= delegate.get(id);</span>
+<span class="fc bfc" id="L667" title="All 2 branches covered.">				if(ret !=null){</span>
+<span class="fc" id="L668">					return ret;</span>
+				}
+<span class="fc" id="L670">			}</span>
+<span class="fc" id="L671">			return null;</span>
+		}
+
+		@Override
+		public boolean contains(String id) throws DataStoreException {
+<span class="fc bfc" id="L676" title="All 2 branches covered.">			for(DataStore&lt;T&gt; delegate : delegates){</span>
+<span class="fc bfc" id="L677" title="All 2 branches covered.">				if(delegate.contains(id)){</span>
+<span class="fc" id="L678">					return true;</span>
+				}
+<span class="fc" id="L680">			}</span>
+<span class="fc" id="L681">			return false;</span>
+		}
+
+		@Override
+		public long getNumberOfRecords() throws DataStoreException {
+<span class="fc" id="L686">			long total=0L;</span>
+<span class="fc bfc" id="L687" title="All 2 branches covered.">			for(DataStore&lt;T&gt; delegate : delegates){</span>
+<span class="fc" id="L688">				total +=delegate.getNumberOfRecords();</span>
+<span class="fc" id="L689">			}</span>
+<span class="fc" id="L690">			return total;</span>
+		}
+
+		@Override
+		public boolean isClosed() {
+<span class="nc bnc" id="L695" title="All 2 branches missed.">			for(DataStore&lt;T&gt; delegate : delegates){</span>
+<span class="nc bnc" id="L696" title="All 2 branches missed.">				if(delegate.isClosed()){</span>
+<span class="nc" id="L697">					return true;</span>
+				}
+<span class="nc" id="L699">			}</span>
+<span class="nc" id="L700">			return false;</span>
+		}
+
+		@Override
+		public StreamingIterator&lt;T&gt; iterator() throws DataStoreException {
+<span class="fc" id="L705">			List&lt;StreamingIterator&lt;T&gt;&gt; iterators = new ArrayList&lt;StreamingIterator&lt;T&gt;&gt;();</span>
+<span class="fc bfc" id="L706" title="All 2 branches covered.">			for(DataStore&lt;T&gt; delegate : delegates){</span>
+<span class="fc" id="L707">				iterators.add(delegate.iterator());</span>
+<span class="fc" id="L708">			}</span>
+<span class="fc" id="L709">			return IteratorUtil.createChainedStreamingIterator(iterators);</span>
+		}
+		
+	}
+
+	
+	/**
+	 * {@code CachedDataStore} uses the Java Proxy classes to
+	 * wrap a given DataStore instance with a cache for objects returned
+	 * by {@link DataStore#get(String)}.
+	 * @author dkatzel
+	 *
+	 *
+	 */
+	private static final class CachedDataStoreInvocationHandler &lt;D extends DataStore&lt;?&gt;&gt; implements InvocationHandler{
+
+	    private final D delegate;
+	    private final Map&lt;String, Object&gt; cache;
+<span class="fc" id="L727">	    private static final Class&lt;?&gt;[] GET_PARAMETERS = new Class&lt;?&gt;[]{String.class};</span>
+	   
+<span class="fc" id="L729">	    private CachedDataStoreInvocationHandler(D delegate, int cacheSize){</span>
+<span class="fc" id="L730">	        this.delegate = delegate;</span>
+<span class="fc" id="L731">	        cache= Caches.createSoftReferencedValueLRUCache(cacheSize);</span>
+<span class="fc" id="L732">	    }</span>
+	   
+	    @Override
+	    public synchronized Object invoke(Object proxy, Method method, Object[] args)
+	            throws Throwable {
+	    	try{
+<span class="fc" id="L738">		        final String methodName = method.getName();</span>
+<span class="pc bpc" id="L739" title="1 of 4 branches missed.">		        if(&quot;close&quot;.equals(methodName) &amp;&amp; args==null){</span>
+<span class="fc" id="L740">		            cache.clear();</span>
+		        }
+<span class="pc bpc" id="L742" title="1 of 4 branches missed.">		        else if(&quot;clearCache&quot;.equals(methodName) &amp;&amp; args==null){</span>
+<span class="fc" id="L743">		            cache.clear();</span>
+<span class="fc" id="L744">		            return null;</span>
+		        }
+<span class="pc bpc" id="L746" title="2 of 4 branches missed.">		        else if(&quot;get&quot;.equals(methodName) &amp;&amp; Arrays.equals(GET_PARAMETERS,method.getParameterTypes())){</span>
+<span class="fc" id="L747">		            String id = (String)args[0];</span>
+		            //we are have to check for null
+		            //because the object could be removed
+		            //between checking and getting
+		            //even in a synchronized block?
+<span class="fc" id="L752">		            Object result =cache.get(id);</span>
+<span class="fc bfc" id="L753" title="All 2 branches covered.">		            if(result !=null){</span>
+<span class="fc" id="L754">		                return result;</span>
+		            }
+		            
+<span class="fc" id="L757">		            Object obj =method.invoke(delegate, args);</span>
+<span class="pc bpc" id="L758" title="1 of 2 branches missed.">		            if(obj==null){</span>
+		            	//we don't put nulls in our cache because
+			            //it might kickout something else
+			            //and cause us to refetch anyway
+			            //since we assume a null value means it's not in the cache.
+<span class="nc" id="L763">		            	return null;</span>
+		            }		            
+<span class="fc" id="L765">		            cache.put(id, obj);</span>
+<span class="fc" id="L766">		            return obj;</span>
+		        }
+<span class="fc" id="L768">		        return method.invoke(delegate, args);</span>
+<span class="nc" id="L769">	    	}catch(InvocationTargetException e){</span>
+<span class="nc" id="L770">	    		throw e.getCause();</span>
+	    	}
+	    }   
+	    
+	}
+	/**
+     * {@code CacheableDataStore} is an interface that is used
+     * for Cached objects created by {@link DataStoreUtil#createNewCachedDataStore(Class, DataStore, int)}.
+     * This way it is possible to determine
+     * at runtime if a given {@link DataStore} has a cache.
+     * @author dkatzel
+     */
+    public interface CacheableDataStore&lt;T&gt; extends DataStore&lt;T&gt;{
+        /**
+         * Clears the cache without
+         * closing the datastore.
+         */
+        void clearCache();
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ZTRChromatogramImpl.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.trace.chromat.ztr</a> &gt; <span class="el_source">ZTRChromatogramImpl.java</span></div><h1>ZTRChromatogramImpl.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Sep 12, 2008
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.internal.trace.chromat.ztr;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.internal.trace.chromat.BasicChromatogram;
+import org.jcvi.jillion.trace.chromat.Chromatogram;
+import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogram;
+
+public class ZTRChromatogramImpl extends BasicChromatogram implements ZtrChromatogram{
+
+    /**
+     * Hints for valid range of this sequence.
+     */
+    private Range clip;
+    /**
+     * Constructor that takes a {@link Chromatogram} without
+     * ztr specific parameters.
+     * @param c the {@link Chromatogram} instance to wrap;
+     * can not be null.
+     * @throws NullPointerException if c is null.
+     */
+    public ZTRChromatogramImpl(Chromatogram c){
+<span class="nc" id="L47">        this(c, null);</span>
+<span class="nc" id="L48">    }</span>
+    /**
+     * Constructor that takes a {@link Chromatogram} and a ZTR clip
+     * point as a Range.
+     * @param c the {@link Chromatogram} instance to wrap;
+     * can not be null.
+     * @param clip the ZTR clip points as  {@link Range};
+     * may be null (which means no clip points have been set).
+     * @throws NullPointerException if c is null.
+     */
+    public ZTRChromatogramImpl(Chromatogram c, Range clip) {
+<span class="fc" id="L59">        super(c);</span>
+<span class="fc" id="L60">        this.clip = clip;</span>
+<span class="fc" id="L61">    }</span>
+    /**
+     * Gets the ZTR Specific clip.
+     * @return a clip, may be null.
+     */
+    public Range getClip() {
+<span class="fc" id="L67">        return clip;</span>
+    }
+
+    /**
+     * 
+    * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        //keep superclass'es equals
+<span class="fc" id="L77">        return super.equals(obj);</span>
+    }
+    /**
+     * 
+    * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        //keep superclass hascode
+<span class="nc" id="L86">        return super.hashCode();</span>
+    }
+    
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

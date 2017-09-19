@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>PhredQuality.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.core.qual</a> &gt; <span class="el_source">PhredQuality.java</span></div><h1>PhredQuality.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Feb 20, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.core.qual;
+
+import java.nio.ByteBuffer;
+
+import org.jcvi.jillion.internal.core.util.JillionUtil;
+
+/**
+ * {@code PhredQuality} is a representation of
+ * a Phred quality score.
+ * &lt;p&gt;
+ * PhredQuality uses the flyweight pattern to reuse the same
+ * objects for the same quality score.
+ * @author dkatzel
+ *
+ *
+ */
+public final class PhredQuality implements Comparable&lt;PhredQuality&gt;{
+    //127 should be good enough for anybody
+	/**
+	 * Max allowed Phred Quality score, currently set to
+	 * {@value}.
+	 */
+    public static final byte MAX_VALUE = Byte.MAX_VALUE;
+    /**
+     * Minimum allowd Phred Quality score, currently set to
+     * {@value}.
+     */
+    public static final byte MIN_VALUE = 0;
+    private static final double TEN = 10D;
+    private static final PhredQuality[] CACHE;
+    
+    /**
+     * Our quality value.
+     */
+    private final byte value;
+    /**
+     * Initialize the cache for flyweight pattern.
+     */
+    static{
+<span class="fc" id="L65">        CACHE = new PhredQuality[MAX_VALUE+1];</span>
+        //need to add the negative check since max ++ will
+        //overflow into negative values of b
+<span class="pc bpc" id="L68" title="1 of 4 branches missed.">        for(byte b=MIN_VALUE; b&gt;=MIN_VALUE &amp;&amp; b&lt;=MAX_VALUE; b++){</span>
+<span class="fc" id="L69">            CACHE[b] =new PhredQuality(b);</span>
+        }
+<span class="fc" id="L71">    }</span>
+<span class="fc" id="L72">    private PhredQuality(byte b) {</span>
+<span class="fc" id="L73">    	this.value = b;</span>
+<span class="fc" id="L74">    }</span>
+    /**
+     * Compares this quality value to the given quality.
+     * 
+     * @param other the other quality value.
+     * 
+     * @return A negative number if this quality is less than the
+     * other quality, {@code 0} if the two qualities
+     * are equal, and a positive value if this
+     * quality value is greater than the other quality.
+     */
+    @Override
+    public int compareTo(PhredQuality other) {
+<span class="fc" id="L87">        return JillionUtil.compare(value, other.value);</span>
+    }
+    /**
+     * Compares this quality value to the given quality value &lt;strong&gt;as a double&lt;/strong&gt;.
+     * 
+     * @param qualityValue the other quality value to compare to.  
+     * &lt;strong&gt;Note:&lt;/strong&gt; no boundary checks are done to make sure that the other quality value is
+     *  a value in the valid {@link PhredQuality} range.
+     *  
+     * @implSpec this is the functionally the same as
+     * {@link #compareTo(PhredQuality) compareTo(PhredQuality.valueOf(qualityValue))}
+     * but should be computed faster since there is no creation of an extra {@link PhredQuality}
+     * object.
+     * 
+     * @return A negative number if this quality is less than the
+     * other quality, {@code 0} if the two qualities
+     * are equal, and a positive value if this
+     * quality value is greater than the other quality.
+     * 
+     * @since 5.2
+     */
+    public int compareTo(double qualityValue) {
+<span class="nc" id="L109">        return Double.compare(value, qualityValue);</span>
+    }
+    /**
+     * Get the {@link PhredQuality} with the given
+     * associated error probability.
+     * @param errorProbability a double between 0 and 1 exclusive
+     * @return a {@link PhredQuality} instance, never null.
+     * @throws IllegalArgumentException if the given probability
+     *  is not between 0 and 1 exclusive
+     */
+    public static PhredQuality withErrorProbability(double errorProbability){
+<span class="fc" id="L120">        return PhredQuality.valueOf(computeQualityScore(errorProbability));</span>
+    }
+    
+    /**
+     * Get the quality score with the given
+     * associated error probability.
+     * @param errorProbability a double between 0 and 1 exclusive
+     * @return an int instance, never negative
+     * @throws IllegalArgumentException if the given probability
+     *  is not between 0 and 1 exclusive
+     */
+    public static int computeQualityScore(double errorProbability){
+<span class="fc bfc" id="L132" title="All 2 branches covered.">        if(errorProbability&lt;=0){</span>
+<span class="fc" id="L133">            throw new IllegalArgumentException(&quot;probability must be &gt; 0 : &quot;+ errorProbability);</span>
+        }
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        if(errorProbability&gt;=1){</span>
+<span class="fc" id="L136">            throw new IllegalArgumentException(&quot;probability must be &lt; 1: &quot;+ errorProbability);</span>
+        }
+<span class="fc" id="L138">        return (int)Math.round(-TEN * Math.log10(errorProbability));</span>
+    }
+    /**
+     * Get the error probability that a basecall
+     * of this phred value is incorrectly called.
+     * @return {@literal 10^(-q/10)}
+     */
+    public double getErrorProbability(){
+<span class="fc" id="L146">        return Math.pow(TEN, value/-TEN);       </span>
+    }
+    /**
+     * Get this {@link PhredQuality}'s 
+     * quality score as a byte.
+     * @return a positive byte value.
+     */
+    public byte getQualityScore(){
+<span class="fc" id="L154">        return value;</span>
+    }
+    /**
+     * Get the corresponding {@link PhredQuality} instance
+     * with the given quality score.
+     * @param qualityScore the quality score
+     * @return the {@link PhredQuality} instance that represents
+     * the given qualityScore.
+     * @throws IllegalArgumentException if qualityScore &amp;lt; 0 or &amp;gt; {@link Byte#MAX_VALUE}.
+     */
+    public static PhredQuality valueOf(int qualityScore){
+<span class="fc" id="L165">    	 validate(qualityScore);</span>
+<span class="fc" id="L166">         return CACHE[qualityScore];</span>
+    }
+
+	private static void validate(int qualityScore) {
+<span class="pc bpc" id="L170" title="2 of 4 branches missed.">		if(qualityScore &lt; MIN_VALUE || qualityScore &gt; MAX_VALUE){</span>
+<span class="nc" id="L171">             throw new IllegalArgumentException(&quot;qualityScore of our range &quot;+qualityScore);</span>
+         }
+<span class="fc" id="L173">	}</span>
+   
+    
+   
+    /**
+     * Create an array of bytes which correspond to the 
+     * input {@link QualitySequence}.
+     * @param qualities a {@link QualitySequence}.
+     * @return a new byte array, never null.
+     * @throws NullPointerException if qualities are null
+     */
+    public static byte[] toArray(QualitySequence qualities){
+<span class="fc" id="L185">        ByteBuffer buf = ByteBuffer.allocate((int)qualities.getLength());</span>
+<span class="fc bfc" id="L186" title="All 2 branches covered.">        for(PhredQuality quality : qualities){</span>
+<span class="fc" id="L187">            buf.put(quality.value);</span>
+<span class="fc" id="L188">        }</span>
+<span class="fc" id="L189">        return buf.array();</span>
+    }
+
+    @Override
+    public String toString() {        
+<span class="nc" id="L194">        return toStringValidValue(value);</span>
+    }
+    /**
+     * Returns same String value
+     * as {@code PhredQuality.valueOf(qualityValue).toString()}
+     * but without the overhead of object construction.
+     * @param qualityValue the quality value to print.
+     * @return a String will never be null.
+     * @throws IllegalArgumentException if qualityScore &amp;lt; 0 or &amp;gt; {@link Byte#MAX_VALUE}.
+     */
+    public static String toString(byte qualityValue){
+<span class="nc" id="L205">    	validate(qualityValue);</span>
+<span class="nc" id="L206">    	return toStringValidValue(qualityValue);</span>
+    }
+    /**
+     * Print the toString value of the quality
+     * value without checking to make sure
+     * the quality value is valid.  This
+     * method should only be called on values
+     * that have already been validated.
+     * @param qualityValue
+     * @return
+     */
+	private static String toStringValidValue(byte qualityValue) {
+<span class="nc" id="L218">		return String.format(&quot;Q%02d&quot;,qualityValue);</span>
+	}
+
+	@Override
+	public int hashCode() {
+<span class="fc" id="L223">		return value;</span>
+	}
+	/**
+	 * Two {@link PhredQuality} values are equal
+	 * if and only if they both have the same quality score.
+	 * @return {@code true} if the given {@link PhredQuality}
+	 * has the same quality score as this; {@code false}
+	 * otherwise.
+	 */
+	@Override
+	public boolean equals(Object obj) {
+<span class="fc bfc" id="L234" title="All 2 branches covered.">		if (this == obj) {</span>
+<span class="fc" id="L235">			return true;</span>
+		}
+<span class="pc bpc" id="L237" title="1 of 2 branches missed.">		if (obj == null) {</span>
+<span class="nc" id="L238">			return false;</span>
+		}
+<span class="pc bpc" id="L240" title="1 of 2 branches missed.">		if (!(obj instanceof PhredQuality)) {</span>
+<span class="nc" id="L241">			return false;</span>
+		}
+<span class="fc" id="L243">		PhredQuality other = (PhredQuality) obj;</span>
+<span class="pc bpc" id="L244" title="1 of 2 branches missed.">		return value == other.value;</span>
+	}
+    
+    
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

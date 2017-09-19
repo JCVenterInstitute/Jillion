@@ -1,0 +1,793 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Chunk.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.trace.chromat.ztr.chunk</a> &gt; <span class="el_source">Chunk.java</span></div><h1>Chunk.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Oct 26, 2006
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.internal.trace.chromat.ztr.chunk;
+
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.ShortBuffer;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Scanner;
+import java.util.Set;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.pos.Position;
+import org.jcvi.jillion.core.pos.PositionSequence;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.internal.core.seq.trace.sanger.chromat.ztr.data.Data;
+import org.jcvi.jillion.internal.trace.chromat.ztr.ZTRUtil;
+import org.jcvi.jillion.internal.trace.chromat.ztr.data.DataFactory;
+import org.jcvi.jillion.internal.trace.chromat.ztr.data.RawData;
+import org.jcvi.jillion.trace.chromat.ChannelGroup;
+import org.jcvi.jillion.trace.chromat.Chromatogram;
+import org.jcvi.jillion.trace.chromat.ChromatogramFileVisitor;
+import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogram;
+import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogramBuilder;
+import org.jcvi.jillion.trace.chromat.ztr.ZtrChromatogramFileVisitor;
+
+/**
+ * The Chunk is the basic unit of the ZTR Structure.
+ * Each Chunk consists of a type, some metadata and then the data.
+ * @author dkatzel
+ *@see &lt;a href=&quot;http://staden.sourceforge.net/ztr.html&quot;&gt;ZTR SPEC v1.2&lt;/a&gt;
+ *
+ */
+<span class="pc" id="L73">public enum Chunk {</span>
+    
+    
+    /**
+     * The &lt;code&gt;BASE&lt;/code&gt; Chunk contains the actual base calls
+     * for this Chromatogram.
+     * @author dkatzel
+     */
+<span class="fc" id="L81">    BASE{</span>
+        @Override
+        protected void parseData(byte[] unEncodedData, ZtrChromatogramBuilder builder)
+                throws IOException {
+            //first byte is padding
+<span class="fc" id="L86">            final int numberOfBases = unEncodedData.length -1;</span>
+<span class="fc" id="L87">            ByteBuffer buf = ByteBuffer.allocate(numberOfBases);</span>
+<span class="fc" id="L88">            buf.put(unEncodedData, 1, numberOfBases);</span>
+<span class="fc" id="L89">            builder.basecalls(new NucleotideSequenceBuilder(</span>
+<span class="fc" id="L90">            		new String(buf.array(),IOUtil.UTF_8))</span>
+<span class="fc" id="L91">            			.build());</span>
+
+<span class="fc" id="L93">        }</span>
+
+        @Override
+        protected NucleotideSequence parseData(byte[] unEncodedData,
+                ChromatogramFileVisitor visitor,NucleotideSequence ignored) throws IOException {
+          //first byte is padding
+<span class="fc" id="L99">            final int numberOfBases = unEncodedData.length -1;</span>
+<span class="fc" id="L100">            ByteBuffer buf = ByteBuffer.allocate(numberOfBases);</span>
+<span class="fc" id="L101">            buf.put(unEncodedData, 1, numberOfBases);</span>
+            
+<span class="fc" id="L103">            final NucleotideSequence basecalls = new NucleotideSequenceBuilder(new String(buf.array(),IOUtil.UTF_8)).build();</span>
+<span class="fc" id="L104">            visitor.visitBasecalls(basecalls);</span>
+<span class="fc" id="L105">            return basecalls;</span>
+            
+        }
+
+		/* (non-Javadoc)
+		 * @see org.jcvi.trace.sanger.chromatogram.ztr.chunk.Chunk#encodeChunk(org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram)
+		 */
+		@Override
+		public byte[] encodeChunk(Chromatogram ztrChromatogram)
+				throws IOException {
+<span class="fc" id="L115">			String basecalls = ztrChromatogram.getNucleotideSequence().toString();</span>
+			
+<span class="fc" id="L117">			ByteBuffer buffer = ByteBuffer.allocate(basecalls.length()+1);</span>
+<span class="fc" id="L118">			buffer.put(PADDING_BYTE);</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">			for(int i=0; i&lt; basecalls.length(); i++){</span>
+<span class="fc" id="L120">				buffer.put((byte)basecalls.charAt(i));</span>
+			}
+<span class="fc" id="L122">			return buffer.array();</span>
+		}
+        
+        
+    },
+    /**
+     * The &lt;code&gt;POSITIONS&lt;/code&gt; Chunk contains the positions of the
+     * bases (peaks)stored as ints.
+     * @author dkatzel
+     *
+     *
+     */
+<span class="fc" id="L134">    POSITIONS{</span>
+        @Override
+        protected void parseData(byte[] unEncodedData, ZtrChromatogramBuilder builder)
+                throws IOException {
+<span class="fc" id="L138">            final int numberOfBases = (unEncodedData.length -1)/4;</span>
+<span class="fc" id="L139">            ShortBuffer peaks = ShortBuffer.allocate(numberOfBases);</span>
+<span class="fc" id="L140">            ByteBuffer input = ByteBuffer.wrap(unEncodedData);</span>
+            //skip padding
+<span class="fc" id="L142">            input.position(4);</span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">            while(input.hasRemaining()){</span>
+<span class="fc" id="L144">                peaks.put((short) input.getInt());</span>
+            }
+<span class="fc" id="L146">            builder.peaks(peaks.array());</span>
+
+<span class="fc" id="L148">        }</span>
+
+        @Override
+        protected NucleotideSequence parseData(byte[] unEncodedData,
+                ChromatogramFileVisitor visitor,NucleotideSequence basecalls) throws IOException {
+<span class="fc" id="L153">            final int numberOfBases = (unEncodedData.length -1)/4;</span>
+<span class="fc" id="L154">            ShortBuffer peaks = ShortBuffer.allocate(numberOfBases);</span>
+<span class="fc" id="L155">            ByteBuffer input = ByteBuffer.wrap(unEncodedData);</span>
+            //skip padding
+<span class="fc" id="L157">            input.position(4);</span>
+<span class="fc bfc" id="L158" title="All 2 branches covered.">            while(input.hasRemaining()){</span>
+<span class="fc" id="L159">                peaks.put((short) input.getInt());</span>
+            }
+<span class="fc" id="L161">            visitor.visitPeaks(peaks.array());</span>
+            
+<span class="fc" id="L163">            return basecalls;</span>
+            
+        }
+
+		/* (non-Javadoc)
+		 * @see org.jcvi.trace.sanger.chromatogram.ztr.chunk.Chunk#encodeChunk(org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram)
+		 */
+		@Override
+		public byte[] encodeChunk(Chromatogram ztrChromatogram)
+				throws IOException {
+<span class="fc" id="L173">			PositionSequence peaks = ztrChromatogram.getPeakSequence();</span>
+<span class="fc" id="L174">			ByteBuffer buffer = ByteBuffer.allocate((int)peaks.getLength()*4+4);</span>
+			//raw byte + 3 pads
+<span class="fc" id="L176">			buffer.putInt(0);</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">			for(Position peak : peaks){</span>
+<span class="fc" id="L178">				buffer.putInt(peak.getValue());</span>
+<span class="fc" id="L179">			}</span>
+<span class="fc" id="L180">			return buffer.array();</span>
+		}
+        
+    },
+    /**
+     * &lt;code&gt;CLIP&lt;/code&gt; contains the suggested quality clip points (0- based).
+     * @author dkatzel
+     *
+     *
+     */
+<span class="fc" id="L190">    CLIP{</span>
+        @Override
+        protected void parseData(byte[] unEncodedData, ZtrChromatogramBuilder builder)
+                throws IOException {
+<span class="fc bfc" id="L194" title="All 2 branches covered.">            if(unEncodedData.length !=9){</span>
+<span class="fc" id="L195">                throw new IOException(&quot;Invalid DefaultClip size, num of bytes = &quot; +unEncodedData.length );</span>
+            }
+<span class="fc" id="L197">            ByteBuffer buf = ByteBuffer.wrap(unEncodedData);</span>
+<span class="fc" id="L198">            buf.position(1); //skip padding</span>
+<span class="fc" id="L199">            builder.clip(Range.of(buf.getInt(), buf.getInt()));</span>
+<span class="fc" id="L200">        }</span>
+
+        @Override
+        protected NucleotideSequence parseData(byte[] unEncodedData,
+                ChromatogramFileVisitor visitor,NucleotideSequence basecalls) throws IOException {
+<span class="pc bpc" id="L205" title="1 of 2 branches missed.">            if(unEncodedData.length !=9){</span>
+<span class="nc" id="L206">                throw new IOException(&quot;Invalid DefaultClip size, num of bytes = &quot; +unEncodedData.length );</span>
+            }
+<span class="fc" id="L208">            ByteBuffer buf = ByteBuffer.wrap(unEncodedData);</span>
+<span class="fc" id="L209">            buf.position(1); //skip padding</span>
+<span class="fc" id="L210">            Range clipRange = Range.of(buf.getInt(), buf.getInt());</span>
+<span class="pc bpc" id="L211" title="1 of 2 branches missed.">            if(visitor instanceof ZtrChromatogramFileVisitor){</span>
+<span class="fc" id="L212">                ((ZtrChromatogramFileVisitor)visitor).visitClipRange(clipRange);</span>
+            }
+            
+<span class="fc" id="L215">            return basecalls;</span>
+        }
+
+		/* (non-Javadoc)
+		 * @see org.jcvi.trace.sanger.chromatogram.ztr.chunk.Chunk#encodeChunk(org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram)
+		 */
+		@Override
+		public byte[] encodeChunk(Chromatogram ztrChromatogram)
+				throws IOException {
+<span class="fc" id="L224">		    Range clip=null;</span>
+<span class="pc bpc" id="L225" title="1 of 2 branches missed.">		    if(ztrChromatogram instanceof ZtrChromatogram){</span>
+<span class="fc" id="L226">		        clip =((ZtrChromatogram)ztrChromatogram).getClip();</span>
+		    }
+			
+<span class="fc bfc" id="L229" title="All 2 branches covered.">			if(clip ==null){</span>
+				//store as 0,0?
+<span class="fc" id="L231">				clip = Range.of(0, 0);</span>
+			}
+<span class="fc" id="L233">			ByteBuffer buffer= ByteBuffer.allocate(9);</span>
+<span class="fc" id="L234">			buffer.put(PADDING_BYTE);</span>
+<span class="fc" id="L235">			buffer.putInt((int)clip.getBegin());</span>
+<span class="fc" id="L236">			buffer.putInt((int)clip.getEnd());</span>
+<span class="fc" id="L237">			return buffer.array();</span>
+		}
+        
+        
+    },
+    /**
+     * The &lt;code&gt;Confidences&lt;/code&gt; Chunk is an implemention of
+     * ZTR 1.2 format for {@code CNF4Chunk} which encodes the quality values for
+     * all 4 channels.  The format of the data is:
+     *  the confidence of the called
+     * base followed by the confidences of the uncalled bases.
+     * So for a sequence AGT we would store confidences 
+     * A1 G2 T3 C1 G1 T1 A2 C2 T2 A3 C3 G3. Any call that is not A, C, G or T
+     * is stored as a T.
+     *
+     * @author dkatzel
+     *@see &lt;a href=&quot;http://staden.sourceforge.net/ztr.html&quot;&gt;ZTR SPEC v1.2&lt;/a&gt;
+     *
+     *
+     */
+<span class="fc" id="L257">    CONFIDENCES{</span>
+    	
+<span class="fc" id="L259">    	EnumSet&lt;Nucleotide&gt; notA = EnumSet.of(</span>
+				Nucleotide.Cytosine, Nucleotide.Guanine, Nucleotide.Thymine);
+<span class="fc" id="L261">		EnumSet&lt;Nucleotide&gt; notC = EnumSet.of(</span>
+				Nucleotide.Adenine, Nucleotide.Guanine, Nucleotide.Thymine);
+<span class="fc" id="L263">		EnumSet&lt;Nucleotide&gt; notG = EnumSet.of(</span>
+				Nucleotide.Adenine, Nucleotide.Cytosine, Nucleotide.Thymine);
+<span class="fc" id="L265">		EnumSet&lt;Nucleotide&gt; notACorG = EnumSet.of(</span>
+				Nucleotide.Adenine, Nucleotide.Cytosine, Nucleotide.Guanine);
+<span class="fc" id="L267">		Map&lt;Nucleotide, Set&lt;Nucleotide&gt;&gt; otherChannelMap = new EnumMap&lt;Nucleotide, Set&lt;Nucleotide&gt;&gt;(Nucleotide.class);</span>
+		{
+<span class="fc" id="L269">			otherChannelMap.put(Nucleotide.Adenine, notA);</span>
+<span class="fc" id="L270">			otherChannelMap.put(Nucleotide.Cytosine, notC);</span>
+<span class="fc" id="L271">			otherChannelMap.put(Nucleotide.Guanine, notG);</span>
+<span class="fc" id="L272">		}</span>
+		
+		private Set&lt;Nucleotide&gt; getOtherChannelsThan(Nucleotide channel){
+			
+<span class="fc bfc" id="L276" title="All 2 branches covered.">			if(otherChannelMap.containsKey(channel)){</span>
+<span class="fc" id="L277">				return otherChannelMap.get(channel);</span>
+			}
+<span class="fc" id="L279">			return notACorG;</span>
+			
+		}
+		
+        @Override
+        protected void parseData(byte[] unEncodedData, ZtrChromatogramBuilder builder)
+                throws IOException {
+<span class="fc" id="L286">            NucleotideSequence basecalls = new NucleotideSequenceBuilder(builder.basecalls()).build();</span>
+<span class="fc" id="L287">            int numberOfBases = (int)basecalls.getLength();</span>
+               
+<span class="fc" id="L289">            ByteBuffer aConfidence = ByteBuffer.allocate(numberOfBases);</span>
+<span class="fc" id="L290">            ByteBuffer cConfidence = ByteBuffer.allocate(numberOfBases);</span>
+<span class="fc" id="L291">            ByteBuffer gConfidence = ByteBuffer.allocate(numberOfBases);</span>
+<span class="fc" id="L292">            ByteBuffer tConfidence = ByteBuffer.allocate(numberOfBases);</span>
+               
+<span class="fc" id="L294">            ByteBuffer calledConfidence = ByteBuffer.wrap(unEncodedData);       </span>
+<span class="fc" id="L295">            ByteBuffer unCalledConfidence = calledConfidence.slice();</span>
+            //skip padding
+<span class="fc" id="L297">            calledConfidence.position(1);</span>
+<span class="fc" id="L298">            unCalledConfidence.position(1+numberOfBases);</span>
+<span class="fc" id="L299">            populateConfidenceBuffers(basecalls, aConfidence, cConfidence,</span>
+                    gConfidence, tConfidence, calledConfidence, unCalledConfidence);
+               
+<span class="fc" id="L302">            builder.aQualities(aConfidence.array());</span>
+<span class="fc" id="L303">            builder.cConfidence(cConfidence.array());</span>
+<span class="fc" id="L304">            builder.gQualities(gConfidence.array());</span>
+<span class="fc" id="L305">            builder.tQualities(tConfidence.array());</span>
+
+<span class="fc" id="L307">        }</span>
+
+        private void populateConfidenceBuffers(NucleotideSequence basecalls,
+                ByteBuffer aConfidence, ByteBuffer cConfidence,
+                ByteBuffer gConfidence, ByteBuffer tConfidence,
+                ByteBuffer calledConfidence, ByteBuffer unCalledConfidence) {
+<span class="fc" id="L313">        	int length = (int) basecalls.getLength();</span>
+<span class="fc bfc" id="L314" title="All 2 branches covered.">            for (int i = 0; i &lt; length; i++) {</span>
+<span class="fc" id="L315">                char currentChar = basecalls.get(i).getCharacter().charValue();</span>
+<span class="fc" id="L316">                populateConfidenceBuffers(currentChar, aConfidence, cConfidence,</span>
+                        gConfidence, tConfidence, calledConfidence,
+                        unCalledConfidence);
+            }
+<span class="fc" id="L320">        }</span>
+
+        private void populateConfidenceBuffers(char currentChar,
+                ByteBuffer aConfidence, ByteBuffer cConfidence,
+                ByteBuffer gConfidence, ByteBuffer tConfidence,
+                ByteBuffer calledConfidence, ByteBuffer unCalledConfidence) {
+<span class="fc bfc" id="L326" title="All 2 branches covered.">            if(matchesCharacterIgnoringCase(currentChar, 'A')){</span>
+<span class="fc" id="L327">                setConfidences(calledConfidence, unCalledConfidence, </span>
+<span class="fc" id="L328">                        aConfidence, Arrays.asList(cConfidence, gConfidence, tConfidence));</span>
+            }
+<span class="fc bfc" id="L330" title="All 2 branches covered.">            else  if(matchesCharacterIgnoringCase(currentChar, 'C')){</span>
+<span class="fc" id="L331">               setConfidences(calledConfidence, unCalledConfidence, </span>
+<span class="fc" id="L332">                       cConfidence, Arrays.asList(aConfidence, gConfidence, tConfidence));</span>
+            }
+<span class="fc bfc" id="L334" title="All 2 branches covered.">            else  if(matchesCharacterIgnoringCase(currentChar, 'G')){</span>
+<span class="fc" id="L335">                   setConfidences(calledConfidence, unCalledConfidence, </span>
+<span class="fc" id="L336">                           gConfidence, Arrays.asList(aConfidence, cConfidence, tConfidence));</span>
+            }
+            //anything is is considered a &quot;T&quot;
+            else{
+<span class="fc" id="L340">                   setConfidences(calledConfidence, unCalledConfidence, </span>
+<span class="fc" id="L341">                           tConfidence, Arrays.asList(aConfidence, cConfidence, gConfidence));</span>
+            }
+<span class="fc" id="L343">        }</span>
+        
+        private boolean matchesCharacterIgnoringCase(char c, char charToMatch){
+<span class="pc bpc" id="L346" title="1 of 2 branches missed.">            return Character.toLowerCase(c) == charToMatch</span>
+<span class="fc bfc" id="L347" title="All 2 branches covered.">                || Character.toUpperCase(c) == charToMatch;</span>
+        }
+
+        private void setConfidences(ByteBuffer calledConfidence, ByteBuffer unCalledConfidence,
+                ByteBuffer calledconfidenceChannel, List&lt;ByteBuffer&gt; uncalledConfidenceChannels){
+<span class="fc" id="L352">            calledconfidenceChannel.put(calledConfidence.get());</span>
+<span class="fc bfc" id="L353" title="All 2 branches covered.">            for(ByteBuffer uncalledBuf : uncalledConfidenceChannels){</span>
+<span class="fc" id="L354">                uncalledBuf.put(unCalledConfidence.get());</span>
+<span class="fc" id="L355">            }</span>
+<span class="fc" id="L356">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        protected NucleotideSequence parseData(byte[] unEncodedData,
+                ChromatogramFileVisitor visitor,NucleotideSequence basecalls)throws IOException {
+           
+<span class="fc" id="L365">            int numberOfBases = (int) basecalls.getLength();</span>
+<span class="fc" id="L366">            ByteBuffer aConfidence = ByteBuffer.allocate(numberOfBases);</span>
+<span class="fc" id="L367">            ByteBuffer cConfidence = ByteBuffer.allocate(numberOfBases);</span>
+<span class="fc" id="L368">            ByteBuffer gConfidence = ByteBuffer.allocate(numberOfBases);</span>
+<span class="fc" id="L369">            ByteBuffer tConfidence = ByteBuffer.allocate(numberOfBases);</span>
+               
+<span class="fc" id="L371">            ByteBuffer calledConfidence = ByteBuffer.wrap(unEncodedData);       </span>
+<span class="fc" id="L372">            ByteBuffer unCalledConfidence = calledConfidence.slice();</span>
+            //skip padding
+<span class="fc" id="L374">            calledConfidence.position(1);</span>
+<span class="fc" id="L375">            unCalledConfidence.position(1+numberOfBases);</span>
+<span class="fc" id="L376">            populateConfidenceBuffers(basecalls, aConfidence, cConfidence,</span>
+                    gConfidence, tConfidence, calledConfidence, unCalledConfidence);
+            
+<span class="fc" id="L379">            visitor.visitAConfidence(aConfidence.array());</span>
+<span class="fc" id="L380">            visitor.visitCConfidence(cConfidence.array());</span>
+<span class="fc" id="L381">            visitor.visitGConfidence(gConfidence.array());</span>
+<span class="fc" id="L382">            visitor.visitTConfidence(tConfidence.array());</span>
+<span class="fc" id="L383">            return basecalls;</span>
+            
+        }
+
+		/* (non-Javadoc)
+		 * @see org.jcvi.trace.sanger.chromatogram.ztr.chunk.Chunk#encodeChunk(org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram)
+		 */
+		@Override
+		public byte[] encodeChunk(Chromatogram ztrChromatogram)
+				throws IOException {
+			
+			
+			
+			
+<span class="fc" id="L397">			ChannelGroup channelGroup =ztrChromatogram.getChannelGroup();</span>
+<span class="fc" id="L398">			NucleotideSequence nucleotideSequence = ztrChromatogram.getNucleotideSequence();</span>
+<span class="fc" id="L399">			int sequenceLength = (int)nucleotideSequence.getLength();</span>
+<span class="fc" id="L400">			ByteBuffer calledBaseConfidences = ByteBuffer.allocate(sequenceLength);</span>
+<span class="fc" id="L401">			ByteBuffer otherConfidences = ByteBuffer.allocate(sequenceLength*3);</span>
+<span class="fc" id="L402">			int i=0;</span>
+<span class="fc bfc" id="L403" title="All 2 branches covered.">			for(Nucleotide base : nucleotideSequence){</span>
+<span class="fc" id="L404">				calledBaseConfidences.put(channelGroup.getChannel(base).getQualitySequence().get(i).getQualityScore());</span>
+				
+<span class="fc bfc" id="L406" title="All 2 branches covered.">				for(Nucleotide other: getOtherChannelsThan(base)){</span>
+<span class="fc" id="L407">					otherConfidences.put(channelGroup.getChannel(other).getQualitySequence().get(i).getQualityScore());</span>
+<span class="fc" id="L408">				}</span>
+<span class="fc" id="L409">				i++;</span>
+<span class="fc" id="L410">			}</span>
+			
+<span class="fc" id="L412">			ByteBuffer result = ByteBuffer.allocate(sequenceLength*4+1);</span>
+<span class="fc" id="L413">			result.put(PADDING_BYTE);</span>
+<span class="fc" id="L414">			result.put(calledBaseConfidences.array());</span>
+<span class="fc" id="L415">			result.put(otherConfidences.array());</span>
+<span class="fc" id="L416">			return result.array();</span>
+		}
+        
+        
+    },
+    /**
+    * &lt;code&gt;SMP4&lt;/code&gt; is the chromatogram scan points for all 4 channels
+    * of trace samples.
+    * The order of channels is A,C,G,T.  It is assumed that all channels are the
+    * same length.
+    * @author dkatzel
+    */
+<span class="fc" id="L428">    SMP4{</span>
+        @Override
+        public void parseData(byte[] unEncodedData,ZtrChromatogramBuilder builder) throws IOException {
+        //read first 2 byte is padded bytes?
+            
+<span class="fc" id="L433">            ShortBuffer buf = ByteBuffer.wrap(unEncodedData).asShortBuffer();</span>
+            //skip padding
+<span class="fc" id="L435">            buf.position(1);</span>
+<span class="fc" id="L436">            int length = buf.capacity()-1;</span>
+<span class="fc" id="L437">            int numberOfPositions = length/4;</span>
+<span class="fc" id="L438">            ShortBuffer aPositions = ShortBuffer.allocate(numberOfPositions);</span>
+<span class="fc" id="L439">            ShortBuffer cPositions = ShortBuffer.allocate(numberOfPositions);</span>
+<span class="fc" id="L440">            ShortBuffer gPositions = ShortBuffer.allocate(numberOfPositions);</span>
+<span class="fc" id="L441">            ShortBuffer tPositions = ShortBuffer.allocate(numberOfPositions);</span>
+            
+<span class="fc" id="L443">            populatePositionData(buf, aPositions);</span>
+<span class="fc" id="L444">            populatePositionData(buf, cPositions);</span>
+<span class="fc" id="L445">            populatePositionData(buf, gPositions);</span>
+<span class="fc" id="L446">            populatePositionData(buf, tPositions);</span>
+            
+<span class="fc" id="L448">              builder.aPositions(aPositions.array());</span>
+<span class="fc" id="L449">              builder.cPositions(cPositions.array());</span>
+<span class="fc" id="L450">              builder.gPositions(gPositions.array());</span>
+<span class="fc" id="L451">              builder.tPositions(tPositions.array());</span>
+              
+<span class="fc" id="L453">        }</span>
+
+
+        private void populatePositionData(ShortBuffer buf, ShortBuffer aPositions) {
+<span class="fc bfc" id="L457" title="All 2 branches covered.">            for(int i=0; i&lt; aPositions.capacity(); i++){</span>
+<span class="fc" id="L458">                aPositions.put(buf.get());</span>
+            }
+<span class="fc" id="L460">        }</span>
+
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        protected NucleotideSequence parseData(byte[] unEncodedData,
+                ChromatogramFileVisitor visitor, NucleotideSequence basecalls) throws IOException {
+       //read first 2 byte is padded bytes?
+            
+<span class="fc" id="L471">            ShortBuffer buf = ByteBuffer.wrap(unEncodedData).asShortBuffer();</span>
+            //skip padding
+<span class="fc" id="L473">            buf.position(1);</span>
+<span class="fc" id="L474">            int length = buf.capacity()-1;</span>
+<span class="fc" id="L475">            int numberOfPositions = length/4;</span>
+<span class="fc" id="L476">            ShortBuffer aPositions = ShortBuffer.allocate(numberOfPositions);</span>
+<span class="fc" id="L477">            ShortBuffer cPositions = ShortBuffer.allocate(numberOfPositions);</span>
+<span class="fc" id="L478">            ShortBuffer gPositions = ShortBuffer.allocate(numberOfPositions);</span>
+<span class="fc" id="L479">            ShortBuffer tPositions = ShortBuffer.allocate(numberOfPositions);</span>
+            
+<span class="fc" id="L481">            populatePositionData(buf, aPositions);</span>
+<span class="fc" id="L482">            populatePositionData(buf, cPositions);</span>
+<span class="fc" id="L483">            populatePositionData(buf, gPositions);</span>
+<span class="fc" id="L484">            populatePositionData(buf, tPositions);</span>
+            
+<span class="fc" id="L486">            visitor.visitAPositions(aPositions.array());</span>
+<span class="fc" id="L487">            visitor.visitCPositions(cPositions.array());</span>
+<span class="fc" id="L488">            visitor.visitGPositions(gPositions.array());</span>
+<span class="fc" id="L489">            visitor.visitTPositions(tPositions.array());</span>
+            
+<span class="fc" id="L491">            return basecalls;</span>
+        }
+
+
+		/* (non-Javadoc)
+		 * @see org.jcvi.trace.sanger.chromatogram.ztr.chunk.Chunk#encodeChunk(org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram)
+		 */
+		@Override
+		public byte[] encodeChunk(Chromatogram ztrChromatogram)
+				throws IOException {
+<span class="fc" id="L501">			int numTracePositions = ztrChromatogram.getNumberOfTracePositions();</span>
+<span class="fc" id="L502">			ChannelGroup channelGroup = ztrChromatogram.getChannelGroup();</span>
+			
+<span class="fc" id="L504">			ByteBuffer result = ByteBuffer.allocate(8 *numTracePositions+2);</span>
+			//first 2 bytes are padding
+<span class="fc" id="L506">			result.putShort(PADDING_BYTE);</span>
+<span class="fc bfc" id="L507" title="All 2 branches covered.">				for(Position pos : channelGroup.getAChannel().getPositionSequence()){</span>
+<span class="fc" id="L508">					result.putShort(IOUtil.toSignedShort(pos.getValue()));</span>
+<span class="fc" id="L509">				}</span>
+<span class="fc bfc" id="L510" title="All 2 branches covered.">				for(Position pos : channelGroup.getCChannel().getPositionSequence()){</span>
+<span class="fc" id="L511">					result.putShort(IOUtil.toSignedShort(pos.getValue()));</span>
+<span class="fc" id="L512">				}</span>
+<span class="fc bfc" id="L513" title="All 2 branches covered.">				for(Position pos : channelGroup.getGChannel().getPositionSequence()){</span>
+<span class="fc" id="L514">					result.putShort(IOUtil.toSignedShort(pos.getValue()));</span>
+<span class="fc" id="L515">				}</span>
+<span class="fc bfc" id="L516" title="All 2 branches covered.">				for(Position pos : channelGroup.getTChannel().getPositionSequence()){</span>
+<span class="fc" id="L517">					result.putShort(IOUtil.toSignedShort(pos.getValue()));</span>
+<span class="fc" id="L518">				}</span>
+				
+<span class="fc" id="L520">			return result.array();</span>
+		}
+        
+        
+    },
+    /**
+     * Implementation of the ZTR TEXT Chunk.
+     * Any information decoded from this chunk will be set as Trace comment
+     * which can be obtained via {@link Chromatogram#getComments()}.
+     * @author dkatzel
+     * @see &lt;a href=&quot;http://staden.sourceforge.net/ztr.html&quot;&gt;ZTR SPEC v1.2&lt;/a&gt;
+     *
+     *
+     */
+<span class="fc" id="L534">    COMMENTS{</span>
+        /**
+         * 
+        * {@inheritDoc}
+         */
+        @Override
+        protected void parseData(byte[] decodedData, ZtrChromatogramBuilder builder)
+                throws IOException {
+<span class="fc" id="L542">            InputStream in = new ByteArrayInputStream(decodedData);</span>
+<span class="fc" id="L543">            builder.comments(parseText(in));</span>
+<span class="fc" id="L544">        }</span>
+
+        protected Map&lt;String,String&gt; parseText(InputStream in)
+                throws IOException {
+<span class="fc" id="L548">            Scanner scanner=null;</span>
+            //linked hash preserves insertion order
+<span class="fc" id="L550">            Map&lt;String,String&gt; textProps = new LinkedHashMap&lt;String, String&gt;();</span>
+            try{
+                //skip first byte
+<span class="fc" id="L553">                in.read();</span>
+<span class="fc" id="L554">                scanner = new Scanner(in, IOUtil.UTF_8_NAME).useDelimiter(&quot;\0+&quot;);</span>
+                 
+<span class="fc bfc" id="L556" title="All 2 branches covered.">                while(scanner.hasNext()){</span>
+<span class="fc" id="L557">                    final String key = scanner.next();                </span>
+<span class="fc" id="L558">                    final String value = scanner.next();</span>
+<span class="fc" id="L559">                    textProps.put(key, value);</span>
+
+<span class="fc" id="L561">                }</span>
+<span class="fc" id="L562">                return textProps;</span>
+            }
+<span class="nc" id="L564">            catch(IOException e){</span>
+<span class="nc" id="L565">                throw new IOException(&quot;error reading text data&quot;, e);</span>
+            }
+            finally{
+<span class="pc bpc" id="L568" title="3 of 4 branches missed.">                if(scanner !=null){</span>
+<span class="pc" id="L569">                    scanner.close();</span>
+                }
+            }
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        protected NucleotideSequence parseData(byte[] decodedData,
+                ChromatogramFileVisitor visitor,NucleotideSequence basecalls) throws IOException {
+<span class="fc" id="L580">            InputStream in = new ByteArrayInputStream(decodedData);</span>
+<span class="fc" id="L581">            final Map&lt;String,String&gt; comments = parseText(in);</span>
+<span class="fc" id="L582">            visitor.visitComments(comments);</span>
+<span class="fc" id="L583">            return basecalls;</span>
+            
+        }
+
+		/* (non-Javadoc)
+		 * @see org.jcvi.trace.sanger.chromatogram.ztr.chunk.Chunk#encodeChunk(org.jcvi.trace.sanger.chromatogram.ztr.ZTRChromatogram)
+		 */
+		@Override
+		public byte[] encodeChunk(Chromatogram ztrChromatogram)
+				throws IOException {
+<span class="fc" id="L593">			ByteArrayOutputStream out = new ByteArrayOutputStream();</span>
+<span class="fc" id="L594">			out.write(PADDING_BYTE);</span>
+<span class="fc bfc" id="L595" title="All 2 branches covered.">			for(Entry&lt;String, String&gt; entry : ztrChromatogram.getComments().entrySet()){</span>
+				try {
+<span class="fc" id="L597">					out.write(entry.getKey().getBytes(&quot;UTF-8&quot;));</span>
+<span class="fc" id="L598">					out.write(PADDING_BYTE);</span>
+<span class="fc" id="L599">					out.write(entry.getValue().getBytes(&quot;UTF-8&quot;));</span>
+<span class="fc" id="L600">					out.write(PADDING_BYTE);</span>
+<span class="nc" id="L601">				} catch (IOException e) {</span>
+<span class="nc" id="L602">					throw new IOException(String.format(&quot;error writing comment key='%s' value ='%s'&quot;, entry.getKey(), entry.getValue()),e);</span>
+<span class="fc" id="L603">				}</span>
+<span class="fc" id="L604">			}</span>
+<span class="fc" id="L605">			out.write(PADDING_BYTE);</span>
+<span class="fc" id="L606">			byte[] ret= out.toByteArray();</span>
+<span class="fc" id="L607">			IOUtil.closeAndIgnoreErrors(out);</span>
+<span class="fc" id="L608">			return ret;</span>
+		}
+        
+        
+    }
+    ;
+
+    
+    /**
+     * map of all supported chunk implementations mapped by header.
+     */
+    private static final Map&lt;ChunkType, Chunk&gt; CHUNK_MAP;
+    
+    private static final byte PADDING_BYTE = (byte)0;
+    /**
+     * populate chunk_map.
+     */
+    static{
+<span class="fc" id="L626">        Map&lt;ChunkType, Chunk&gt; map = new HashMap&lt;ChunkType, Chunk&gt;();</span>
+<span class="fc" id="L627">        map.put(ChunkType.SAMPLES, Chunk.SMP4);</span>
+<span class="fc" id="L628">        map.put(ChunkType.BASECALLS, Chunk.BASE);</span>
+<span class="fc" id="L629">        map.put(ChunkType.POSITIONS, Chunk.POSITIONS);</span>
+<span class="fc" id="L630">        map.put(ChunkType.CONFIDENCE, Chunk.CONFIDENCES);</span>
+<span class="fc" id="L631">        map.put(ChunkType.COMMENTS, Chunk.COMMENTS);</span>
+<span class="fc" id="L632">        map.put(ChunkType.CLIP, Chunk.CLIP);</span>
+<span class="fc" id="L633">        CHUNK_MAP = Collections.unmodifiableMap(map);</span>
+<span class="fc" id="L634">    }</span>
+    /**
+     * get {@link Chunk} by chunk header name.
+     * @param chunkHeader the name of the chunk as seen in its header.
+     * @return a non-null {@link Chunk}.
+     * @throws ChunkException if chunk name not supported.
+     */
+    public static Chunk getChunk(String chunkHeader) throws ChunkException{
+<span class="fc" id="L642">        return CHUNK_MAP.get(ChunkType.getChunkFor(chunkHeader));</span>
+    }
+    
+    public void parseChunk(ZtrChromatogramBuilder builder, InputStream inputStream) throws IOException{
+<span class="nc bnc" id="L646" title="All 2 branches missed.">        if(inputStream ==null){</span>
+<span class="nc" id="L647">            throw new IOException(&quot;inputStream can not be null&quot;);</span>
+        }
+<span class="nc bnc" id="L649" title="All 2 branches missed.">        if(builder ==null){</span>
+<span class="nc" id="L650">            throw new IOException(&quot;chromoStruct can not be null&quot;);</span>
+        }
+<span class="nc" id="L652">        readMetaData(inputStream);</span>
+<span class="nc" id="L653">        readData(builder,inputStream);</span>
+<span class="nc" id="L654">    }</span>
+    public NucleotideSequence parseChunk(InputStream inputStream, ChromatogramFileVisitor visitor,NucleotideSequence basecalls) throws IOException{
+<span class="pc bpc" id="L656" title="1 of 2 branches missed.">        if(inputStream ==null){</span>
+<span class="nc" id="L657">            throw new IOException(&quot;inputStream can not be null&quot;);</span>
+        }
+<span class="fc" id="L659">        readMetaData(inputStream);</span>
+<span class="fc" id="L660">        return readData(inputStream,visitor,basecalls);</span>
+    }
+    /**
+     * Read the meta data portion of the chunk
+     * Some implementations of chunk may not have
+     * metaData.
+     *
+     */
+    protected void readMetaData(InputStream inputStream)throws IOException{
+
+       try{
+<span class="fc" id="L671">        long length = readLength(inputStream);</span>
+
+        //skip over meta data here
+<span class="fc" id="L674">        IOUtil.blockingSkip(inputStream, length);</span>
+       }
+<span class="fc" id="L676">        catch(IOException ioEx){</span>
+<span class="fc" id="L677">            throw new IOException(&quot;error reading chunk meta data&quot;,ioEx);</span>
+<span class="fc" id="L678">        }</span>
+<span class="fc" id="L679">    }</span>
+
+    /**
+     * Get the length of the current chunk.
+     * @param inputStream the {@link InputStream} to read; should not be null.
+     * @throws IOException if there is a problem reading the chunk length
+     * @return the number of bytes in the chunk.
+     */
+    protected int readLength(InputStream inputStream) throws IOException{
+       try{
+
+        //get metaDataLength
+<span class="fc" id="L691">        byte[] lengthArray = readLengthFromInputStream(inputStream);</span>
+<span class="fc" id="L692">        long length = ZTRUtil.readInt(lengthArray);</span>
+<span class="pc bpc" id="L693" title="2 of 4 branches missed.">        if(length &lt;0 || length &gt; Integer.MAX_VALUE){</span>
+            //uhh... try other endian
+<span class="nc" id="L695">            length = ZTRUtil.readInt(IOUtil.switchEndian(lengthArray));</span>
+        }
+
+<span class="fc" id="L698">        return  (int)length;</span>
+       }
+<span class="fc" id="L700">       catch(IOException e){</span>
+<span class="fc" id="L701">           throw new IOException(&quot;error reading chunk length&quot;, e);</span>
+       }
+
+    }
+
+    private byte[] readLengthFromInputStream(InputStream inputStream)
+            throws IOException {
+<span class="fc" id="L708">        byte[] lengthArray = new byte[4];</span>
+<span class="fc" id="L709">        IOUtil.blockingRead(inputStream, lengthArray);    </span>
+<span class="fc" id="L710">        return lengthArray;</span>
+    }
+
+
+    /**
+     * Read the data portion of the chunk.
+     * This method calls parseData to interpret
+     * the data and returns the result.
+     */
+    private void readData(ZtrChromatogramBuilder builder,InputStream inputStream)throws IOException{
+<span class="nc" id="L720">        int length = readLength(inputStream);</span>
+
+        //the data may be encoded
+        //call dataFactory to get the data implementation
+
+<span class="nc" id="L725">        parseData(decodeChunk(inputStream,length), builder);</span>
+<span class="nc" id="L726">    }</span>
+    /**
+     * Read the data portion of the chunk.
+     * This method calls parseData to interpret
+     * the data and returns the result.
+     */
+    private NucleotideSequence readData(InputStream inputStream,ChromatogramFileVisitor visitor, NucleotideSequence basecalls)throws IOException{
+<span class="fc" id="L733">        int length = readLength(inputStream);</span>
+
+        //the data may be encoded
+        //call dataFactory to get the data implementation
+
+<span class="fc" id="L738">        return parseData(decodeChunk(inputStream,length), visitor, basecalls);</span>
+    }
+    /**
+     * Performs the actual conversion from the data stored in the chunk
+     * into the appropriate format and SETS the data to the given
+     * {@link ZtrChromatogramBuilder} object.
+     * @param unEncodedData the actual bytes to parse
+     * (including any formating bytes).
+     * @param builder the {@link ZtrChromatogramBuilder} to set the data to.
+     * @throws IOException if there are any problems parsing the data.
+     */
+    protected abstract void parseData(byte[] unEncodedData, ZtrChromatogramBuilder builder) throws IOException;
+    protected abstract NucleotideSequence parseData(byte[] unEncodedData, ChromatogramFileVisitor visitor, NucleotideSequence basecalls) throws IOException;
+
+    public abstract byte[] encodeChunk(Chromatogram ztrChromatogram) throws IOException;
+
+    protected byte[] decodeChunk(InputStream inputStream, int datalength) throws IOException{
+        try{
+           
+           //first we have to read the data encoding
+//          data can be encoded, get data type.
+            // the data can be encoded multiple times
+            //ex: runlength encoded, then zipped
+            //we will know when we are done, when the first byte is 0.
+<span class="fc" id="L762">            boolean stillEncoded = true;</span>
+<span class="fc" id="L763">            byte[] data = readData(inputStream,datalength);</span>
+<span class="fc bfc" id="L764" title="All 2 branches covered.">            while(stillEncoded){</span>
+<span class="fc" id="L765">                final Data dataImplementation = DataFactory.getDataImplementation(data);</span>
+<span class="fc bfc" id="L766" title="All 2 branches covered.">                if(dataImplementation instanceof RawData){</span>
+<span class="fc" id="L767">                    stillEncoded = false;</span>
+                }            
+                else{
+                    //not done yet
+<span class="fc" id="L771">                    data = dataImplementation.parseData(data);</span>
+                }
+<span class="fc" id="L773">            }</span>
+<span class="fc" id="L774">            return data;</span>
+        }
+<span class="nc" id="L776">        catch(IOException e){</span>
+<span class="nc" id="L777">            throw new IOException(&quot;error decoding chunk&quot;,e);</span>
+        }
+    }
+
+    private byte[] readData(InputStream inputStream, int datalength) throws IOException,
+            IOException {
+<span class="fc" id="L783">        byte[] data = new byte[datalength];</span>
+        try{
+<span class="fc" id="L785">        	IOUtil.blockingRead(inputStream, data);</span>
+<span class="nc" id="L786">        }catch(EOFException e){</span>
+<span class="nc" id="L787">        	 throw new IOException(&quot;invalid datalength field&quot;, e);</span>
+<span class="fc" id="L788">        }</span>
+            
+<span class="fc" id="L790">        return data;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

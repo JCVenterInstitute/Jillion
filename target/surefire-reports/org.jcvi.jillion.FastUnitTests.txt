@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: org.jcvi.jillion.FastUnitTests
+-------------------------------------------------------------------------------
+Tests run: 11692, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 55.683 sec - in org.jcvi.jillion.FastUnitTests

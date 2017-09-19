@@ -1,0 +1,499 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>GrowableIntArray.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.core.util</a> &gt; <span class="el_source">GrowableIntArray.java</span></div><h1>GrowableIntArray.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.internal.core.util;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.IntStream;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.internal.core.util.iter.PrimitiveArrayIterators;
+/**
+ * A {@code GrowableIntArray} is a utility class
+ * that wraps a int array that will dynamically
+ * grow as needed when data is
+ * appended, inserted, replaced and removed etc.
+ * This is similar to an {@link ArrayList}
+ * or {@link StringBuilder}
+ * for primitive shorts.
+ * This class is not Thread-safe.
+ * @author dkatzel
+ *
+ */
+public final class GrowableIntArray implements Iterable&lt;Integer&gt;{
+	/**
+	 * The current length of valid data
+	 * this is not the same as the length
+	 * of the int array (capacity) since
+	 * there still might be room to grow.
+	 * There might even be old data in the array
+	 * past current length if the array
+	 * has been modified via the {@link #remove(int)}
+	 * methods.
+	 */
+<span class="fc" id="L55">	private int currentLength=0;</span>
+	/**
+	 * Our actual int array,
+	 * the capacity is the size of the array.
+	 */
+	private int[] data;
+	/**
+	 * Creates a new Growable array
+	 * with the given initial capacity.
+	 * @param initialCapacity the initial size 
+	 * of the backing int array.  When adding
+	 * ints will cause the int array to overflow,
+	 * the backing int array will automatically
+	 * grow larger.
+	 * @throws IllegalArgumentException if initialCapacity is &lt;0.
+	 */
+<span class="fc" id="L71">	public GrowableIntArray(int initialCapacity){</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">		if(initialCapacity &lt;0){</span>
+<span class="fc" id="L73">			throw new IllegalArgumentException(&quot;initial capacity should be &gt;= 0 :&quot;+initialCapacity);</span>
+		}
+<span class="fc" id="L75">		data = new int[initialCapacity];		</span>
+<span class="fc" id="L76">	}</span>
+	/**
+	 * Creates a new Growable array
+	 * where the backing array contains
+	 * the contents of the given Collection
+	 * stored as primitives.  The order in the array
+	 * is the determined by the Collection's iteration order.
+	 * The capacity and length of this growable array
+	 * are set to the collection's size.
+	 * @param ints the Collection of Integers to 
+	 * create into a growable array from.
+	 * @throws NullPointerException if the given
+	 * collection is null or any elements in the collection
+	 * are null.
+	 */
+<span class="fc" id="L91">	public GrowableIntArray(Collection&lt;Integer&gt; ints){</span>
+<span class="fc" id="L92">		data = new int[ints.size()];</span>
+<span class="fc" id="L93">		int index=0;</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">		for(Integer i : ints){</span>
+<span class="fc" id="L95">			data[index]=i.intValue();</span>
+<span class="fc" id="L96">			index++;</span>
+<span class="fc" id="L97">		}</span>
+<span class="fc" id="L98">		currentLength=data.length;</span>
+<span class="fc" id="L99">	}</span>
+	/**
+	 * Creates a new Growable array
+	 * where the backing int array is an exact
+	 * copy of the input array and the initial
+	 * capacity is set to the array length.
+	 * This has similar (although optimized)
+	 * functionality to
+	 * &lt;pre&gt;
+	 * int[] ints = ...
+	 * GrowableIntArray gba = new GrowableIntArray(ints.length);
+	 * gba.append(int);
+	 * &lt;/pre&gt;
+	 * @param ints the initial short values to set
+	 * to the backing array.
+	 * @throws NullPointerException if ints is null.
+	 */
+<span class="fc" id="L116">	public GrowableIntArray(int[] ints){</span>
+<span class="fc" id="L117">		data = Arrays.copyOf(ints, ints.length);</span>
+<span class="fc" id="L118">		currentLength=data.length;</span>
+<span class="fc" id="L119">	}</span>
+<span class="fc" id="L120">	private GrowableIntArray(GrowableIntArray copy){</span>
+<span class="fc" id="L121">		data = Arrays.copyOf(copy.data, copy.data.length);</span>
+<span class="fc" id="L122">		currentLength = copy.currentLength;</span>
+<span class="fc" id="L123">	}</span>
+	/**
+	 * Creates a new Growable array
+	 * with a default initial capacity.
+	 */
+	public GrowableIntArray() {
+<span class="fc" id="L129">		this(16);</span>
+<span class="fc" id="L130">	}</span>
+	/**
+	 * Create a new instance of GrowableShortArray
+	 * that is an exact copy of this instance.
+	 * Any future modifications to either the original
+	 * instance or the copy will NOT be reflected 
+	 * in the other.
+	 * @return a new instance of GrowableIntArray
+	 * that contains the same data as this instance
+	 * currently does.
+	 */
+	public GrowableIntArray copy(){
+<span class="fc" id="L142">		return new GrowableIntArray(this);</span>
+	}
+	private void assertValidOffset(int offset) {
+<span class="pc bpc" id="L145" title="2 of 4 branches missed.">		if (offset &lt;0 || offset &gt;= currentLength){</span>
+<span class="nc" id="L146">		    throw new IndexOutOfBoundsException(</span>
+			&quot;Index: &quot;+offset+&quot;, Size: &quot;+currentLength);
+	    }
+<span class="fc" id="L149">	}</span>
+	private void assertValidRange(Range range) {
+<span class="pc bpc" id="L151" title="2 of 4 branches missed.">		if (range.getBegin()&lt;0 || range.getEnd() &gt;= currentLength){</span>
+<span class="nc" id="L152">		    throw new IndexOutOfBoundsException(</span>
+			&quot;range: &quot;+range+&quot;, array size: &quot;+currentLength);
+	    }
+<span class="fc" id="L155">	}</span>
+	
+	public void reverse(){
+<span class="fc" id="L158">		int pivotPoint = currentLength/2;</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">		for(int i=0; i&lt;pivotPoint;i++){</span>
+<span class="fc" id="L160">			int temp=data[i];</span>
+<span class="fc" id="L161">			int reverseI = currentLength-i-1;</span>
+<span class="fc" id="L162">			data[i] = data[reverseI];</span>
+<span class="fc" id="L163">			data[reverseI] = temp;</span>
+		}
+<span class="fc" id="L165">	}</span>
+	public int getCurrentLength() {
+<span class="fc" id="L167">		return currentLength;</span>
+	}
+
+	public void append(int value){
+<span class="fc" id="L171">		ensureCapacity(currentLength+1);</span>
+<span class="fc" id="L172">		data[currentLength++]=value;</span>
+<span class="fc" id="L173">	}</span>
+	
+	public void append(int[] values){
+<span class="fc" id="L176">		ensureCapacity(currentLength+values.length);</span>
+<span class="fc" id="L177">		System.arraycopy(values, 0, data, currentLength, values.length);</span>
+<span class="fc" id="L178">		currentLength+=values.length;</span>
+<span class="fc" id="L179">	}</span>
+	public void append(GrowableIntArray other){
+<span class="fc" id="L181">		ensureCapacity(currentLength+other.currentLength);</span>
+<span class="fc" id="L182">		System.arraycopy(other.data, 0, data, currentLength, other.currentLength);</span>
+<span class="fc" id="L183">		currentLength+=other.currentLength;</span>
+<span class="fc" id="L184">	}</span>
+	public int get(int offset){
+<span class="fc" id="L186">		assertValidOffset(offset);</span>
+<span class="fc" id="L187">		return data[offset];</span>
+	}
+	
+	public void prepend(int value){
+<span class="fc" id="L191">		insert(0,value);</span>
+<span class="fc" id="L192">	}</span>
+	
+	public void prepend(int[] values){
+<span class="fc" id="L195">		insert(0,values);</span>
+<span class="fc" id="L196">	}</span>
+	public void prepend(GrowableIntArray other){
+<span class="fc" id="L198">		insert(0,other);</span>
+<span class="fc" id="L199">	}</span>
+	public void replace(int offset, int value){
+<span class="fc" id="L201">		assertValidOffset(offset);</span>
+<span class="fc" id="L202">		data[offset]=value;</span>
+<span class="fc" id="L203">	}</span>
+	public void insert(int offset, int[] values){
+<span class="fc" id="L205">		assertValidInsertOffset(offset);</span>
+<span class="fc" id="L206">		ensureCapacity(currentLength+values.length);</span>
+<span class="fc" id="L207">		System.arraycopy(data, offset, data, offset + values.length,</span>
+				currentLength - offset);
+		
+<span class="fc" id="L210">		System.arraycopy(values, 0, data, offset, values.length);</span>
+<span class="fc" id="L211">		currentLength+=values.length;</span>
+		
+<span class="fc" id="L213">	}</span>
+	
+	public void insert(int offset, GrowableIntArray other){
+<span class="fc" id="L216">		assertValidInsertOffset(offset);</span>
+<span class="fc" id="L217">		ensureCapacity(currentLength+other.currentLength);</span>
+<span class="fc" id="L218">		System.arraycopy(data, offset, data, offset + other.currentLength,</span>
+				currentLength - offset);
+		
+<span class="fc" id="L221">		System.arraycopy(other.data, 0, data, offset, other.currentLength);</span>
+<span class="fc" id="L222">		currentLength+=other.currentLength;</span>
+		
+<span class="fc" id="L224">	}</span>
+	public void insert(int offset, int value){
+<span class="fc" id="L226">		assertValidInsertOffset(offset);</span>
+<span class="fc" id="L227">		ensureCapacity(currentLength+1);</span>
+<span class="fc" id="L228">		System.arraycopy(data, offset, data, offset + 1,</span>
+				currentLength - offset);
+<span class="fc" id="L230">		data[offset] = value;</span>
+<span class="fc" id="L231">		currentLength++;</span>
+<span class="fc" id="L232">	}</span>
+	private void assertValidInsertOffset(int offset) {
+		//inserts allow offset to be length
+<span class="fc bfc" id="L235" title="All 2 branches covered.">		if(offset !=currentLength){</span>
+<span class="fc" id="L236">			assertValidOffset(offset);</span>
+		}
+		
+		
+<span class="fc" id="L240">	}</span>
+	public void remove(Range range){
+<span class="fc" id="L242">		assertValidRange(range);</span>
+<span class="fc" id="L243">		int numMoved = currentLength -(int)range.getBegin()-(int) range.getLength();</span>
+<span class="pc bpc" id="L244" title="1 of 2 branches missed.">		if (numMoved &gt; 0){</span>
+<span class="fc" id="L245">			System.arraycopy(data, (int)range.getEnd()+1, </span>
+<span class="fc" id="L246">					data, (int)range.getBegin(),  numMoved);</span>
+		}
+<span class="fc" id="L248">		currentLength-=(int)range.getLength();    </span>
+<span class="fc" id="L249">	}</span>
+	public int remove(int offset){
+<span class="fc" id="L251">		assertValidOffset(offset);</span>
+<span class="fc" id="L252">		int oldValue = data[offset];</span>
+
+<span class="fc" id="L254">		int numMoved = currentLength - offset - 1;</span>
+<span class="fc bfc" id="L255" title="All 2 branches covered.">		if (numMoved &gt; 0){</span>
+<span class="fc" id="L256">		    System.arraycopy(data, offset+1, data, offset,    numMoved);</span>
+		}
+<span class="fc" id="L258">		currentLength--;</span>
+<span class="fc" id="L259">		return oldValue;</span>
+	}
+	/**
+	 * Get the current capacity of the backing
+	 * array.  This may be larger than the value
+	 * returned by {@link #getCurrentLength()}.
+	 * Modifying this growable array to extend
+	 * beyond the current capacity will require
+	 * the backing array to be grown.
+	 * @return the current capacity;
+	 * will always be &gt;=0;
+	 */
+	public int getCurrentCapacity(){
+<span class="fc" id="L272">		return data.length;</span>
+	}
+	
+	private void ensureCapacity(int minCapacity) {
+<span class="fc" id="L276">		int oldCapacity = data.length;</span>
+<span class="fc bfc" id="L277" title="All 2 branches covered.">		if (minCapacity &gt; oldCapacity) {</span>
+		    //algorithm borrowed from ArrayList
+<span class="fc" id="L279">		    int newCapacity = (oldCapacity * 3)/2 + 1;</span>
+<span class="fc bfc" id="L280" title="All 2 branches covered.">    	    if (newCapacity &lt; minCapacity){</span>
+<span class="fc" id="L281">    	    	newCapacity = minCapacity;</span>
+    	    }
+            // minCapacity is usually close to size, so this is a win:
+<span class="fc" id="L284">            data = Arrays.copyOf(data, newCapacity);</span>
+		}
+<span class="fc" id="L286">    }</span>
+	
+	public int[] toArray(){
+<span class="fc" id="L289">		return Arrays.copyOf(data,currentLength);</span>
+	}
+	/**
+	 * Searches the current values in this growable array
+	 * using the binary search algorithm as implemented
+	 * by {@link Arrays#binarySearch(int[], int)}.
+	 * The array must be sorted (as
+     * by the {@link #sort()} method) prior to making this call.  If it
+     * is not sorted, the results are undefined.  If the array contains
+     * multiple elements with the specified value, there is no guarantee which
+     * one will be found.
+	 * 
+	 * @param key the value to be searched for.
+	 * @return index of the search key, if it is contained in the array;
+     *	       otherwise, &lt;tt&gt;(-(&lt;i&gt;insertion point&lt;/i&gt;) - 1)&lt;/tt&gt;.  The
+     *	       &lt;i&gt;insertion point&lt;/i&gt; is defined as the point at which the
+     *	       key would be inserted into the array: the index of the first
+     *	       element greater than the key, or &lt;tt&gt;a.length&lt;/tt&gt; if all
+     *	       elements in the array are less than the specified key.  Note
+     *	       that this guarantees that the return value will be &amp;gt;= 0 if
+     *	       and only if the key is found.
+     * @throws IllegalArgumentException
+     *	       if {@code fromIndex &gt; toIndex}
+     * @throws ArrayIndexOutOfBoundsException
+     *	       if {@code fromIndex &lt; 0 or toIndex &gt; a.length}
+     *@see Arrays#binarySearch(byte[], byte)
+     */
+	public int binarySearch(int key){
+<span class="fc" id="L317">		return Arrays.binarySearch(data, 0, currentLength, key);</span>
+	}
+	/**
+	 * Remove the given value from this
+	 * sorted array.  This method
+	 * assumes that the values in the backing
+	 * array have been previously sorted.
+	 * If this sorted array contains several
+	 * indexes with this value
+	 * then only one will be removed
+	 * and it is undefined which one will
+	 * actually be removed.
+	 * Calling this method on an unsorted
+	 * backing array may not remove the value
+	 * correctly.
+	 * @param value the value to remove
+	 * @return {@code true} if the value
+	 * was found and removed; {@code false}
+	 * if the value does not exist in the
+	 * sorted backing array.
+	 */
+	public boolean sortedRemove(int value){	
+<span class="fc" id="L339">		int index = binarySearch(value);</span>
+
+<span class="fc bfc" id="L341" title="All 2 branches covered.">		if (index &gt;= 0) {</span>
+<span class="fc" id="L342">			remove(index);</span>
+<span class="fc" id="L343">			return true;</span>
+		}
+<span class="fc" id="L345">		return false;</span>
+	}
+	/**
+	 * Insert the given value into the 
+	 * sorted backing array.  
+	 * Calling this method on an unsorted
+	 * backing array may not insert the value
+	 * correctly.
+	 * @param value the value to insert.
+	 * @return the index that this value
+	 * was inserted into.
+	 */
+	public int sortedInsert(int value){
+<span class="fc" id="L358">		int index = binarySearch(value);</span>
+<span class="fc bfc" id="L359" title="All 2 branches covered.">		if(index &lt;0){</span>
+			//not found
+			//value returned is (-insertion point) -1)
+<span class="fc" id="L362">			index = -index -1;</span>
+		}
+<span class="fc" id="L364">		insert(index, value);</span>
+<span class="fc" id="L365">		return index;</span>
+	}
+	/**
+	 * Insert the given sorted array of values into the 
+	 * sorted backing array.  This should produce identical
+	 * results
+	 * to iterating over the array and calling
+	 * {@link #sortedInsert(int)} on each element,
+	 * but is hopefully more efficient.
+	 * 
+	 * Calling this method on an unsorted
+	 * backing array may not insert the value
+	 * correctly.
+	 * @param values the values to insert.
+	 */
+	public void sortedInsert(int[] values){
+<span class="fc bfc" id="L381" title="All 2 branches covered.">		if(values.length==0){</span>
+			//no-op
+<span class="fc" id="L383">			return;</span>
+		}
+<span class="fc bfc" id="L385" title="All 2 branches covered.">		if(currentLength ==0){</span>
+			//we have 0 length 
+			//act just like append
+<span class="fc" id="L388">			append(values);</span>
+<span class="fc" id="L389">			return;</span>
+		}
+<span class="fc" id="L391">		int[] newData = new int[data.length + values.length];</span>
+<span class="fc" id="L392">		int newCurrentLength = currentLength + values.length;</span>
+		
+<span class="fc" id="L394">		int ourDataIndex=0, otherDataIndex=0;</span>
+
+<span class="fc" id="L396">		int ourNextValue = data[0];</span>
+<span class="fc" id="L397">		int otherNextValue = values[0];</span>
+<span class="fc" id="L398">		int i=0;</span>
+<span class="fc bfc" id="L399" title="All 4 branches covered.">		for(; ourDataIndex&lt;currentLength &amp;&amp; otherDataIndex &lt; values.length; i++){</span>
+<span class="fc bfc" id="L400" title="All 2 branches covered.">			if(ourNextValue &lt;otherNextValue){</span>
+<span class="fc" id="L401">				newData[i] = ourNextValue;</span>
+<span class="fc" id="L402">				ourDataIndex ++;</span>
+<span class="fc bfc" id="L403" title="All 2 branches covered.">				if(ourDataIndex &lt;currentLength){</span>
+<span class="fc" id="L404">					ourNextValue = data[ourDataIndex];</span>
+				}
+				
+			}else{
+<span class="fc" id="L408">				newData[i] = otherNextValue;</span>
+<span class="fc" id="L409">				otherDataIndex++;</span>
+<span class="fc bfc" id="L410" title="All 2 branches covered.">				if(otherDataIndex &lt;values.length){</span>
+<span class="fc" id="L411">					otherNextValue = values[otherDataIndex];</span>
+				}
+			}
+		}
+		//by the time we get here
+		//at least one of the original
+		//sorted arrays has been exhausted
+		//(possibly both if they are the same size
+		//with perfect interleaving...
+		
+<span class="fc bfc" id="L421" title="All 2 branches covered.">		if(ourDataIndex&lt;currentLength){</span>
+			//fill in rest of our data
+<span class="fc bfc" id="L423" title="All 2 branches covered.">			for(; ourDataIndex&lt;currentLength; i++, ourDataIndex++){</span>
+<span class="fc" id="L424">				newData[i] =data[ourDataIndex];</span>
+			}
+		}else{
+			//fill in rest of other data
+<span class="fc bfc" id="L428" title="All 2 branches covered.">			for(; otherDataIndex&lt;values.length; i++, otherDataIndex++){</span>
+<span class="fc" id="L429">				newData[i] =values[otherDataIndex];</span>
+			}
+		}
+			
+<span class="fc" id="L433">		data = newData;</span>
+<span class="fc" id="L434">		currentLength = newCurrentLength;</span>
+<span class="fc" id="L435">	}</span>
+	
+	/**
+	 * Sort the current values in this growable array
+	 * using the default comparator.
+	 */
+	public void sort(){
+<span class="fc" id="L442">		Arrays.sort(data, 0, currentLength);</span>
+<span class="fc" id="L443">	}</span>
+	
+	/**
+	 * Set the current length to 0.
+	 */
+	public void clear(){
+<span class="fc" id="L449">		this.currentLength=0;</span>
+<span class="fc" id="L450">	}</span>
+	@Override
+	public Iterator&lt;Integer&gt; iterator() {
+<span class="fc" id="L453">		return PrimitiveArrayIterators.create(data, currentLength);</span>
+	}
+	/**
+	 * Get the number of values
+	 * in this array that currently
+	 * have the given value.
+	 * @param value the value to look for.
+	 * @return the number of cells with 
+	 * the value; will always be &gt;= 0.
+	 */
+	public int getCount(int value){
+<span class="fc" id="L464">		int count=0;</span>
+<span class="fc bfc" id="L465" title="All 2 branches covered.">		for(int i=0; i&lt;currentLength; i++){</span>
+<span class="fc bfc" id="L466" title="All 2 branches covered.">			if(data[i] == value){</span>
+<span class="fc" id="L467">				count++;</span>
+			}
+		}
+<span class="fc" id="L470">		return count;</span>
+	}
+	/**
+	 * Create a sequential {@link IntStream}
+	 * of the current array.
+	 * @return a new {@link IntStream}
+	 * will never be null but may be empty.
+	 */
+	public IntStream stream() {
+<span class="fc" id="L479">		return Arrays.stream(data, 0, currentLength);		</span>
+	}
+	/**
+	 * Create a new List of Integers with the same data
+	 * as the current array values. The returned list
+	 * IS A COPY so any modifications to the returned list 
+	 * or the backing GrowableIntArray will not affect the other.
+	 * 
+	 * @return a new modifable list; will never be null but may be empty.
+	 * 
+	 * @since 5.3
+	 */
+	public List&lt;Integer&gt; toBoxedList() {
+<span class="pc bpc" id="L492" title="1 of 2 branches missed.">		if(currentLength ==0){</span>
+			//return new list to make it mutable
+<span class="nc" id="L494">			return new ArrayList&lt;&gt;();</span>
+		}
+<span class="fc" id="L496">		return ArrayUtil.asList(toArray());</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

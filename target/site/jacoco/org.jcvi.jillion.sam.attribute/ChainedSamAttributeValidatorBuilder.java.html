@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ChainedSamAttributeValidatorBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.sam.attribute</a> &gt; <span class="el_source">ChainedSamAttributeValidatorBuilder.java</span></div><h1>ChainedSamAttributeValidatorBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.sam.attribute;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jcvi.jillion.sam.SamAttributed;
+import org.jcvi.jillion.sam.header.SamHeader;
+/**
+ * {@code ChainedSamAttributeValidatorBuilder}
+ * builds a {@link SamAttributeValidator}
+ * that calls several other
+ * {@link SamAttributeValidator}s
+ * in a chain.  If a validator
+ * &quot;passes&quot; an attribute, then the next validator
+ * in the chain gets called etc.
+ * 
+ * The attribute only passes the chained validator
+ * if all the validators in the chain also pass the attribute.
+ * If any validator throws an exception, then that exception is thrown
+ * by the chain and no other validators in the chain are called.
+ * 
+ * @author dkatzel
+ *
+ */
+public class ChainedSamAttributeValidatorBuilder {
+
+	
+<span class="fc" id="L48">	private final List&lt;SamAttributeValidator&gt; validators = new ArrayList&lt;SamAttributeValidator&gt;();</span>
+	/**
+	 * Convenience constructor same as {@link #ChainedSamAttributeValidatorBuilder(boolean)
+	 * new ChainedSamAttributeValidatorBuilder(true)}.
+	 * @see #ChainedSamAttributeValidatorBuilder(boolean)
+	 */
+	public ChainedSamAttributeValidatorBuilder(){
+<span class="fc" id="L55">		this(true);</span>
+<span class="fc" id="L56">	}</span>
+	/**
+	 * Create a new ChainedSamAttributeValidatorBuilder instance.
+	 * 
+	 * @param validateReservedAttributes should the rules for the {@link ReservedSamAttributeKeys} 
+	 * specified in the SAM format be checked.  If {@code true}, then the first {@link SamAttributeValidator}
+	 * in the chain will check to make sure the values in the attributes meet the requirements specified 
+	 * in the SAM format specification.
+	 */
+<span class="fc" id="L65">	public ChainedSamAttributeValidatorBuilder(boolean validateReservedAttributes){</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">		if(validateReservedAttributes){</span>
+<span class="fc" id="L67">			validators.add(ReservedAttributeValidator.INSTANCE);</span>
+		}
+<span class="fc" id="L69">	}</span>
+	/**
+	 * Add the given {@link SamAttributeValidator} to the end of the chain.
+	 * @param validator the {@link SamAttributeValidator} to add;
+	 * can not be null.
+	 * @return this.
+	 * @throws NullPointerException if validator is null.
+	 */
+	public ChainedSamAttributeValidatorBuilder addValidator(SamAttributeValidator validator){
+<span class="fc bfc" id="L78" title="All 2 branches covered.">		if(validator ==null){</span>
+<span class="fc" id="L79">			throw new NullPointerException(&quot;validator can not be null&quot;);</span>
+		}
+<span class="fc" id="L81">		validators.add(validator);</span>
+<span class="fc" id="L82">		return this;</span>
+	}
+	/**
+	 * Create a new {@link SamAttributeValidator} instance
+	 * that will delegate to  all the validators in the chain
+	 * so far.
+	 * @return a new {@link SamAttributeValidator}
+	 * instance; will never be null.
+	 */
+	public SamAttributeValidator build(){
+<span class="fc" id="L92">		return new ChainedSamAttributeValidator(validators);</span>
+	}
+	
+	
+	static final class ChainedSamAttributeValidator implements SamAttributeValidator{
+		private final List&lt;SamAttributeValidator&gt; validators;
+
+		public ChainedSamAttributeValidator(
+<span class="fc" id="L100">				List&lt;SamAttributeValidator&gt; validators) {</span>
+			//defensive copy
+<span class="fc" id="L102">			this.validators = new ArrayList&lt;SamAttributeValidator&gt;(validators);</span>
+<span class="fc" id="L103">		}</span>
+
+		@Override
+		public void validate(SamHeader header, SamAttributed record, SamAttribute attribute)
+				throws InvalidAttributeException {
+<span class="fc bfc" id="L108" title="All 2 branches covered.">			for(SamAttributeValidator validator : validators){</span>
+<span class="fc" id="L109">				validator.validate(header, record, attribute);</span>
+<span class="fc" id="L110">			}</span>
+			
+<span class="fc" id="L112">		}</span>
+		
+		
+	}
+	
+	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

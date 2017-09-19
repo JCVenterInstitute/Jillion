@@ -1,0 +1,545 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>FastaFileParser.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.fasta</a> &gt; <span class="el_source">FastaFileParser.java</span></div><h1>FastaFileParser.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.fasta;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.io.InputStreamSupplier;
+import org.jcvi.jillion.fasta.FastaVisitorCallback.FastaVisitorMemento;
+import org.jcvi.jillion.internal.core.io.LineParser;
+import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
+import org.jcvi.jillion.internal.core.io.TextLineParser;
+/**
+ * {@code FastaFileParser} will parse a single 
+ * fasta encoded file and call the appropriate
+ * visitXXX methods on the given {@link FastaVisitor}.
+ * 
+ * As of Jillion 4.2, {@code FastaFileParser} supports
+ * non-redundant text fasta files like
+ * the ones described in
+ * &lt;a href=&quot;ftp://ftp.ncbi.nih.gov/blast/db/README&quot;&gt;ftp://ftp.ncbi.nih.gov/blast/db/README&lt;/a&gt;.
+ * If non-redundant records are encountered, then the visitXXX methods will be called
+ * in a way such that it will appear as if they were redundantly listed.  The non-redundant
+ * defline will be split and each identical sequence will be visited separately with each
+ * of the many ids for it.  Creating {@link org.jcvi.jillion.fasta.FastaVisitorCallback.FastaVisitorMemento}s
+ * (if supported by the {@link FastaParser} implementation) are also non-redundant aware
+ * and will correctly only visit the subset of non-redundant records according to when
+ * the memento was created.
+ * @author dkatzel
+ *
+ */
+<span class="fc" id="L59">public abstract class FastaFileParser implements FastaParser{</span>
+	/**
+	 * Pattern to match to find the defline for each record in
+	 * the fasta file.  Group 1 is the id and Group 3 is the optional
+	 * comment which will return null if there is no comment. (Group 2 is not to be used)
+	 */
+<span class="fc" id="L65">	private static final Pattern DEFLINE_LINE_PATTERN = Pattern.compile(&quot;^&gt;(\\S+)(\\s+(.*))?&quot;);</span>
+	
+<span class="fc" id="L67">	private static final Pattern REDUNDANT_DEFLINE_LINE_PATTERN = Pattern.compile(&quot;^(\\S+)(\\s+(.*))?&quot;);</span>
+
+	private static final char CONTROL_A = 1;
+	/**
+	 * Create a new {@link FastaFileParser} instance
+	 * that will parse the given fasta encoded
+	 * file.
+	 * @param fastaFile the file to parse.
+	 * @throws NullPointerException if the file is null.
+	 * @throws IOException if the file is not readable or does not exist.
+	 */
+	public static FastaParser create(File fastaFile) throws IOException{
+<span class="fc" id="L79">		return new FileFastaParser(fastaFile);</span>
+	}
+	/**
+         * Create a new {@link FastaFileParser} instance
+         * that will parse the fasta encoded
+         * data from the given {@link InputStreamSupplier}.
+         * 
+         * @param inputStreamSupplier the {@link InputStreamSupplier} to use
+         * to get the inputStreams of fasta encoded data.
+         * @throws NullPointerException if the inputStreamSupplier is null.
+         * 
+         * @since 5.0
+         */
+        public static FastaParser create(InputStreamSupplier inputStreamSupplier) throws IOException{
+<span class="nc" id="L93">                return new FileFastaParser(inputStreamSupplier);</span>
+        }
+	/**
+	 * Create a new {@link FastaFileParser} instance
+	 * that will parse the given fasta encoded
+	 * inputStream.  Please Note that inputStream implementations
+	 * of the FastaFileParser can not create {@link FastaVisitorMemento}s
+	 * or use {@link #parse(FastaVisitor, FastaVisitorMemento)}
+	 * method.
+	 * @param inputStream the {@link InputStream} to parse.
+	 * @throws NullPointerException if inputStream is null.
+	 */
+	public static FastaParser create(InputStream inputStream){
+<span class="fc" id="L106">		return new InputStreamFastaParser(inputStream);</span>
+	}
+	/**
+	 * Parse the fasta file starting from the beginning 
+	 * of the file (or {@link InputStream}) and call the appropriate
+	 * visit methods on the given {@link FastaVisitor}.
+	 * @param visitor the {@link FastaVisitor} instance to call
+	 * visit methods on; can not be null;
+	 * @throws IOException if there is a problem parsing the fasta file.
+	 * @throws NullPointerException if visitor is null.
+	 */
+	public void parse(FastaVisitor visitor) throws IOException{
+<span class="fc" id="L118">		checkNotNull(visitor);</span>
+<span class="fc" id="L119">		InputStream in = null;		</span>
+		try{
+<span class="fc" id="L121">			in = getInputStream();			</span>
+<span class="fc" id="L122">			TextLineParser parser = new TextLineParser(in);</span>
+<span class="fc" id="L123">			parseFile(parser, visitor);</span>
+		}finally{
+<span class="pc" id="L125">			IOUtil.closeAndIgnoreErrors(in);</span>
+<span class="fc" id="L126">		}</span>
+<span class="fc" id="L127">	}</span>
+	/**
+	 * Create an inputStream that starts reading at the beginning
+	 * of the fasta file.
+	 * @return an {@link InputStream} can not be null.
+	 * @throws IOException if there is a problem creating the {@link InputStream}.
+	 */
+	protected abstract InputStream getInputStream()  throws IOException;
+	/**
+	 * Get the original source file if it is known and exists.
+	 * @return an {@link Optional} that wraps a the file that will be parsed;
+	 * will never return null but may be empty if the file is not known
+	 * or does not exist.  
+	 * 
+	 * @since 5.3
+	 */
+	public abstract Optional&lt;File&gt; getFile();
+	
+	protected void checkNotNull(FastaVisitor visitor) {
+<span class="fc bfc" id="L146" title="All 2 branches covered.">		if(visitor==null){</span>
+<span class="fc" id="L147">			throw new NullPointerException(&quot;visitor can not be null&quot;);</span>
+		}
+<span class="fc" id="L149">	}</span>
+	final void parseFile(TextLineParser parser, FastaVisitor visitor) throws IOException {
+<span class="fc" id="L151">		parseFile(parser, visitor, 0);</span>
+<span class="fc" id="L152">	}</span>
+	@SuppressWarnings(&quot;PMD.AvoidDeeplyNestedIfStmts&quot;)
+	final void parseFile(TextLineParser parser, FastaVisitor visitor, int initialRedundantIndex) throws IOException {
+<span class="fc" id="L155">		AtomicBoolean keepParsing=new AtomicBoolean(true);</span>
+<span class="fc" id="L156">		FastaRecordVisitor recordVisitor =null;</span>
+<span class="fc" id="L157">		long currentOffset=parser.getPosition();</span>
+<span class="fc" id="L158">		AbstractFastaVisitorCallback callback = createNewCallback(currentOffset, keepParsing);</span>
+<span class="fc" id="L159">		int currentInitialRedundantStartIndex= initialRedundantIndex;</span>
+		
+<span class="fc bfc" id="L161" title="All 4 branches covered.">		while(keepParsing.get() &amp;&amp; parser.hasNextLine()){</span>
+<span class="fc" id="L162">			String line=parser.nextLine();</span>
+<span class="fc" id="L163">			String trimmedLine = line.trim();</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">			if(!trimmedLine.isEmpty()){</span>
+<span class="fc" id="L165">				Matcher matcher = DEFLINE_LINE_PATTERN.matcher(trimmedLine);</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">				if(matcher.find()){</span>
+<span class="fc bfc" id="L167" title="All 2 branches covered.">					if(recordVisitor !=null){</span>
+<span class="fc" id="L168">						recordVisitor.visitEnd();</span>
+						//need to check again the keep parsing flag 
+						//incase the callback was used to stop in the previous
+						//called to visitEnd()
+<span class="fc bfc" id="L172" title="All 2 branches covered.">						if(!keepParsing.get()){</span>
+							//need to set recordVisitor to null
+							//so we don't call visitEnd() again
+<span class="fc" id="L175">							recordVisitor=null;</span>
+<span class="fc" id="L176">							continue;</span>
+						}
+					}
+					
+					//2015-07-09: check for control-A characters
+					//which is used in non-redundant fastas
+<span class="fc bfc" id="L182" title="All 2 branches covered.">					if(line.indexOf(CONTROL_A) == -1){</span>
+						//normal fasta record
+<span class="fc" id="L184">						String id = matcher.group(1);</span>
+<span class="fc" id="L185">			            String comment = matcher.group(3);		            </span>
+<span class="fc" id="L186">			            callback = createNewCallback(currentOffset, keepParsing);</span>
+<span class="fc" id="L187">			            recordVisitor = visitor.visitDefline(callback, id, comment);</span>
+<span class="fc" id="L188">					}else{</span>
+<span class="fc" id="L189">						handleNonRedundantRecord(parser, trimmedLine, visitor, currentOffset, keepParsing, currentInitialRedundantStartIndex);</span>
+<span class="fc" id="L190">						currentInitialRedundantStartIndex = 0;</span>
+					}
+					
+				
+				}else{
+					//not a defline use current record visitor
+<span class="fc bfc" id="L196" title="All 2 branches covered.">					if(recordVisitor !=null){</span>
+<span class="fc" id="L197">						recordVisitor.visitBodyLine(line);</span>
+					}
+				}
+			}
+<span class="fc" id="L201">			currentOffset =parser.getPosition();</span>
+<span class="fc" id="L202">		}</span>
+		
+<span class="fc" id="L204">		handleEndOfFile(visitor, keepParsing, recordVisitor);</span>
+
+<span class="fc" id="L206">	}</span>
+	private void handleNonRedundantRecord(LineParser parser, String defline, 
+			FastaVisitor visitor, long offsetOfBeginningOfDefline, 
+			AtomicBoolean keepParsing, int initialRedundantStartIndex) throws IOException {
+		//there are multiple redundant records included
+		//on this defline that each have the same sequence but different ids.
+		
+		//read the whole record body and then call the visit methods
+		//in case the visitor wants to skip some of the records
+		//split on control-A character (ASCII value of 1)
+		//substring(1) to remove '&gt;' char
+<span class="fc" id="L217">		String[] redundantDeflines = defline.substring(1).split(&quot;[\u0001]&quot;);</span>
+<span class="fc" id="L218">		List&lt;String&gt; bodyLines = new ArrayList&lt;String&gt;();</span>
+		
+<span class="fc bfc" id="L220" title="All 2 branches covered.">		while(parser.hasNextLine()){</span>
+<span class="fc" id="L221">			String nextLine = parser.peekLine();</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">			if(nextLine.charAt(0) == '&gt;'){</span>
+				//next defline found
+<span class="fc" id="L224">				break;</span>
+			}
+			//consume next line we just peeked
+<span class="fc" id="L227">			bodyLines.add(parser.nextLine());</span>
+<span class="fc" id="L228">		}</span>
+		
+<span class="fc bfc" id="L230" title="All 4 branches covered.">		for(int i=initialRedundantStartIndex; keepParsing.get() &amp;&amp; i&lt; redundantDeflines.length ; i++){</span>
+<span class="fc" id="L231">			String redundantDefline = redundantDeflines[i];</span>
+		
+<span class="fc" id="L233">			Matcher matcher = REDUNDANT_DEFLINE_LINE_PATTERN.matcher(redundantDefline);</span>
+<span class="pc bpc" id="L234" title="1 of 2 branches missed.">			if(!matcher.find()){</span>
+<span class="nc" id="L235">				throw new IOException(&quot;error parsing redundant defline [&quot; + i + &quot;] from &quot; + defline);</span>
+			}
+<span class="fc" id="L237">			String id = matcher.group(1);</span>
+<span class="fc" id="L238">            String comment = matcher.group(3);</span>
+            //need to make a new type of callback that notes which of the redundant records we
+            //are parsing since the offset is the same!
+<span class="fc" id="L241">            AbstractFastaVisitorCallback redundantCallback = createNewRedundantCallback(offsetOfBeginningOfDefline, i , keepParsing);</span>
+            
+<span class="fc" id="L243">            FastaRecordVisitor recordVisitor = visitor.visitDefline(redundantCallback, id, comment);</span>
+<span class="fc bfc" id="L244" title="All 2 branches covered.">            if(recordVisitor !=null){</span>
+<span class="pc bpc" id="L245" title="1 of 4 branches missed.">            	for(int j=0; keepParsing.get() &amp;&amp; j&lt; bodyLines.size(); j++){</span>
+<span class="fc" id="L246">            		recordVisitor.visitBodyLine(bodyLines.get(j));</span>
+            	}
+<span class="pc bpc" id="L248" title="1 of 2 branches missed.">            	if(keepParsing.get()){</span>
+<span class="fc" id="L249">            		recordVisitor.visitEnd();</span>
+            	}else{
+<span class="nc" id="L251">            		recordVisitor.halted();</span>
+            	}
+            }
+		}
+		
+		
+<span class="fc" id="L257">	}</span>
+	protected void handleEndOfFile(FastaVisitor visitor,
+			AtomicBoolean keepParsing, FastaRecordVisitor recordVisitor) {
+<span class="fc bfc" id="L260" title="All 2 branches covered.">		if(recordVisitor !=null){</span>
+<span class="pc bpc" id="L261" title="1 of 2 branches missed.">			if(keepParsing.get()){</span>
+<span class="fc" id="L262">				recordVisitor.visitEnd();</span>
+			}else{
+<span class="nc" id="L264">				recordVisitor.halted();</span>
+			}
+		}
+		//need to check keep parsing flag
+		//for record visitor and visitor
+		//separately in case the recordVisitor.visitEnd()
+		//calls haltParsing
+<span class="fc bfc" id="L271" title="All 2 branches covered.">		if(keepParsing.get()){</span>
+<span class="fc" id="L272">			visitor.visitEnd();</span>
+		}else{
+<span class="fc" id="L274">			visitor.halted();</span>
+		}
+<span class="fc" id="L276">	}</span>
+
+	protected abstract AbstractFastaVisitorCallback createNewCallback(long currentOffset, AtomicBoolean keepParsing);
+	protected abstract AbstractFastaVisitorCallback createNewRedundantCallback(long offsetOfBeginningOfDefline, int i, AtomicBoolean keepParsing);
+	
+	private abstract static class AbstractFastaVisitorCallback implements FastaVisitorCallback{
+		private final AtomicBoolean keepParsing;
+		
+<span class="fc" id="L284">		public AbstractFastaVisitorCallback(AtomicBoolean keepParsing) {</span>
+<span class="fc" id="L285">			this.keepParsing = keepParsing;</span>
+<span class="fc" id="L286">		}</span>
+
+		@Override
+		public void haltParsing() {
+<span class="fc" id="L290">			keepParsing.set(false);</span>
+			
+<span class="fc" id="L292">		}</span>
+
+	}
+	
+	private static class NoMementoCallback extends AbstractFastaVisitorCallback{
+
+		
+		
+		public NoMementoCallback(AtomicBoolean keepParsing) {
+<span class="fc" id="L301">			super(keepParsing);</span>
+<span class="fc" id="L302">		}</span>
+
+		@Override
+		public boolean canCreateMemento() {
+<span class="nc" id="L306">			return false;</span>
+		}
+
+		@Override
+		public FastaVisitorMemento createMemento() {
+<span class="nc" id="L311">			throw new UnsupportedOperationException(&quot;can not create memento&quot;);</span>
+		}
+		
+	}
+	
+	private static class MementoCallback extends AbstractFastaVisitorCallback{
+
+		private final long offset;
+		
+		public MementoCallback(long offset, AtomicBoolean keepParsing){
+<span class="fc" id="L321">			super(keepParsing);</span>
+<span class="fc" id="L322">			this.offset = offset;</span>
+<span class="fc" id="L323">		}</span>
+
+		@Override
+		public boolean canCreateMemento() {
+<span class="fc" id="L327">			return true;</span>
+		}
+
+		@Override
+		public FastaVisitorMemento createMemento() {
+<span class="fc" id="L332">			return new OffsetMemento(offset);</span>
+		}
+		
+	}
+	
+	private static class RedundantMementoCallback extends AbstractFastaVisitorCallback{
+
+		private final long offset;
+		private final int redundantIndex;
+		
+		public RedundantMementoCallback(long offset, int redundantIndex, AtomicBoolean keepParsing){
+<span class="fc" id="L343">			super(keepParsing);</span>
+<span class="fc" id="L344">			this.offset = offset;</span>
+<span class="fc" id="L345">			this.redundantIndex = redundantIndex;</span>
+<span class="fc" id="L346">		}</span>
+
+		@Override
+		public boolean canCreateMemento() {
+<span class="nc" id="L350">			return true;</span>
+		}
+
+		@Override
+		public FastaVisitorMemento createMemento() {
+<span class="fc" id="L355">			return new RedundantOffsetMemento(offset, redundantIndex);</span>
+		}
+		
+	}
+	
+	private static class OffsetMemento implements FastaVisitorMemento{
+		private final long offset;
+
+<span class="fc" id="L363">		public OffsetMemento(long offset) {</span>
+<span class="fc" id="L364">			this.offset = offset;</span>
+<span class="fc" id="L365">		}</span>
+
+		public final long getOffset() {
+<span class="fc" id="L368">			return offset;</span>
+		}
+		
+	}
+	
+	private static class RedundantOffsetMemento extends OffsetMemento{
+		private final int redundantIndex;
+
+		public RedundantOffsetMemento(long offset, int redundantIndex) {
+<span class="fc" id="L377">			super(offset);</span>
+<span class="fc" id="L378">			this.redundantIndex = redundantIndex;</span>
+<span class="fc" id="L379">		}</span>
+
+		public int getRedundantIndex() {
+<span class="fc" id="L382">			return redundantIndex;</span>
+		}
+
+		
+	}
+	
+	private static class FileFastaParser extends FastaFileParser{
+		private final InputStreamSupplier fileSupplier;
+		
+		private final File fastaFile;
+<span class="fc" id="L392">		public FileFastaParser(File fastaFile) throws IOException{</span>
+<span class="fc" id="L393">			this.fileSupplier = InputStreamSupplier.forFile(fastaFile);</span>
+<span class="fc" id="L394">			this.fastaFile = fastaFile;</span>
+<span class="fc" id="L395">		}</span>
+		
+		
+		
+		
+<span class="nc" id="L400">		public FileFastaParser(InputStreamSupplier fileSupplier) {</span>
+<span class="nc" id="L401">		    Objects.requireNonNull(fileSupplier);</span>
+<span class="nc" id="L402">                    this.fileSupplier = fileSupplier;</span>
+<span class="nc" id="L403">                    this.fastaFile = null;</span>
+<span class="nc" id="L404">                }</span>
+
+
+
+        
+                @Override
+                public Optional&lt;File&gt; getFile() {
+<span class="fc" id="L411">                    return Optional.ofNullable(fastaFile);</span>
+                }
+
+
+
+
+        @Override
+		public boolean isReadOnceOnly() {
+<span class="fc" id="L419">			return false;</span>
+		}
+
+
+		@Override
+		public boolean canCreateMemento() {
+<span class="fc" id="L425">			return true;</span>
+		}
+
+
+		protected AbstractFastaVisitorCallback createNewCallback(long currentOffset, AtomicBoolean keepParsing) {
+<span class="fc" id="L430">			return new MementoCallback(currentOffset, keepParsing);</span>
+		}
+		
+		
+		
+		public void parse(FastaVisitor visitor, FastaVisitorMemento memento) throws IOException{
+<span class="pc bpc" id="L436" title="1 of 2 branches missed.">			if(!(memento instanceof OffsetMemento)){</span>
+<span class="nc" id="L437">				throw new IllegalStateException(&quot;unknown memento instance : &quot;+memento);</span>
+			}
+			
+<span class="fc" id="L440">			long startOffset = ((OffsetMemento)memento).getOffset();</span>
+			
+<span class="pc" id="L442">                    try (InputStream inputStream = fileSupplier.get(startOffset)) {</span>
+        
+<span class="fc" id="L444">                        TextLineParser parser = new TextLineParser(inputStream,</span>
+                                startOffset);
+<span class="fc bfc" id="L446" title="All 2 branches covered.">                        if (memento instanceof RedundantOffsetMemento) {</span>
+<span class="fc" id="L447">                            int redundantIndex = ((RedundantOffsetMemento) memento)</span>
+<span class="fc" id="L448">                                    .getRedundantIndex();</span>
+<span class="fc" id="L449">                            parseFile(parser, visitor, redundantIndex);</span>
+<span class="fc" id="L450">                        } else {</span>
+<span class="fc" id="L451">                            parseFile(parser, visitor);</span>
+                        }
+<span class="pc bpc" id="L453" title="6 of 8 branches missed.">                    }</span>
+<span class="fc" id="L454">		}</span>
+		@Override
+		protected InputStream getInputStream() throws IOException {
+			//start parsing from beginning of file.
+<span class="fc" id="L458">			return fileSupplier.get();</span>
+		}
+		@Override
+		public boolean canParse() {
+<span class="fc" id="L462">			return true;</span>
+		}
+
+
+		@Override
+		protected AbstractFastaVisitorCallback createNewRedundantCallback(
+				long offsetOfBeginningOfDefline, int redundantIndex,
+				AtomicBoolean keepParsing) {
+<span class="fc" id="L470">			return new RedundantMementoCallback(offsetOfBeginningOfDefline, redundantIndex, keepParsing);</span>
+		}
+		
+		
+	}
+	private static class InputStreamFastaParser extends FastaFileParser{
+		private final OpenAwareInputStream inputStream;
+<span class="fc" id="L477">		private boolean hasParsedBefore= false;</span>
+		
+<span class="fc" id="L479">		public InputStreamFastaParser(InputStream inputStream) {</span>
+<span class="fc" id="L480">			this.inputStream = new OpenAwareInputStream(inputStream);</span>
+<span class="fc" id="L481">		}</span>
+		protected AbstractFastaVisitorCallback createNewCallback(long currentOffset, AtomicBoolean keepParsing) {
+<span class="fc" id="L483">			return new NoMementoCallback(keepParsing);</span>
+		}
+		
+		@Override
+		protected AbstractFastaVisitorCallback createNewRedundantCallback(long offsetOfBeginningOfDefline, int i, AtomicBoolean keepParsing) {
+<span class="nc" id="L488">			return new NoMementoCallback(keepParsing);</span>
+		}
+		
+		
+		@Override
+		public boolean isReadOnceOnly() {
+			//can only parse Stream once
+<span class="fc" id="L495">			return true;</span>
+		}
+		@Override
+		public synchronized void parse(FastaVisitor visitor) throws IOException {
+			//wrap in synchronized block so we only
+			//can parse one visitor at a time (probably at all)
+<span class="fc" id="L501">			super.parse(visitor);</span>
+<span class="fc" id="L502">		}</span>
+
+		@Override
+		public void parse(FastaVisitor visitor, FastaVisitorMemento memento)
+				throws IOException {
+			//we probably will never see this in real usage
+			//since inputstream implementation can't make mementors...
+<span class="nc" id="L509">			throw new UnsupportedOperationException(&quot;can not use mementos with inputstream&quot;);</span>
+		}
+
+		@Override
+		protected InputStream getInputStream() throws IOException {
+			//this is a work around to fix a regression
+			//where we give an empty stream
+			//first time should not throw an error
+			//even if there is nothing to parse.
+<span class="pc bpc" id="L518" title="1 of 2 branches missed.">			if(!hasParsedBefore){</span>
+<span class="fc" id="L519">				return inputStream;</span>
+			}
+<span class="nc" id="L521">			hasParsedBefore = true;</span>
+<span class="nc bnc" id="L522" title="All 2 branches missed.">			if(canParse()){</span>
+<span class="nc" id="L523">				return inputStream;</span>
+			}
+<span class="nc" id="L525">			throw new IllegalStateException(&quot;can not accept visitor - inputstream is closed&quot;);			</span>
+		}
+		@Override
+		public boolean canParse() {
+<span class="nc" id="L529">			return inputStream.isOpen();</span>
+		}
+		@Override
+		public boolean canCreateMemento() {
+<span class="nc" id="L533">			return false;</span>
+		}
+        @Override
+        public Optional&lt;File&gt; getFile() {
+            // no file? if we have a file we shouldn't use this implementation
+<span class="fc" id="L538">            return Optional.empty();</span>
+        }
+		
+		
+		
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

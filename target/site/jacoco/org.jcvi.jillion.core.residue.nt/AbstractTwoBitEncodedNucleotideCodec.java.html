@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AbstractTwoBitEncodedNucleotideCodec.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.core.residue.nt</a> &gt; <span class="el_source">AbstractTwoBitEncodedNucleotideCodec.java</span></div><h1>AbstractTwoBitEncodedNucleotideCodec.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.core.residue.nt;
+
+import java.nio.ByteBuffer;
+import java.util.Iterator;
+
+/**
+ * Encodes each basecall into two bytes.
+ * The sentinel value can then be used to store
+ * a 5th type of base that is rarely used
+ * (gaps or N's).
+ * @author dkatzel
+ *
+ */
+abstract class AbstractTwoBitEncodedNucleotideCodec extends AbstractNucleotideCodec{
+	private static final int ORDINAL_A = 12;
+	private static final int ORDINAL_C = 13;
+	private static final int ORDINAL_G = 14;
+	private static final int ORDINAL_T = 15;
+	
+	
+	@Override
+	 protected byte getByteFor(Nucleotide nuc){
+<span class="fc" id="L43">		int ordinal = nuc.ordinal();</span>
+<span class="fc bfc" id="L44" title="All 5 branches covered.">         switch(ordinal){</span>
+ 
+         
+<span class="fc" id="L47">         	case ORDINAL_A : return (byte)0;</span>
+<span class="fc" id="L48">             case ORDINAL_C : return (byte)1;</span>
+<span class="fc" id="L49">             case ORDINAL_G : return (byte)2;</span>
+<span class="fc" id="L50">             case ORDINAL_T : return (byte)3;</span>
+<span class="fc" id="L51">             default : throw new IllegalArgumentException(&quot;only A,C,G,T supported : &quot;+ nuc);</span>
+         }
+     }
+	@Override
+     protected Nucleotide getGlyphFor(byte b){
+<span class="pc bpc" id="L56" title="1 of 5 branches missed.">     	switch(b){</span>
+<span class="fc" id="L57">	        	case 0 : return Nucleotide.Adenine;</span>
+<span class="fc" id="L58">	        	case 1: return Nucleotide.Cytosine;</span>
+<span class="fc" id="L59">	        	case 2: return Nucleotide.Guanine;</span>
+<span class="fc" id="L60">	        	case 3: return Nucleotide.Thymine;</span>
+<span class="nc" id="L61">	        	default: throw new IllegalArgumentException(&quot;unknown encoded value : &quot;+b);</span>
+     	}
+     }
+	@Override
+	protected Nucleotide getNucleotide(byte encodedByte, int index){
+		//shift by 1 is the same as *2
+<span class="fc" id="L67">		int j= (index%4) &lt;&lt;1;</span>
+<span class="fc" id="L68">		return getGlyphFor((byte)((encodedByte &gt;&gt;j) &amp;0x3));</span>
+    }
+	@Override
+	protected void encodeLastGroup(Iterator&lt;Nucleotide&gt; glyphs, ByteBuffer result, int offset) {
+<span class="fc" id="L72">        byte b0 = getNextByte(glyphs);</span>
+<span class="fc" id="L73">        byte b1 = getNextByte(glyphs);</span>
+<span class="fc" id="L74">        byte b2 = getNextByte(glyphs);</span>
+<span class="fc" id="L75">        byte b3 = getNextByte(glyphs);</span>
+        
+<span class="fc" id="L77">        result.put((byte) ((b3&lt;&lt;6 | b2&lt;&lt;4 | b1&lt;&lt;2 | b0) &amp;0xFF));</span>
+<span class="fc" id="L78">    }</span>
+	private byte getNextByte(Iterator&lt;Nucleotide&gt; glyphs) {
+<span class="fc bfc" id="L80" title="All 2 branches covered.">		return glyphs.hasNext() ? getSentienelByteFor(glyphs.next()) : 0;</span>
+	}
+	
+	
+	@Override
+	protected void encodeCompleteGroup(Iterator&lt;Nucleotide&gt; glyphs,
+			ByteBuffer result, int offset) {
+<span class="fc" id="L87">		byte b0 = getSentienelByteFor(glyphs.next());</span>
+<span class="fc" id="L88">        byte b1 = getSentienelByteFor(glyphs.next());</span>
+<span class="fc" id="L89">        byte b2 = getSentienelByteFor(glyphs.next());</span>
+<span class="fc" id="L90">        byte b3 = getSentienelByteFor(glyphs.next());</span>
+        
+<span class="fc" id="L92">        result.put((byte) ((b3&lt;&lt;6 | b2&lt;&lt;4 | b1&lt;&lt;2 | b0) &amp;0xFF));</span>
+		
+<span class="fc" id="L94">	}</span>
+	protected AbstractTwoBitEncodedNucleotideCodec(Nucleotide sententialBase) {
+<span class="fc" id="L96">		super(sententialBase);</span>
+<span class="fc" id="L97">	}</span>
+
+	@Override
+	protected int getNucleotidesPerGroup() {
+<span class="fc" id="L101">		return 4;</span>
+	}
+
+	
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

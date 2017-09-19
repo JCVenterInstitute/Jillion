@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>BoundedPriorityQueue.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.core.util</a> &gt; <span class="el_source">BoundedPriorityQueue.java</span></div><h1>BoundedPriorityQueue.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.internal.core.util;
+
+import java.util.AbstractQueue;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Objects;
+import java.util.PriorityQueue;
+/**
+ * {@code BoundedPriorityQueue} is a {@link PriorityQueue}
+ * that is bounded by a maximum size.  If the queue size goes beyond
+ * this max size, then the least element (determined by the provided comparator)
+ * will be removed.
+ * 
+ * This class is NOT THREADSAFE
+ * 
+ * @author dkatzel
+ *
+ * @param &lt;E&gt; the type of element in the queue.
+ */
+public class BoundedPriorityQueue&lt;E&gt; extends AbstractQueue&lt;E&gt;{
+
+	private final int maxSize;
+	private final Comparator&lt;? super E&gt; comparator;
+	
+	private final PriorityQueue&lt;E&gt; delegate;
+	/**
+	 * Create a new BoundedPriorityQueue with the given maxSize and uses
+	 * the natural order of the Elements as a comparator.
+	 * 
+	 * @param maxSize the max size this Bounded Priority Queue can grow to
+	 * before we start kicking out elements, must be &gt;= 1.
+	 * 
+	 * 
+	 * 
+	 * @throws IllegalArgumentException if maxSize &lt; 1.
+	 */
+	public static &lt;E extends Comparable&lt;? super E&gt;&gt; BoundedPriorityQueue&lt;E&gt; create(int maxSize){
+<span class="fc" id="L58">		return new BoundedPriorityQueue&lt;E&gt;(maxSize, Comparator.naturalOrder());</span>
+	}
+
+	/**
+	 * Create a new BoundedPriorityQueue with the given maxSize and comparator.
+	 * 
+	 * @param maxSize the max size this Bounded Priority Queue can grow to
+	 * before we start kicking out elements, must be &gt;= 1.
+	 * 
+	 * @param comparator the {@link Comparator} used for comparisons.
+	 * 		The comparator should sort the elements worst (smallest) to best (largest)
+	 * 
+	 * @throws NullPointerException if comparator is null.
+	 * @throws IllegalArgumentException if maxSize &lt; 1.
+	 */
+	public static &lt;E&gt; BoundedPriorityQueue&lt;E&gt; create(int maxSize, Comparator&lt;? super E&gt; comparator){
+<span class="fc" id="L74">		return new BoundedPriorityQueue&lt;E&gt;(maxSize, comparator);</span>
+	}
+	
+	
+<span class="fc" id="L78">	private BoundedPriorityQueue(int maxSize, Comparator&lt;? super E&gt; comparator){</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">		if(maxSize &lt;1){</span>
+<span class="fc" id="L80">			throw new IllegalArgumentException(&quot;max size must be &gt;= 1&quot;);</span>
+		}
+<span class="fc" id="L82">		Objects.requireNonNull(comparator);</span>
+		//priorityQueue can only see the top
+		//so peeking
+		//at the top will get us the &quot;smallest&quot; element in the queue
+		//which we can use to determine if we can bump it in #offer(e)
+<span class="fc" id="L87">		this.comparator = comparator;</span>
+<span class="fc" id="L88">		delegate = new PriorityQueue&lt;E&gt;(this.comparator);</span>
+		
+<span class="fc" id="L90">		this.maxSize = maxSize;</span>
+<span class="fc" id="L91">	}</span>
+	
+	@Override
+	public boolean offer(E e) {
+<span class="fc bfc" id="L95" title="All 2 branches covered.">		if(size() &gt;= maxSize){</span>
+<span class="fc" id="L96">			E peek = peek();</span>
+			
+<span class="fc bfc" id="L98" title="All 2 branches covered.">			if(comparator.compare(e, peek) &gt;0){</span>
+				//new element offered is greater than
+				//to our current worst element
+				//so we can bump the current worst
+				//and add the new one
+<span class="fc" id="L103">				poll();</span>
+			}else{
+				//don't add the new element
+				//but return true so we don't get 
+				//a Queue Full exception
+<span class="fc" id="L108">				return true;</span>
+			}
+		}
+<span class="fc" id="L111">		return delegate.offer(e);</span>
+	}
+
+	@Override
+	public E poll() {
+<span class="fc" id="L116">		return delegate.poll();</span>
+	}
+
+	@Override
+	public E peek() {
+<span class="fc" id="L121">		return delegate.peek();</span>
+	}
+
+	@Override
+	public Iterator&lt;E&gt; iterator() {
+<span class="fc" id="L126">		return delegate.iterator();</span>
+	}
+
+	@Override
+	public int size() {
+<span class="fc" id="L131">		return delegate.size();</span>
+	}
+
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

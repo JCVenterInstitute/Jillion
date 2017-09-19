@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DefaultSamFileDataStore.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.sam</a> &gt; <span class="el_source">DefaultSamFileDataStore.java</span></div><h1>DefaultSamFileDataStore.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.sam;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Predicate;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
+import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.util.streams.ThrowingBiConsumer;
+import org.jcvi.jillion.core.util.streams.ThrowingConsumer;
+import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
+import org.jcvi.jillion.internal.core.util.Sneak;
+import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
+import org.jcvi.jillion.sam.header.SamHeader;
+
+class DefaultSamFileDataStore implements SamFileDataStore {
+
+    protected final SamParser parser;
+    private final Predicate&lt;SamRecord&gt; filter;
+    
+    private volatile boolean isClosed;
+    
+<span class="fc" id="L48">    private long numRecords = -1;</span>
+    
+<span class="fc" id="L50">    DefaultSamFileDataStore(SamParser parser, Predicate&lt;SamRecord&gt; filter) {</span>
+<span class="fc" id="L51">        this.parser = parser;</span>
+<span class="fc" id="L52">        this.filter = filter;</span>
+<span class="fc" id="L53">    }</span>
+
+    private void verifyNotClosed() throws DataStoreException{
+<span class="fc bfc" id="L56" title="All 2 branches covered.">        if(isClosed){</span>
+<span class="fc" id="L57">            throw new DataStoreException(&quot;closed&quot;);</span>
+        }
+<span class="fc" id="L59">    }</span>
+    @Override
+    public StreamingIterator&lt;String&gt; idIterator() throws DataStoreException {
+<span class="nc" id="L62">        verifyNotClosed();</span>
+<span class="nc" id="L63">        return new StreamingIterator&lt;String&gt;(){</span>
+<span class="nc" id="L64">                StreamingIterator&lt;SamRecord&gt; iter = iterator();</span>
+                @Override
+                public boolean hasNext() {
+<span class="nc" id="L67">                        return iter.hasNext();</span>
+                }
+
+                @Override
+                public void close() {
+<span class="nc" id="L72">                        iter.close();</span>
+<span class="nc" id="L73">                }</span>
+
+                @Override
+                public String next() {
+<span class="nc" id="L77">                    SamRecord next = iter.next();</span>
+<span class="nc" id="L78">                    return next.getQueryName();</span>
+                }
+
+                @Override
+                public void remove() {
+<span class="nc" id="L83">                        iter.remove();</span>
+<span class="nc" id="L84">                }</span>
+                
+        };
+    }
+
+    @Override
+    public SamRecord get(String id) throws DataStoreException {
+<span class="fc" id="L91">        verifyNotClosed();</span>
+<span class="fc" id="L92">        Objects.requireNonNull(id);</span>
+        SamRecord found;
+        try {
+<span class="fc" id="L95">            found = getRecord(id);</span>
+<span class="pc bpc" id="L96" title="2 of 6 branches missed.">            if(found == null || (filter !=null &amp;&amp; !filter.test(found))){</span>
+<span class="fc" id="L97">                return null;</span>
+            }
+<span class="nc" id="L99">            return found;</span>
+<span class="nc" id="L100">        } catch (IOException e) {</span>
+<span class="nc" id="L101">           throw new DataStoreException(&quot;error parsing sam/bam file to find record with id '&quot; + id +&quot;'&quot;, e);</span>
+        }
+       
+    }
+    
+    @Override
+    public List&lt;SamRecord&gt; getAllRecordsFor(String id) throws DataStoreException {
+<span class="fc" id="L108">        verifyNotClosed();</span>
+<span class="fc" id="L109">        Objects.requireNonNull(id);</span>
+       
+        try {
+<span class="fc" id="L112">            List&lt;SamRecord&gt; found = getAllRecord(id);</span>
+<span class="fc" id="L113">            List&lt;SamRecord&gt; filtered = new ArrayList&lt;&gt;(found.size());</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">            for(SamRecord r : found){</span>
+<span class="pc bpc" id="L115" title="2 of 6 branches missed.">                if(found == null || (filter !=null &amp;&amp; !filter.test(r))){</span>
+<span class="fc" id="L116">                    continue;</span>
+                }
+<span class="fc" id="L118">                filtered.add(r);</span>
+<span class="fc" id="L119">            }</span>
+<span class="fc" id="L120">            return filtered;</span>
+<span class="nc" id="L121">        } catch (IOException e) {</span>
+<span class="nc" id="L122">           throw new DataStoreException(&quot;error parsing sam/bam file to find record with id '&quot; + id +&quot;'&quot;, e);</span>
+        }
+       
+    }
+
+    protected SamRecord getRecord(String id) throws IOException{
+<span class="fc" id="L128">        SamRecord[] ret = new SamRecord[1];</span>
+<span class="fc" id="L129">        parser.parse(new AbstractSamVisitor() {</span>
+
+            @Override
+            public void visitRecord(SamVisitorCallback callback,
+                    SamRecord record, VirtualFileOffset start,
+                    VirtualFileOffset end) {
+<span class="fc bfc" id="L135" title="All 2 branches covered.">                if(id.equals(record.getQueryName())){</span>
+<span class="fc" id="L136">                    ret[0] = record;</span>
+<span class="fc" id="L137">                    callback.haltParsing();</span>
+                }
+<span class="fc" id="L139">            }</span>
+            
+        });
+<span class="fc" id="L142">        return ret[0];</span>
+    }
+    
+    protected List&lt;SamRecord&gt; getAllRecord(String id) throws IOException{
+<span class="fc" id="L146">        List&lt;SamRecord&gt; ret = new ArrayList&lt;SamRecord&gt;();</span>
+<span class="fc" id="L147">        parser.parse(new AbstractSamVisitor() {</span>
+
+            @Override
+            public void visitRecord(SamVisitorCallback callback,
+                    SamRecord record, VirtualFileOffset start,
+                    VirtualFileOffset end) {
+<span class="fc bfc" id="L153" title="All 2 branches covered.">                if(id.equals(record.getQueryName())){</span>
+<span class="fc" id="L154">                   ret.add(record);</span>
+                }
+<span class="fc" id="L156">            }</span>
+            
+        });
+<span class="fc" id="L159">        return ret;</span>
+    }
+
+    @Override
+    public boolean contains(String id) throws DataStoreException {
+<span class="pc bpc" id="L164" title="1 of 2 branches missed.">        return get(id) !=null;</span>
+    }
+
+    @Override
+    public long getNumberOfRecords() throws DataStoreException {
+<span class="fc" id="L169">        verifyNotClosed();</span>
+<span class="fc" id="L170">        synchronized(this){</span>
+<span class="pc bpc" id="L171" title="1 of 2 branches missed.">            if(numRecords == -1){</span>
+                try {
+<span class="fc" id="L173">                    parser.parse(new AbstractSamVisitor() {</span>
+<span class="fc" id="L174">                        long count=0;</span>
+                        @Override
+                        public void visitRecord(SamVisitorCallback callback,
+                                SamRecord record, VirtualFileOffset start,
+                                VirtualFileOffset end) {
+<span class="fc" id="L179">                             count++;</span>
+<span class="fc" id="L180">                        }</span>
+                        @Override
+                        public void visitEnd() {
+<span class="fc" id="L183">                            numRecords = count;</span>
+<span class="fc" id="L184">                        }</span>
+                        
+                    });
+<span class="nc" id="L187">                } catch (IOException e) {</span>
+<span class="nc" id="L188">                    throw new DataStoreException(&quot;error counting number of records&quot;, e);</span>
+<span class="fc" id="L189">                }</span>
+            }
+<span class="fc" id="L191">            return numRecords;</span>
+<span class="nc" id="L192">        }</span>
+    }
+
+    @Override
+    public boolean isClosed() {
+<span class="fc" id="L197">        return isClosed;</span>
+    }
+
+    @Override
+    public StreamingIterator&lt;SamRecord&gt; iterator() throws DataStoreException {
+<span class="fc" id="L202">        verifyNotClosed();</span>
+<span class="fc" id="L203">        FilteredVisitor iter = new FilteredVisitor();</span>
+<span class="fc" id="L204">        iter.start();</span>
+        
+<span class="fc" id="L206">        return DataStoreStreamingIterator.create(this, iter);</span>
+    }
+
+    @Override
+    public StreamingIterator&lt;DataStoreEntry&lt;SamRecord&gt;&gt; entryIterator()
+            throws DataStoreException {
+<span class="nc" id="L212">        verifyNotClosed();</span>
+<span class="nc" id="L213">        return new StreamingIterator&lt;DataStoreEntry&lt;SamRecord&gt;&gt;(){</span>
+<span class="nc" id="L214">                StreamingIterator&lt;SamRecord&gt; iter = iterator();</span>
+                @Override
+                public boolean hasNext() {
+<span class="nc" id="L217">                        return iter.hasNext();</span>
+                }
+
+                @Override
+                public void close() {
+<span class="nc" id="L222">                        iter.close();</span>
+<span class="nc" id="L223">                }</span>
+
+                @Override
+                public DataStoreEntry&lt;SamRecord&gt; next() {
+<span class="nc" id="L227">                    SamRecord next = iter.next();</span>
+<span class="nc" id="L228">                        return new DataStoreEntry&lt;&gt;(next.getQueryName(), next);</span>
+                }
+
+                @Override
+                public void remove() {
+<span class="nc" id="L233">                        iter.remove();</span>
+<span class="nc" id="L234">                }</span>
+                
+        };
+    }
+
+    @Override
+    public void close() {
+<span class="fc" id="L241">        isClosed = true;</span>
+
+<span class="fc" id="L243">    }</span>
+
+    @Override
+    public SamHeader getHeader() throws DataStoreException {
+<span class="fc" id="L247">        verifyNotClosed();</span>
+        try {
+<span class="fc" id="L249">            return parser.getHeader();</span>
+<span class="nc" id="L250">        } catch (IOException e) {</span>
+<span class="nc" id="L251">            throw new DataStoreException(&quot;error parsing sam/bam file to get header&quot;, e);</span>
+        }
+    }
+
+    @Override
+    public &lt;E extends Throwable&gt; void forEachAlignedRecord(String referenceName,
+            ThrowingConsumer&lt;SamRecord, E&gt; consumer) throws DataStoreException, E {
+<span class="nc" id="L258">        Objects.requireNonNull(referenceName);</span>
+<span class="nc" id="L259">        Objects.requireNonNull(consumer);</span>
+<span class="nc" id="L260">        verifyNotClosed();</span>
+        try{
+<span class="nc" id="L262">        parser.parse(referenceName, new AbstractSamVisitor() {</span>
+
+            @Override
+            public void visitRecord(SamVisitorCallback callback,
+                    SamRecord record, VirtualFileOffset start,
+                    VirtualFileOffset end) {
+<span class="nc bnc" id="L268" title="All 4 branches missed.">                if(filter !=null &amp;&amp; !filter.test(record)){</span>
+<span class="nc" id="L269">                    return;</span>
+                }
+                try{
+<span class="nc" id="L272">                    consumer.accept(record);</span>
+<span class="nc" id="L273">                }catch(Throwable t){</span>
+<span class="nc" id="L274">                    Sneak.sneakyThrow(t);</span>
+<span class="nc" id="L275">                }</span>
+<span class="nc" id="L276">            }</span>
+            
+        });
+<span class="nc" id="L279">        }catch (IOException e) {</span>
+<span class="nc" id="L280">            throw new DataStoreException(&quot;error parsing sam/bam file to get header&quot;, e);</span>
+<span class="nc" id="L281">        }</span>
+        
+<span class="nc" id="L283">    }</span>
+    
+    @Override
+    public &lt;E extends Throwable&gt; void forEach(
+            ThrowingBiConsumer&lt;String, SamRecord, E&gt; consumer)
+            throws IOException, E {
+<span class="nc" id="L289">        Objects.requireNonNull(consumer);</span>
+<span class="nc" id="L290">        verifyNotClosed();</span>
+        try{
+<span class="nc" id="L292">        parser.parse(new AbstractSamVisitor() {</span>
+
+            @Override
+            public void visitRecord(SamVisitorCallback callback,
+                    SamRecord record, VirtualFileOffset start,
+                    VirtualFileOffset end) {
+<span class="nc bnc" id="L298" title="All 4 branches missed.">                if(filter !=null &amp;&amp; !filter.test(record)){</span>
+<span class="nc" id="L299">                    return;</span>
+                }
+                try{
+<span class="nc" id="L302">                    consumer.accept(record.getQueryName(), record);</span>
+<span class="nc" id="L303">                }catch(Throwable t){</span>
+<span class="nc" id="L304">                    Sneak.sneakyThrow(t);</span>
+<span class="nc" id="L305">                }</span>
+<span class="nc" id="L306">            }</span>
+            
+        });
+<span class="nc" id="L309">        }catch (IOException e) {</span>
+<span class="nc" id="L310">            throw new DataStoreException(&quot;error parsing sam/bam file to get header&quot;, e);</span>
+<span class="nc" id="L311">        }</span>
+<span class="nc" id="L312">    }</span>
+
+    @Override
+    public &lt;E extends Throwable&gt; void forEachAlignedRecord(String referenceName, Range alignmentRange,
+            ThrowingConsumer&lt;SamRecord, E&gt; consumer) throws DataStoreException, E {
+<span class="fc" id="L317">        Objects.requireNonNull(referenceName);</span>
+<span class="fc" id="L318">        Objects.requireNonNull(alignmentRange);</span>
+<span class="fc" id="L319">        verifyNotClosed();</span>
+        try{
+<span class="fc" id="L321">        parser.parse(referenceName,alignmentRange, new AbstractSamVisitor() {</span>
+
+            @Override
+            public void visitRecord(SamVisitorCallback callback,
+                    SamRecord record, VirtualFileOffset start,
+                    VirtualFileOffset end) {
+<span class="pc bpc" id="L327" title="3 of 4 branches missed.">                if(filter !=null &amp;&amp; !filter.test(record)){</span>
+<span class="nc" id="L328">                    return;</span>
+                }
+                try{
+<span class="fc" id="L331">                    consumer.accept(record);</span>
+<span class="nc" id="L332">                }catch(Throwable t){</span>
+<span class="nc" id="L333">                    Sneak.sneakyThrow(t);</span>
+<span class="fc" id="L334">                }</span>
+<span class="fc" id="L335">            }</span>
+            
+        });
+<span class="nc" id="L338">        }catch (IOException e) {</span>
+<span class="nc" id="L339">            throw new DataStoreException(&quot;error parsing sam/bam file to get header&quot;, e);</span>
+<span class="fc" id="L340">        }</span>
+        
+<span class="fc" id="L342">    }</span>
+
+    @Override
+    public StreamingIterator&lt;SamRecord&gt; getAlignedRecords(String referenceName)
+            throws DataStoreException {
+<span class="fc" id="L347">        Objects.requireNonNull(referenceName);</span>
+        
+<span class="fc" id="L349">        verifyNotClosed();</span>
+<span class="fc" id="L350">        verifyValidReference(referenceName);</span>
+<span class="fc" id="L351">        SingleReferenceFilteredVisitor iter = new SingleReferenceFilteredVisitor(referenceName);</span>
+<span class="fc" id="L352">        iter.start();</span>
+        
+<span class="fc" id="L354">        return DataStoreStreamingIterator.create(this, iter);</span>
+    }
+
+    private void verifyValidReference(String referenceName) throws DataStoreException {
+<span class="fc bfc" id="L358" title="All 2 branches covered.">        if(getHeader().getReferenceSequence(referenceName) == null){</span>
+<span class="fc" id="L359">            throw new DataStoreException(&quot;no reference with name '&quot; + referenceName + &quot;'&quot;);</span>
+        }
+        
+<span class="fc" id="L362">    }</span>
+
+    @Override
+    public StreamingIterator&lt;SamRecord&gt; getAlignedRecords(String referenceName,
+            Range alignmentRange) throws DataStoreException {
+<span class="fc" id="L367">        Objects.requireNonNull(referenceName);</span>
+<span class="fc" id="L368">        Objects.requireNonNull(alignmentRange);</span>
+<span class="fc" id="L369">        verifyNotClosed();</span>
+<span class="fc" id="L370">        SingleReferenceAndRangeFilteredVisitor iter = new SingleReferenceAndRangeFilteredVisitor(referenceName, alignmentRange);</span>
+<span class="fc" id="L371">        iter.start();</span>
+        
+<span class="fc" id="L373">        return DataStoreStreamingIterator.create(this, iter);</span>
+    }
+    
+<span class="fc" id="L376">    private class FilteredVisitor extends AbstractBlockingStreamingIterator&lt;SamRecord&gt;{</span>
+
+        @Override
+        protected void backgroundThreadRunMethod() throws RuntimeException {
+            try {
+<span class="fc" id="L381">                parser.parse(new AbstractSamVisitor() {</span>
+
+                    @Override
+                    public void visitRecord(SamVisitorCallback callback,
+                            SamRecord record, VirtualFileOffset start,
+                            VirtualFileOffset end) {
+<span class="pc bpc" id="L387" title="3 of 4 branches missed.">                        if(filter !=null &amp;&amp; !filter.test(record)){</span>
+<span class="nc" id="L388">                            return;</span>
+                        }
+<span class="fc" id="L390">                        FilteredVisitor.this.blockingPut(record);</span>
+<span class="fc" id="L391">                    }</span>
+                    
+                });
+<span class="nc" id="L394">            } catch (IOException e) {</span>
+<span class="nc" id="L395">                throw new UncheckedIOException(&quot;error parsing sam/bam file&quot;, e);</span>
+<span class="fc" id="L396">            }</span>
+            
+<span class="fc" id="L398">        }</span>
+        
+    }
+    
+    
+    
+    private class SingleReferenceFilteredVisitor extends AbstractBlockingStreamingIterator&lt;SamRecord&gt;{
+        private final String refname;
+        
+<span class="fc" id="L407">        protected SingleReferenceFilteredVisitor(String refname) {</span>
+<span class="fc" id="L408">            super();</span>
+<span class="fc" id="L409">            this.refname = refname;</span>
+<span class="fc" id="L410">        }</span>
+
+        @Override
+        protected void backgroundThreadRunMethod() throws RuntimeException {
+            try {
+<span class="fc" id="L415">                parser.parse(refname, new AbstractSamVisitor() {</span>
+
+                    @Override
+                    public void visitRecord(SamVisitorCallback callback,
+                            SamRecord record, VirtualFileOffset start,
+                            VirtualFileOffset end) {
+<span class="fc bfc" id="L421" title="All 4 branches covered.">                        if(filter !=null &amp;&amp; !filter.test(record)){</span>
+<span class="fc" id="L422">                            return;</span>
+                        }
+<span class="fc" id="L424">                        SingleReferenceFilteredVisitor.this.blockingPut(record);</span>
+<span class="fc" id="L425">                    }</span>
+                    
+                });
+<span class="nc" id="L428">            } catch (IOException e) {</span>
+<span class="nc" id="L429">                throw new UncheckedIOException(&quot;error parsing sam/bam file&quot;, e);</span>
+<span class="fc" id="L430">            }</span>
+            
+<span class="fc" id="L432">        }</span>
+        
+    }
+    
+    private class SingleReferenceAndRangeFilteredVisitor extends AbstractBlockingStreamingIterator&lt;SamRecord&gt;{
+        private final String refname;
+        private final Range range;
+        
+<span class="fc" id="L440">        protected SingleReferenceAndRangeFilteredVisitor(String refname, Range range) {</span>
+<span class="fc" id="L441">            super();</span>
+<span class="fc" id="L442">            this.refname = refname;</span>
+<span class="fc" id="L443">            this.range = range;</span>
+<span class="fc" id="L444">        }</span>
+
+        @Override
+        protected void backgroundThreadRunMethod() throws RuntimeException {
+            try {
+<span class="fc" id="L449">                parser.parse(refname, range, new AbstractSamVisitor() {</span>
+
+                    @Override
+                    public void visitRecord(SamVisitorCallback callback,
+                            SamRecord record, VirtualFileOffset start,
+                            VirtualFileOffset end) {
+<span class="fc bfc" id="L455" title="All 4 branches covered.">                        if(filter !=null &amp;&amp; !filter.test(record)){</span>
+<span class="fc" id="L456">                            return;</span>
+                        }
+<span class="fc" id="L458">                        SingleReferenceAndRangeFilteredVisitor.this.blockingPut(record);</span>
+<span class="fc" id="L459">                    }</span>
+                    
+                });
+<span class="nc" id="L462">            } catch (IOException e) {</span>
+<span class="nc" id="L463">                throw new UncheckedIOException(&quot;error parsing sam/bam file&quot;, e);</span>
+<span class="fc" id="L464">            }</span>
+            
+<span class="fc" id="L466">        }</span>
+        
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

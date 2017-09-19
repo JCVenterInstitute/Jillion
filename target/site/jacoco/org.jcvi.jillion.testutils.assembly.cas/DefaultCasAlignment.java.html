@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DefaultCasAlignment.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.testutils.assembly.cas</a> &gt; <span class="el_source">DefaultCasAlignment.java</span></div><h1>DefaultCasAlignment.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Oct 29, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.testutils.assembly.cas;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
+import org.jcvi.jillion.assembly.clc.cas.CasAlignment;
+import org.jcvi.jillion.assembly.clc.cas.CasAlignmentRegion;
+import org.jcvi.jillion.assembly.clc.cas.CasAlignmentRegionType;
+import org.jcvi.jillion.core.Direction;
+
+final class DefaultCasAlignment implements CasAlignment {
+
+    private final long contigSequenceId;
+    private final long startOfMatch;
+    private final boolean readIsReversed;
+    private final List&lt;CasAlignmentRegion&gt; alignmentRegions;
+    
+    
+    /**
+     * @param contigSequenceId
+     * @param startOfMatch
+     * @param readIsReversed
+     * @param alignmentRegions
+     */
+    public DefaultCasAlignment(long contigSequenceId,
+            long startOfMatch, boolean readIsReversed,
+<span class="fc" id="L54">            List&lt;CasAlignmentRegion&gt; alignmentRegions) {</span>
+<span class="fc" id="L55">        this.contigSequenceId = contigSequenceId;</span>
+<span class="fc" id="L56">        this.startOfMatch = startOfMatch;</span>
+<span class="fc" id="L57">        this.readIsReversed = readIsReversed;</span>
+<span class="fc" id="L58">        this.alignmentRegions = new ArrayList&lt;CasAlignmentRegion&gt;(alignmentRegions);</span>
+<span class="fc" id="L59">    }</span>
+
+    @Override
+    public long getReferenceIndex() {
+<span class="fc" id="L63">        return contigSequenceId;</span>
+    }
+
+    @Override
+    public List&lt;CasAlignmentRegion&gt; getAlignmentRegions() {
+<span class="fc" id="L68">        return Collections.unmodifiableList(alignmentRegions);</span>
+    }
+
+  
+
+    @Override
+    public long getStartOfMatch() {
+<span class="fc" id="L75">        return startOfMatch;</span>
+    }
+
+    @Override
+    public boolean readIsReversed() {
+<span class="fc" id="L80">        return readIsReversed;</span>
+    }
+    
+    
+    
+    @Override
+    public int hashCode() {
+<span class="nc" id="L87">        final int prime = 31;</span>
+<span class="nc" id="L88">        int result = 1;</span>
+<span class="nc" id="L89">        result = prime</span>
+                * result
+<span class="nc" id="L91">                + alignmentRegions.hashCode();</span>
+<span class="nc" id="L92">        result = prime * result</span>
+                + (int) (contigSequenceId ^ (contigSequenceId &gt;&gt;&gt; 32));
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        result = prime * result + (readIsReversed ? 1231 : 1237);</span>
+<span class="nc" id="L95">        result = prime * result + (int) (startOfMatch ^ (startOfMatch &gt;&gt;&gt; 32));</span>
+<span class="nc" id="L96">        return result;</span>
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+<span class="nc bnc" id="L101" title="All 2 branches missed.">        if (this == obj) {</span>
+<span class="nc" id="L102">            return true;</span>
+        }
+<span class="nc bnc" id="L104" title="All 2 branches missed.">        if (obj == null) {</span>
+<span class="nc" id="L105">            return false;</span>
+        }
+<span class="nc bnc" id="L107" title="All 2 branches missed.">        if (!(obj instanceof DefaultCasAlignment)) {</span>
+<span class="nc" id="L108">            return false;</span>
+        }
+<span class="nc" id="L110">        DefaultCasAlignment other = (DefaultCasAlignment) obj;</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">        if (!alignmentRegions.equals(other.alignmentRegions)) {</span>
+<span class="nc" id="L112">            return false;</span>
+        }
+<span class="nc bnc" id="L114" title="All 2 branches missed.">        if (contigSequenceId != other.contigSequenceId) {</span>
+<span class="nc" id="L115">            return false;</span>
+        }
+<span class="nc bnc" id="L117" title="All 2 branches missed.">        if (readIsReversed != other.readIsReversed) {</span>
+<span class="nc" id="L118">            return false;</span>
+        }
+<span class="nc bnc" id="L120" title="All 2 branches missed.">        if (startOfMatch != other.startOfMatch) {</span>
+<span class="nc" id="L121">            return false;</span>
+        }
+<span class="nc" id="L123">        return true;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L128">        return &quot;DefaultCasAlignment [contigSequenceId=&quot; + contigSequenceId</span>
+                + &quot;, startOfMatch=&quot; + startOfMatch + &quot;, readIsReversed=&quot;
+                + readIsReversed + &quot;, alignmentRegions=&quot; + alignmentRegions
+                + &quot;]&quot;;
+    }
+
+
+
+    public static final class Builder implements org.jcvi.jillion.core.util.Builder&lt;DefaultCasAlignment&gt;{
+        private final long contigSequenceId;
+        private final long startOfMatch;
+        private final boolean readIsReversed;
+        
+<span class="fc" id="L141">        List&lt;CasAlignmentRegion&gt; regions = new ArrayList&lt;CasAlignmentRegion&gt;();</span>
+        private CasAlignmentRegionType currentType;
+        private long currentLength;
+        /**
+         * @param contigSequenceId
+         * @param startOfMatch
+         * @param readIsReversed
+         */
+<span class="fc" id="L149">        public Builder(long contigSequenceId, long startOfMatch,Direction dir){</span>
+<span class="fc" id="L150">        	Objects.requireNonNull(dir);</span>
+<span class="fc" id="L151">            this.contigSequenceId = contigSequenceId;</span>
+<span class="fc" id="L152">            this.startOfMatch = startOfMatch;</span>
+<span class="fc bfc" id="L153" title="All 2 branches covered.">            this.readIsReversed = dir == Direction.REVERSE;</span>
+<span class="fc" id="L154">            resetCurrentRegion();</span>
+<span class="fc" id="L155">        }</span>
+       
+
+        private synchronized void resetCurrentRegion(){
+<span class="fc" id="L159">            currentType=null;</span>
+<span class="fc" id="L160">            currentLength=0;</span>
+<span class="fc" id="L161">        }</span>
+
+        public final synchronized Builder addRegion(CasAlignmentRegionType type, long length){
+<span class="pc bpc" id="L164" title="1 of 2 branches missed.">            if(type== null){</span>
+<span class="nc" id="L165">                throw new IllegalArgumentException(&quot;type can not be null&quot;);</span>
+            }
+<span class="pc bpc" id="L167" title="1 of 2 branches missed.">            if(length&lt;1){</span>
+<span class="nc" id="L168">                throw new IllegalArgumentException(&quot;length can not &lt; 1&quot;);</span>
+            }
+<span class="fc bfc" id="L170" title="All 2 branches covered.">            if(type.equals(currentType)){</span>
+<span class="fc" id="L171">                currentLength+=length;</span>
+            }
+            else{
+<span class="fc" id="L174">                createAndResetCurrentRegion();</span>
+<span class="fc" id="L175">                currentType = type;</span>
+<span class="fc" id="L176">                currentLength= length;</span>
+            }
+<span class="fc" id="L178">            return this;</span>
+        }
+        
+       
+
+        private void createAndResetCurrentRegion() {
+<span class="fc bfc" id="L184" title="All 2 branches covered.">            if(currentType!=null){</span>
+<span class="fc" id="L185">                createCurrentRegion();</span>
+<span class="fc" id="L186">                resetCurrentRegion();</span>
+            }
+<span class="fc" id="L188">        }</span>
+        
+        
+        private synchronized void createCurrentRegion() {
+<span class="fc" id="L192">            regions.add(new DefaultCasAlignmentRegion(currentType, currentLength));            </span>
+<span class="fc" id="L193">        }</span>
+
+        @Override
+        public final DefaultCasAlignment build() {
+<span class="fc" id="L197">            createAndResetCurrentRegion();            </span>
+<span class="fc" id="L198">            return new DefaultCasAlignment(contigSequenceId,startOfMatch,readIsReversed, regions);</span>
+        }
+
+
+		public Builder addRegion(CasAlignmentRegion alignmentRegion) {
+<span class="fc" id="L203">			return addRegion(alignmentRegion.getType(), alignmentRegion.getLength());</span>
+			
+		}
+        
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

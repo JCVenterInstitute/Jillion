@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AbstractAsmContigBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.ca.asm</a> &gt; <span class="el_source">AbstractAsmContigBuilder.java</span></div><h1>AbstractAsmContigBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly.ca.asm;
+
+import java.util.List;
+import java.util.Map;
+import java.util.SortedSet;
+
+import org.jcvi.jillion.assembly.ca.asm.AsmVisitor.UnitigLayoutType;
+import org.jcvi.jillion.core.DirectedRange;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+/**
+ * {@code AbstractAsmContigBuilder} is a {@link AsmContigVisitor}
+ * that will populate an {@link AsmContigBuilder} instance
+ * when its visit methods are called.
+ * @author dkatzel
+ *
+ */
+public abstract class AbstractAsmContigBuilder implements AsmContigVisitor{
+
+	private final Map&lt;String, Range&gt; validRanges;
+	private final DataStore&lt;NucleotideSequence&gt; fullLengthSequenceDatastore;
+	
+	private final AsmContigBuilder builder;
+	
+	
+	
+	public AbstractAsmContigBuilder(
+			String id,
+			NucleotideSequence consensus,
+			boolean isDegenerate,
+			DataStore&lt;NucleotideSequence&gt; fullLengthSequenceDatastore,
+<span class="fc" id="L56">			Map&lt;String, Range&gt; validRanges) {</span>
+<span class="fc" id="L57">		this.fullLengthSequenceDatastore = fullLengthSequenceDatastore;</span>
+<span class="fc" id="L58">		this.validRanges = validRanges;</span>
+		
+<span class="fc" id="L60">		builder = DefaultAsmContig.createBuilder(id, consensus, isDegenerate);</span>
+<span class="fc" id="L61">	}</span>
+
+	/**
+	 * Ignored by default.  This method
+	 * may be overridden to handle variant records
+	 * (example, de-phasing diploid sequence by collecting
+	 * all the linked variants and modifying the builder
+	 * as a post process.
+	 * &lt;p&gt;
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void visitVariance(Range range, long numberOfSpanningReads,
+			long anchorSize, long internalAccessionId,
+			long accessionForPhasedVariant,
+			SortedSet&lt;VariantRecord&gt; variantRecords) {
+		//default to no-op
+		
+<span class="nc" id="L79">	}</span>
+
+	@Override
+	public void visitReadLayout(char readType, String externalReadId,
+			DirectedRange readRange, List&lt;Integer&gt; gapOffsets) {
+        try {
+<span class="fc" id="L85">            NucleotideSequence fullLengthSequence = fullLengthSequenceDatastore.get(externalReadId);</span>
+<span class="fc" id="L86">            Range clearRange = validRanges.get(externalReadId);</span>
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">            if(clearRange==null){</span>
+<span class="nc" id="L88">                throw new IllegalStateException(&quot;do not have clear range information for read &quot;+ externalReadId);</span>
+            }
+           
+<span class="fc" id="L91">            NucleotideSequenceBuilder validBases = new NucleotideSequenceBuilder(fullLengthSequence)</span>
+<span class="fc" id="L92">            											.trim(clearRange);</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">            if(readRange.getDirection() == Direction.REVERSE){</span>
+<span class="fc" id="L94">                validBases.reverseComplement();</span>
+            }
+<span class="fc" id="L96">            validBases = AsmUtil.computeGappedSequence(validBases, gapOffsets);</span>
+<span class="fc" id="L97">            builder.addRead(externalReadId, validBases.toString(),</span>
+<span class="fc" id="L98">                    (int)readRange.asRange().getBegin(),readRange.getDirection(),</span>
+                    clearRange, 
+<span class="fc" id="L100">                    (int)fullLengthSequence.getLength(),</span>
+                    false);
+<span class="nc" id="L102">        } catch (DataStoreException e) {</span>
+<span class="nc" id="L103">            throw new IllegalStateException(</span>
+            		&quot;error getting read id &quot;+ externalReadId 
+                    + &quot; from frg file&quot;, e);
+<span class="fc" id="L106">        }</span>
+		
+<span class="fc" id="L108">	}</span>
+	/**
+	 * Ignored by default since this class
+	 * only works with contig data.
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void visitUnitigLayout(UnitigLayoutType type,
+			String unitigExternalId, DirectedRange unitigRange,
+			List&lt;Long&gt; gapOffsets) {
+		//no-op
+		
+<span class="fc" id="L120">	}</span>
+
+	@Override
+	public void halted() {
+		//no-op
+		
+<span class="nc" id="L126">	}</span>
+
+	@Override
+	public final void visitEnd() {
+<span class="fc" id="L130">		visitContig(builder);	</span>
+<span class="fc" id="L131">	}</span>
+
+	protected abstract void visitContig(AsmContigBuilder builder);
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

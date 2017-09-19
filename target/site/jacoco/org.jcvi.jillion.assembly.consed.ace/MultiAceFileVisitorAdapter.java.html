@@ -1,0 +1,443 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>MultiAceFileVisitorAdapter.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.consed.ace</a> &gt; <span class="el_source">MultiAceFileVisitorAdapter.java</span></div><h1>MultiAceFileVisitorAdapter.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly.consed.ace;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
+
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.qual.QualitySequence;
+
+public class MultiAceFileVisitorAdapter implements AceFileVisitor{
+
+	private final List&lt;AceFileVisitor&gt; visitors;
+	
+	private List&lt;AceContigVisitor&gt; currentContigVisitors;
+	private List&lt;AceContigReadVisitor&gt; currentReadVisitors;
+	private List&lt;AceConsensusTagVisitor&gt; currentConsensusTagVisitors;
+	
+	private List&lt;AceFileVisitorCallbackAdapter&gt; currentCallbacks;
+	
+	private AceFileVisitorCallback ourCallback;
+	public MultiAceFileVisitorAdapter(AceFileVisitor...visitors){
+<span class="nc" id="L45">		this(Arrays.asList(visitors));</span>
+<span class="nc" id="L46">	}</span>
+<span class="nc" id="L47">	public MultiAceFileVisitorAdapter(Collection&lt;? extends AceFileVisitor&gt; visitors) {</span>
+<span class="nc bnc" id="L48" title="All 2 branches missed.">		if(visitors.isEmpty()){</span>
+<span class="nc" id="L49">			throw new IllegalArgumentException(&quot;must provide at least one visitor&quot;);</span>
+		}
+<span class="nc" id="L51">		this.visitors = new ArrayList&lt;AceFileVisitor&gt;(visitors.size());</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">		for(AceFileVisitor visitor : visitors){</span>
+<span class="nc bnc" id="L53" title="All 2 branches missed.">			if(visitor ==null){</span>
+<span class="nc" id="L54">				throw new NullPointerException(&quot;visitor can not be null&quot;);</span>
+			}
+<span class="nc" id="L56">			this.visitors.add(visitor);</span>
+<span class="nc" id="L57">		}</span>
+<span class="nc" id="L58">	}</span>
+
+	private boolean handleHaltedVisitors(){
+<span class="nc bnc" id="L61" title="All 2 branches missed.">		if(ourCallback ==null){</span>
+			//no callbacks do nothing
+<span class="nc" id="L63">			return false;</span>
+		}
+		//work backwards to avoid concurrent modification exception
+<span class="nc bnc" id="L66" title="All 2 branches missed.">		for(int i=currentCallbacks.size(); i&gt;=0; i--){</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">			if(currentCallbacks.get(i).isHalted()){</span>
+<span class="nc" id="L68">				haltVisitor(i);</span>
+			}
+		}
+<span class="nc bnc" id="L71" title="All 2 branches missed.">		if(currentCallbacks.isEmpty()){</span>
+			//all callbacks have been halted
+<span class="nc" id="L73">			ourCallback.haltParsing();</span>
+<span class="nc" id="L74">			ourCallback=null;</span>
+<span class="nc" id="L75">			currentReadVisitors=null;</span>
+<span class="nc" id="L76">			currentContigVisitors = null;</span>
+<span class="nc" id="L77">			currentConsensusTagVisitors =null;</span>
+<span class="nc" id="L78">			return true;</span>
+		}
+<span class="nc" id="L80">		return false;</span>
+	}
+	
+	private void haltVisitor(int i) {
+<span class="nc bnc" id="L84" title="All 2 branches missed.">		if(currentReadVisitors !=null){</span>
+			//visitor lists should all be the same size
+			//so indexes are in sync
+<span class="nc" id="L87">			AceContigReadVisitor readVisitor =currentReadVisitors.remove(i);</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">			if(readVisitor!=null){</span>
+<span class="nc" id="L89">				readVisitor.halted();</span>
+			}					
+		}
+<span class="nc bnc" id="L92" title="All 2 branches missed.">		if(currentContigVisitors !=null){</span>
+<span class="nc" id="L93">			AceContigVisitor contigVisitor = currentContigVisitors.remove(i);</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">			if(contigVisitor !=null){</span>
+<span class="nc" id="L95">				contigVisitor.halted();</span>
+			}
+		}
+<span class="nc bnc" id="L98" title="All 2 branches missed.">		if(currentConsensusTagVisitors !=null){</span>
+<span class="nc" id="L99">			AceConsensusTagVisitor tagVisitor = currentConsensusTagVisitors.remove(i);</span>
+<span class="nc bnc" id="L100" title="All 2 branches missed.">			if(tagVisitor !=null){</span>
+<span class="nc" id="L101">				tagVisitor.halted();</span>
+			}
+		}
+		
+<span class="nc" id="L105">		AceFileVisitor visitor = visitors.remove(i);</span>
+<span class="nc" id="L106">		visitor.halted();</span>
+<span class="nc" id="L107">		currentCallbacks.remove(i);</span>
+<span class="nc" id="L108">	}</span>
+	@Override
+	public void visitHeader(int numberOfContigs, long totalNumberOfReads) {
+<span class="nc bnc" id="L111" title="All 2 branches missed.">		for(AceFileVisitor visitor : visitors){</span>
+<span class="nc" id="L112">			visitor.visitHeader(numberOfContigs, totalNumberOfReads);</span>
+			
+<span class="nc" id="L114">		}</span>
+<span class="nc" id="L115">	}</span>
+
+	@Override
+	public AceContigVisitor visitContig(AceFileVisitorCallback callback,
+			String contigId, int numberOfBases, int numberOfReads,
+			int numberOfBaseSegments, boolean reverseComplemented) {
+<span class="nc" id="L121">		this.ourCallback = callback;</span>
+<span class="nc" id="L122">		currentCallbacks = new ArrayList&lt;AceFileVisitorCallbackAdapter&gt;(visitors.size());</span>
+<span class="nc" id="L123">		currentContigVisitors = new ArrayList&lt;AceContigVisitor&gt;(visitors.size());</span>
+<span class="nc" id="L124">		boolean skipContig = true;</span>
+<span class="nc bnc" id="L125" title="All 2 branches missed.">		for(AceFileVisitor visitor : visitors){</span>
+<span class="nc" id="L126">			AceFileVisitorCallbackAdapter adaptedCallback = new AceFileVisitorCallbackAdapter(callback);</span>
+<span class="nc" id="L127">			currentCallbacks.add(adaptedCallback);</span>
+<span class="nc" id="L128">			AceContigVisitor contigVisitor = visitor.visitContig(adaptedCallback, contigId, numberOfBases, numberOfReads, numberOfBaseSegments, reverseComplemented);</span>
+<span class="nc" id="L129">			currentContigVisitors.add(contigVisitor);</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">			if(contigVisitor !=null){</span>
+<span class="nc" id="L131">				skipContig=false;</span>
+			}
+<span class="nc" id="L133">		}</span>
+<span class="nc bnc" id="L134" title="All 2 branches missed.">		if(handleHaltedVisitors()){</span>
+<span class="nc" id="L135">			return null;</span>
+		}
+		//if none of our visitors want to
+		//visit, then we can safely skip it too.
+<span class="nc bnc" id="L139" title="All 2 branches missed.">		if(skipContig){</span>
+<span class="nc" id="L140">			currentContigVisitors=null;</span>
+<span class="nc" id="L141">			return null;</span>
+		}
+<span class="nc" id="L143">		return new MultiAceContigVisitor();</span>
+	}
+
+	@Override
+	public void visitReadTag(String id, String type, String creator,
+			long gappedStart, long gappedEnd, Date creationDate,
+			boolean isTransient) {
+<span class="nc bnc" id="L150" title="All 2 branches missed.">		for(AceFileVisitor visitor : visitors){</span>
+<span class="nc" id="L151">			visitor.visitReadTag(id, type, creator, </span>
+				gappedStart, gappedEnd, creationDate, 
+				isTransient);
+			
+<span class="nc" id="L155">		}</span>
+		
+<span class="nc" id="L157">	}</span>
+
+	@Override
+	public AceConsensusTagVisitor visitConsensusTag(String id, String type,
+			String creator, long gappedStart, long gappedEnd,
+			Date creationDate, boolean isTransient) {
+<span class="nc" id="L163">		currentConsensusTagVisitors = new ArrayList&lt;AceConsensusTagVisitor&gt;(visitors.size());</span>
+<span class="nc" id="L164">		boolean skipTag=true;</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">		for(AceFileVisitor visitor : visitors){</span>
+<span class="nc" id="L166">			AceConsensusTagVisitor tagVisitor = visitor.visitConsensusTag(id, type, creator, gappedStart, gappedEnd, creationDate, isTransient);</span>
+<span class="nc" id="L167">			currentConsensusTagVisitors.add(tagVisitor);</span>
+<span class="nc bnc" id="L168" title="All 2 branches missed.">			if(tagVisitor !=null){</span>
+<span class="nc" id="L169">				skipTag =true;</span>
+			}
+<span class="nc" id="L171">		}</span>
+<span class="nc bnc" id="L172" title="All 4 branches missed.">		if(handleHaltedVisitors() || skipTag){</span>
+<span class="nc" id="L173">			currentConsensusTagVisitors=null;</span>
+<span class="nc" id="L174">			return null;</span>
+		}
+		
+<span class="nc" id="L177">		return new MultiAceConsensusTagVisitor();</span>
+	}
+
+	@Override
+	public void visitWholeAssemblyTag(String type, String creator,
+			Date creationDate, String data) {
+<span class="nc bnc" id="L183" title="All 2 branches missed.">		for(AceFileVisitor visitor : visitors){</span>
+<span class="nc" id="L184">			visitor.visitWholeAssemblyTag(type, creator, creationDate, data);</span>
+<span class="nc" id="L185">		}</span>
+		
+<span class="nc" id="L187">	}</span>
+
+	@Override
+	public void visitEnd() {
+<span class="nc bnc" id="L191" title="All 2 branches missed.">		for(AceFileVisitor visitor : visitors){</span>
+<span class="nc" id="L192">			visitor.visitEnd();</span>
+<span class="nc" id="L193">		}</span>
+		
+<span class="nc" id="L195">	}</span>
+
+	@Override
+	public void halted() {
+		//all visitors should have been
+		//removed by the time we call this
+		//but just in case:
+<span class="nc bnc" id="L202" title="All 2 branches missed.">		if(currentReadVisitors !=null){</span>
+<span class="nc bnc" id="L203" title="All 2 branches missed.">			for(AceContigReadVisitor readVisitor : currentReadVisitors){</span>
+<span class="nc" id="L204">				readVisitor.halted();</span>
+<span class="nc" id="L205">			}</span>
+		}
+<span class="nc bnc" id="L207" title="All 2 branches missed.">		if(currentContigVisitors !=null){</span>
+<span class="nc bnc" id="L208" title="All 2 branches missed.">			for(AceContigVisitor contigVisitor : currentContigVisitors){</span>
+<span class="nc" id="L209">				contigVisitor.halted();</span>
+<span class="nc" id="L210">			}</span>
+		}
+<span class="nc bnc" id="L212" title="All 2 branches missed.">		if(currentConsensusTagVisitors !=null){</span>
+<span class="nc bnc" id="L213" title="All 2 branches missed.">			for(AceConsensusTagVisitor tagVisitor : currentConsensusTagVisitors){</span>
+<span class="nc" id="L214">				tagVisitor.halted();</span>
+<span class="nc" id="L215">			}</span>
+		}
+<span class="nc bnc" id="L217" title="All 2 branches missed.">		for(AceFileVisitor visitor : visitors){</span>
+<span class="nc" id="L218">			visitor.halted();</span>
+<span class="nc" id="L219">		}</span>
+		
+<span class="nc" id="L221">	}</span>
+	
+<span class="nc" id="L223">	private class MultiAceConsensusTagVisitor implements AceConsensusTagVisitor{</span>
+
+		@Override
+		public void visitComment(String comment) {
+<span class="nc bnc" id="L227" title="All 2 branches missed.">			for(AceConsensusTagVisitor visitor : currentConsensusTagVisitors){</span>
+<span class="nc bnc" id="L228" title="All 2 branches missed.">				if(visitor !=null){</span>
+<span class="nc" id="L229">					visitor.visitComment(comment);</span>
+				}
+<span class="nc" id="L231">			}</span>
+<span class="nc" id="L232">			handleHaltedVisitors();</span>
+<span class="nc" id="L233">		}</span>
+
+		@Override
+		public void visitData(String data) {
+<span class="nc bnc" id="L237" title="All 2 branches missed.">			for(AceConsensusTagVisitor visitor : currentConsensusTagVisitors){</span>
+<span class="nc bnc" id="L238" title="All 2 branches missed.">				if(visitor !=null){</span>
+<span class="nc" id="L239">					visitor.visitData(data);</span>
+				}
+<span class="nc" id="L241">			}</span>
+<span class="nc" id="L242">			handleHaltedVisitors();</span>
+			
+<span class="nc" id="L244">		}</span>
+
+		@Override
+		public void visitEnd() {
+<span class="nc bnc" id="L248" title="All 2 branches missed.">			for(AceConsensusTagVisitor visitor : currentConsensusTagVisitors){</span>
+<span class="nc bnc" id="L249" title="All 2 branches missed.">				if(visitor !=null){</span>
+<span class="nc" id="L250">					visitor.visitEnd();</span>
+				}
+<span class="nc" id="L252">			}</span>
+<span class="nc" id="L253">			handleHaltedVisitors();</span>
+			
+<span class="nc" id="L255">		}</span>
+
+		@Override
+		public void halted() {
+			//no-op?
+			//handled by outer visitor
+			
+<span class="nc" id="L262">		}</span>
+		
+	}
+	
+<span class="nc" id="L266">	private class MultiAceContigVisitor implements AceContigVisitor{</span>
+		
+		
+		@Override
+		public void visitBasesLine(String mixedCaseBasecalls) {
+<span class="nc bnc" id="L271" title="All 2 branches missed.">			for(AceContigVisitor visitor : currentContigVisitors){</span>
+<span class="nc bnc" id="L272" title="All 2 branches missed.">				if(visitor !=null){</span>
+<span class="nc" id="L273">					visitor.visitBasesLine(mixedCaseBasecalls);</span>
+				}
+<span class="nc" id="L275">			}</span>
+<span class="nc" id="L276">			handleHaltedVisitors();</span>
+			
+<span class="nc" id="L278">		}</span>
+		@Override
+		public void visitConsensusQualities(
+				QualitySequence ungappedConsensusQualities) {
+<span class="nc bnc" id="L282" title="All 2 branches missed.">			for(AceContigVisitor visitor : currentContigVisitors){</span>
+<span class="nc bnc" id="L283" title="All 2 branches missed.">				if(visitor !=null){</span>
+<span class="nc" id="L284">					visitor.visitConsensusQualities(ungappedConsensusQualities);</span>
+				}				
+<span class="nc" id="L286">			}</span>
+<span class="nc" id="L287">			handleHaltedVisitors();</span>
+			
+<span class="nc" id="L289">		}</span>
+		@Override
+		public void visitAlignedReadInfo(String readId, Direction dir,
+				int gappedStartPosition) {
+<span class="nc bnc" id="L293" title="All 2 branches missed.">			for(AceContigVisitor visitor : currentContigVisitors){</span>
+<span class="nc bnc" id="L294" title="All 2 branches missed.">				if(visitor !=null){</span>
+<span class="nc" id="L295">					visitor.visitAlignedReadInfo(readId, dir, gappedStartPosition);</span>
+				}
+<span class="nc" id="L297">			}</span>
+<span class="nc" id="L298">			handleHaltedVisitors();</span>
+			
+<span class="nc" id="L300">		}</span>
+		@Override
+		public void visitBaseSegment(Range gappedConsensusRange, String readId) {
+<span class="nc bnc" id="L303" title="All 2 branches missed.">			for(AceContigVisitor visitor : currentContigVisitors){</span>
+<span class="nc bnc" id="L304" title="All 2 branches missed.">				if(visitor !=null){</span>
+<span class="nc" id="L305">					visitor.visitBaseSegment(gappedConsensusRange, readId);</span>
+				}
+<span class="nc" id="L307">			}</span>
+<span class="nc" id="L308">			handleHaltedVisitors();</span>
+			
+<span class="nc" id="L310">		}</span>
+		@Override
+		public AceContigReadVisitor visitBeginRead(String readId,
+				int gappedLength) {
+<span class="nc" id="L314">			currentReadVisitors = new ArrayList&lt;AceContigReadVisitor&gt;(currentContigVisitors.size());</span>
+<span class="nc" id="L315">			boolean skipRead=true;</span>
+<span class="nc bnc" id="L316" title="All 2 branches missed.">			for(AceContigVisitor visitor : currentContigVisitors){</span>
+<span class="nc bnc" id="L317" title="All 2 branches missed.">				if(visitor ==null){</span>
+<span class="nc" id="L318">					currentReadVisitors.add(null);</span>
+				}else{
+<span class="nc" id="L320">					AceContigReadVisitor readVisitor = visitor.visitBeginRead(readId, gappedLength);</span>
+<span class="nc" id="L321">					currentReadVisitors.add(readVisitor);</span>
+<span class="nc bnc" id="L322" title="All 2 branches missed.">					if(readVisitor !=null){</span>
+<span class="nc" id="L323">						skipRead=false;</span>
+					}
+				}
+<span class="nc" id="L326">			}</span>
+<span class="nc bnc" id="L327" title="All 2 branches missed.">			if(handleHaltedVisitors()){</span>
+<span class="nc" id="L328">				return null;</span>
+			}
+<span class="nc bnc" id="L330" title="All 2 branches missed.">			if(skipRead){</span>
+<span class="nc" id="L331">				currentReadVisitors= null;</span>
+<span class="nc" id="L332">				return null;</span>
+			}
+<span class="nc" id="L334">			return new MultiAceContigReadVisitor();</span>
+		}
+		@Override
+		public void visitEnd() {			
+<span class="nc bnc" id="L338" title="All 2 branches missed.">			for(AceContigVisitor visitor : currentContigVisitors){</span>
+<span class="nc bnc" id="L339" title="All 2 branches missed.">				if(visitor !=null){</span>
+<span class="nc" id="L340">					visitor.visitEnd();</span>
+				}
+<span class="nc" id="L342">			}</span>
+			//we are done visiting our current contigs
+			//so remove them 
+<span class="nc" id="L345">			currentContigVisitors = null;</span>
+<span class="nc" id="L346">			handleHaltedVisitors();</span>
+			
+<span class="nc" id="L348">		}</span>
+		@Override
+		public void halted() {
+			//no-op?
+			//the outer visitor should handle halting
+			
+<span class="nc" id="L354">		}		</span>
+	}
+	
+<span class="nc" id="L357">	private class MultiAceContigReadVisitor implements AceContigReadVisitor{</span>
+
+		@Override
+		public void visitQualityLine(int qualLeft, int qualRight,
+				int alignLeft, int alignRight) {
+<span class="nc bnc" id="L362" title="All 2 branches missed.">			for(AceContigReadVisitor visitor : currentReadVisitors){</span>
+<span class="nc bnc" id="L363" title="All 2 branches missed.">				if(visitor !=null){</span>
+<span class="nc" id="L364">					visitor.visitQualityLine(qualLeft, qualRight, alignLeft, alignRight);</span>
+				}
+<span class="nc" id="L366">			}</span>
+<span class="nc" id="L367">			handleHaltedVisitors();</span>
+<span class="nc" id="L368">		}</span>
+
+		@Override
+		public void visitTraceDescriptionLine(String traceName, String phdName,
+				Date date) {
+<span class="nc bnc" id="L373" title="All 2 branches missed.">			for(AceContigReadVisitor visitor : currentReadVisitors){</span>
+<span class="nc bnc" id="L374" title="All 2 branches missed.">				if(visitor !=null){</span>
+<span class="nc" id="L375">					visitor.visitTraceDescriptionLine(traceName, phdName, date);</span>
+				}
+<span class="nc" id="L377">			}</span>
+<span class="nc" id="L378">			handleHaltedVisitors();</span>
+			
+<span class="nc" id="L380">		}</span>
+
+		@Override
+		public void visitBasesLine(String mixedCaseBasecalls) {
+<span class="nc bnc" id="L384" title="All 2 branches missed.">			for(AceContigReadVisitor visitor : currentReadVisitors){</span>
+<span class="nc bnc" id="L385" title="All 2 branches missed.">				if(visitor !=null){</span>
+<span class="nc" id="L386">					visitor.visitBasesLine(mixedCaseBasecalls);</span>
+				}
+<span class="nc" id="L388">			}</span>
+<span class="nc" id="L389">			handleHaltedVisitors();			</span>
+<span class="nc" id="L390">		}</span>
+
+		@Override
+		public void visitEnd() {
+<span class="nc bnc" id="L394" title="All 2 branches missed.">			for(AceContigReadVisitor visitor : currentReadVisitors){</span>
+<span class="nc bnc" id="L395" title="All 2 branches missed.">				if(visitor !=null){</span>
+<span class="nc" id="L396">					visitor.visitEnd();</span>
+				}
+<span class="nc" id="L398">			}</span>
+<span class="nc" id="L399">			handleHaltedVisitors();</span>
+<span class="nc" id="L400">			currentReadVisitors = null;</span>
+<span class="nc" id="L401">		}</span>
+
+		@Override
+		public void halted() {
+			//no-op?
+			//the outer visitor should handle halting
+<span class="nc" id="L407">		}</span>
+		
+	}
+	
+	
+	private static class AceFileVisitorCallbackAdapter implements AceFileVisitorCallback{
+		private final AceFileVisitorCallback callback;
+		private volatile boolean halt;
+		
+		public AceFileVisitorCallbackAdapter(
+<span class="nc" id="L417">				AceFileVisitorCallback callback) {</span>
+<span class="nc" id="L418">			this.callback = callback;</span>
+<span class="nc" id="L419">		}</span>
+
+		@Override
+		public boolean canCreateMemento() {
+<span class="nc" id="L423">			return callback.canCreateMemento();</span>
+		}
+
+		@Override
+		public AceFileVisitorMemento createMemento() {
+<span class="nc" id="L428">			return callback.createMemento();</span>
+		}
+
+		@Override
+		public void haltParsing() {
+<span class="nc" id="L433">			halt = true;			</span>
+<span class="nc" id="L434">		}</span>
+
+		public boolean isHalted() {
+<span class="nc" id="L437">			return halt;</span>
+		}
+		
+		
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

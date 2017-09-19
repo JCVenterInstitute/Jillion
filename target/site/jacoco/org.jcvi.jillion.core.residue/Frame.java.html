@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Frame.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.core.residue</a> &gt; <span class="el_source">Frame.java</span></div><h1>Frame.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.core.residue;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.Triplet;
+import org.jcvi.jillion.core.util.iter.IteratorUtil;
+
+<span class="pc" id="L33">public enum Frame{</span>
+<span class="fc" id="L34">    ONE(1),</span>
+<span class="fc" id="L35">    TWO(2),</span>
+<span class="fc" id="L36">    THREE(3),</span>
+    
+    
+<span class="fc" id="L39">    NEGATIVE_ONE(-1){</span>
+
+        @Override
+        public boolean onReverseStrand() {
+<span class="nc" id="L43">            return true;</span>
+        }
+        
+    },
+<span class="fc" id="L47">    NEGATIVE_TWO(-2){</span>
+
+        @Override
+        public boolean onReverseStrand() {
+<span class="nc" id="L51">            return true;</span>
+        }
+        
+    },
+<span class="fc" id="L55">    NEGATIVE_THREE(-3){</span>
+
+        @Override
+        public boolean onReverseStrand() {
+<span class="nc" id="L59">            return true;</span>
+        }
+        
+    }
+    ;
+    
+    private int frame;
+    
+<span class="fc" id="L67">    private static final Frame[] VALUES = values();</span>
+    //need ArrayList to get the rollover iterator to work
+    //since we need marker interface RandomAccess
+<span class="fc" id="L70">    private static final ArrayList&lt;Frame&gt; FORWARDS = new ArrayList&lt;&gt;(Arrays.asList(ONE, TWO, THREE));</span>
+<span class="fc" id="L71">    private static final ArrayList&lt;Frame&gt; REVERSE = new ArrayList&lt;&gt;(Arrays.asList(NEGATIVE_ONE, NEGATIVE_TWO, NEGATIVE_THREE));</span>
+    
+    public  final int getFrame() {
+<span class="nc" id="L74">        return frame;</span>
+    }
+<span class="fc" id="L76">    Frame(int frame){</span>
+<span class="fc" id="L77">        this.frame = frame;</span>
+<span class="fc" id="L78">    }</span>
+    
+    public Frame shift(int amount){
+        
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">        if(amount &lt;1){</span>
+<span class="nc" id="L83">            throw new IllegalArgumentException(&quot;amount must be positive&quot;);</span>
+        }
+<span class="fc" id="L85">        int shift = amount %3;</span>
+        Iterator&lt;Frame&gt; rollOverIter;
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        if(ordinal() &lt; 3){</span>
+<span class="fc" id="L88">            rollOverIter = IteratorUtil.rollover(FORWARDS, ordinal()+1);</span>
+        }else{
+<span class="fc" id="L90">            rollOverIter = IteratorUtil.rollover(REVERSE, ordinal()-2);</span>
+        }
+<span class="fc" id="L92">        Frame f = this;</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        for(int i=0; i&lt; shift; i++){</span>
+<span class="fc" id="L94">            f = rollOverIter.next();</span>
+        }
+<span class="fc" id="L96">        return f;</span>
+    }
+    /**
+     * Parse a {@link Frame} from the given int value.
+     * Valid values are &lt;code&gt;-3&lt;/code&gt; to &lt;code&gt;3&lt;/code&gt;
+     * inclusive excluding 0.
+     * @param frame the frame number as an int (1, 2, 3, -1, -2, -3).
+     * 
+     * @return a {@link Frame}
+     * @throws IllegalArgumentException if &lt;code&gt; frame &amp;lt; 0 || frame &amp;gt; 2&lt;/code&gt;
+     */
+    public static Frame parseFrame(int frame){
+<span class="nc bnc" id="L108" title="All 2 branches missed.">        for(Frame f : Frame.values()){</span>
+<span class="nc bnc" id="L109" title="All 2 branches missed.">            if(f.frame == frame){</span>
+<span class="nc" id="L110">                return f;</span>
+            }
+        }
+     
+<span class="nc" id="L114">        throw new IllegalArgumentException(&quot;unable to parse frame &quot; + frame);</span>
+    }
+    
+    
+    public static List&lt;Frame&gt; forwardFrames(){
+<span class="fc" id="L119">        return FORWARDS;</span>
+    }
+    
+    public static List&lt;Frame&gt; reverseFrames(){
+<span class="fc" id="L123">        return REVERSE;</span>
+    }
+    public boolean onReverseStrand() {
+        // overridden by -1, -2 and -3
+<span class="fc" id="L127">        return false;</span>
+    }
+    
+    public Frame getOppositeFrame(){
+<span class="fc" id="L131">        return VALUES[ (this.ordinal() +3)%VALUES.length];</span>
+    }
+    
+    public Iterator&lt;Triplet&gt; asTriplets(NucleotideSequence sequence){
+<span class="fc" id="L135">        Iterator&lt;Nucleotide&gt; iter = handleFrame(sequence, this);</span>
+<span class="fc" id="L136">        return new Iterator&lt;Triplet&gt;() {</span>
+
+            Triplet next;
+            {
+<span class="fc" id="L140">                next = getNextTriplet(iter);</span>
+<span class="fc" id="L141">            }</span>
+            @Override
+            public boolean hasNext() {
+<span class="fc bfc" id="L144" title="All 2 branches covered.">                return next !=null;</span>
+            }
+
+            @Override
+            public Triplet next() {
+<span class="pc bpc" id="L149" title="1 of 2 branches missed.">                if(!hasNext()){</span>
+<span class="nc" id="L150">                    throw new NullPointerException();</span>
+                }
+<span class="fc" id="L152">                Triplet ret = next;</span>
+<span class="fc" id="L153">                next = getNextTriplet(iter);</span>
+<span class="fc" id="L154">                return ret;</span>
+            }
+        };
+    }
+
+    private Triplet getNextTriplet(Iterator&lt;Nucleotide&gt; iter) {
+
+<span class="fc" id="L161">        Nucleotide first = getNextNucleotide(iter);</span>
+<span class="fc" id="L162">        Nucleotide second = getNextNucleotide(iter);</span>
+<span class="fc" id="L163">        Nucleotide third = getNextNucleotide(iter);</span>
+<span class="fc bfc" id="L164" title="All 6 branches covered.">        if (first == null || second == null || third == null) {</span>
+            // no more bases
+<span class="fc" id="L166">            return null;</span>
+        }
+<span class="fc" id="L168">        return Triplet.create(first, second, third);</span>
+    }
+
+    private Nucleotide getNextNucleotide(Iterator&lt;Nucleotide&gt; iter) {
+<span class="fc bfc" id="L172" title="All 2 branches covered.">        if (!iter.hasNext()) {</span>
+<span class="fc" id="L173">            return null;</span>
+        }
+<span class="fc" id="L175">        Nucleotide n = iter.next();</span>
+        // if(n.isGap()){
+        // throw new IllegalArgumentException(&quot;sequence can not contain gaps&quot;);
+        // }
+<span class="fc" id="L179">        return n;</span>
+    }
+    
+    
+    @SuppressWarnings(&quot;fallthrough&quot;)
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(&quot;SF_SWITCH_FALLTHROUGH&quot;)
+    private Iterator&lt;Nucleotide&gt; handleFrame(NucleotideSequence sequence, Frame frame) {
+        Iterator&lt;Nucleotide&gt; iter;
+<span class="pc bpc" id="L187" title="1 of 2 branches missed.">        if(frame.onReverseStrand()){</span>
+<span class="nc" id="L188">            iter = sequence.toBuilder().reverseComplement().iterator();</span>
+          //switch uses fall through
+            //so frame 2 skips first 2 bp           
+<span class="pc bnc" id="L191" title="All 3 branches missed.">            switch(frame){</span>
+                    case NEGATIVE_THREE:
+<span class="nc bnc" id="L193" title="All 2 branches missed.">                                    if(iter.hasNext()){</span>
+<span class="nc" id="L194">                                            iter.next();</span>
+                                    }
+                    case NEGATIVE_TWO:
+<span class="nc bnc" id="L197" title="All 2 branches missed.">                                    if(iter.hasNext()){</span>
+<span class="nc" id="L198">                                            iter.next();</span>
+                                    }
+                                    break;
+                    default:
+                                    //no-op
+<span class="nc" id="L203">                            break;</span>
+            }
+        }else{
+<span class="fc" id="L206">            iter = sequence.iterator();</span>
+            //switch uses fall through
+            //so frame 2 skips first 2 bp           
+<span class="fc bfc" id="L209" title="All 3 branches covered.">            switch(frame){</span>
+                    case THREE:
+<span class="pc bpc" id="L211" title="1 of 2 branches missed.">                                    if(iter.hasNext()){</span>
+<span class="fc" id="L212">                                            iter.next();</span>
+                                    }
+                    case TWO:
+<span class="pc bpc" id="L215" title="1 of 2 branches missed.">                                    if(iter.hasNext()){</span>
+<span class="fc" id="L216">                                            iter.next();</span>
+                                    }
+                                    break;
+                    default:
+                                    //no-op
+                            break;
+            }
+        }
+<span class="fc" id="L224">        return iter;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

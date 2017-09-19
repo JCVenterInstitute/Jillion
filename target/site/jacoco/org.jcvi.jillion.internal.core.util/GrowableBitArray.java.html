@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>GrowableBitArray.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.core.util</a> &gt; <span class="el_source">GrowableBitArray.java</span></div><h1>GrowableBitArray.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.internal.core.util;
+
+
+import java.util.Arrays;
+
+import org.jcvi.jillion.core.Range;
+/**
+ * A {@code GrowableBitArray} is a utility class
+ * that wraps an array that will dynamically
+ * grow as needed when data is
+ * appended, inserted, replaced and removed etc.
+ * This is similar to an {@link ArrayList}
+ * or {@link StringBuilder}
+ * for primitive bits.
+ * This class is not Thread-safe.
+ * @author dkatzel
+ *
+ */
+public final class GrowableBitArray {
+	/**
+	 * The current length of valid data
+	 * this is not the same as the length
+	 * of the byte array (capacity) since
+	 * there still might be room to grow.
+	 * There might even be old data in the array
+	 * past current length if the array
+	 * has been modified via the {@link #remove(int)}
+	 * methods.
+	 */
+<span class="nc" id="L50">	private int currentLength=0;</span>
+	/**
+	 * Our actual byte array,
+	 * the capacity is the size of the array.
+	 */
+	private boolean[] data;
+	/**
+	 * Creates a new {@link GrowableBitArray}
+	 * with the given initial capacity.
+	 * @param initialCapacity the initial size 
+	 * of the backing byte array.  When adding
+	 * bytes will cause the byte array to overflow,
+	 * the backing byte array will automatically
+	 * grow larger.
+	 * @throws IllegalArgumentException if initialCapacity is &lt;=0.
+	 */
+<span class="nc" id="L66">	public GrowableBitArray(int initialCapacity){</span>
+<span class="nc bnc" id="L67" title="All 2 branches missed.">		if(initialCapacity &lt;=0){</span>
+<span class="nc" id="L68">			throw new IllegalArgumentException(&quot;initial capacity should be &gt; 0 :&quot;+initialCapacity);</span>
+		}
+<span class="nc" id="L70">		data = new boolean[initialCapacity];		</span>
+<span class="nc" id="L71">	}</span>
+	/**
+	 * Creates a new {@link GrowableBitArray}
+	 * where the backing byte array is an exact
+	 * copy of the input array and the initial
+	 * capacity is set to the array length.
+	 * This has similar (although optimized)
+	 * functionality to
+	 * &lt;pre&gt;
+	 * byte[] bytes = ...
+	 * GrowableBitArray gba = new GrowableBitArray(bytes.length);
+	 * gba.append(bytes);
+	 * &lt;/pre&gt;
+	 * @param bytes the initial byte values to set
+	 * to the backing array.
+	 * @throws NullPointerException if bytes is null.
+	 */
+<span class="nc" id="L88">	public GrowableBitArray(boolean[] bytes){</span>
+<span class="nc" id="L89">		data = Arrays.copyOf(bytes, bytes.length);</span>
+<span class="nc" id="L90">		currentLength=data.length;</span>
+<span class="nc" id="L91">	}</span>
+<span class="nc" id="L92">	private GrowableBitArray(GrowableBitArray copy){</span>
+<span class="nc" id="L93">		data = Arrays.copyOf(copy.data, copy.data.length);</span>
+<span class="nc" id="L94">		currentLength = copy.currentLength;</span>
+<span class="nc" id="L95">	}</span>
+	/**
+	 * Create a new instance of GrowableBitArray
+	 * that is an exact copy of this instance.
+	 * Any future modifications to either the original
+	 * instance or the copy will NOT be reflected 
+	 * in the other.
+	 * @return a new instance of GrowableBitArray
+	 * that contains the same data as this instance
+	 * currently does.
+	 */
+	public GrowableBitArray copy(){
+<span class="nc" id="L107">		return new GrowableBitArray(this);</span>
+	}
+	private void assertValidOffset(int offset) {
+<span class="nc bnc" id="L110" title="All 4 branches missed.">		if (offset &lt;0 || offset &gt;= currentLength){</span>
+<span class="nc" id="L111">		    throw new IndexOutOfBoundsException(</span>
+			&quot;Index: &quot;+offset+&quot;, Size: &quot;+currentLength);
+	    }
+<span class="nc" id="L114">	}</span>
+	private void assertValidRange(Range range) {
+<span class="nc bnc" id="L116" title="All 4 branches missed.">		if (range.getBegin()&lt;0 || range.getEnd() &gt;= currentLength){</span>
+<span class="nc" id="L117">		    throw new IndexOutOfBoundsException(</span>
+			&quot;range: &quot;+range+&quot;, array size: &quot;+currentLength);
+	    }
+<span class="nc" id="L120">	}</span>
+	
+	public void reverse(){
+<span class="nc" id="L123">		int pivotPoint = currentLength/2;</span>
+<span class="nc bnc" id="L124" title="All 2 branches missed.">		for(int i=0; i&lt;pivotPoint;i++){</span>
+<span class="nc" id="L125">			boolean temp=data[i];</span>
+<span class="nc" id="L126">			int reverseI = currentLength-i-1;</span>
+<span class="nc" id="L127">			data[i] = data[reverseI];</span>
+<span class="nc" id="L128">			data[reverseI] = temp;</span>
+		}
+<span class="nc" id="L130">	}</span>
+	public int getCurrentLength() {
+<span class="nc" id="L132">		return currentLength;</span>
+	}
+
+	public void append(boolean value){
+<span class="nc" id="L136">		ensureCapacity(currentLength+1);</span>
+<span class="nc" id="L137">		data[currentLength++]=value;</span>
+<span class="nc" id="L138">	}</span>
+	
+	public void append(boolean[] values){
+<span class="nc" id="L141">		ensureCapacity(currentLength+values.length);</span>
+<span class="nc" id="L142">		System.arraycopy(values, 0, data, currentLength, values.length);</span>
+<span class="nc" id="L143">		currentLength+=values.length;</span>
+<span class="nc" id="L144">	}</span>
+	public void append(GrowableBitArray other){
+<span class="nc" id="L146">		ensureCapacity(currentLength+other.currentLength);</span>
+<span class="nc" id="L147">		System.arraycopy(other.data, 0, data, currentLength, other.currentLength);</span>
+<span class="nc" id="L148">		currentLength+=other.currentLength;</span>
+<span class="nc" id="L149">	}</span>
+	public boolean get(int offset){
+<span class="nc" id="L151">		assertValidOffset(offset);</span>
+<span class="nc" id="L152">		return data[offset];</span>
+	}
+	
+	public void prepend(boolean value){
+<span class="nc" id="L156">		insert(0,value);</span>
+<span class="nc" id="L157">	}</span>
+	
+	public void prepend(boolean[] values){
+<span class="nc" id="L160">		insert(0,values);</span>
+<span class="nc" id="L161">	}</span>
+	public void prepend(GrowableBitArray other){
+<span class="nc" id="L163">		insert(0,other);</span>
+<span class="nc" id="L164">	}</span>
+	public void replace(int offset, boolean value){
+<span class="nc" id="L166">		assertValidOffset(offset);</span>
+<span class="nc" id="L167">		data[offset]=value;</span>
+<span class="nc" id="L168">	}</span>
+	public void insert(int offset, boolean[] values){
+<span class="nc" id="L170">		assertValidInsertOffset(offset);</span>
+<span class="nc" id="L171">		ensureCapacity(currentLength+values.length);</span>
+<span class="nc" id="L172">		System.arraycopy(data, offset, data, offset + values.length,</span>
+				currentLength - offset);
+		
+<span class="nc" id="L175">		System.arraycopy(values, 0, data, offset, values.length);</span>
+<span class="nc" id="L176">		currentLength+=values.length;</span>
+		
+<span class="nc" id="L178">	}</span>
+	
+	public void insert(int offset, GrowableBitArray other){
+<span class="nc" id="L181">		assertValidInsertOffset(offset);</span>
+<span class="nc" id="L182">		ensureCapacity(currentLength+other.currentLength);</span>
+<span class="nc" id="L183">		System.arraycopy(data, offset, data, offset + other.currentLength,</span>
+				currentLength - offset);
+		
+<span class="nc" id="L186">		System.arraycopy(other.data, 0, data, offset, other.currentLength);</span>
+<span class="nc" id="L187">		currentLength+=other.currentLength;</span>
+		
+<span class="nc" id="L189">	}</span>
+	public void insert(int offset, boolean value){
+<span class="nc" id="L191">		assertValidInsertOffset(offset);</span>
+<span class="nc" id="L192">		ensureCapacity(currentLength+1);</span>
+<span class="nc" id="L193">		System.arraycopy(data, offset, data, offset + 1,</span>
+				currentLength - offset);
+<span class="nc" id="L195">		data[offset] = value;</span>
+<span class="nc" id="L196">		currentLength++;</span>
+<span class="nc" id="L197">	}</span>
+	private void assertValidInsertOffset(int offset) {
+		//inserts allow offset to be length
+<span class="nc bnc" id="L200" title="All 2 branches missed.">		if(offset !=currentLength){</span>
+<span class="nc" id="L201">			assertValidOffset(offset);</span>
+		}
+		
+		
+<span class="nc" id="L205">	}</span>
+	public void remove(Range range){
+<span class="nc" id="L207">		assertValidRange(range);</span>
+<span class="nc" id="L208">		int numMoved = currentLength -(int)range.getBegin()-(int) range.getLength();</span>
+<span class="nc bnc" id="L209" title="All 2 branches missed.">		if (numMoved &gt; 0){</span>
+<span class="nc" id="L210">			System.arraycopy(data, (int)range.getEnd()+1, </span>
+<span class="nc" id="L211">					data, (int)range.getBegin(),  numMoved);</span>
+		}
+<span class="nc" id="L213">		currentLength-=(int)range.getLength();    </span>
+<span class="nc" id="L214">	}</span>
+	public boolean remove(int offset){
+<span class="nc" id="L216">		assertValidOffset(offset);</span>
+<span class="nc" id="L217">		boolean oldValue = data[offset];</span>
+
+<span class="nc" id="L219">		int numMoved = currentLength - offset - 1;</span>
+<span class="nc bnc" id="L220" title="All 2 branches missed.">		if (numMoved &gt; 0){</span>
+<span class="nc" id="L221">		    System.arraycopy(data, offset+1, data, offset,    numMoved);</span>
+		}
+<span class="nc" id="L223">		currentLength--;</span>
+<span class="nc" id="L224">		return oldValue;</span>
+	}
+	
+	public void ensureCapacity(int minCapacity) {
+<span class="nc" id="L228">		int oldCapacity = data.length;</span>
+<span class="nc bnc" id="L229" title="All 2 branches missed.">		if (minCapacity &gt; oldCapacity) {</span>
+		    //algorithm borrowed from ArrayList
+<span class="nc" id="L231">		    int newCapacity = (oldCapacity * 3)/2 + 1;</span>
+<span class="nc bnc" id="L232" title="All 2 branches missed.">    	    if (newCapacity &lt; minCapacity){</span>
+<span class="nc" id="L233">    	    	newCapacity = minCapacity;</span>
+    	    }
+            // minCapacity is usually close to size, so this is a win:
+<span class="nc" id="L236">            data = Arrays.copyOf(data, newCapacity);</span>
+		}
+<span class="nc" id="L238">    }</span>
+	
+	public boolean[] toArray(){
+<span class="nc" id="L241">		return Arrays.copyOf(data,currentLength);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

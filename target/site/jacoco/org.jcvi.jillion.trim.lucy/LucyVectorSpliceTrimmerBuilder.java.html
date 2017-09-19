@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>LucyVectorSpliceTrimmerBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.trim.lucy</a> &gt; <span class="el_source">LucyVectorSpliceTrimmerBuilder.java</span></div><h1>LucyVectorSpliceTrimmerBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.trim.lucy;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+
+import org.jcvi.jillion.align.NucleotideSubstitutionMatrices;
+import org.jcvi.jillion.align.NucleotideSubstitutionMatrix;
+import org.jcvi.jillion.align.pairwise.NucleotidePairwiseSequenceAlignment;
+import org.jcvi.jillion.align.pairwise.PairwiseAlignmentBuilder;
+import org.jcvi.jillion.assembly.AssemblyUtil;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.Builder;
+import org.jcvi.jillion.trim.NucleotideTrimmer;
+/**
+ * {@code LucyVectorSpliceTrimmerBuilder} is a class that builds a
+ * {@link NucleotideTrimmer} that finds the &quot;vector free&quot; {@link Range}
+ * of a {@link NucleotideSequence} using a simplified version
+ * of the algorithm that the TIGR program Lucy used.
+ * &lt;p/&gt;
+ * This Builder object allows you to configure the trimmer
+ * to use customized settings.
+ * 
+ * @author dkatzel
+ *
+ */
+public class LucyVectorSpliceTrimmerBuilder implements Builder&lt;NucleotideTrimmer&gt;{
+	/**
+	 * Default {@link AdaptiveSearchArea} instance which uses search area
+	 * values as defined in the Lucy paper.
+	 */
+<span class="fc" id="L55">	private static final AdaptiveSearchArea DEFAULT_SEARCH_AREA = new AdaptiveSearchAreaBuilder()</span>
+<span class="fc" id="L56">																			.addAreaRange(40, 8)</span>
+<span class="fc" id="L57">																			.addAreaRange(60, 12)</span>
+<span class="fc" id="L58">																			.addAreaRange(100, 16)</span>
+<span class="fc" id="L59">																			.build();</span>
+	
+	private static final int DEFAULT_GAP_OPEN = -17;
+	private static final int DEFAULT_GAP_EXTENSION = -5;
+	private static final NucleotideSubstitutionMatrix DEFAULT_MATRIX;
+	
+	static{
+		try {
+<span class="fc" id="L67">			DEFAULT_MATRIX = NucleotideSubstitutionMatrices.parsePropertyFile(LucyVectorSpliceTrimmerBuilder.class.getResourceAsStream(&quot;lucy.matrix&quot;));</span>
+<span class="nc" id="L68">		} catch (IOException e) {</span>
+<span class="nc" id="L69">			throw new IllegalStateException(&quot;error parsing lucy subsitution matrix file&quot;,e);</span>
+<span class="fc" id="L70">		}</span>
+<span class="fc" id="L71">	}</span>
+	
+	private final NucleotideSequence upstreamSpliceSeq, downstreamSpliceSeq;
+	
+<span class="fc" id="L75">	private NucleotideSubstitutionMatrix matrix = DEFAULT_MATRIX;</span>
+<span class="fc" id="L76">	private int gapOpen = DEFAULT_GAP_OPEN;</span>
+<span class="fc" id="L77">	private int gapExtension = DEFAULT_GAP_EXTENSION;</span>
+	
+<span class="fc" id="L79">	private boolean checkBothDirections = true;</span>
+	
+<span class="fc" id="L81">	private AdaptiveSearchArea adaptiveSearchArea = DEFAULT_SEARCH_AREA;</span>
+	
+	/**
+	 * Create a new Builder object with the given splice site sequences
+	 * and initialized to use the default Lucy settings.
+	 * 
+	 * @param upstreamSpliceSeq the vector splice site upstream of the desired sequence;
+	 * can not be null.
+	 * @param downstreamSpliceSeq the vector splice site downstream of the desired sequence;
+	 * can not be null.
+	 * 
+	 * @throws NullPointerException if either splice sequence is null.
+	 */
+<span class="fc" id="L94">	public LucyVectorSpliceTrimmerBuilder(NucleotideSequence upstreamSpliceSeq, NucleotideSequence downstreamSpliceSeq) {</span>
+<span class="fc" id="L95">		Objects.requireNonNull(upstreamSpliceSeq);</span>
+<span class="fc" id="L96">		Objects.requireNonNull(downstreamSpliceSeq);</span>
+		
+		
+<span class="fc" id="L99">		this.upstreamSpliceSeq = upstreamSpliceSeq;</span>
+<span class="fc" id="L100">		this.downstreamSpliceSeq = downstreamSpliceSeq;</span>
+<span class="fc" id="L101">	}</span>
+	/**
+	 * Only check for splice sites in the forward direction.
+	 * By default, this trimmer will check for splice sites in both
+	 * directions (reverse complemented).  Call this method to only check
+	 * for splice sites in the forward direction, no reverse complementing.
+	 * This is not recommended unless you really know for sure that the sequences
+	 * you will be providing this trimmer are all in the same orientation as
+	 * the provided splice sequences.
+	 * 
+	 * @return this
+	 */
+	public LucyVectorSpliceTrimmerBuilder onlyCheckForwardDirection(){
+<span class="fc" id="L114">		checkBothDirections = false;</span>
+<span class="fc" id="L115">		return this;</span>
+	}
+	/**
+	 * Create a new {@link NucleotideTrimmer} instance
+	 * which follows the Lucy vector trim algorithm using
+	 * the specified configuration.
+	 * 
+	 * @return a new {@link NucleotideTrimmer} will never be null.
+	 */
+	@Override
+	public NucleotideTrimmer build() {
+<span class="fc" id="L126">		return new LucyLikeVectorSpliceTrimmer(this);</span>
+	}
+	/**
+	 * Change the parameters used when aligning sequences to the vectors.
+	 * &lt;p&gt;
+	 * Lucy performs pairwise local alignments between the vector sequences and
+	 * the input {@link NucleotideSequence}s.  By default, this class uses
+	 * the same {@link org.jcvi.jillion.align.SubstitutionMatrix}
+	 * values, and gap open and extension penalties that the LUCY program used.
+	 * &lt;/p&gt;
+	 * @param matrix the {@link NucleotideSubstitutionMatrix} to use instead of the default; can not be null.
+	 * @param gapOpen the gap open penalty to use instead of the default; usually a negative number.
+	 * @param gapExtension the gap extension penalty to use instead of default; usually a negative number.
+	 * 
+	 * @return this
+	 * 
+	 * @throws NullPointerException if matrix is null.
+	 */
+	public LucyVectorSpliceTrimmerBuilder alignmentMatrix(NucleotideSubstitutionMatrix matrix, int gapOpen, int gapExtension){
+<span class="nc" id="L145">		Objects.requireNonNull(matrix);</span>
+<span class="nc" id="L146">		this.gapOpen = gapOpen;</span>
+<span class="nc" id="L147">		this.gapExtension = gapExtension;</span>
+<span class="nc" id="L148">		return this;</span>
+	}
+	
+	/**
+	 * Lucy uses an &quot;adaptive search criteria&quot; to find the vector splice sites
+	 * that varies the minimum alignment criteria depending on where on the sanger sequence
+	 * the splice site lies.
+	 * 
+	 * Change the {@link AdaptiveSearchArea} that this trimmer will use instead 
+	 * of the default value.
+	 * 
+	 * @param adaptiveSearchArea a {@link AdaptiveSearchArea} to use instead of the default; can not be null.
+	 * 
+	 * @throws NullPointerException if adaptiveSearchArea is null.
+	 * 
+	 * @return this
+	 * 
+	 * @implNote the default {@link AdaptiveSearchArea} as defined by the Lucy paper is equivalent to
+	 * &lt;pre&gt;
+	 * {@code 
+	 * new AdaptiveSearchAreaBuilder()
+	 * 					.addAreaRange(40, 8)
+	 * 					.addAreaRange(60, 12)
+	 * 					.addAreaRange(100, 16)
+	 * 					.build();
+	 * }
+	 * &lt;/pre&gt;
+	 */
+	public LucyVectorSpliceTrimmerBuilder adaptiveSearchArea(AdaptiveSearchArea adaptiveSearchArea){
+<span class="nc" id="L177">		Objects.requireNonNull(adaptiveSearchArea);</span>
+<span class="nc" id="L178">		this.adaptiveSearchArea = adaptiveSearchArea;</span>
+<span class="nc" id="L179">		return this;</span>
+	}
+
+	private static final class LucyLikeVectorSpliceTrimmer implements NucleotideTrimmer{
+
+		private final NucleotideSequence upstreamSpliceSeq, downstreamSpliceSeq;
+		private final AdaptiveSearchArea adaptiveSearchArea;
+		
+		private final NucleotideSubstitutionMatrix matrix;
+		private final int gapOpen;
+		private final int gapExtension;
+		
+		private final boolean checkBothDirections;
+		
+<span class="fc" id="L193">		private LucyLikeVectorSpliceTrimmer(LucyVectorSpliceTrimmerBuilder builder){</span>
+<span class="fc" id="L194">			upstreamSpliceSeq = builder.upstreamSpliceSeq;</span>
+<span class="fc" id="L195">			downstreamSpliceSeq = builder.downstreamSpliceSeq;</span>
+			
+<span class="fc" id="L197">			this.adaptiveSearchArea = builder.adaptiveSearchArea;</span>
+<span class="fc" id="L198">			matrix = builder.matrix;</span>
+<span class="fc" id="L199">			gapOpen = builder.gapOpen;</span>
+<span class="fc" id="L200">			gapExtension = builder.gapExtension;</span>
+			
+			
+<span class="fc" id="L203">			this.checkBothDirections = builder.checkBothDirections;</span>
+<span class="fc" id="L204">		}</span>
+		
+		@Override
+		public Range trim(NucleotideSequence seq) {
+<span class="fc" id="L208">			Range fwdRange= getForwardGoodRange(seq);</span>
+			
+<span class="fc bfc" id="L210" title="All 2 branches covered.">			if(!checkBothDirections){</span>
+<span class="fc" id="L211">				return fwdRange;</span>
+			}
+			
+<span class="fc" id="L214">			Range revRange = getReverseGoodRange(seq);</span>
+			
+			//get the smaller of the 2?
+			//a smaller good range implies that something was found and trimmed
+<span class="fc bfc" id="L218" title="All 2 branches covered.">			if(revRange.getLength() &lt; fwdRange.getLength()){</span>
+<span class="fc" id="L219">				return revRange;</span>
+			}
+<span class="fc" id="L221">			return fwdRange;</span>
+		}
+
+		private Range getReverseGoodRange(NucleotideSequence seq) {
+<span class="fc" id="L225">			NucleotideSequence revComp = seq.toBuilder().reverseComplement().build();</span>
+<span class="fc" id="L226">			Range revRange = getForwardGoodRange(revComp);</span>
+<span class="fc" id="L227">			return AssemblyUtil.reverseComplementValidRange(revRange, revComp.getLength());</span>
+		}
+
+		private Range getForwardGoodRange(NucleotideSequence seq) {
+<span class="fc" id="L231">			Range upstreamVectorHit = findUpstreamVectorHit(seq);</span>
+			
+<span class="fc" id="L233">			Range downstreamVectorHit = findDownstreamVectorHit(seq, upstreamVectorHit);</span>
+			
+<span class="fc" id="L235">			Range.Builder goodRangeBuilder = new Range.Builder(seq.getLength());</span>
+			
+<span class="fc bfc" id="L237" title="All 2 branches covered.">			if(downstreamVectorHit !=null){</span>
+<span class="fc" id="L238">				goodRangeBuilder.setEnd(downstreamVectorHit.getBegin() -1);</span>
+			}
+<span class="fc bfc" id="L240" title="All 2 branches covered.">			if(upstreamVectorHit !=null){</span>
+<span class="fc" id="L241">				goodRangeBuilder.setBegin(upstreamVectorHit.getEnd() +1);</span>
+			}
+			
+									
+<span class="fc" id="L245">			return goodRangeBuilder.build();</span>
+		}
+
+		private Range findDownstreamVectorHit(NucleotideSequence seq, Range upstreamVectorHit) {
+			long shiftAmount;
+			NucleotideSequence subseq;
+<span class="fc bfc" id="L251" title="All 2 branches covered.">			if(upstreamVectorHit ==null){</span>
+<span class="fc" id="L252">				subseq = seq;</span>
+<span class="fc" id="L253">				shiftAmount = 0;</span>
+			}else{
+				//only consider seq after upstream hit
+<span class="fc" id="L256">				shiftAmount = upstreamVectorHit.getEnd()+1;</span>
+<span class="fc" id="L257">				subseq = seq.toBuilder()</span>
+<span class="fc" id="L258">								.delete(Range.ofLength(shiftAmount))</span>
+<span class="fc" id="L259">								.build();</span>
+				
+				
+			}
+<span class="fc" id="L263">			NucleotidePairwiseSequenceAlignment alignment = PairwiseAlignmentBuilder.createNucleotideAlignmentBuilder(downstreamSpliceSeq, subseq, matrix)</span>
+<span class="fc" id="L264">					.gapPenalty(gapOpen, gapExtension)</span>
+<span class="fc" id="L265">					.useLocalAlignment()</span>
+<span class="fc" id="L266">					.build();</span>
+
+<span class="fc" id="L268">			Range subjectRange = alignment.getSubjectRange().getRange();</span>
+<span class="fc bfc" id="L269" title="All 2 branches covered.">			if(this.adaptiveSearchArea.meetsDownstreamMatchingCriteria(subjectRange, alignment.getPercentIdentity())){			</span>
+				//have to shift range to compensate for amount we trimmed off
+<span class="fc" id="L271">				return new Range.Builder(subjectRange)</span>
+<span class="fc" id="L272">								.shift(shiftAmount)</span>
+<span class="fc" id="L273">								.build();</span>
+			}
+<span class="fc" id="L275">			return null;</span>
+		}
+
+		private Range findUpstreamVectorHit(NucleotideSequence seq) {
+			
+<span class="fc" id="L280">			NucleotideSequence subseq = seq.toBuilder()</span>
+<span class="fc" id="L281">											.trim(adaptiveSearchArea.getSearchAreaRange())</span>
+<span class="fc" id="L282">											.build();</span>
+			//uses adaptive alignment as described in the Lucy paper
+<span class="fc" id="L284">			NucleotidePairwiseSequenceAlignment alignment = PairwiseAlignmentBuilder.createNucleotideAlignmentBuilder(upstreamSpliceSeq, subseq, matrix)</span>
+<span class="fc" id="L285">																						.gapPenalty(gapOpen, gapExtension)</span>
+<span class="fc" id="L286">																						.useLocalAlignment()</span>
+<span class="fc" id="L287">																						.build();</span>
+			
+<span class="fc" id="L289">			Range subjectRange = alignment.getSubjectRange().getRange();</span>
+<span class="fc bfc" id="L290" title="All 2 branches covered.">			if(adaptiveSearchArea.meetsUpstreamMatchingCriteria(subjectRange)){</span>
+<span class="fc" id="L291">				return subjectRange;</span>
+			}
+			
+			//either didn't find any alignment or the alignment was too small
+			//for the adapted min length
+			
+			//search through the rest of the sequence looking for any hit &gt;=75% ident
+<span class="fc" id="L298">			NucleotidePairwiseSequenceAlignment downstreamAlignment = PairwiseAlignmentBuilder.createNucleotideAlignmentBuilder(upstreamSpliceSeq, seq, matrix)</span>
+<span class="fc" id="L299">					.gapPenalty(gapOpen, gapExtension)</span>
+<span class="fc" id="L300">					.useLocalAlignment()</span>
+<span class="fc" id="L301">					.build();</span>
+			
+<span class="fc" id="L303">			Range downstreamSubjectRange = downstreamAlignment.getSubjectRange().getRange();</span>
+<span class="fc bfc" id="L304" title="All 2 branches covered.">			if(adaptiveSearchArea.meetsDownstreamMatchingCriteria(downstreamSubjectRange, downstreamAlignment.getPercentIdentity())){</span>
+<span class="fc" id="L305">				return downstreamSubjectRange;</span>
+			}
+			
+<span class="fc" id="L308">			return null;</span>
+		}
+		
+	}
+	
+	private static final class SearchArea{
+		private final Range range;
+		private final int minAlignmentLength;
+		
+<span class="fc" id="L317">		public SearchArea(Range range, int minAlignmentLength) {</span>
+<span class="fc" id="L318">			Objects.requireNonNull(range);</span>
+<span class="pc bpc" id="L319" title="1 of 2 branches missed.">			if(minAlignmentLength &lt;1){</span>
+<span class="nc" id="L320">				throw new IllegalStateException(&quot;min alignment length can not be null&quot;);</span>
+			}
+<span class="fc" id="L322">			this.range = range;</span>
+<span class="fc" id="L323">			this.minAlignmentLength = minAlignmentLength;</span>
+<span class="fc" id="L324">		}</span>
+		
+		
+	}
+	/**
+	 * Lucy uses an &quot;adaptive search criteria&quot; to find the vector splice sites
+	 * that varies the minimum alignment criteria depending on where on the sanger sequence
+	 * the splice site lies.
+	 * &lt;p&gt;
+	 * Because Sanger sequencing typically starts off with low quality
+	 * basecalls and then gradually improves over the first 100 bp
+	 * it is likely that the upstream vector splice site aligns to
+	 * an area of poor quality.
+	 * &lt;/p&gt;
+	 * &lt;p&gt;
+	 * By having less stringent alignment criteria at the start
+	 * of the sequence and then getting stricter as the quality goes up
+	 * improves the chance that we will identity the upstream splice site
+	 * without compromising downstream alignments.
+	 * &lt;/p&gt;
+	 * @author dkatzel
+	 *
+	 */
+	public static final class AdaptiveSearchArea{
+		private static final double MIN_DOWNSTREAM_PERCENT_IDENT = .75D;
+		private final List&lt;SearchArea&gt; areas;
+		private final Range areaRange;
+<span class="fc" id="L351">		private AdaptiveSearchArea(AdaptiveSearchAreaBuilder builder){</span>
+			//add elements backwards
+<span class="fc" id="L353">			areas = new ArrayList&lt;LucyVectorSpliceTrimmerBuilder.SearchArea&gt;(builder.areas);</span>
+<span class="fc" id="L354">			Collections.reverse(areas);</span>
+<span class="fc" id="L355">			areaRange = Range.ofLength(builder.currentOffset);</span>
+			
+<span class="pc bpc" id="L357" title="1 of 2 branches missed.">			if(areas.isEmpty()){</span>
+<span class="nc" id="L358">				throw new IllegalStateException(&quot;must have at least one search area&quot;);</span>
+			}
+<span class="fc" id="L360">		}</span>
+		boolean meetsDownstreamMatchingCriteria(Range downstreamSubjectRange, double percentIdentity) {
+			
+			//must be &gt;=75% ident
+<span class="pc bpc" id="L364" title="1 of 2 branches missed.">			if(percentIdentity &lt; MIN_DOWNSTREAM_PERCENT_IDENT){</span>
+<span class="nc" id="L365">				return false;</span>
+			}
+			//lucy paper fig 6 implies area 3 parameters used to determine downstream hit
+			//which makes sense since it should be in high quality sanger area
+		
+			//only check the first (which is actually the last, since we reversed the list)
+			//the match can be anywhere as long as the length meets the criteria
+<span class="fc" id="L372">			SearchArea area = areas.get(0);</span>
+<span class="fc bfc" id="L373" title="All 2 branches covered.">			if(downstreamSubjectRange.getLength() &gt;=area.minAlignmentLength){</span>
+<span class="fc" id="L374">				return true;</span>
+			}
+<span class="fc" id="L376">			return false;</span>
+		}
+		Range getSearchAreaRange(){
+<span class="fc" id="L379">			return areaRange;</span>
+		}
+		boolean meetsUpstreamMatchingCriteria(Range alignmentRange){
+<span class="fc" id="L382">			long alignmentLength = alignmentRange.getLength();</span>
+<span class="fc bfc" id="L383" title="All 2 branches covered.">			for(SearchArea area : areas){</span>
+<span class="fc bfc" id="L384" title="All 4 branches covered.">				if(area.range.intersects(alignmentRange) &amp;&amp; alignmentLength &gt;=area.minAlignmentLength){</span>
+<span class="fc" id="L385">					return true;</span>
+				}
+<span class="fc" id="L387">			}</span>
+<span class="fc" id="L388">			return false;</span>
+		}
+	}
+	/**
+	 * Builder object that creates a new {@link AdaptiveSearchArea} object.
+	 * 
+	 * @author dkatzel
+	 *
+	 *@see LucyVectorSpliceTrimmerBuilder#adaptiveSearchArea(AdaptiveSearchArea)
+	 */
+<span class="fc" id="L398">	public static final class AdaptiveSearchAreaBuilder implements Builder&lt;AdaptiveSearchArea&gt;{</span>
+<span class="fc" id="L399">		private final List&lt;SearchArea&gt; areas = new ArrayList&lt;LucyVectorSpliceTrimmerBuilder.SearchArea&gt;();</span>
+<span class="fc" id="L400">		private long currentOffset=0;</span>
+		/**
+		 * Add a new adaptive search area range of the specified length and minimum alignment length
+		 * a vector splice site alignment must have to be considered a match if it intersects this search area range.
+		 * Area lengths are appended to the previous lengths so successive calls to this method
+		 * should increase the minimum match length since the sanger read should be in better and better
+		 * quality area the further the area moves downstream.
+		 * 
+		 * @param areaLength the area length of this new search area range.  Since this area
+		 * is appended to the previous areas, the actual coordinates are caluclated by summing
+		 * the prevous area lengths.  Length can not be &lt; 1.
+		 * @param minimumMatchLength the minimum vector splice site alignment length; can not be &lt; 1.
+		 * 
+		 * @return this
+		 * 
+		 * @throws IllegalArgumentException if either parameter is &lt; 1.
+		 */
+		public AdaptiveSearchAreaBuilder addAreaRange(long areaLength, int minimumMatchLength){
+<span class="pc bpc" id="L418" title="1 of 2 branches missed.">			if(areaLength &lt; 1){</span>
+<span class="nc" id="L419">				throw new IllegalArgumentException(&quot;area length can not be &lt; 1&quot;);</span>
+			}
+<span class="pc bpc" id="L421" title="1 of 2 branches missed.">			if(minimumMatchLength &lt; 1){</span>
+<span class="nc" id="L422">				throw new IllegalArgumentException(&quot;min match length can not be &lt; 1&quot;);</span>
+			}
+<span class="fc" id="L424">			Range range = new Range.Builder(areaLength)</span>
+<span class="fc" id="L425">									.shift(currentOffset)</span>
+<span class="fc" id="L426">									.build();</span>
+<span class="fc" id="L427">			currentOffset+=areaLength;</span>
+<span class="fc" id="L428">			areas.add(new SearchArea(range, minimumMatchLength));</span>
+<span class="fc" id="L429">			return this;</span>
+		}
+		/**
+		 *Create a new {@link AdaptiveSearchArea} using the current area ranges that have been added.
+		 */
+		@Override
+		public AdaptiveSearchArea build() {
+<span class="fc" id="L436">			return new AdaptiveSearchArea(this);</span>
+		}
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

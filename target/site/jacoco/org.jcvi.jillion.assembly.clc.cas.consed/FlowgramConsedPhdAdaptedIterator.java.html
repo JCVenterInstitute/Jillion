@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>FlowgramConsedPhdAdaptedIterator.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.clc.cas.consed</a> &gt; <span class="el_source">FlowgramConsedPhdAdaptedIterator.java</span></div><h1>FlowgramConsedPhdAdaptedIterator.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly.clc.cas.consed;
+
+import java.io.File;
+import java.util.Date;
+import java.util.Map;
+
+import org.jcvi.jillion.assembly.consed.ConsedUtil;
+import org.jcvi.jillion.assembly.consed.ace.PhdInfo;
+import org.jcvi.jillion.assembly.consed.phd.Phd;
+import org.jcvi.jillion.assembly.consed.phd.PhdBuilder;
+import org.jcvi.jillion.assembly.consed.phd.PhdUtil;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.trace.sff.SffFlowgram;
+
+class FlowgramConsedPhdAdaptedIterator implements StreamingIterator&lt;PhdReadRecord&gt;{
+	private final StreamingIterator&lt;? extends SffFlowgram&gt; flowgramIterator;
+	private final Map&lt;String,String&gt; requiredComments;
+	private final Date phdDate;
+	private final File sffFile;
+<span class="fc" id="L40">	public FlowgramConsedPhdAdaptedIterator(StreamingIterator&lt;? extends SffFlowgram&gt; flowgramIterator, File sffFile, Date phdDate ){</span>
+<span class="fc" id="L41">		this.requiredComments = PhdUtil.createPhdTimeStampCommentFor(phdDate);</span>
+<span class="fc" id="L42">		this.flowgramIterator = flowgramIterator;	</span>
+<span class="fc" id="L43">		this.phdDate = new Date(phdDate.getTime());</span>
+<span class="fc" id="L44">		this.sffFile = sffFile;</span>
+<span class="fc" id="L45">	}</span>
+	@Override
+	public boolean hasNext() {
+<span class="fc" id="L48">		return flowgramIterator.hasNext();</span>
+	}
+
+	@Override
+	public PhdReadRecord next() {
+<span class="fc" id="L53">		SffFlowgram nextFlowgram = flowgramIterator.next();</span>
+<span class="fc" id="L54">		String id = nextFlowgram.getId();</span>
+<span class="fc" id="L55">		Phd phd= new PhdBuilder(id, nextFlowgram.getNucleotideSequence(), nextFlowgram.getQualitySequence())</span>
+<span class="fc" id="L56">						.comments(requiredComments)</span>
+<span class="fc" id="L57">						.fakePeaks()</span>
+<span class="fc" id="L58">						.build();</span>
+		
+<span class="fc" id="L60">		PhdInfo phdInfo = ConsedUtil.generateDefaultPhdInfoFor(sffFile, id, phdDate);</span>
+<span class="fc" id="L61">		return new PhdReadRecord(phd,phdInfo);</span>
+	}
+
+	@Override
+	public void remove() {
+<span class="nc" id="L66">		flowgramIterator.remove();</span>
+		
+<span class="nc" id="L68">	}</span>
+	@Override
+	public void close() {
+<span class="fc" id="L71">	   flowgramIterator.close();</span>
+		
+<span class="fc" id="L73">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

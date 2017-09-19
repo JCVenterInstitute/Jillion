@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DefaultFragmentDataStore.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.ca.frg</a> &gt; <span class="el_source">DefaultFragmentDataStore.java</span></div><h1>DefaultFragmentDataStore.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Jul 21, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.assembly.ca.frg;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.iter.IteratorUtil;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
+
+public final class DefaultFragmentDataStore extends AbstractFragmentDataStore{
+    
+<span class="fc" id="L47">    private final Map&lt;String, Fragment&gt; fragments = new LinkedHashMap&lt;String, Fragment&gt;();</span>
+<span class="fc" id="L48">    private final Map&lt;String,String&gt; fragmentMates = new HashMap&lt;String, String&gt;();</span>
+    
+    public static FragmentDataStore create(File frgFile) throws FileNotFoundException{
+<span class="fc" id="L51">        Frg2Parser parserInstance = new Frg2Parser();</span>
+<span class="fc" id="L52">        DefaultFragmentDataStore datastore = new DefaultFragmentDataStore();</span>
+<span class="fc" id="L53">        InputStream in = null;</span>
+        try{
+<span class="fc" id="L55">            in = new FileInputStream(frgFile);</span>
+<span class="fc" id="L56">            parserInstance.parse(in, datastore);</span>
+<span class="fc" id="L57">            return datastore;</span>
+        }finally{
+<span class="pc" id="L59">            IOUtil.closeAndIgnoreErrors(in);</span>
+        }
+       
+    }
+    
+<span class="fc" id="L64">    private DefaultFragmentDataStore(){</span>
+    	//can not instantiate
+<span class="fc" id="L66">    }</span>
+    @Override
+    public void visitLink(FrgAction action, List&lt;String&gt; fragIds) {
+<span class="fc" id="L69">        throwErrorIfAlreadyInitialized();</span>
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">        if(fragIds.size() !=2){</span>
+<span class="nc" id="L71">            throw new IllegalArgumentException(&quot;only supports 1 : 1 mate pairs&quot;);</span>
+        }
+<span class="fc" id="L73">        String forward = fragIds.get(0);</span>
+<span class="fc" id="L74">        String reverse = fragIds.get(1);</span>
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">        if(isAddOrModify(action)){</span>
+<span class="fc" id="L76">            fragmentMates.put(forward, reverse);</span>
+<span class="fc" id="L77">            fragmentMates.put(reverse, forward);</span>
+        }
+<span class="nc bnc" id="L79" title="All 2 branches missed.">        else if(isDelete(action)){</span>
+<span class="nc" id="L80">            fragmentMates.remove(forward);</span>
+<span class="nc" id="L81">            fragmentMates.remove(reverse);</span>
+        }
+<span class="fc" id="L83">    }</span>
+    @Override
+    public Fragment getMateOf(Fragment fragment) throws DataStoreException {
+<span class="fc" id="L86">        throwErrorIfClosed();</span>
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">        if(!hasMate(fragment)){</span>
+<span class="nc" id="L88">            return null;</span>
+        }
+<span class="fc" id="L90">        final String mateId = fragmentMates.get(fragment.getId());        </span>
+<span class="fc" id="L91">        return get(mateId);</span>
+    }
+
+    @Override
+    public boolean hasMate(Fragment fragment) {
+<span class="fc" id="L96">        throwErrorIfClosed();</span>
+<span class="fc" id="L97">        return fragmentMates.containsKey(fragment.getId());</span>
+    }
+    @Override
+    public void visitFragment(FrgAction action, String fragmentId,
+            String libraryId, NucleotideSequence bases,
+            QualitySequence qualities, Range validRange,
+            Range vectorClearRange, String source) {
+<span class="fc" id="L104">        throwErrorIfAlreadyInitialized();</span>
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">        if(isAddOrModify(action)){</span>
+            Library library;
+            try {
+<span class="fc" id="L108">                library = getLibrary(libraryId);</span>
+<span class="nc" id="L109">            } catch (DataStoreException e) {</span>
+<span class="nc" id="L110">                throw new IllegalStateException(&quot;Fragment uses library &quot;+ libraryId + &quot;before it is declared&quot;,e);</span>
+<span class="fc" id="L111">            }</span>
+<span class="fc" id="L112">            Fragment frag = new DefaultFragment(fragmentId, bases, qualities, </span>
+                    validRange, vectorClearRange, library, source);
+<span class="fc" id="L114">            fragments.put(fragmentId, frag);</span>
+<span class="fc" id="L115">        }</span>
+<span class="nc bnc" id="L116" title="All 2 branches missed.">        else if(isDelete(action)){</span>
+<span class="nc" id="L117">            fragments.remove(fragmentId);</span>
+        }
+        
+<span class="fc" id="L120">    }</span>
+
+    @Override
+    public void visitLine(String line) {
+        //no-op
+        
+<span class="fc" id="L126">    }</span>
+    @Override
+    public boolean contains(String fragmentId) throws DataStoreException {
+<span class="fc" id="L129">        throwErrorIfClosed();</span>
+<span class="fc" id="L130">        return fragments.containsKey(fragmentId);</span>
+    }
+
+    @Override
+    public Fragment get(String id) throws DataStoreException {
+<span class="fc" id="L135">        throwErrorIfClosed();</span>
+<span class="fc" id="L136">        return fragments.get(id);</span>
+    }
+
+    @Override
+    public StreamingIterator&lt;String&gt; idIterator() {
+<span class="fc" id="L141">        throwErrorIfClosed();</span>
+<span class="fc" id="L142">        return IteratorUtil.createStreamingIterator(fragments.keySet().iterator());</span>
+    }
+
+    @Override
+    public long getNumberOfRecords() throws DataStoreException {
+<span class="nc" id="L147">        throwErrorIfClosed();</span>
+<span class="nc" id="L148">        return fragments.size();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

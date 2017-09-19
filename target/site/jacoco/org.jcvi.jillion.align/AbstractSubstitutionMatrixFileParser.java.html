@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AbstractSubstitutionMatrixFileParser.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.align</a> &gt; <span class="el_source">AbstractSubstitutionMatrixFileParser.java</span></div><h1>AbstractSubstitutionMatrixFileParser.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.align;
+
+import java.io.InputStream;
+import java.util.Scanner;
+
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.residue.Residue;
+/**
+ * {@code AbstractSubstitutionMatrixFileParser}
+ * is a class that can parse
+ * the  {@link SubstitutionMatrix} text files
+ * provided by NCBI.
+ * @author dkatzel
+ * @see &lt;a href=&quot;ftp://ftp.ncbi.nlm.nih.gov/blast/matrices&quot;&gt;NCBI Blast Matrices FTP&lt;/a&gt;
+ */
+abstract class AbstractSubstitutionMatrixFileParser&lt;R extends Residue&gt; implements SubstitutionMatrix&lt;R&gt; {
+
+	private final float[][] matrix; 
+	
+	
+<span class="fc" id="L42">	protected AbstractSubstitutionMatrixFileParser(InputStream in){</span>
+<span class="fc" id="L43">		Scanner scanner = null;</span>
+		try{
+<span class="fc" id="L45">			scanner = new Scanner(in, IOUtil.UTF_8_NAME);</span>
+			
+			//first column is amino acids in matrix
+<span class="fc" id="L48">			String headerLine = parseColumns(scanner);</span>
+			//Sequence&lt;R&gt; header = new ProteinSequenceBuilder(headerLine).build();
+<span class="fc" id="L50">			Sequence&lt;R&gt; header = parseColumns(headerLine);</span>
+			
+<span class="fc" id="L52">			long headerLength = header.getLength();</span>
+<span class="fc" id="L53">			int n = getNumberOfValues();</span>
+<span class="fc" id="L54">			matrix = new float[n][n];</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">			while(scanner.hasNextLine()){</span>
+<span class="fc" id="L56">				String line = scanner.nextLine();</span>
+<span class="fc" id="L57">				Scanner lineScanner = null;</span>
+				try{
+<span class="fc" id="L59">					lineScanner = new Scanner(line);</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">					while(lineScanner.hasNext()){</span>
+<span class="fc" id="L61">						String next = lineScanner.next();</span>
+<span class="fc" id="L62">						R aa = parse(next);</span>
+<span class="fc" id="L63">						int x = aa.getOrdinalAsByte();</span>
+						
+<span class="fc bfc" id="L65" title="All 2 branches covered.">						for(int i=0; i&lt; headerLength; i++){</span>
+						
+<span class="fc" id="L67">							float value =lineScanner.nextFloat();</span>
+<span class="fc" id="L68">							int y = header.get(i).getOrdinalAsByte();</span>
+<span class="fc" id="L69">							matrix[x][y]=value;</span>
+						}
+<span class="fc" id="L71">					}</span>
+				}finally{
+<span class="pc bpc" id="L73" title="3 of 4 branches missed.">					if(lineScanner !=null){</span>
+<span class="pc" id="L74">						lineScanner.close();</span>
+					}
+				}
+<span class="fc" id="L77">			}</span>
+		}finally{
+<span class="pc bpc" id="L79" title="3 of 4 branches missed.">			if(scanner !=null){</span>
+<span class="pc" id="L80">				scanner.close();</span>
+			}
+			
+		}
+		
+<span class="fc" id="L85">	}</span>
+
+	/**
+	 * Convert the given String (probably
+	 * 1 character long) into a single 
+	 * {@link Residue} object. 
+	 * @param s
+	 * @return
+	 */
+	protected abstract R parse(String s);
+
+	/**
+	 * Get the number of possible Residue values.
+	 * For example, for {@link org.jcvi.jillion.core.residue.nt.Nucleotide}s,
+	 * this method would return {@code Nucleotide.values().length}
+	 * @return
+	 */
+	protected abstract int getNumberOfValues();
+
+	
+	private String parseColumns(Scanner scanner) {
+<span class="fc" id="L106">		boolean done=false;</span>
+		String line;
+		do{
+<span class="fc" id="L109">			line = scanner.nextLine();</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">			if(line.isEmpty()){</span>
+<span class="fc" id="L111">				continue;</span>
+			}
+			//skip comments
+<span class="fc bfc" id="L114" title="All 2 branches covered.">			done = line.charAt(0) !='#';</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">		}while(!done);</span>
+		
+<span class="fc" id="L117">		return line;</span>
+	}
+	/**
+	 * Convert the a line of residue characters
+	 * separated by whitespace into a Sequence where
+	 * {@code sequence.get(i)} is the ith column.
+	 * @param columns
+	 * @return
+	 */
+	protected abstract Sequence&lt;R&gt; parseColumns(String columns);
+	
+	@Override
+	public float getValue(R a, R b) {
+<span class="fc" id="L130">		return getValue(a.getOrdinalAsByte(), b.getOrdinalAsByte());</span>
+	}
+
+
+	private float getValue(byte a, byte b) {
+<span class="fc" id="L135">		return matrix[a][b];</span>
+	}
+
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>NoConsensusCompactedSlice.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.assembly.util</a> &gt; <span class="el_source">NoConsensusCompactedSlice.java</span></div><h1>NoConsensusCompactedSlice.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.internal.assembly.util;
+
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+
+import org.jcvi.jillion.assembly.util.Slice;
+import org.jcvi.jillion.assembly.util.SliceBuilder;
+import org.jcvi.jillion.assembly.util.SliceElement;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public class NoConsensusCompactedSlice implements Slice{
+	
+    private final short[] elements;
+    private final String[] ids;
+    
+<span class="fc" id="L45">    public static final NoConsensusCompactedSlice EMPTY = (NoConsensusCompactedSlice) new SliceBuilder().build();</span>
+    
+    /**
+     * @param elements array of encoded element data.
+     * @param ids list of ids in the same order as the encoded elements.
+     */
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+    		value = {&quot;EI_EXPOSE_REP2&quot;},
+    		justification = &quot;only used internally by builders so don't&quot;
+    						+ &quot; have to worry about leaking ref&quot;)
+<span class="fc" id="L55">    public NoConsensusCompactedSlice(short[] elements, List&lt;String&gt; ids) {</span>
+<span class="fc" id="L56">        this.elements = elements;</span>
+<span class="fc" id="L57">        this.ids = ids.toArray(new String[ids.size()]);</span>
+<span class="fc" id="L58">    }</span>
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Iterator&lt;SliceElement&gt; iterator() {
+    	
+<span class="fc" id="L66">        return new Iterator&lt;SliceElement&gt;(){</span>
+<span class="fc" id="L67">        	int i=0;</span>
+            @Override
+            public boolean hasNext() {
+<span class="fc bfc" id="L70" title="All 2 branches covered.">                return i&lt;ids.length;</span>
+            }
+
+            @Override
+            public SliceElement next() {
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">            	if(!hasNext()){</span>
+<span class="nc" id="L76">            		throw new NoSuchElementException();</span>
+            	}
+            	//i++ returns old value of i
+<span class="fc" id="L79">                return getElement(i++);</span>
+            }
+
+            @Override
+            public void remove() {
+<span class="nc" id="L84">                throw new UnsupportedOperationException();</span>
+                
+            }
+            
+        };
+    }
+    
+    
+    @Override
+	public Map&lt;Nucleotide, Integer&gt; getNucleotideCounts() {
+<span class="fc" id="L94">		int[] counts = new int[Nucleotide.VALUES.size()];</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">		for(int i=0; i &lt; elements.length; i++){</span>
+<span class="fc" id="L96">			int ordinal =(elements[i] &gt;&gt;&gt;8) &amp;0xF;</span>
+<span class="fc" id="L97">			counts[ordinal]++;</span>
+		}
+<span class="fc" id="L99">		Map&lt;Nucleotide, Integer&gt; map = new EnumMap&lt;Nucleotide, Integer&gt;(Nucleotide.class);</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">		for(int i=0; i &lt; counts.length; i++){</span>
+<span class="fc" id="L101">			int count = counts[i];</span>
+<span class="fc" id="L102">			map.put(Nucleotide.VALUES.get(i), count);</span>
+		}
+<span class="fc" id="L104">		return map;</span>
+	}
+
+	@Override
+	public int hashCode() {
+<span class="fc" id="L109">		final int prime = 31;</span>
+<span class="fc" id="L110">		int result = 1;</span>
+<span class="fc" id="L111">		result = prime * result + Arrays.hashCode(elements);</span>
+<span class="fc" id="L112">		result = prime * result + Arrays.hashCode(ids);</span>
+<span class="fc" id="L113">		Nucleotide consensusCall = getConsensusCall();</span>
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">		if(consensusCall !=null){</span>
+<span class="fc" id="L115">			result = prime * result + consensusCall.hashCode();</span>
+		}
+		
+<span class="fc" id="L118">		return result;</span>
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">        if (this == obj){</span>
+<span class="nc" id="L124">            return true;</span>
+        }
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">        if (obj == null){</span>
+<span class="nc" id="L127">            return false;</span>
+        }
+<span class="pc bpc" id="L129" title="1 of 2 branches missed.">        if (!(obj instanceof Slice)){</span>
+<span class="nc" id="L130">            return false;</span>
+        }
+<span class="fc" id="L132">        Slice other = (Slice) obj;</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">        if(getCoverageDepth() !=other.getCoverageDepth()){</span>
+<span class="fc" id="L134">        	return false;</span>
+        }
+<span class="fc" id="L136">        Nucleotide consensusCall = getConsensusCall();</span>
+<span class="fc" id="L137">		Nucleotide otherConsensusCall = other.getConsensusCall();</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">		if(consensusCall ==null){</span>
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">        	if(otherConsensusCall!=null){</span>
+<span class="nc" id="L140">        		return false;</span>
+        	}
+        }else{
+<span class="fc bfc" id="L143" title="All 2 branches covered.">        	if(!consensusCall.equals(otherConsensusCall)){</span>
+<span class="fc" id="L144">        		return false;</span>
+        	}
+        }
+<span class="fc" id="L147">		Iterator&lt;SliceElement&gt; iter = other.iterator();</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">		while(iter.hasNext()){</span>
+			
+<span class="fc" id="L150">			SliceElement element = iter.next();</span>
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">			if(!element.equals(getSliceElement(element.getId()))){</span>
+<span class="nc" id="L152">				return false;</span>
+			}
+			
+<span class="fc" id="L155">		}</span>
+		 
+<span class="fc" id="L157">       return true;</span>
+            
+    }
+    
+    private CompactedSliceElement getElement(int i){
+<span class="fc" id="L162">    	String id = ids[i];</span>
+<span class="fc" id="L163">        return CompactedSliceElement.create(id, elements[i]);</span>
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int getCoverageDepth() {
+<span class="fc" id="L170">        return ids.length;</span>
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean containsElement(String elementId) {
+<span class="fc bfc" id="L178" title="All 2 branches covered.">    	return indexOf(elementId) &gt;=0;</span>
+    }
+
+    private int indexOf(String id){
+<span class="pc bpc" id="L182" title="1 of 2 branches missed.">    	if(id==null){</span>
+<span class="nc bnc" id="L183" title="All 2 branches missed.">    		for(int i=0; i&lt; ids.length; i++){</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">        		if(ids[i]==null){</span>
+<span class="nc" id="L185">        			return i;</span>
+        		}
+        	}
+    	}else{
+<span class="fc bfc" id="L189" title="All 2 branches covered.">    		for(int i=0; i&lt; ids.length; i++){</span>
+<span class="fc bfc" id="L190" title="All 2 branches covered.">        		if(id.equals(ids[i])){</span>
+<span class="fc" id="L191">        			return i;</span>
+        		}
+        	}
+    	}
+<span class="fc" id="L195">    	return -1;</span>
+    }
+    @Override
+    public String toString(){
+<span class="nc" id="L199">        StringBuilder builder = new StringBuilder(&quot;consensus = &quot;)</span>
+<span class="nc" id="L200">        						.append(getConsensusCall())</span>
+<span class="nc" id="L201">        						.append(&quot; &quot;);</span>
+<span class="nc bnc" id="L202" title="All 2 branches missed.">        for(SliceElement element : this){</span>
+<span class="nc" id="L203">            builder.append(element).append( &quot; | &quot;);</span>
+<span class="nc" id="L204">        }</span>
+        
+        
+<span class="nc" id="L207">        return builder.toString();</span>
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public SliceElement getSliceElement(String elementId) {
+<span class="fc" id="L214">        int index= indexOf(elementId);</span>
+<span class="fc bfc" id="L215" title="All 2 branches covered.">        if(index&lt;0){</span>
+<span class="fc" id="L216">            return null;</span>
+        }
+<span class="fc" id="L218">        return getElement(index);</span>
+    }
+
+	@Override
+	public Nucleotide getConsensusCall() {
+<span class="fc" id="L223">		return null;</span>
+	}
+    
+   
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

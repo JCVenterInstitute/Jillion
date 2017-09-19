@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CompactProteinSequenceCodec.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.core.residue.aa</a> &gt; <span class="el_source">CompactProteinSequenceCodec.java</span></div><h1>CompactProteinSequenceCodec.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.core.residue.aa;
+
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.BitSet;
+
+import org.jcvi.jillion.core.io.IOUtil;
+/**
+ * {@code CompactProteinSequenceCodec} is able to store
+ * {@link AminoAcid} in a byte array where each {@link AminoAcid}
+ * only takes up 5 bits. This is a 37.5% memory reduction compared to 
+ * encoding the data as one byte each or 68% memory reduction compared
+ * to encoding each AminoAcid as one char each.
+ * @author dkatzel
+ *
+ */
+<span class="pc" id="L38">enum CompactProteinSequenceCodec implements AminoAcidCodec {</span>
+	/**
+	 * Singleton instance.
+	 */
+<span class="fc" id="L42">	INSTANCE</span>
+	;
+	private static final int BITS_PER_AA = 5;
+	
+<span class="fc" id="L46">	private CompactProteinSequenceCodec(){</span>
+		//private constructor
+<span class="fc" id="L48">	}</span>
+	@Override
+	public byte[] encode(AminoAcid[] aas) {
+<span class="fc" id="L51">		int numberOfAminoAcids = aas.length;</span>
+<span class="fc" id="L52">		int numBits = numberOfAminoAcids * BITS_PER_AA;</span>
+<span class="fc" id="L53">		BitSet bits = new BitSet(numBits);</span>
+<span class="fc" id="L54">		int offset=0;</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">		for(AminoAcid aa : aas){</span>
+<span class="fc" id="L56">			byte ordinal = aa.getOrdinalAsByte();</span>
+			
+<span class="fc bfc" id="L58" title="All 2 branches covered.">			for(int i=0; i&lt;BITS_PER_AA; i++){</span>
+<span class="fc bfc" id="L59" title="All 2 branches covered.">				if((ordinal &amp; (1&lt;&lt; i))!=0){</span>
+<span class="fc" id="L60">					bits.set(offset);</span>
+				}
+<span class="fc" id="L62">				offset++;</span>
+			}
+		}
+<span class="fc" id="L65">		byte[] encodedData = IOUtil.toByteArray(bits,numBits);</span>
+<span class="fc" id="L66">		ByteBuffer buf = ByteBuffer.allocate(4 + encodedData.length);</span>
+<span class="fc" id="L67">		buf.putInt(numberOfAminoAcids);</span>
+<span class="fc" id="L68">		buf.put(encodedData);</span>
+<span class="fc" id="L69">		return buf.array();</span>
+	}
+	
+
+	protected AminoAcid getAminoAcidFor(BitSet subSet) {
+		final AminoAcid aa;
+<span class="fc bfc" id="L75" title="All 2 branches covered.">		if(subSet.isEmpty()){</span>
+<span class="fc" id="L76">			aa =AminoAcid.values()[0];</span>
+		}else{
+<span class="fc" id="L78">			aa =AminoAcid.values()[new BigInteger(IOUtil.toByteArray(subSet,BITS_PER_AA)).intValue()];</span>
+		}
+<span class="fc" id="L80">		return aa;</span>
+	}
+
+	@Override
+	public AminoAcid decode(byte[] encodedGlyphs, long index) {
+<span class="fc" id="L85">		byte[] tmp = Arrays.copyOfRange(encodedGlyphs, 4, encodedGlyphs.length);</span>
+		
+<span class="fc" id="L87">		BitSet bits = IOUtil.toBitSet(tmp);</span>
+<span class="fc" id="L88">		int bitOffset = BITS_PER_AA *(int)index;</span>
+<span class="fc" id="L89">		BitSet subSet = bits.get(bitOffset, bitOffset+BITS_PER_AA);</span>
+<span class="fc" id="L90">		return getAminoAcidFor(subSet);</span>
+	}
+
+	@Override
+	public int decodedLengthOf(byte[] encodedGlyphs) {
+<span class="fc" id="L95">		ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);</span>
+<span class="fc" id="L96">		return buf.getInt();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

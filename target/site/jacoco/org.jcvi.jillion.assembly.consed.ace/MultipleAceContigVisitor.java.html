@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>MultipleAceContigVisitor.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.consed.ace</a> &gt; <span class="el_source">MultipleAceContigVisitor.java</span></div><h1>MultipleAceContigVisitor.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly.consed.ace;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.qual.QualitySequence;
+
+public class MultipleAceContigVisitor implements AceContigVisitor{
+
+	private final List&lt;AceContigVisitor&gt; delegates;
+	
+	public MultipleAceContigVisitor(AceContigVisitor...delegates){
+<span class="nc" id="L36">		this(Arrays.asList(delegates));</span>
+<span class="nc" id="L37">	}</span>
+<span class="nc" id="L38">	public MultipleAceContigVisitor(List&lt;? extends AceContigVisitor&gt; delegates) {</span>
+<span class="nc" id="L39">		this.delegates = new ArrayList&lt;AceContigVisitor&gt;(delegates.size());</span>
+<span class="nc bnc" id="L40" title="All 2 branches missed.">		for(AceContigVisitor visitor : delegates){</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">			if(visitor !=null){</span>
+<span class="nc" id="L42">				this.delegates.add(visitor);</span>
+			}
+<span class="nc" id="L44">		}</span>
+<span class="nc" id="L45">	}</span>
+
+	@Override
+	public void visitBasesLine(String mixedCaseBasecalls) {
+<span class="nc bnc" id="L49" title="All 2 branches missed.">		for(AceContigVisitor visitor : delegates){</span>
+<span class="nc" id="L50">			visitor.visitBasesLine(mixedCaseBasecalls);</span>
+<span class="nc" id="L51">		}</span>
+		
+<span class="nc" id="L53">	}</span>
+
+	@Override
+	public void visitConsensusQualities(
+			QualitySequence ungappedConsensusQualities) {
+<span class="nc bnc" id="L58" title="All 2 branches missed.">		for(AceContigVisitor visitor : delegates){</span>
+<span class="nc" id="L59">			visitor.visitConsensusQualities(ungappedConsensusQualities);</span>
+<span class="nc" id="L60">		}</span>
+		
+<span class="nc" id="L62">	}</span>
+
+	@Override
+	public void visitAlignedReadInfo(String readId, Direction dir,
+			int gappedStartPosition) {
+<span class="nc bnc" id="L67" title="All 2 branches missed.">		for(AceContigVisitor visitor : delegates){</span>
+<span class="nc" id="L68">			visitor.visitAlignedReadInfo(readId, dir, gappedStartPosition);</span>
+<span class="nc" id="L69">		}</span>
+		
+<span class="nc" id="L71">	}</span>
+
+	@Override
+	public void visitBaseSegment(Range gappedConsensusRange, String readId) {
+<span class="nc bnc" id="L75" title="All 2 branches missed.">		for(AceContigVisitor visitor : delegates){</span>
+<span class="nc" id="L76">			visitor.visitBaseSegment(gappedConsensusRange, readId);</span>
+<span class="nc" id="L77">		}</span>
+		
+<span class="nc" id="L79">	}</span>
+
+	@Override
+	public AceContigReadVisitor visitBeginRead(String readId, int gappedLength) {
+<span class="nc" id="L83">		List&lt;AceContigReadVisitor&gt; readVisitors = new ArrayList&lt;AceContigReadVisitor&gt;(delegates.size());</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">		for(AceContigVisitor visitor : delegates){</span>
+<span class="nc" id="L85">			AceContigReadVisitor readVisitor = visitor.visitBeginRead(readId, gappedLength);</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">			if(readVisitor !=null){</span>
+<span class="nc" id="L87">				readVisitors.add(readVisitor);</span>
+			}
+<span class="nc" id="L89">		}</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">		if(readVisitors.isEmpty()){</span>
+			//all delegates say skip
+<span class="nc" id="L92">			return null;</span>
+		}
+<span class="nc" id="L94">		return new MultipleAceContigReadVisitor(readVisitors);</span>
+	}
+
+	@Override
+	public void visitEnd() {
+<span class="nc bnc" id="L99" title="All 2 branches missed.">		for(AceContigVisitor visitor : delegates){</span>
+<span class="nc" id="L100">			visitor.visitEnd();</span>
+<span class="nc" id="L101">		}</span>
+		
+<span class="nc" id="L103">	}</span>
+
+	@Override
+	public void halted() {
+<span class="nc bnc" id="L107" title="All 2 branches missed.">		for(AceContigVisitor visitor : delegates){</span>
+<span class="nc" id="L108">			visitor.halted();</span>
+<span class="nc" id="L109">		}</span>
+		
+<span class="nc" id="L111">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

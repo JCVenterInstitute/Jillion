@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AbstractResidueFastaWriter.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.shared.fasta</a> &gt; <span class="el_source">AbstractResidueFastaWriter.java</span></div><h1>AbstractResidueFastaWriter.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.shared.fasta;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+
+import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.residue.ResidueSequence;
+import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
+import org.jcvi.jillion.fasta.FastaRecord;
+import org.jcvi.jillion.fasta.FastaWriter;
+
+/**
+ * {@code AbstractResidueFastaWriter} is an abstract
+ * implementation of a {@link FastaWriter} that 
+ * writes {@link ResidueSequence}s.
+ * @author dkatzel
+ *
+ * @param &lt;R&gt; the type of {@link Residue}
+ * @param &lt;S&gt; the type of {@link ResidueSequence}
+ * @param &lt;F&gt; the Type of {@link FastaRecord}
+ */
+public abstract class AbstractResidueFastaWriter&lt;R extends Residue, S extends ResidueSequence&lt;R, S,B&gt;, B extends ResidueSequenceBuilder&lt;R, S&gt;, F extends FastaRecord&lt;R,S&gt;&gt; extends  AbstractFastaRecordWriter&lt;R, S, F&gt;{
+
+	
+	protected AbstractResidueFastaWriter(OutputStream out,
+			int numberOfResiduesPerLine, Charset charSet, String eol) {
+<span class="fc" id="L49">		super(out, numberOfResiduesPerLine, charSet, eol);</span>
+<span class="fc" id="L50">	}</span>
+	@Override
+	protected String getStringRepresentationFor(R symbol) {
+<span class="fc" id="L53">		return symbol.getCharacter().toString();</span>
+	}
+	
+	
+	@Override
+	protected boolean hasSymbolSeparator() {
+<span class="fc" id="L59">		return false;</span>
+	}
+	@Override
+	protected String getSymbolSeparator() {
+<span class="nc" id="L63">		return null;</span>
+	}
+
+	/**
+	 * Builder creates a builder instance that will build a {@link FastaWriter}
+	 * using the given {@link OutputStream}
+	 *  and any additional configuration given.
+	 * @author dkatzel
+	 *
+	 * @param &lt;R&gt; the type of {@link Residue}
+	 * @param &lt;S&gt; the type of {@link ResidueSequence}
+	 * @param &lt;F&gt; the Type of {@link FastaRecord}
+	 * @param &lt;W&gt; the Type of {@link FastaWriter} that will be built.
+	 */
+	public abstract static class Builder&lt;R extends Residue, S extends ResidueSequence&lt;R, S,B&gt;, B extends ResidueSequenceBuilder&lt;R, S&gt;,F extends FastaRecord&lt;R,S&gt;, W extends FastaWriter&lt;R, S, F&gt;, T extends AbstractResidueFastaWriter.Builder&lt;R, S, B, F,W,T&gt;&gt; extends AbstractBuilder&lt;R,S,F,W,T&gt;{
+		protected static final int DEFAULT_RESIDUES_PER_LINE = 60;
+		   
+		public Builder(File outputFile)
+				throws IOException {
+<span class="fc" id="L82">			super(outputFile);</span>
+<span class="fc" id="L83">		}</span>
+
+		public Builder(OutputStream out) {
+<span class="fc" id="L86">			super(out);</span>
+<span class="fc" id="L87">		}</span>
+
+		@Override
+		protected int getDefaultNumberOfSymbolsPerLine() {
+<span class="fc" id="L91">			return DEFAULT_RESIDUES_PER_LINE;</span>
+		}
+		
+		
+	}
+
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -20,6 +20,9 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.aa;
 
+import java.util.List;
+import java.util.Map;
+
 import org.jcvi.jillion.core.residue.Frame;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
@@ -127,4 +130,6 @@ public interface TranslationTable {
 	 * @throws IllegalArgumentException if the sequence contains gaps.
 	 */
 	ProteinSequence translate(NucleotideSequence sequence, Frame frame, int length, boolean substituteStarts);
+	
+	Map<Frame,List<Long>> findStops(NucleotideSequence sequence);
 }

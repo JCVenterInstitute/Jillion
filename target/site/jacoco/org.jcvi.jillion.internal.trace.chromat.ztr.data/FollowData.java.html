@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>FollowData.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.trace.chromat.ztr.data</a> &gt; <span class="el_source">FollowData.java</span></div><h1>FollowData.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Oct 31, 2006
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.internal.trace.chromat.ztr.data;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.internal.core.seq.trace.sanger.chromat.ztr.data.Data;
+
+
+/**
+ * The &lt;code&gt;FollowData&lt;/code&gt; implements the follow predictor data
+ * format.  Each byte value has a &quot;follow byte&quot; which is the most
+ * likely byte to appear after it in the data. Each encoded value
+ * is the difference between the actual data value and the predicted &quot;followed&quot;
+ * value.  The technique removes some non-randomness in the input data 
+ * and allows for better compression.
+ * @author dkatzel
+ * @see &lt;a href=&quot;http://staden.sourceforge.net/ztr.html&quot;&gt;ZTR SPEC v1.2&lt;/a&gt;
+ */
+<span class="pc" id="L45">public enum FollowData implements Data {</span>
+    /**
+     * Singleton instance of FollowData.
+     */
+<span class="fc" id="L49">    INSTANCE;</span>
+    /**
+     * This is the index where the actual encoded values start.
+     */
+<span class="fc" id="L53">    private static int DATA_START_POSITION = 257;</span>
+    /**
+     * 
+    * {@inheritDoc}
+     */
+    @Override
+    public byte[] parseData(byte[] data) throws IOException {
+<span class="fc" id="L60">        int uncompressedLength = data.length-DATA_START_POSITION;        </span>
+<span class="fc" id="L61">        byte[] follow = createFollowArray(data);</span>
+<span class="fc" id="L62">        ByteBuffer compressedData = getCompressedData(data, uncompressedLength);</span>
+<span class="fc" id="L63">        ByteBuffer uncompressedData = ByteBuffer.allocate(uncompressedLength);</span>
+        //prev is kept as an int to avoid java signed byte issues
+<span class="fc" id="L65">        int prev = IOUtil.toUnsignedByte(compressedData.get());</span>
+<span class="fc" id="L66">        uncompressedData.put((byte)prev);</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        while(compressedData.hasRemaining()){</span>
+<span class="fc" id="L68">            prev = IOUtil.toUnsignedByte((byte)(follow[prev] - compressedData.get()));</span>
+<span class="fc" id="L69">            uncompressedData.put((byte)prev);   </span>
+            
+        }
+<span class="fc" id="L72">        return uncompressedData.array();</span>
+    }
+
+    private ByteBuffer getCompressedData(byte[] data, int uncompressedLength) {
+<span class="fc" id="L76">        ByteBuffer compressedData = ByteBuffer.allocate(uncompressedLength);</span>
+<span class="fc" id="L77">        compressedData.put(data,DATA_START_POSITION, data.length-DATA_START_POSITION);</span>
+<span class="fc" id="L78">        compressedData.flip();</span>
+<span class="fc" id="L79">        return compressedData;</span>
+    }
+    /**
+     * The first 256 bytes of the data are the follow data.
+     * @param data the encoded data where the follow data is located.
+     * @return a byte array containing the follow data look up
+     * such that follow[i] = the predicted value that will come
+     * after a byte with the value &lt;code&gt;i&lt;/code&gt;.
+     */
+    private byte[] createFollowArray(byte[] data) {
+        //create next array
+<span class="fc" id="L90">        byte next[] = new byte[DATA_START_POSITION-1];</span>
+        //load next array
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        for(int i=1; i&lt; DATA_START_POSITION; i++){</span>
+<span class="fc" id="L93">            next[i-1]= data[i];</span>
+        }
+<span class="fc" id="L95">        return next;</span>
+    }
+
+	@Override
+	public byte[] encodeData(byte[] data) throws IOException {
+<span class="fc" id="L100">		ByteBuffer result = ByteBuffer.allocate(data.length+256+1);</span>
+<span class="fc" id="L101">		result.put(DataHeader.FOLLOW_DATA_ENCODED);</span>
+<span class="fc" id="L102">		byte[] followArray = generateFollowArray(data);</span>
+<span class="fc" id="L103">		result.put(followArray);</span>
+		//put 1st byte without follow encoding
+<span class="fc" id="L105">		result.put(data[0]);</span>
+		//follow encode the rest
+<span class="fc bfc" id="L107" title="All 2 branches covered.">		for(int i=1; i&lt;data.length; i++){</span>
+<span class="fc" id="L108">			int prev = IOUtil.toUnsignedByte(data[i-1]);</span>
+<span class="fc" id="L109">			int current = IOUtil.toUnsignedByte(data[i]);</span>
+<span class="fc" id="L110">			int nextFollowValue = IOUtil.toUnsignedByte(followArray[prev]) - current;</span>
+<span class="fc" id="L111">			result.put(IOUtil.toSignedByte(nextFollowValue));</span>
+		}
+<span class="fc" id="L113">		result.flip();</span>
+<span class="fc" id="L114">		return result.array();</span>
+	}
+
+	private byte[] generateFollowArray(byte[] data) {
+<span class="fc" id="L118">		int[][] frequencyMatrix = new int[256][256];</span>
+<span class="fc" id="L119">		int[] countsArray = new int[256];</span>
+<span class="fc" id="L120">		byte[] followArray = new byte[256];</span>
+		
+<span class="fc bfc" id="L122" title="All 2 branches covered.">		for(int i=0; i&lt; data.length-1; i++){</span>
+<span class="fc" id="L123">			int current = IOUtil.toUnsignedByte(data[i]);</span>
+<span class="fc" id="L124">			int next = IOUtil.toUnsignedByte(data[i+1]);</span>
+<span class="fc" id="L125">			int frequencyCount = ++frequencyMatrix[current][next];</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">			if(frequencyCount &gt; countsArray[current]){</span>
+<span class="fc" id="L127">				countsArray[current]=frequencyCount;</span>
+<span class="fc" id="L128">				followArray[current]=IOUtil.toSignedByte(next);</span>
+			}
+		}
+<span class="fc" id="L131">		return followArray;</span>
+	}
+	
+	/**
+	 * This returns the same result as {@link #encodeData(byte[])}
+	 * the optional parameter is ignored.
+	 */
+	@Override
+	public byte[] encodeData(byte[] data, byte ignored)
+			throws IOException {
+<span class="fc" id="L141">		return encodeData(data);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

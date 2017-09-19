@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DefaultPositionFastaFileDataStore.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.fasta.pos</a> &gt; <span class="el_source">DefaultPositionFastaFileDataStore.java</span></div><h1>DefaultPositionFastaFileDataStore.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.fasta.pos;
+
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Predicate;
+
+import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.pos.Position;
+import org.jcvi.jillion.core.pos.PositionSequence;
+import org.jcvi.jillion.core.util.Builder;
+import org.jcvi.jillion.fasta.FastaParser;
+import org.jcvi.jillion.fasta.FastaRecordVisitor;
+import org.jcvi.jillion.fasta.FastaVisitor;
+import org.jcvi.jillion.fasta.FastaVisitorCallback;
+import org.jcvi.jillion.internal.fasta.AdaptedFastaDataStore;
+
+final class DefaultPositionFastaFileDataStore {
+	
+<span class="nc" id="L40">	private DefaultPositionFastaFileDataStore(){</span>
+		//can not instantiate
+<span class="nc" id="L42">	}</span>
+	public static PositionFastaDataStore create(FastaParser parser, Predicate&lt;String&gt; filter, Predicate&lt;PositionFastaRecord&gt; recordFilter) throws IOException{
+<span class="fc" id="L44">		DefaultPositionFastaFileDataStoreBuilder builder = new DefaultPositionFastaFileDataStoreBuilder(filter, recordFilter);</span>
+<span class="fc" id="L45">		parser.parse(builder);</span>
+<span class="fc" id="L46">    	return builder.build();</span>
+	}
+	
+
+	
+	private static class DefaultPositionFastaFileDataStoreBuilder implements FastaVisitor, Builder&lt;PositionFastaDataStore&gt;{
+
+<span class="fc" id="L53">		private final Map&lt;String, PositionFastaRecord&gt; fastaRecords = new LinkedHashMap&lt;String, PositionFastaRecord&gt;();</span>
+		
+		private final Predicate&lt;String&gt; filter;
+		private final Predicate&lt;PositionFastaRecord&gt; recordFilter;
+		
+<span class="fc" id="L58">		public DefaultPositionFastaFileDataStoreBuilder(Predicate&lt;String&gt; filter, Predicate&lt;PositionFastaRecord&gt; recordFilter){</span>
+<span class="fc" id="L59">			this.filter = filter;</span>
+<span class="fc" id="L60">			this.recordFilter = recordFilter;</span>
+<span class="fc" id="L61">		}</span>
+		@Override
+		public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
+				final String id, String optionalComment) {
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">			if(!filter.test(id)){</span>
+<span class="nc" id="L66">				return null;</span>
+			}
+<span class="fc" id="L68">			return new AbstractPositionSequenceFastaRecordVisitor(id,optionalComment){</span>
+
+				@Override
+				protected void visitRecord(
+						PositionFastaRecord fastaRecord) {
+<span class="pc bpc" id="L73" title="3 of 4 branches missed.">					if(recordFilter ==null || recordFilter.test(fastaRecord)){</span>
+<span class="fc" id="L74">						fastaRecords.put(id, fastaRecord);</span>
+					}
+					
+<span class="fc" id="L77">				}</span>
+				
+			};
+		}
+
+		@Override
+		public void visitEnd() {
+			//no-op			
+<span class="fc" id="L85">		}</span>
+		@Override
+		public void halted() {
+			//no-op			
+<span class="nc" id="L89">		}</span>
+		@Override
+		public PositionFastaDataStore build() {
+<span class="fc" id="L92">			return new AdaptedPositionFastaDataStore(fastaRecords);</span>
+		}
+		
+	}
+	
+	private static class AdaptedPositionFastaDataStore extends AdaptedFastaDataStore&lt;Position, PositionSequence, PositionFastaRecord, PositionSequenceDataStore&gt; implements PositionFastaDataStore{
+
+        public AdaptedPositionFastaDataStore(
+                Map&lt;String, PositionFastaRecord&gt; map) {
+<span class="fc" id="L101">            super(map);</span>
+<span class="fc" id="L102">        }</span>
+
+        @Override
+        public PositionSequenceDataStore asSequenceDataStore(){
+<span class="nc" id="L106">            return DataStore.adapt(PositionSequenceDataStore.class, this, PositionFastaRecord::getSequence);</span>
+        }
+	    
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

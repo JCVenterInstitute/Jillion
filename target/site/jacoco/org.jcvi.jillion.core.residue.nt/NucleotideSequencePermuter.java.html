@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>NucleotideSequencePermuter.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.core.residue.nt</a> &gt; <span class="el_source">NucleotideSequencePermuter.java</span></div><h1>NucleotideSequencePermuter.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.core.residue.nt;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+/**
+ * {@code NucleotideSequencePermuter} is a class
+ * that can transform a {@link NucleotideSequence}
+ * into many other {@link NucleotideSequence}s.
+ * @author dkatzel
+ *
+ */
+public final class NucleotideSequencePermuter {
+
+<span class="nc" id="L38">	private NucleotideSequencePermuter(){</span>
+		//can not instantiate
+<span class="nc" id="L40">	}</span>
+	/**
+	 * Compute all the different permutations of the given
+	 * {@link NucleotideSequence} that contain all the combinations
+	 * of non-ambiguous bases.
+	 * @apiNote
+	 * Example invocations :
+	 * &lt;ol&gt;
+	 * &lt;li&gt;	If the input sequence was &quot;AAMA&quot; then this method
+	 * 		will return a set containing
+	 * 		&quot;AA&lt;strong&gt;A&lt;/strong&gt;A&quot; and &quot;AA&lt;strong&gt;C&lt;/strong&gt;A&quot;.
+	 * &lt;/li&gt;
+	 * &lt;li&gt;	If the input sequence was &quot;AAMAY&quot; then this method
+	 * 		will return a set containing
+	 * &quot;AA&lt;strong&gt;A&lt;/strong&gt;A&lt;strong&gt;C&lt;/strong&gt;&quot;,  &quot;AA&lt;strong&gt;A&lt;/strong&gt;A&lt;strong&gt;T&lt;/strong&gt;&quot;,
+		&quot;AA&lt;strong&gt;C&lt;/strong&gt;A&lt;strong&gt;C&lt;/strong&gt;&quot;, &quot;AA&lt;strong&gt;C&lt;/strong&gt;A&lt;strong&gt;T&lt;/strong&gt;&quot;
+
+	 * &lt;/li&gt;
+	 * &lt;/ol&gt;
+	 * @param seq the sequence to permute; may not be null.
+	 * 
+	 * @return a Set of all the permutations; will never be empty.
+	 * If the given sequence does not have any ambiguities, then
+	 * a Set that only contains the original sequence is returned.
+	 * 
+	 * @throws NullPointerException if seq is null.
+	 */
+	public static Set&lt;NucleotideSequence&gt; permuteAmbiguities(NucleotideSequence seq) {
+<span class="fc" id="L68">		NucleotideSequenceBuilder seqBuilder = new NucleotideSequenceBuilder(seq);</span>
+<span class="fc" id="L69">		int numAmbiguties =seqBuilder.getNumAmbiguities();</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">		if(numAmbiguties ==0){</span>
+			//no reason to permute
+<span class="fc" id="L72">			return Collections.singleton(seq);</span>
+		}
+		
+<span class="fc" id="L75">		List&lt;NucleotideSequenceBuilder&gt; permutations = new ArrayList&lt;&gt;();</span>
+		
+<span class="fc" id="L77">		permutations.add(seqBuilder);</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">		for(int i=0; i&lt;seqBuilder.getLength(); i++){</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">			if(seqBuilder.get(i).isAmbiguity()){</span>
+<span class="fc" id="L80">				permutations = permute(permutations, i);</span>
+			}
+		}
+		
+<span class="fc" id="L84">		Set&lt;NucleotideSequence&gt; set= new HashSet&lt;NucleotideSequence&gt;(permutations.size());</span>
+		
+<span class="fc bfc" id="L86" title="All 2 branches covered.">		for(NucleotideSequenceBuilder builder : permutations){</span>
+<span class="fc" id="L87">			set.add(builder.build());</span>
+<span class="fc" id="L88">		}</span>
+		
+<span class="fc" id="L90">		return set;</span>
+	}
+
+	private static List&lt;NucleotideSequenceBuilder&gt; permute(List&lt;NucleotideSequenceBuilder&gt; permutations, int offset) {
+<span class="fc" id="L94">		List&lt;NucleotideSequenceBuilder&gt; newPermutations = new ArrayList&lt;&gt;(permutations.size() *4);</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">		for(NucleotideSequenceBuilder builder : permutations){</span>
+<span class="fc" id="L96">			Nucleotide ambiguity =builder.get(offset);</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">			for(Nucleotide n :ambiguity.getBasesFor()){</span>
+<span class="fc" id="L98">				newPermutations.add(builder.copy()</span>
+<span class="fc" id="L99">									.replace(offset, n));</span>
+<span class="fc" id="L100">			}</span>
+<span class="fc" id="L101">		}</span>
+		
+<span class="fc" id="L103">		return newPermutations;</span>
+		
+	}
+	/**
+	 * Convenience method that takes a Collection of {@link NucleotideSequence}s
+	 * and permutes the ambiguities of each one and returns the entire permutation set.
+	 * @apiNote
+	 * This is equivalent to :
+	 * &lt;pre&gt;
+	 * &lt;code&gt;
+	 * 	Set&lt;NucleotideSequence&gt; set = new LinkedHashSet&lt;&gt;();
+	 * 		for(NucleotideSequence seq : sequences){
+	 *		set.addAll(permuteAmbiguities(seq));
+	 *	}
+	 *	return set;
+	 * &lt;/code&gt;
+	 * &lt;/pre&gt;
+	 * @param sequences the sequences to permute; may not be null.
+	 * 
+	 * @return a Set of all the permutations; will never be empty.
+	 * If the given sequence does not have any ambiguities, then
+	 * a Set that only contains the original sequence is returned.
+	 */
+	public static Set&lt;NucleotideSequence&gt; permuteAmbiguities(Iterable&lt;NucleotideSequence&gt; sequences){
+<span class="fc" id="L127">		Set&lt;NucleotideSequence&gt; set = new LinkedHashSet&lt;&gt;();</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">		for(NucleotideSequence seq : sequences){</span>
+<span class="fc" id="L129">			set.addAll(permuteAmbiguities(seq));</span>
+<span class="fc" id="L130">		}</span>
+<span class="fc" id="L131">		return set;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

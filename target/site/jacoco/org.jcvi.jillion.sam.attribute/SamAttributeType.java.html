@@ -1,0 +1,1047 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SamAttributeType.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.sam.attribute</a> &gt; <span class="el_source">SamAttributeType.java</span></div><h1>SamAttributeType.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.sam.attribute;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+import java.nio.ShortBuffer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.util.UnsignedByteArray;
+import org.jcvi.jillion.core.util.UnsignedIntArray;
+import org.jcvi.jillion.core.util.UnsignedShortArray;
+
+<span class="pc" id="L35">public enum SamAttributeType {</span>
+/*
+	A [!-~] Printable character
+	i [-+]?[0-9]+ Singed 32-bit integer
+	I [-+]?[0-9]+ Unsigned 32-bit integer
+	f [-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)? Single-precision 
+	oating number
+	Z [ !-~]+ Printable string, including space
+	H [0-9A-F]+ Byte array in the Hex format2
+	B [cCsSiIf](,[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)+ Integer or numeric array
+*/
+<span class="fc" id="L46">	PRINTABLE_CHARACTER('A'){</span>
+		
+		private boolean assertValidValue(char c) {
+			//[!-~]
+<span class="nc bnc" id="L50" title="All 4 branches missed.">			if(c &lt; 33 || c&gt; 126){</span>
+<span class="nc" id="L51">				return false;</span>
+			}
+<span class="nc" id="L53">			return true;</span>
+		}
+		
+		@Override
+		public boolean isPrintableCharacter(){
+<span class="nc" id="L58">			return true;</span>
+		}
+		
+		@Override 
+		public char getPrintableCharacter(Object obj){
+<span class="nc" id="L63">			return ((Character) obj).charValue();</span>
+		}
+		@Override
+		public String textEncode(Object o) {
+			try{
+<span class="nc" id="L68">				return ((Character)o).toString();</span>
+<span class="nc" id="L69">			}catch(ClassCastException e){</span>
+<span class="nc" id="L70">				throw new IllegalArgumentException(&quot;not a character&quot;, e);</span>
+			}
+		}
+		
+		@Override
+		public void binaryEncode(Object o, ByteBuffer out) throws IOException{
+<span class="nc" id="L76">			out.put((byte)o.toString().charAt(0));</span>
+<span class="nc" id="L77">		}</span>
+
+		@Override
+		public Object decode(String value) {
+<span class="nc bnc" id="L81" title="All 2 branches missed.">			if(value.length() !=1){</span>
+<span class="nc" id="L82">				throw new IllegalArgumentException(&quot;length must be 1&quot;);</span>
+			}
+<span class="nc" id="L84">			char firstChar = value.charAt(0);</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">			if(!assertValidValue(firstChar)){</span>
+<span class="nc" id="L86">				throw new IllegalArgumentException(&quot;invalid printable char ascii value : &quot; + (int)firstChar);</span>
+			
+			};
+<span class="nc" id="L89">			return firstChar;</span>
+		}
+
+		@Override
+		public void validate(Object value) throws InvalidValueTypeException {
+<span class="nc bnc" id="L94" title="All 2 branches missed.">			if(!(value instanceof Character)){</span>
+<span class="nc" id="L95">				throw new InvalidValueTypeException(&quot;not a Character&quot;);</span>
+			}
+<span class="nc bnc" id="L97" title="All 2 branches missed.">			if(!assertValidValue(((Character)value).charValue())){</span>
+<span class="nc" id="L98">				throw new InvalidValueTypeException(&quot;not a valid printable character&quot;);</span>
+			}
+			
+<span class="nc" id="L101">		}</span>
+		
+	},
+<span class="fc" id="L104">	SIGNED_INT('i'){</span>
+
+		@Override
+		public boolean isSignedInt() {
+<span class="nc" id="L108">			return true;</span>
+		}
+
+		@Override
+		public int getSignedInt(Object obj) {			
+<span class="fc" id="L113">			return Integer.parseInt(obj.toString());</span>
+		}
+
+		@Override
+		public String textEncode(Object o) {
+			//this ugliness to to type check
+			//that the object is a integer
+			//or a type that can be converted into an integer
+			//ex: &quot;1&quot; or Integer.valueOf(1) etc.
+			try{
+<span class="fc" id="L123">				return Integer.toString(Integer.parseInt(o.toString()));</span>
+<span class="nc" id="L124">			}catch(Exception e){</span>
+<span class="nc" id="L125">				throw new IllegalArgumentException(&quot;not an int&quot;, e);</span>
+			}
+		}
+		
+		
+		@Override
+		public void encodeInBam(Object o, ByteBuffer b) throws IOException {
+<span class="fc" id="L132">			int i = getSignedInt(o);</span>
+			//according to BAM spec
+			//we can choose to represent this int
+			//in a smaller number of bytes if it fits
+			//but we have to change the type accordingly
+<span class="pc bpc" id="L137" title="2 of 4 branches missed.">			if(i &gt;=Byte.MIN_VALUE &amp;&amp; i &lt;= Byte.MAX_VALUE){</span>
+<span class="fc" id="L138">				b.put((byte)'c');</span>
+<span class="fc" id="L139">				b.put((byte)i);</span>
+<span class="nc bnc" id="L140" title="All 4 branches missed.">			}else if(i &gt;=0 &amp;&amp; i &lt;= 255){</span>
+<span class="nc" id="L141">				b.put((byte)'C');</span>
+<span class="nc" id="L142">				b.put((byte)i);</span>
+<span class="nc bnc" id="L143" title="All 4 branches missed.">			}else if(i &gt;=Short.MIN_VALUE &amp;&amp; i &lt;= Short.MAX_VALUE){</span>
+<span class="nc" id="L144">				b.put((byte)'s');</span>
+<span class="nc" id="L145">				b.putShort((short)i);</span>
+<span class="nc bnc" id="L146" title="All 4 branches missed.">			}else if(i &gt;=0 &amp;&amp; i &lt;= 65535){</span>
+<span class="nc" id="L147">				b.put((byte)'S');</span>
+<span class="nc" id="L148">				b.putShort((short)i);</span>
+			}else{
+				//the spec also mentions unsigned int
+				//but I don't think we can actually store
+				//that in this attribute type?
+				//since SAM only allows up to signed ints.
+<span class="nc" id="L154">				b.put((byte)'i');</span>
+<span class="nc" id="L155">				b.putInt(i);</span>
+			}
+<span class="fc" id="L157">		}</span>
+
+		@Override
+		public void binaryEncode(Object o, ByteBuffer out) throws IOException {
+			//no-op since we override encoideInBam()
+			
+<span class="nc" id="L163">		}</span>
+
+		@Override
+		public Object decode(String value) {
+<span class="nc" id="L167">			return Integer.parseInt(value);</span>
+		}
+
+		@Override
+		public void validate(Object value) throws InvalidValueTypeException {			
+<span class="fc bfc" id="L172" title="All 2 branches covered.">			if(!(value instanceof Integer)){</span>
+				//check that it can be parsed into an int
+				try{
+<span class="fc" id="L175">					Integer.parseInt(value.toString());</span>
+<span class="nc" id="L176">				}catch(NumberFormatException e){</span>
+<span class="nc" id="L177">					throw new InvalidValueTypeException(&quot;not a valid int : '&quot; + value + &quot;'&quot;, e);</span>
+<span class="fc" id="L178">				}</span>
+			}
+			
+<span class="fc" id="L181">		}</span>
+		
+	},
+	
+	
+	
+<span class="fc" id="L187">	UNSIGNED_INT('I'){</span>
+
+		@Override
+		public boolean isUnsignedInt() {
+<span class="nc" id="L191">			return true;</span>
+		}
+
+		@Override
+		public long getUnsignedInt(Object obj) {			
+<span class="nc" id="L196">			return Long.parseLong(obj.toString());</span>
+		}
+
+		@Override
+		public String textEncode(Object o) {
+			//this ugliness to to type check
+			//that the object is a integer
+			//or a type that can be converted into an integer
+			//ex: &quot;1&quot; or Integer.valueOf(1) etc.
+			try{
+<span class="nc" id="L206">				return Long.toString(Long.parseLong(o.toString()));</span>
+<span class="nc" id="L207">			}catch(Exception e){</span>
+<span class="nc" id="L208">				throw new IllegalArgumentException(&quot;not an u_int&quot;, e);</span>
+			}
+		}
+		
+		
+		@Override
+		public void encodeInBam(Object o, ByteBuffer b) throws IOException {
+<span class="nc" id="L215">			long i = getUnsignedInt(o);</span>
+			//according to BAM spec
+			//we can choose to represent this int
+			//in a smaller number of bytes if it fits
+			//but we have to change the type accordingly
+<span class="nc bnc" id="L220" title="All 4 branches missed.">			if(i &gt;=Byte.MIN_VALUE &amp;&amp; i &lt;= Byte.MAX_VALUE){</span>
+<span class="nc" id="L221">				b.put((byte)'c');</span>
+<span class="nc" id="L222">				b.put((byte)i);</span>
+<span class="nc bnc" id="L223" title="All 4 branches missed.">			}else if(i &gt;=0 &amp;&amp; i &lt;= 255){</span>
+<span class="nc" id="L224">				b.put((byte)'C');</span>
+<span class="nc" id="L225">				b.put((byte)i);</span>
+<span class="nc bnc" id="L226" title="All 4 branches missed.">			}else if(i &gt;=Short.MIN_VALUE &amp;&amp; i &lt;= Short.MAX_VALUE){</span>
+<span class="nc" id="L227">				b.put((byte)'s');</span>
+<span class="nc" id="L228">				b.putShort((short)i);</span>
+<span class="nc bnc" id="L229" title="All 4 branches missed.">			}else if(i &gt;=0 &amp;&amp; i &lt;= 65535){</span>
+<span class="nc" id="L230">				b.put((byte)'S');</span>
+<span class="nc" id="L231">				b.putShort((short)i);</span>
+<span class="nc bnc" id="L232" title="All 4 branches missed.">			}else if(i &gt;=Integer.MIN_VALUE &amp;&amp; i &lt;= Integer.MAX_VALUE){</span>
+				//the spec also mentions unsigned int
+				//but I don't think we can actually store
+				//that in this attribute type?
+				//since SAM only allows up to signed ints.
+<span class="nc" id="L237">				b.put((byte)'i');</span>
+<span class="nc" id="L238">				b.putInt((int)i);</span>
+			}else{
+				//Picard doesn't seem to support unsigned ints
+				//but the SAMv1 spec does
+				//page 13 
+				//&quot;[21] An integer may be stored as one of `cCsSiI' in BAM, representing
+				//int8t,uint8t,int16t,uint16t,int32t and uint32t,
+				//respectively.  In SAM, all single (i.e., non-array) 
+				//integer types are stored as `i', regardless of magnitude.&quot;
+				
+				/*
+				 * Found this comment in the samtools mailing list from Dec 22, 2009
+				 * regarding unsigned ints:
+				 * 
+				 * 
+					Re: [Samtools-help] [picard] getAttribute sometimes returns long
+					From: Alec Wysoker &lt;alecw@br...&gt; - 2009-12-22 22:27:01
+					
+					Hi Ido,
+					
+					I finally got around to implementing your request that integral tag 
+					value types be handled more consistently in Picard.  Now, regardless of 
+					how the integral value is stored in the file, it will be stored in 
+					memory as an Integer.  Storage in the file is as the most compact type 
+					allowed by the value.  The only exception is that if validation 
+					stringency is not strict, a tag can be read from a BAM that contains an 
+					unsigned 32-bit integer value, which will be returned as a Java Long.  
+					This is merely to handle legacy files that have been writing unsigned 
+					integers, which I think should be eliminated from the next SAM spec.  
+					Note that reading a SAM with a tag value &gt; the largest 32-bit signed 
+					integer will not be allowed, only BAM. 
+					
+					In addition, there are now typed SAMRecord.getAttribute() methods so you 
+					don't have to cast all the time.
+					
+					-Alec
+					
+					
+					
+				 */
+<span class="nc" id="L278">				b.put((byte)'I');	</span>
+				//b.put((byte)'i');	
+<span class="nc" id="L280">				b.putInt((int)i);</span>
+			}
+<span class="nc" id="L282">		}</span>
+
+		@Override
+		public void binaryEncode(Object o, ByteBuffer out) throws IOException {
+			//no-op since we override encodeInBam()
+			
+<span class="nc" id="L288">		}</span>
+
+		@Override
+		public Object decode(String value) {
+<span class="nc" id="L292">			return Long.parseLong(value);</span>
+		}
+
+		@Override
+		public void validate(Object value) throws InvalidValueTypeException {			
+<span class="nc bnc" id="L297" title="All 2 branches missed.">			if(!(value instanceof Long)){</span>
+				//check that it can be parsed into an int
+				try{
+<span class="nc" id="L300">					Long.parseLong(value.toString());</span>
+<span class="nc" id="L301">				}catch(NumberFormatException e){</span>
+<span class="nc" id="L302">					throw new InvalidValueTypeException(&quot;not a valid int : '&quot; + value + &quot;'&quot;, e);</span>
+<span class="nc" id="L303">				}</span>
+			}
+			
+<span class="nc" id="L306">		}</span>
+		
+	},
+<span class="fc" id="L309">	FLOAT('f'){</span>
+		@Override
+		public void validate(Object value) throws InvalidValueTypeException {
+<span class="nc bnc" id="L312" title="All 2 branches missed.">			if(!(value instanceof Float)){</span>
+<span class="nc" id="L313">				throw new InvalidValueTypeException(&quot;not a valid float&quot;);				</span>
+			}
+			
+<span class="nc" id="L316">		}</span>
+		@Override
+		public boolean isFloat() {
+<span class="nc" id="L319">			return true;</span>
+		}
+
+		@Override
+		public int getSignedInt(Object obj) {			
+<span class="nc" id="L324">			return Integer.parseInt(obj.toString());</span>
+		}
+
+		@Override
+		public String textEncode(Object o) {
+			//this ugliness to to type check
+			//that the object is a float
+			//or a type that can be converted into an integer
+			//ex: &quot;1.23&quot; or Float.valueOf(1.23) etc.
+			try{
+<span class="nc" id="L334">				return Float.toString(Float.parseFloat(o.toString()));</span>
+<span class="nc" id="L335">			}catch(Exception e){</span>
+<span class="nc" id="L336">				throw new IllegalArgumentException(&quot;not an float&quot;, e);</span>
+			}
+		}
+		@Override
+		public float getFloat(Object obj) {
+<span class="nc" id="L341">			return Float.parseFloat(obj.toString());</span>
+		}
+
+		
+		
+
+		@Override
+		public void binaryEncode(Object o, ByteBuffer out)
+				throws IOException {
+<span class="nc" id="L350">			out.putFloat( getFloat(o));</span>
+			
+<span class="nc" id="L352">		}</span>
+		@Override
+		public Object decode(String value) {
+<span class="nc" id="L355">			return Float.parseFloat(value);</span>
+		}
+		
+	},
+<span class="fc" id="L359">	STRING('Z'){</span>
+
+		@Override
+		public void validate(Object value) throws InvalidValueTypeException {
+<span class="pc bpc" id="L363" title="1 of 2 branches missed.">			if(!(value instanceof String)){</span>
+<span class="nc" id="L364">				throw new InvalidValueTypeException(&quot;not a valid String&quot;);				</span>
+			}
+			
+<span class="fc" id="L367">		}</span>
+		@Override
+		public boolean isString() {
+<span class="nc" id="L370">			return true;</span>
+		}
+
+		@Override
+		public String getString(Object obj) {
+<span class="fc" id="L375">			return obj.toString();</span>
+		}
+
+		@Override
+		public String textEncode(Object o) {
+<span class="fc" id="L380">			return o.toString();</span>
+		}
+
+		@Override
+		public void binaryEncode(Object o, ByteBuffer out)
+				throws IOException {
+<span class="fc" id="L386">			out.put(o.toString().getBytes(IOUtil.UTF_8));</span>
+			//null terminate
+<span class="fc" id="L388">			out.put((byte)0);</span>
+<span class="fc" id="L389">		}</span>
+		@Override
+		public Object decode(String value) {
+<span class="nc bnc" id="L392" title="All 2 branches missed.">			if(value ==null){</span>
+<span class="nc" id="L393">				throw new NullPointerException(&quot;value can not be null&quot;);</span>
+			}
+<span class="nc" id="L395">			return value;</span>
+		}
+		
+	},
+<span class="fc" id="L399">	BYTE_ARRAY_IN_HEX('H'){</span>
+		@Override
+		public void validate(Object value) throws InvalidValueTypeException {
+<span class="nc bnc" id="L402" title="All 2 branches missed.">			if(!(value instanceof byte[])){</span>
+<span class="nc" id="L403">				throw new InvalidValueTypeException(&quot;not a valid byte array&quot;);				</span>
+			}
+			
+<span class="nc" id="L406">		}</span>
+		@Override
+		public boolean isByteArray() {
+<span class="nc" id="L409">			return true;</span>
+		}
+
+		@Override
+		public byte[] getByteArray(Object obj) {
+<span class="nc" id="L414">			return (byte[])obj;</span>
+		}
+
+		@Override
+		public String textEncode(Object o) {
+<span class="nc" id="L419">			byte[] array = (byte[])o;</span>
+			//2hex digits per element
+<span class="nc" id="L421">			StringBuilder builder = new StringBuilder(3+ 2*array.length);</span>
+<span class="nc bnc" id="L422" title="All 2 branches missed.">			for(int i=0; i&lt; array.length; i++){				</span>
+<span class="nc" id="L423">				builder.append(HEX_ARRAY[IOUtil.toUnsignedByte(array[i])]);</span>
+			}
+<span class="nc" id="L425">			return builder.toString();</span>
+		}
+
+		@Override
+		public void binaryEncode(Object o, ByteBuffer out)
+				throws IOException {
+			//TODO write as a null terminated string?
+<span class="nc" id="L432">			out.put(textEncode(o).getBytes(IOUtil.UTF_8));</span>
+<span class="nc" id="L433">			out.put((byte)0);</span>
+			
+<span class="nc" id="L435">		}</span>
+		@Override
+		public Object decode(String value) {
+<span class="nc bnc" id="L438" title="All 2 branches missed.">			if(value.charAt(0) != optionalArrayType.charValue()){</span>
+<span class="nc" id="L439">				throw new IllegalArgumentException(&quot;must be hex string with in H format&quot; + value);</span>
+			}
+<span class="nc" id="L441">			byte[] array = new byte[(value.length()-1)/2];</span>
+<span class="nc bnc" id="L442" title="All 2 branches missed.">			for(int i=1; i&lt;value.length();i+=2){</span>
+<span class="nc" id="L443">				String hex =value.substring(i, i+2);</span>
+<span class="nc" id="L444">				array[i] =Byte.parseByte(hex, 16);</span>
+			}
+<span class="nc" id="L446">			return array;</span>
+		}
+		
+	},
+	//B [cCsSiIf](,[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)+ Integer or numeric array
+<span class="fc" id="L451">	SIGNED_BYTE_ARRAY('B','c'){</span>
+		@Override
+		public void validate(Object value) throws InvalidValueTypeException {
+<span class="nc bnc" id="L454" title="All 2 branches missed.">			if(!(value instanceof byte[])){</span>
+<span class="nc" id="L455">				throw new InvalidValueTypeException(&quot;not a valid byte array&quot;);				</span>
+			}
+			
+<span class="nc" id="L458">		}</span>
+		@Override
+		public boolean isByteArray() {
+<span class="nc" id="L461">			return true;</span>
+		}
+
+		@Override
+		public byte[] getByteArray(Object obj) {
+<span class="nc" id="L466">			return (byte[])obj;</span>
+		}
+		@Override
+		public String textEncode(Object o) {
+<span class="nc" id="L470">			byte[] array = (byte[])o;</span>
+			//signed so max length per element is
+			//-128, = 4 chars			
+<span class="nc" id="L473">			StringBuilder builder = new StringBuilder(3+ 4*array.length);</span>
+<span class="nc bnc" id="L474" title="All 2 branches missed.">			for(int i=0; i&lt; array.length; i++){</span>
+<span class="nc" id="L475">				builder.append(Byte.toString(array[i])).append(',');</span>
+			}
+<span class="nc" id="L477">			return builder.toString();</span>
+		}
+		
+		@Override
+		public void binaryEncode(Object o, ByteBuffer out)
+				throws IOException {
+<span class="nc" id="L483">			byte[] array = (byte[])o;</span>
+<span class="nc" id="L484">			out.put((byte)(optionalArrayType &amp; 0xFF));</span>
+<span class="nc" id="L485">			out.putInt(array.length);</span>
+<span class="nc" id="L486">			out.put(array);</span>
+<span class="nc" id="L487">		}</span>
+
+		@Override
+		public Object decode(String value) {
+<span class="nc" id="L491">			String[] split = parseArrayElementsFrom(value);</span>
+<span class="nc" id="L492">			byte[] ret = new byte[split.length];</span>
+<span class="nc bnc" id="L493" title="All 2 branches missed.">			for(int i=0; i&lt; split.length; i++){</span>
+<span class="nc" id="L494">				ret[i] = Byte.parseByte(split[i]);</span>
+			}
+<span class="nc" id="L496">			return ret;</span>
+		}
+	},
+<span class="fc" id="L499">	UNSIGNED_BYTE_ARRAY('B','C'){</span>
+		@Override
+		public void validate(Object value) throws InvalidValueTypeException {
+<span class="nc bnc" id="L502" title="All 2 branches missed.">			if(!(value instanceof UnsignedByteArray)){</span>
+<span class="nc" id="L503">				throw new InvalidValueTypeException(&quot;not a valid unsigned byte array&quot;);				</span>
+			}
+			
+<span class="nc" id="L506">		}</span>
+		@Override
+		public boolean isUnsignedByteArray() {
+<span class="nc" id="L509">			return true;</span>
+		}
+
+		@Override
+		public UnsignedByteArray getUnsignedByteArray(Object obj) {
+<span class="nc" id="L514">			return (UnsignedByteArray)obj;</span>
+		}
+		@Override
+		public String textEncode(Object o) {
+<span class="nc" id="L518">			UnsignedByteArray array = (UnsignedByteArray)o;</span>
+<span class="nc" id="L519">			int length = array.getLength();</span>
+			//signed so max length per element is
+			//-128, = 4 chars			
+<span class="nc" id="L522">			StringBuilder builder = new StringBuilder(3+ 4*length);</span>
+<span class="nc bnc" id="L523" title="All 2 branches missed.">			for(int i=0; i&lt; length; i++){</span>
+<span class="nc" id="L524">				builder.append(Integer.toString(array.get(i))).append(',');</span>
+			}
+<span class="nc" id="L526">			return builder.toString();</span>
+		}
+		@Override
+		public void binaryEncode(Object o, ByteBuffer out)
+				throws IOException {
+<span class="nc" id="L531">			UnsignedByteArray array = (UnsignedByteArray)o;</span>
+<span class="nc" id="L532">			out.put((byte)(optionalArrayType &amp; 0xFF));</span>
+<span class="nc" id="L533">			int length = array.getLength();</span>
+<span class="nc" id="L534">			out.putInt(length);</span>
+<span class="nc bnc" id="L535" title="All 2 branches missed.">			for(int i=0; i&lt; length; i++){</span>
+<span class="nc" id="L536">				out.put((byte)array.get(i));</span>
+			}
+			
+<span class="nc" id="L539">		}</span>
+
+		@Override
+		public Object decode(String value) {
+<span class="nc" id="L543">			String[] split = parseArrayElementsFrom(value);</span>
+<span class="nc" id="L544">			byte[] ret = new byte[split.length];</span>
+<span class="nc bnc" id="L545" title="All 2 branches missed.">			for(int i=0; i&lt; split.length; i++){</span>
+<span class="nc" id="L546">				ret[i] = IOUtil.toSignedByte(Integer.parseInt(split[i]));</span>
+			}
+<span class="nc" id="L548">			return new UnsignedByteArray(ret);</span>
+		}
+	},
+<span class="fc" id="L551">	SIGNED_SHORT_ARRAY('B','s'){</span>
+		@Override
+		public void validate(Object value) throws InvalidValueTypeException {
+<span class="nc bnc" id="L554" title="All 2 branches missed.">			if(!(value instanceof short[])){</span>
+<span class="nc" id="L555">				throw new InvalidValueTypeException(&quot;not a valid short array&quot;);				</span>
+			}
+			
+<span class="nc" id="L558">		}</span>
+		@Override
+		public boolean isShortArray() {
+<span class="nc" id="L561">			return true;</span>
+		}
+
+		@Override
+		public short[] getShortArray(Object obj) {
+<span class="nc" id="L566">			return (short[])obj;</span>
+		}
+
+		@Override
+		public String textEncode(Object o) {
+<span class="nc" id="L571">			short[] array = (short[])o;</span>
+			//signed so max length per element is
+			//-32768, = 7 chars			
+<span class="nc" id="L574">			StringBuilder builder = new StringBuilder(3+ 7*array.length);</span>
+<span class="nc bnc" id="L575" title="All 2 branches missed.">			for(int i=0; i&lt; array.length; i++){</span>
+<span class="nc" id="L576">				builder.append(Short.toString(array[i])).append(',');</span>
+			}
+<span class="nc" id="L578">			return builder.toString();</span>
+		}
+
+		@Override
+		public void binaryEncode(Object o, ByteBuffer out)
+				throws IOException {
+<span class="nc" id="L584">			short[] array = (short[])o;</span>
+<span class="nc" id="L585">			out.put((byte)(optionalArrayType &amp; 0xFF));</span>
+<span class="nc" id="L586">			out.putInt(array.length);</span>
+<span class="nc" id="L587">			out.asShortBuffer().put(array);</span>
+<span class="nc" id="L588">		}</span>
+		
+		@Override
+		public Object decode(String value) {
+<span class="nc" id="L592">			String[] split = parseArrayElementsFrom(value);</span>
+<span class="nc" id="L593">			short[] ret = new short[split.length];</span>
+<span class="nc bnc" id="L594" title="All 2 branches missed.">			for(int i=0; i&lt; split.length; i++){</span>
+<span class="nc" id="L595">				ret[i] = Short.parseShort(split[i]);</span>
+			}
+<span class="nc" id="L597">			return ret;</span>
+		}
+	},
+<span class="fc" id="L600">	UNSIGNED_SHORT_ARRAY('B','S'){</span>
+		@Override
+		public void validate(Object value) throws InvalidValueTypeException {
+<span class="pc bpc" id="L603" title="1 of 2 branches missed.">			if(!(value instanceof UnsignedShortArray)){</span>
+<span class="nc" id="L604">				throw new InvalidValueTypeException(&quot;not a valid short array&quot;);				</span>
+			}
+			
+<span class="fc" id="L607">		}</span>
+		@Override
+		public boolean isUnsignedShortArray() {
+<span class="nc" id="L610">			return true;</span>
+		}
+
+		@Override
+		public UnsignedShortArray getUnsignedShortArray(Object obj) {
+<span class="nc" id="L615">			return (UnsignedShortArray)obj;</span>
+		}
+
+		@Override
+		public String textEncode(Object o) {
+<span class="nc" id="L620">			UnsignedShortArray array = (UnsignedShortArray)o;</span>
+<span class="nc" id="L621">			int length = array.getLength();</span>
+			//signed so max length per element is
+			//65535, = 6 chars			
+<span class="nc" id="L624">			StringBuilder builder = new StringBuilder(3+ 6*length);</span>
+<span class="nc bnc" id="L625" title="All 2 branches missed.">			for(int i=0; i&lt; length; i++){</span>
+<span class="nc" id="L626">				builder.append(Integer.toString(array.get(i))).append(',');</span>
+			}
+<span class="nc" id="L628">			return builder.toString();</span>
+		}
+		@Override
+		public void binaryEncode(Object o, ByteBuffer out)
+				throws IOException {
+<span class="nc" id="L633">			UnsignedShortArray array = (UnsignedShortArray)o;</span>
+<span class="nc" id="L634">			out.put((byte)(optionalArrayType &amp; 0xFF));</span>
+<span class="nc" id="L635">			int length = array.getLength();</span>
+<span class="nc" id="L636">			out.putInt(length);</span>
+<span class="nc" id="L637">			ShortBuffer sb = out.asShortBuffer();</span>
+<span class="nc bnc" id="L638" title="All 2 branches missed.">			for(int i=0; i&lt; length; i++){</span>
+<span class="nc" id="L639">				sb.put((short)array.get(i));</span>
+			}
+			
+<span class="nc" id="L642">		}</span>
+		@Override
+		public Object decode(String value) {
+<span class="nc" id="L645">			String[] split = parseArrayElementsFrom(value);</span>
+<span class="nc" id="L646">			short[] ret = new short[split.length];</span>
+<span class="nc bnc" id="L647" title="All 2 branches missed.">			for(int i=0; i&lt; split.length; i++){</span>
+<span class="nc" id="L648">				ret[i] = IOUtil.toSignedShort(Integer.parseInt(split[i]));</span>
+			}
+<span class="nc" id="L650">			return new UnsignedShortArray(ret);</span>
+		}
+	},
+<span class="fc" id="L653">	SIGNED_INT_ARRAY('B','i'){</span>
+		@Override
+		public void validate(Object value) throws InvalidValueTypeException {
+<span class="nc bnc" id="L656" title="All 2 branches missed.">			if(!(value instanceof int[])){</span>
+<span class="nc" id="L657">				throw new InvalidValueTypeException(&quot;not a valid int array&quot;);				</span>
+			}
+			
+<span class="nc" id="L660">		}</span>
+		@Override
+		public boolean isIntArray() {
+<span class="nc" id="L663">			return true;</span>
+		}
+
+		@Override
+		public int[] getIntArray(Object obj) {
+<span class="nc" id="L668">			return (int[])obj;</span>
+		}
+
+		@Override
+		public String textEncode(Object o) {
+<span class="nc" id="L673">			int[] array = (int[])o;</span>
+			//signed so max length per element is
+			//-2147483648, = 12 chars			
+<span class="nc" id="L676">			StringBuilder builder = new StringBuilder(3+ 12*array.length);</span>
+<span class="nc bnc" id="L677" title="All 2 branches missed.">			for(int i=0; i&lt; array.length; i++){</span>
+<span class="nc" id="L678">				builder.append(Integer.toString(array[i])).append(',');</span>
+			}
+<span class="nc" id="L680">			return builder.toString();</span>
+		}
+		
+		@Override
+		public void binaryEncode(Object o, ByteBuffer out)
+				throws IOException {
+<span class="nc" id="L686">			int[] array = (int[])o;</span>
+<span class="nc" id="L687">			out.put((byte)(optionalArrayType &amp; 0xFF));</span>
+<span class="nc" id="L688">			out.putInt(array.length);</span>
+<span class="nc" id="L689">			out.asIntBuffer().put(array);</span>
+<span class="nc" id="L690">		}</span>
+
+		@Override
+		public Object decode(String value) {
+<span class="nc" id="L694">			String[] split = parseArrayElementsFrom(value);</span>
+<span class="nc" id="L695">			int[] ret = new int[split.length];</span>
+<span class="nc bnc" id="L696" title="All 2 branches missed.">			for(int i=0; i&lt; split.length; i++){</span>
+<span class="nc" id="L697">				ret[i] = Integer.parseInt(split[i]);</span>
+			}
+<span class="nc" id="L699">			return ret;</span>
+		}
+	},
+<span class="fc" id="L702">	UNSIGNED_INT_ARRAY('B','I'){</span>
+		@Override
+		public void validate(Object value) throws InvalidValueTypeException {
+<span class="nc bnc" id="L705" title="All 2 branches missed.">			if(!(value instanceof UnsignedIntArray)){</span>
+<span class="nc" id="L706">				throw new InvalidValueTypeException(&quot;not a valid unsignedInt array&quot;);				</span>
+			}
+			
+<span class="nc" id="L709">		}</span>
+		@Override
+		public boolean isUnsignedIntArray() {
+<span class="nc" id="L712">			return true;</span>
+		}
+
+		@Override
+		public UnsignedIntArray getUnsignedIntArray(Object obj) {
+<span class="nc" id="L717">			return (UnsignedIntArray) obj;</span>
+		}
+
+		@Override
+		public String textEncode(Object o) {
+<span class="nc" id="L722">			UnsignedIntArray array = (UnsignedIntArray)o;</span>
+<span class="nc" id="L723">			int length = array.getLength();</span>
+			//signed so max length per element is
+			//2147483647, = 11 chars			
+<span class="nc" id="L726">			StringBuilder builder = new StringBuilder(3+ 11*length);</span>
+<span class="nc bnc" id="L727" title="All 2 branches missed.">			for(int i=0; i&lt; length; i++){</span>
+<span class="nc" id="L728">				builder.append(Long.toString(array.get(i))).append(',');</span>
+			}
+<span class="nc" id="L730">			return builder.toString();</span>
+		}
+
+		@Override
+		public void binaryEncode(Object o, ByteBuffer out)
+				throws IOException {
+<span class="nc" id="L736">			UnsignedIntArray array = (UnsignedIntArray)o;</span>
+<span class="nc" id="L737">			out.put((byte)(optionalArrayType &amp; 0xFF));</span>
+<span class="nc" id="L738">			int length = array.getLength();</span>
+<span class="nc" id="L739">			out.putInt(length);</span>
+<span class="nc" id="L740">			IntBuffer ib = out.asIntBuffer();</span>
+<span class="nc bnc" id="L741" title="All 2 branches missed.">			for(int i=0; i&lt; length; i++){</span>
+<span class="nc" id="L742">				ib.put((int)array.get(i));</span>
+			}
+			
+<span class="nc" id="L745">		}</span>
+		@Override
+		public Object decode(String value) {
+<span class="nc" id="L748">			String[] split = parseArrayElementsFrom(value);</span>
+<span class="nc" id="L749">			int[] ret = new int[split.length];</span>
+<span class="nc bnc" id="L750" title="All 2 branches missed.">			for(int i=0; i&lt; split.length; i++){</span>
+<span class="nc" id="L751">				ret[i] = IOUtil.toSignedInt(Long.parseLong(split[i]));</span>
+			}
+<span class="nc" id="L753">			return new UnsignedIntArray(ret);</span>
+		}
+	},
+<span class="fc" id="L756">	FLOAT_ARRAY('B','f'){</span>
+		@Override
+		public void validate(Object value) throws InvalidValueTypeException {
+<span class="nc bnc" id="L759" title="All 2 branches missed.">			if(!(value instanceof float[])){</span>
+<span class="nc" id="L760">				throw new InvalidValueTypeException(&quot;not a valid float array&quot;);				</span>
+			}
+			
+<span class="nc" id="L763">		}</span>
+		@Override
+		public boolean isFloatArray() {
+<span class="nc" id="L766">			return true;</span>
+		}
+
+		@Override
+		public float[] getFloatArray(Object obj) {
+<span class="nc" id="L771">			return (float[])obj;</span>
+		}
+
+		@Override
+		public String textEncode(Object o) {
+<span class="nc" id="L776">			float[] array = (float[])o;</span>
+			//floats should store around 7 decimal digits
+			//plus the neg sign for a total of 8
+			//if we don't guess correctly, the builder will expand for us anyway
+<span class="nc" id="L780">			StringBuilder builder = new StringBuilder(3+ 8*array.length);</span>
+<span class="nc bnc" id="L781" title="All 2 branches missed.">			for(int i=0; i&lt; array.length; i++){</span>
+<span class="nc" id="L782">				builder.append(Float.toString(array[i])).append(',');</span>
+			}
+<span class="nc" id="L784">			return builder.toString();</span>
+		}
+
+		@Override
+		public void binaryEncode(Object o, ByteBuffer out)
+				throws IOException {
+<span class="nc" id="L790">			float[] array = (float[])o;</span>
+<span class="nc" id="L791">			out.put((byte)(optionalArrayType &amp; 0xFF));</span>
+<span class="nc" id="L792">			out.putInt(array.length);</span>
+<span class="nc" id="L793">			out.asFloatBuffer().put(array);</span>
+<span class="nc" id="L794">		}</span>
+		@Override
+		public Object decode(String value) {
+<span class="nc" id="L797">			String[] split = parseArrayElementsFrom(value);</span>
+<span class="nc" id="L798">			float[] ret = new float[split.length];</span>
+<span class="nc bnc" id="L799" title="All 2 branches missed.">			for(int i=0; i&lt; split.length; i++){</span>
+<span class="nc" id="L800">				ret[i] = Float.parseFloat(split[i]);</span>
+			}
+<span class="nc" id="L802">			return ret;</span>
+		}
+	},
+	;
+<span class="fc" id="L806">	private static final String[] HEX_ARRAY = new String[255];</span>
+<span class="fc" id="L807">	private static final Pattern SPLIT_ARRAY_PATTERN = Pattern.compile(&quot;,&quot;);</span>
+<span class="fc" id="L808">	private static final Pattern ARRAY_PATTERN = Pattern.compile(&quot;[cCsSiIf](,[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?)+&quot;);</span>
+	
+	static{
+<span class="fc bfc" id="L811" title="All 2 branches covered.">		for(int i=0; i&lt;HEX_ARRAY.length; i++){</span>
+			//use X to make it uppercase
+<span class="fc" id="L813">			HEX_ARRAY[i]= String.format(&quot;%02X&quot;,i);</span>
+		}
+		
+<span class="fc" id="L816">	}</span>
+	
+	char value;
+	Character optionalArrayType;
+	
+	SamAttributeType(char c){
+<span class="fc" id="L822">		this(c,null);</span>
+<span class="fc" id="L823">	}</span>
+<span class="fc" id="L824">	SamAttributeType(char c, Character optionalArrayType){</span>
+<span class="fc" id="L825">		this.value = c;</span>
+<span class="fc" id="L826">		this.optionalArrayType = optionalArrayType;</span>
+<span class="fc" id="L827">	}</span>
+	public String getTextTypeCode(){
+<span class="fc" id="L829">		StringBuilder builder = new StringBuilder();</span>
+<span class="fc" id="L830">		builder.append(value).append(':');</span>
+<span class="pc bpc" id="L831" title="1 of 2 branches missed.">		if(optionalArrayType !=null){</span>
+<span class="nc" id="L832">			builder.append(optionalArrayType);</span>
+		}
+<span class="fc" id="L834">		return builder.toString();</span>
+	}
+	
+	private void putBinaryTypeCode(ByteBuffer buf){
+<span class="fc" id="L838">		buf.put((byte)(value &amp; 0xFF));</span>
+<span class="pc bpc" id="L839" title="1 of 2 branches missed.">		if(optionalArrayType !=null){</span>
+<span class="nc" id="L840">			buf.put((byte)(optionalArrayType &amp; 0xFF));</span>
+		}
+<span class="fc" id="L842">	}</span>
+	public abstract String textEncode(Object o);
+	
+	public void encodeInBam(Object o, ByteBuffer b) throws IOException{
+<span class="fc" id="L846">		putBinaryTypeCode(b);</span>
+<span class="fc" id="L847">		binaryEncode(o, b);</span>
+<span class="fc" id="L848">	}</span>
+	/**
+	 * Encode the type AND the value in BAM format
+	 * and write those bytes to the given ByteBuffer.
+	 * @param o
+	 * @param out
+	 * @throws IOException
+	 */
+	abstract void binaryEncode(Object o, ByteBuffer out) throws IOException;
+	
+	public abstract Object decode(String value);
+	
+	protected String[] parseArrayElementsFrom(String value) {
+<span class="nc" id="L861">		Matcher matcher =ARRAY_PATTERN.matcher(value.trim());</span>
+<span class="nc bnc" id="L862" title="All 2 branches missed.">		if(!matcher.matches()){</span>
+<span class="nc" id="L863">			throw new IllegalArgumentException(&quot;invalid encoded array &quot; + value);</span>
+		}
+<span class="nc" id="L865">		char code = matcher.group(1).charAt(0);</span>
+<span class="nc bnc" id="L866" title="All 2 branches missed.">		if(!optionalArrayType.equals(code)){</span>
+<span class="nc" id="L867">			throw new IllegalArgumentException(</span>
+<span class="nc" id="L868">					String.format(&quot;incorrect array type: expected :%s but was %s: %s&quot;,</span>
+<span class="nc" id="L869">							optionalArrayType, code, value));</span>
+		}
+<span class="nc" id="L871">		return SPLIT_ARRAY_PATTERN.split(matcher.group(2));</span>
+	}
+	
+	public boolean isPrintableCharacter(){
+<span class="nc" id="L875">		return false;</span>
+	}
+	public char getPrintableCharacter(Object obj){
+<span class="nc" id="L878">		throw new UnsupportedOperationException();</span>
+	}
+	
+	public boolean isSignedInt(){
+<span class="nc" id="L882">		return false;</span>
+	}
+	public int getSignedInt(Object obj){
+<span class="nc" id="L885">		throw new UnsupportedOperationException();</span>
+	}
+	
+	public boolean isUnsignedInt(){
+<span class="nc" id="L889">		return false;</span>
+	}
+	public long getUnsignedInt(Object obj){
+<span class="nc" id="L892">		throw new UnsupportedOperationException();</span>
+	}
+	
+	public boolean isFloat(){
+<span class="nc" id="L896">		return false;</span>
+	}
+	public float getFloat(Object obj){
+<span class="nc" id="L899">		throw new UnsupportedOperationException();</span>
+	}
+	
+	public boolean isString(){
+<span class="nc" id="L903">		return false;</span>
+	}
+	public String getString(Object obj){
+<span class="nc" id="L906">		throw new UnsupportedOperationException();</span>
+	}
+	
+	public boolean isByteArray(){
+<span class="nc" id="L910">		return false;</span>
+	}
+	public byte[] getByteArray(Object obj){
+<span class="nc" id="L913">		throw new UnsupportedOperationException();</span>
+	}
+	public boolean isShortArray(){
+<span class="nc" id="L916">		return false;</span>
+	}
+	public short[] getShortArray(Object obj){
+<span class="nc" id="L919">		throw new UnsupportedOperationException();</span>
+	}
+	public boolean isIntArray(){
+<span class="nc" id="L922">		return false;</span>
+	}
+	public int[] getIntArray(Object obj){
+<span class="nc" id="L925">		throw new UnsupportedOperationException();</span>
+	}
+	public boolean isUnsignedByteArray(){
+<span class="nc" id="L928">		return false;</span>
+	}
+	public UnsignedByteArray getUnsignedByteArray(Object obj){
+<span class="nc" id="L931">		throw new UnsupportedOperationException();</span>
+	}
+	public boolean isUnsignedShortArray(){
+<span class="nc" id="L934">		return false;</span>
+	}
+	public UnsignedShortArray getUnsignedShortArray(Object obj){
+<span class="nc" id="L937">		throw new UnsupportedOperationException();</span>
+	}
+	public boolean isUnsignedIntArray(){
+<span class="nc" id="L940">		return false;</span>
+	}
+	public UnsignedIntArray getUnsignedIntArray(Object obj){
+<span class="nc" id="L943">		throw new UnsupportedOperationException();</span>
+	}
+	
+	public boolean isFloatArray(){
+<span class="nc" id="L947">		return false;</span>
+	}
+	public float[] getFloatArray(Object obj){
+<span class="nc" id="L950">		throw new UnsupportedOperationException();</span>
+	}
+	public abstract void validate(Object value2) throws InvalidValueTypeException;
+
+
+	public static SamAttributeType parseType(char typeCode, String value){
+<span class="pc bpc" id="L956" title="1 of 2 branches missed.">		if(typeCode =='B'){</span>
+			//handle arrays separately
+<span class="nc" id="L958">			char arrayType = value.charAt(0);</span>
+			//cCsSiIf
+<span class="nc bnc" id="L960" title="All 50 branches missed.">			switch(arrayType){</span>
+<span class="nc" id="L961">				case 'C': return UNSIGNED_BYTE_ARRAY;</span>
+<span class="nc" id="L962">				case 'D': return null;</span>
+<span class="nc" id="L963">				case 'E': return null;</span>
+<span class="nc" id="L964">				case 'F': return null;</span>
+<span class="nc" id="L965">				case 'G': return null;</span>
+<span class="nc" id="L966">				case 'H': return null;</span>
+<span class="nc" id="L967">				case 'I': return UNSIGNED_INT_ARRAY;</span>
+<span class="nc" id="L968">				case 'J': return null;</span>
+<span class="nc" id="L969">				case 'K': return null;</span>
+<span class="nc" id="L970">				case 'L': return null;</span>
+<span class="nc" id="L971">				case 'M': return null;</span>
+<span class="nc" id="L972">				case 'N': return null;</span>
+<span class="nc" id="L973">				case 'O': return null;</span>
+<span class="nc" id="L974">				case 'P': return null;</span>
+<span class="nc" id="L975">				case 'Q': return null;</span>
+<span class="nc" id="L976">				case 'R': return null;</span>
+<span class="nc" id="L977">				case 'S': return UNSIGNED_SHORT_ARRAY;</span>
+<span class="nc" id="L978">				case 'T': return null;</span>
+<span class="nc" id="L979">				case 'U': return null;</span>
+<span class="nc" id="L980">				case 'V': return null;</span>
+<span class="nc" id="L981">				case 'W': return null;</span>
+<span class="nc" id="L982">				case 'X': return null;</span>
+<span class="nc" id="L983">				case 'Y': return null;</span>
+<span class="nc" id="L984">				case 'Z': return null;</span>
+				
+<span class="nc" id="L986">				case '[': return null;</span>
+<span class="nc" id="L987">				case '\\': return null;</span>
+<span class="nc" id="L988">				case ']': return null;</span>
+<span class="nc" id="L989">				case '^': return null;</span>
+<span class="nc" id="L990">				case '_': return null;</span>
+<span class="nc" id="L991">				case '`': return null;</span>
+				
+<span class="nc" id="L993">				case 'a': return null;</span>
+<span class="nc" id="L994">				case 'b': return null;</span>
+<span class="nc" id="L995">				case 'c': return SIGNED_BYTE_ARRAY;</span>
+<span class="nc" id="L996">				case 'd': return null;</span>
+<span class="nc" id="L997">				case 'e': return null;</span>
+<span class="nc" id="L998">				case 'f': return FLOAT_ARRAY;</span>
+<span class="nc" id="L999">				case 'g': return null;</span>
+<span class="nc" id="L1000">				case 'h': return null;</span>
+<span class="nc" id="L1001">				case 'i': return SIGNED_INT_ARRAY;</span>
+<span class="nc" id="L1002">				case 'j': return null;</span>
+<span class="nc" id="L1003">				case 'k': return null;</span>
+<span class="nc" id="L1004">				case 'l': return null;</span>
+<span class="nc" id="L1005">				case 'm': return null;</span>
+<span class="nc" id="L1006">				case 'n': return null;</span>
+<span class="nc" id="L1007">				case 'o': return null;</span>
+<span class="nc" id="L1008">				case 'p': return null;</span>
+<span class="nc" id="L1009">				case 'q': return null;</span>
+<span class="nc" id="L1010">				case 'r': return null;			</span>
+<span class="nc" id="L1011">				case 's': return SIGNED_SHORT_ARRAY;</span>
+				
+<span class="nc" id="L1013">				default: return null;</span>
+			
+			}
+		}
+		//there are so few types and some are so uncommon
+		//that we can just take the performance hit
+		//once in a while and compare each
+		
+		//ordered in most common to least common order
+		//to do as few comparisons as possible
+		
+<span class="fc bfc" id="L1024" title="All 2 branches covered.">		if('Z' == typeCode){</span>
+<span class="fc" id="L1025">			return STRING;</span>
+		}
+		//BAM can use smaller number of bytes
+		//so need to check for all sizes of ints
+<span class="pc bpc" id="L1029" title="11 of 12 branches missed.">		if('i' == typeCode || 'I' == typeCode</span>
+				|| 'c' == typeCode || 'C' == typeCode
+				|| 's' == typeCode || 'S' == typeCode){
+<span class="fc" id="L1032">			return SIGNED_INT;</span>
+		}
+<span class="nc bnc" id="L1034" title="All 2 branches missed.">		if('f' == typeCode){</span>
+<span class="nc" id="L1035">			return FLOAT;</span>
+		}
+<span class="nc bnc" id="L1037" title="All 2 branches missed.">		if('A' == typeCode){</span>
+<span class="nc" id="L1038">			return PRINTABLE_CHARACTER;</span>
+		}
+<span class="nc bnc" id="L1040" title="All 2 branches missed.">		if('H' == typeCode){			</span>
+<span class="nc" id="L1041">			return BYTE_ARRAY_IN_HEX;</span>
+		}
+<span class="nc" id="L1043">		return null;</span>
+		
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

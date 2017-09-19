@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AbstractNucleotideFastaRecordVisitor.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.fasta.nt</a> &gt; <span class="el_source">AbstractNucleotideFastaRecordVisitor.java</span></div><h1>AbstractNucleotideFastaRecordVisitor.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.fasta.nt;
+
+import org.jcvi.jillion.fasta.AbstractFastaRecordVisitor;
+/**
+ * Abstract
+ * implementation of {@link FastaRecordVisitor} that will collect
+ * the visit methods &lt;strong&gt;for a single fasta record&lt;/strong&gt;
+ * and build an instance of {@link NucleotideFastaRecord}.
+ * When {@link FastaRecordVisitor#visitEnd()} is called,
+ * the {@link NucleotideFastaRecord} is built
+ * and the abstract method visitRecord(NucleotideFastaRecord)
+ * will be called.  
+ * 
+ * &lt;p/&gt;
+ * A new instance of this class should be used for each fasta record
+ * to be visited.  This class is not threadsafe.
+ * @author dkatzel
+ *
+ */
+public abstract class AbstractNucleotideFastaRecordVisitor extends  AbstractFastaRecordVisitor{
+
+	public AbstractNucleotideFastaRecordVisitor(String id, String comment) {
+<span class="fc" id="L43">		super(id,comment);</span>
+<span class="fc" id="L44">	}</span>
+
+	
+	protected abstract void visitRecord(NucleotideFastaRecord fastaRecord);
+
+	@Override
+	protected final  void visitRecord(String id, String optionalComment,
+			String fullBody) {
+<span class="fc" id="L52">		NucleotideFastaRecord record = new NucleotideFastaRecordBuilder(id, fullBody)</span>
+<span class="fc" id="L53">													.comment(optionalComment)</span>
+<span class="fc" id="L54">													.build();</span>
+<span class="fc" id="L55">		visitRecord(record);</span>
+<span class="fc" id="L56">	}</span>
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

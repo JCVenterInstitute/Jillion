@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ProteinNeedlemanWunschAligner.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.align.pairwise</a> &gt; <span class="el_source">ProteinNeedlemanWunschAligner.java</span></div><h1>ProteinNeedlemanWunschAligner.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.align.pairwise;
+
+import org.jcvi.jillion.align.ProteinSequenceAlignment;
+import org.jcvi.jillion.align.SubstitutionMatrix;
+import org.jcvi.jillion.core.residue.aa.AminoAcid;
+import org.jcvi.jillion.core.residue.aa.ProteinSequence;
+import org.jcvi.jillion.core.residue.aa.ProteinSequenceBuilder;
+
+/**
+ * {@code ProteinNeedlemanWunschAligner} can perform 
+ * a pair-wise alignment of two {@link ProteinSequence}s
+ * using the global alignment algorithm developed
+ * by Needleman and Wunsch using improvements developed
+ * by Gotoh.
+ * @author dkatzel
+ * 
+ * @see &lt;a href=&quot;http://dx.doi.org/10.1016/0022-2836(70)90057-4&quot;&gt;
+ Needleman, Saul B.; and Wunsch, Christian D.
+ &quot;A general method applicable to the search for similarities in the amino acid sequence of two proteins&quot;.
+ Journal of Molecular Biology 48:443-53.&lt;/a&gt;
+ *   
+ * @see &lt;a href=&quot;http://dx.doi.org/10.1016/0022-2836(82)90398-9&quot;&gt;
+ Gotoh Osamu. An improved algorithm for matching biological sequences. 
+ Journal of Molecular Biology 162:705-708&lt;/a&gt;
+ */
+final class ProteinNeedlemanWunschAligner extends AbstractNeedlemanWunschAligner&lt;AminoAcid, ProteinSequence, ProteinSequenceBuilder,ProteinSequenceAlignment, ProteinPairwiseSequenceAlignment&gt;{
+	/**
+	 * Align the given two {@link ProteinSequence}s
+	 * using the given {@link SubstitutionMatrix} by the Needleman-Wunsch
+	 * global alignment algorithm.
+	 * @param query the query {@link ProteinSequence} to align;
+	 * can not be null.
+	 * @param subject the subject {@link ProteinSequence} to align;
+	 * can not be null.
+	 * @param matrix the {@link SubstitutionMatrix} to use; can not be null.
+	 * @param openGapPenalty the penalty value for opening a gap.
+	 * @param extendGapPenalty the penalty for extending an already open gap.
+	 * @return a new {@link ProteinPairwiseSequenceAlignment} instance;
+	 * representing the global alignment, will never be null.
+	 * @throws NullPointerException if query, subject or matrix are null.
+	 */
+	public static ProteinPairwiseSequenceAlignment align(ProteinSequence query,
+			ProteinSequence subject, SubstitutionMatrix&lt;AminoAcid&gt; matrix,
+			float openGapPenalty, float extendGapPenalty){
+<span class="fc" id="L65">		ProteinNeedlemanWunschAligner aligner = new ProteinNeedlemanWunschAligner(query, subject, matrix, openGapPenalty, extendGapPenalty);</span>
+<span class="fc" id="L66">		return aligner.getPairwiseSequenceAlignment();</span>
+	}
+	
+	private ProteinNeedlemanWunschAligner(ProteinSequence query,
+	        ProteinSequence subject, SubstitutionMatrix&lt;AminoAcid&gt; matrix,
+			float openGapPenalty, float extendGapPenalty) {
+<span class="fc" id="L72">		super(query, subject, matrix, openGapPenalty, extendGapPenalty,</span>
+<span class="fc" id="L73">				ResiduePairwiseStrategy.getAminoAcidStrategy());</span>
+<span class="fc" id="L74">	}</span>
+	
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

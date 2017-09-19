@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CommentSectionCodec.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.trace.chromat.scf.section</a> &gt; <span class="el_source">CommentSectionCodec.java</span></div><h1>CommentSectionCodec.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Sep 11, 2008
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.internal.trace.chromat.scf.section;
+
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
+
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.internal.trace.chromat.scf.header.SCFHeader;
+import org.jcvi.jillion.trace.chromat.Chromatogram;
+import org.jcvi.jillion.trace.chromat.ChromatogramFileVisitor;
+import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramBuilder;
+
+
+<span class="fc" id="L46">public class CommentSectionCodec implements SectionCodec {</span>
+
+    private static final String NULL =&quot;\0&quot;;
+    @Override
+    public long decode(DataInputStream in,long currentOffset, SCFHeader header, ScfChromatogramBuilder c)
+            throws SectionDecoderException {
+<span class="fc" id="L52">        long bytesToSkip = Math.max(0, header.getCommentOffset() - currentOffset);</span>
+        try {
+<span class="fc" id="L54">            IOUtil.blockingSkip(in,bytesToSkip);</span>
+<span class="fc" id="L55">            byte[] comments = new byte[header.getCommentSize()];</span>
+            try{
+<span class="fc" id="L57">            	IOUtil.blockingRead(in,comments, 0, comments.length);</span>
+<span class="nc" id="L58">            }catch(EOFException e){</span>
+<span class="nc" id="L59">            	throw new SectionDecoderException(&quot;could not read entire comment section&quot;,e);</span>
+<span class="fc" id="L60">            }</span>
+<span class="fc" id="L61">            Properties props = new Properties();</span>
+<span class="fc" id="L62">            props.load(new InputStreamReader(</span>
+                        new ByteArrayInputStream(comments),
+                        IOUtil.UTF_8));
+            //SCF has a \0 at the end of the comment section
+            //java will interpret this as an extra property
+            //remove it
+<span class="fc" id="L68">            props.remove(NULL);</span>
+<span class="fc" id="L69">            Map&lt;String,String&gt; map = new HashMap&lt;String, String&gt;();</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">            for(Entry&lt;Object,Object&gt; entry : props.entrySet()){</span>
+<span class="fc" id="L71">                map.put((String)entry.getKey(), (String) entry.getValue());</span>
+<span class="fc" id="L72">            }</span>
+<span class="fc" id="L73">            c.comments(map);</span>
+<span class="fc" id="L74">            return currentOffset+bytesToSkip+comments.length;</span>
+<span class="fc" id="L75">        } catch (IOException e) {</span>
+<span class="fc" id="L76">            throw new SectionDecoderException(&quot;error parsing Comment&quot;,e);</span>
+        }
+
+    }
+
+    @Override
+    public EncodedSection encode(Chromatogram c, SCFHeader header)
+            throws IOException {
+<span class="fc" id="L84">        Map&lt;String,String&gt; props =c.getComments();</span>
+<span class="pc bpc" id="L85" title="1 of 4 branches missed.">        if(props ==null|| props.isEmpty()){</span>
+<span class="fc" id="L86">            header.setCommentSize(0);</span>
+<span class="fc" id="L87">            return new EncodedSection(null,Section.COMMENTS);</span>
+        }
+<span class="fc" id="L89">        StringBuilder builder = new StringBuilder();</span>
+<span class="fc bfc" id="L90" title="All 2 branches covered.">        for(Entry&lt;String, String&gt; entry :props.entrySet()){</span>
+<span class="fc" id="L91">            builder.append(entry.getKey())</span>
+<span class="fc" id="L92">            .append('=')</span>
+<span class="fc" id="L93">            .append(entry.getValue())</span>
+<span class="fc" id="L94">            .append('\n');</span>
+<span class="fc" id="L95">        }</span>
+<span class="fc" id="L96">        builder.append(NULL);</span>
+<span class="fc" id="L97">        ByteBuffer buffer = ByteBuffer.wrap(builder.toString().getBytes(IOUtil.UTF_8));</span>
+<span class="fc" id="L98">        header.setCommentSize(builder.length());</span>
+<span class="fc" id="L99">        return new EncodedSection(buffer,Section.COMMENTS);</span>
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public long decode(DataInputStream in, long currentOffset,
+            SCFHeader header, ChromatogramFileVisitor c)
+            throws SectionDecoderException {
+<span class="fc" id="L109">        long bytesToSkip = header.getCommentOffset() - currentOffset;</span>
+        try {
+<span class="fc" id="L111">            IOUtil.blockingSkip(in,bytesToSkip);</span>
+<span class="fc" id="L112">            byte[] comments = new byte[header.getCommentSize()];</span>
+            try{
+<span class="fc" id="L114">            	IOUtil.blockingRead(in,comments, 0, comments.length);</span>
+<span class="nc" id="L115">            }catch(EOFException e){</span>
+<span class="nc" id="L116">            	throw new SectionDecoderException(&quot;could not read entire comment section&quot;,e);</span>
+<span class="fc" id="L117">            }</span>
+            
+<span class="fc" id="L119">            Properties props = new Properties();</span>
+<span class="fc" id="L120">            props.load(new InputStreamReader(</span>
+                        new ByteArrayInputStream(comments),
+                        IOUtil.UTF_8));
+            //SCF has a \0 at the end of the comment section
+            //java will interpret this as an extra property
+            //remove it
+<span class="fc" id="L126">            props.remove(NULL);</span>
+<span class="fc" id="L127">            Map&lt;String,String&gt; map = new HashMap&lt;String, String&gt;();</span>
+<span class="fc bfc" id="L128" title="All 2 branches covered.">            for(Entry&lt;Object,Object&gt; entry : props.entrySet()){</span>
+<span class="fc" id="L129">                map.put((String)entry.getKey(), (String) entry.getValue());</span>
+<span class="fc" id="L130">            }</span>
+<span class="fc" id="L131">            c.visitComments(map);</span>
+<span class="fc" id="L132">            return currentOffset+bytesToSkip+comments.length;</span>
+<span class="nc" id="L133">        } catch (IOException e) {</span>
+<span class="nc" id="L134">            throw new SectionDecoderException(&quot;error parsing Comment&quot;,e);</span>
+        }
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

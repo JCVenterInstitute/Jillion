@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>PrivateDataImpl.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.trace.chromat.scf</a> &gt; <span class="el_source">PrivateDataImpl.java</span></div><h1>PrivateDataImpl.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Sep 24, 2008
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.internal.trace.chromat.scf;
+
+import java.util.Arrays;
+
+import org.jcvi.jillion.trace.chromat.scf.PrivateData;
+
+/**
+ * PrivateData is a wrapper around a byte array
+ * for additional optional data in an scf file.
+ * The scf file specification puts no limitations
+ * on what this data can contain and is implementation 
+ * specific.  It is up to different scf writer implementations
+ * to decide what data to put here (if any) and how to encode it. 
+ * 
+ * @author dkatzel
+ *
+ */
+public final class PrivateDataImpl implements PrivateData {
+
+    private final byte[] data;
+
+<span class="fc" id="L47">    public PrivateDataImpl(byte[] data){</span>
+<span class="fc" id="L48">        this.data =Arrays.copyOf(data, data.length);</span>
+<span class="fc" id="L49">    }</span>
+
+    /**
+	 * {@inheritDoc}
+	 */
+    @Override
+	public byte[] getBytes() {
+    	//defensive copy
+<span class="fc" id="L57">        return Arrays.copyOf(data, data.length);</span>
+    }
+
+    /**
+	 * {@inheritDoc}
+	 */
+	@Override
+    public int hashCode() {
+<span class="fc" id="L65">        final int prime = 31;</span>
+<span class="fc" id="L66">        int result = 1;</span>
+<span class="fc" id="L67">        result = prime * result + Arrays.hashCode(data);</span>
+<span class="fc" id="L68">        return result;</span>
+    }
+
+    /**
+	 * {@inheritDoc}
+	 */
+	@Override
+    public boolean equals(Object obj) {
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        if (this == obj){</span>
+<span class="fc" id="L77">            return true;</span>
+        }
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        if (!(obj instanceof PrivateData)){</span>
+<span class="fc" id="L80">            return false;</span>
+        }
+<span class="fc" id="L82">        final PrivateData other = (PrivateData) obj;</span>
+<span class="fc" id="L83">        return</span>
+<span class="fc" id="L84">         Arrays.equals(data, other.getBytes());</span>
+
+    }
+
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>BlastHitImpl.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.experimental.align.blast</a> &gt; <span class="el_source">BlastHitImpl.java</span></div><h1>BlastHitImpl.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.experimental.align.blast;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+class BlastHitImpl implements BlastHit{
+
+	private final String queryId, subjectId, subjectDefline, programName, dbName;;
+
+	private final Integer queryLength, subjectLength;
+	//initialize to empty list
+	private final List&lt;Hsp&lt;?,?,?&gt;&gt; hsps;
+	
+<span class="fc" id="L36">	public BlastHitImpl(Builder builder) {</span>
+<span class="fc" id="L37">		this.queryId = builder.queryId;</span>
+<span class="fc" id="L38">		this.subjectId = builder.subjectId;</span>
+<span class="fc" id="L39">		this.queryLength = builder.queryLength;</span>
+<span class="fc" id="L40">		this.subjectLength = builder.subjectLength;</span>
+<span class="fc" id="L41">		this.subjectDefline = builder.subjectDeflineComment;</span>
+<span class="fc" id="L42">		this.programName = builder.programName;</span>
+<span class="fc" id="L43">		this.dbName = builder.dbName;</span>
+		
+		//defensive copy
+<span class="fc" id="L46">		ArrayList&lt;Hsp&lt;?,?,?&gt;&gt; sortedList = new ArrayList&lt;&gt;(builder.hsps);</span>
+<span class="fc" id="L47">		Collections.sort(sortedList, HspComparator.INSTANCE);</span>
+<span class="fc" id="L48">		this.hsps = Collections.unmodifiableList(sortedList);</span>
+<span class="fc" id="L49">	}</span>
+
+	@Override
+	public String getBlastDbName() {
+<span class="nc" id="L53">		return dbName;</span>
+	}
+
+	@Override
+	public String getBlastProgramName() {
+<span class="nc" id="L58">		return programName;</span>
+	}
+
+	@Override
+	public String getQueryId() {
+<span class="nc" id="L63">		return queryId;</span>
+	}
+
+	@Override
+	public String getSubjectId() {
+<span class="nc" id="L68">		return subjectId;</span>
+	}
+
+	@Override
+	public String getSubjectDefinition() {
+<span class="nc" id="L73">		return subjectDefline;</span>
+	}
+
+	@Override
+	public Integer getQueryLength() {
+<span class="nc" id="L78">		return queryLength;</span>
+	}
+
+	@Override
+	public Integer getSubjectLength() {
+<span class="nc" id="L83">		return subjectLength;</span>
+	}
+
+	@Override
+	public List&lt;Hsp&lt;?,?,?&gt;&gt; getHsps() {
+<span class="fc" id="L88">		return hsps;</span>
+	}
+	
+	
+
+	@Override
+	public int hashCode() {
+<span class="nc" id="L95">		final int prime = 31;</span>
+<span class="nc" id="L96">		int result = 1;</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">		result = prime * result + ((dbName == null) ? 0 : dbName.hashCode());</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">		result = prime * result + ((hsps == null) ? 0 : hsps.hashCode());</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">		result = prime * result</span>
+<span class="nc" id="L100">				+ ((programName == null) ? 0 : programName.hashCode());</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">		result = prime * result + ((queryId == null) ? 0 : queryId.hashCode());</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">		result = prime * result</span>
+<span class="nc" id="L103">				+ ((queryLength == null) ? 0 : queryLength.hashCode());</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">		result = prime</span>
+				* result
+				+ ((subjectDefline == null) ? 0 : subjectDefline
+<span class="nc" id="L107">						.hashCode());</span>
+<span class="nc bnc" id="L108" title="All 2 branches missed.">		result = prime * result</span>
+<span class="nc" id="L109">				+ ((subjectId == null) ? 0 : subjectId.hashCode());</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">		result = prime * result</span>
+<span class="nc" id="L111">				+ ((subjectLength == null) ? 0 : subjectLength.hashCode());</span>
+<span class="nc" id="L112">		return result;</span>
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">		if (this == obj) {</span>
+<span class="nc" id="L118">			return true;</span>
+		}
+<span class="pc bpc" id="L120" title="1 of 2 branches missed.">		if (obj == null) {</span>
+<span class="nc" id="L121">			return false;</span>
+		}
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">		if (!(obj instanceof BlastHitImpl)) {</span>
+<span class="nc" id="L124">			return false;</span>
+		}
+<span class="fc" id="L126">		BlastHitImpl other = (BlastHitImpl) obj;</span>
+<span class="pc bpc" id="L127" title="1 of 2 branches missed.">		if (dbName == null) {</span>
+<span class="pc bpc" id="L128" title="1 of 2 branches missed.">			if (other.dbName != null) {</span>
+<span class="nc" id="L129">				return false;</span>
+			}
+<span class="nc bnc" id="L131" title="All 2 branches missed.">		} else if (!dbName.equals(other.dbName)) {</span>
+<span class="nc" id="L132">			return false;</span>
+		}
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">		if (hsps == null) {</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">			if (other.hsps != null) {</span>
+<span class="nc" id="L136">				return false;</span>
+			}
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">		} else if (!hsps.equals(other.hsps)) {</span>
+<span class="nc" id="L139">			return false;</span>
+		}
+<span class="pc bpc" id="L141" title="1 of 2 branches missed.">		if (programName == null) {</span>
+<span class="pc bpc" id="L142" title="1 of 2 branches missed.">			if (other.programName != null) {</span>
+<span class="nc" id="L143">				return false;</span>
+			}
+<span class="nc bnc" id="L145" title="All 2 branches missed.">		} else if (!programName.equals(other.programName)) {</span>
+<span class="nc" id="L146">			return false;</span>
+		}
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">		if (queryId == null) {</span>
+<span class="nc bnc" id="L149" title="All 2 branches missed.">			if (other.queryId != null) {</span>
+<span class="nc" id="L150">				return false;</span>
+			}
+<span class="pc bpc" id="L152" title="1 of 2 branches missed.">		} else if (!queryId.equals(other.queryId)) {</span>
+<span class="nc" id="L153">			return false;</span>
+		}
+<span class="pc bpc" id="L155" title="1 of 2 branches missed.">		if (queryLength == null) {</span>
+<span class="pc bpc" id="L156" title="1 of 2 branches missed.">			if (other.queryLength != null) {</span>
+<span class="nc" id="L157">				return false;</span>
+			}
+<span class="nc bnc" id="L159" title="All 2 branches missed.">		} else if (!queryLength.equals(other.queryLength)) {</span>
+<span class="nc" id="L160">			return false;</span>
+		}
+<span class="pc bpc" id="L162" title="1 of 2 branches missed.">		if (subjectDefline == null) {</span>
+<span class="pc bpc" id="L163" title="1 of 2 branches missed.">			if (other.subjectDefline != null) {</span>
+<span class="nc" id="L164">				return false;</span>
+			}
+<span class="nc bnc" id="L166" title="All 2 branches missed.">		} else if (!subjectDefline.equals(other.subjectDefline)) {</span>
+<span class="nc" id="L167">			return false;</span>
+		}
+<span class="pc bpc" id="L169" title="1 of 2 branches missed.">		if (subjectId == null) {</span>
+<span class="nc bnc" id="L170" title="All 2 branches missed.">			if (other.subjectId != null) {</span>
+<span class="nc" id="L171">				return false;</span>
+			}
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">		} else if (!subjectId.equals(other.subjectId)) {</span>
+<span class="nc" id="L174">			return false;</span>
+		}
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">		if (subjectLength == null) {</span>
+<span class="pc bpc" id="L177" title="1 of 2 branches missed.">			if (other.subjectLength != null) {</span>
+<span class="nc" id="L178">				return false;</span>
+			}
+<span class="nc bnc" id="L180" title="All 2 branches missed.">		} else if (!subjectLength.equals(other.subjectLength)) {</span>
+<span class="nc" id="L181">			return false;</span>
+		}
+<span class="fc" id="L183">		return true;</span>
+	}
+
+
+
+<span class="pc" id="L188">	private static enum HspComparator implements Comparator&lt;Hsp&lt;?,?,?&gt;&gt; {</span>
+<span class="fc" id="L189">		INSTANCE;</span>
+		
+		@Override
+		public int compare(Hsp&lt;?,?,?&gt; o1, Hsp&lt;?,?,?&gt; o2) {
+			//the lower the evalue the better
+<span class="fc" id="L194">			int eCmp =o1.getEvalue().compareTo(o2.getEvalue());</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">			if(eCmp !=0){</span>
+<span class="fc" id="L196">				return eCmp;</span>
+			}
+			//the higher the value the better
+			
+			//NOTE the order of the comparison is switched
+			//so the higher values get a lower comparison			
+			
+<span class="fc" id="L203">			int bitScoreCmp= o2.getBitScore().compareTo(o1.getBitScore());</span>
+<span class="fc bfc" id="L204" title="All 2 branches covered.">			if(bitScoreCmp !=0){</span>
+<span class="fc" id="L205">				return bitScoreCmp;</span>
+			}
+			
+			//some blast parsers don't have hsps so they are null!
+<span class="fc" id="L209">			Float hsp1 = o1.getHspScore();</span>
+<span class="fc" id="L210">			Float hsp2 = o2.getHspScore();</span>
+<span class="pc bpc" id="L211" title="1 of 4 branches missed.">			if(hsp1 !=null &amp;&amp; hsp2 !=null){</span>
+<span class="fc" id="L212">				return Float.compare(hsp2, hsp1);</span>
+			}
+<span class="pc bpc" id="L214" title="2 of 4 branches missed.">			if(hsp1 ==null &amp;&amp; hsp2 ==null){</span>
+				//same
+<span class="fc" id="L216">				return 0;</span>
+			}
+			//I guess the ordering from here doesn't matter
+			//but must be consistent
+			//treat null as greater? 
+<span class="nc bnc" id="L221" title="All 2 branches missed.">			if(hsp1 ==null){</span>
+				//hsp2 is not null so hsp1 is better?
+<span class="nc" id="L223">				return 1;</span>
+			}
+<span class="nc" id="L225">			return -1;</span>
+			
+		}
+	}
+
+	public static class Builder{
+		private final String queryId, subjectId;
+
+		private String subjectDeflineComment;
+		
+		private Integer queryLength, subjectLength;
+		
+		private String programName, dbName;
+		//initialize to empty list
+<span class="fc" id="L239">		private List&lt;Hsp&lt;?,?,?&gt;&gt; hsps = new ArrayList&lt;&gt;();</span>
+		
+<span class="fc" id="L241">		public Builder(String queryId, String subjectId) {</span>
+<span class="fc" id="L242">			this.queryId = queryId;</span>
+<span class="fc" id="L243">			this.subjectId = subjectId;</span>
+<span class="fc" id="L244">		}</span>
+		
+		public Builder setQueryLength(int queryLength){
+<span class="pc bpc" id="L247" title="1 of 2 branches missed.">			if(queryLength &lt;0){</span>
+<span class="nc" id="L248">				throw new IllegalArgumentException(&quot;query length can not be negative&quot;);</span>
+			}
+<span class="fc" id="L250">			this.queryLength = queryLength;</span>
+<span class="fc" id="L251">			return this;</span>
+		}
+		
+		public Builder setSubjectDefline(String subjectDefline){
+<span class="fc" id="L255">			this.subjectDeflineComment = subjectDefline;</span>
+<span class="fc" id="L256">			return this;</span>
+		}
+		
+		public Builder setBlastProgramName(String programName){
+<span class="fc" id="L260">			this.programName = programName;</span>
+<span class="fc" id="L261">			return this;</span>
+		}
+		
+		public Builder setBlastDbName(String dbName){
+<span class="fc" id="L265">			this.dbName = dbName;</span>
+<span class="fc" id="L266">			return this;</span>
+		}
+		
+		
+		
+		
+		public Builder setSubjectLength(int subjectLength){
+<span class="nc bnc" id="L273" title="All 2 branches missed.">			if(subjectLength &lt;0){</span>
+<span class="nc" id="L274">				throw new IllegalArgumentException(&quot;subject length can not be negative&quot;);</span>
+			}
+<span class="nc" id="L276">			this.subjectLength = subjectLength;</span>
+<span class="nc" id="L277">			return this;</span>
+		}
+		
+		public Builder addHsp(Hsp&lt;?,?,?&gt; hsp){
+<span class="pc bpc" id="L281" title="1 of 2 branches missed.">			if(hsp ==null){</span>
+<span class="nc" id="L282">				throw new NullPointerException(&quot;hsp can not be null&quot;);</span>
+			}
+<span class="fc" id="L284">			hsps.add(hsp);</span>
+<span class="fc" id="L285">			return this;</span>
+		}
+		
+		
+		
+		
+		public BlastHit build(){
+<span class="fc" id="L292">			return new BlastHitImpl(this);</span>
+		}
+		
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

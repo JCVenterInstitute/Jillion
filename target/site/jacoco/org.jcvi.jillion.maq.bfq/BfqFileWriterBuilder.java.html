@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>BfqFileWriterBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.maq.bfq</a> &gt; <span class="el_source">BfqFileWriterBuilder.java</span></div><h1>BfqFileWriterBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.maq.bfq;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.Iterator;
+import java.util.zip.GZIPOutputStream;
+
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.trace.fastq.FastqRecord;
+import org.jcvi.jillion.trace.fastq.FastqWriter;
+
+/**
+ * {@code BfqFileWriterBuilder}
+ * is a builder class that will create
+ * a new {@link FastqWriter} instance
+ * that will write MAQ binary encoded fastq
+ * files ({@literal .bfq} files).
+ * 
+ * It is important to note that BFQ
+ * files only encode ACGT and N bases.
+ * Any bases that are not ACG or T are
+ * converted into N's and their quality values
+ * are set to 0.
+ * Furthermore, any quality values &gt;63 will be capped
+ * at 63.  This means that it is possible 
+ * that writing a {@link FastqRecord} to the built writer
+ * which either has quality values &gt; 63 or bases that are not
+ * ACG and T will not be written out the same. 
+ * @author dkatzel
+ *
+ */
+public class BfqFileWriterBuilder {
+	/**
+	 * Output file to write.
+	 */
+	private final File outputBfqFile;
+	/**
+	 * The ByteOrder to use, default to system
+	 * order if not set by user.
+	 */
+<span class="fc" id="L69">	private ByteOrder endian = ByteOrder.nativeOrder();</span>
+	
+	/**
+	 * Create a new {@link BfqFileWriterBuilder} instance
+	 * which will create a {@link FastqWriter}
+	 * that will write to the given output {@link File}.
+	 * @param outputBfqFile the output bfq file to write to; can not be null.
+	 * If this file already exists, then it will be overwritten.  If the file
+	 * or any parent directories do not yet exist,
+	 * then they will be created when {@link #build()}
+	 * is called.
+	 * @throws NullPointerException if outputBfqFile is null.
+	 */
+<span class="fc" id="L82">	public BfqFileWriterBuilder(File outputBfqFile) {</span>
+<span class="pc bpc" id="L83" title="1 of 2 branches missed.">		if(outputBfqFile == null){</span>
+<span class="nc" id="L84">			throw new NullPointerException(&quot;output bfq file can not be null&quot;);</span>
+		}
+		
+<span class="fc" id="L87">		this.outputBfqFile = outputBfqFile;</span>
+<span class="fc" id="L88">	}</span>
+	/**
+	 * Force the writer to use the given {@link ByteOrder}.
+	 * If this method is not used, then the system default
+	 * endian will be used.  MAQ uses the default
+	 * endian of the machine it is run on so if you wish
+	 * to use bfq files produced by this writer in MAQ
+	 * then you will need to make sure the endian
+	 * matches the endian the target machine MAQ will run on.
+	 * @param endian the endian to use; can not be null.
+	 * @return this
+	 * @throws NullPointerException if endian is null.
+	 */
+	public BfqFileWriterBuilder endian(ByteOrder endian){
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">		if(endian ==null){</span>
+<span class="nc" id="L103">			throw new NullPointerException(&quot;endian can not be null&quot;);</span>
+		}
+<span class="fc" id="L105">		this.endian = endian;</span>
+<span class="fc" id="L106">		return this;</span>
+	}
+	/**
+	 * Create a new {@link FastqWriter}
+	 * instance that will write Binary Fastq encoded data
+	 * to the given output file.
+	 * @return a new {@link FastqWriter}
+	 * instance will never be null.
+	 * @throws IOException if there is a problem creating the 
+	 * file or any parent directory or opening the file for writing.
+	 */
+	public FastqWriter build() throws IOException{
+<span class="fc" id="L118">		IOUtil.mkdirs(outputBfqFile.getParentFile());</span>
+		
+<span class="fc" id="L120">		return new BinaryFastqFileWriter(outputBfqFile, endian);</span>
+	}
+	
+	
+	private static class BinaryFastqFileWriter implements FastqWriter {
+		private final OutputStream out;
+		private final ByteOrder byteOrder;
+		
+<span class="fc" id="L128">		public BinaryFastqFileWriter(File bqf, ByteOrder endian) throws IOException{</span>
+<span class="fc" id="L129">			this.byteOrder = endian;</span>
+<span class="fc" id="L130">			this.out = new GZIPOutputStream(new BufferedOutputStream(new FileOutputStream(bqf)));</span>
+<span class="fc" id="L131">		}</span>
+		
+		@Override
+		public void close() throws IOException {
+<span class="fc" id="L135">			out.close();</span>
+<span class="fc" id="L136">		}</span>
+
+		@Override
+		public void write(FastqRecord record) throws IOException {
+<span class="fc" id="L140">			write(record.getId(), record.getNucleotideSequence(), record.getQualitySequence());</span>
+
+<span class="fc" id="L142">		}</span>
+
+		
+
+		@Override
+		public void write(String id, NucleotideSequence sequence,
+				QualitySequence qualities, String optionalComment)
+				throws IOException {
+			//ignore comment
+<span class="nc" id="L151">			write(id, sequence, qualities);</span>
+
+<span class="nc" id="L153">		}</span>
+		
+		@Override
+		public void write(String id, NucleotideSequence nucleotides,
+				QualitySequence qualities) throws IOException {
+<span class="fc" id="L158">			int nameLength = id.length() +1;</span>
+<span class="fc" id="L159">			int numBases = (int) nucleotides.getLength();</span>
+<span class="fc" id="L160">			int bufferSize = 8 + nameLength + numBases;</span>
+			
+<span class="fc" id="L162">			ByteBuffer buf = ByteBuffer.allocate(bufferSize);</span>
+<span class="fc" id="L163">			buf.order(byteOrder);</span>
+<span class="fc" id="L164">			buf.putInt(nameLength);</span>
+<span class="fc" id="L165">			buf.put(asNullTerminatedBytes(id, nameLength));</span>
+<span class="fc" id="L166">			buf.putInt(numBases);</span>
+<span class="fc" id="L167">			buf.put(encodeBasesAndQualities(nucleotides,qualities, numBases));</span>
+			
+<span class="fc" id="L169">			buf.flip();</span>
+<span class="fc" id="L170">			byte[] b = new byte[bufferSize];</span>
+<span class="fc" id="L171">			buf.get(b);</span>
+<span class="fc" id="L172">			out.write(b);</span>
+<span class="fc" id="L173">		}</span>
+
+		private byte[] encodeBasesAndQualities(
+				NucleotideSequence nucleotides, QualitySequence qualities,
+				int numBases) {
+			
+<span class="fc" id="L179">			Iterator&lt;Nucleotide&gt; basesIter = nucleotides.iterator();</span>
+<span class="fc" id="L180">			byte[] buffer = qualities.toArray();</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">			for(int i=0; i&lt; buffer.length; i++){</span>
+<span class="fc" id="L182">				Nucleotide n = basesIter.next();</span>
+<span class="fc" id="L183">				int v = encode(n);</span>
+<span class="fc bfc" id="L184" title="All 2 branches covered.">				if(v &gt;3){</span>
+					//follow Maq and make non ACGT
+					//0
+					//I guess we can tell by having 
+					//a quality value of 0?
+<span class="fc" id="L189">					buffer[i] = 0;</span>
+				}else{
+					//the byte value is the ACG or T
+					//and the qual value bit masked together
+					//plus the 
+<span class="fc" id="L194">					buffer[i] = (byte)Math.min(buffer[i], 63);</span>
+<span class="fc" id="L195">					buffer[i] |= v&lt;&lt;6;</span>
+				}
+			}
+<span class="fc" id="L198">			return buffer;</span>
+		}
+
+		private int encode(Nucleotide n) {
+<span class="pc bfc" id="L202" title="All 5 branches covered.">			switch(n){</span>
+<span class="fc" id="L203">			case Adenine : return 0;</span>
+<span class="fc" id="L204">			case Cytosine : return 1;</span>
+<span class="fc" id="L205">			case Guanine : return 2;</span>
+<span class="fc" id="L206">			case Thymine : return 3;</span>
+			default : 
+<span class="fc" id="L208">				return 4;</span>
+			}
+		}
+
+		private byte[] asNullTerminatedBytes(String id, int nameLength) {
+<span class="fc" id="L213">			byte[] b = new byte[nameLength];</span>
+<span class="fc" id="L214">			char[] cs = id.toCharArray();</span>
+<span class="fc bfc" id="L215" title="All 2 branches covered.">			for(int i=0; i&lt;cs.length; i++){</span>
+<span class="fc" id="L216">				b[i] = (byte)cs[i];</span>
+			}
+			//last byte should be initialized to 0
+<span class="fc" id="L219">			return b;</span>
+		}
+
+	}
+	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

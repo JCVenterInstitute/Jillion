@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SingleNucleotideSliceMap.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.util.slice</a> &gt; <span class="el_source">SingleNucleotideSliceMap.java</span></div><h1>SingleNucleotideSliceMap.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly.util.slice;
+
+import java.util.Iterator;
+
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+
+public class SingleNucleotideSliceMap implements VariableWidthSliceMap&lt;Nucleotide, NucleotideSequence&gt;{
+
+	private final SingleNucleotideSlice[] slices;
+	
+<span class="fc" id="L32">	private SingleNucleotideSliceMap(Builder builder){</span>
+<span class="fc" id="L33">		slices = new SingleNucleotideSlice[builder.builders.length];</span>
+		
+<span class="fc bfc" id="L35" title="All 2 branches covered.">		for(int i=0; i&lt;slices.length; i++){</span>
+<span class="fc" id="L36">			slices[i] = builder.builders[i].build();</span>
+		}
+<span class="fc" id="L38">	}</span>
+	
+	@Override
+	public SingleNucleotideSlice getSlice(int offset) {
+<span class="fc" id="L42">		return slices[offset];</span>
+	}
+
+	@Override
+	public int getConsensusLength() {
+<span class="fc" id="L47">		return slices.length;</span>
+	}
+	
+	
+	
+	@Override
+	public int getNumberOfSlices() {
+		//each slice is only 1 so number of slices matches length
+<span class="fc" id="L55">		return getConsensusLength();</span>
+	}
+
+
+
+	public static class Builder{
+		private final SingleNucleotideSlice.Builder[] builders;
+		
+<span class="fc" id="L63">		public Builder(NucleotideSequence gappedReference){</span>
+<span class="fc" id="L64">			builders = new SingleNucleotideSlice.Builder[(int)gappedReference.getLength()];</span>
+<span class="fc" id="L65">			Iterator&lt;Nucleotide&gt; iter = gappedReference.iterator();</span>
+<span class="fc" id="L66">			int i=0;</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">			while(iter.hasNext()){</span>
+<span class="fc" id="L68">				builders[i++] = new SingleNucleotideSlice.Builder(iter.next());</span>
+			}
+<span class="fc" id="L70">		}</span>
+		
+		public Builder add(int offset, NucleotideSequence seq){
+<span class="fc" id="L73">			int currentOffset = offset;</span>
+<span class="fc" id="L74">			Iterator&lt;Nucleotide&gt; iter = seq.iterator();</span>
+			
+<span class="fc bfc" id="L76" title="All 2 branches covered.">			while(iter.hasNext()){</span>
+<span class="fc" id="L77">				builders[currentOffset++].add(iter.next());</span>
+			}
+			
+<span class="fc" id="L80">			return this;</span>
+		}
+		
+		public SingleNucleotideSliceMap build(){
+<span class="fc" id="L84">			return new SingleNucleotideSliceMap(this);</span>
+		}
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

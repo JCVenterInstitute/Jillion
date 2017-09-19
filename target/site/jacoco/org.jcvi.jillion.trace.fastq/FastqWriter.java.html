@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>FastqWriter.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.trace.fastq</a> &gt; <span class="el_source">FastqWriter.java</span></div><h1>FastqWriter.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.trace.fastq;
+
+import java.io.BufferedWriter;
+import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.ThrowingStream;
+import org.jcvi.jillion.internal.core.util.Sneak;
+import org.jcvi.jillion.trace.fastq.FastqFileReader.Results;
+/**
+ * {@code FastqWriter} is an interface
+ * that handles writing out {@link FastqRecord}s.
+ * @author dkatzel
+ *
+ */
+public interface FastqWriter extends Closeable{
+	/**
+	 * Write the given {@link FastqRecord} out.
+	 * @param record the {@link FastqRecord} to write;
+	 * can not be null.
+	 * @throws IOException if there is a problem writing out the
+	 * {@link FastqRecord}.
+	 * @throws NullPointerException if record is null.
+	 */
+	void write(FastqRecord record) throws IOException;
+	
+	/**
+         * Write the given {@link FastqRecord} out.
+         * 
+         * @param record the {@link FastqRecord} to write;
+         * can not be null.
+         * 
+         * @param trimRange the {@link Range} to use to trim the nucleotide
+         * and quality sequences.  If the trimRange is null, then the whole
+         * sequence is written. 
+         * 
+         * @throws IOException if there is a problem writing out the
+         * {@link FastqRecord}.
+         * 
+         * @throws NullPointerException if record is null.
+         * 
+         * 
+         * @implNote The default implementation is given below, but 
+         *           implementations may override this method to provide
+         *           a more efficient version:
+         * 
+         * &lt;pre&gt;
+         * if(trimRange==null){
+         *     write(record);
+         *     return;
+         * }
+         * write(record.getId(), 
+                    record.getNucleotideSequence()
+                            .toBuilder()
+                            .trim(trimRange)
+                            .build(), 
+                    record.getQualitySequence()
+                            .toBuilder()
+                            .trim(trimRange)
+                            .build(),
+                 record.getComment());
+         * &lt;/pre&gt;
+         * 
+         * @since 5.2
+         */
+        default void write(FastqRecord record, Range trimRange) throws IOException{
+<span class="nc bnc" id="L96" title="All 2 branches missed.">            if(trimRange==null){</span>
+<span class="nc" id="L97">                write(record);</span>
+<span class="nc" id="L98">                return;</span>
+            }
+            
+<span class="nc" id="L101">            write(record.getId(), </span>
+<span class="nc" id="L102">                    record.getNucleotideSequence()</span>
+<span class="nc" id="L103">                            .toBuilder()</span>
+<span class="nc" id="L104">                            .trim(trimRange)</span>
+<span class="nc" id="L105">                            .turnOffDataCompression(true)</span>
+<span class="nc" id="L106">                            .build(), </span>
+<span class="nc" id="L107">                    record.getQualitySequence()</span>
+<span class="nc" id="L108">                            .toBuilder()</span>
+<span class="nc" id="L109">                            .trim(trimRange)</span>
+<span class="nc" id="L110">                            .turnOffDataCompression(true)</span>
+<span class="nc" id="L111">                            .build(),</span>
+<span class="nc" id="L112">                 record.getComment());</span>
+<span class="nc" id="L113">        }</span>
+	/**
+	 * Write the given id, {@link NucleotideSequence}
+	 * and {@link QualitySequence}
+	 * out as a {@link FastqRecord} without a comment.
+	 * @param id the id of the record to be written.
+	 * @param nucleotides the {@link NucleotideSequence} to be written.
+	 * @param qualities the {@link QualitySequence} to be written.
+	 * @throws IOException if there is a problem writing out the record.
+	 * @throws NullPointerException if either id, nucleotides or qualities are null.
+	 */
+	default void write(String id, NucleotideSequence nucleotides, QualitySequence qualities) throws IOException{
+<span class="nc" id="L125">	    write(id, nucleotides, qualities, null);</span>
+<span class="nc" id="L126">	}</span>
+	/**
+	 * Write the given id and {{@link NucleotideSequence}
+	 * and {@link QualitySequence}
+	 * out as a {@link FastqRecord} along with the optional comment.
+	 * @param id the id of the record to be written.
+	 * @param sequence the {@link NucleotideSequence} to be written.
+	 * @param qualities the {@link QualitySequence} to be written.
+	 * @param optionalComment comment to write, if this value is null,
+	 * then no comment will be written.
+	 * @throws IOException if there is a problem writing out the record.
+	 * @throws NullPointerException if either id, nucleotides or qualities are null.
+	 */
+	default void write(String id, NucleotideSequence sequence, QualitySequence qualities, String optionalComment) throws IOException{
+<span class="nc" id="L140">	    write(FastqRecordBuilder.create(id, sequence, qualities, optionalComment).build());</span>
+<span class="nc" id="L141">	}</span>
+	
+	/**
+	 * Create a new FastqWriter that will wrap the given fastqWriter and intercept any calls
+	 * to write() to allow the record to be transformed in some way.  For example,
+	 * to change the id or modify or trim the sequences; or even skip the record entirely.
+	 * @param delegate the writer to delegate the actual writing to this writer will be called
+	 * after each record is adapted.
+	 * 
+	 * @param adapter a Function that is given the input FastqRecord to be written
+	 * and will return a possibly new FastqRecord to actually write.  If the function
+	 * returns {@code null} then the record is skipped.
+	 * @return a new FastqWriter; will never be null.
+	 * @throws NullPointerException if any parameter is null.
+	 * 
+	 * @since 5.3
+	 */
+	public static FastqWriter adapt(FastqWriter delegate, Function&lt;FastqRecord, FastqRecord&gt; adapter){
+<span class="fc" id="L159">	    return new FastqWriterAdapter(delegate, adapter);</span>
+	}
+	/**
+	 * Write the contents of the given datastore to the given output file.  
+	 * The output fastq file written will use the same {@link FastqQualityCodec}
+	 * as was used in the input fastq of the datastore.
+	 * 
+	 * @apiNote this is the same as
+	 * {@link #write(FastqFileDataStore, File, FastqQualityCodec) write(datastore, outputFile, datastore.getQualityCodec())}.
+	 * 
+	 * @param datastore the {@link FastqFileDataStore} to write out; can not be null.
+	 * @param outputFile the output file to write the resulting Fastq file to.
+	 * 
+	 * @throws IOException if there are any problems writing out the file.
+	 * @throws NullPointerException if any parameter is null.
+	 * 
+	 * @since 5.3
+	 */
+	public static void write(FastqFileDataStore datastore, File outputFile) throws IOException{
+<span class="fc" id="L178">	    write(datastore, outputFile, datastore.getQualityCodec());</span>
+<span class="fc" id="L179">	}</span>
+	
+	/**
+         * Write the contents of the given datastore to the given output file.  
+         * The output fastq file written will use the same {@link FastqQualityCodec}
+         * as was used in the input fastq of the datastore.
+         * 
+         * 
+         * 
+         * @param datastore the {@link FastqDataStore} to write out; can not be null.
+         * @param outputFile the output file to write the resulting Fastq file to.
+         * @param coec the {@link FastqQualityCodec} to use when writing out the output fastq file.
+         * 
+         * @throws IOException if there are any problems writing out the file.
+         * @throws NullPointerException if any parameter is null.
+         * 
+         * @since 5.3
+         */
+	public static void write(FastqDataStore datastore, File outputFile, FastqQualityCodec codec) throws IOException{
+<span class="fc" id="L198">	    Objects.requireNonNull(datastore);</span>
+	    
+<span class="pc" id="L200">	    try(FastqWriter writer = new FastqWriterBuilder(outputFile)</span>
+<span class="fc" id="L201">	                                    .qualityCodec(codec)</span>
+<span class="fc" id="L202">	                                    .build();</span>
+	            
+<span class="fc" id="L204">	        ThrowingStream&lt;FastqRecord&gt; stream = datastore.records();</span>
+	            ){
+<span class="fc" id="L206">	        stream.throwingForEach(writer::write);</span>
+<span class="pc bpc" id="L207" title="12 of 16 branches missed.">	    }</span>
+<span class="fc" id="L208">	}</span>
+	
+	public static void copy(FastqParser in, OutputStream out) throws IOException{
+	    
+<span class="pc" id="L212">            try(Results results = FastqFileReader.read(in);</span>
+                    
+<span class="fc" id="L214">                    FastqWriter writer = new FastqWriterBuilder(out)</span>
+<span class="fc" id="L215">                                            .qualityCodec(results.getCodec())</span>
+<span class="fc" id="L216">                                            .build();</span>
+                    
+<span class="fc" id="L218">                ThrowingStream&lt;FastqRecord&gt; stream = results.records();</span>
+                    ){
+<span class="fc" id="L220">                stream.throwingForEach(writer::write);</span>
+<span class="pc bpc" id="L221" title="18 of 24 branches missed.">            }</span>
+<span class="fc" id="L222">	}</span>
+	
+    public static void copy(FastqParser in, FastqQualityCodec codec,
+            OutputStream out) throws IOException {
+
+<span class="pc" id="L227">        try (FastqWriter writer = new FastqWriterBuilder(out)</span>
+<span class="fc" id="L228">                                        .qualityCodec(codec).build()) {</span>
+<span class="fc" id="L229">            FastqFileReader.forEach(in, codec,  (id, fastq) -&gt; writer.write(fastq));</span>
+
+<span class="pc bpc" id="L231" title="6 of 8 branches missed.">        }</span>
+<span class="fc" id="L232">    }</span>
+    
+    public static void copy(FastqParser in, FastqQualityCodec codec,
+            File out) throws IOException {
+
+<span class="pc" id="L237">        try (FastqWriter writer = new FastqWriterBuilder(out)</span>
+<span class="fc" id="L238">                                        .qualityCodec(codec).build()) {</span>
+<span class="fc" id="L239">            FastqFileReader.forEach(in, codec,  (id, fastq) -&gt; writer.write(fastq));</span>
+
+<span class="pc bpc" id="L241" title="6 of 8 branches missed.">        }</span>
+<span class="fc" id="L242">    }</span>
+	public static void copy(FastqParser in, File out) throws IOException{
+            
+<span class="pc" id="L245">            try(Results results = FastqFileReader.read(in);</span>
+                    
+<span class="fc" id="L247">                    FastqWriter writer = new FastqWriterBuilder(out)</span>
+<span class="fc" id="L248">                                            .qualityCodec(results.getCodec())</span>
+<span class="fc" id="L249">                                            .build();</span>
+                    
+<span class="fc" id="L251">                ThrowingStream&lt;FastqRecord&gt; stream = results.records();</span>
+                    ){
+<span class="fc" id="L253">                stream.throwingForEach(writer::write);</span>
+<span class="pc bpc" id="L254" title="18 of 24 branches missed.">            }</span>
+<span class="fc" id="L255">        }</span>
+	
+	public static void copy(FastqParser in, OutputStream out, Predicate&lt;FastqRecord&gt; filter) throws IOException{
+            
+<span class="nc" id="L259">            try(Results results = FastqFileReader.read(in);</span>
+                    
+<span class="nc" id="L261">                    FastqWriter writer = new FastqWriterBuilder(out)</span>
+<span class="nc" id="L262">                                            .qualityCodec(results.getCodec())</span>
+<span class="nc" id="L263">                                            .build();</span>
+                    
+<span class="nc" id="L265">                ThrowingStream&lt;FastqRecord&gt; stream = results.records();</span>
+                    ){
+<span class="nc" id="L267">                stream.filter(filter)</span>
+<span class="nc" id="L268">                        .throwingForEach(writer::write);</span>
+<span class="nc bnc" id="L269" title="All 24 branches missed.">            }</span>
+<span class="nc" id="L270">        }</span>
+
+	public static void copy(FastqParser in, File out, Predicate&lt;FastqRecord&gt; filter) throws IOException{
+            
+<span class="pc" id="L274">            try(Results results = FastqFileReader.read(in);</span>
+                    
+<span class="fc" id="L276">                    FastqWriter writer = new FastqWriterBuilder(out)</span>
+<span class="fc" id="L277">                                            .qualityCodec(results.getCodec())</span>
+<span class="fc" id="L278">                                            .build();</span>
+                    
+<span class="fc" id="L280">                ThrowingStream&lt;FastqRecord&gt; stream = results.records();</span>
+                    ){
+<span class="fc" id="L282">                stream.filter(filter)</span>
+<span class="fc" id="L283">                        .throwingForEach(writer::write);</span>
+<span class="pc bpc" id="L284" title="18 of 24 branches missed.">            }</span>
+<span class="fc" id="L285">        }</span>
+	
+    public static void copy(FastqParser in, FastqQualityCodec codec,
+            OutputStream out, Predicate&lt;FastqRecord&gt; filter)
+            throws IOException {
+
+<span class="pc" id="L291">        try (FastqWriter writer = new FastqWriterBuilder(out)</span>
+<span class="fc" id="L292">                                        .qualityCodec(codec).build()) {</span>
+<span class="fc" id="L293">            FastqFileReader.forEach(in, codec, filter,  (id, record) -&gt; writer.write(record));</span>
+
+<span class="pc bpc" id="L295" title="6 of 8 branches missed.">        }</span>
+<span class="fc" id="L296">    }</span>
+
+    public static void copy(FastqParser in, FastqQualityCodec codec,
+            File out, Predicate&lt;FastqRecord&gt; filter)
+            throws IOException {
+
+<span class="pc" id="L302">        try (FastqWriter writer = new FastqWriterBuilder(out)</span>
+<span class="fc" id="L303">                                        .qualityCodec(codec).build()) {</span>
+<span class="fc" id="L304">            FastqFileReader.forEach(in, codec, filter,  (id, record) -&gt; writer.write(record));</span>
+
+<span class="pc bpc" id="L306" title="6 of 8 branches missed.">        }</span>
+<span class="fc" id="L307">    }</span>
+	
+	public static void copyById(FastqParser in, OutputStream out, Predicate&lt;String&gt; idFilter) throws IOException{
+	    
+<span class="pc" id="L311">	    try(BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(out))){</span>
+<span class="fc" id="L312">	        in.parse(new AbstractFastqVisitor() {</span>
+               
+<span class="fc" id="L314">	            StringBuilder builder = new StringBuilder(2000);</span>
+                    
+                    @Override
+                    public FastqRecordVisitor visitDefline(FastqVisitorCallback callback,
+                            String id, String optionalComment) {
+<span class="fc bfc" id="L319" title="All 2 branches covered.">                        if(idFilter.test(id)){</span>
+<span class="fc" id="L320">                            builder.setLength(0);</span>
+<span class="fc" id="L321">                            builder.append('@').append(id);</span>
+<span class="pc bpc" id="L322" title="1 of 2 branches missed.">                            if(optionalComment !=null){</span>
+<span class="nc" id="L323">                                builder.append(' ').append(optionalComment);</span>
+                            }
+<span class="fc" id="L325">                            builder.append('\n');</span>
+<span class="fc" id="L326">                            return new FastqRecordVisitor() {</span>
+                                
+                                @Override
+                                public void visitQualities(QualitySequence qualities) {
+<span class="nc" id="L330">                                    visitEncodedQualities(FastqQualityCodec.getDefault().encode(qualities));</span>
+                                    
+<span class="nc" id="L332">                                }</span>
+                                
+                                @Override
+                                public void visitNucleotides(String nucleotides) {
+<span class="fc" id="L336">                                    builder.append(nucleotides).append('\n');</span>
+                                    
+<span class="fc" id="L338">                                }</span>
+                                
+                                @Override
+                                public void visitEnd() {
+                                    try {
+<span class="fc" id="L343">                                        writer.write(builder.toString());</span>
+<span class="nc" id="L344">                                    } catch (IOException e) {</span>
+<span class="nc" id="L345">                                        Sneak.sneakyThrow(e);</span>
+<span class="fc" id="L346">                                    }</span>
+                                    
+<span class="fc" id="L348">                                }</span>
+                                
+                                @Override
+                                public void visitEncodedQualities(String encodedQualities) {
+<span class="fc" id="L352">                                    builder.append(&quot;+\n&quot;).append(encodedQualities).append('\n');</span>
+                                    
+<span class="fc" id="L354">                                }</span>
+                                
+                                @Override
+                                public void halted() {
+                                    // TODO Auto-generated method stub
+                                    
+<span class="nc" id="L360">                                }</span>
+                            };
+                        }
+<span class="fc" id="L363">                        return null;</span>
+                    }
+                    
+                  
+                });
+<span class="pc bpc" id="L368" title="6 of 8 branches missed.">	    }</span>
+<span class="fc" id="L369">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

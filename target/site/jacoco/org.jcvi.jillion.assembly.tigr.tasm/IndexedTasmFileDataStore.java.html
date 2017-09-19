@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>IndexedTasmFileDataStore.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.tigr.tasm</a> &gt; <span class="el_source">IndexedTasmFileDataStore.java</span></div><h1>IndexedTasmFileDataStore.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly.tigr.tasm;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import org.jcvi.jillion.assembly.tigr.tasm.TasmVisitor.TasmVisitorCallback.TasmVisitorMemento;
+import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreClosedException;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
+import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.datastore.DataStoreFilter;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.internal.core.datastore.DataStoreIterator;
+import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
+/**
+ * {@code IndexedTasmFileDataStore} is a {@link TasmContigDataStore}
+ * implementation that only stores the 
+ * {@link TasmVisitorMemento}s for the 
+ * contig ids in a tasm file 
+ * that match the given {@link DataStoreFilter}.
+ * This will keep memory usage small put require
+ * additional I/O opperations to seek
+ * to the specified location and reparse the contig during
+ * calls to {@link DataStore#get(String)}.
+ * @author dkatzel
+ *
+ */
+final class IndexedTasmFileDataStore implements TasmContigDataStore{
+
+	private final DataStore&lt;Long&gt; fullLengthSequenceDataStore;
+	private final TasmParser parser;
+	
+	private final Map&lt;String, TasmVisitorMemento&gt; mementos;
+	
+<span class="fc" id="L57">	private volatile boolean closed=false;</span>
+	
+	
+	public static TasmContigDataStore create(File tasmFile, DataStore&lt;Long&gt; fullLengthSequenceDataStore, DataStoreFilter filter) throws IOException{
+<span class="fc" id="L61">		IndexVisitor visitor = new IndexVisitor(filter);</span>
+<span class="fc" id="L62">		TasmParser parser = TasmFileParser.create(tasmFile);</span>
+<span class="fc" id="L63">		parser.parse(visitor);</span>
+<span class="fc" id="L64">		return new IndexedTasmFileDataStore(parser, fullLengthSequenceDataStore, visitor.mementos);</span>
+	}
+	
+	private IndexedTasmFileDataStore(TasmParser parser,
+			DataStore&lt;Long&gt; fullLengthSequenceDataStore,
+<span class="fc" id="L69">			Map&lt;String, TasmVisitorMemento&gt; mementos) {</span>
+<span class="fc" id="L70">		this.parser = parser;</span>
+<span class="fc" id="L71">		this.fullLengthSequenceDataStore = fullLengthSequenceDataStore;</span>
+<span class="fc" id="L72">		this.mementos = mementos;</span>
+<span class="fc" id="L73">	}</span>
+
+	private void checkNotYetClosed(){
+<span class="pc bpc" id="L76" title="1 of 2 branches missed.">		if(closed){</span>
+<span class="nc" id="L77">			throw new DataStoreClosedException(&quot;closed&quot;);</span>
+		}
+<span class="fc" id="L79">	}</span>
+
+	@Override
+	public void close() throws IOException {
+<span class="nc" id="L83">		closed=true;</span>
+<span class="nc" id="L84">		mementos.clear();</span>
+<span class="nc" id="L85">	}</span>
+
+
+
+	@Override
+	public StreamingIterator&lt;String&gt; idIterator() throws DataStoreException {
+<span class="fc" id="L91">		return DataStoreStreamingIterator.create(this, mementos.keySet().iterator());</span>
+	}
+
+
+
+	@Override
+	public TasmContig get(String id) throws DataStoreException {
+<span class="fc" id="L98">		checkNotYetClosed();</span>
+<span class="fc" id="L99">		TasmVisitorMemento memento = mementos.get(id);</span>
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">		if(memento==null){</span>
+<span class="nc" id="L101">			return null;</span>
+		}
+<span class="fc" id="L103">		SingleContigVisitor visitor = new SingleContigVisitor();</span>
+		try {
+<span class="fc" id="L105">			parser.parse(visitor, memento);</span>
+<span class="fc" id="L106">			return visitor.contig;</span>
+<span class="nc" id="L107">		} catch (IOException e) {</span>
+<span class="nc" id="L108">			throw new DataStoreException(&quot;error parsing contig &quot; + id, e);</span>
+		}
+	}
+
+
+
+	@Override
+	public boolean contains(String id) throws DataStoreException {
+<span class="nc" id="L116">		checkNotYetClosed();		</span>
+<span class="nc" id="L117">		return mementos.containsKey(id);</span>
+	}
+
+
+
+	@Override
+	public long getNumberOfRecords() throws DataStoreException {
+<span class="fc" id="L124">		checkNotYetClosed();	</span>
+<span class="fc" id="L125">		return mementos.size();</span>
+	}
+
+
+
+	@Override
+	public boolean isClosed() {
+<span class="fc" id="L132">		return closed;</span>
+	}
+
+
+
+	@Override
+	public StreamingIterator&lt;TasmContig&gt; iterator() throws DataStoreException {
+<span class="fc" id="L139">		return new DataStoreIterator&lt;TasmContig&gt;(this);</span>
+	}
+
+
+
+	@Override
+	public StreamingIterator&lt;DataStoreEntry&lt;TasmContig&gt;&gt; entryIterator()
+			throws DataStoreException {
+<span class="nc" id="L147">		 StreamingIterator&lt;DataStoreEntry&lt;TasmContig&gt;&gt; iter = new StreamingIterator&lt;DataStoreEntry&lt;TasmContig&gt;&gt;(){</span>
+<span class="nc" id="L148">    		 StreamingIterator&lt;TasmContig&gt; delegate = iterator();</span>
+			@Override
+			public boolean hasNext() {
+<span class="nc" id="L151">				return delegate.hasNext();</span>
+			}
+
+			@Override
+			public void close() {
+<span class="nc" id="L156">				delegate.close();</span>
+<span class="nc" id="L157">			}</span>
+
+			@Override
+			public DataStoreEntry&lt;TasmContig&gt; next() {
+<span class="nc" id="L161">				TasmContig trace = delegate.next();</span>
+<span class="nc" id="L162">				return new DataStoreEntry&lt;TasmContig&gt;(trace.getId(), trace);</span>
+			}
+
+			@Override
+			public void remove() {
+<span class="nc" id="L167">				throw new UnsupportedOperationException();</span>
+			}
+    		 
+    	 };
+<span class="nc" id="L171">		return DataStoreStreamingIterator.create(this, iter);</span>
+	}
+
+
+
+	private static final class IndexVisitor implements TasmVisitor{
+		private final DataStoreFilter filter;
+<span class="fc" id="L178">		private final Map&lt;String, TasmVisitorMemento&gt; mementos = new LinkedHashMap&lt;String, TasmVisitorMemento&gt;();</span>
+		
+<span class="fc" id="L180">		public IndexVisitor(DataStoreFilter filter) {</span>
+<span class="fc" id="L181">			this.filter = filter;</span>
+<span class="fc" id="L182">		}</span>
+
+		@Override
+		public TasmContigVisitor visitContig(
+				TasmVisitorCallback callback, String contigId) {
+<span class="pc bpc" id="L187" title="1 of 2 branches missed.">			if(filter.accept(contigId)){</span>
+<span class="pc bpc" id="L188" title="1 of 2 branches missed.">				if(!callback.canCreateMemento()){</span>
+<span class="nc" id="L189">					throw new IllegalStateException(&quot;tasm parser must be able to create mementos&quot;);</span>
+				}
+<span class="fc" id="L191">				mementos.put(contigId, callback.createMemento());</span>
+			}
+			//always skip
+<span class="fc" id="L194">			return null;</span>
+		}
+
+		@Override
+		public void halted() {
+			//no-op
+			
+<span class="nc" id="L201">		}</span>
+
+		@Override
+		public void visitEnd() {
+			//no-op
+			
+<span class="fc" id="L207">		}</span>
+		
+	}
+
+<span class="fc" id="L211">	private class SingleContigVisitor implements TasmVisitor{</span>
+		private TasmContig contig;
+		@Override
+		public TasmContigVisitor visitContig(
+				final TasmVisitorCallback callback, String contigId) {
+			//assume first visit is the one we want
+<span class="fc" id="L217">			return new AbstractTasmContigBuilderVisitor(contigId, fullLengthSequenceDataStore) {</span>
+				
+				@Override
+				protected void visitRecord(TasmContigBuilder builder) {
+<span class="fc" id="L221">					contig= builder.build();</span>
+<span class="fc" id="L222">					callback.halt();</span>
+<span class="fc" id="L223">				}</span>
+			};
+		}
+
+		@Override
+		public void halted() {
+			//no-op
+			
+<span class="nc" id="L231">		}</span>
+
+		@Override
+		public void visitEnd() {
+			//no-op
+			
+<span class="fc" id="L237">		}</span>
+		
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

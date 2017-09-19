@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ReadInfo.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly</a> &gt; <span class="el_source">ReadInfo.java</span></div><h1>ReadInfo.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly;
+
+import org.jcvi.jillion.core.Range;
+/**
+ * {@code ReadInfo} is a value
+ * object that contains a read's 
+ * trim information.
+ * @author dkatzel
+ *
+ */
+public class ReadInfo{
+
+	private final Range validRange;
+	private final int fullLength;
+	
+	/**
+	 * Create a new {@link ReadInfo}.
+	 * @param validRange the (ungapped) valid range for this
+	 * read in fulllength coordinates; can not be null.
+	 * @param fullLength the ungapped full length of this read
+	 * including any portions that have been trimmed off;
+	 * must be &amp;ge; 0.
+	 * @throws NullPointerException if validRange is null
+	 * @throws IllegalArgumentException if {@code fullLength &lt; 0 } or
+	 * if  {@code fullLength &lt; validRange.getEnd()} 
+	 */
+<span class="fc" id="L47">	public ReadInfo(Range validRange, int fullLength) {</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">		if(validRange ==null){</span>
+<span class="fc" id="L49">			throw new NullPointerException(&quot;valid range can not be null&quot;);</span>
+		}
+<span class="fc bfc" id="L51" title="All 2 branches covered.">		if(fullLength &lt; 0){</span>
+<span class="fc" id="L52">			throw new IllegalArgumentException(&quot;full length must be &gt;=0&quot;);</span>
+		}
+<span class="fc bfc" id="L54" title="All 2 branches covered.">		if(fullLength &lt;validRange.getEnd()){</span>
+<span class="fc" id="L55">			throw new IllegalArgumentException(&quot;full length must be &gt;=validRange.getEnd()&quot;);</span>
+		}
+<span class="fc" id="L57">		this.validRange = validRange;</span>
+<span class="fc" id="L58">		this.fullLength = fullLength;</span>
+<span class="fc" id="L59">	}</span>
+	/**
+     * Get the valid {@link Range} which is ungapped &quot;good&quot; part of the basecalls.  Depending
+     * on what this {@link org.jcvi.jillion.core.residue.nt.NucleotideSequence} represents can change the 
+     * meaning of valid range some possible meanings include:
+     * &lt;ul&gt;
+     * &lt;li&gt;the high quality region&lt;li&gt;
+     * &lt;li&gt;the region that aligns to a reference&lt;/li&gt;
+     * &lt;li&gt;the region used to compute assembly consensus&lt;/li&gt;
+     * &lt;/ul&gt;
+     * The maximum possible valid range length is the length
+     * returned by {@link #getUngappedFullLength()}.
+     * @return a Range with a minimum (zero-based) begin value of 0 
+     * and a max (zero-based) end value of {@link #getUngappedFullLength()} -1.
+     */
+	public Range getValidRange() {
+<span class="fc" id="L75">		return validRange;</span>
+	}
+	/**
+     * Get the ungapped full length of this read &lt;strong&gt;including bases outside of the valid range&lt;/strong&gt;.
+     * If this read has any portion of the read that was trimmed off because of bad quality, primer/vector sequence
+     * or because it did not fully align to the reference then those portions still counted by this method.
+     * @return the full length including bases outside of the valid range; always positive.
+     */
+	public int getUngappedFullLength() {
+<span class="fc" id="L84">		return fullLength;</span>
+	}
+
+	@Override
+	public int hashCode() {
+<span class="fc" id="L89">		final int prime = 31;</span>
+<span class="fc" id="L90">		int result = 1;</span>
+<span class="fc" id="L91">		result = prime * result + fullLength;</span>
+<span class="fc" id="L92">		result = prime * result	+ validRange.hashCode();</span>
+<span class="fc" id="L93">		return result;</span>
+	}
+	/**
+	 *Two ReadInfos are equal if they have the same
+	 *valid range and full length values.
+	 */
+	@Override
+	public boolean equals(Object obj) {
+<span class="fc bfc" id="L101" title="All 2 branches covered.">		if (this == obj) {</span>
+<span class="fc" id="L102">			return true;</span>
+		}
+<span class="fc bfc" id="L104" title="All 2 branches covered.">		if (obj == null) {</span>
+<span class="fc" id="L105">			return false;</span>
+		}
+<span class="fc bfc" id="L107" title="All 2 branches covered.">		if (getClass() != obj.getClass()) {</span>
+<span class="fc" id="L108">			return false;</span>
+		}
+<span class="fc" id="L110">		ReadInfo other = (ReadInfo) obj;</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">		if (fullLength != other.fullLength) {</span>
+<span class="fc" id="L112">			return false;</span>
+		}
+<span class="fc bfc" id="L114" title="All 2 branches covered.">		if (!validRange.equals(other.validRange)) {</span>
+<span class="fc" id="L115">			return false;</span>
+		}
+<span class="fc" id="L117">		return true;</span>
+	}
+	@Override
+	public String toString() {
+<span class="nc" id="L121">		return &quot;ReadInfo [validRange=&quot; + validRange + &quot;, fullLength=&quot;</span>
+				+ fullLength + &quot;]&quot;;
+	}
+	
+	
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

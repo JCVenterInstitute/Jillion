@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AbstractPhdVisitor.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.consed.phd</a> &gt; <span class="el_source">AbstractPhdVisitor.java</span></div><h1>AbstractPhdVisitor.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly.consed.phd;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.pos.PositionSequence;
+import org.jcvi.jillion.core.pos.PositionSequenceBuilder;
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+/**
+ * {@code AbstractPhdVisitor} is an abstract
+ * implementation of {@link PhdVisitor}
+ * that collects all the information about a single
+ * phd record.
+ * Subclasses are required to implement the abstract
+ * method visitPhd(...)
+ * which will be called when all the information has been collected
+ * (when {@link #visitEnd()} is called).
+ * 
+ * @author dkatzel
+ *
+ */
+public abstract class AbstractPhdVisitor implements PhdVisitor{
+
+	private final String id;
+	private final Integer version;
+	
+<span class="fc" id="L56">	private final Map&lt;String, String&gt; comments = new LinkedHashMap&lt;String, String&gt;();</span>
+	
+<span class="fc" id="L58">	private final NucleotideSequenceBuilder sequenceBuilder = new NucleotideSequenceBuilder(1024);</span>
+<span class="fc" id="L59">	private final QualitySequenceBuilder qualityBuilder = new QualitySequenceBuilder(1024);</span>
+<span class="fc" id="L60">	private final PositionSequenceBuilder positionBuilder = new PositionSequenceBuilder(1024);</span>
+	
+<span class="fc" id="L62">	private final List&lt;PhdWholeReadItem&gt; wholeReadItems = new ArrayList&lt;PhdWholeReadItem&gt;();</span>
+	
+<span class="fc" id="L64">	private final List&lt;PhdReadTag&gt; readTags = new ArrayList&lt;PhdReadTag&gt;();</span>
+	
+	
+	
+<span class="fc" id="L68">	public AbstractPhdVisitor(String id, Integer version){</span>
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">		if(id ==null){</span>
+<span class="nc" id="L70">			throw new NullPointerException(&quot;id can not be null&quot;);</span>
+		}
+<span class="pc bpc" id="L72" title="1 of 4 branches missed.">		if(version !=null &amp;&amp; version.intValue() &lt; 1){</span>
+<span class="nc" id="L73">			throw new IllegalArgumentException(&quot;version must be &gt;=1 : &quot; + version);</span>
+		}
+<span class="fc" id="L75">		this.id = id;</span>
+<span class="fc" id="L76">		this.version = version;</span>
+<span class="fc" id="L77">	}</span>
+
+	@Override
+	public final void visitComments(Map&lt;String, String&gt; comments) {
+<span class="fc" id="L81">		this.comments.putAll(comments);		</span>
+<span class="fc" id="L82">	}</span>
+
+	
+
+	@Override
+	public final void visitBasecall(Nucleotide base, PhredQuality quality,
+			Integer tracePosition) {
+<span class="fc" id="L89">		sequenceBuilder.append(base);</span>
+<span class="fc" id="L90">		qualityBuilder.append(quality);</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">		if(tracePosition !=null){</span>
+<span class="fc" id="L92">			positionBuilder.append(tracePosition.intValue());</span>
+		}
+<span class="fc" id="L94">	}</span>
+
+	@Override
+	public final PhdReadTagVisitor visitReadTag() {
+<span class="fc" id="L98">		return new AbstractPhdReadTagVisitor(){</span>
+
+			@Override
+			protected void visitPhdReadTag(String type, String source,
+					Range ungappedRange, Date date, String comment,
+					String freeFormData) {
+<span class="fc" id="L104">				readTags.add(new DefaultPhdReadTag(type, source, ungappedRange, date, comment, freeFormData));</span>
+				
+<span class="fc" id="L106">			}</span>
+			
+		};
+	}
+
+	@Override
+	public final PhdWholeReadItemVisitor visitWholeReadItem() {
+<span class="fc" id="L113">		return new PhdWholeReadItemVisitor() {</span>
+<span class="fc" id="L114">			List&lt;String&gt; lines = new ArrayList&lt;String&gt;();</span>
+			@Override
+			public void visitLine(String line) {
+<span class="fc" id="L117">				lines.add(line);				</span>
+<span class="fc" id="L118">			}</span>
+			
+			@Override
+			public void visitEnd() {
+<span class="fc" id="L122">				wholeReadItems.add(new DefaultPhdWholeReadItem(lines));</span>
+				
+<span class="fc" id="L124">			}</span>
+			
+			@Override
+			public void halted() {
+				//no-op				
+<span class="nc" id="L129">			}</span>
+		};
+	}
+
+	@Override
+	public final void visitEnd() {
+		final PositionSequence peaks;
+		//no peaks
+<span class="fc bfc" id="L137" title="All 2 branches covered.">		if(positionBuilder.getLength() ==0){</span>
+<span class="fc" id="L138">			peaks =null;</span>
+		}else{
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">			if( positionBuilder.getLength() != sequenceBuilder.getLength()){</span>
+<span class="nc" id="L141">				throw new IllegalStateException(&quot;not all basecalls have positions set&quot;);</span>
+			}
+<span class="fc" id="L143">			peaks = positionBuilder.build();</span>
+		}
+<span class="fc" id="L145">		visitPhd(id, version, </span>
+<span class="fc" id="L146">				sequenceBuilder.build(), qualityBuilder.build(), peaks,</span>
+				comments, wholeReadItems,readTags);
+		
+<span class="fc" id="L149">	}</span>
+
+	protected abstract void visitPhd(String id, Integer version,
+			NucleotideSequence basescalls, QualitySequence qualities, PositionSequence positions,
+			Map&lt;String,String&gt; comments,
+			List&lt;PhdWholeReadItem&gt; wholeReadItems,
+			List&lt;PhdReadTag&gt; readTags);
+	
+	/**
+	 * Ignored by default, please
+	 * override to get halted notification.
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void halted() {
+		//no-op		
+<span class="nc" id="L165">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

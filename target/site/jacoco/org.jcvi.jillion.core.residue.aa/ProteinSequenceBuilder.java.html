@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ProteinSequenceBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.core.residue.aa</a> &gt; <span class="el_source">ProteinSequenceBuilder.java</span></div><h1>ProteinSequenceBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.core.residue.aa;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
+import org.jcvi.jillion.internal.core.util.GrowableByteArray;
+/**
+ * {@code ProteinSequenceBuilder}  is a way to
+ * construct a {@link ProteinSequence}
+ * similar to how a {@link StringBuilder} can be used
+ * to create a String.  The contents of the {@link ProteinSequence}
+ * can be changed by method calls.  This class
+ * is not thread safe.
+ * @author dkatzel
+ *
+ *
+ */
+public final class ProteinSequenceBuilder implements ResidueSequenceBuilder&lt;AminoAcid,ProteinSequence&gt;{
+<span class="fc" id="L42">	private static final AminoAcid[] AMINO_ACID_VALUES = AminoAcid.values();</span>
+<span class="fc" id="L43">	private static final byte GAP_ORDINAL = AminoAcid.Gap.getOrdinalAsByte();</span>
+	
+	private static final int DEFAULT_CAPACITY = 20;
+	private GrowableByteArray builder;
+<span class="pc" id="L47">	private int numberOfGaps=0;</span>
+	 /**
+     * Creates a new ProteinSequenceBuilder instance
+     * which currently contains no amino acids.
+     */
+<span class="fc" id="L52">	public ProteinSequenceBuilder(){</span>
+<span class="fc" id="L53">		builder = new GrowableByteArray(DEFAULT_CAPACITY);</span>
+<span class="fc" id="L54">	}</span>
+	/**
+     * Creates a new ProteinSequenceBuilder instance
+     * which currently contains no amino acids
+     * but is expected to be eventually take up
+     * the given capacity.
+     * @param initialCapacity the initial capacity 
+     * of the array backing the {@link ProteinSequence}
+     * (will be grown if sequence gets too large)
+     * @throws IllegalArgumentException if initialCapacity &amp;lt; 1.
+     */
+<span class="fc" id="L65">	public ProteinSequenceBuilder(int initialCapacity){</span>
+<span class="fc" id="L66">		builder = new GrowableByteArray(initialCapacity);</span>
+<span class="fc" id="L67">	}</span>
+	/**
+     * Creates a new ProteinSequenceBuilder instance
+     * which currently contains the given sequence.
+     *  Any whitespace in the input string will be ignored.
+     * @param sequence the initial nucleotide sequence.
+     * @throws NullPointerException if sequence is null.
+     * @throws IllegalArgumentException if any non-whitespace
+     * in character in the sequence can not be converted
+     * into an {@link AminoAcid}.
+     */
+<span class="fc" id="L78">	public ProteinSequenceBuilder(CharSequence sequence){</span>
+<span class="fc" id="L79">		builder = new GrowableByteArray(sequence.length());</span>
+<span class="fc" id="L80">		append(parse(sequence.toString()));</span>
+<span class="fc" id="L81">	}</span>
+	/**
+     * Creates a new ProteinSequenceBuilder instance
+     * which currently contains the given sequence.
+     * @param sequence the initial protein sequence.
+     * @throws NullPointerException if sequence is null.
+     */
+<span class="fc" id="L88">	public ProteinSequenceBuilder(ProteinSequence sequence){</span>
+<span class="fc" id="L89">		builder = new GrowableByteArray((int)sequence.getLength());</span>
+<span class="fc" id="L90">		append(sequence);</span>
+<span class="fc" id="L91">	}</span>
+	
+    /**
+     * Creates a new ProteinSequenceBuilder instance which currently contains
+     * the given sequence.
+     * 
+     * @param sequence
+     *            the initial protein sequence.
+     *            
+     *@param range the subrange to use
+     * @throws NullPointerException
+     *             if sequence is null.
+     */
+<span class="nc" id="L104">    public ProteinSequenceBuilder(ProteinSequence sequence, Range range) {</span>
+<span class="nc" id="L105">        builder = new GrowableByteArray((int) range.getLength());</span>
+<span class="nc" id="L106">        Iterator&lt;AminoAcid&gt; iter = sequence.iterator(range);</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">        while(iter.hasNext()){</span>
+<span class="nc" id="L108">            append(iter.next());</span>
+        }
+<span class="nc" id="L110">    }</span>
+<span class="fc" id="L111">	private ProteinSequenceBuilder(ProteinSequenceBuilder copy){</span>
+<span class="fc" id="L112">		builder = copy.builder.copy();</span>
+<span class="fc" id="L113">	}</span>
+	
+	private static List&lt;AminoAcid&gt; parse(String aminoAcids){
+<span class="fc" id="L116">		List&lt;AminoAcid&gt; result = new ArrayList&lt;AminoAcid&gt;(aminoAcids.length());</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">        for(int i=0; i&lt;aminoAcids.length(); i++){</span>
+<span class="fc" id="L118">            char charAt = aminoAcids.charAt(i);</span>
+<span class="fc bfc" id="L119" title="All 2 branches covered.">            if(!Character.isWhitespace(charAt)){</span>
+<span class="fc" id="L120">            	result.add(AminoAcid.parse(charAt));</span>
+            }
+        }
+<span class="fc" id="L123">        return result;</span>
+	}
+	/**
+     * Appends the given residue to the end
+     * of the builder's mutable sequence.
+     * @param residue a single {@link AminoAcid} to be appended
+     * to the end our builder.
+     * @throws NullPointerException if residue is null.
+     */
+	@Override
+	public ProteinSequenceBuilder append(AminoAcid residue) {
+<span class="fc bfc" id="L134" title="All 2 branches covered.">		if(residue==AminoAcid.Gap){</span>
+<span class="fc" id="L135">			numberOfGaps++;</span>
+		}
+<span class="fc" id="L137">		builder.append(residue.getOrdinalAsByte());</span>
+<span class="fc" id="L138">		return this;</span>
+	}
+
+	
+	@Override
+	public ProteinSequenceBuilder clear() {
+<span class="fc" id="L144">		numberOfGaps=0;</span>
+<span class="fc" id="L145">		builder.clear();</span>
+<span class="fc" id="L146">		return this;</span>
+	}
+	/**
+     * Appends the given sequence to the end
+     * of the builder's mutable sequence.
+     * @param sequence the protein sequence to be appended
+     * to the end our builder.
+     * @throws NullPointerException if sequence is null.
+     */
+	@Override
+	public ProteinSequenceBuilder append(Iterable&lt;AminoAcid&gt; sequence) {
+<span class="fc bfc" id="L157" title="All 2 branches covered.">		for(AminoAcid aa : sequence){</span>
+<span class="fc" id="L158">			append(aa);</span>
+<span class="fc" id="L159">		}</span>
+<span class="fc" id="L160">		return this;</span>
+	}
+
+	/**
+     * Appends the current contents of the given {@link ProteinSequenceBuilder} to the end
+     * of the builder's mutable sequence.  Any further modifications to the passed in builder
+     * will not be reflected in this builder.  This is an equivalent but more efficient way operation
+     * as {@code this.append(otherBuilder.build())}
+     * 
+     * @param otherBuilder the {@link ProteinSequenceBuilder} whose current
+     * nucleotides are to be appended.
+     * 
+     * @return this.
+     * 
+     * @throws NullPointerException if otherBuilder is null.
+     */
+	public ProteinSequenceBuilder append(
+			ProteinSequenceBuilder otherBuilder) {
+<span class="fc" id="L178">		builder.append(otherBuilder.builder.toArray());</span>
+<span class="fc" id="L179">		return this;</span>
+	}
+
+	@Override
+	public ProteinSequenceBuilder append(
+			String sequence) {
+<span class="fc" id="L185">		return append(parse(sequence));</span>
+	}
+
+	@Override
+	public ProteinSequenceBuilder insert(
+			int offset, String sequence) {
+<span class="fc" id="L191">		List&lt;AminoAcid&gt; list = parse(sequence);</span>
+<span class="fc" id="L192">		byte[] array = new byte[list.size()];</span>
+<span class="fc" id="L193">		int i=0;</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">		for(AminoAcid aa :list){</span>
+<span class="pc bpc" id="L195" title="1 of 2 branches missed.">			if(aa == AminoAcid.Gap){</span>
+<span class="nc" id="L196">				numberOfGaps++;</span>
+			}
+<span class="fc" id="L198">			array[i]=(aa.getOrdinalAsByte());</span>
+<span class="fc" id="L199">			i++;</span>
+<span class="fc" id="L200">		}		</span>
+<span class="fc" id="L201">		builder.insert(offset, array);</span>
+<span class="fc" id="L202">		return this;</span>
+	}
+
+	
+	@Override
+	public AminoAcid get(int offset) {
+<span class="fc" id="L208">		return AMINO_ACID_VALUES[builder.get(offset)];</span>
+	}
+
+	@Override
+	public long getLength() {
+<span class="fc" id="L213">		return builder.getCurrentLength();</span>
+	}
+	@Override
+	public long getUngappedLength() {
+<span class="fc" id="L217">		return builder.getCurrentLength() - numberOfGaps;</span>
+	}
+	
+	@Override
+	public ProteinSequenceBuilder replace(
+			int offset, AminoAcid replacement) {
+<span class="pc bpc" id="L223" title="1 of 2 branches missed.">		if(AMINO_ACID_VALUES[builder.get(offset)] == AminoAcid.Gap){</span>
+<span class="nc" id="L224">			numberOfGaps--;			</span>
+		}
+<span class="pc bpc" id="L226" title="1 of 2 branches missed.">		if(replacement == AminoAcid.Gap){</span>
+<span class="nc" id="L227">			numberOfGaps++;</span>
+		}
+<span class="fc" id="L229">		builder.replace(offset, replacement.getOrdinalAsByte());</span>
+<span class="fc" id="L230">		return this;</span>
+	}
+
+	@Override
+	public ProteinSequenceBuilder delete(
+			Range range) {
+<span class="fc bfc" id="L236" title="All 2 branches covered.">		for(AminoAcid aa : asList(range)){</span>
+<span class="pc bpc" id="L237" title="1 of 2 branches missed.">			if(aa == AminoAcid.Gap){</span>
+<span class="nc" id="L238">				numberOfGaps --;</span>
+			}
+<span class="fc" id="L240">		}</span>
+<span class="fc" id="L241">		builder.remove(range);</span>
+<span class="fc" id="L242">		return this;</span>
+	}
+
+	@Override
+	public int getNumGaps() {
+<span class="fc" id="L247">		return numberOfGaps;</span>
+	}
+
+	@Override
+	public ProteinSequenceBuilder prepend(
+			String sequence) {			
+<span class="nc" id="L253">		return insert(0, sequence);</span>
+	}
+
+	@Override
+	public ProteinSequenceBuilder insert(
+			int offset, Iterable&lt;AminoAcid&gt; sequence) {
+<span class="fc" id="L259">		GrowableByteArray temp = new GrowableByteArray(DEFAULT_CAPACITY);</span>
+<span class="fc bfc" id="L260" title="All 2 branches covered.">		for(AminoAcid aa :sequence){</span>
+<span class="pc bpc" id="L261" title="1 of 2 branches missed.">			if(aa == AminoAcid.Gap){</span>
+<span class="nc" id="L262">				numberOfGaps++;</span>
+			}
+<span class="fc" id="L264">			temp.append(aa.getOrdinalAsByte());</span>
+<span class="fc" id="L265">		}		</span>
+<span class="fc" id="L266">		builder.insert(offset, temp);</span>
+<span class="fc" id="L267">		return this;</span>
+	}
+
+	@Override
+	public ProteinSequenceBuilder insert(
+			int offset,
+			ResidueSequenceBuilder&lt;AminoAcid, ProteinSequence&gt; otherBuilder) {
+<span class="fc" id="L274">		return insert(offset,otherBuilder.toString());</span>
+	}
+
+	@Override
+	public ProteinSequenceBuilder insert(
+			int offset, AminoAcid base) {
+<span class="pc bpc" id="L280" title="1 of 2 branches missed.">		if(base == AminoAcid.Gap){</span>
+<span class="nc" id="L281">			numberOfGaps++;</span>
+		}
+<span class="fc" id="L283">		builder.insert(offset, base.getOrdinalAsByte());</span>
+<span class="fc" id="L284">		return this;</span>
+	}
+
+	@Override
+	public ProteinSequenceBuilder prepend(
+			Iterable&lt;AminoAcid&gt; sequence) {
+<span class="nc" id="L290">		return insert(0, sequence);</span>
+	}
+
+	@Override
+	public ProteinSequenceBuilder prepend(
+			ResidueSequenceBuilder&lt;AminoAcid, ProteinSequence&gt; otherBuilder) {
+<span class="nc" id="L296">		return prepend(otherBuilder.toString());</span>
+	}
+
+	@Override
+	public ProteinSequence build() {
+<span class="fc" id="L301">		return build(builder.toArray());</span>
+	}
+
+
+	
+	private AminoAcid[] convertFromBytes(byte[] array){
+<span class="fc" id="L307">		AminoAcid[] aas = new AminoAcid[array.length];</span>
+<span class="fc bfc" id="L308" title="All 2 branches covered.">		for(int i=0; i&lt;array.length; i++){</span>
+<span class="fc" id="L309">			aas[i]=AMINO_ACID_VALUES[array[i]];</span>
+		}
+<span class="fc" id="L311">		return aas;</span>
+	}
+	private ProteinSequence build(byte[] seqToBuild){
+<span class="fc" id="L314">		AminoAcid[] asList = convertFromBytes(seqToBuild);</span>
+<span class="pc bpc" id="L315" title="1 of 4 branches missed.">		if(numberOfGaps&gt;0 &amp;&amp; hasGaps(asList)){</span>
+<span class="fc" id="L316">			return new CompactProteinSequence(asList);</span>
+		}
+		//no gaps
+		
+<span class="fc" id="L320">		return new UngappedProteinSequence(asList);</span>
+	}
+	private boolean hasGaps(AminoAcid[] asArray) {
+<span class="pc bpc" id="L323" title="1 of 2 branches missed.">		for(AminoAcid aa : asArray){</span>
+<span class="fc bfc" id="L324" title="All 2 branches covered.">			if(aa == AminoAcid.Gap){</span>
+<span class="fc" id="L325">				return true;</span>
+			}
+		}
+<span class="nc" id="L328">		return false;</span>
+	}
+
+	private List&lt;AminoAcid&gt; asList(Range range) {
+<span class="fc" id="L332">		ProteinSequence s = build();</span>
+<span class="fc" id="L333">		List&lt;AminoAcid&gt; list = new ArrayList&lt;AminoAcid&gt;((int)range.getLength());</span>
+<span class="fc" id="L334">		Iterator&lt;AminoAcid&gt; iter = s.iterator(range);</span>
+<span class="fc bfc" id="L335" title="All 2 branches covered.">		while(iter.hasNext()){</span>
+<span class="fc" id="L336">			list.add(iter.next());</span>
+		}
+<span class="fc" id="L338">		return list;</span>
+	}
+
+
+	@Override
+	public ProteinSequenceBuilder trim(Range range) {
+<span class="fc" id="L344">		Range intersection = range.intersection(Range.ofLength(getLength()));</span>
+<span class="fc" id="L345">		builder =builder.subArray(intersection);		</span>
+<span class="fc" id="L346">		this.numberOfGaps =builder.getCount(GAP_ORDINAL);</span>
+<span class="fc" id="L347">		return this;</span>
+		
+		
+	}
+
+
+	@Override
+	public ProteinSequenceBuilder copy() {
+<span class="fc" id="L355">		return new ProteinSequenceBuilder(this);</span>
+		
+	}
+
+	@Override
+	public ProteinSequenceBuilder reverse() {
+<span class="fc" id="L361">		builder.reverse();</span>
+<span class="fc" id="L362">		return this;</span>
+	}
+
+	@Override
+	public ProteinSequenceBuilder ungap() {
+
+<span class="fc" id="L368">		ProteinSequence list = build(builder.toArray());</span>
+<span class="fc bfc" id="L369" title="All 2 branches covered.">		if(list.getNumberOfGaps() !=0){</span>
+<span class="fc" id="L370">			List&lt;Integer&gt; gapOffsets =list.getGapOffsets();</span>
+<span class="fc bfc" id="L371" title="All 2 branches covered.">			for(int i=gapOffsets.size()-1; i&gt;=0; i--){</span>
+<span class="fc" id="L372">				builder.remove(gapOffsets.get(i));</span>
+			}
+		}
+<span class="fc" id="L375">		numberOfGaps=0;</span>
+<span class="fc" id="L376">		return this;</span>
+	}
+
+	@Override
+	public String toString() {
+<span class="fc" id="L381">		byte[] array =builder.toArray();</span>
+<span class="fc" id="L382">		StringBuilder stringBuilder = new StringBuilder(array.length);</span>
+<span class="fc" id="L383">		AminoAcid[] values = AminoAcid.values();</span>
+<span class="fc bfc" id="L384" title="All 2 branches covered.">		for(int i=0; i&lt;array.length; i++){</span>
+			
+<span class="fc" id="L386">			stringBuilder.append(values[array[i]]);</span>
+		}
+<span class="fc" id="L388">		return stringBuilder.toString();</span>
+	}
+
+	@Override
+	public Iterator&lt;AminoAcid&gt; iterator() {
+<span class="fc" id="L393">		return new IteratorImpl();</span>
+	}
+
+<span class="fc" id="L396">	private class IteratorImpl implements Iterator&lt;AminoAcid&gt;{</span>
+<span class="fc" id="L397">		private int currentOffset=0;</span>
+
+		@Override
+		public boolean hasNext() {
+<span class="fc bfc" id="L401" title="All 2 branches covered.">			return currentOffset&lt;builder.getCurrentLength();</span>
+		}
+
+		@Override
+		public AminoAcid next() {
+<span class="fc" id="L406">			AminoAcid next = AMINO_ACID_VALUES[builder.get(currentOffset)];</span>
+<span class="fc" id="L407">			currentOffset++;</span>
+<span class="fc" id="L408">			return next;</span>
+		}
+
+		@Override
+		public void remove() {
+<span class="nc" id="L413">			throw new UnsupportedOperationException();</span>
+			
+		}
+		
+	}
+
+    @Override
+    public ProteinSequenceBuilder turnOffDataCompression(boolean turnOffDataCompression) {
+        // TODO implement me!
+        //no-op for now since we only have 1 implementation
+<span class="nc" id="L423">        return this;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

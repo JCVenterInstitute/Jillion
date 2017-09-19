@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ThrowingStreamImpl.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.core.util</a> &gt; <span class="el_source">ThrowingStreamImpl.java</span></div><h1>ThrowingStreamImpl.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.core.util;
+
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Spliterator;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.IntFunction;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.function.ToDoubleFunction;
+import java.util.function.ToIntFunction;
+import java.util.function.ToLongFunction;
+import java.util.stream.Collector;
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+import java.util.stream.LongStream;
+import java.util.stream.Stream;
+
+class ThrowingStreamImpl&lt;T&gt; implements ThrowingStream&lt;T&gt; {
+
+    private final Stream&lt;T&gt; delegate;
+    
+<span class="fc" id="L49">    public ThrowingStreamImpl(Stream&lt;T&gt; delegate){</span>
+<span class="fc" id="L50">        this.delegate = Objects.requireNonNull(delegate);</span>
+<span class="fc" id="L51">    }</span>
+
+    @Override
+    public ThrowingStream&lt;T&gt; filter(Predicate&lt;? super T&gt; predicate) {
+<span class="fc" id="L55">        return handleNewStream(() -&gt; delegate.filter(predicate));</span>
+    }
+
+    @Override
+    public &lt;R&gt; ThrowingStream&lt;R&gt; map(Function&lt;? super T, ? extends R&gt; mapper) {
+<span class="nc" id="L60">        return ThrowingStream.asThrowingStream(delegate.map(mapper));</span>
+    }
+
+    @Override
+    public IntStream mapToInt(ToIntFunction&lt;? super T&gt; mapper) {
+<span class="nc" id="L65">        return delegate.mapToInt(mapper);</span>
+    }
+
+    @Override
+    public LongStream mapToLong(ToLongFunction&lt;? super T&gt; mapper) {
+<span class="nc" id="L70">        return delegate.mapToLong(mapper);</span>
+    }
+
+    @Override
+    public DoubleStream mapToDouble(ToDoubleFunction&lt;? super T&gt; mapper) {
+<span class="nc" id="L75">        return delegate.mapToDouble(mapper);</span>
+    }
+
+    @Override
+    public &lt;R&gt; ThrowingStream&lt;R&gt; flatMap(Function&lt;? super T, ? extends Stream&lt;? extends R&gt;&gt; mapper) {
+<span class="nc" id="L80">        return ThrowingStream.asThrowingStream(delegate.flatMap(mapper));</span>
+    }
+
+    @Override
+    public IntStream flatMapToInt(
+            Function&lt;? super T, ? extends IntStream&gt; mapper) {
+<span class="nc" id="L86">        return delegate.flatMapToInt(mapper);</span>
+    }
+
+    @Override
+    public LongStream flatMapToLong(
+            Function&lt;? super T, ? extends LongStream&gt; mapper) {
+<span class="nc" id="L92">        return delegate.flatMapToLong(mapper);</span>
+    }
+
+    @Override
+    public DoubleStream flatMapToDouble(
+            Function&lt;? super T, ? extends DoubleStream&gt; mapper) {
+<span class="nc" id="L98">        return delegate.flatMapToDouble(mapper);</span>
+    }
+
+    @Override
+    public ThrowingStream&lt;T&gt; distinct() {
+<span class="nc" id="L103">        return handleNewStream(delegate::distinct);</span>
+    }
+
+    @Override
+    public ThrowingStream&lt;T&gt; sorted() {
+<span class="nc" id="L108">        return handleNewStream(delegate::sorted);</span>
+    }
+
+    @Override
+    public ThrowingStream&lt;T&gt; sorted(Comparator&lt;? super T&gt; comparator) {
+<span class="nc" id="L113">        return handleNewStream(()-&gt; delegate.sorted(comparator));</span>
+    }
+
+    @Override
+    public ThrowingStream&lt;T&gt; peek(Consumer&lt;? super T&gt; action) {
+<span class="nc" id="L118">        return handleNewStream(() -&gt; delegate.peek(action));</span>
+    }
+
+    @Override
+    public ThrowingStream&lt;T&gt; limit(long maxSize) {
+<span class="nc" id="L123">        return handleNewStream( ()-&gt;delegate.limit(maxSize));</span>
+    }
+
+    @Override
+    public ThrowingStream&lt;T&gt; skip(long n) {
+<span class="nc" id="L128">        return handleNewStream(() -&gt;delegate.skip(n));</span>
+    }
+
+    @Override
+    public void forEach(Consumer&lt;? super T&gt; action) {
+<span class="fc" id="L133">        delegate.forEach(action);</span>
+        
+<span class="fc" id="L135">    }</span>
+
+    @Override
+    public void forEachOrdered(Consumer&lt;? super T&gt; action) {
+<span class="nc" id="L139">        delegate.forEachOrdered(action);</span>
+<span class="nc" id="L140">    }</span>
+
+    @Override
+    public Object[] toArray() {
+<span class="nc" id="L144">        return delegate.toArray();</span>
+    }
+
+    @Override
+    public &lt;A&gt; A[] toArray(IntFunction&lt;A[]&gt; generator) {
+<span class="nc" id="L149">        return delegate.toArray(generator);</span>
+    }
+
+    @Override
+    public T reduce(T identity, BinaryOperator&lt;T&gt; accumulator) {
+<span class="nc" id="L154">        return delegate.reduce(identity, accumulator);</span>
+    }
+
+    @Override
+    public Optional&lt;T&gt; reduce(BinaryOperator&lt;T&gt; accumulator) {
+<span class="nc" id="L159">        return delegate.reduce(accumulator);</span>
+    }
+
+    @Override
+    public &lt;U&gt; U reduce(U identity, BiFunction&lt;U, ? super T, U&gt; accumulator,
+            BinaryOperator&lt;U&gt; combiner) {
+<span class="nc" id="L165">        return delegate.reduce(identity, accumulator, combiner);</span>
+    }
+
+    @Override
+    public &lt;R&gt; R collect(Supplier&lt;R&gt; supplier,
+            BiConsumer&lt;R, ? super T&gt; accumulator, BiConsumer&lt;R, R&gt; combiner) {
+<span class="nc" id="L171">        return delegate.collect(supplier, accumulator, combiner);</span>
+    }
+
+    @Override
+    public &lt;R, A&gt; R collect(Collector&lt;? super T, A, R&gt; collector) {
+<span class="fc" id="L176">        return delegate.collect(collector);</span>
+    }
+
+    @Override
+    public Optional&lt;T&gt; min(Comparator&lt;? super T&gt; comparator) {
+<span class="nc" id="L181">        return delegate.min(comparator);</span>
+    }
+
+    @Override
+    public Optional&lt;T&gt; max(Comparator&lt;? super T&gt; comparator) {
+<span class="nc" id="L186">        return delegate.max(comparator);</span>
+    }
+
+    @Override
+    public long count() {
+<span class="fc" id="L191">        return delegate.count();</span>
+    }
+
+    @Override
+    public boolean anyMatch(Predicate&lt;? super T&gt; predicate) {
+<span class="nc" id="L196">        return delegate.anyMatch(predicate);</span>
+    }
+
+    @Override
+    public boolean allMatch(Predicate&lt;? super T&gt; predicate) {
+<span class="nc" id="L201">        return delegate.allMatch(predicate);</span>
+    }
+
+    @Override
+    public boolean noneMatch(Predicate&lt;? super T&gt; predicate) {
+<span class="nc" id="L206">        return delegate.noneMatch(predicate);</span>
+    }
+
+    @Override
+    public Optional&lt;T&gt; findFirst() {
+<span class="nc" id="L211">        return delegate.findFirst();</span>
+    }
+
+    @Override
+    public Optional&lt;T&gt; findAny() {
+<span class="nc" id="L216">        return delegate.findAny();</span>
+    }
+
+    @Override
+    public Iterator&lt;T&gt; iterator() {
+<span class="nc" id="L221">        return delegate.iterator();</span>
+    }
+
+    @Override
+    public Spliterator&lt;T&gt; spliterator() {
+<span class="nc" id="L226">        return delegate.spliterator();</span>
+    }
+
+    @Override
+    public boolean isParallel() {
+<span class="nc" id="L231">        return delegate.isParallel();</span>
+    }
+
+    @Override
+    public ThrowingStream&lt;T&gt; sequential() {
+<span class="nc" id="L236">        return handleNewStream(delegate::sequential);</span>
+    }
+
+    @Override
+    public ThrowingStream&lt;T&gt; parallel() {
+<span class="fc" id="L241">        return handleNewStream(delegate::parallel);</span>
+    }
+
+    @Override
+    public ThrowingStream&lt;T&gt; unordered() {
+<span class="nc" id="L246">        return handleNewStream(delegate::unordered);</span>
+    }
+
+    @Override
+    public ThrowingStream&lt;T&gt; onClose(Runnable closeHandler) {
+<span class="nc" id="L251">        Stream&lt;T&gt; newStream = delegate.onClose(closeHandler);</span>
+<span class="nc bnc" id="L252" title="All 2 branches missed.">        if(newStream == delegate){</span>
+<span class="nc" id="L253">            return this;</span>
+        }
+<span class="nc" id="L255">        return ThrowingStream.asThrowingStream(newStream);</span>
+    }
+    
+    private ThrowingStream&lt;T&gt; handleNewStream(Supplier&lt;Stream&lt;T&gt;&gt; supplier){
+<span class="fc" id="L259">        Stream&lt;T&gt; newStream = supplier.get();</span>
+<span class="fc bfc" id="L260" title="All 2 branches covered.">        if(newStream == delegate){</span>
+<span class="fc" id="L261">            return this;</span>
+        }
+<span class="fc" id="L263">        return ThrowingStream.asThrowingStream(newStream);</span>
+    }
+    
+   
+
+    @Override
+    public void close() {
+<span class="fc" id="L270">        delegate.close();</span>
+        
+<span class="fc" id="L272">    }</span>
+    
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

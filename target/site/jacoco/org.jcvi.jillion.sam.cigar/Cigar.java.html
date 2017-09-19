@@ -1,0 +1,849 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Cigar.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.sam.cigar</a> &gt; <span class="el_source">Cigar.java</span></div><h1>Cigar.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.sam.cigar;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.util.iter.ArrayIterator;
+import org.jcvi.jillion.core.util.iter.IteratorUtil;
+/**
+ * {@code Cigar} is an Object for a single
+ * read alignment encoded in the CIGAR format.
+ * 
+ * @author dkatzel
+ *
+ */
+public final class Cigar implements Iterable&lt;CigarElement&gt;{
+    
+<span class="fc" id="L43">        private static Pattern REMOVE_WHITESPACE = Pattern.compile(&quot;\\s+&quot;);</span>
+	/**
+	 * Singleton instance of an empty {@link Cigar}.
+	 */
+<span class="fc" id="L47">	public static final Cigar EMPTY_CIGAR = new Cigar.Builder(0).build();</span>
+	/**
+	 * The various types of clipping
+	 * operations performed on a sequence.
+	 * @author dkatzel
+	 *
+	 */
+<span class="pc" id="L54">	public static enum ClipType {</span>
+		/**
+		 * The raw sequence including
+		 * all bases provided that are clipped.
+		 */
+<span class="fc" id="L59">		RAW,</span>
+		/**
+		 * The sequence excluding all
+		 * clipped bases (no hard or soft
+		 * clipped bases are included).
+		 */
+<span class="fc" id="L65">		SOFT_CLIPPED,</span>
+		/**
+		 * The sequence excluding
+		 * any hard clipped based
+		 * (no hard clipped bases are included,
+		 * but soft clipped bases are included).
+		 */
+<span class="fc" id="L72">		HARD_CLIPPED,</span>
+	}
+
+
+	private static final String UN_AVAILABLE = &quot;*&quot;;
+	private final CigarElement[] elements;
+	/**
+	 * Parse the given Cigar String into a {@link Cigar}
+	 * object.  If the cigarString is '*' then this 
+	 * value will return {@code null} since there is
+	 * no alignment information.  An invalid cigar string
+	 * will throw an Exception.
+	 * @param cigarString the cigarString to parse;
+	 * can not be null.
+	 * @return a {@link Cigar} if the cigar is a valid
+	 * cigar string that represents a known alignment;
+	 * {@code null} if the cigar string &quot;*&quot;.
+	 * @throws NullPointerException if cigarString is null.
+	 * @throws IllegalArgumentException if the cigarString is invalild.
+	 */
+	public static Cigar parse(String cigarString){
+	    //some tools like exonerate have whitespace
+<span class="fc" id="L94">		String trimmedString = REMOVE_WHITESPACE.matcher(cigarString).replaceAll(&quot;&quot;);</span>
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">		if(trimmedString.isEmpty()){</span>
+<span class="nc" id="L96">			throw new IllegalArgumentException(&quot;cigar string can not be null&quot;);</span>
+		}
+<span class="fc bfc" id="L98" title="All 2 branches covered.">		if(trimmedString.equals(UN_AVAILABLE)){</span>
+<span class="fc" id="L99">			return null;</span>
+		}
+<span class="fc" id="L101">		Cigar.Builder builder = new Cigar.Builder();</span>
+		//format is ([0-9]+[MIDNSHPX=])+
+		//probably fastest to just
+		//parse char by char
+<span class="fc" id="L105">		PrimitiveCharIterator iter = new PrimitiveCharIterator(trimmedString);</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">		while(iter.hasNext()){</span>
+			//parse next Element
+<span class="fc" id="L108">			int length=0;</span>
+			do{
+<span class="fc" id="L110">				char next = iter.next();</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">				if(isDigit(next)){</span>
+<span class="fc" id="L112">					length = length*10 +( next - '0');					</span>
+				}else{
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">					if(length ==0){</span>
+<span class="nc" id="L115">						throw new IllegalArgumentException(&quot;invalid cigar string &quot; + cigarString);</span>
+					}
+<span class="fc" id="L117">					CigarOperation op = CigarOperation.parseOp(next);</span>
+<span class="fc" id="L118">					builder.addElement(new CigarElement(op, length));</span>
+<span class="fc" id="L119">					break;</span>
+				}
+				
+<span class="fc" id="L122">			}while(true);			</span>
+<span class="fc" id="L123">		}</span>
+<span class="fc" id="L124">		return builder.build();</span>
+		
+	}
+	
+	
+	
+	private static boolean isDigit(char c){
+<span class="pc bpc" id="L131" title="1 of 4 branches missed.">		return c &gt;='0' &amp;&amp; c&lt;= '9';</span>
+	}
+	
+<span class="fc" id="L134">	private Cigar(CigarElement[] elements) {</span>
+<span class="fc" id="L135">		this.elements = elements;</span>
+<span class="fc" id="L136">	}</span>
+
+	@Override
+	public Iterator&lt;CigarElement&gt; iterator() {
+<span class="fc" id="L140">		return new ArrayIterator&lt;CigarElement&gt;(elements);</span>
+	}
+
+	/**
+	 * Get the length of this cigar
+	 * including padding (gaps)
+	 * with the provided clip type
+	 * @param type the {@link ClipType}
+	 * of clipping operations to include in the length
+	 * calculation; can not be null.
+	 * @return an int.
+	 * @throws NullPointerException if type is null.
+	 */
+	public int getPaddedReadLength(ClipType type){
+<span class="pc bnc" id="L154" title="All 4 branches missed.">		switch(type){</span>
+<span class="nc" id="L155">			case RAW : return getRawPaddedReadLength();</span>
+<span class="nc" id="L156">			case SOFT_CLIPPED : return getPaddedReadLength();</span>
+<span class="nc" id="L157">			case HARD_CLIPPED : return getSoftPaddedReadLength();</span>
+			default : 
+				//shouldn't happen unless we add a new type 
+				//and forget to include it in the switch()
+<span class="nc" id="L161">				throw new IllegalArgumentException(&quot;unknown clip type : &quot; + type);</span>
+		}
+	}
+	/**
+	 * Get the length of this cigar
+	 * excluding padding (gaps)
+	 * with the provided clip type
+	 * @param type the {@link ClipType}
+	 * of clipping operations to include in the length
+	 * calculation; can not be null.
+	 * @return an int.
+	 * @throws NullPointerException if type is null.
+	 */
+	public int getUnpaddedReadLength(ClipType type){
+<span class="pc bpc" id="L175" title="2 of 4 branches missed.">		switch(type){</span>
+<span class="fc" id="L176">			case RAW : return getRawUnPaddedReadLength();</span>
+<span class="nc" id="L177">			case SOFT_CLIPPED : return getUnPaddedReadLength();</span>
+<span class="fc" id="L178">			case HARD_CLIPPED : return getSoftUnPaddedReadLength();</span>
+			default : 
+				//shouldn't happen unless we add a new type 
+				//and forget to include it in the switch()
+<span class="nc" id="L182">				throw new IllegalArgumentException(&quot;unknown clip type : &quot; + type);</span>
+		}
+	}
+
+	private int getRawUnPaddedReadLength(){
+<span class="fc" id="L187">		int length=0;</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">		for(CigarElement element : elements){</span>
+			//This is an optimization to allow the 
+	    	//compiler to use a tableswitch opcode
+	    	//instead of the more general purpose
+	    	//lookupswitch opcode.
+	    	//tableswitch is an O(1) lookup
+	    	//while lookupswitch is O(n) where n
+	    	//is the number of case statements in the switch.
+	    	//tableswitch requires consecutive case values.
+	    	//DO NOT CHANGE THE ORDER OF THE CASE STATEMENTS
+<span class="pc bpc" id="L198" title="3 of 10 branches missed.">			switch (element.getOp()) {</span>
+				case ALIGNMENT_MATCH:
+<span class="fc" id="L200">					length += element.getLength();</span>
+<span class="fc" id="L201">					break;</span>
+				case INSERTION:
+<span class="fc" id="L203">					length += element.getLength();</span>
+<span class="fc" id="L204">					break;</span>
+				case DELETION:
+<span class="fc" id="L206">					break;</span>
+				case SKIPPED:
+<span class="fc" id="L208">					break;</span>
+				case SOFT_CLIP:
+<span class="fc" id="L210">					length += element.getLength();</span>
+<span class="fc" id="L211">					break;</span>
+				case HARD_CLIP:
+<span class="fc" id="L213">					length += element.getLength();</span>
+<span class="fc" id="L214">					break;</span>
+				case PADDING:
+<span class="fc" id="L216">					break;</span>
+				case SEQUENCE_MATCH:
+<span class="nc" id="L218">					length += element.getLength();</span>
+<span class="nc" id="L219">					break;</span>
+				case SEQUENCE_MISMATCH:
+<span class="nc" id="L221">					length += element.getLength();</span>
+<span class="nc" id="L222">					break;</span>
+	
+				default:
+					// do not increase length
+			}		
+		}
+<span class="fc" id="L228">		return length;</span>
+	}
+	
+	private int getRawPaddedReadLength(){
+<span class="nc" id="L232">		int length=0;</span>
+<span class="nc bnc" id="L233" title="All 2 branches missed.">		for(CigarElement element : elements){</span>
+			//This is an optimization to allow the 
+	    	//compiler to use a tableswitch opcode
+	    	//instead of the more general purpose
+	    	//lookupswitch opcode.
+	    	//tableswitch is an O(1) lookup
+	    	//while lookupswitch is O(n) where n
+	    	//is the number of case statements in the switch.
+	    	//tableswitch requires consecutive case values.
+	    	//DO NOT CHANGE THE ORDER OF THE CASE STATEMENTS
+<span class="nc bnc" id="L243" title="All 10 branches missed.">			switch (element.getOp()) {</span>
+				case ALIGNMENT_MATCH:
+<span class="nc" id="L245">					length += element.getLength();</span>
+<span class="nc" id="L246">					break;</span>
+				case INSERTION:
+<span class="nc" id="L248">					length += element.getLength();</span>
+<span class="nc" id="L249">					break;</span>
+				case DELETION:
+<span class="nc" id="L251">					length += element.getLength();</span>
+<span class="nc" id="L252">					break;</span>
+				case SKIPPED:
+<span class="nc" id="L254">					break;</span>
+				case SOFT_CLIP:
+<span class="nc" id="L256">					length += element.getLength();</span>
+<span class="nc" id="L257">					break;</span>
+				case HARD_CLIP:
+<span class="nc" id="L259">					length += element.getLength();</span>
+<span class="nc" id="L260">					break;</span>
+				case PADDING:
+<span class="nc" id="L262">					length += element.getLength();</span>
+<span class="nc" id="L263">					break;</span>
+				case SEQUENCE_MATCH:
+<span class="nc" id="L265">					length += element.getLength();</span>
+<span class="nc" id="L266">					break;</span>
+				case SEQUENCE_MISMATCH:
+<span class="nc" id="L268">					length += element.getLength();</span>
+<span class="nc" id="L269">					break;</span>
+	
+				default:
+					// do not increase length
+			}		
+		}
+<span class="nc" id="L275">		return length;</span>
+	}
+	
+	private int getSoftPaddedReadLength(){
+<span class="nc" id="L279">		int length=0;</span>
+<span class="nc bnc" id="L280" title="All 2 branches missed.">		for(CigarElement element : elements){</span>
+			//This is an optimization to allow the 
+	    	//compiler to use a tableswitch opcode
+	    	//instead of the more general purpose
+	    	//lookupswitch opcode.
+	    	//tableswitch is an O(1) lookup
+	    	//while lookupswitch is O(n) where n
+	    	//is the number of case statements in the switch.
+	    	//tableswitch requires consecutive case values.
+	    	//DO NOT CHANGE THE ORDER OF THE CASE STATEMENTS
+<span class="nc bnc" id="L290" title="All 10 branches missed.">			switch (element.getOp()) {</span>
+				case ALIGNMENT_MATCH:
+<span class="nc" id="L292">					length += element.getLength();</span>
+<span class="nc" id="L293">					break;</span>
+				case INSERTION:
+<span class="nc" id="L295">					length += element.getLength();</span>
+<span class="nc" id="L296">					break;</span>
+				case DELETION:
+<span class="nc" id="L298">					length += element.getLength();</span>
+<span class="nc" id="L299">					break;</span>
+				case SKIPPED:
+<span class="nc" id="L301">					break;</span>
+				case SOFT_CLIP:
+<span class="nc" id="L303">					length += element.getLength();</span>
+<span class="nc" id="L304">					break;</span>
+				case HARD_CLIP:					
+<span class="nc" id="L306">					break;</span>
+				case PADDING:
+<span class="nc" id="L308">					length += element.getLength();</span>
+<span class="nc" id="L309">					break;</span>
+				case SEQUENCE_MATCH:
+<span class="nc" id="L311">					length += element.getLength();</span>
+<span class="nc" id="L312">					break;</span>
+				case SEQUENCE_MISMATCH:
+<span class="nc" id="L314">					length += element.getLength();</span>
+<span class="nc" id="L315">					break;</span>
+	
+				default:
+					// do not increase length
+			}		
+		}
+<span class="nc" id="L321">		return length;</span>
+	}
+	public int getUnPaddedReadLength(){
+<span class="fc" id="L324">		int length=0;</span>
+<span class="fc bfc" id="L325" title="All 2 branches covered.">		for(CigarElement element : elements){</span>
+			//This is an optimization to allow the 
+	    	//compiler to use a tableswitch opcode
+	    	//instead of the more general purpose
+	    	//lookupswitch opcode.
+	    	//tableswitch is an O(1) lookup
+	    	//while lookupswitch is O(n) where n
+	    	//is the number of case statements in the switch.
+	    	//tableswitch requires consecutive case values.
+	    	//DO NOT CHANGE THE ORDER OF THE CASE STATEMENTS
+<span class="pc bpc" id="L335" title="3 of 10 branches missed.">			switch (element.getOp()) {</span>
+				case ALIGNMENT_MATCH:
+<span class="fc" id="L337">					length += element.getLength();</span>
+<span class="fc" id="L338">					break;</span>
+				case INSERTION:
+<span class="fc" id="L340">					length += element.getLength();</span>
+<span class="fc" id="L341">					break;</span>
+				case DELETION:
+<span class="fc" id="L343">					break;</span>
+				case SKIPPED:
+<span class="fc" id="L345">					break;</span>
+				case SOFT_CLIP:
+					//don't count clip points
+<span class="fc" id="L348">					break;</span>
+				case HARD_CLIP:
+					//don't count clip points
+<span class="fc" id="L351">					break;</span>
+				case PADDING:
+<span class="fc" id="L353">					break;</span>
+				case SEQUENCE_MATCH:
+<span class="nc" id="L355">					length += element.getLength();</span>
+<span class="nc" id="L356">					break;</span>
+				case SEQUENCE_MISMATCH:
+<span class="nc" id="L358">					length += element.getLength();</span>
+<span class="nc" id="L359">					break;</span>
+	
+				default:
+					// do not increase length
+			}		
+		}
+<span class="fc" id="L365">		return length;</span>
+	}
+	
+	private int getSoftUnPaddedReadLength(){
+<span class="fc" id="L369">		int length=0;</span>
+<span class="fc bfc" id="L370" title="All 2 branches covered.">		for(CigarElement element : elements){</span>
+			//This is an optimization to allow the 
+	    	//compiler to use a tableswitch opcode
+	    	//instead of the more general purpose
+	    	//lookupswitch opcode.
+	    	//tableswitch is an O(1) lookup
+	    	//while lookupswitch is O(n) where n
+	    	//is the number of case statements in the switch.
+	    	//tableswitch requires consecutive case values.
+	    	//DO NOT CHANGE THE ORDER OF THE CASE STATEMENTS
+<span class="pc bpc" id="L380" title="3 of 10 branches missed.">			switch (element.getOp()) {</span>
+				case ALIGNMENT_MATCH:
+<span class="fc" id="L382">					length += element.getLength();</span>
+<span class="fc" id="L383">					break;</span>
+				case INSERTION:
+<span class="fc" id="L385">					length += element.getLength();</span>
+<span class="fc" id="L386">					break;</span>
+				case DELETION:
+<span class="fc" id="L388">					break;</span>
+				case SKIPPED:
+<span class="fc" id="L390">					break;</span>
+				case SOFT_CLIP:
+<span class="fc" id="L392">					length += element.getLength();</span>
+<span class="fc" id="L393">					break;</span>
+				case HARD_CLIP:
+					//don't count clip points
+<span class="fc" id="L396">					break;</span>
+				case PADDING:
+<span class="fc" id="L398">					break;</span>
+				case SEQUENCE_MATCH:
+<span class="nc" id="L400">					length += element.getLength();</span>
+<span class="nc" id="L401">					break;</span>
+				case SEQUENCE_MISMATCH:
+<span class="nc" id="L403">					length += element.getLength();</span>
+<span class="nc" id="L404">					break;</span>
+	
+				default:
+					// do not increase length
+			}		
+		}
+<span class="fc" id="L410">		return length;</span>
+	}
+	
+	private int getPaddedReadLength(){
+<span class="nc" id="L414">		int length=0;</span>
+<span class="nc bnc" id="L415" title="All 2 branches missed.">		for(CigarElement element : elements){</span>
+			//This is an optimization to allow the 
+	    	//compiler to use a tableswitch opcode
+	    	//instead of the more general purpose
+	    	//lookupswitch opcode.
+	    	//tableswitch is an O(1) lookup
+	    	//while lookupswitch is O(n) where n
+	    	//is the number of case statements in the switch.
+	    	//tableswitch requires consecutive case values.
+	    	//DO NOT CHANGE THE ORDER OF THE CASE STATEMENTS
+<span class="nc bnc" id="L425" title="All 10 branches missed.">			switch (element.getOp()) {</span>
+				case ALIGNMENT_MATCH:
+<span class="nc" id="L427">					length += element.getLength();</span>
+<span class="nc" id="L428">					break;</span>
+				case INSERTION:
+<span class="nc" id="L430">					length += element.getLength();</span>
+<span class="nc" id="L431">					break;</span>
+				case DELETION:
+<span class="nc" id="L433">					length += element.getLength();</span>
+<span class="nc" id="L434">					break;</span>
+				case SKIPPED:
+<span class="nc" id="L436">					break;</span>
+				case SOFT_CLIP:
+					//don't count clip points
+<span class="nc" id="L439">					break;</span>
+				case HARD_CLIP:
+					//don't count clip points
+<span class="nc" id="L442">					break;</span>
+				case PADDING:
+<span class="nc" id="L444">					length += element.getLength();</span>
+<span class="nc" id="L445">					break;</span>
+				case SEQUENCE_MATCH:
+<span class="nc" id="L447">					length += element.getLength();</span>
+<span class="nc" id="L448">					break;</span>
+				case SEQUENCE_MISMATCH:
+<span class="nc" id="L450">					length += element.getLength();</span>
+<span class="nc" id="L451">					break;</span>
+	
+				default:
+					// do not increase length
+			}		
+		}
+<span class="nc" id="L457">		return length;</span>
+	}
+	
+	public int getNumberOfElements(){
+<span class="fc" id="L461">		return elements.length;</span>
+	}
+	
+	public CigarElement getElement(int i){
+<span class="nc" id="L465">		return elements[i];</span>
+	}
+	
+	public Iterator&lt;CigarElement&gt; getElementIterator(){
+<span class="fc" id="L469">		return IteratorUtil.createIteratorFromArray(elements);</span>
+	}
+	/**
+	 * Given this Cigar and the corresponding raw ungapped
+	 * sequence from the sequencing machine, create the trimmed
+	 * gapped {@link NucleotideSequence}.
+	 * @param rawUngappedSequence the raw ungapped
+	 * sequence from the sequencing machine; can not be null.
+	 * @return a {@link NucleotideSequence} of the gapped
+	 * trimmed sequence, will not be null.
+	 * @throws NullPointerException if rawUngappedSequence
+	 * is null.
+	 * @throws IllegalArgumentException if rawUngappedSequence has gaps.
+	 * @throws IllegalArgumentException if rawUngappedSequence ungapped length
+	 * does not match the cigar unpadded length.
+	 */
+	public NucleotideSequence toGappedTrimmedSequence(NucleotideSequence rawUngappedSequence){
+		
+<span class="fc" id="L487">		return toGappedTrimmedSequenceBuilder(rawUngappedSequence)</span>
+<span class="fc" id="L488">								.build();</span>
+	}
+	
+	@Override
+	public String toString(){
+<span class="fc" id="L493">		return toCigarString();</span>
+	}
+	/**
+	 * Convert this {@link Cigar} into a formatted &quot;cigar String&quot;.
+	 * The returned cigar string should be valid input
+	 * into {@link Cigar#parse(String)} such that: 
+	 * &lt;pre&gt;
+	 * Cigar.parse( this.toCigarString() ).equals(this);
+	 * &lt;/pre&gt;
+	 * @return the Cigar as a String using the standard CIGAR format.
+	 */
+	public  String toCigarString() {
+<span class="fc" id="L505">		StringBuilder builder = new StringBuilder(3*elements.length);</span>
+<span class="fc bfc" id="L506" title="All 2 branches covered.">		for(CigarElement e : elements){</span>
+<span class="fc" id="L507">			builder.append(e.getLength())</span>
+<span class="fc" id="L508">					.append(e.getOp().getOpCode());</span>
+		}
+<span class="fc" id="L510">		return builder.toString();</span>
+	}
+
+
+
+	@Override
+	public int hashCode() {
+<span class="fc" id="L517">		final int prime = 31;</span>
+<span class="fc" id="L518">		int result = 1;</span>
+<span class="fc" id="L519">		result = prime * result + Arrays.hashCode(elements);</span>
+<span class="fc" id="L520">		return result;</span>
+	}
+
+
+
+	@Override
+	public boolean equals(Object obj) {
+<span class="fc bfc" id="L527" title="All 2 branches covered.">		if (this == obj) {</span>
+<span class="fc" id="L528">			return true;</span>
+		}
+<span class="pc bpc" id="L530" title="1 of 2 branches missed.">		if (obj == null) {</span>
+<span class="nc" id="L531">			return false;</span>
+		}
+<span class="pc bpc" id="L533" title="1 of 2 branches missed.">		if (!(obj instanceof Cigar)) {</span>
+<span class="nc" id="L534">			return false;</span>
+		}
+<span class="fc" id="L536">		Cigar other = (Cigar) obj;</span>
+<span class="fc bfc" id="L537" title="All 2 branches covered.">		if (!Arrays.equals(elements, other.elements)) {</span>
+<span class="fc" id="L538">			return false;</span>
+		}
+<span class="fc" id="L540">		return true;</span>
+	}
+
+
+	/**
+	 * Builder class to programmatically build
+	 * up a {@link Cigar} object.
+	 * 
+	 * @author dkatzel
+	 *
+	 */
+	public static class Builder{
+		private final List&lt;CigarElement&gt; elements;
+		/**
+		 * Create a new Builder object
+		 * with the expected number of cigar elements.
+		 * This is only a memory optimization,
+		 * if it turns out there are more elements
+		 * then specified, then the builder will
+		 * grow the backing array automatically.
+		 * 
+		 * @param size the expected number of cigar elements
+		 * that will be in this builder; can not be negative.
+		 * 
+		 * @throws IllegalArgumentException if size is negative.
+		 */
+<span class="fc" id="L566">		public Builder(int size){</span>
+<span class="fc" id="L567">			elements = new ArrayList&lt;CigarElement&gt;(size);</span>
+<span class="fc" id="L568">		}</span>
+		/**
+		 * Create a new Builder object.
+		 */
+<span class="fc" id="L572">		public Builder(){</span>
+<span class="fc" id="L573">			elements = new ArrayList&lt;CigarElement&gt;();</span>
+<span class="fc" id="L574">		}</span>
+		/**
+		 * Create a new {@link Builder}
+		 * that is initialized to the contents
+		 * of the provided {@link Cigar} object;
+		 * 
+		 * @param cigar the cigar to copy into this Builder;
+		 * can not be null.
+		 * 
+		 * @throws NullPointerException if cigar is null.
+		 */
+<span class="fc" id="L585">		public Builder(Cigar cigar) {</span>
+<span class="fc" id="L586">			elements = new ArrayList&lt;CigarElement&gt;(cigar.getNumberOfElements());</span>
+<span class="fc bfc" id="L587" title="All 2 branches covered.">			for(CigarElement e : cigar){</span>
+<span class="fc" id="L588">				elements.add(e);</span>
+<span class="fc" id="L589">			}</span>
+<span class="fc" id="L590">		}</span>
+		public Builder addElement(CigarOperation op, int length){
+<span class="fc" id="L592">			return addElement(new CigarElement(op, length));</span>
+		}
+		/**
+		 * Add the given {@link CigarElement} to this builder
+		 * as the next element.
+		 * @param e the {@link CigarElement} to add; can not be null.
+		 * 
+		 * @return this.
+		 * 
+		 * @throws NullPointerException if e is null.
+		 */
+		public Builder addElement(CigarElement e){
+<span class="pc bpc" id="L604" title="1 of 2 branches missed.">			if(e ==null){</span>
+<span class="nc" id="L605">				throw new NullPointerException(&quot;element can not be null&quot;);</span>
+			}
+<span class="fc" id="L607">			elements.add(e);</span>
+<span class="fc" id="L608">			return this;</span>
+		}
+		/**
+		 * Create a new {@link Cigar} object using
+		 * the current contents of the builder.
+		 * 
+		 * @return a new {@link Cigar}; will never be null.
+		 * 
+		 * @throws IllegalStateException if the builder built a cigar
+		 * with an illegal combination of {@link CigarElement}s.
+		 * For example, {@link CigarOperation#HARD_CLIP}s if present,
+		 * must be the first/and or last elements and {@link CigarOperation#SOFT_CLIP}
+		 * must be immediately inside a {@link CigarOperation#HARD_CLIP}s.
+		 */
+		public Cigar build(){
+			
+<span class="fc" id="L624">			CigarElement[] array = elements.toArray(new CigarElement[elements.size()]);</span>
+<span class="fc" id="L625">			validate(array);</span>
+<span class="fc" id="L626">			return new Cigar(array);</span>
+		}
+		private void validate(CigarElement[] array) {
+			//only first and last ops may be hard_clips
+<span class="fc bfc" id="L630" title="All 2 branches covered.">			for(int i=0; i&lt;array.length; i++){</span>
+<span class="fc bfc" id="L631" title="All 6 branches covered.">				if(i !=0 &amp;&amp; i!=array.length-1 &amp;&amp; array[i].getOp() ==CigarOperation.HARD_CLIP){</span>
+<span class="fc" id="L632">					throw new IllegalStateException(&quot;hard clips may only be first and/or last operations&quot;);</span>
+				}
+<span class="fc bfc" id="L634" title="All 2 branches covered.">				if(array[i].getOp() == CigarOperation.SOFT_CLIP){</span>
+<span class="fc bfc" id="L635" title="All 2 branches covered.">					if(i&lt;array.length/2){</span>
+						//check left
+<span class="fc bfc" id="L637" title="All 2 branches covered.">						for(int j=0; j&lt;i; j++){</span>
+<span class="fc bfc" id="L638" title="All 2 branches covered.">							if(array[j].getOp() != CigarOperation.HARD_CLIP){</span>
+<span class="fc" id="L639">								throw new IllegalStateException(&quot;soft clips may only have hard clips between them and the end of the CIGAR string&quot;);</span>
+							}
+						}
+					}else{
+						//check right
+<span class="fc bfc" id="L644" title="All 2 branches covered.">						for(int j=i+1; j&lt;array.length; j++){</span>
+<span class="fc bfc" id="L645" title="All 2 branches covered.">							if(array[j].getOp() != CigarOperation.HARD_CLIP){</span>
+<span class="fc" id="L646">								throw new IllegalStateException(&quot;soft clips may only have hard clips between them and the end of the CIGAR string&quot;);</span>
+							}
+						}
+					}
+				}
+			}
+			
+<span class="fc" id="L653">		}</span>
+		/**
+		 * Remove the {@link CigarOperation#HARD_CLIP} at the
+		 * edges of this builder.  Will only remove the 
+		 * {@link CigarOperation#HARD_CLIP}s that are already present.
+		 * Calling this method will not affect any new {@link CigarOperation#HARD_CLIP}s
+		 * that are added later.
+		 * 
+		 * @return this.
+		 */
+		public Builder removeHardClips() {
+			//hard clips must be the first and/or last operations
+<span class="fc" id="L665">			int lastIndex = elements.size()-1;</span>
+<span class="pc bpc" id="L666" title="1 of 2 branches missed.">			if(elements.get(lastIndex).getOp() == CigarOperation.HARD_CLIP){</span>
+<span class="nc" id="L667">				elements.remove(lastIndex);</span>
+			}
+<span class="fc bfc" id="L669" title="All 2 branches covered.">			if(elements.get(0).getOp() == CigarOperation.HARD_CLIP){</span>
+<span class="fc" id="L670">				elements.remove(0);</span>
+			}
+<span class="fc" id="L672">			return this;</span>
+		}
+	}
+	
+	private static final class PrimitiveCharIterator{
+		private final char[] array;
+<span class="fc" id="L678">		private int i=0;</span>
+<span class="fc" id="L679">		public PrimitiveCharIterator(char[] array) {</span>
+<span class="fc" id="L680">			this.array = array;</span>
+<span class="fc" id="L681">		}</span>
+		
+		public PrimitiveCharIterator(String string) {
+<span class="fc" id="L684">			this(string.toCharArray());</span>
+<span class="fc" id="L685">		}</span>
+
+		public boolean hasNext(){
+<span class="fc bfc" id="L688" title="All 2 branches covered.">			return i &lt; array.length;</span>
+		}
+		
+		public char next(){
+<span class="pc bpc" id="L692" title="1 of 2 branches missed.">			if(!hasNext()){</span>
+<span class="nc" id="L693">				throw new IllegalStateException(&quot;no more elements&quot;);</span>
+			}
+<span class="fc" id="L695">			return array[i++];</span>
+		}
+	}
+
+	public Range getValidRange() {
+<span class="fc" id="L700">		int ungappedAlignedLength = getUnPaddedReadLength();</span>
+<span class="fc" id="L701">		int numberOfClippedLeadingBases = computeLeadingClippedBases();</span>
+		
+<span class="fc" id="L703">		return new Range.Builder(ungappedAlignedLength)</span>
+<span class="fc" id="L704">						.shift(numberOfClippedLeadingBases)</span>
+<span class="fc" id="L705">						.build();</span>
+	}
+
+
+
+	private int computeLeadingClippedBases() {
+<span class="fc" id="L711">		int count=0;</span>
+<span class="pc bpc" id="L712" title="1 of 2 branches missed.">		for(CigarElement e : elements){</span>
+<span class="fc bfc" id="L713" title="All 4 branches covered.">			if(e.getOp()==CigarOperation.HARD_CLIP || e.getOp() == CigarOperation.SOFT_CLIP){</span>
+<span class="fc" id="L714">				count+=e.getLength();</span>
+			}else{
+				break;
+			}
+		}
+<span class="fc" id="L719">		return count;</span>
+	}
+
+
+	/**
+	 * Given this Cigar and the corresponding raw ungapped
+	 * sequence from the sequencing machine, create the trimmed
+	 * gapped {@link NucleotideSequenceBuilder}.
+	 * @param rawUngappedSequence the raw ungapped
+	 * sequence from the sequencing machine; can not be null.
+	 * @return a {@link NucleotideSequenceBuilder} of the gapped
+	 * trimmed sequence, will not be null.
+	 * @throws NullPointerException if rawUngappedSequence
+	 * is null.
+	 * @throws IllegalArgumentException if rawUngappedSequence has gaps.
+	 * @throws IllegalArgumentException if rawUngappedSequence ungapped length
+	 * does not match the cigar unpadded length.
+	 */
+	@SuppressWarnings(&quot;fallthrough&quot;)
+	@edu.umd.cs.findbugs.annotations.SuppressFBWarnings(&quot;SF_SWITCH_FALLTHROUGH&quot;)
+	public NucleotideSequenceBuilder toGappedTrimmedSequenceBuilder( NucleotideSequence rawUngappedSequence) {
+<span class="fc bfc" id="L740" title="All 2 branches covered.">		if(rawUngappedSequence.getNumberOfGaps() !=0){</span>
+<span class="fc" id="L741">			throw new IllegalArgumentException(&quot;rawUngapped Sequence can not have gaps&quot;);</span>
+		}
+		
+<span class="fc" id="L744">		NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(rawUngappedSequence);</span>
+<span class="fc" id="L745">		int currentOffset=0;</span>
+<span class="fc" id="L746">		int ungappedLength=0;</span>
+<span class="fc bfc" id="L747" title="All 2 branches covered.">		for(CigarElement e : elements){</span>
+<span class="pc bpc" id="L748" title="1 of 5 branches missed.">			switch(e.getOp()){</span>
+			case HARD_CLIP:
+<span class="fc" id="L750">			case SOFT_CLIP: builder.delete(new Range.Builder(e.getLength())</span>
+<span class="fc" id="L751">												.shift(currentOffset)</span>
+<span class="fc" id="L752">												.build());</span>
+<span class="fc" id="L753">							ungappedLength+=e.getLength();</span>
+<span class="fc" id="L754">							break;</span>
+			//insert gap into read
+<span class="fc" id="L756">			case DELETION : char[] gaps = new char[e.getLength()];</span>
+<span class="fc" id="L757">							Arrays.fill(gaps, '-');</span>
+<span class="fc" id="L758">							builder.insert(currentOffset, gaps);</span>
+<span class="fc" id="L759">							currentOffset+=e.getLength();</span>
+<span class="fc" id="L760">							break;</span>
+			case PADDING : //silent deletion against padded ref?
+						/*	char[] pads = new char[e.getLength()];
+							Arrays.fill(pads, '-');
+							builder.insert(currentOffset, pads);
+							currentOffset+=e.getLength();
+							*/
+<span class="nc" id="L767">							break;</span>
+			case SKIPPED:
+				//In cDNA-to-genome alignment, we may want to distinguish introns from deletions in exons.
+				//We introduce openation 'N' to represent long skip on the reference sequence.
+				//Suppose the spliced alignment is:
+				//REF: AGCTAGCATCGTGTCGCCCGTCTAGCATACGCATGATCGACTGTCAGCTAGTCAGACTAGTCGATCGATGTG
+				//READ:          GTGTAACCC................................TCAGAATA
+				//where '...' on the read sequence indicates intron. 
+				//The CIGAR for this alignment is : 9M32N8M.
+				//
+				//it looks like tophat just skips them completely?
+				//skip completely
+				
+<span class="fc" id="L780">				char[] skips = new char[e.getLength()];</span>
+<span class="fc" id="L781">				Arrays.fill(skips, '-');</span>
+<span class="fc" id="L782">				builder.insert(currentOffset, skips);</span>
+				
+<span class="fc" id="L784">				currentOffset+=e.getLength();</span>
+				
+<span class="fc" id="L786">				break;</span>
+			default :
+<span class="fc" id="L788">				currentOffset+=e.getLength();</span>
+<span class="fc" id="L789">				ungappedLength+=e.getLength();</span>
+			}
+		}
+<span class="fc bfc" id="L792" title="All 2 branches covered.">		if(ungappedLength != rawUngappedSequence.getLength()){</span>
+<span class="fc" id="L793">			throw new IllegalArgumentException(&quot;invalid input sequence length, expected &quot; + ungappedLength + &quot; but was &quot; + rawUngappedSequence.getLength());</span>
+		}
+<span class="fc" id="L795">		return builder;</span>
+	}
+
+
+
+	public int getNumberOfReferenceBasesAligned() {
+<span class="fc" id="L801">		int length=0;</span>
+<span class="fc bfc" id="L802" title="All 2 branches covered.">		for(CigarElement element : elements){</span>
+			//This is an optimization to allow the 
+	    	//compiler to use a tableswitch opcode
+	    	//instead of the more general purpose
+	    	//lookupswitch opcode.
+	    	//tableswitch is an O(1) lookup
+	    	//while lookupswitch is O(n) where n
+	    	//is the number of case statements in the switch.
+	    	//tableswitch requires consecutive case values.
+	    	//DO NOT CHANGE THE ORDER OF THE CASE STATEMENTS
+<span class="pc bpc" id="L812" title="3 of 10 branches missed.">			switch (element.getOp()) {</span>
+				case ALIGNMENT_MATCH:
+<span class="fc" id="L814">					length += element.getLength();</span>
+<span class="fc" id="L815">					break;</span>
+				case INSERTION:
+					//don't count insertions
+<span class="fc" id="L818">					break;</span>
+				case DELETION:
+<span class="fc" id="L820">					length += element.getLength();</span>
+<span class="fc" id="L821">					break;</span>
+				case SKIPPED:
+					//skip does get counted!
+<span class="fc" id="L824">					length += element.getLength();</span>
+<span class="fc" id="L825">					break;</span>
+				case SOFT_CLIP:
+					//don't count clip points
+<span class="fc" id="L828">					break;</span>
+				case HARD_CLIP:
+					//don't count clip points
+<span class="fc" id="L831">					break;</span>
+				case PADDING:
+					//don't count padding
+<span class="fc" id="L834">					break;</span>
+				case SEQUENCE_MATCH:
+<span class="nc" id="L836">					length += element.getLength();</span>
+<span class="nc" id="L837">					break;</span>
+				case SEQUENCE_MISMATCH:
+<span class="nc" id="L839">					length += element.getLength();</span>
+<span class="nc" id="L840">					break;</span>
+	
+				default:
+					// do not increase length
+			}		
+		}
+<span class="fc" id="L846">		return length;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

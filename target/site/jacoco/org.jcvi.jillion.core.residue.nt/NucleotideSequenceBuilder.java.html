@@ -1,0 +1,1889 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>NucleotideSequenceBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.core.residue.nt</a> &gt; <span class="el_source">NucleotideSequenceBuilder.java</span></div><h1>NucleotideSequenceBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.core.residue.nt;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Objects;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
+import org.jcvi.jillion.core.util.SingleThreadAdder;
+import org.jcvi.jillion.core.util.iter.IteratorUtil;
+import org.jcvi.jillion.core.util.iter.PeekableIterator;
+import org.jcvi.jillion.internal.core.util.GrowableByteArray;
+import org.jcvi.jillion.internal.core.util.GrowableIntArray;
+
+/**
+ * {@code NucleotideSequenceBuilder}  is a way to
+ * construct a {@link NucleotideSequence}
+ * similar to how a {@link StringBuilder} can be used
+ * to create a String.  The contents of the NucleotideSequence
+ * can be changed by method calls.  This class
+ * is not thread safe.
+ * @author dkatzel
+ *
+ *
+ */
+public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder&lt;Nucleotide,NucleotideSequence&gt;{
+	/**
+	 * Initial buffer size is {@value} which should
+	 * be enough for most next-gen reads that are seen.
+	 * This should greatly reduce the number of resizes we need to do.
+	 */
+	private static final int INTITAL_BUFFER_SIZE =200;
+	
+    private static final String NULL_SEQUENCE_ERROR_MSG = &quot;sequence can not be null&quot;;
+<span class="fc" id="L56">	private static final byte GAP_VALUE = Nucleotide.Gap.getOrdinalAsByte();</span>
+<span class="fc" id="L57">    private static final byte N_VALUE = Nucleotide.Unknown.getOrdinalAsByte();</span>
+<span class="fc" id="L58">    private static final byte A_VALUE = Nucleotide.Adenine.getOrdinalAsByte();</span>
+<span class="fc" id="L59">    private static final byte C_VALUE = Nucleotide.Cytosine.getOrdinalAsByte();</span>
+<span class="fc" id="L60">    private static final byte G_VALUE = Nucleotide.Guanine.getOrdinalAsByte();</span>
+<span class="fc" id="L61">    private static final byte T_VALUE = Nucleotide.Thymine.getOrdinalAsByte();</span>
+   
+    
+    private GrowableByteArray data;
+    /**
+     * The CodecDecider will keep track of what types of
+     * bases we have and how many in order to decide
+     * the best codec to use when we
+     * build our immutable NucleotideSequence
+     * via  {@link #build()}.
+     */
+    private CodecDecider codecDecider;
+
+    /**
+     * Creates a new NucleotideSequenceBuilder instance
+     * which currently contains no nucleotides.
+     */
+    public NucleotideSequenceBuilder(){
+<span class="fc" id="L79">        this(INTITAL_BUFFER_SIZE);</span>
+<span class="fc" id="L80">    }</span>
+    
+    
+    @Override
+	public NucleotideSequenceBuilder clear() {		
+<span class="fc" id="L85">    	data.clear();</span>
+<span class="fc" id="L86">		codecDecider.clear();</span>
+<span class="fc" id="L87">		return this;</span>
+	}
+
+
+	/**
+     * Creates a new NucleotideSequenceBuilder instance
+     * which currently contains no nucleotides 
+     * @param initialCapacity the initial capacity 
+     * but is expected to be eventually take up
+     * the given capacity.
+     * of the array backing the {@link NucleotideSequence}
+     * (will be grown if sequence gets too large)
+     * @throws IllegalArgumentException if initialCapacity &amp;lt; 1.
+     */
+<span class="fc" id="L101">    public NucleotideSequenceBuilder(int initialCapacity){</span>
+<span class="fc bfc" id="L102" title="All 2 branches covered.">        if(initialCapacity&lt;1){</span>
+<span class="fc" id="L103">            throw new IllegalArgumentException(&quot;initial capacity must be &gt;=1&quot;);</span>
+        }
+<span class="fc" id="L105">        data = new GrowableByteArray(initialCapacity);</span>
+<span class="fc" id="L106">        codecDecider = new CodecDecider();</span>
+<span class="fc" id="L107">    }</span>
+    /**
+     * Creates a new NucleotideSequenceBuilder instance
+     * which currently contains the given sequence.
+     * @param sequence the initial nucleotide sequence.
+     * @throws NullPointerException if sequence is null.
+     */
+<span class="fc" id="L114">    public NucleotideSequenceBuilder(NucleotideSequence sequence){</span>
+<span class="fc" id="L115">        assertNotNull(sequence);</span>
+<span class="fc" id="L116">        NewValues newValues = new NewValues(sequence);</span>
+<span class="fc" id="L117">        this.data = newValues.getData();</span>
+<span class="fc" id="L118">        codecDecider = new CodecDecider(newValues);</span>
+<span class="fc" id="L119">    }</span>
+    /**
+     * Creates a new NucleotideSequenceBuilder instance
+     * which currently contains the given sequence.
+     * @param sequence the initial nucleotide sequence.
+     * @throws NullPointerException if sequence is null.
+     */
+<span class="nc" id="L126">    public NucleotideSequenceBuilder(Iterable&lt;Nucleotide&gt; sequence){</span>
+<span class="nc" id="L127">        assertNotNull(sequence);</span>
+<span class="nc" id="L128">        NewValues newValues = new NewValues(sequence);</span>
+<span class="nc" id="L129">        this.data = newValues.getData();</span>
+<span class="nc" id="L130">        codecDecider = new CodecDecider(newValues);</span>
+<span class="nc" id="L131">    }</span>
+    /**
+     * Creates a new NucleotideSequenceBuilder instance
+     * which currently contains the given sequence.
+     *  Any whitespace in the input string will be ignored.
+     *  This method is able to parse both
+     * '*' (consed) and '-' (TIGR) as gap characters. 
+     * @param sequence the initial nucleotide sequence.
+     * @throws NullPointerException if sequence is null.
+     * @throws IllegalArgumentException if any non-whitespace
+     * in character in the sequence can not be converted
+     * into a {@link Nucleotide}.
+     */
+<span class="fc" id="L144">    public NucleotideSequenceBuilder(String sequence){</span>
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">		if (sequence == null) {</span>
+<span class="nc" id="L146">			throw new NullPointerException(NULL_SEQUENCE_ERROR_MSG);</span>
+		}
+<span class="fc" id="L148">		NewValues newValues = new NewValues(sequence);</span>
+<span class="fc" id="L149">		this.data = newValues.getData();</span>
+<span class="fc" id="L150">		codecDecider = new CodecDecider(newValues);</span>
+<span class="fc" id="L151">    }</span>
+    
+    /**
+     * Creates a new NucleotideSequenceBuilder instance
+     * which currently contains the given sequence as a char[].
+     *  Any whitespace or '\0' characters in the input array will be ignored.
+     *  This method is able to parse both
+     * '*' (consed) and '-' (TIGR) as gap characters. 
+     * @param sequence the initial nucleotide sequence as a character array
+     * @throws NullPointerException if sequence is null.
+     * @throws IllegalArgumentException if any non-whitespace
+     * in character in the sequence can not be converted
+     * into a {@link Nucleotide}.
+     */
+<span class="fc" id="L165">    public NucleotideSequenceBuilder(char[] sequence){</span>
+<span class="pc bpc" id="L166" title="1 of 2 branches missed.">		if (sequence == null) {</span>
+<span class="nc" id="L167">			throw new NullPointerException(NULL_SEQUENCE_ERROR_MSG);</span>
+		}
+<span class="fc" id="L169">		NewValues newValues = new NewValues(sequence);</span>
+<span class="fc" id="L170">		this.data = newValues.getData();</span>
+<span class="fc" id="L171">		codecDecider = new CodecDecider(newValues);</span>
+<span class="fc" id="L172">    }</span>
+    /**
+     * Creates a new NucleotideSequenceBuilder instance
+     * which currently contains the given single nucleotide.
+     * @param singleNucleotide the initial nucleotide sequence.
+     * @throws NullPointerException if singleNucleotide is null.
+     */
+<span class="nc" id="L179">    public NucleotideSequenceBuilder(Nucleotide singleNucleotide){</span>
+<span class="nc bnc" id="L180" title="All 2 branches missed.">		if (singleNucleotide == null) {</span>
+<span class="nc" id="L181">			throw new NullPointerException(&quot;singleNucleotide can not be null&quot;);</span>
+		}
+<span class="nc" id="L183">		NewValues newValues = new NewValues(singleNucleotide);</span>
+<span class="nc" id="L184">		this.data = newValues.getData();</span>
+<span class="nc" id="L185">		codecDecider = new CodecDecider(newValues);</span>
+<span class="nc" id="L186">	}</span>
+
+    
+<span class="fc" id="L189">    private NucleotideSequenceBuilder(NucleotideSequenceBuilder copy){    	</span>
+<span class="fc" id="L190">        this.data = copy.data.copy();</span>
+<span class="fc" id="L191">        this.codecDecider = copy.codecDecider.copy();</span>
+<span class="fc" id="L192">    }</span>
+<span class="fc" id="L193">    private NucleotideSequenceBuilder(GrowableByteArray data){</span>
+<span class="fc" id="L194">    	this.data = data;</span>
+<span class="fc" id="L195">    	NewValues newValues = new NewValues(data);</span>
+<span class="fc" id="L196">    	this.codecDecider = new CodecDecider(newValues);</span>
+<span class="fc" id="L197">    }</span>
+    
+    /**
+     * Creates a new NucleotideSequenceBuilder instance
+     * which currently contains the only the portion
+     * of the given sequence within the specified {@link Range}.
+     * 
+     * @apiNote This should be a more efficient way of achieving
+     *  &lt;pre&gt;
+     *  {@code new NucleotideSequenceBuilder(seq)
+     *  			.trim(range)}
+     *  &lt;/pre&gt;
+     * 
+     * @param seq the initial nucleotide sequence.
+     * @param range the range of the sequence to use; can not be null.
+     * @throws NullPointerException if sequence is null.
+     * @throws IndexOutOfBoundsException if Range contains values outside of the possible sequence offsets.
+     */
+<span class="fc" id="L215">	public NucleotideSequenceBuilder(NucleotideSequence seq, Range range) {</span>
+<span class="fc" id="L216">		NewValues newValues = new NewValues(seq.iterator(range));</span>
+<span class="fc" id="L217">		this.data = newValues.getData();</span>
+<span class="fc" id="L218">		codecDecider = new CodecDecider(newValues);</span>
+<span class="fc" id="L219">	}</span>
+
+
+	/**
+     * Appends the given base to the end
+     * of the builder's mutable sequence.
+     * @param base a single nucleotide sequence to be appended
+     * to the end our builder.
+     * @throws NullPointerException if base is null.
+     * 
+     * @return this.
+     */
+    public NucleotideSequenceBuilder append(Nucleotide base){
+<span class="fc bfc" id="L232" title="All 2 branches covered.">        if(base==null){</span>
+<span class="fc" id="L233">            throw new NullPointerException(&quot;base can not be null&quot;);</span>
+        }
+<span class="fc" id="L235">        return append(Collections.singleton(base));</span>
+    }
+    /**
+     * Appends the given sequence to the end
+     * of the builder's mutable sequence.
+     * @param sequence the nucleotide sequence to be appended
+     * to the end our builder.
+     * 
+     * @return this.
+     * 
+     * @throws NullPointerException if sequence is null.
+     */
+    public NucleotideSequenceBuilder append(Iterable&lt;Nucleotide&gt; sequence){
+<span class="fc" id="L248">        assertNotNull(sequence);</span>
+<span class="fc" id="L249">        NewValues newValues = new NewValues(sequence);</span>
+<span class="fc" id="L250">        return append(newValues);</span>
+    }
+    
+    /**
+     * Appends the given sequence to the end
+     * of the builder's mutable sequence.
+     * @param sequence the nucleotide sequence to be appended
+     * to the end our builder.
+     * @throws NullPointerException if sequence is null.
+     * 
+     * @return this.
+     */
+    public NucleotideSequenceBuilder append(NucleotideSequence sequence){
+<span class="fc" id="L263">        assertNotNull(sequence);</span>
+<span class="fc" id="L264">        NewValues newValues = new NewValues(sequence);</span>
+<span class="fc" id="L265">        return append(newValues);</span>
+    }
+	private NucleotideSequenceBuilder append(NewValues newValues) {
+		//this will force the bitset to 
+		//grow to the max new size so we don't keep growing each time
+<span class="fc" id="L270">		data.append(newValues.data);		</span>
+<span class="fc" id="L271">        this.codecDecider.append(newValues);</span>
+<span class="fc" id="L272">        return this;</span>
+	}
+    
+    /**
+     * Appends the current contents of the given {@link NucleotideSequenceBuilder} to the end
+     * of the builder's mutable sequence.  Any further modifications to the passed in builder
+     * will not be reflected in this builder.  This is an equivalent but more efficient way operation
+     * as {@code this.append(otherBuilder.build())}
+     * 
+     * @param otherBuilder the {@link NucleotideSequenceBuilder} whose current
+     * nucleotides are to be appended.
+     * 
+     * @return this.
+     * 
+     * @throws NullPointerException if otherBuilder is null.
+     * @throws IllegalArgumentException if otherBuilder is not a NucleotideSequenceBuilder.
+     */
+    public NucleotideSequenceBuilder append(NucleotideSequenceBuilder otherBuilder){
+        
+<span class="fc" id="L291">    	assertNotNull(otherBuilder);   </span>
+<span class="fc" id="L292">    	this.data.append(otherBuilder.data);</span>
+<span class="fc" id="L293">    	this.codecDecider.append(otherBuilder);</span>
+<span class="fc" id="L294">    	return this;</span>
+    }
+   
+    
+    /**
+     * Appends the given sequence to the end
+     * of the builder's mutable sequence.
+     * Any whitespace in the input string will be ignored.
+     *  This method is able to parse both
+     * '*' (consed) and '-' (TIGR) as gap characters. 
+     * @param sequence the nucleotide sequence to be appended
+     * to the end our builder.
+     * @throws NullPointerException if sequence is null.
+     */
+    public NucleotideSequenceBuilder append(String sequence){
+<span class="pc bpc" id="L309" title="1 of 2 branches missed.">    	if(sequence ==null){</span>
+<span class="nc" id="L310">    		throw new NullPointerException(NULL_SEQUENCE_ERROR_MSG);</span>
+    	}
+<span class="fc" id="L312">        return append(new NewValues(sequence));</span>
+    }
+    
+    
+    /**
+     * Appends the given sequence to the end
+     * of the builder's mutable sequence.
+     * Any whitespace in the input string will be ignored.
+     *  This method is able to parse both
+     * '*' (consed) and '-' (TIGR) as gap characters. 
+     * 
+     * @param sequence the nucleotide sequence to be appended
+     * to the end our builder; any '\0' characters are ignored.
+     * 
+     * @return this.
+     * 
+     * @throws NullPointerException if sequence is null.
+     */
+    public NucleotideSequenceBuilder append(char[] sequence){
+<span class="pc bpc" id="L331" title="1 of 2 branches missed.">    	if(sequence ==null){</span>
+<span class="nc" id="L332">    		throw new NullPointerException(NULL_SEQUENCE_ERROR_MSG);</span>
+    	}
+<span class="fc" id="L334">        return append(new NewValues(sequence));</span>
+    }
+    
+    /**
+     * Appends the given sequence to the end
+     * of the builder's mutable sequence.
+     * Any whitespace in the input string will be ignored.
+     *  This method is able to parse both
+     * '*' (consed) and '-' (TIGR) as gap characters. 
+     * 
+     * @param sequence the nucleotide sequence to be appended
+     * to the end our builder; any nulls are ignored.
+     * 
+     * @return this.
+     * 
+     * @throws NullPointerException if sequence is null.
+     * 
+     * @since 5.3
+     */
+    public NucleotideSequenceBuilder append(Nucleotide[] sequence){
+<span class="pc bpc" id="L354" title="1 of 2 branches missed.">        if(sequence ==null){</span>
+<span class="nc" id="L355">                throw new NullPointerException(NULL_SEQUENCE_ERROR_MSG);</span>
+        }
+<span class="fc" id="L357">        return append(new NewValues(sequence));</span>
+    }
+    /**
+     * Inserts the given sequence to the builder's mutable sequence
+     * starting at the given offset.  If any nucleotides existed
+     * downstream of this offset before this insert method
+     * was executed, then those nucleotides will be shifted by n
+     * bases where n is the length of the given sequence to insert.
+     * Any whitespace in the input string will be ignored.
+     *  This method is able to parse both
+     * '*' (consed) and '-' (TIGR) as gap characters. 
+     * If the offset = the current length then this insertion
+     * is treated as an append.
+     * @param offset the GAPPED offset into this mutable sequence
+     * to begin insertion.
+     * @param sequence the nucleotide sequence to be 
+     * inserted at the given offset.
+     * @throws NullPointerException if sequence is null.
+     * @throws IllegalArgumentException if offset is invalid.
+     */
+    public NucleotideSequenceBuilder insert(int offset, String sequence){
+<span class="fc" id="L378">    	 assertInsertionParametersValid(offset, sequence);</span>
+<span class="fc" id="L379">    	return insert(offset, new NewValues(sequence));</span>
+    }
+    /**
+     * Inserts the given sequence to the builder's mutable sequence
+     * starting at the given offset.  If any nucleotides existed
+     * downstream of this offset before this insert method
+     * was executed, then those nucleotides will be shifted by n
+     * bases where n is the length of the given sequence to insert.
+     * Any whitespace or '\0' characters will be ignored.
+     *  This method is able to parse both
+     * '*' (consed) and '-' (TIGR) as gap characters. 
+     * If the offset = the current length then this insertion
+     * is treated as an append.
+     * 
+     * @param offset the GAPPED offset into this mutable sequence
+     * to begin insertion.
+     * @param sequence the nucleotide sequence to be 
+     * inserted at the given offset.
+     * 
+     * @return this.
+     * 
+     * @throws NullPointerException if sequence is null.
+     * @throws IllegalArgumentException if offset is invalid.
+     */
+    public NucleotideSequenceBuilder insert(int offset, char[] sequence){
+<span class="fc" id="L404">    	assertInsertionParametersValid(offset, sequence);</span>
+<span class="fc" id="L405">		return insert(offset, new NewValues(sequence));</span>
+    }
+    
+    /**
+     * Replace the sequence currently located at the given
+     * {@link Range} with the given replacementSequence.
+     * 
+     * @apiNote This is the same as calling:
+     * &lt;pre&gt;
+     * 	delete(gappedRangeToBeReplaced);
+     * 	insert((int)gappedRangeToBeReplaced.getBegin(), replacementSeq);
+     * &lt;/pre&gt;
+     * @param gappedRangeToBeReplaced the range of this sequence to be replaced.
+     * @param replacementSeq the sequence use in this range.
+     * 
+     * @return this.
+     * 
+     */
+	public NucleotideSequenceBuilder replace(Range gappedRangeToBeReplaced, NucleotideSequenceBuilder replacementSeq) {
+<span class="fc" id="L424">		delete(gappedRangeToBeReplaced);</span>
+<span class="fc" id="L425">		insert((int)gappedRangeToBeReplaced.getBegin(), replacementSeq);	</span>
+<span class="fc" id="L426">		return this;</span>
+	}
+	/**
+     * Replace the sequence currently located at the given
+     * {@link Range} with the given replacementSequence.
+     * 
+     * @apiNote This is the same as calling:
+     * &lt;pre&gt;
+     * 	delete(gappedRangeToBeReplaced);
+     * 	insert((int)gappedRangeToBeReplaced.getBegin(), replacementSeq);
+     * &lt;/pre&gt;
+     * @param gappedRangeToBeReplaced the range of this sequence to be replaced.
+     * @param replacementSeq the sequence use in this range.
+     * 
+     * @return this.
+     */
+	public NucleotideSequenceBuilder replace(Range gappedRangeToBeReplaced, char[] replacementSeq) {
+<span class="nc" id="L443">		delete(gappedRangeToBeReplaced);</span>
+<span class="nc" id="L444">		insert((int)gappedRangeToBeReplaced.getBegin(), replacementSeq);	</span>
+<span class="nc" id="L445">		return this;</span>
+	}
+	
+	/**
+     * Replace the sequence currently located at the given
+     * {@link Range} with the given replacementSequence.
+     * 
+     * @apiNote This is the same as calling:
+     * &lt;pre&gt;
+     * 	delete(gappedRangeToBeReplaced);
+     * 	insert((int)gappedRangeToBeReplaced.getBegin(), replacementSeq);
+     * &lt;/pre&gt;
+     * @param gappedRangeToBeReplaced the range of this sequence to be replaced.
+     * @param replacementSeq the sequence use in this range.
+     * 
+     * @return this.
+     */
+	public NucleotideSequenceBuilder replace(Range gappedRangeToBeReplaced, String replacementSeq) {
+<span class="fc" id="L463">		delete(gappedRangeToBeReplaced);</span>
+<span class="fc" id="L464">		insert((int)gappedRangeToBeReplaced.getBegin(), replacementSeq);	</span>
+<span class="fc" id="L465">		return this;</span>
+	}
+	
+	/**
+     * Replace the sequence currently located at the given
+     * {@link Range} with the given replacementSequence.
+     * 
+     * @apiNote This is the same as calling:
+     * &lt;pre&gt;
+     * 	delete(gappedRangeToBeReplaced);
+     * 	insert((int)gappedRangeToBeReplaced.getBegin(), replacementSeq);
+     * &lt;/pre&gt;
+     * @param gappedRangeToBeReplaced the range of this sequence to be replaced.
+     * @param replacementSeq the sequence use in this range.
+     * 
+     * @return this.
+     */
+	public NucleotideSequenceBuilder replace(Range gappedRangeToBeReplaced, NucleotideSequence replacementSeq) {
+<span class="nc" id="L483">		delete(gappedRangeToBeReplaced);</span>
+<span class="nc" id="L484">		insert((int)gappedRangeToBeReplaced.getBegin(), replacementSeq);	</span>
+<span class="nc" id="L485">		return this;</span>
+	}
+    
+    private void assertNotNull(Object sequence) {
+<span class="fc bfc" id="L489" title="All 2 branches covered.">        if(sequence ==null){</span>
+<span class="fc" id="L490">            throw new NullPointerException(NULL_SEQUENCE_ERROR_MSG);</span>
+        }
+<span class="fc" id="L492">    }</span>
+    /**
+     * Get the current length of the mutable
+     * sequence. 
+     * @return the current length
+     * of the nucleotide sequence.
+     */
+    public long getLength(){
+<span class="fc" id="L500">        return codecDecider.getCurrentLength();</span>
+    }
+    
+    @Override
+	public long getUngappedLength() {
+<span class="fc" id="L505">		return codecDecider.getCurrentLength() - codecDecider.getNumberOfGaps();</span>
+	}
+    /**
+     * Replace the Nucleotide at the given offset with a different nucleotide.
+     * @param offset the gapped offset to modify.
+     * @param replacement the new {@link Nucleotide} to replace the old
+     * {@link Nucleotide} at that location.
+     * @return this
+     * @throws NullPointerException if replacement is null.
+     * @throws IllegalArgumentException if offset is invalid.
+     */
+    public NucleotideSequenceBuilder replace(int offset, Nucleotide replacement){
+    	
+<span class="fc bfc" id="L518" title="All 4 branches covered.">        if(offset &lt;0 || offset &gt;= data.getCurrentLength()){</span>
+<span class="fc" id="L519">            throw new IllegalArgumentException(</span>
+<span class="fc" id="L520">                    String.format(&quot;offset %d out of range (length = %d)&quot;,data.getCurrentLength(),offset));</span>
+        }
+<span class="fc bfc" id="L522" title="All 2 branches covered.">        if(replacement ==null){</span>
+<span class="fc" id="L523">            throw new NullPointerException(&quot;replacement base can not be null&quot;);</span>
+        }
+<span class="fc" id="L525">        return privateReplace(offset, replacement);</span>
+    }
+    /**
+     * Method that actually performs the replace which assumes all
+     * of the input values are valid.
+     * @param offset
+     * @param replacement
+     * @return
+     */
+	private NucleotideSequenceBuilder privateReplace(int offset,
+			Nucleotide replacement) {
+<span class="fc" id="L536">		byte value = (byte)replacement.ordinal();</span>
+<span class="fc" id="L537">		final byte oldValue = data.get(offset);</span>
+		
+		
+<span class="fc" id="L540">        codecDecider.replace(offset, oldValue, value);</span>
+<span class="fc" id="L541">        data.replace(offset, value);</span>
+         
+<span class="fc" id="L543">        return this;</span>
+	}
+    /**
+     * Deletes the nucleotides from the given range of this 
+     * partially constructed NucleotideSequence.  If the given
+     * range is empty, then the nucleotideSequence will not
+     * be modified. If the range extends beyond the currently
+     * built sequence, then this will delete until the end of
+     * the sequence.
+     * @param range the range to delete can not be null.
+     * @return this.
+     * @throws NullPointerException if range is null.
+     * @throws IllegalArgumentException if range's start is negative
+     * or greater than this nucleotide sequence's current length.
+     */
+    public NucleotideSequenceBuilder delete(Range range){
+<span class="fc bfc" id="L559" title="All 2 branches covered.">        if(range ==null){</span>
+<span class="fc" id="L560">            throw new NullPointerException(&quot;range can not be null&quot;);</span>
+        }
+<span class="fc bfc" id="L562" title="All 2 branches covered.">        if(!range.isEmpty()){</span>
+<span class="fc" id="L563">        	Range rangeToDelete = Range.of(Math.max(0, range.getBegin()),</span>
+<span class="fc" id="L564">        			Math.min(data.getCurrentLength()-1, range.getEnd()));</span>
+<span class="fc" id="L565">        	GrowableByteArray deletedBytes = data.subArray(rangeToDelete);</span>
+        	
+<span class="fc" id="L567">            NewValues newValues = new NewValues(deletedBytes);</span>
+<span class="fc" id="L568">            this.codecDecider.delete((int)range.getBegin(),newValues);</span>
+<span class="fc" id="L569">            data.remove(rangeToDelete);</span>
+        }
+<span class="fc" id="L571">        return this;</span>
+    }
+	
+	
+	
+    
+    @Override
+	public Nucleotide get(int offset) {
+<span class="fc bfc" id="L579" title="All 2 branches covered.">    	if(offset&lt;0){</span>
+<span class="fc" id="L580">            throw new IndexOutOfBoundsException(&quot;offset can not have negatives coordinates: &quot;+ offset);</span>
+        }
+<span class="fc bfc" id="L582" title="All 2 branches covered.">        if(offset&gt; getLength()){</span>
+<span class="fc" id="L583">            throw new IndexOutOfBoundsException(</span>
+<span class="fc" id="L584">                    String.format(&quot;offset can not start beyond current length (%d) : %d&quot;, getLength(),offset));</span>
+        }
+<span class="fc" id="L586">		return Nucleotide.VALUES.get(data.get(offset));</span>
+	}
+	public int getNumGaps(){
+<span class="fc" id="L589">        return codecDecider.getNumberOfGaps();</span>
+    }
+	public int[] getGapOffsets() {
+<span class="fc" id="L592">		return codecDecider.gapOffsets.toArray();		</span>
+	}
+
+	
+    int[] getNOffsets(){
+<span class="fc" id="L597">    	return codecDecider.nOffsets.toArray();</span>
+    }
+    public int getNumNs(){
+<span class="fc" id="L600">        return codecDecider.getNumberOfNs();</span>
+    }
+    public int getNumAmbiguities(){
+<span class="fc" id="L603">        return codecDecider.getNumberOfAmbiguities();</span>
+    }
+    
+    /**
+     * Inserts the given sequence the beginning
+     * of the builder's mutable sequence.
+     * This is the same as calling 
+     * {@link #insert(int, String) insert(0,sequence)}
+     * @param sequence the nucleotide sequence to be 
+     * inserted at the beginning.
+     * @return this.
+     * @throws NullPointerException if sequence is null.
+     * @see #insert(int, String)
+     */
+    public NucleotideSequenceBuilder prepend(String sequence){
+<span class="fc" id="L618">        return insert(0, sequence);</span>
+    }
+    
+    /**
+     * Inserts the given sequence the beginning
+     * of the builder's mutable sequence.
+     * This is the same as calling 
+     * {@link #insert(int, String) insert(0,sequence)}
+     * @param sequence the nucleotide sequence to be 
+     * inserted at the beginning.
+     * @return this.
+     * @throws NullPointerException if sequence is null.
+     * @see #insert(int, char[])
+     */
+    public NucleotideSequenceBuilder prepend(char[] sequence){
+<span class="fc" id="L633">        return insert(0, sequence);</span>
+    }
+    /**
+     * Inserts the given sequence to the builder's mutable sequence
+     * starting at the given offset.  If any nucleotides existed
+     * downstream of this offset before this insert method
+     * was executed, then those nucleotides will be shifted by n
+     * bases where n is the length of the given sequence to insert.
+     * @param offset the &lt;strong&gt;gapped&lt;/strong&gt; offset into this mutable sequence
+     * to begin insertion.  If the offset = the current length then this insertion
+     * is treated as an append.
+     * @param sequence the nucleotide sequence to be 
+     * inserted at the given offset.
+     * @return this
+     * @throws NullPointerException if sequence is null.
+     * @throws IllegalArgumentException if offset &amp;lt; 0 or &amp;gt; current sequence length.
+     */
+    public NucleotideSequenceBuilder insert(int offset, Iterable&lt;Nucleotide&gt; sequence){
+<span class="fc" id="L651">        assertInsertionParametersValid(offset, sequence);   </span>
+<span class="fc" id="L652">        NewValues newValues = new NewValues(sequence);</span>
+<span class="fc" id="L653">        return insert(offset, newValues);</span>
+    }
+    /**
+     * Inserts the given sequence to the builder's mutable sequence
+     * starting at the given offset.  If any nucleotides existed
+     * downstream of this offset before this insert method
+     * was executed, then those nucleotides will be shifted by n
+     * bases where n is the length of the given sequence to insert.
+     * 
+     * @param offset the &lt;strong&gt;gapped&lt;/strong&gt; offset into this mutable sequence
+     * to begin insertion.  If the offset = the current length then this insertion
+     * is treated as an append.
+     * @param sequence the nucleotide sequence to be 
+     * inserted at the given offset; any nulls are ignored.
+     * 
+     * @return this
+     * @throws NullPointerException if sequence is null.
+     * @throws IllegalArgumentException if offset &amp;lt; 0 or &amp;gt; current sequence length.
+     * 
+     * @since 5.3
+     */
+    public NucleotideSequenceBuilder insert(int offset, Nucleotide[] sequence) {
+<span class="nc" id="L675">        assertInsertionParametersValid(offset, sequence);   </span>
+<span class="nc" id="L676">        NewValues newValues = new NewValues(sequence);</span>
+<span class="nc" id="L677">        return insert(offset, newValues);</span>
+    }
+    
+    /**
+     * Inserts the given sequence to the builder's mutable sequence
+     * starting at the given offset.  If any nucleotides existed
+     * downstream of this offset before this insert method
+     * was executed, then those nucleotides will be shifted by n
+     * bases where n is the length of the given sequence to insert.
+     * @param offset the &lt;strong&gt;gapped&lt;/strong&gt; offset into this mutable sequence
+     * to begin insertion.  If the offset = the current length then this insertion
+     * is treated as an append.
+     * @param sequence the nucleotide sequence to be 
+     * inserted at the given offset.
+     * @return this
+     * @throws NullPointerException if sequence is null.
+     * @throws IllegalArgumentException if offset &amp;lt; 0 or &amp;gt; current sequence length.
+     */
+    public NucleotideSequenceBuilder insert(int offset, NucleotideSequence sequence){
+<span class="fc" id="L696">        assertInsertionParametersValid(offset, sequence);   </span>
+<span class="fc" id="L697">        NewValues newValues = new NewValues(sequence);</span>
+<span class="fc" id="L698">        return insert(offset, newValues);</span>
+    }
+	private void assertInsertionParametersValid(int offset,
+			Object sequence) {
+<span class="fc" id="L702">		assertNotNull(sequence);</span>
+<span class="fc bfc" id="L703" title="All 2 branches covered.">        if(offset&lt;0){</span>
+<span class="fc" id="L704">            throw new IllegalArgumentException(&quot;offset can not have negatives coordinates: &quot;+ offset);</span>
+        }
+<span class="fc bfc" id="L706" title="All 2 branches covered.">        if(offset&gt; getLength()){</span>
+<span class="fc" id="L707">            throw new IllegalArgumentException(</span>
+<span class="fc" id="L708">                    String.format(&quot;offset can not start beyond current length (%d) : %d&quot;, getLength(),offset));</span>
+        }
+<span class="fc" id="L710">	}</span>
+	private NucleotideSequenceBuilder insert(int offset, NewValues newValues) {
+<span class="fc" id="L712">		data.insert(offset, newValues.data);</span>
+		
+<span class="fc" id="L714">        this.codecDecider.insert(offset,newValues);</span>
+<span class="fc" id="L715">        return this;</span>
+	}
+    /**
+     * Inserts the contents of the given other  {@link NucleotideSequenceBuilder}
+     *  into this builder's mutable sequence
+     * starting at the given offset.  If any nucleotides existed
+     * downstream of this offset before this insert method
+     * was executed, then those nucleotides will be shifted by n
+     * bases where n is the length of the given sequence to insert.
+     * Any further modifications to the passed in builder
+     * will not be reflected in this builder.  This is an equivalent but more efficient operation
+     * as {@code this.insert(offset, otherBuilder.build())}.
+     * If the offset = the current length then this insertion
+     * is treated as an append.
+     * 
+     * @param offset the &lt;strong&gt;gapped&lt;/strong&gt; offset into this mutable sequence
+     * to begin insertion.
+     * @param otherBuilder the {@link NucleotideSequenceBuilder} whose current
+     * nucleotides are to be inserted at the given offset.
+     * @return this
+     * @throws NullPointerException if otherBuilder is null.
+     * @throws IllegalArgumentException if offset &amp;lt; 0 or &amp;gt; current sequence length or if otherBuilder is not a NucleotideSequenceBuilder.
+     */
+    public NucleotideSequenceBuilder insert(int offset, ResidueSequenceBuilder&lt;Nucleotide, NucleotideSequence&gt; otherBuilder){
+<span class="fc" id="L739">        assertNotNull(otherBuilder);</span>
+<span class="pc bpc" id="L740" title="1 of 2 branches missed.">        if(!(otherBuilder instanceof NucleotideSequenceBuilder)){</span>
+<span class="nc" id="L741">        	throw new IllegalArgumentException(&quot;otherBuilder must be a NucleotideSequenceBuilder&quot;);</span>
+        }
+<span class="fc bfc" id="L743" title="All 2 branches covered.">        if(offset&lt;0){</span>
+<span class="fc" id="L744">            throw new IllegalArgumentException(&quot;offset can not have negatives coordinates: &quot;+ offset);</span>
+        }
+<span class="fc bfc" id="L746" title="All 2 branches covered.">        if(offset&gt; getLength()){</span>
+<span class="fc" id="L747">            throw new IllegalArgumentException(</span>
+<span class="fc" id="L748">                    String.format(&quot;offset can not start beyond current length (%d) : %d&quot;, getLength(),offset));</span>
+        }
+<span class="fc" id="L750">        NucleotideSequenceBuilder otherSequenceBuilder = (NucleotideSequenceBuilder)otherBuilder;</span>
+<span class="fc" id="L751">        NewValues newValues = new NewValues(otherSequenceBuilder);</span>
+<span class="fc bfc" id="L752" title="All 2 branches covered.">        if(offset == getLength()){</span>
+        	//act like append!
+<span class="fc" id="L754">        	return append(newValues);</span>
+        }
+       
+<span class="fc" id="L757">        return insert(offset, newValues);</span>
+    }
+    
+   
+    
+    /**
+     * Inserts the given {@link Nucleotide} to the builder's mutable sequence
+     * at the given offset.  If any nucleotides existed
+     * downstream of this offset before this insert method
+     * was executed, then those nucleotides will be shifted by 1
+     * base.
+     * If the offset = the current length then this insertion
+     * is treated as an append.
+     * @param offset the GAPPED offset into this mutable sequence
+     * to begin insertion.
+     * @param base the {@link Nucleotide} to be 
+     * inserted at the given offset.
+     * @return this
+     * @throws NullPointerException if base is null.
+     * @throws IllegalArgumentException if offset &amp;lt; 0 or &amp;gt; current sequence length.
+     */
+    public NucleotideSequenceBuilder insert(int offset, Nucleotide base){
+<span class="fc bfc" id="L779" title="All 2 branches covered.">    	if(base ==null){</span>
+<span class="fc" id="L780">    		throw new NullPointerException(&quot;base can not be null&quot;);</span>
+    	}
+<span class="fc" id="L782">        return insert(offset, Collections.singleton(base));</span>
+     }
+    /**
+     * Inserts the given sequence the beginning
+     * of the builder's mutable sequence.
+     * This is the same as calling 
+     * {@link #insert(int, Iterable) insert(0,sequence)}
+     * @param sequence the nucleotide sequence to be 
+     * inserted at the beginning.
+     * @return this.
+     * @throws NullPointerException if sequence is null.
+     * @see #insert(int, Iterable)
+     */
+    public NucleotideSequenceBuilder prepend(Iterable&lt;Nucleotide&gt; sequence){
+<span class="fc" id="L796">        return insert(0, sequence);</span>
+    }
+    
+    /**
+     * Inserts the given sequence the beginning
+     * of the builder's mutable sequence.
+     * This is the same as calling 
+     * {@link #insert(int, NucleotideSequence) insert(0,sequence)}
+     * @param sequence the nucleotide sequence to be 
+     * inserted at the beginning.
+     * @return this.
+     * @throws NullPointerException if sequence is null.
+     * @see #insert(int, Iterable)
+     */
+    public NucleotideSequenceBuilder prepend(NucleotideSequence sequence){
+<span class="fc" id="L811">        return insert(0, sequence);</span>
+    }
+    
+    /**
+     * Inserts the current contents of the given {@link NucleotideSequenceBuilder}
+     * to the beginning
+     * of this builder's mutable sequence.
+     * This is the same as calling 
+     * {@link #insert(int, NucleotideSequenceBuilder) insert(0,otherBuilder)}
+     * @param otherBuilder {@link NucleotideSequenceBuilder} whose current
+     * nucleotides are to be inserted at the beginning.
+     * @return this.
+     * @throws NullPointerException if otherBuilder is null.
+     * @see #insert(int, NucleotideSequenceBuilder)
+     */
+    public NucleotideSequenceBuilder prepend(ResidueSequenceBuilder&lt;Nucleotide, NucleotideSequence&gt; otherBuilder){
+<span class="fc" id="L827">        return insert(0, otherBuilder);</span>
+    }
+    /**
+    * {@inheritDoc}
+    * &lt;p&gt;
+    * Create a new {@link NucleotideSequence} instance
+    * from the current mutable nucleotides.  This method
+    * does not destroy any temp data so this method
+    * could be called multiple times each time 
+    * creating a new {@link NucleotideSequence}.
+    * @return a new NucleotideSequence never null
+    * but may be empty.
+    */
+    @Override
+    public NucleotideSequence build() {    
+    		
+<span class="fc bfc" id="L843" title="All 2 branches covered.">        	if(codecDecider.hasAlignedReference()){</span>
+<span class="fc" id="L844">        		return new DefaultReferenceEncodedNucleotideSequence(</span>
+<span class="fc" id="L845">        				codecDecider.alignedReference.reference, this, codecDecider.alignedReference.offset);</span>
+        	
+        	}
+        	
+<span class="fc" id="L849">        	return codecDecider.encode(iterator());</span>
+
+    }
+    @Override
+    public Iterator&lt;Nucleotide&gt; iterator() {
+<span class="fc" id="L854">    	return new Iterator&lt;Nucleotide&gt;(){</span>
+<span class="fc" id="L855">    		int currentOffset=0;</span>
+<span class="fc" id="L856">    		int length = data.getCurrentLength();</span>
+    		
+    		
+			@Override
+			public boolean hasNext() {
+<span class="fc bfc" id="L861" title="All 2 branches covered.">				return currentOffset&lt;length;</span>
+			}
+			@Override
+			public Nucleotide next() {
+<span class="fc" id="L865">				return Nucleotide.getByOrdinal(data.get(currentOffset++));</span>
+			}
+			@Override
+			public void remove() {
+<span class="nc" id="L869">				throw new UnsupportedOperationException();</span>
+				
+			}
+    	};
+    	
+	}
+	/**
+     * Return the built {@link NucleotideSequence} as {@link ReferenceMappedNucleotideSequence} 
+     * assuming {@link #setReferenceHint(NucleotideSequence, int)} has been set.
+     * This is the same as {@code (ReferenceEncodedNucleotideSequence) build()}
+     * @return the built NucleotideSequence as a {@link ReferenceMappedNucleotideSequence}.
+     * @throws IllegalStateException if a reference
+     * has not been provided via the {@link #setReferenceHint(NucleotideSequence, int)}
+     */
+    public ReferenceMappedNucleotideSequence buildReferenceEncodedNucleotideSequence() {    
+<span class="pc bpc" id="L884" title="1 of 2 branches missed.">    	if(!codecDecider.hasAlignedReference()){</span>
+<span class="nc" id="L885">    		throw new IllegalStateException(&quot;must provide reference&quot;);</span>
+    	}
+<span class="fc" id="L887">        return (ReferenceMappedNucleotideSequence)build();</span>
+    }
+   
+    /**
+     * Provide another {@link NucleotideSequence} and a start coordinate
+     * that can be used as a reference alignment for this sequence to be built.
+     * This information may or may not be actually used during {@link #build()}
+     *  to construct a more memory efficient
+     * {@link NucleotideSequence} implementation.  The given sequence and start coordinate
+     * provided should be the coordinates used in the final fully built sequence.
+     * &lt;br&gt;
+     * For example:
+     * &lt;pre&gt;
+     * 
+     * NucleotideSequence reference = ... //reference = A-GCCGTT
+     * 
+     *  new NucleotideSequenceBuilder(&quot;CGGC&quot;)
+     *  		.setReference(reference, 2)
+                .reverseCompliment()
+                .append(&quot;N&quot;);     
+     * &lt;/pre&gt;
+     * might use the part of the reference &quot;GCCGT&quot;
+     * that aligns to this sequence being built with only one SNP ({@code T -&gt;N} )
+     * to save memory. 
+     * 
+     * @param referenceSequence the reference sequence 
+     * that aligns well to this sequence and that may be used
+     * to improve memory performance.  A reference
+     * can be a contig or scaffold consensus or anything else
+     * that will have a high percent identity for the length 
+     * of this sequence being built. This sequence and the reference
+     * sequence must be in the same orientation to align well.  Can not be null.
+     * @param gappedStartOffset the &lt;strong&gt;gapped&lt;/strong&gt; offset into
+     * this reference where the final version of this built sequence will
+     * start to align. Can not be negative or start beyond
+     * the length of this reference.
+     * @return this.
+     * @throws NullPointerException if referenceSequence is null.
+     * @throws IllegalArgumentException if gappedStartOffset is &amp;lt; 0 or beyond the reference.
+     */
+    public NucleotideSequenceBuilder setReferenceHint(NucleotideSequence referenceSequence, int gappedStartOffset){
+<span class="fc" id="L928">    	codecDecider.alignedReference(new AlignedReference(referenceSequence, gappedStartOffset));</span>
+<span class="fc" id="L929">    	return this;</span>
+    }
+    
+    /**
+     * {@inheritDoc}
+     * 
+     * If a previous reference hint is provided
+     * via {@link #setReferenceHint(NucleotideSequence, int)},
+     * then the reference coordinates will be automatically
+     * adjusted to compensate for the new trimmed sequence.
+     * 
+     * @param range the range of nucleotides to keep (gapped).
+     * @return this.
+     */
+    @Override
+    public NucleotideSequenceBuilder trim(Range range){
+<span class="pc bpc" id="L945" title="1 of 4 branches missed.">    	if(range.getEnd() &lt;0 || range.isEmpty()){</span>
+<span class="fc" id="L946">    		return delete(Range.ofLength(this.getLength()));</span>
+    	}
+    	
+<span class="fc" id="L949">    	Range trimRange = range.intersection(Range.ofLength(getLength()));</span>
+<span class="fc" id="L950">    	NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(data.subArray(trimRange));</span>
+<span class="fc bfc" id="L951" title="All 2 branches covered.">		if(codecDecider.hasAlignedReference()){</span>
+<span class="fc" id="L952">			builder.setReferenceHint(codecDecider.alignedReference.reference, codecDecider.alignedReference.offset+ (int)range.getBegin());</span>
+		}
+<span class="fc" id="L954">		this.codecDecider = builder.codecDecider;</span>
+<span class="fc" id="L955">		this.data = builder.data;</span>
+<span class="fc" id="L956">		return this;</span>
+    }
+   
+	
+    
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	public NucleotideSequenceBuilder copy(){	
+<span class="fc" id="L966">		return new NucleotideSequenceBuilder(this);</span>
+	}
+    /**
+     * Create a copy of only the {@link Range}
+     * to use. If the range extends beyond this builder's
+     * sequence, then only the intersecting portion is used.
+     * 
+     * @param gappedRange the range in gapped coordinates; can not be null.
+     * 
+     * @return a new NucleotideSequenceBuilder; will never be null.
+     * 
+     * @since 5.0
+     */
+	public NucleotideSequenceBuilder copy(Range gappedRange) {
+<span class="fc" id="L980">		return new NucleotideSequenceBuilder(data.subArray(gappedRange));</span>
+	}
+   
+	@Override
+	public int hashCode() {
+<span class="fc" id="L985">		final int prime = 31;</span>
+<span class="fc" id="L986">		int result = 1;</span>
+<span class="fc" id="L987">		result = prime * result + Arrays.hashCode(data.toArray());</span>
+<span class="fc" id="L988">		return result;</span>
+	}
+	/**
+	 * Two {@link NucleotideSequenceBuilder}s are equal
+	 * if they currently both contain
+	 * the exact same Nucleotide sequence.
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean equals(Object obj) {
+<span class="fc bfc" id="L998" title="All 2 branches covered.">		if (this == obj) {</span>
+<span class="fc" id="L999">			return true;</span>
+		}
+<span class="pc bpc" id="L1001" title="1 of 2 branches missed.">		if (obj == null) {</span>
+<span class="nc" id="L1002">			return false;</span>
+		}
+<span class="pc bpc" id="L1004" title="1 of 2 branches missed.">		if (!(obj instanceof NucleotideSequenceBuilder)) {</span>
+<span class="nc" id="L1005">			return false;</span>
+		}
+<span class="fc" id="L1007">		NucleotideSequenceBuilder other = (NucleotideSequenceBuilder) obj;</span>
+		
+		
+<span class="fc" id="L1010">		return Arrays.equals(data.toArray(),other.data.toArray());</span>
+	}
+	/**
+	 * Convenience equality check against a {@link NucleotideSequence}
+	 * so that we don't have to build this builder
+	 * just to check.
+	 * @param other the {@link NucleotideSequence} to check against;
+	 * may be null.
+	 * @return {@code false} if other is null or does not have the 
+	 * exact same length and {@link Nucleotide}s in the same order;
+	 * {@code true} otherwise.
+	 * @since 5.0
+	 */
+	public boolean isEqualTo(NucleotideSequence other){
+<span class="fc bfc" id="L1024" title="All 2 branches covered.">		if(other ==null){</span>
+<span class="fc" id="L1025">			return false;</span>
+		}
+<span class="fc bfc" id="L1027" title="All 2 branches covered.">		if(getLength() != other.getLength()){</span>
+<span class="fc" id="L1028">			return false;</span>
+		}
+<span class="fc" id="L1030">		Iterator&lt;Nucleotide&gt; iter = iterator();</span>
+<span class="fc" id="L1031">		Iterator&lt;Nucleotide&gt; otherIter = other.iterator();</span>
+<span class="fc bfc" id="L1032" title="All 2 branches covered.">		while(iter.hasNext()){</span>
+<span class="fc bfc" id="L1033" title="All 2 branches covered.">			if(!iter.next().equals(otherIter.next())){</span>
+<span class="fc" id="L1034">				return false;</span>
+			}
+		}
+<span class="fc" id="L1037">		return true;</span>
+	}
+	
+	public boolean isEqualToIgnoringGaps(NucleotideSequence other){
+<span class="fc bfc" id="L1041" title="All 2 branches covered.">	    	if(other ==null){</span>
+<span class="fc" id="L1042">	    		return false;</span>
+	    	}
+<span class="fc bfc" id="L1044" title="All 2 branches covered.">	    	if(getUngappedLength() != other.getUngappedLength()){</span>
+<span class="fc" id="L1045">	    		return false;</span>
+	    	}
+<span class="fc" id="L1047">	    	Iterator&lt;Nucleotide&gt; iter = iterator();</span>
+<span class="fc" id="L1048">	    	Iterator&lt;Nucleotide&gt; otherIter = other.iterator(); </span>
+<span class="fc bfc" id="L1049" title="All 2 branches covered.">	    	while(iter.hasNext()){</span>
+	    		//have to duplicate get non-gap
+	    		//code because can't use private helper method
+	    		//inside a default method.
+<span class="fc" id="L1053">	    		Nucleotide nextNonGap = getNextNonGapBaseFrom(iter);</span>
+	    		
+<span class="fc bfc" id="L1055" title="All 2 branches covered.">	    		if(nextNonGap !=null){    			</span>
+	    			//haven't reached the end of our sequence
+	    			//yet so check the other sequence for equality
+<span class="fc" id="L1058">	    			Nucleotide nextOtherNonGap=getNextNonGapBaseFrom(otherIter);</span>
+		    		
+		    		//if we get this far,
+		    		//then the our next base is NOT a gap
+		    		//so the other seq better equal
+<span class="fc bfc" id="L1063" title="All 2 branches covered.">		    		if(!nextNonGap.equals(nextOtherNonGap)){</span>
+<span class="fc" id="L1064">		    			return false;</span>
+		    		}
+	    		}
+	    		
+<span class="fc" id="L1068">	    	}</span>
+	    	//if we get this far then our entire sequences
+	    	//matched. because we previously
+	    	//checked that the ungapped lengths matched
+	    	//so if either iterator still has elements
+	    	//they must all be gaps.
+<span class="fc" id="L1074">	    	return true;</span>
+	    }
+
+
+	private Nucleotide getNextNonGapBaseFrom(Iterator&lt;Nucleotide&gt; iter) {
+		Nucleotide nextNonGap;
+		do{
+<span class="fc" id="L1081">			nextNonGap =iter.next();</span>
+<span class="fc bfc" id="L1082" title="All 4 branches covered.">		}while(nextNonGap.isGap() &amp;&amp; iter.hasNext());</span>
+<span class="fc bfc" id="L1083" title="All 2 branches covered.">		if(nextNonGap.isGap()){</span>
+<span class="fc" id="L1084">			return null;</span>
+		}
+<span class="fc" id="L1086">		return nextNonGap;</span>
+	}
+	
+	
+	/**
+     * Get the current Nucleotides sequence as 
+     * one long String without any whitespace.
+     * For example:
+     * &lt;pre&gt;
+     *  new NucleotideSequenceBuilder(&quot;ACGT&quot;)
+     *  .append(&quot;-TAG&quot;)
+     *  .toString();
+     * &lt;/pre&gt;
+     * will return &quot;ACGT-TAG&quot;.
+     */
+    @Override
+    public String toString(){
+<span class="fc" id="L1103">    	StringBuilder builder = new StringBuilder(codecDecider.getCurrentLength());</span>
+<span class="fc" id="L1104">    	byte[] array = data.toArray();</span>
+<span class="fc bfc" id="L1105" title="All 2 branches covered.">    	for(int i=0; i&lt; array.length;i++){</span>
+<span class="fc" id="L1106">    		builder.append(Nucleotide.VALUES.get(array[i]));</span>
+    	}
+<span class="fc" id="L1108">        return builder.toString();</span>
+    }
+    /**
+     * Reverse complement all the nucleotides currently in this builder.
+     * Calling this method will only reverse complement bases that 
+     * already exist in this builder; any additional operations
+     * to insert bases will not be affected.
+     * &lt;p&gt;
+     * For example:
+     * &lt;pre&gt;
+     *      new NucleotideSequenceBuilder(&quot;CGGC&quot;)
+                .reverseComplement()
+                .append(&quot;N&quot;);                
+     * &lt;/pre&gt;
+     * will generate a Sequence &quot;GCCGN&quot;.
+     * @return this.
+     */
+    public NucleotideSequenceBuilder reverseComplement(){
+<span class="fc" id="L1126">    	byte[] bytes = data.toArray();</span>
+<span class="fc" id="L1127">        int currentLength = bytes.length;</span>
+<span class="fc" id="L1128">        int pivotOffset = currentLength/2;</span>
+        
+        
+<span class="fc bfc" id="L1131" title="All 2 branches covered.">        for(int i=0; i&lt;pivotOffset; i++){</span>
+<span class="fc" id="L1132">            int compOffset = currentLength-1-i;</span>
+            
+<span class="fc" id="L1134">            Nucleotide tmp = Nucleotide.VALUES.get(bytes[i]).complement();</span>
+           
+<span class="fc" id="L1136">            byte complementOrdinal = Nucleotide.VALUES.get(bytes[compOffset]).complement().getOrdinalAsByte();</span>
+<span class="fc" id="L1137">            bytes[i] = complementOrdinal;</span>
+<span class="fc" id="L1138">            bytes[compOffset] = tmp.getOrdinalAsByte();</span>
+        }
+<span class="fc bfc" id="L1140" title="All 2 branches covered.">        if(currentLength%2!=0){</span>
+<span class="fc" id="L1141">        	bytes[pivotOffset] = Nucleotide.VALUES.get(bytes[pivotOffset]).complement().getOrdinalAsByte();</span>
+        }
+<span class="fc" id="L1143">        data = new GrowableByteArray(bytes);</span>
+<span class="fc" id="L1144">        codecDecider.reverse();</span>
+<span class="fc" id="L1145">        return this;</span>
+    }
+    /**
+     * Complements all the nucleotides currently in this builder
+     * but does not reverse the sequence.
+     * Calling this method will only complement bases that 
+     * already exist in this builder; any additional operations
+     * to insert bases will not be affected.
+     * &lt;p&gt;
+     * For example:
+     * &lt;pre&gt;
+     *      new NucleotideSequenceBuilder(&quot;ATGT&quot;)
+                .compliment()
+                .append(&quot;N&quot;);                
+     * &lt;/pre&gt;
+     * will generate a Sequence &quot;TACAN&quot;.
+     * @return this.
+     */
+    public NucleotideSequenceBuilder complement(){
+<span class="fc" id="L1164">        int currentLength = codecDecider.getCurrentLength();</span>
+<span class="fc" id="L1165">        byte[] complementedData = new byte[currentLength];</span>
+<span class="fc" id="L1166">        byte[] originalData = data.toArray();</span>
+<span class="fc bfc" id="L1167" title="All 2 branches covered.">        for(int i=0; i&lt;originalData.length; i++){</span>
+<span class="fc" id="L1168">        	complementedData[i]=Nucleotide.VALUES.get(originalData[i]).complement().getOrdinalAsByte();</span>
+        }
+<span class="fc" id="L1170">        this.data = new GrowableByteArray(complementedData);</span>
+        //codec decider shouldn't change since number
+        //of ambiguities, Ns and gaps wont change
+        //and the offsets of N's and gaps won't change
+        //either since they are self-complementing.
+<span class="fc" id="L1175">        return this;</span>
+    }
+    
+    /**
+     * Turn off more extreme data compression which
+     * will improve cpu performance at the cost
+     * of the built {@link NucleotideSequence} taking up more memory.
+     * By default, if this method is not called, then 
+     * the data compression is turned ON which is the equivalent
+     * of calling this method with the parameter set to {@code false}.
+     * @param turnOffDataCompression {@code true} to turn off data compression;
+     * {@code false} to keep data compression on.  Defaults to {@code false}. 
+     * @return this.
+     */
+    @Override
+    public NucleotideSequenceBuilder turnOffDataCompression(boolean turnOffDataCompression){
+<span class="fc" id="L1191">    	codecDecider.forceBasicCompression(turnOffDataCompression);</span>
+<span class="fc" id="L1192">    	return this;</span>
+    }
+    /**
+     * {@inheritDoc}
+     * 
+     * @see #reverseComplement()
+     */
+    @Override
+	public NucleotideSequenceBuilder reverse() {
+<span class="fc" id="L1201">        data.reverse();        </span>
+<span class="fc" id="L1202">        codecDecider.reverse();</span>
+<span class="fc" id="L1203">		return this;</span>
+	}
+	/**
+     * Remove all gaps currently present in this builder.
+     * @return this.
+     */
+    public NucleotideSequenceBuilder ungap(){
+<span class="fc" id="L1210">		final int numGaps = codecDecider.getNumberOfGaps();</span>
+		// if we have no gaps then we can short circuit
+		// and do nothing
+<span class="fc bfc" id="L1213" title="All 2 branches covered.">		if (numGaps == 0) {</span>
+<span class="fc" id="L1214">			return this;</span>
+		}
+		
+<span class="fc" id="L1217">		byte[] oldBytes = data.toArray();</span>
+<span class="fc" id="L1218">		byte[] newBytes = new byte[oldBytes.length-codecDecider.gapOffsets.getCurrentLength()];</span>
+		// bulk copy all bits that aren't
+		// for the gaps
+<span class="fc" id="L1221">		Iterator&lt;Integer&gt; gapIterator = codecDecider.gapOffsets.iterator();</span>
+		
+<span class="fc" id="L1223">		int oldOffset = 0;</span>
+<span class="fc" id="L1224">		int newOffset = 0;</span>
+<span class="fc bfc" id="L1225" title="All 2 branches covered.">		while (gapIterator.hasNext()) {</span>
+<span class="fc" id="L1226">			int nextGapOffset = gapIterator.next().intValue();</span>
+<span class="fc bfc" id="L1227" title="All 2 branches covered.">			for (; oldOffset &lt; nextGapOffset; oldOffset++,newOffset++) {</span>
+<span class="fc" id="L1228">				newBytes[newOffset] = oldBytes[oldOffset];</span>
+			}
+			// skip gap
+<span class="fc" id="L1231">			oldOffset ++;</span>
+<span class="fc" id="L1232">		}</span>
+		// fill in rest of bits after the gaps
+<span class="fc bfc" id="L1234" title="All 2 branches covered.">		for (; oldOffset &lt; oldBytes.length; oldOffset++,newOffset++) {</span>
+<span class="fc" id="L1235">			newBytes[newOffset] = oldBytes[oldOffset];</span>
+		}
+<span class="fc" id="L1237">		data = new GrowableByteArray(newBytes);</span>
+<span class="fc" id="L1238">		codecDecider.ungap();</span>
+<span class="fc" id="L1239">		return this;</span>
+    }
+    /**
+     * Get the corresponding gapped Range (where the start and end values
+     * of the range are in gapped coordinate space) for the given
+     * ungapped {@link Range}.
+     * @param ungappedRegion the Range of ungapped coordinates; can not be null.
+     * @return a new Range never null.
+     * @throws NullPointerException if the gappedRange is null.
+     * 
+     * 
+     */
+    public Range toGappedRange(Range ungappedRange) {
+<span class="fc" id="L1252">    	int ungappedStart = (int)ungappedRange.getBegin();</span>
+<span class="fc" id="L1253">    	int ungappedEnd = (int)ungappedRange.getEnd();</span>
+<span class="fc" id="L1254">    	return Range.of(getGappedOffsetFor(ungappedStart),</span>
+<span class="fc" id="L1255">    			getGappedOffsetFor(ungappedEnd)</span>
+    			); 
+	}
+    /**
+     * Get the corresponding ungapped Range (where the start and end values
+     * of the range are in ungapped coordinate space) for the given
+     * gapped {@link Range}.
+     * @param gappedRange the Range of gapped coordinates; can not be null.
+     * @return a new Range never null.
+     * @throws NullPointerException if the gappedRange is null.
+     * @throws IndexOutOfBoundsException if the given Range goes beyond
+     * the gapped sequence.
+     * 
+     * @since 5.2
+     */
+    public Range toUngappedRange(Range gappedRange) {
+<span class="fc" id="L1271">        Objects.requireNonNull(gappedRange);</span>
+<span class="fc" id="L1272">        long gappedBegin = gappedRange.getBegin();</span>
+<span class="fc" id="L1273">        long gappedEnd = gappedRange.getEnd();</span>
+        
+<span class="fc" id="L1275">        long currentLength = codecDecider.getCurrentLength();</span>
+<span class="fc bfc" id="L1276" title="All 4 branches covered.">        if(gappedBegin &gt;= currentLength || gappedEnd &gt;= currentLength){</span>
+<span class="fc" id="L1277">            throw new IndexOutOfBoundsException(&quot;gapped Range of &quot; + gappedRange +&quot; is beyond the gapped sequence length of &quot; + currentLength);</span>
+        }
+        
+<span class="fc" id="L1280">        GrowableIntArray gaps = codecDecider.gapOffsets;</span>
+<span class="fc bfc" id="L1281" title="All 2 branches covered.">        if(gaps.getCurrentLength() == 0){</span>
+            //no gaps
+<span class="fc" id="L1283">            return gappedRange;</span>
+        }
+        
+<span class="fc" id="L1286">        long ungappedStart = gappedBegin - numGapsUntil(gaps, (int)gappedBegin);</span>
+<span class="fc" id="L1287">        long ungappedEnd = gappedEnd - numGapsUntil(gaps, (int)gappedEnd);</span>
+       
+<span class="fc" id="L1289">        return Range.of(ungappedStart, ungappedEnd); </span>
+    }
+    
+    private int numGapsUntil(GrowableIntArray gaps, int gappedOffset){
+<span class="fc" id="L1293">        int insertionPoint = gaps.binarySearch(gappedOffset);</span>
+<span class="fc bfc" id="L1294" title="All 2 branches covered.">        if(insertionPoint &gt;=0){</span>
+            //if we landed on a gap, then
+            //the we want the length of the array
+            //up until that offset so that's why it's +1
+<span class="fc" id="L1298">            return insertionPoint +1;</span>
+        }
+<span class="fc" id="L1300">        return -insertionPoint -1;</span>
+    }
+    
+    public int getGappedOffsetFor(int ungappedOffset){
+<span class="fc" id="L1304">    	SingleThreadAdder currentOffset = new SingleThreadAdder(ungappedOffset);</span>
+<span class="fc" id="L1305">    	codecDecider.gapOffsets.stream()</span>
+<span class="fc" id="L1306">    							.forEach(i -&gt;{</span>
+<span class="fc bfc" id="L1307" title="All 2 branches covered.">    								if( i &lt;= currentOffset.intValue()){</span>
+<span class="fc" id="L1308">    									currentOffset.increment();</span>
+    								}
+<span class="fc" id="L1310">    							});</span>
+    	
+<span class="fc" id="L1312">    	return currentOffset.intValue();</span>
+    }
+    
+   
+    /**
+     * This class keeps track of the number of special
+     * nucleotides (gaps, N, ambiguities etc)
+     * that we have so far in our sequence.
+     * We can use this information during
+     * {@link #build()} to determine the best
+     * {@link NucleotideCodec} to use.
+     * @author dkatzel
+     */
+    private static final class CodecDecider{
+       // private int numberOfGaps=0;
+<span class="fc" id="L1327">        private int numberOfNonNAmbiguities=0;</span>
+       // private int numberOfNs=0;
+<span class="fc" id="L1329">        private int currentLength=0;</span>
+<span class="fc" id="L1330">        private AlignedReference alignedReference=null;</span>
+        private GrowableIntArray gapOffsets;
+        private GrowableIntArray nOffsets;
+        
+<span class="fc" id="L1334">        private boolean forceBasicCodec = false;</span>
+        
+<span class="fc" id="L1336">        CodecDecider(){</span>
+        	//needs to be initialized
+<span class="fc" id="L1338">        	gapOffsets = new GrowableIntArray(12);</span>
+<span class="fc" id="L1339">        	nOffsets = new GrowableIntArray(12);</span>
+<span class="fc" id="L1340">        }</span>
+        public NucleotideSequence encode(Iterator&lt;Nucleotide&gt; iterator) {
+        	
+<span class="fc" id="L1343">        	int numberOfGaps = gapOffsets.getCurrentLength();</span>
+<span class="fc" id="L1344">            int numberOfNs = nOffsets.getCurrentLength();</span>
+            
+<span class="fc bfc" id="L1346" title="All 8 branches covered.">			if(forceBasicCodec || numberOfNonNAmbiguities&gt;0 || (numberOfGaps&gt;0 &amp;&amp; numberOfNs &gt;0)){</span>
+<span class="fc" id="L1347">                byte[] encodedBytes= BasicNucleotideCodec.INSTANCE.encode(currentLength, gapOffsets.toArray(), iterator);</span>
+<span class="fc" id="L1348">                return new DefaultNucleotideSequence(BasicNucleotideCodec.INSTANCE, encodedBytes);</span>
+			}
+			//if we get this far then we don't have any non-N ambiguities
+			//AND we have either only gaps or only Ns
+<span class="fc" id="L1352">            int fourBitBufferSize =BasicNucleotideCodec.INSTANCE.getNumberOfEncodedBytesFor(currentLength, numberOfGaps);</span>
+<span class="fc" id="L1353">            int twoBitBufferSize = AcgtnNucloetideCodec.INSTANCE.getNumberOfEncodedBytesFor(currentLength,</span>
+<span class="fc" id="L1354">            		Math.max(numberOfGaps, numberOfNs));</span>
+<span class="fc bfc" id="L1355" title="All 2 branches covered.">            if(fourBitBufferSize &lt; twoBitBufferSize){</span>
+<span class="fc" id="L1356">                byte[] encodedBytes= BasicNucleotideCodec.INSTANCE.encode(currentLength, gapOffsets.toArray(), iterator);</span>
+<span class="fc" id="L1357">                return new DefaultNucleotideSequence(BasicNucleotideCodec.INSTANCE, encodedBytes);</span>
+            }
+<span class="fc bfc" id="L1359" title="All 2 branches covered.">            if(numberOfGaps==0 ){</span>
+<span class="fc" id="L1360">                byte[] encodedBytes= AcgtnNucloetideCodec.INSTANCE.encode(currentLength, nOffsets.toArray(), iterator);</span>
+<span class="fc" id="L1361">                return new DefaultNucleotideSequence(AcgtnNucloetideCodec.INSTANCE, encodedBytes);</span>
+            }
+            
+<span class="fc" id="L1364">            byte[] encodedBytes= AcgtGapNucleotideCodec.INSTANCE.encode(currentLength, gapOffsets.toArray(), iterator);</span>
+<span class="fc" id="L1365">            return new DefaultNucleotideSequence(AcgtGapNucleotideCodec.INSTANCE, encodedBytes);</span>
+       
+		}
+<span class="fc" id="L1368">		CodecDecider(NewValues newValues){</span>
+<span class="fc" id="L1369">        	nOffsets = newValues.getNOffsets().copy();</span>
+<span class="fc" id="L1370">			currentLength = newValues.getLength();</span>
+<span class="fc" id="L1371">			numberOfNonNAmbiguities = newValues.getnumberOfNonNAmiguities();</span>
+<span class="fc" id="L1372">			gapOffsets = newValues.getGapOffsets().copy();</span>
+<span class="fc" id="L1373">        }</span>
+        CodecDecider copy(){
+<span class="fc" id="L1375">        	CodecDecider copy = new CodecDecider();</span>
+<span class="fc" id="L1376">        	copy.numberOfNonNAmbiguities = numberOfNonNAmbiguities;</span>
+        	
+<span class="fc" id="L1378">        	copy.currentLength= currentLength;</span>
+<span class="fc" id="L1379">        	copy.nOffsets = nOffsets.copy();</span>
+<span class="fc" id="L1380">        	copy.alignedReference = alignedReference;</span>
+<span class="fc" id="L1381">        	copy.gapOffsets = gapOffsets.copy();</span>
+<span class="fc" id="L1382">        	return copy;</span>
+        	
+        }
+        
+        void forceBasicCompression(boolean forceBasicCompression){
+<span class="fc" id="L1387">        	this.forceBasicCodec = forceBasicCompression;</span>
+        	
+<span class="fc" id="L1389">        }</span>
+        
+        void clear(){
+<span class="fc" id="L1392">        	 gapOffsets.clear();</span>
+<span class="fc" id="L1393">        	 nOffsets.clear();</span>
+        	 
+<span class="fc" id="L1395">             numberOfNonNAmbiguities=0;            </span>
+<span class="fc" id="L1396">             currentLength=0;</span>
+<span class="fc" id="L1397">             alignedReference=null;</span>
+<span class="fc" id="L1398">        }</span>
+        
+        void alignedReference(AlignedReference ref){
+<span class="fc" id="L1401">        	this.alignedReference = ref;</span>
+<span class="fc" id="L1402">        }</span>
+        
+        boolean hasAlignedReference(){
+<span class="fc bfc" id="L1405" title="All 2 branches covered.">        	return alignedReference!=null;</span>
+        }
+        
+        private void append(GrowableIntArray src, GrowableIntArray dest){
+<span class="fc" id="L1409">        	int[] newGaps =src.toArray();        	</span>
+<span class="fc bfc" id="L1410" title="All 2 branches covered.">        	for(int i=0; i&lt; newGaps.length; i++){</span>
+<span class="fc" id="L1411">        		newGaps[i] +=currentLength;</span>
+        	}
+        	//should already be in sorted order
+        	//so we don't have to re-sort        	
+<span class="fc" id="L1415">        	dest.append(newGaps);</span>
+<span class="fc" id="L1416">        }</span>
+        public void append(NucleotideSequenceBuilder other) {
+<span class="fc" id="L1418">        	CodecDecider otherDecider = other.codecDecider;</span>
+        	
+<span class="fc" id="L1420">        	append(otherDecider.gapOffsets, gapOffsets);</span>
+<span class="fc" id="L1421">        	append(otherDecider.nOffsets, nOffsets);</span>
+        
+<span class="fc" id="L1423">			currentLength += other.getLength();</span>
+<span class="fc" id="L1424">			numberOfNonNAmbiguities += otherDecider.numberOfNonNAmbiguities;</span>
+<span class="fc" id="L1425">        }</span>
+        public void append(NewValues newValues) {
+<span class="fc" id="L1427">        	append(newValues.getGapOffsets(), gapOffsets);</span>
+<span class="fc" id="L1428">        	append(newValues.getNOffsets(), nOffsets);</span>
+        
+<span class="fc" id="L1430">			currentLength += newValues.getLength();</span>
+<span class="fc" id="L1431">			numberOfNonNAmbiguities += newValues.getnumberOfNonNAmiguities();</span>
+			
+			
+<span class="fc" id="L1434">        }</span>
+        
+        private void insert(GrowableIntArray src, GrowableIntArray dest, int insertionOffset, int insertionLength){
+<span class="fc" id="L1437">        	int currentGapLength=dest.getCurrentLength();</span>
+<span class="fc" id="L1438">        	int insertLength = insertionLength;</span>
+        	//shift downstream gaps we already have
+<span class="fc bfc" id="L1440" title="All 2 branches covered.">        	for(int i=0; i&lt;currentGapLength; i++){</span>
+<span class="fc" id="L1441">        		int currentValue = dest.get(i);</span>
+<span class="fc bfc" id="L1442" title="All 2 branches covered.">        		if(currentValue&gt;=insertionOffset){</span>
+<span class="fc" id="L1443">        			dest.replace(i, currentValue +insertLength);</span>
+        		}
+        	}
+<span class="fc" id="L1446">        	int[] newGaps =src.toArray();</span>
+<span class="fc bfc" id="L1447" title="All 2 branches covered.">        	for(int i=0; i&lt; newGaps.length; i++){</span>
+<span class="fc" id="L1448">        		newGaps[i] +=insertionOffset;</span>
+        	}
+<span class="fc" id="L1450">        	dest.sortedInsert(newGaps);</span>
+        	
+<span class="fc" id="L1452">        }</span>
+        
+        public void insert(int startOffset, NewValues newValues){
+<span class="fc" id="L1455">        	int insertLength = newValues.getLength();</span>
+<span class="fc bfc" id="L1456" title="All 2 branches covered.">        	if(startOffset ==0){</span>
+        		//use optimized prepend
+<span class="fc" id="L1458">        		gapOffsets = prepend(newValues.getGapOffsets(), gapOffsets, insertLength);</span>
+<span class="fc" id="L1459">        		nOffsets = prepend(newValues.getNOffsets(), nOffsets, insertLength);</span>
+        	}else{        	
+<span class="fc" id="L1461">	        	insert(newValues.getGapOffsets(), gapOffsets, startOffset, insertLength);</span>
+<span class="fc" id="L1462">	        	insert(newValues.getNOffsets(), nOffsets, startOffset, insertLength);</span>
+        	}
+
+<span class="fc" id="L1465">			currentLength += insertLength;</span>
+<span class="fc" id="L1466">			numberOfNonNAmbiguities += newValues.getnumberOfNonNAmiguities();		</span>
+			
+<span class="fc" id="L1468">        }</span>
+        
+        private GrowableIntArray prepend(GrowableIntArray src, GrowableIntArray original, int insertionLength){
+<span class="fc" id="L1471">        	int oldGaps[] =original.toArray();</span>
+<span class="fc bfc" id="L1472" title="All 2 branches covered.">        	for(int i=0; i&lt; oldGaps.length; i++){</span>
+<span class="fc" id="L1473">        		oldGaps[i] +=insertionLength;</span>
+        	}
+        	//should already be in sorted order
+        	//so we don't have to re-sort        	
+<span class="fc" id="L1477">        	GrowableIntArray newOffsets= new GrowableIntArray(insertionLength + original.getCurrentCapacity());</span>
+<span class="fc" id="L1478">        	newOffsets.append(src);</span>
+<span class="fc" id="L1479">        	newOffsets.append(oldGaps);</span>
+        	
+<span class="fc" id="L1481">        	return newOffsets;</span>
+        }
+        
+        
+        public void reverse(){
+        	
+<span class="fc" id="L1487">        	gapOffsets = reverseCoordinates(gapOffsets);</span>
+<span class="fc" id="L1488">        	nOffsets = reverseCoordinates(nOffsets);</span>
+        	
+<span class="fc" id="L1490">        }</span>
+		private GrowableIntArray reverseCoordinates(GrowableIntArray array) {
+<span class="fc" id="L1492">			int gaps[] =array.toArray();</span>
+<span class="fc" id="L1493">        	int delta = currentLength-1;</span>
+<span class="fc bfc" id="L1494" title="All 2 branches covered.">        	for(int i=0; i&lt;gaps.length; i++){</span>
+<span class="fc" id="L1495">        		gaps[i]= delta-gaps[i];</span>
+        	}
+<span class="fc" id="L1497">        	GrowableIntArray newArray = new GrowableIntArray(array.getCurrentCapacity());</span>
+<span class="fc" id="L1498">        	newArray.append(gaps);</span>
+<span class="fc" id="L1499">        	newArray.reverse();</span>
+<span class="fc" id="L1500">			return newArray;</span>
+		}
+        
+        private void delete(GrowableIntArray array, int startOffset, int[] gapsToDelete, int lengthDeleted){
+        	
+<span class="fc bfc" id="L1505" title="All 2 branches covered.">			for(int i=0; i&lt;gapsToDelete.length; i++){</span>
+<span class="fc" id="L1506">				array.sortedRemove(gapsToDelete[i]+startOffset);				</span>
+			}
+			
+			//shift all downstream offsets accordingly
+<span class="fc" id="L1510">			int lastGap = startOffset+lengthDeleted-1;</span>
+<span class="fc" id="L1511">			int remainingGapLength = array.getCurrentLength();</span>
+			//we know that we won't have to shift any offsets
+			//upstream of the deleted region
+			//return of binarySearch is guaranteed to be
+			//negative (because we would have deleted it above
+<span class="fc bfc" id="L1516" title="All 2 branches covered.">			for(int i=-array.binarySearch(lastGap) -1; i&lt;remainingGapLength; i++){</span>
+				try{
+<span class="pc bpc" id="L1518" title="1 of 2 branches missed.">				if(array.get(i)&gt; lastGap){</span>
+<span class="fc" id="L1519">					array.replace(i, array.get(i) - lengthDeleted);</span>
+				}
+<span class="nc" id="L1521">				}catch(Throwable t){</span>
+<span class="nc" id="L1522">					throw new RuntimeException(t);</span>
+<span class="fc" id="L1523">				}</span>
+			}
+<span class="fc" id="L1525">        }</span>
+        
+        public void delete(int startOffset, NewValues newValues) {
+<span class="fc" id="L1528">        	delete(gapOffsets, startOffset, newValues.getGapOffsets().toArray(), newValues.getLength());</span>
+<span class="fc" id="L1529">        	delete(nOffsets, startOffset, newValues.getNOffsets().toArray(),newValues.getLength());</span>
+        	
+<span class="fc" id="L1531">			currentLength -= newValues.getLength();</span>
+<span class="fc" id="L1532">			numberOfNonNAmbiguities -= newValues.getnumberOfNonNAmiguities();</span>
+<span class="fc" id="L1533">        }</span>
+       
+		
+        public void replace(int offset,byte oldValue, byte newValue) {
+<span class="fc" id="L1537">            handleReplacementValue(offset, oldValue,false);</span>
+<span class="fc" id="L1538">            handleReplacementValue(offset,newValue,true);</span>
+<span class="fc" id="L1539">        }</span>
+
+       
+        
+        void handleReplacementValue(int offset, int value, boolean insert) {
+<span class="fc bfc" id="L1544" title="All 2 branches covered.">            if(value == GAP_VALUE){</span>
+<span class="fc" id="L1545">            	replaceValue(gapOffsets, offset, insert);               </span>
+<span class="fc bfc" id="L1546" title="All 2 branches covered.">            }else if(value == N_VALUE){</span>
+<span class="fc" id="L1547">            	replaceValue(nOffsets, offset, insert);</span>
+<span class="fc bfc" id="L1548" title="All 4 branches covered.">            }else if(value != A_VALUE &amp;&amp; value != C_VALUE </span>
+<span class="fc bfc" id="L1549" title="All 4 branches covered.">                    &amp;&amp; value != G_VALUE &amp;&amp; value != T_VALUE){</span>
+<span class="fc" id="L1550">                handleAmbiguity(insert);                </span>
+            }
+<span class="fc" id="L1552">        }</span>
+
+        private void replaceValue(GrowableIntArray array, int offset, boolean insert){
+<span class="fc bfc" id="L1555" title="All 2 branches covered.">        	if(insert){</span>
+<span class="fc" id="L1556">        		array.sortedInsert(offset);</span>
+         	  
+            }else{
+<span class="fc" id="L1559">            	array.sortedRemove(offset);         	   </span>
+            }
+<span class="fc" id="L1561">        }</span>
+        
+        private void handleAmbiguity(boolean increment) {
+<span class="fc bfc" id="L1564" title="All 2 branches covered.">            if(increment){</span>
+<span class="fc" id="L1565">                numberOfNonNAmbiguities++;</span>
+            }else{
+<span class="fc" id="L1567">                numberOfNonNAmbiguities--;</span>
+            }
+<span class="fc" id="L1569">        }</span>
+
+      
+        
+        void ungap(){
+        	//first we have to shift the N's
+<span class="fc" id="L1575">        	int[] gaps =gapOffsets.toArray();</span>
+<span class="fc" id="L1576">        	int[] newNOffsets = new int[nOffsets.getCurrentLength()];</span>
+        	
+<span class="fc" id="L1578">        	PeekableIterator&lt;Integer&gt; gapOffsetIter = IteratorUtil.createPeekableIterator(gapOffsets.iterator());</span>
+<span class="fc" id="L1579">        	Iterator&lt;Integer&gt; nOffsetIter = nOffsets.iterator();</span>
+        	
+<span class="fc" id="L1581">        	int shiftSize=0;</span>
+<span class="fc" id="L1582">        	int i=0;</span>
+<span class="fc bfc" id="L1583" title="All 2 branches covered.">        	while(nOffsetIter.hasNext()){</span>
+<span class="fc" id="L1584">        		int currentNOffset = nOffsetIter.next();</span>
+<span class="fc bfc" id="L1585" title="All 2 branches covered.">        		while(gapOffsetIter.hasNext()){</span>
+<span class="fc" id="L1586">        			int nextGapOffset =gapOffsetIter.peek();</span>
+<span class="fc bfc" id="L1587" title="All 2 branches covered.">        			if(nextGapOffset &lt; currentNOffset){</span>
+<span class="fc" id="L1588">        				shiftSize++;</span>
+<span class="fc" id="L1589">        				gapOffsetIter.next();</span>
+        			}else{
+        				break;
+        			}
+<span class="fc" id="L1593">        		}</span>
+<span class="fc" id="L1594">        		newNOffsets[i] = currentNOffset - shiftSize;</span>
+<span class="fc" id="L1595">        		i++;</span>
+<span class="fc" id="L1596">        	}</span>
+<span class="fc" id="L1597">        	nOffsets = new GrowableIntArray(newNOffsets);</span>
+        	//now we can remove the gaps
+<span class="fc" id="L1599">            currentLength-=gaps.length;</span>
+<span class="fc" id="L1600">            gapOffsets.clear();</span>
+            
+<span class="fc" id="L1602">        }</span>
+        /**
+         * @return the numberOfGaps
+         */
+        int getNumberOfGaps() {
+<span class="fc" id="L1607">            return gapOffsets.getCurrentLength();</span>
+        }
+        /**
+         * @return the numberOfNonNAmbiguities
+         */
+        int getNumberOfAmbiguities() {
+<span class="fc" id="L1613">            return numberOfNonNAmbiguities + getNumberOfNs();</span>
+        }
+        /**
+         * @return the numberOfNs
+         */
+        int getNumberOfNs() {
+<span class="fc" id="L1619">            return nOffsets.getCurrentLength();</span>
+        }
+        /**
+         * @return the currentLength
+         */
+        int getCurrentLength() {
+<span class="fc" id="L1625">            return currentLength;</span>
+        }
+        
+        
+    }
+    
+    
+    private static class AlignedReference{
+    	private final NucleotideSequence reference;
+    	private final int offset;
+<span class="fc" id="L1635">		public AlignedReference(NucleotideSequence reference, int offset) {</span>
+<span class="fc" id="L1636">			long length = reference.getLength();</span>
+<span class="pc bpc" id="L1637" title="1 of 2 branches missed.">			if(offset &gt; length){</span>
+<span class="nc" id="L1638">				throw new IllegalArgumentException(</span>
+<span class="nc" id="L1639">						String.format(&quot;invalid offset %d is beyond reference length %d&quot;, offset, length));</span>
+			}
+<span class="fc" id="L1641">			this.reference = reference;</span>
+<span class="fc" id="L1642">			this.offset = offset;</span>
+<span class="fc" id="L1643">		}</span>
+    	
+    }
+    
+    
+    
+    private static class NewValues{
+    	
+    	private final GrowableByteArray data;
+    	private int numberOfACGTs;
+    	
+    	private final GrowableIntArray nOffsets;
+    	private final GrowableIntArray gapOffsets;
+
+<span class="fc" id="L1657">    	public NewValues(GrowableByteArray data){</span>
+<span class="fc" id="L1658">    		this.data = data.copy();</span>
+<span class="fc" id="L1659">    		nOffsets = new GrowableIntArray(12);</span>
+<span class="fc" id="L1660">			gapOffsets = new GrowableIntArray(12);</span>
+			
+    		
+<span class="fc" id="L1663">    		SingleThreadAdder offset = new SingleThreadAdder();</span>
+<span class="fc" id="L1664">    		data.stream()</span>
+<span class="fc" id="L1665">    				.forEach(i-&gt;{</span>
+<span class="fc" id="L1666">    					handleOrdinal((byte)i, offset.intValue());</span>
+<span class="fc" id="L1667">    					offset.increment();</span>
+<span class="fc" id="L1668">    				});</span>
+    		
+<span class="fc" id="L1670">    	}</span>
+    	
+<span class="nc" id="L1672">    	public NewValues(Nucleotide nucleotide){</span>
+<span class="nc" id="L1673">    		nOffsets = new GrowableIntArray(12);</span>
+<span class="nc" id="L1674">			gapOffsets = new GrowableIntArray(12);</span>
+<span class="nc" id="L1675">    		data = new GrowableByteArray(1);</span>
+    		
+<span class="nc" id="L1677">            handle(nucleotide, 0);</span>
+            //only one value so we
+            //don't need to sort
+<span class="nc" id="L1680">    	}</span>
+    	
+<span class="fc" id="L1682">        public NewValues(Nucleotide[] sequence) {</span>
+<span class="fc" id="L1683">            nOffsets = new GrowableIntArray();</span>
+<span class="fc" id="L1684">            gapOffsets = new GrowableIntArray();</span>
+<span class="fc" id="L1685">            data = new GrowableByteArray(sequence.length);</span>
+
+<span class="fc" id="L1687">            int offset = 0;</span>
+<span class="fc bfc" id="L1688" title="All 2 branches covered.">            for (int i = 0; i &lt; sequence.length; i++) {</span>
+<span class="fc" id="L1689">                Nucleotide n = sequence[i];</span>
+<span class="pc bpc" id="L1690" title="1 of 2 branches missed.">                if (n != null) {</span>
+<span class="fc" id="L1691">                    handle(n, offset);</span>
+<span class="fc" id="L1692">                    offset++;</span>
+                }
+            }
+<span class="fc" id="L1695">        }</span>
+<span class="fc" id="L1696">    	public NewValues(String sequence){</span>
+<span class="fc" id="L1697">    		nOffsets = new GrowableIntArray(12);</span>
+<span class="fc" id="L1698">			gapOffsets = new GrowableIntArray(12);</span>
+<span class="fc" id="L1699">			data = new GrowableByteArray(sequence.length());</span>
+			
+<span class="fc" id="L1701">    		int offset=0;</span>
+            //convert sequence to char[] which 
+            //will run faster than sequence.charAt(i)
+<span class="fc" id="L1704">            char[] chars = sequence.toCharArray();</span>
+
+<span class="fc bfc" id="L1706" title="All 2 branches covered.">            for (int i = 0; i &lt; chars.length; i++) {</span>
+<span class="fc" id="L1707">                char c = chars[i];</span>
+<span class="fc" id="L1708">                Nucleotide n = Nucleotide.parseOrNull(c);</span>
+<span class="fc bfc" id="L1709" title="All 2 branches covered.">                if (n != null) {</span>
+<span class="fc" id="L1710">                    handle(n, offset);</span>
+<span class="fc" id="L1711">                    offset++;</span>
+                }
+            }
+    		
+<span class="fc" id="L1715">    	}</span>
+<span class="fc" id="L1716">    	public NewValues(char[] sequence){</span>
+<span class="fc" id="L1717">    		nOffsets = new GrowableIntArray(12);</span>
+<span class="fc" id="L1718">			gapOffsets = new GrowableIntArray(12);</span>
+<span class="fc" id="L1719">			data = new GrowableByteArray(sequence.length);</span>
+			
+<span class="fc" id="L1721">    		int offset=0;</span>
+            
+<span class="fc bfc" id="L1723" title="All 2 branches covered.">    		for(int i=0; i&lt;sequence.length; i++){</span>
+<span class="fc" id="L1724">    			char c = sequence[i];    			</span>
+<span class="fc" id="L1725">				Nucleotide n = Nucleotide.parseOrNull(c);</span>
+<span class="fc bfc" id="L1726" title="All 2 branches covered.">				if(n !=null){</span>
+<span class="fc" id="L1727">    				handle(n, offset);</span>
+<span class="fc" id="L1728">                	offset++;</span>
+    			}
+    		}
+    		
+<span class="fc" id="L1732">    	}</span>
+    	
+    	
+    	/**
+    	 * Convenience constructor that allocates
+    	 * the gap Offsets and bitSet fields to the needed
+    	 * sizes
+    	 * since we know those sizes before processing. 
+    	 * @param sequence the sequence to use.
+    	 * 
+    	 */
+<span class="fc" id="L1743">    	public NewValues(NucleotideSequence sequence){</span>
+<span class="fc" id="L1744">    		nOffsets = new GrowableIntArray(12);</span>
+<span class="fc" id="L1745">    		gapOffsets = new GrowableIntArray(sequence.getNumberOfGaps());</span>
+<span class="fc" id="L1746">    		data = new GrowableByteArray((int)sequence.getLength());</span>
+    		
+<span class="fc" id="L1748">            int offset=0;</span>
+<span class="fc bfc" id="L1749" title="All 2 branches covered.">            for(Nucleotide n : sequence){</span>
+<span class="fc" id="L1750">            	handle(n, offset);</span>
+<span class="fc" id="L1751">            	offset++;            	</span>
+<span class="fc" id="L1752">            }</span>
+<span class="fc" id="L1753">    	}</span>
+<span class="fc" id="L1754">    	public NewValues(Iterator&lt;Nucleotide&gt; iter){</span>
+<span class="fc" id="L1755">    		nOffsets = new GrowableIntArray(12);</span>
+<span class="fc" id="L1756">			gapOffsets = new GrowableIntArray(12);</span>
+<span class="fc" id="L1757">    		data = new GrowableByteArray(100);</span>
+<span class="fc" id="L1758">            int offset=0;</span>
+<span class="fc bfc" id="L1759" title="All 2 branches covered.">            while(iter.hasNext()){</span>
+<span class="fc" id="L1760">            	Nucleotide n = iter.next();</span>
+<span class="fc" id="L1761">            	handle(n, offset);</span>
+<span class="fc" id="L1762">            	offset++;            	</span>
+<span class="fc" id="L1763">            }</span>
+<span class="fc" id="L1764">    	}</span>
+<span class="fc" id="L1765">    	public NewValues(Iterable&lt;Nucleotide&gt; nucleotides){</span>
+<span class="fc" id="L1766">    		nOffsets = new GrowableIntArray(12);</span>
+<span class="fc" id="L1767">			gapOffsets = new GrowableIntArray(12);</span>
+<span class="fc" id="L1768">    		data = new GrowableByteArray(100);</span>
+<span class="fc" id="L1769">            int offset=0;</span>
+<span class="fc bfc" id="L1770" title="All 2 branches covered.">            for(Nucleotide n : nucleotides){</span>
+<span class="fc" id="L1771">            	handle(n, offset);</span>
+<span class="fc" id="L1772">            	offset++;            	</span>
+<span class="fc" id="L1773">            }</span>
+<span class="fc" id="L1774">    	}</span>
+    	@SuppressWarnings(&quot;fallthrough&quot;)
+		private void handle(Nucleotide n, int offset) {
+<span class="fc" id="L1777">			byte value=n.getOrdinalAsByte();</span>
+			//switch statements has been optimized using profiler 
+			//this will cause a special tableswitch opcode
+			//which is is an O(1) lookup instead of an
+			//o(n) lookupswitch opcode.  
+			//This switch will also increment
+			//the nuclotide counts usually
+			//done by handle(value) so
+			//we don't need to do the lookup twice
+<span class="fc" id="L1786">			data.append(value);</span>
+			
+<span class="pc bpc" id="L1788" title="1 of 5 branches missed.">			switch(value){</span>
+<span class="fc" id="L1789">				case 0:nOffsets.append(offset);  break;</span>
+				case 1:
+				case 2: 
+				case 3:
+				case 4:
+				case 5:
+				case 6:
+				case 7:
+				case 8:
+				case 9:
+<span class="fc" id="L1799">				case 10: break;</span>
+<span class="fc" id="L1800">				case 11: gapOffsets.append(offset);</span>
+<span class="fc" id="L1801">							break;</span>
+				case 12:
+				case 13:
+				case 14:
+<span class="fc" id="L1805">				case 15: numberOfACGTs++;</span>
+<span class="fc" id="L1806">						break;</span>
+				default: break;
+			}
+
+<span class="fc" id="L1810">		}</span>
+    	@SuppressWarnings(&quot;fallthrough&quot;)
+		private void handleOrdinal(byte ordinal, int offset) {
+			//switch statements has been optimized using profiler 
+			//this will cause a special tableswitch opcode
+			//which is is an O(1) lookup instead of an
+			//o(n) lookupswitch opcode
+<span class="pc bpc" id="L1817" title="1 of 5 branches missed.">			switch(ordinal){</span>
+<span class="fc" id="L1818">			case 0 :nOffsets.append(offset); break;</span>
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+			case 6:
+			case 7:
+			case 8:
+			case 9:
+<span class="fc" id="L1828">			case 10:break;</span>
+<span class="fc" id="L1829">			case 11:gapOffsets.append(offset); break;</span>
+			case 12:
+			case 13:
+			case 14:
+<span class="fc" id="L1833">			case 15:numberOfACGTs++; break;</span>
+			default: break;
+			}
+		
+<span class="fc" id="L1837">		}</span>
+
+		public int getnumberOfNonNAmiguities() {
+<span class="fc" id="L1840">			return getLength() - (getNumberOfGaps() + getNumberOfNs()+ numberOfACGTs);</span>
+		}
+
+		
+
+		public GrowableByteArray getData() {
+<span class="fc" id="L1846">			return data;</span>
+		}
+
+		public int getLength() {
+<span class="fc" id="L1850">			return data.getCurrentLength();</span>
+		}
+
+		public int getNumberOfGaps() {
+<span class="fc" id="L1854">			return gapOffsets.getCurrentLength();</span>
+		}
+
+		public int getNumberOfNs() {
+<span class="fc" id="L1858">			return nOffsets.getCurrentLength();</span>
+		}
+		public GrowableIntArray getGapOffsets() {
+<span class="fc" id="L1861">			return gapOffsets;</span>
+		}
+		public GrowableIntArray getNOffsets() {
+<span class="fc" id="L1864">			return nOffsets;</span>
+		}
+    	
+    	
+    	
+    }
+
+
+
+    
+
+
+
+	
+
+
+
+
+
+	
+
+
+
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

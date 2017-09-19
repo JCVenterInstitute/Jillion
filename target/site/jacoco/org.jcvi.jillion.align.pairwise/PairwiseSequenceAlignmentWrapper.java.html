@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>PairwiseSequenceAlignmentWrapper.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.align.pairwise</a> &gt; <span class="el_source">PairwiseSequenceAlignmentWrapper.java</span></div><h1>PairwiseSequenceAlignmentWrapper.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.align.pairwise;
+
+import org.jcvi.jillion.align.SequenceAlignment;
+import org.jcvi.jillion.core.DirectedRange;
+import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.residue.ResidueSequence;
+
+final class PairwiseSequenceAlignmentWrapper&lt;R extends Residue, S extends ResidueSequence&lt;R, S, ?&gt;, A extends SequenceAlignment&lt;R, S&gt;&gt; implements PairwiseSequenceAlignment&lt;R, S&gt;{
+	
+	
+	private final A delegate;
+	private final float score;
+	
+	
+	public static &lt;R extends Residue, S extends ResidueSequence&lt;R, S, ?&gt;, A extends SequenceAlignment&lt;R, S&gt;&gt; 
+	PairwiseSequenceAlignment&lt;R, S&gt; wrap(A alignment, float score){
+<span class="fc" id="L37">		return new PairwiseSequenceAlignmentWrapper&lt;R,S,A&gt;(alignment, score);</span>
+	}
+	
+	
+	
+	private PairwiseSequenceAlignmentWrapper(
+<span class="fc" id="L43">			A delegate, float score) {</span>
+<span class="fc" id="L44">		this.delegate = delegate;</span>
+<span class="fc" id="L45">		this.score = score;</span>
+<span class="fc" id="L46">	}</span>
+
+	@Override
+	public double getPercentIdentity() {
+<span class="fc" id="L50">		return delegate.getPercentIdentity();</span>
+	}
+
+	@Override
+	public int getAlignmentLength() {
+<span class="fc" id="L55">		return delegate.getAlignmentLength();</span>
+	}
+
+	@Override
+	public int getNumberOfMismatches() {
+<span class="fc" id="L60">		return delegate.getNumberOfMismatches();</span>
+	}
+
+	@Override
+	public int getNumberOfGapOpenings() {
+<span class="fc" id="L65">		return delegate.getNumberOfGapOpenings();</span>
+	}
+
+	@Override
+	public S getGappedQueryAlignment() {
+<span class="fc" id="L70">		return delegate.getGappedQueryAlignment();</span>
+	}
+
+	@Override
+	public S getGappedSubjectAlignment() {
+<span class="fc" id="L75">		return delegate.getGappedSubjectAlignment();</span>
+	}
+
+	@Override
+	public DirectedRange getQueryRange() {
+<span class="fc" id="L80">		return delegate.getQueryRange();</span>
+	}
+
+	@Override
+	public DirectedRange getSubjectRange() {
+<span class="fc" id="L85">		return delegate.getSubjectRange();</span>
+	}
+
+	@Override
+	public float getScore() {
+<span class="fc" id="L90">		return score;</span>
+	}
+
+	@Override
+	public int hashCode() {
+<span class="nc" id="L95">		final int prime = 31;</span>
+<span class="nc" id="L96">		int result = 1;</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">		result = prime * result</span>
+<span class="nc" id="L98">				+ ((delegate == null) ? 0 : delegate.hashCode());</span>
+<span class="nc" id="L99">		result = prime * result + Float.floatToIntBits(score);</span>
+<span class="nc" id="L100">		return result;</span>
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+<span class="nc bnc" id="L105" title="All 2 branches missed.">		if (this == obj){</span>
+<span class="nc" id="L106">			return true;</span>
+		}
+<span class="nc bnc" id="L108" title="All 2 branches missed.">		if (obj == null){</span>
+<span class="nc" id="L109">			return false;</span>
+		}
+<span class="nc bnc" id="L111" title="All 2 branches missed.">		if (getClass() != obj.getClass()){</span>
+<span class="nc" id="L112">			return false;</span>
+		}
+		@SuppressWarnings(&quot;rawtypes&quot;)
+<span class="nc" id="L115">		PairwiseSequenceAlignmentWrapper other = (PairwiseSequenceAlignmentWrapper) obj;</span>
+<span class="nc bnc" id="L116" title="All 2 branches missed.">		if (delegate == null) {</span>
+<span class="nc bnc" id="L117" title="All 2 branches missed.">			if (other.delegate != null){</span>
+<span class="nc" id="L118">				return false;</span>
+			}
+<span class="nc bnc" id="L120" title="All 2 branches missed.">		} else if (!delegate.equals(other.delegate)){</span>
+<span class="nc" id="L121">			return false;</span>
+		}
+<span class="nc bnc" id="L123" title="All 2 branches missed.">		if (Float.floatToIntBits(score) != Float.floatToIntBits(other.score)){</span>
+<span class="nc" id="L124">			return false;</span>
+		}
+<span class="nc" id="L126">		return true;</span>
+	}
+
+	@Override
+	public String toString() {
+<span class="nc" id="L131">		return &quot;PairwiseSequenceAlignmentWrapper [delegate=&quot; + delegate</span>
+				+ &quot;, score=&quot; + score + &quot;]&quot;;
+	}
+	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

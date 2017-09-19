@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>IndexedBamFileParser.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.sam</a> &gt; <span class="el_source">IndexedBamFileParser.java</span></div><h1>IndexedBamFileParser.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.sam;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Predicate;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.internal.sam.SamUtil;
+import org.jcvi.jillion.internal.sam.index.IndexUtil;
+import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
+import org.jcvi.jillion.sam.index.BamIndex;
+import org.jcvi.jillion.sam.index.ReferenceIndex;
+
+class IndexedBamFileParser extends BamFileParser{
+	private final BamIndex index;
+<span class="fc" id="L42">	private static VirtualFileOffset BEGINING_OF_FILE = new VirtualFileOffset(0L);</span>
+	
+	public IndexedBamFileParser(File bamFile, File baiFile, SamAttributeValidator validator) throws IOException {
+<span class="fc" id="L45">		super(bamFile, validator);</span>
+<span class="pc" id="L46">		try(InputStream in = new BufferedInputStream(new FileInputStream(baiFile))){</span>
+<span class="fc" id="L47">			index = IndexUtil.parseIndex(in, this.getHeader());</span>
+<span class="pc bpc" id="L48" title="6 of 8 branches missed.">		}</span>
+<span class="fc" id="L49">	}</span>
+
+   
+
+    @Override
+    protected void _parse(String referenceName, boolean shouldCreateMementos,
+            SamVisitor visitor) throws IOException {
+       
+<span class="nc" id="L57">		Objects.requireNonNull(referenceName);</span>
+<span class="nc" id="L58">		Objects.requireNonNull(visitor);</span>
+		
+<span class="nc" id="L60">		Integer indexOffset = index.getReferenceIndexOffset(referenceName);</span>
+		
+<span class="nc bnc" id="L62" title="All 2 branches missed.">		if(indexOffset ==null){</span>
+<span class="nc" id="L63">			throw new IllegalArgumentException(&quot;no reference with name '&quot;+ referenceName +&quot;'&quot;);</span>
+		}
+<span class="nc" id="L65">		ReferenceIndex refIndex =index.getReferenceIndex(indexOffset);</span>
+		
+<span class="nc" id="L67">		VirtualFileOffset start = refIndex.getLowestStartOffset();</span>
+		
+<span class="nc" id="L69">		VirtualFileOffset end = refIndex.getHighestEndOffset();</span>
+		
+<span class="nc" id="L71">		Predicate&lt;SamRecord&gt; recordMatchPredicate =(record) -&gt;referenceName.equals(record.getReferenceName());</span>
+		
+<span class="nc bnc" id="L73" title="All 2 branches missed.">		Predicate&lt;VirtualFileOffset&gt; endPredicate =(vfs) -&gt;vfs.compareTo(end) &lt;0;</span>
+		
+		
+		
+<span class="nc" id="L77">		try(BgzfInputStream in = BgzfInputStream.create(bamFile, start)){</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">			if(BEGINING_OF_FILE.equals(start)){</span>
+<span class="nc" id="L79">				this.parseBamFromBeginning(visitor, </span>
+				        shouldCreateMementos,
+						recordMatchPredicate,
+						endPredicate, in);
+			}else{
+				//assume anything in this interval matches?
+<span class="nc" id="L85">				AtomicBoolean keepParsing = new AtomicBoolean(true);</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">				this.parseBamRecords(visitor, </span>
+						recordMatchPredicate,
+						endPredicate,
+						in,
+						keepParsing, shouldCreateMementos ? new BamCallback(keepParsing) :new MementoLessBamCallback(keepParsing));
+			}
+<span class="nc bnc" id="L92" title="All 8 branches missed.">		}</span>
+<span class="nc" id="L93">	}</span>
+    @Override
+    protected void _parse(String referenceName, Range alignmentRange,
+            boolean shouldCreateMementos, SamVisitor visitor)
+            throws IOException {
+       
+<span class="nc" id="L99">		Objects.requireNonNull(referenceName);</span>
+<span class="nc" id="L100">		Objects.requireNonNull(visitor);</span>
+		
+<span class="nc" id="L102">		ReferenceIndex refIndex =index.getReferenceIndex(referenceName);</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">		if(refIndex ==null){</span>
+<span class="nc" id="L104">			throw new IllegalArgumentException(&quot;no reference with name '&quot;+ referenceName +&quot;'&quot;);</span>
+		}
+		//only let things pass that match some bin
+<span class="nc" id="L107">		int[] overlappingBins = SamUtil.getCandidateOverlappingBins(alignmentRange);</span>
+		
+		//TODO can probably do better filtering by specific bins...
+<span class="nc" id="L110">		VirtualFileOffset start = refIndex.getLowestStartOffset();</span>
+<span class="nc" id="L111">		VirtualFileOffset end = refIndex.getHighestEndOffset();</span>
+		
+<span class="nc" id="L113">		Predicate&lt;SamRecord&gt; recordBinFilter = (record) -&gt; {</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">			if(!referenceName.equals(record.getReferenceName())){</span>
+<span class="nc" id="L115">				return false;</span>
+			}
+		
+<span class="nc" id="L118">			Range readAlignmentRange = record.getAlignmentRange();</span>
+<span class="nc" id="L119">			int bin = SamUtil.computeBinFor(readAlignmentRange);</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">			if(Arrays.binarySearch(overlappingBins, bin) &lt;0){</span>
+<span class="nc" id="L121">				return false;</span>
+			}
+<span class="nc" id="L123">			return readAlignmentRange.isSubRangeOf(alignmentRange);</span>
+		};
+		
+<span class="nc" id="L126">		try(BgzfInputStream in = BgzfInputStream.create(bamFile, start)){</span>
+			//assume anything in this interval matches?
+<span class="nc" id="L128">			AtomicBoolean keepParsing = new AtomicBoolean(true);</span>
+<span class="nc bnc" id="L129" title="All 2 branches missed.">			this.parseBamRecords(visitor, </span>
+					recordBinFilter,
+<span class="nc bnc" id="L131" title="All 2 branches missed.">					(vfs)-&gt; vfs.compareTo(end) &lt;=0,</span>
+					in,
+					keepParsing,
+					shouldCreateMementos ? new BamCallback(keepParsing) :new MementoLessBamCallback(keepParsing));
+<span class="nc bnc" id="L135" title="All 8 branches missed.">		}</span>
+<span class="nc" id="L136">	}</span>
+
+	
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

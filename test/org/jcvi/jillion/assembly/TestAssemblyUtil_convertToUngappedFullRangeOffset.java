@@ -150,6 +150,16 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
             return delegate.findMatches(pattern, subSequenceRange);
         }
 
+		@Override
+		public Stream<Range> findMatches(Pattern pattern, boolean nested) {
+		     return delegate.findMatches(pattern,nested);
+		}
+
+		@Override
+		public Stream<Range> findMatches(Pattern pattern,
+				Range subSequenceRange, boolean nested) {
+			return delegate.findMatches(pattern,subSequenceRange,nested);
+		}
         @Override
 		public int getNumberOfGaps() {
 			return delegate.getNumberOfGaps();
@@ -234,6 +244,19 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
         public List<Range> getRangesOfNs() {
             return delegate.getRangesOfNs();
         }
+
+
+		@Override
+		public NucleotideSequenceBuilder newEmptyBuilder() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public NucleotideSequenceBuilder newEmptyBuilder(int initialCapacity) {
+			// TODO Auto-generated method stub
+			return null;
+		}
 		
 		
 		

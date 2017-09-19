@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ConsedTransformationService.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.consed.transform</a> &gt; <span class="el_source">ConsedTransformationService.java</span></div><h1>ConsedTransformationService.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly.consed.transform;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.jcvi.jillion.assembly.AssemblyTransformationService;
+import org.jcvi.jillion.assembly.AssemblyTransformer;
+import org.jcvi.jillion.assembly.AssemblyUtil;
+import org.jcvi.jillion.assembly.ReadInfo;
+import org.jcvi.jillion.assembly.consed.ConsedUtil;
+import org.jcvi.jillion.assembly.consed.ConsedUtil.ClipPointsType;
+import org.jcvi.jillion.assembly.consed.ace.AbstractAceFileVisitor;
+import org.jcvi.jillion.assembly.consed.ace.AceContigReadVisitor;
+import org.jcvi.jillion.assembly.consed.ace.AceContigVisitor;
+import org.jcvi.jillion.assembly.consed.ace.AceFileParser;
+import org.jcvi.jillion.assembly.consed.ace.AceFileVisitorCallback;
+import org.jcvi.jillion.assembly.consed.phd.PhdDataStore;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Range.CoordinateSystem;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+
+public class ConsedTransformationService implements AssemblyTransformationService{
+
+	File consedDir;
+	File aceFile;
+	private final PhdDataStore phdDataStore;
+	
+<span class="nc" id="L54">	private ConsedTransformationService(Builder builder) throws IOException{</span>
+<span class="nc" id="L55">		consedDir = builder.consedDir;</span>
+<span class="nc bnc" id="L56" title="All 2 branches missed.">		if(builder.includeQualities){</span>
+			
+<span class="nc" id="L58">			phdDataStore = ConsedUtil.createPhdDataStoreFor(consedDir);</span>
+		}else{
+<span class="nc" id="L60">			phdDataStore = null;</span>
+		}
+<span class="nc" id="L62">		File editDir = ConsedUtil.getEditDirFor(consedDir);</span>
+<span class="nc bnc" id="L63" title="All 2 branches missed.">		if(builder.aceVersion ==null){</span>
+			//get latest ace			
+<span class="nc" id="L65">			aceFile = ConsedUtil.getLatestAceFile(editDir, builder.acePrefix);</span>
+		}else{
+<span class="nc" id="L67">			aceFile = ConsedUtil.getAceFile(editDir, builder.acePrefix, builder.aceVersion.intValue());</span>
+		}
+<span class="nc bnc" id="L69" title="All 2 branches missed.">		if(aceFile == null){</span>
+<span class="nc" id="L70">			throw new IOException(&quot;specified ace file not found in edit_dir : &quot; + editDir.getAbsolutePath());</span>
+		}
+<span class="nc" id="L72">	}</span>
+	
+	@Override
+	public void transform(final AssemblyTransformer transformer) throws IOException {
+<span class="nc bnc" id="L76" title="All 2 branches missed.">		if(transformer ==null){</span>
+<span class="nc" id="L77">			throw new NullPointerException(&quot;transformer can not be null&quot;);</span>
+		}
+		//TODO implement!!
+<span class="nc" id="L80">		AceFileParser.create(aceFile)</span>
+<span class="nc" id="L81">						.parse(new AbstractAceFileVisitor() {</span>
+
+							@Override
+							public AceContigVisitor visitContig(
+									AceFileVisitorCallback callback,
+									String contigId, int consensusLength,
+									int numberOfReads,
+									int numberOfBaseSegments,
+									boolean reverseComplemented) {
+<span class="nc" id="L90">								return new AceContigVisitor() {</span>
+<span class="nc" id="L91">									NucleotideSequenceBuilder consensusBuilder = new NucleotideSequenceBuilder();</span>
+<span class="nc" id="L92">									boolean madeReferenceCallYet = false;</span>
+									
+<span class="nc" id="L94">									Map&lt;String, Integer&gt; readStarts = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L95">									Map&lt;String, Direction&gt; readDirs = new HashMap&lt;&gt;();</span>
+									
+									@Override
+									public void visitEnd() {
+<span class="nc bnc" id="L99" title="All 2 branches missed.">										if(!madeReferenceCallYet){</span>
+<span class="nc" id="L100">											makeReferenceCall();</span>
+										}
+										
+<span class="nc" id="L103">									}</span>
+									
+									@Override
+									public void visitConsensusQualities(
+											QualitySequence ungappedConsensusQualities) {
+										//no-op
+										
+<span class="nc" id="L110">									}</span>
+									
+									@Override
+									public AceContigReadVisitor visitBeginRead(String readId, int gappedLength) {
+<span class="nc bnc" id="L114" title="All 2 branches missed.">										if(!madeReferenceCallYet){</span>
+<span class="nc" id="L115">											makeReferenceCall();</span>
+										}
+<span class="nc" id="L117">										return new AceContigReadVisitor() {</span>
+<span class="nc" id="L118">											NucleotideSequenceBuilder fullLengthReadBuilder = new NucleotideSequenceBuilder();</span>
+<span class="nc" id="L119">											Range gappedValidRange = null;</span>
+											
+											@Override
+											public void visitTraceDescriptionLine(String traceName, String phdName,
+													Date date) {
+												//no-op
+												
+<span class="nc" id="L126">											}</span>
+											
+											@Override
+											public void visitQualityLine(int qualLeft, int qualRight, int alignLeft,
+													int alignRight) {
+<span class="nc" id="L131">												ClipPointsType clipPointsType = ConsedUtil.ClipPointsType.getType(qualLeft, qualRight, alignLeft, alignRight);</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">												if(clipPointsType != ClipPointsType.VALID){</span>
+<span class="nc" id="L133">													return;</span>
+												}
+												//dkatzel 4/2011 - There have been cases when qual coords and align coords
+										        //do not match; usually qual is a sub set of align
+										        //but occasionally, qual goes beyond the align coords.
+										        //I guess this happens in a referenced based alignment for
+										        //reads at the edges when the reads have good quality 
+										        //beyond the reference.
+										        //It might also be possible that the read has been 
+										        //edited and that could have changed the coordinates.
+										        //Therefore intersect the qual and align coords
+										        //to find the region we are interested in
+<span class="nc" id="L145">										        Range qualityRange = Range.of(CoordinateSystem.RESIDUE_BASED, qualLeft,qualRight);</span>
+<span class="nc" id="L146">										        Range alignmentRange = Range.of(CoordinateSystem.RESIDUE_BASED, alignLeft,alignRight);</span>
+<span class="nc" id="L147">										        gappedValidRange =qualityRange.intersection(alignmentRange);</span>
+										        
+										       
+<span class="nc" id="L150">											}</span>
+											
+											@Override
+											public void visitEnd() {
+												
+<span class="nc" id="L155">												NucleotideSequence gappedValidRangeSequence = fullLengthReadBuilder.copy()</span>
+<span class="nc" id="L156">																								.trim(gappedValidRange)</span>
+<span class="nc" id="L157">																								.build();</span>
+												//TODO make this more efficient.
+												//currently have to create NucleteotideSequence just
+												//to convert from gapped to ungapped coords
+<span class="nc" id="L161">												NucleotideSequence gappedFullLengthSequence = fullLengthReadBuilder.build();</span>
+												
+<span class="nc" id="L163">												NucleotideSequence ungappedFullLengthSequence = fullLengthReadBuilder.ungap().build();</span>
+												
+												
+<span class="nc" id="L166">												transformer.aligned(readId, </span>
+														//TODO add support for phd ball?
+														ungappedFullLengthSequence, null, null, 
+														null, contigId, 
+<span class="nc" id="L170">														readStarts.get(readId), readDirs.get(readId), </span>
+														gappedValidRangeSequence, 
+<span class="nc" id="L172">														new ReadInfo(AssemblyUtil.toUngappedRange(gappedFullLengthSequence, gappedValidRange),</span>
+<span class="nc" id="L173">																(int)ungappedFullLengthSequence.getLength()));</span>
+												
+<span class="nc" id="L175">											}</span>
+											
+											@Override
+											public void visitBasesLine(String mixedCaseBasecalls) {
+<span class="nc" id="L179">												fullLengthReadBuilder.append(mixedCaseBasecalls);</span>
+												
+<span class="nc" id="L181">											}</span>
+											
+											@Override
+											public void halted() {
+												//no-op
+												
+<span class="nc" id="L187">											}</span>
+										};
+									}
+									
+									private void makeReferenceCall() {
+<span class="nc" id="L192">										madeReferenceCallYet =true;</span>
+										//TODO do we have to worry about contigLeft and right?
+<span class="nc" id="L194">										transformer.referenceOrConsensus(contigId, consensusBuilder.build());</span>
+										
+<span class="nc" id="L196">									}</span>
+
+									@Override
+									public void visitBasesLine(String mixedCaseBasecalls) {
+<span class="nc" id="L200">										consensusBuilder.append(mixedCaseBasecalls);</span>
+										
+<span class="nc" id="L202">									}</span>
+									
+									@Override
+									public void visitBaseSegment(Range gappedConsensusRange, String readId) {
+										//no-op
+										
+<span class="nc" id="L208">									}</span>
+									
+									@Override
+									public void visitAlignedReadInfo(String readId, Direction dir,
+											int gappedStartPosition) {
+										//no-op
+<span class="nc" id="L214">										readStarts.put(readId, gappedStartPosition -1);</span>
+<span class="nc" id="L215">										readDirs.put(readId, dir);</span>
+<span class="nc" id="L216">									}</span>
+									
+									@Override
+									public void halted() {
+										//no-op
+										
+<span class="nc" id="L222">									}</span>
+								};
+							}
+
+							@Override
+							public void visitEnd() {
+<span class="nc" id="L228">								transformer.endAssembly();</span>
+<span class="nc" id="L229">							}</span>
+							
+						});
+<span class="nc" id="L232">	}</span>
+
+	public static class Builder{
+		private final File consedDir;
+		private final File editDir;
+		private final String acePrefix;
+		
+<span class="nc" id="L239">		private Integer aceVersion =null;</span>
+<span class="nc" id="L240">		private boolean includeQualities = false;</span>
+		
+		
+<span class="nc" id="L243">		public Builder(File consedDir, String acePrefix) {</span>
+<span class="nc bnc" id="L244" title="All 2 branches missed.">			if(!consedDir.exists()){</span>
+<span class="nc" id="L245">				throw new IllegalArgumentException(&quot;consed directory does not exist : &quot;+ consedDir.getAbsolutePath());</span>
+			}
+<span class="nc bnc" id="L247" title="All 2 branches missed.">			if(acePrefix == null){</span>
+<span class="nc" id="L248">				throw new NullPointerException(&quot;ace prefix can not be null&quot;);</span>
+			}
+<span class="nc" id="L250">			editDir = ConsedUtil.getEditDirFor(consedDir);</span>
+<span class="nc bnc" id="L251" title="All 2 branches missed.">			if(!editDir.exists()){</span>
+<span class="nc" id="L252">				throw new IllegalStateException(&quot;edit_dir does not exist : &quot; + consedDir.getAbsolutePath());</span>
+			}
+<span class="nc" id="L254">			this.consedDir = consedDir;</span>
+<span class="nc" id="L255">			this.acePrefix = acePrefix;</span>
+<span class="nc" id="L256">		}</span>
+		
+		public Builder includeQualities(boolean includeQualities){
+<span class="nc" id="L259">			this.includeQualities = includeQualities;</span>
+<span class="nc" id="L260">			return this;</span>
+		}
+		
+		public Builder useAceVersion(int version){			
+<span class="nc" id="L264">			File ace = ConsedUtil.getAceFile(editDir, acePrefix, version);</span>
+<span class="nc bnc" id="L265" title="All 2 branches missed.">			if(ace ==null){</span>
+<span class="nc" id="L266">				throw new IllegalArgumentException(&quot;ace file with version &quot; + version + &quot; does not exist in &quot; + editDir.getAbsolutePath());</span>
+			}
+<span class="nc" id="L268">			this.aceVersion = version;</span>
+<span class="nc" id="L269">			return this;</span>
+		}
+		
+		public ConsedTransformationService build() throws IOException{
+<span class="nc" id="L273">			return new ConsedTransformationService(this);</span>
+		}
+		
+		
+	}
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

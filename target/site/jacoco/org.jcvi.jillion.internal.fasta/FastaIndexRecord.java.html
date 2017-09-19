@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>FastaIndexRecord.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.fasta</a> &gt; <span class="el_source">FastaIndexRecord.java</span></div><h1>FastaIndexRecord.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.internal.fasta;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.io.InputStreamSupplier;
+/**
+ * Object representation of a single
+ * record in a {@code fai} index file
+ * that is used by Samtools.
+ * 
+ * @author dkatzel
+ *
+ * @since 5.1
+ */
+public final class FastaIndexRecord {
+
+	private final long seqLength;
+	private final long firstBaseOffset;
+	private final int basesPerLine;
+	private final int bytesPerLineIncludingEol;
+	/**
+	 * Constructor that takes the fields of a record
+	 * in the order that they are listed in an fai file.
+	 * 
+	 * @param seqLength the length of a sequence in bases.
+	 * 
+	 * @param firstBaseOffset the offset (in bytes) to the first
+	 * base of the sequence.  This is not to be confused with 
+	 * the first byte offset of the defline.
+	 * 
+	 * @param basesPerLine the number of bases per line on a full line 
+	 * (the final line may be shorter).
+	 * 
+	 * @param bytesPerLineIncludingEol the number of bytes per line including
+	 * any line terminators.
+	 * 
+	 * @throws IllegalArgumentException if any fields are negative, or firstBaseOffset
+	 * is determined to be before the end of a defline or
+	 * if bytesPerLineIncludingEol &lt; basesPerLine
+	 */
+	public FastaIndexRecord(long seqLength, long firstBaseOffset, int basesPerLine,
+<span class="fc" id="L64">			int bytesPerLineIncludingEol) {</span>
+		
+		
+<span class="pc bpc" id="L67" title="1 of 2 branches missed.">		if(seqLength &lt;0){</span>
+<span class="nc" id="L68">			throw new IllegalArgumentException(&quot;seq length can not be negative&quot;);</span>
+		}
+		//technically has to be a defline too so we can't start the sequence anywhere
+		//less than 2 bytes into the file
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">		if(firstBaseOffset &lt;2){</span>
+<span class="nc" id="L73">			throw new IllegalArgumentException(&quot;first base offset can not be negative&quot;);</span>
+		}
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">		if(basesPerLine &lt;0){</span>
+<span class="nc" id="L76">			throw new IllegalArgumentException(&quot;bases per line can not be negative&quot;);</span>
+		}
+		//even if there are all single line records these 2 will be equal
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">		if(bytesPerLineIncludingEol &lt;basesPerLine){</span>
+<span class="nc" id="L80">			throw new IllegalArgumentException(&quot;bytes per line  can not be less than bases per line&quot;);</span>
+		}
+<span class="fc" id="L82">		this.seqLength = seqLength;</span>
+<span class="fc" id="L83">		this.firstBaseOffset = firstBaseOffset;</span>
+<span class="fc" id="L84">		this.basesPerLine = basesPerLine;</span>
+<span class="fc" id="L85">		this.bytesPerLineIncludingEol = bytesPerLineIncludingEol;</span>
+<span class="fc" id="L86">	}</span>
+	
+	public long computeFileOffset(long sequenceOffset){
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">		if(sequenceOffset &lt;0){</span>
+<span class="nc" id="L90">			throw new IllegalArgumentException(&quot;seq offset must be &gt;=0&quot;);</span>
+		}
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">		if(sequenceOffset &gt;= seqLength){</span>
+<span class="nc" id="L93">			throw new IllegalArgumentException(&quot;seq offset &quot; + sequenceOffset + &quot;must be &lt; sequence length &quot; + seqLength);</span>
+		}
+		//the offset is computed by home many lines we skip + how much into the last line we are
+		//parenthesis aren't needed but makes it more clear
+<span class="fc" id="L97">		return firstBaseOffset + (sequenceOffset/basesPerLine * bytesPerLineIncludingEol) + sequenceOffset % basesPerLine;</span>
+	}
+	
+	public Range computeFileOffsetRange(Range sequenceOffsetRange){
+<span class="fc" id="L101">		return Range.of(computeFileOffset(sequenceOffsetRange.getBegin()), </span>
+<span class="fc" id="L102">						computeFileOffset(sequenceOffsetRange.getEnd()));</span>
+	}
+
+	public InputStream newInputStream(InputStreamSupplier fastaFile) throws IOException{
+<span class="fc" id="L106">		Range range = computeFileOffsetRange(Range.ofLength(seqLength));</span>
+<span class="fc" id="L107">		return fastaFile.get(range);</span>
+	}
+	public InputStream newInputStream(InputStreamSupplier fastaFile, Range sequenceRange) throws IOException{
+<span class="fc" id="L110">		Range offsetRange = computeFileOffsetRange(sequenceRange);</span>
+<span class="fc" id="L111">		return fastaFile.get(offsetRange);</span>
+	}
+	
+	
+	public InputStream newInputStream(InputStreamSupplier fastaFile, long sequenceStartOffset) throws IOException{
+<span class="fc" id="L116">		Range range = new Range.Builder(seqLength)</span>
+<span class="fc" id="L117">								.contractBegin(sequenceStartOffset)</span>
+<span class="fc" id="L118">								.build();</span>
+<span class="fc" id="L119">		return newInputStream(fastaFile, range);</span>
+	}
+
+	public long getSeqLength() {
+<span class="fc" id="L123">		return seqLength;</span>
+	}
+
+	@Override
+	public String toString() {
+<span class="nc" id="L128">		return &quot;FastaIndexRecord [seqLength=&quot; + seqLength + &quot;, firstBaseOffset=&quot; + firstBaseOffset + &quot;, basesPerLine=&quot;</span>
+				+ basesPerLine + &quot;, bytesPerLineIncludingEol=&quot; + bytesPerLineIncludingEol + &quot;]&quot;;
+	}
+
+	@Override
+	public int hashCode() {
+<span class="nc" id="L134">		final int prime = 31;</span>
+<span class="nc" id="L135">		int result = 1;</span>
+<span class="nc" id="L136">		result = prime * result + basesPerLine;</span>
+<span class="nc" id="L137">		result = prime * result + bytesPerLineIncludingEol;</span>
+<span class="nc" id="L138">		result = prime * result + (int) (firstBaseOffset ^ (firstBaseOffset &gt;&gt;&gt; 32));</span>
+<span class="nc" id="L139">		result = prime * result + (int) (seqLength ^ (seqLength &gt;&gt;&gt; 32));</span>
+<span class="nc" id="L140">		return result;</span>
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">		if (this == obj) {</span>
+<span class="nc" id="L146">			return true;</span>
+		}
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">		if (obj == null) {</span>
+<span class="nc" id="L149">			return false;</span>
+		}
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">		if (!(obj instanceof FastaIndexRecord)) {</span>
+<span class="nc" id="L152">			return false;</span>
+		}
+<span class="fc" id="L154">		FastaIndexRecord other = (FastaIndexRecord) obj;</span>
+<span class="pc bpc" id="L155" title="1 of 2 branches missed.">		if (basesPerLine != other.basesPerLine) {</span>
+<span class="nc" id="L156">			return false;</span>
+		}
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">		if (bytesPerLineIncludingEol != other.bytesPerLineIncludingEol) {</span>
+<span class="nc" id="L159">			return false;</span>
+		}
+<span class="pc bpc" id="L161" title="1 of 2 branches missed.">		if (firstBaseOffset != other.firstBaseOffset) {</span>
+<span class="nc" id="L162">			return false;</span>
+		}
+<span class="pc bpc" id="L164" title="1 of 2 branches missed.">		if (seqLength != other.seqLength) {</span>
+<span class="nc" id="L165">			return false;</span>
+		}
+<span class="fc" id="L167">		return true;</span>
+	}
+	
+	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

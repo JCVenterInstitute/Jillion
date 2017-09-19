@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>RawData.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.trace.chromat.ztr.data</a> &gt; <span class="el_source">RawData.java</span></div><h1>RawData.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Oct 27, 2006
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.internal.trace.chromat.ztr.data;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+
+import org.jcvi.jillion.internal.core.seq.trace.sanger.chromat.ztr.data.Data;
+
+
+
+/**
+ * This is the implementation of the ZTR Raw Data Format.  This data
+ * has no encoding.
+ * @author dkatzel
+ * @see &lt;a href=&quot;http://staden.sourceforge.net/ztr.html&quot;&gt;ZTR SPEC v1.2&lt;/a&gt;
+ *
+ */
+<span class="pc" id="L42">public enum RawData implements Data {</span>
+    /**
+     * Singleton instance of RawData.
+     */
+<span class="fc" id="L46">    INSTANCE;</span>
+    /**
+     * Since the given data is not encoded, 
+     * return the data back as is.
+     * @param data the already completely decoded data
+     * @return the same reference to the given data.
+     */
+    @Override
+    public byte[] parseData(byte[] data){
+        //this is raw data
+<span class="fc" id="L56">       return data;</span>
+    }
+    /**
+     * Creates a new array with the first element as {@link DataHeader#RAW}
+     * and the rest of the array exactly matches the elements in the given
+     * byte array.
+     * @param data the raw data to encode.
+     * @throws IOException if there is a problem encoding the data.
+     */
+	@Override
+	public byte[] encodeData(byte[] data) throws IOException {
+<span class="fc" id="L67">		ByteBuffer encodedData = ByteBuffer.allocate(data.length+1);</span>
+<span class="fc" id="L68">		encodedData.put(DataHeader.RAW);</span>
+<span class="fc" id="L69">		encodedData.put(data);</span>
+<span class="fc" id="L70">		return encodedData.array();</span>
+	}
+	/**
+	 * This returns the same result as {@link #encodeData(byte[])}
+	 * the optional parameter is ignored. 
+	 */
+	@Override
+	public byte[] encodeData(byte[] data, byte ignored)
+			throws IOException {
+<span class="nc" id="L79">		return encodeData(data);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

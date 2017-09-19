@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DefaultAsmUnitig.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.ca.asm</a> &gt; <span class="el_source">DefaultAsmUnitig.java</span></div><h1>DefaultAsmUnitig.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly.ca.asm;
+
+import java.util.Collection;
+
+import org.jcvi.jillion.assembly.AssembledReadBuilder;
+import org.jcvi.jillion.assembly.Contig;
+import org.jcvi.jillion.assembly.util.GapQualityValueStrategy;
+import org.jcvi.jillion.assembly.util.consensus.ConsensusCaller;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
+
+/**
+ * @author dkatzel
+ *
+ *
+ */
+final class DefaultAsmUnitig implements AsmUnitig{
+
+    private final Contig&lt;AsmAssembledRead&gt; delegate;
+
+    public static AsmUnitigBuilder createBuilder(String id, NucleotideSequence consensus){
+<span class="fc" id="L46">    	return new DefaultAsmUnitigBuilder(id,consensus);</span>
+    }
+    
+<span class="fc" id="L49">    public DefaultAsmUnitig(Contig&lt;AsmAssembledRead&gt; delegate) {</span>
+<span class="fc" id="L50">        this.delegate = delegate;</span>
+<span class="fc" id="L51">    }</span>
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public String getId() {
+<span class="fc" id="L58">        return delegate.getId();</span>
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public long getNumberOfReads() {
+<span class="fc" id="L66">        return delegate.getNumberOfReads();</span>
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public StreamingIterator&lt;AsmAssembledRead&gt; getReadIterator() {
+<span class="fc" id="L74">        return delegate.getReadIterator();</span>
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public NucleotideSequence getConsensusSequence() {
+<span class="fc" id="L82">        return delegate.getConsensusSequence();</span>
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public AsmAssembledRead getRead(String id) {
+<span class="fc" id="L90">        return delegate.getRead(id);</span>
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean containsRead(String placedReadId) {
+<span class="fc" id="L98">        return delegate.containsRead(placedReadId);</span>
+    }
+    
+
+	@Override
+	public int hashCode() {
+<span class="nc" id="L104">		return delegate.hashCode();</span>
+	}
+
+
+
+	@Override
+	public boolean equals(Object obj) {
+<span class="nc bnc" id="L111" title="All 2 branches missed.">		if (this == obj) {</span>
+<span class="nc" id="L112">			return true;</span>
+		}
+<span class="nc bnc" id="L114" title="All 2 branches missed.">		if (obj == null) {</span>
+<span class="nc" id="L115">			return false;</span>
+		}
+<span class="nc bnc" id="L117" title="All 2 branches missed.">		if (!(obj instanceof AsmUnitig)) {</span>
+<span class="nc" id="L118">			return false;</span>
+		}
+<span class="nc" id="L120">		AsmUnitig other = (AsmUnitig) obj;		</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">		if (!getId().equals(other.getId())) {</span>
+<span class="nc" id="L122">			return false;</span>
+		}
+<span class="nc bnc" id="L124" title="All 2 branches missed.">		if (!getConsensusSequence().equals(other.getConsensusSequence())) {</span>
+<span class="nc" id="L125">			return false;</span>
+		}
+<span class="nc bnc" id="L127" title="All 2 branches missed.">		if (getNumberOfReads()!=other.getNumberOfReads()) {</span>
+<span class="nc" id="L128">			return false;</span>
+		}
+<span class="nc" id="L130">		try(StreamingIterator&lt;AsmAssembledRead&gt; readIter = getReadIterator()){</span>
+			
+<span class="nc bnc" id="L132" title="All 2 branches missed.">			while(readIter.hasNext()){</span>
+<span class="nc" id="L133">				AsmAssembledRead read = readIter.next();</span>
+<span class="nc" id="L134">				String readId = read.getId();</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">				if(!other.containsRead(readId)){</span>
+<span class="nc" id="L136">					return false;</span>
+				}
+<span class="nc bnc" id="L138" title="All 2 branches missed.">				if(!read.equals(other.getRead(readId))){</span>
+<span class="nc" id="L139">					return false;</span>
+				}
+<span class="nc" id="L141">			}</span>
+<span class="nc bnc" id="L142" title="All 16 branches missed.">		}		</span>
+<span class="nc" id="L143">		return true;</span>
+	}
+	
+	
+	private static final class DefaultAsmUnitigBuilder implements AsmUnitigBuilder{
+
+		private final AsmContigBuilder delegate;
+		
+<span class="fc" id="L151">		public DefaultAsmUnitigBuilder(String id, NucleotideSequence consensus){</span>
+<span class="fc" id="L152">			delegate = DefaultAsmContig.createBuilder(id, consensus);</span>
+<span class="fc" id="L153">		}</span>
+		@Override
+		public AsmUnitigBuilder setContigId(
+				String contigId) {
+<span class="nc" id="L157">			delegate.setContigId(contigId);</span>
+<span class="nc" id="L158">			return this;</span>
+		}
+
+		@Override
+		public String getContigId() {
+<span class="nc" id="L163">			return delegate.getContigId();</span>
+		}
+
+		@Override
+		public int numberOfReads() {
+<span class="nc" id="L168">			return delegate.numberOfReads();</span>
+		}
+
+		@Override
+		public AsmUnitigBuilder addRead(
+				AsmAssembledRead placedRead) {
+<span class="nc" id="L174">			delegate.addRead(placedRead);</span>
+<span class="nc" id="L175">			return this;</span>
+		}
+
+		@Override
+		public AsmUnitigBuilder addAllReads(
+				Iterable&lt;AsmAssembledRead&gt; reads) {
+<span class="nc" id="L181">			delegate.addAllReads(reads);</span>
+<span class="nc" id="L182">			return this;</span>
+		}
+
+		@Override
+		public Collection&lt;? extends AssembledReadBuilder&lt;AsmAssembledRead&gt;&gt; getAllAssembledReadBuilders() {
+<span class="nc" id="L187">			return delegate.getAllAssembledReadBuilders();</span>
+		}
+
+		@Override
+		public AssembledReadBuilder&lt;AsmAssembledRead&gt; getAssembledReadBuilder(
+				String readId) {
+<span class="nc" id="L193">			return delegate.getAssembledReadBuilder(readId);</span>
+		}
+
+		@Override
+		public AsmUnitigBuilder removeRead(
+				String readId) {
+<span class="nc" id="L199">			delegate.removeRead(readId);</span>
+<span class="nc" id="L200">			return this;</span>
+		}
+
+		@Override
+		public NucleotideSequenceBuilder getConsensusBuilder() {
+<span class="nc" id="L205">			return delegate.getConsensusBuilder();</span>
+		}
+
+		@Override
+		public AsmUnitigBuilder recallConsensus(
+				ConsensusCaller consensusCaller,
+				QualitySequenceDataStore qualityDataStore,
+				GapQualityValueStrategy qualityValueStrategy) {
+<span class="nc" id="L213">			delegate.recallConsensus(consensusCaller,qualityDataStore,qualityValueStrategy);</span>
+<span class="nc" id="L214">			return this;</span>
+		}
+
+		@Override
+		public AsmUnitigBuilder recallConsensus(
+				ConsensusCaller consensusCaller) {
+<span class="nc" id="L220">			delegate.recallConsensus(consensusCaller);</span>
+<span class="nc" id="L221">			return this;</span>
+		}
+
+		@Override
+		public AsmUnitigBuilder recallConsensusNow() {
+<span class="nc" id="L226">			delegate.recallConsensusNow();</span>
+<span class="nc" id="L227">			return this;</span>
+		}
+
+		@Override
+		public AsmUnitig build() {
+<span class="fc" id="L232">			return new DefaultAsmUnitig(delegate.build());</span>
+		}
+
+		@Override
+		public AsmUnitigBuilder addRead(String readId, String validBases,
+				int offset, Direction dir, Range clearRange,
+				int ungappedFullLength, boolean isSurrogate) {
+<span class="fc" id="L239">			delegate.addRead(readId, validBases,offset,dir,clearRange,ungappedFullLength,isSurrogate);</span>
+<span class="fc" id="L240">			return this;</span>
+		}
+		
+		
+		
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

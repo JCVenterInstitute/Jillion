@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>TigrContigFileWriter.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.tigr.contig</a> &gt; <span class="el_source">TigrContigFileWriter.java</span></div><h1>TigrContigFileWriter.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Mar 12, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.assembly.tigr.contig;
+
+import java.io.BufferedOutputStream;
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.util.Comparator;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.jcvi.jillion.assembly.AssembledRead;
+import org.jcvi.jillion.assembly.Contig;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.internal.core.util.JillionUtil;
+/**
+ * {@code TigrContigFileWriter} will write out {@link Contig}
+ * objects in ctg format.
+ * @author dkatzel
+ *
+ *
+ */
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+		value = {&quot;VA_FORMAT_STRING_USES_NEWLINE&quot;},
+		justification = &quot;\n character is required for .contig format &quot;
+						+ &quot;we don't want to accidentally put in a \r\n on diffent OS&quot;)
+public class TigrContigFileWriter implements Closeable{
+    private static final int INITIAL_RECORD_BUFFER_SIZE = 2048;
+<span class="fc" id="L62">	private static final CtgFormatReadSorter READ_SORTER = CtgFormatReadSorter.INSTANCE;</span>
+    private final OutputStream out;
+    
+<span class="nc" id="L65">    public TigrContigFileWriter(File out) throws IOException{</span>
+<span class="nc" id="L66">    	IOUtil.mkdirs(out.getParentFile());</span>
+<span class="nc" id="L67">    	this.out = new BufferedOutputStream(new FileOutputStream(out));</span>
+<span class="nc" id="L68">    }</span>
+<span class="fc" id="L69">    public TigrContigFileWriter(OutputStream out) {</span>
+<span class="fc" id="L70">        this.out = out;</span>
+<span class="fc" id="L71">    }</span>
+    public &lt;PR extends AssembledRead, C extends Contig&lt;PR&gt;&gt; void write(C contig) throws IOException,
+            UnsupportedEncodingException {
+<span class="fc" id="L74">        writeContigHeader(contig);</span>
+<span class="fc" id="L75">        writeBases(contig.getConsensusSequence());</span>
+<span class="fc" id="L76">        Set&lt;PR&gt; readsInContig = new TreeSet&lt;PR&gt;(READ_SORTER);</span>
+<span class="fc" id="L77">        StreamingIterator&lt;PR&gt; iter = null;</span>
+        try{
+<span class="fc" id="L79">        	iter = contig.getReadIterator();</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">        	while(iter.hasNext()){</span>
+<span class="fc" id="L81">        		PR placedRead = iter.next();</span>
+<span class="fc" id="L82">        		readsInContig.add(placedRead);</span>
+<span class="fc" id="L83">        	}</span>
+        }finally{
+<span class="pc" id="L85">        	IOUtil.closeAndIgnoreErrors(iter);</span>
+<span class="fc" id="L86">        }</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        for(AssembledRead placedRead : readsInContig){</span>
+<span class="fc" id="L88">            writePlacedReadHeader(placedRead, contig.getConsensusSequence());</span>
+<span class="fc" id="L89">            writeBases(placedRead.getNucleotideSequence());</span>
+<span class="fc" id="L90">        }</span>
+<span class="fc" id="L91">    }</span>
+    
+   
+    private void writeContigHeader(Contig&lt;? extends AssembledRead&gt; contig) throws IOException {
+<span class="fc" id="L95">        String header = String.format(&quot;##%s %d %d bases\n&quot;,</span>
+<span class="fc" id="L96">                contig.getId(), contig.getNumberOfReads(), contig.getConsensusSequence().getLength());</span>
+        
+<span class="fc" id="L98">        writeToOutputStream(header);</span>
+<span class="fc" id="L99">    }</span>
+
+    private void writeBases(Sequence&lt;Nucleotide&gt; consensus) throws UnsupportedEncodingException, IOException {
+       
+<span class="fc" id="L103">        String result = consensus.toString().replaceAll(&quot;(.{60})&quot;, &quot;$1\n&quot;);</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        if(!result.endsWith(&quot;\n&quot;)){</span>
+<span class="fc" id="L105">            result += &quot;\n&quot;;</span>
+        }
+<span class="fc" id="L107">        writeToOutputStream(result);</span>
+        
+<span class="fc" id="L109">    }</span>
+    private void writeToOutputStream(final String result) throws IOException,
+            UnsupportedEncodingException {
+<span class="fc" id="L112">        out.write(result.getBytes(&quot;UTF-8&quot;));</span>
+<span class="fc" id="L113">    }</span>
+    
+    private void writePlacedReadHeader(AssembledRead placedRead,NucleotideSequence consensus) throws IOException {
+<span class="fc" id="L116">        StringBuilder header = new StringBuilder(INITIAL_RECORD_BUFFER_SIZE);</span>
+<span class="fc" id="L117">        header.append(String.format(&quot;#%s(%d) [&quot;, placedRead.getId(), placedRead.getGappedStartOffset()));</span>
+<span class="fc" id="L118">        int validLeft = (int)placedRead.getReadInfo().getValidRange().getBegin();</span>
+<span class="fc" id="L119">        int validRight = (int)placedRead.getReadInfo().getValidRange().getEnd();</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">        if(placedRead.getDirection() == Direction.REVERSE){</span>
+<span class="fc" id="L121">            header.append(&quot;RC&quot;);</span>
+<span class="fc" id="L122">            int temp = validLeft;</span>
+<span class="fc" id="L123">            validLeft = validRight;</span>
+<span class="fc" id="L124">            validRight = temp;</span>
+        }
+
+<span class="fc" id="L127">        header.append(String.format(&quot;] %d bases {%d %d} &lt;%d %d&gt;\n&quot;,</span>
+<span class="fc" id="L128">                placedRead.getNucleotideSequence().getLength(), validLeft+1, validRight+1, </span>
+<span class="fc" id="L129">                placedRead.getGappedStartOffset()+1-consensus.getNumberOfGapsUntil((int) placedRead.getGappedStartOffset()), </span>
+<span class="fc" id="L130">                placedRead.getGappedEndOffset()+1-consensus.getNumberOfGapsUntil((int)placedRead.getGappedEndOffset())));</span>
+<span class="fc" id="L131">        writeToOutputStream(header.toString());</span>
+        
+<span class="fc" id="L133">    }</span>
+    /**
+     * {@code CtgFormatReadSorter} will sort the {@link AssembledRead}s
+     * by start coordinate.  If multiple reads have the same start coordinate
+     * in the contig, then those reads will be sorted by length (smallest first).  If there are still
+     * multiple reads that have the same start AND the same length, then those reads
+     * are sorted by their ids.
+     * @author dkatzel
+     *
+     *
+     */
+<span class="pc" id="L144">    private static enum CtgFormatReadSorter implements Comparator&lt;AssembledRead&gt;, Serializable{</span>
+        /**
+         * Singleton instance.
+         */
+<span class="fc" id="L148">        INSTANCE;</span>
+
+        /**
+         * Sorts PlacedRead by offset then by read length, then by id.
+         */
+        @Override
+        public int compare(AssembledRead o1, AssembledRead o2) {
+        	
+<span class="fc" id="L156">            int startComparison = JillionUtil.compare(o1.getGappedStartOffset(), o2.getGappedStartOffset());</span>
+<span class="fc bfc" id="L157" title="All 2 branches covered.">            if(startComparison !=0){</span>
+<span class="fc" id="L158">                return startComparison;</span>
+            }
+<span class="fc" id="L160">            int lengthComparison= JillionUtil.compare(o1.getGappedLength(), o2.getGappedLength());</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">            if(lengthComparison !=0){</span>
+<span class="fc" id="L162">                return lengthComparison;</span>
+            }
+<span class="fc" id="L164">            int idLengthComparison =  JillionUtil.compare(o1.getId().length(), o2.getId().length());</span>
+<span class="fc bfc" id="L165" title="All 2 branches covered.">            if(idLengthComparison !=0){</span>
+<span class="fc" id="L166">                return idLengthComparison;</span>
+            }
+<span class="fc" id="L168">            return o1.getId().compareTo(o2.getId());</span>
+        }
+        
+    }
+    @Override
+    public void close() throws IOException {
+<span class="fc" id="L174">        out.close();</span>
+        
+<span class="fc" id="L176">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

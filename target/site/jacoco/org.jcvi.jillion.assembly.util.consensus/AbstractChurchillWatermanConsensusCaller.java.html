@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AbstractChurchillWatermanConsensusCaller.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.util.consensus</a> &gt; <span class="el_source">AbstractChurchillWatermanConsensusCaller.java</span></div><h1>AbstractChurchillWatermanConsensusCaller.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Jun 4, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.assembly.util.consensus;
+
+import static org.jcvi.jillion.assembly.util.consensus.ConsensusUtil.BASES_TO_CONSIDER;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.EnumMap;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import org.jcvi.jillion.assembly.util.Slice;
+import org.jcvi.jillion.assembly.util.SliceElement;
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.util.SingleThreadAdder;
+/**
+ * Calculate Consensus for a slice using Bayes formula and the procedure from
+ * &lt;pre&gt;
+ * Churchill, G.A. and Waterman, M.S.
+ * &quot;The accuracy of DNA sequences: Estimating sequence quality.&quot;
+ * Genomics 14, pp.89-98 (1992)
+ * &lt;/pre&gt;
+ * @author dkatzel
+ *
+ *
+ */
+abstract class AbstractChurchillWatermanConsensusCaller implements ConsensusCaller{
+    
+   
+	 private final PhredQuality highQualityThreshold;
+	  
+	    
+	   
+
+	/**
+	 * Creates a new Churchill-Waterman consensus caller
+	 * instance.
+	 * @param highQualityThreshold the quality threshold
+	 * whose error probability is used to determine
+	 * which basecalls to consider towards
+	 * the consensus based on cumulative quality
+	 * values.
+	 * @throws NullPointerException if highQualityThreshold is null
+	 */
+    public AbstractChurchillWatermanConsensusCaller(
+<span class="fc" id="L75">            PhredQuality highQualityThreshold) {</span>
+<span class="pc bpc" id="L76" title="1 of 2 branches missed.">    	if(highQualityThreshold ==null){</span>
+<span class="nc" id="L77">    		throw new NullPointerException(&quot;high quality threshold can not be null&quot;);</span>
+    	}
+<span class="fc" id="L79">    	this.highQualityThreshold = highQualityThreshold;</span>
+<span class="fc" id="L80">    }</span>
+    
+    public PhredQuality getHighQualityThreshold() {
+<span class="fc" id="L83">        return highQualityThreshold;</span>
+    }
+    
+    /**
+     * Get the consensus for the given Slice which
+     * is guaranteed to have coverage.
+     * @param normalizedConsensusProbabilities the {@link ConsensusProbabilities}
+     * containing the probabilities of each non-ambiguous base
+     * normalized to total 100%.
+     * @param slice the {@link Slice} to compute the consensus of.
+     * @return a {@link Nucleotide} that is the consensus of all the bases in this
+     * slice; the return may be an ambiguous {@link Nucleotide}.
+     */
+    protected abstract Nucleotide getConsensus(ConsensusProbabilities normalizedConsensusProbabilities,Slice slice) ;
+    
+    @Override
+    public final ConsensusResult callConsensus(Slice slice) {
+<span class="fc bfc" id="L100" title="All 2 branches covered.">        if(slice.getCoverageDepth() ==0){</span>
+            //by definition, an empty slice is a Gap
+<span class="fc" id="L102">            return new DefaultConsensusResult(Nucleotide.Gap,0);</span>
+        }
+<span class="fc" id="L104">        Map&lt;Nucleotide, Integer&gt; qualityValueSumMap = generateQualityValueSumMap(slice);</span>
+<span class="fc" id="L105">        ConsensusProbabilities normalizedErrorProbabilityStruct = generateNormalizedProbabilityStruct(qualityValueSumMap);</span>
+<span class="fc" id="L106">        Nucleotide consensus=  getConsensus(normalizedErrorProbabilityStruct,slice);</span>
+<span class="fc" id="L107">        return new DefaultConsensusResult(consensus,</span>
+                
+<span class="fc" id="L109">                getErrorProbability(normalizedErrorProbabilityStruct,</span>
+                        slice));
+    }
+    
+    protected final Map&lt;Nucleotide, Integer&gt; generateQualityValueSumMap(Slice slice) {
+<span class="fc" id="L114">        Map&lt;Nucleotide, SingleThreadAdder&gt; qualityValueSumMap = initalizeNucleotideMap();</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        for(SliceElement sliceElement : slice){</span>
+<span class="fc" id="L116">            Nucleotide basecall =sliceElement.getBase();</span>
+<span class="fc" id="L117">            final SingleThreadAdder previousSum = qualityValueSumMap.get(basecall);</span>
+            //ignore not ACGT-?
+<span class="fc bfc" id="L119" title="All 2 branches covered.">            if(previousSum!=null){</span>
+<span class="fc" id="L120">               previousSum.add(sliceElement.getQuality().getQualityScore());</span>
+            }
+            
+<span class="fc" id="L123">        }</span>
+<span class="fc" id="L124">        Map&lt;Nucleotide, Integer&gt; map = new EnumMap&lt;&gt;(Nucleotide.class);</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">        for(Entry&lt;Nucleotide, SingleThreadAdder&gt; entry :qualityValueSumMap.entrySet()){</span>
+<span class="fc" id="L126">        	map.put(entry.getKey(), entry.getValue().intValue());</span>
+<span class="fc" id="L127">        }</span>
+<span class="fc" id="L128">        return map;</span>
+    }
+
+    private Map&lt;Nucleotide, SingleThreadAdder&gt; initalizeNucleotideMap() {
+<span class="fc" id="L132">        Map&lt;Nucleotide, SingleThreadAdder&gt; map = new EnumMap&lt;Nucleotide, SingleThreadAdder&gt;(Nucleotide.class);</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">        for(Nucleotide glyph : ConsensusUtil.BASES_TO_CONSIDER){</span>
+<span class="fc" id="L134">            map.put(glyph, new SingleThreadAdder(0));</span>
+<span class="fc" id="L135">        }</span>
+<span class="fc" id="L136">        return map;</span>
+    }
+
+
+    private int getErrorProbability(
+            ConsensusProbabilities normalizedErrorProbabilityStruct,
+            Slice slice) {
+<span class="fc" id="L143">        double normalizedProbability= getProbabilityFor(normalizedErrorProbabilityStruct);</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">        if(normalizedProbability == 0.0D){</span>
+            //special case if we only have matches, then sum slice qualities
+<span class="fc" id="L146">            int sum =0;</span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">            for(SliceElement element : slice){</span>
+<span class="fc" id="L148">                sum += element.getQuality().getQualityScore();</span>
+<span class="fc" id="L149">            }</span>
+<span class="fc" id="L150">            return sum;</span>
+        }
+<span class="fc" id="L152">            return PhredQuality.computeQualityScore(normalizedProbability);</span>
+    }
+
+   
+    
+    private double getProbabilityFor(ConsensusProbabilities normalizedErrorProbabilityStruct){
+        //find lowest
+<span class="fc" id="L159">        Double lowest = Double.MAX_VALUE;</span>
+<span class="fc bfc" id="L160" title="All 2 branches covered.">        for(Entry&lt;Nucleotide, Double&gt; entry: normalizedErrorProbabilityStruct.entrySet()){</span>
+<span class="fc" id="L161">            Double currentValue = entry.getValue();</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">            if(currentValue.compareTo(lowest) &lt;0){</span>
+<span class="fc" id="L163">                lowest = currentValue;</span>
+            }
+<span class="fc" id="L165">        }</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">        if(lowest.equals(Double.MAX_VALUE)){</span>
+            //no probabilities
+<span class="fc" id="L168">            return 0D;</span>
+        }
+<span class="fc" id="L170">        return lowest;</span>
+    }
+    private ConsensusProbabilities generateNormalizedProbabilityStruct(
+            Map&lt;Nucleotide, Integer&gt; qualityValueSumMap) {
+<span class="fc" id="L174">        List&lt;ConsensusProbabilities&gt; probabilityStructs = createProbabilityStructsForEachBase(qualityValueSumMap);</span>
+<span class="fc" id="L175">        ConsensusProbabilities rawErrorProbabilityStruct = createRawErrorProbabilityStruct(probabilityStructs);</span>
+<span class="fc" id="L176">        return rawErrorProbabilityStruct.normalize();</span>
+    }
+    private ConsensusProbabilities createRawErrorProbabilityStruct(
+            List&lt;ConsensusProbabilities&gt; probabilityStructs) {
+<span class="fc" id="L180">        Map&lt;Nucleotide, Double&gt; rawErrorProbabilityMap = new EnumMap&lt;Nucleotide, Double&gt;(Nucleotide.class);</span>
+<span class="fc bfc" id="L181" title="All 2 branches covered.">        for(Nucleotide base : ConsensusUtil.BASES_TO_CONSIDER){</span>
+<span class="fc" id="L182">            rawErrorProbabilityMap.put(base, calculateRawErrorProbabilityFor(base, probabilityStructs));</span>
+<span class="fc" id="L183">        }        </span>
+<span class="fc" id="L184">        return new ConsensusProbabilities(rawErrorProbabilityMap);</span>
+    }
+
+    private List&lt;ConsensusProbabilities&gt; createProbabilityStructsForEachBase(
+            Map&lt;Nucleotide, Integer&gt; qualityValueSumMap) {
+<span class="fc" id="L189">        List&lt;ConsensusProbabilities&gt; probabilityStructs= new ArrayList&lt;ConsensusProbabilities&gt;();</span>
+<span class="fc bfc" id="L190" title="All 2 branches covered.">        for(Nucleotide base : ConsensusUtil.BASES_TO_CONSIDER){</span>
+<span class="fc" id="L191">            probabilityStructs.add(new ConsensusProbabilities(base, qualityValueSumMap.get(base)));</span>
+<span class="fc" id="L192">        }</span>
+               
+<span class="fc" id="L194">        return probabilityStructs;</span>
+    }
+
+    private double calculateRawErrorProbabilityFor(Nucleotide base,
+            List&lt;ConsensusProbabilities&gt; probabilityStructs) {
+<span class="fc" id="L199">        double result = 1D;</span>
+<span class="fc bfc" id="L200" title="All 2 branches covered.">        for(ConsensusProbabilities struct : probabilityStructs){</span>
+<span class="fc" id="L201">            result *=struct.getProbabilityFor(base);</span>
+<span class="fc" id="L202">        }</span>
+<span class="fc" id="L203">        return result;</span>
+    }
+   
+    protected final Set&lt;Nucleotide&gt; getBasesUsedTowardsAmbiguity(
+            ConsensusProbabilities normalizedErrorProbabilityStruct, int baseCount) {
+        double errorProbabilityOfAmbiguity;
+<span class="fc" id="L209">        double sumOfProbabilitySuccess=0D;</span>
+<span class="fc" id="L210">        Set&lt;Nucleotide&gt; basesUsed = EnumSet.noneOf(Nucleotide.class);</span>
+<span class="fc" id="L211">        List&lt;Nucleotide&gt; basesToConsider = new ArrayList&lt;Nucleotide&gt;(BASES_TO_CONSIDER);</span>
+<span class="fc" id="L212">        Collections.sort(basesToConsider, new LowestProbabilityComparator(normalizedErrorProbabilityStruct));</span>
+        do
+        {
+<span class="fc" id="L215">            Nucleotide baseWithLowestErrorProbability = basesToConsider.remove(0);</span>
+<span class="fc" id="L216">            sumOfProbabilitySuccess += (1 - normalizedErrorProbabilityStruct.getProbabilityFor(</span>
+                    baseWithLowestErrorProbability));
+<span class="fc" id="L218">            basesUsed.add(baseWithLowestErrorProbability);</span>
+<span class="fc" id="L219">            errorProbabilityOfAmbiguity = 1-sumOfProbabilitySuccess;</span>
+<span class="fc bfc" id="L220" title="All 4 branches covered.">        }while( sumOfProbabilitySuccess &lt;1D &amp;&amp; underThreshold(errorProbabilityOfAmbiguity)</span>
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">                &amp;&amp; basesUsed.size()&lt; baseCount );</span>
+        
+<span class="fc" id="L223">        return basesUsed;</span>
+    }
+    
+    private boolean underThreshold(double errorProbability){
+<span class="fc bfc" id="L227" title="All 2 branches covered.">        return PhredQuality.computeQualityScore(errorProbability) &lt; getHighQualityThreshold().getQualityScore();</span>
+     }
+    /**
+     * Sorts {@link ConsensusProbabilities} by comparing the 
+     * probability of the given {@link Nucleotide}.
+     * @author dkatzel
+     *
+     *
+     */
+    private static class LowestProbabilityComparator implements Comparator&lt;Nucleotide&gt;{
+        private final ConsensusProbabilities probabilityStruct;
+<span class="fc" id="L238">        LowestProbabilityComparator(ConsensusProbabilities probabilityStruct){</span>
+<span class="fc" id="L239">            this.probabilityStruct = probabilityStruct;</span>
+<span class="fc" id="L240">        }</span>
+        @Override
+        public int compare(Nucleotide o1, Nucleotide o2) {
+<span class="fc" id="L243">            return probabilityStruct.getProbabilityFor(o1).compareTo(probabilityStruct.getProbabilityFor(o2));</span>
+        }
+        
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

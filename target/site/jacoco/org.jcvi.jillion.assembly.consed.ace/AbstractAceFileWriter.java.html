@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AbstractAceFileWriter.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.consed.ace</a> &gt; <span class="el_source">AbstractAceFileWriter.java</span></div><h1>AbstractAceFileWriter.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly.consed.ace;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
+import org.jcvi.jillion.assembly.AssembledRead;
+import org.jcvi.jillion.assembly.AssemblyUtil;
+import org.jcvi.jillion.assembly.Contig;
+import org.jcvi.jillion.assembly.consed.phd.Phd;
+import org.jcvi.jillion.assembly.consed.phd.PhdDataStore;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Range.CoordinateSystem;
+import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.internal.core.util.JillionUtil;
+/**
+ * {@code AbstractAceFileWriter}
+ * handles most of the work of writing
+ * out an Ace formatted file.
+ * @author dkatzel
+ *
+ */
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+		value = {&quot;VA_FORMAT_STRING_USES_NEWLINE&quot;},
+		justification = &quot;\n character is required for .ace format (?) &quot;
+						+ &quot;we don't want to accidentally put in a \r\n on diffent OS&quot;
+						+ &quot;and break consed&quot;)
+abstract class AbstractAceFileWriter implements AceFileWriter{
+	protected static final String CR = &quot;\n&quot;;
+	
+	protected static final int DEFAULT_BUFFER_SIZE = 2&lt;&lt;14; 
+	private final boolean createBsRecords;
+	
+<span class="fc" id="L63">	 protected AbstractAceFileWriter(boolean createBsRecords) {</span>
+<span class="fc" id="L64">		this.createBsRecords = createBsRecords;</span>
+<span class="fc" id="L65">	}</span>
+
+	protected void writeAceContigHeader(Writer tempWriter, String contigId, long consensusLength, long numberOfReads,
+	    		int numberOfBaseSegments, boolean isComplimented) throws IOException{
+<span class="fc" id="L69">	    	String formattedHeader = String.format(&quot;CO %s %d %d %d %s\n&quot;, </span>
+	                contigId, 
+<span class="fc" id="L71">	                consensusLength,</span>
+<span class="fc" id="L72">	                numberOfReads,</span>
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">	                numberOfBaseSegments,</span>
+	                isComplimented? &quot;C&quot;:&quot;U&quot;);
+	    	
+<span class="fc" id="L76">	    	tempWriter.write(formattedHeader);</span>
+<span class="fc" id="L77">	    }</span>
+
+	public void write(Writer tempWriter, AceContig contig, PhdDataStore phdDataStore) throws IOException {		
+<span class="fc" id="L80">		final NucleotideSequence consensus = contig.getConsensusSequence();</span>
+<span class="fc" id="L81">        writeAceContigHeader(tempWriter,</span>
+<span class="fc" id="L82">                contig.getId(), </span>
+<span class="fc" id="L83">                consensus.getLength(),</span>
+<span class="fc" id="L84">                contig.getNumberOfReads(),</span>
+                0,
+<span class="fc" id="L86">                contig.isComplemented());</span>
+<span class="fc" id="L87">        tempWriter.write(String.format(&quot;%s\n\n\n&quot;,AceFileUtil.convertToAcePaddedBasecalls(consensus)));</span>
+<span class="fc" id="L88">        writeConsensusQualities(tempWriter,contig.getConsensusQualitySequence());</span>
+       
+<span class="fc" id="L90">        tempWriter.write(CR);</span>
+<span class="fc" id="L91">        List&lt;IdAlignedReadInfo&gt; assembledFroms = IdAlignedReadInfo.getSortedAssembledFromsFor(contig);</span>
+<span class="fc" id="L92">        StringBuilder assembledFromBuilder = new StringBuilder();</span>
+<span class="fc" id="L93">        StringBuilder placedReadBuilder = new StringBuilder();</span>
+        
+<span class="fc bfc" id="L95" title="All 2 branches covered.">        for(IdAlignedReadInfo assembledFrom : assembledFroms){</span>
+<span class="fc" id="L96">            String id = assembledFrom.getId();</span>
+           
+<span class="fc" id="L98">            final AceAssembledRead realPlacedRead = contig.getRead(id);</span>
+<span class="fc" id="L99">             long fullLength = realPlacedRead.getReadInfo().getUngappedFullLength();</span>
+<span class="fc" id="L100">            assembledFromBuilder.append(createAssembledFromRecord(realPlacedRead,fullLength));</span>
+<span class="fc" id="L101">            placedReadBuilder.append(createPlacedReadRecord(realPlacedRead,phdDataStore));</span>
+<span class="fc" id="L102">        }</span>
+       
+<span class="fc" id="L104">        placedReadBuilder.append(CR);</span>
+<span class="fc" id="L105">        tempWriter.write(assembledFromBuilder.toString());</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">        if(createBsRecords){</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        	for(AceBaseSegment bs : BaseSegmentUtil.computeBestSegmentsFor(contig)){</span>
+<span class="fc" id="L108">        		Range gappedRange = bs.getGappedConsensusRange();</span>
+<span class="fc" id="L109">        		tempWriter.write(String.format(&quot;BS %d %d %s\n&quot;, </span>
+<span class="fc" id="L110">        				gappedRange.getBegin(CoordinateSystem.RESIDUE_BASED),</span>
+<span class="fc" id="L111">        				gappedRange.getEnd(CoordinateSystem.RESIDUE_BASED),</span>
+<span class="fc" id="L112">        				bs.getReadName()));</span>
+<span class="fc" id="L113">        	}</span>
+        }
+<span class="fc" id="L115">        tempWriter.write(CR);</span>
+<span class="fc" id="L116">        tempWriter.write(placedReadBuilder.toString());</span>
+
+		
+<span class="fc" id="L119">	}</span>
+	
+	private void writeConsensusQualities(Writer tempWriter, QualitySequence consensusQualities) throws IOException {
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">			if(consensusQualities ==null){</span>
+<span class="nc" id="L123">				throw new NullPointerException(&quot;consensus qualities can not be null&quot;);</span>
+			}
+<span class="fc" id="L125">			int qualityLength = (int)consensusQualities.getLength();</span>
+<span class="fc" id="L126">			int numberOfLines = qualityLength/50+1;</span>
+<span class="fc" id="L127">			StringBuilder formattedString = new StringBuilder(3+ 3* qualityLength+numberOfLines);</span>
+<span class="fc" id="L128">			formattedString.append(&quot;BQ\n&quot;);</span>
+<span class="fc" id="L129">			Iterator&lt;PhredQuality&gt; iter = consensusQualities.iterator();</span>
+<span class="fc" id="L130">			int i=1;</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">			while(i &lt;qualityLength){</span>
+<span class="fc" id="L132">				formattedString.append(String.format(&quot;%02d&quot;,iter.next().getQualityScore()));</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">				if(i%50==0){</span>
+<span class="fc" id="L134">					formattedString.append(CR);</span>
+				}else{
+<span class="fc" id="L136">					formattedString.append(' ');</span>
+				}
+<span class="fc" id="L138">				i++;</span>
+			}
+			//last quality handled specially so we don't add an extra CR
+<span class="fc" id="L141">			formattedString.append(String.format(&quot;%02d%s&quot;,iter.next().getQualityScore(), CR));</span>
+<span class="fc" id="L142">			tempWriter.write(formattedString.toString());</span>
+		
+<span class="fc" id="L144">	}</span>
+
+	private String createAssembledFromRecord(AceAssembledRead read, long fullLength){
+<span class="fc" id="L147">    	IdAlignedReadInfo assembledFrom = IdAlignedReadInfo.createFrom(read, fullLength);</span>
+<span class="fc" id="L148">        return String.format(&quot;AF %s %s %d\n&quot;,</span>
+<span class="fc" id="L149">                assembledFrom.getId(),</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">                assembledFrom.getDirection()==Direction.FORWARD? &quot;U&quot;:&quot;C&quot;,</span>
+<span class="fc" id="L151">                        assembledFrom.getStartOffset());</span>
+    }
+    
+    
+    private String createPlacedReadRecord(AceAssembledRead read, PhdDataStore phdDatastore) throws IOException{
+    	 Phd phd;
+		try {
+<span class="fc" id="L158">			phd = phdDatastore.get(read.getId());</span>
+<span class="nc" id="L159">		} catch (DataStoreException e) {</span>
+<span class="nc" id="L160">			throw new IOException(&quot;error writing quality values for read &quot;+ read.getId(),e);</span>
+<span class="fc" id="L161">		}</span>
+<span class="fc" id="L162">        return AceFileUtil.createAcePlacedReadRecord(</span>
+<span class="fc" id="L163">                read.getId(),read,</span>
+                phd, 
+<span class="fc" id="L165">                read.getPhdInfo());</span>
+        
+    }
+	
+	private static final class IdAlignedReadInfo implements Comparable&lt;IdAlignedReadInfo&gt;{
+    	private static final int TO_STRING_BUFFER_SIZE = 30;
+		private final String id;
+	    private final byte dir;
+	    private final int startOffset;
+<span class="fc" id="L174">	    private static final Direction[] DIRECTION_VALUES = Direction.values();</span>
+	    public static IdAlignedReadInfo createFrom(AssembledRead read, long ungappedFullLength){
+	        final Range validRange;
+<span class="fc" id="L177">	        Direction dir = read.getDirection();</span>
+<span class="fc" id="L178">	        Range readValidRange = read.getReadInfo().getValidRange();</span>
+<span class="fc bfc" id="L179" title="All 2 branches covered.">	        if(dir==Direction.REVERSE){</span>
+<span class="fc" id="L180">	            validRange = AssemblyUtil.reverseComplementValidRange(readValidRange, ungappedFullLength);</span>
+	        }
+	        else{
+<span class="fc" id="L183">	            validRange = readValidRange;</span>
+	        }
+<span class="fc" id="L185">	        return new IdAlignedReadInfo(read.getId(), </span>
+<span class="fc" id="L186">	                (int)(read.getGappedStartOffset()-validRange.getBegin()+1),dir);</span>
+	    }
+	    
+	    public static List&lt;IdAlignedReadInfo&gt; getSortedAssembledFromsFor(
+	            Contig&lt;AceAssembledRead&gt; contig){
+<span class="fc" id="L191">	        List&lt;IdAlignedReadInfo&gt; assembledFroms = new ArrayList&lt;IdAlignedReadInfo&gt;((int)contig.getNumberOfReads());</span>
+<span class="fc" id="L192">	        StreamingIterator&lt;AceAssembledRead&gt; iter = null;</span>
+	        try{
+<span class="fc" id="L194">	        	iter = contig.getReadIterator();</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">	        	while(iter.hasNext()){</span>
+<span class="fc" id="L196">	        		AceAssembledRead read = iter.next();</span>
+<span class="fc" id="L197">	        		long fullLength =read.getReadInfo().getUngappedFullLength();</span>
+<span class="fc" id="L198">		            assembledFroms.add(IdAlignedReadInfo.createFrom(read, fullLength));</span>
+<span class="fc" id="L199">	        	}</span>
+	        }finally{
+<span class="pc" id="L201">	        	IOUtil.closeAndIgnoreErrors(iter);</span>
+<span class="fc" id="L202">	        }</span>
+<span class="fc" id="L203">	        Collections.sort(assembledFroms);</span>
+<span class="fc" id="L204">	        return assembledFroms;</span>
+	    }
+	    
+<span class="fc" id="L207">		private IdAlignedReadInfo(String id, int startOffset, Direction dir) {</span>
+<span class="fc" id="L208">			this.id = id;</span>
+<span class="fc" id="L209">			this.dir = (byte)dir.ordinal();</span>
+<span class="fc" id="L210">			this.startOffset = startOffset;</span>
+<span class="fc" id="L211">		}</span>
+
+
+		@Override
+	    public int hashCode() {
+<span class="nc" id="L216">	        final int prime = 31;</span>
+<span class="nc" id="L217">	        int result = 1;</span>
+<span class="nc" id="L218">	        result = prime * result + id.hashCode();</span>
+<span class="nc" id="L219">	        return result;</span>
+	    }
+	    @Override
+	    public boolean equals(Object obj) {
+<span class="nc bnc" id="L223" title="All 2 branches missed.">	        if (this == obj){</span>
+<span class="nc" id="L224">	            return true;</span>
+	        }
+<span class="nc bnc" id="L226" title="All 2 branches missed.">	        if (obj == null){</span>
+<span class="nc" id="L227">	            return false;</span>
+	        }
+<span class="nc bnc" id="L229" title="All 2 branches missed.">	        if (!(obj instanceof IdAlignedReadInfo)){</span>
+<span class="nc" id="L230">	            return false;</span>
+	        }
+<span class="nc" id="L232">	        IdAlignedReadInfo other = (IdAlignedReadInfo) obj;</span>
+<span class="nc" id="L233">	        return id.equals(other.getId());</span>
+	    }
+	    public String getId() {
+<span class="fc" id="L236">	        return id;</span>
+	    }
+
+	    public int getStartOffset() {
+<span class="fc" id="L240">	        return startOffset;</span>
+	    }
+	    
+	    public Direction getDirection(){
+<span class="fc" id="L244">	        return DIRECTION_VALUES[dir];</span>
+	    }
+	    @Override
+	    public String toString() {
+<span class="nc" id="L248">	        StringBuilder builder = new StringBuilder(TO_STRING_BUFFER_SIZE);</span>
+<span class="nc" id="L249">	        builder.append(id).append(' ')</span>
+<span class="nc" id="L250">	        		.append(startOffset)</span>
+<span class="nc" id="L251">	        		.append(&quot;is complemented? &quot;)</span>
+<span class="nc bnc" id="L252" title="All 2 branches missed.">	        		.append(getDirection() ==Direction.REVERSE);</span>
+<span class="nc" id="L253">	        return builder.toString();</span>
+	    }
+	    /**
+	    * Compares two AssembledFrom instances and compares them based on start offset
+	    * then by Id.  This should match the order of AssembledFrom records 
+	    * (and reads) in an .ace file.
+	    */
+	    @Override
+	    public int compareTo(IdAlignedReadInfo o) {
+<span class="fc" id="L262">	    	return JillionUtil.compare(getStartOffset(), o.getStartOffset());	    	     </span>
+	        
+	    }
+    	
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>VulgarOperation.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.align.exonerate.vulgar</a> &gt; <span class="el_source">VulgarOperation.java</span></div><h1>VulgarOperation.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.align.exonerate.vulgar;
+
+import java.util.HashMap;
+import java.util.Map;
+
+<span class="nc" id="L26">public enum VulgarOperation {</span>
+
+
+<span class="nc" id="L29">        Match(&quot;M&quot;),</span>
+<span class="nc" id="L30">        Codon(&quot;C&quot;),</span>
+<span class="nc" id="L31">        Gap(&quot;G&quot;),</span>
+<span class="nc" id="L32">        Non_equivalenced_region(&quot;N&quot;),</span>
+<span class="nc" id="L33">        Splice_5(&quot;5&quot;),</span>
+<span class="nc" id="L34">        Splice_3(&quot;3&quot;),</span>
+<span class="nc" id="L35">        Intron(&quot;I&quot;),</span>
+<span class="nc" id="L36">        Split_Codon(&quot;S&quot;),</span>
+<span class="nc" id="L37">        Frameshift(&quot;F&quot;)</span>
+        ;
+    
+        private String code;
+        
+        
+        private static Map&lt;String, VulgarOperation&gt; map;
+        static{
+<span class="nc" id="L45">            map = new HashMap&lt;&gt;();</span>
+<span class="nc bnc" id="L46" title="All 2 branches missed.">            for(VulgarOperation o : values()){</span>
+<span class="nc" id="L47">                map.put(o.code, o);</span>
+            }
+<span class="nc" id="L49">        }</span>
+<span class="nc" id="L50">        VulgarOperation(String code){</span>
+<span class="nc" id="L51">            this.code = code;</span>
+<span class="nc" id="L52">        }</span>
+
+        public static VulgarOperation getByCode(String code){
+<span class="nc" id="L55">            return map.get(code);</span>
+        }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

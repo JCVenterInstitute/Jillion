@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ReferenceIndexBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.sam.index</a> &gt; <span class="el_source">ReferenceIndexBuilder.java</span></div><h1>ReferenceIndexBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.internal.sam.index;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import org.jcvi.jillion.internal.sam.SamUtil;
+import org.jcvi.jillion.sam.VirtualFileOffset;
+import org.jcvi.jillion.sam.index.Bin;
+import org.jcvi.jillion.sam.index.Chunk;
+import org.jcvi.jillion.sam.index.ReferenceIndex;
+
+public final class ReferenceIndexBuilder{
+	
+	private final VirtualFileOffset[] intervals;
+
+<span class="fc" id="L38">	private int largestIndexUsed=-1;</span>
+	//need to keep type as ArrayList since
+	//we use trimToSize() method which is only on arraylist.
+	@SuppressWarnings(&quot;PMD.LooseCoupling&quot;)
+	private ArrayList&lt;Bin&gt; bins;
+<span class="fc" id="L43">	private long numberOfUnalignedReads=0, numberOfAlignedReads=0;</span>
+<span class="fc" id="L44">	private VirtualFileOffset lowestStart = new VirtualFileOffset(Long.MAX_VALUE);</span>
+<span class="fc" id="L45">	private VirtualFileOffset higestEnd = new VirtualFileOffset(0L);</span>
+	
+	private BinBuilder[] binBuilders;
+	
+<span class="fc" id="L49">	public ReferenceIndexBuilder(int length){</span>
+<span class="fc" id="L50">		int arraySize = IndexUtil.getIntervalOffsetFor(length-1);</span>
+		//size of array is largest possible bin of this length + 1 to get the number of those elements
+		//we need to keep an array of all the bin builders because
+		//bin numbers are not monotonically increasing.
+		//we could have reads that span 2 of the samller bins
+		//which gives it a smaller bin number so we will
+		//frequently jump around bins
+<span class="fc" id="L57">		binBuilders = new BinBuilder[ SamUtil.computeBinFor(length-1, length) +1];</span>
+<span class="fc" id="L58">		this.intervals = new VirtualFileOffset[arraySize+1];</span>
+		
+<span class="fc" id="L60">	}</span>
+	
+	public void addAlignment(int readStartOffset, int readEndOffsetExclusive, VirtualFileOffset start, VirtualFileOffset end){
+		
+<span class="fc" id="L64">		updateIntervals(readStartOffset, readEndOffsetExclusive-1, start, end);		</span>
+<span class="fc" id="L65">		updateBins(readStartOffset, readEndOffsetExclusive, start, end);</span>
+<span class="fc" id="L66">	}</span>
+	
+	public void incrementUnmappedCount() {
+<span class="nc" id="L69">		numberOfUnalignedReads++;</span>
+<span class="nc" id="L70">	}</span>
+	
+	public ReferenceIndex build(){
+		//only include the bins that actually had alignments
+		//in the built index
+<span class="fc" id="L75">		bins = new ArrayList&lt;Bin&gt;(binBuilders.length);</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">		for(int i=0; i&lt; binBuilders.length; i++){</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">			if(binBuilders[i] !=null){</span>
+<span class="fc" id="L78">				bins.add(binBuilders[i].build());</span>
+			}
+		}		
+<span class="fc" id="L81">		bins.trimToSize();		</span>
+<span class="fc" id="L82">		return new ReferenceIndexImpl(this);</span>
+	}
+	
+	private void updateBins(int readStartOffset, int readEndOffsetExclusive,
+			VirtualFileOffset start, VirtualFileOffset end) {
+<span class="fc" id="L87">		int bin = SamUtil.computeBinFor(readStartOffset, readEndOffsetExclusive);</span>
+		
+		BinBuilder binBuilder;
+<span class="fc bfc" id="L90" title="All 2 branches covered.">		if(binBuilders[bin] ==null){</span>
+			//make new one
+<span class="fc" id="L92">			binBuilder = new BinBuilder(bin);</span>
+<span class="fc" id="L93">			binBuilders[bin] = binBuilder;</span>
+		}else{
+<span class="fc" id="L95">			binBuilder = binBuilders[bin];</span>
+		}
+		
+<span class="fc" id="L98">		binBuilder.addChunk(new Chunk(start, end));</span>
+<span class="fc" id="L99">		numberOfAlignedReads++;</span>
+<span class="fc" id="L100">	}</span>
+
+	public void updateIntervals(int readStartOffset, int readEndOffset, VirtualFileOffset start, VirtualFileOffset end) {
+<span class="fc" id="L103">		int startInterval = IndexUtil.getIntervalOffsetFor(readStartOffset);</span>
+<span class="fc" id="L104">		int endInterval = IndexUtil.getIntervalOffsetFor(readEndOffset);</span>
+		
+<span class="fc bfc" id="L106" title="All 2 branches covered.">		if(endInterval &gt; largestIndexUsed){</span>
+<span class="fc" id="L107">			largestIndexUsed = endInterval;</span>
+		}
+<span class="fc bfc" id="L109" title="All 2 branches covered.">		for(int i = startInterval; i&lt;=endInterval; i++){</span>
+			try{
+<span class="fc" id="L111">			VirtualFileOffset currentValue = intervals[i];</span>
+<span class="pc bpc" id="L112" title="1 of 4 branches missed.">			if(currentValue ==null || start.compareTo(currentValue) &lt; 0){</span>
+<span class="fc" id="L113">				intervals[i] = start;</span>
+			}
+<span class="nc" id="L115">			}catch(ArrayIndexOutOfBoundsException e){</span>
+<span class="nc" id="L116">				throw e;</span>
+<span class="fc" id="L117">			}</span>
+			
+		}
+		
+<span class="fc bfc" id="L121" title="All 2 branches covered.">		if(start.compareTo(lowestStart)&lt;0){</span>
+<span class="fc" id="L122">			lowestStart = start;</span>
+		}
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">		if(end.compareTo(higestEnd) &gt;0){</span>
+<span class="fc" id="L125">			higestEnd = end;</span>
+		}
+<span class="fc" id="L127">	}</span>
+
+	private static final class ReferenceIndexImpl implements ReferenceIndex {
+
+		private final List&lt;Bin&gt; bins;
+		private final VirtualFileOffset[] intervals;
+		private final Long numberOfUnAlignedReads, numberOfAlignedReads;
+		private final VirtualFileOffset lowestOffset, highestOffset;
+		
+		
+<span class="fc" id="L137">		private ReferenceIndexImpl(ReferenceIndexBuilder builder){</span>
+<span class="fc" id="L138">			this.bins = builder.bins;</span>
+<span class="fc" id="L139">			this.intervals = Arrays.copyOf(builder.intervals, builder.largestIndexUsed+1);</span>
+			
+			//match sam tools which only includes upto the max intervals seen
+			//instead of the intervals possible for the reference seq length
+			//AND fills in unused interval virtualFileOffsets with the
+			//previous value.
+<span class="fc" id="L145">			VirtualFileOffset prev = new VirtualFileOffset(0);</span>
+<span class="fc bfc" id="L146" title="All 2 branches covered.">			for(int i=0; i&lt;intervals.length; i++){</span>
+<span class="fc bfc" id="L147" title="All 2 branches covered.">				if(intervals[i] ==null){</span>
+<span class="fc" id="L148">					intervals[i] = prev;</span>
+				}else{
+<span class="fc" id="L150">					prev = intervals[i];</span>
+				}
+			}
+<span class="fc" id="L153">			numberOfUnAlignedReads = Long.valueOf(builder.numberOfUnalignedReads);</span>
+<span class="fc" id="L154">			numberOfAlignedReads = Long.valueOf(builder.numberOfAlignedReads);</span>
+<span class="fc" id="L155">			lowestOffset = builder.lowestStart;</span>
+<span class="fc" id="L156">			highestOffset = builder.higestEnd;</span>
+<span class="fc" id="L157">		}</span>
+		
+		
+		
+		public Long getNumberOfUnAlignedReads() {
+<span class="fc" id="L162">			return numberOfUnAlignedReads;</span>
+		}
+
+
+
+		public Long getNumberOfAlignedReads() {
+<span class="fc" id="L168">			return numberOfAlignedReads;</span>
+		}
+
+
+		@Override
+		public boolean hasMetaData() {
+<span class="fc" id="L174">			return true;</span>
+		}
+
+
+
+		@Override
+		public int getNumberOfBins() {
+<span class="fc" id="L181">			return bins.size();</span>
+		}
+
+
+
+		@Override
+		public VirtualFileOffset getLowestStartOffset() {
+<span class="fc" id="L188">			return lowestOffset;</span>
+		}
+
+
+		@Override
+		public VirtualFileOffset getHighestEndOffset() {
+<span class="fc" id="L194">			return highestOffset;</span>
+		}
+
+
+
+		@Override
+		public List&lt;Bin&gt; getBins() {
+<span class="fc" id="L201">			return Collections.unmodifiableList(bins);</span>
+		}
+
+
+
+		@Override
+		public int hashCode() {
+<span class="nc" id="L208">			final int prime = 31;</span>
+<span class="nc" id="L209">			int result = 1;</span>
+<span class="nc bnc" id="L210" title="All 2 branches missed.">			result = prime * result + ((bins == null) ? 0 : bins.hashCode());</span>
+<span class="nc" id="L211">			result = prime * result + Arrays.hashCode(intervals);</span>
+<span class="nc" id="L212">			return result;</span>
+		}
+
+
+
+		@Override
+		public boolean equals(Object obj) {
+<span class="nc bnc" id="L219" title="All 2 branches missed.">			if (this == obj) {</span>
+<span class="nc" id="L220">				return true;</span>
+			}
+<span class="nc bnc" id="L222" title="All 2 branches missed.">			if (obj == null) {</span>
+<span class="nc" id="L223">				return false;</span>
+			}
+<span class="nc bnc" id="L225" title="All 2 branches missed.">			if (!(obj instanceof ReferenceIndex)) {</span>
+<span class="nc" id="L226">				return false;</span>
+			}
+<span class="nc" id="L228">			ReferenceIndex other = (ReferenceIndex) obj;</span>
+<span class="nc bnc" id="L229" title="All 2 branches missed.">			if (!bins.equals(other.getBins())) {</span>
+<span class="nc" id="L230">				return false;</span>
+			}
+<span class="nc bnc" id="L232" title="All 2 branches missed.">			if (!Arrays.equals(intervals, other.getIntervals())) {</span>
+<span class="nc" id="L233">				return false;</span>
+			}
+<span class="nc" id="L235">			return true;</span>
+		}
+
+
+
+		@Override
+		public VirtualFileOffset[] getIntervals() {
+<span class="fc" id="L242">			return Arrays.copyOf(intervals, intervals.length);</span>
+		}
+
+
+
+		@Override
+		public String toString() {
+<span class="nc" id="L249">			return &quot;ReferenceIndexImpl [bins=&quot; + bins + &quot;, intervals=&quot;</span>
+<span class="nc" id="L250">					+ Arrays.toString(intervals) + &quot;]&quot;;</span>
+		}
+		
+		
+	}
+	
+	
+
+	
+
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

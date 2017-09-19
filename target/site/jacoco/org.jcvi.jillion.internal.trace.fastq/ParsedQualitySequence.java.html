@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ParsedQualitySequence.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.trace.fastq</a> &gt; <span class="el_source">ParsedQualitySequence.java</span></div><h1>ParsedQualitySequence.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.internal.trace.fastq;
+
+import java.util.Arrays;
+import java.util.DoubleSummaryStatistics;
+import java.util.Iterator;
+import java.util.Optional;
+import java.util.OptionalDouble;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
+/**
+ * A special implementation of {@link QualitySequence}
+ * that decodes on the fly from the encoded String from a 
+ * fastq file.  This allows random access and conversion
+ * to byte arrays and {@link QualitySequenceBuilder}s
+ * without the overhead of building a {@link QualitySequence}
+ * using the builder and trying multiple encodings.
+ * 
+ * This should be faster than the normal QualitySequence implementations 
+ * when doing simple iteration and even
+ * trimming when parsing directly from fastq files.
+ * 
+ * @author dkatzel
+ * @since 5.2
+ */
+class ParsedQualitySequence implements QualitySequence{
+
+    private final FastqQualityCodec codec;
+    private final String encodedQualities;
+    private DoubleSummaryStatistics stats;
+    /**
+     * cached hashcode.
+     */
+    private int hash;
+    
+    ParsedQualitySequence(FastqQualityCodec codec,
+<span class="fc" id="L60">            String encodedQualities) {</span>
+        //this is package private, we 
+        //don't check for nulls since we assume the caller is trusted.
+<span class="fc" id="L63">        this.codec = codec;</span>
+<span class="fc" id="L64">        this.encodedQualities = encodedQualities;</span>
+<span class="fc" id="L65">    }</span>
+
+    @Override
+    public PhredQuality get(long offset) {
+<span class="nc" id="L69">        return codec.decode(encodedQualities.charAt((int)offset));</span>
+    }
+
+    @Override
+    public long getLength() {
+<span class="fc" id="L74">        return encodedQualities.length();</span>
+    }
+
+    @Override
+    public Iterator&lt;PhredQuality&gt; iterator(Range range) {
+<span class="nc" id="L79">        return new QualitySequenceBuilder(toArray(range)).iterator();</span>
+    }
+
+    @Override
+    public QualitySequenceBuilder toBuilder() {
+<span class="fc" id="L84">        return new QualitySequenceBuilder(toArray());</span>
+    }
+
+    @Override
+    public Iterator&lt;PhredQuality&gt; iterator() {
+<span class="fc" id="L89">        return toBuilder().iterator();</span>
+    }
+
+    @Override
+    public byte[] toArray() {
+<span class="fc" id="L94">        char[] chars = encodedQualities.toCharArray();</span>
+<span class="fc" id="L95">        byte[] ret = new byte[chars.length];</span>
+<span class="fc" id="L96">        int offset = codec.getOffset();</span>
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        for(int i=0; i&lt; chars.length; i++){</span>
+<span class="fc" id="L98">            ret[i] = (byte)(chars[i] - offset);</span>
+        }
+<span class="fc" id="L100">        return ret;</span>
+    }
+    
+    
+
+    @Override
+    public byte[] toArray(Range range) {
+<span class="nc" id="L107">        char[] chars = encodedQualities.toCharArray();</span>
+<span class="nc" id="L108">        byte[] ret = new byte[chars.length];</span>
+<span class="nc" id="L109">        int offset = codec.getOffset();</span>
+<span class="nc" id="L110">        int end = (int)range.getEnd();</span>
+<span class="nc" id="L111">        int shift = (int)range.getBegin();</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">        for(int i=shift; i&lt;=end; i++){</span>
+<span class="nc" id="L113">            ret[i-shift] = (byte)(chars[i] - offset);</span>
+        }
+<span class="nc" id="L115">        return ret;</span>
+    }
+
+    private void computeSummaryStatsIfNeeded(){
+        //no synchronization here,
+        //in the unlikely event 2 threads enter at the sametime,
+        //they will get the same value anyway
+        //not worth the performance penalty
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">        if(stats !=null){</span>
+<span class="nc" id="L124">            return;</span>
+        }
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">        if(encodedQualities.isEmpty()){</span>
+<span class="nc" id="L127">            stats = new DoubleSummaryStatistics();</span>
+<span class="nc" id="L128">            return;</span>
+        }
+<span class="fc" id="L130">        DoubleSummaryStatistics stats2 = new DoubleSummaryStatistics();</span>
+<span class="fc" id="L131">        char[] chars = encodedQualities.toCharArray();</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">        for(int i=0; i&lt; chars.length; i++){</span>
+<span class="fc" id="L133">            stats2.accept(chars[i]);</span>
+        }
+        
+<span class="fc" id="L136">        stats = stats2;</span>
+<span class="fc" id="L137">    }</span>
+    @Override
+    public OptionalDouble getAvgQuality() throws ArithmeticException {
+<span class="fc" id="L140">        computeSummaryStatsIfNeeded();</span>
+<span class="pc bpc" id="L141" title="1 of 2 branches missed.">        if(stats.getCount() ==0){</span>
+<span class="nc" id="L142">            return OptionalDouble.empty();</span>
+        }
+<span class="fc" id="L144">        return OptionalDouble.of(stats.getAverage() - codec.getOffset());</span>
+    }
+
+    @Override
+    public Optional&lt;PhredQuality&gt; getMinQuality() {
+<span class="nc" id="L149">        computeSummaryStatsIfNeeded();</span>
+<span class="nc" id="L150">        double value = stats.getMin();</span>
+<span class="nc bnc" id="L151" title="All 2 branches missed.">        if(Double.POSITIVE_INFINITY == value){</span>
+<span class="nc" id="L152">            return Optional.empty();</span>
+        }
+<span class="nc" id="L154">        return Optional.of(codec.decode((char)value));</span>
+    }
+
+    @Override
+    public Optional&lt;PhredQuality&gt; getMaxQuality() {
+<span class="nc" id="L159">        computeSummaryStatsIfNeeded();</span>
+<span class="nc" id="L160">        double value = stats.getMax();</span>
+<span class="nc bnc" id="L161" title="All 2 branches missed.">        if(Double.NEGATIVE_INFINITY == value){</span>
+<span class="nc" id="L162">            return Optional.empty();</span>
+        }
+<span class="nc" id="L164">        return Optional.of(codec.decode((char)value));</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="nc bnc" id="L169" title="All 4 branches missed.">        if(hash ==0 &amp;&amp; getLength() &gt;0){</span>
+<span class="nc" id="L170">            hash = Arrays.hashCode(toArray());</span>
+        }
+<span class="nc" id="L172">       return hash;</span>
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+<span class="pc bpc" id="L177" title="1 of 2 branches missed.">        if (this == obj) {</span>
+<span class="nc" id="L178">            return true;</span>
+        }
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">        if (obj == null) {</span>
+<span class="nc" id="L181">            return false;</span>
+        }
+<span class="fc bfc" id="L183" title="All 2 branches covered.">        if (obj instanceof ParsedQualitySequence) {</span>
+               
+<span class="fc" id="L185">            ParsedQualitySequence other = (ParsedQualitySequence) obj;</span>
+<span class="fc bfc" id="L186" title="All 2 branches covered.">            if (codec == other.codec) {</span>
+               //if same quality code can do quick check
+<span class="fc" id="L188">                return encodedQualities.equals(other.encodedQualities);</span>
+            }
+            //else fall through
+        }
+<span class="pc bpc" id="L192" title="1 of 2 branches missed.">        if(obj instanceof QualitySequence){</span>
+<span class="fc" id="L193">            return Arrays.equals(toArray(), ((QualitySequence)obj).toArray());</span>
+        }
+<span class="nc" id="L195">        return false;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

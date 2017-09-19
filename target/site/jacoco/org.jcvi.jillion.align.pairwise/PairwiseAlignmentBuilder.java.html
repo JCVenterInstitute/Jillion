@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>PairwiseAlignmentBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.align.pairwise</a> &gt; <span class="el_source">PairwiseAlignmentBuilder.java</span></div><h1>PairwiseAlignmentBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.align.pairwise;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+
+import org.jcvi.jillion.align.AminoAcidSubstitutionMatrix;
+import org.jcvi.jillion.align.NucleotideSubstitutionMatrix;
+import org.jcvi.jillion.align.SubstitutionMatrix;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.residue.ResidueSequence;
+import org.jcvi.jillion.core.residue.aa.AminoAcid;
+import org.jcvi.jillion.core.residue.aa.ProteinSequence;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+/**
+ * {@code PairwiseAlignmentBuilder} is a class
+ * that can create {@link PairwiseSequenceAlignment}s
+ * using the given query and subject sequences,
+ * and the given {@link SubstitutionMatrix} and gap penalties.
+ * This Builder can handle both local and global alignments.
+ * 
+ * @author dkatzel
+ *
+ * @param &lt;R&gt; the type of {@link Residue} (either {@link Nucleotide} or {@link AminoAcid} ). 
+ * @param &lt;S&gt; the type of {@link org.jcvi.jillion.core.Sequence} (either {@link NucleotideSequence} or {@link ProteinSequence} ).
+ * @param &lt;A&gt; the type of {@link PairwiseSequenceAlignment} to build.
+ */
+public final class PairwiseAlignmentBuilder&lt;R extends Residue, S extends ResidueSequence&lt;R, S, ?&gt;, A extends PairwiseSequenceAlignment&lt;R,S&gt;&gt; {
+	private final S query,  subject;
+	private final SubstitutionMatrix&lt;R&gt; matrix;
+<span class="fc" id="L54">	private float gapOpen=0;</span>
+<span class="fc" id="L55">	private float gapExtension =0;</span>
+	
+<span class="fc" id="L57">	private boolean local=true;</span>
+	/**
+	 * Create a new PairwiseAlignmentBuilder to align
+	 * 2 {@link NucleotideSequence}s.
+	 * @param query the query sequence, any gaps
+	 * in the sequence will be ignored by the alignment; may not be null.
+	 * @param subject the subject sequence, any gaps
+	 * in the sequence will be ignored by the alignment; may not be null.
+	 * @param matrix the {@link SubstitutionMatrix}; can not be null.
+	 * @return a new {@link PairwiseAlignmentBuilder} instance;
+	 * will never be null.
+	 * @throws NullPointerException if any parameters are null.
+	 */
+	public static PairwiseAlignmentBuilder&lt;Nucleotide, NucleotideSequence, NucleotidePairwiseSequenceAlignment&gt; createNucleotideAlignmentBuilder(NucleotideSequence query, NucleotideSequence subject, NucleotideSubstitutionMatrix matrix){
+<span class="fc" id="L71">		return new PairwiseAlignmentBuilder&lt;Nucleotide, NucleotideSequence,NucleotidePairwiseSequenceAlignment&gt;(query, subject, matrix);</span>
+	}
+	/**
+	 * Create a new PairwiseAlignmentBuilder to align
+	 * 2 {@link ProteinSequence}s.
+	 * @param query the query sequence, any gaps
+	 * in the sequence will be ignored by the alignment; may not be null.
+	 * @param subject the subject sequence, any gaps
+	 * in the sequence will be ignored by the alignment; may not be null.
+	 * @param matrix the {@link SubstitutionMatrix}; can not be null.
+	 * @return a new {@link PairwiseAlignmentBuilder} instance;
+	 * will never be null.
+	 * @throws NullPointerException if any parameters are null.
+	 */
+	public static PairwiseAlignmentBuilder&lt;AminoAcid, ProteinSequence, ProteinPairwiseSequenceAlignment&gt; createProtienAlignmentBuilder(ProteinSequence query, ProteinSequence subject, AminoAcidSubstitutionMatrix matrix){
+<span class="fc" id="L86">		return new PairwiseAlignmentBuilder&lt;AminoAcid, ProteinSequence, ProteinPairwiseSequenceAlignment&gt;(query, subject, matrix);</span>
+	}
+	
+<span class="fc" id="L89">	private PairwiseAlignmentBuilder(S query, S subject, SubstitutionMatrix&lt;R&gt; matrix){</span>
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">		if(query==null){</span>
+<span class="nc" id="L91">			throw new NullPointerException(&quot;query can not be null&quot;);</span>
+		}
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">		if(subject==null){</span>
+<span class="nc" id="L94">			throw new NullPointerException(&quot;subject can not be null&quot;);</span>
+		}
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">		if(matrix==null){</span>
+<span class="nc" id="L97">			throw new NullPointerException(&quot;matrix can not be null&quot;);</span>
+		}
+<span class="fc" id="L99">		this.query = query;</span>
+<span class="fc" id="L100">		this.subject = subject;</span>
+<span class="fc" id="L101">		this.matrix = matrix;</span>
+<span class="fc" id="L102">	}</span>
+	/**
+	 * Set the gap penalty without an extension penalty,
+	 * this is the same as calling {@link #gapPenalty(float, float) gapPenalty(open, 0)}.
+	 * @param open the penalty score for creating a new gap; usually a negative number.
+	 * @return this
+	 * @see #gapPenalty(float, float)
+	 */
+	public PairwiseAlignmentBuilder&lt;R,S,A&gt; gapPenalty(float open){
+<span class="fc" id="L111">		return gapPenalty(open, 0F);</span>
+	}
+			
+	/**
+	 * Set the affine gap penalties to use when scoring the alignments.
+	 * @param open the penalty score for creating a new gap; usually a negative number.
+	 * @param extension the penalty for extending an already open gap;
+	 * usually a negative number.
+	 * @return this
+	 */
+	public PairwiseAlignmentBuilder&lt;R,S,A&gt; gapPenalty(float open, float extension){
+<span class="fc" id="L122">		this.gapOpen = open;</span>
+<span class="fc" id="L123">		this.gapExtension = extension;</span>
+<span class="fc" id="L124">		return this;</span>
+	}
+	/**
+	 * Set this pairwise alignment algorithm to use a global
+	 * alignment.  This will force the alignment for both sequences
+	 * to go from end to end.  If not set, then the default is 
+	 * a local alignment.
+	 * @return this.
+	 */
+	public PairwiseAlignmentBuilder&lt;R,S,A&gt; useGlobalAlignment(){
+<span class="fc" id="L134">		local=false;</span>
+<span class="fc" id="L135">		return this;</span>
+	}
+	/**
+	 * Set this pairwise alignment algorithm to use a local
+	 * alignment.  A local alignment will only include the best
+	 * subsequence alignment and will not force the entire
+	 * sequence to be aligned.  If not set, this is the default
+	 * alignment used.
+	 * @return this.
+	 */
+	public PairwiseAlignmentBuilder&lt;R,S,A&gt; useLocalAlignment(){
+<span class="fc" id="L146">		local=true;</span>
+<span class="fc" id="L147">		return this;</span>
+	}
+	/**
+	 * Compute the actual pairwise alignment.
+	 * This method may be computationally expensive
+	 * if the sequences are long.
+	 * @return a new {@link PairwiseSequenceAlignment}
+	 * instance, will never be null.
+	 */
+	@SuppressWarnings(&quot;unchecked&quot;)
+	public A build(){
+		//we know that we can only be either an ProteinSequence
+		//or a NucleotideSequence so these casts should all be safe.
+		//The casts are so the user's interface is clean
+		//all ugliness is hidden here
+		
+<span class="fc bfc" id="L163" title="All 2 branches covered.">		if(query instanceof NucleotideSequence){</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">			if(local){</span>
+<span class="fc" id="L165">				 return (A)NucleotideSmithWatermanAligner.align((NucleotideSequence)query, (NucleotideSequence)subject, (NucleotideSubstitutionMatrix)matrix, gapOpen, gapExtension);</span>
+			}
+<span class="fc" id="L167">			return (A) NucleotideNeedlemanWunschAligner.align((NucleotideSequence)query, (NucleotideSequence)subject, (NucleotideSubstitutionMatrix)matrix, gapOpen, gapExtension);</span>
+		}
+<span class="fc bfc" id="L169" title="All 2 branches covered.">		if(local){</span>
+<span class="fc" id="L170">			 return (A) ProteinSmithWatermanAligner.align((ProteinSequence)query, (ProteinSequence)subject, (AminoAcidSubstitutionMatrix)matrix, gapOpen, gapExtension);</span>
+		}
+<span class="fc" id="L172">		return (A) ProteinNeedlemanWunschAligner.align((ProteinSequence)query, (ProteinSequence)subject, (AminoAcidSubstitutionMatrix)matrix, gapOpen, gapExtension);</span>
+
+	}
+	/**
+         * Find several alignments.  If this Builder is configured to
+         * use local alignments then this method will try to find several alignments by
+         * recursively performing alignments on smaller and smaller subject sequences. 
+         * &lt;strong&gt;Note&lt;/strong&gt; this algorithm will find both good and poor alignments
+         * so it is recommended that the returned Stream is filtered using a {@link java.util.function.Predicate}
+         * that requires a minimum Score value.
+         * 
+         * if this Builder is configured to use global alignments, then 
+         * the returned list will be of size 1 with the same result as {@link #build()}.
+         * 
+         * 
+         * @return a Stream will never be null.
+         */
+	public Stream&lt;A&gt; findMultiple(){
+<span class="pc bpc" id="L190" title="1 of 2 branches missed.">            if(!local){</span>
+<span class="nc" id="L191">                return Stream.of(build());</span>
+            }
+<span class="fc" id="L193">            List&lt;A&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L194" title="All 2 branches covered.">            if(query instanceof NucleotideSequence){</span>
+<span class="fc" id="L195">                findMultiple((NucleotideSequence) subject, 0, list::add);</span>
+            }else{
+<span class="fc" id="L197">                findMultiple((ProteinSequence)subject, 0, list::add);</span>
+            }
+<span class="fc" id="L199">            return list.stream();</span>
+	}
+	
+	private void findMultiple(NucleotideSequence currentSubject, int currentShift, Consumer&lt;A&gt; consumer){
+<span class="fc bfc" id="L203" title="All 2 branches covered.">	    if(currentSubject.getLength()&lt; query.getLength()){</span>
+<span class="fc" id="L204">	        return;</span>
+	    }
+	    @SuppressWarnings(&quot;unchecked&quot;)
+<span class="fc" id="L207">            A alignment = (A) NucleotideSmithWatermanAligner.align((NucleotideSequence)query, currentSubject, (NucleotideSubstitutionMatrix)matrix, gapOpen, gapExtension, currentShift);</span>
+	   
+<span class="fc" id="L209">	    consumer.accept(alignment);</span>
+<span class="fc" id="L210">	    long endOfAlignment = alignment.getSubjectRange().getEnd()+1 - currentShift;</span>
+<span class="fc" id="L211">	    long startOfAlignment = alignment.getSubjectRange().getBegin() - currentShift;</span>
+	    //downstream
+<span class="fc" id="L213">	    findMultiple(currentSubject.toBuilder()</span>
+<span class="fc" id="L214">                                .delete(Range.ofLength(endOfAlignment))</span>
+<span class="fc" id="L215">                                .build(),</span>
+                                (int)(currentShift+endOfAlignment),
+                                consumer);
+	    //upstream
+<span class="fc" id="L219">	    findMultiple(currentSubject.toBuilder()</span>
+<span class="fc" id="L220">                    .trim(Range.ofLength(startOfAlignment))</span>
+<span class="fc" id="L221">                    .build(),</span>
+                    currentShift,
+                    consumer);
+	    
+<span class="fc" id="L225">	}</span>
+	private void findMultiple(ProteinSequence currentSubject, int currentShift, Consumer&lt;A&gt; consumer){
+<span class="fc bfc" id="L227" title="All 2 branches covered.">            if(currentSubject.getLength()&lt; query.getLength()){</span>
+<span class="fc" id="L228">                return;</span>
+            }
+            @SuppressWarnings(&quot;unchecked&quot;)
+<span class="fc" id="L231">            A alignment = (A) ProteinSmithWatermanAligner.align((ProteinSequence)query, currentSubject, (AminoAcidSubstitutionMatrix)matrix, gapOpen, gapExtension, currentShift);</span>
+           
+<span class="fc" id="L233">            consumer.accept(alignment);</span>
+<span class="fc" id="L234">            long endOfAlignment = alignment.getSubjectRange().getEnd()+1 - currentShift;</span>
+<span class="fc" id="L235">            long startOfAlignment = alignment.getSubjectRange().getBegin() - currentShift;</span>
+            //downstream
+<span class="fc" id="L237">            findMultiple(currentSubject.toBuilder()</span>
+<span class="fc" id="L238">                                .delete(Range.ofLength(endOfAlignment))</span>
+<span class="fc" id="L239">                                .build(),</span>
+                                (int)(currentShift+endOfAlignment),
+                                consumer);
+            //upstream
+<span class="fc" id="L243">            findMultiple(currentSubject.toBuilder()</span>
+<span class="fc" id="L244">                    .trim(Range.ofLength(startOfAlignment))</span>
+<span class="fc" id="L245">                    .build(),</span>
+                    currentShift,
+                    consumer);
+            
+<span class="fc" id="L249">        }</span>
+	
+	
+    /**
+     * Helper method to programmatically use Local or Global Alignment.
+     * 
+     * @param useLocal
+     *            flag to say which kind of alignment to use. If set to
+     *            {@code true}, this is the same as
+     *            {@link #useGlobalAlignment()}, If set to {@code false}, this is
+     *            the same as {@link #useLocalAlignment()}
+     * @return this
+     * 
+     * @since 5.3
+     */
+    public PairwiseAlignmentBuilder&lt;R,S,A&gt; useGlobalAlignment(boolean useGlobal) {
+<span class="pc bpc" id="L265" title="1 of 2 branches missed.">        if(useGlobal){</span>
+<span class="fc" id="L266">            return useGlobalAlignment();</span>
+        }
+<span class="nc" id="L268">        return useLocalAlignment();</span>
+    }
+
+    /**
+     * Helper method to programmatically use Local or Global Alignment.
+     * 
+     * @param useLocal
+     *            flag to say which kind of alignment to use. If set to
+     *            {@code true}, this is the same as
+     *            {@link #useLocalAlignment()}, If set to {@code false}, this is
+     *            the same as {@link #useGlobalAlignment()}
+     * @return this
+     * 
+     * @since 5.3
+     */
+    public PairwiseAlignmentBuilder&lt;R,S,A&gt; useLocalAlignment(boolean useLocal) {
+<span class="nc bnc" id="L284" title="All 2 branches missed.">        if(useLocal){            </span>
+<span class="nc" id="L285">            return useLocalAlignment();</span>
+        }
+<span class="nc" id="L287">        return useGlobalAlignment();</span>
+    }
+	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

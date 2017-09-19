@@ -1,0 +1,396 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SamProgramBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.sam.header</a> &gt; <span class="el_source">SamProgramBuilder.java</span></div><h1>SamProgramBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.sam.header;
+
+/**
+ * {@code Builder} is the Builder object
+ * used to create {@link SamProgram}
+ * instances.
+ * @author dkatzel
+ *
+ */
+public final class SamProgramBuilder{
+	private String id;
+
+	private String name;
+	private String version;
+	private String description;
+	private String commandLine;
+	private String prevousProgramId;
+	
+	/**
+	 * Create a new Builder object
+	 * that will be used to create a new 
+	 * {@link SamProgram} instance.
+	 * @param id the SamProgram id to use;
+	 * can not be null.
+	 * @throws NullPointerException if id is null.
+	 */
+<span class="fc" id="L47">	public SamProgramBuilder(String id) {</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">		if(id ==null){</span>
+<span class="fc" id="L49">			throw new NullPointerException(&quot;id can not be null&quot;);</span>
+		}
+<span class="fc" id="L51">		this.id = id;</span>
+<span class="fc" id="L52">	}</span>
+
+<span class="fc" id="L54">	public SamProgramBuilder(SamProgram copy) {</span>
+<span class="fc" id="L55">		this.id = copy.getId();</span>
+<span class="fc" id="L56">		this.name = copy.getName();</span>
+<span class="fc" id="L57">		this.version = copy.getVersion();</span>
+<span class="fc" id="L58">		this.description = copy.getDescription();</span>
+<span class="fc" id="L59">		this.prevousProgramId = copy.getPreviousProgramId();</span>
+<span class="fc" id="L60">		this.commandLine = copy.getCommandLine();</span>
+<span class="fc" id="L61">	}</span>
+
+	
+	/**
+	 * Get the name of the program.
+	 * @return the name of this program as a String;
+	 * may be null if this information is not provided.
+	 */
+	public String getName() {
+<span class="nc" id="L70">		return name;</span>
+	}
+
+	/**
+	 * Change the name of the program,
+	 * if not called, then the built {@link SamProgram#getName()}
+	 * will return null.
+	 * @param name the name to set;
+	 * may be null.
+	 * @return this
+	 */
+	public SamProgramBuilder setName(String name) {
+<span class="fc" id="L82">		this.name = name;</span>
+<span class="fc" id="L83">		return this;</span>
+	}
+
+	/**
+	 * Version of the program.
+	 * @return the version as a String;
+	 * may be {@code null} if not provided.
+	 */
+	public String getVersion() {
+<span class="nc" id="L92">		return version;</span>
+	}
+
+	/**
+	 * Change the version of the program,
+	 * if not called, then the built {@link SamProgram#getVersion()}
+	 * will return null.
+	 * @param version the version to set;
+	 * may be null.
+	 * @return this
+	 */
+	public SamProgramBuilder setVersion(String version) {
+<span class="fc" id="L104">		this.version = version;</span>
+<span class="fc" id="L105">		return this;</span>
+	}
+
+	/**
+	 * Description of the program.
+	 * @return the description of what this program
+	 * does as a String;
+	 * may be {@code null} if not provided.
+	 */
+	public String getDescription() {
+<span class="nc" id="L115">		return description;</span>
+	}
+
+	/**
+	 * Change the description of the program,
+	 * if not called, then the built {@link SamProgram#getDescription()}
+	 * will return null.
+	 * @param description the description to set;
+	 * may be null.
+	 * @return this
+	 */
+	public SamProgramBuilder setDescription(String description) {
+<span class="fc" id="L127">		this.description = description;</span>
+<span class="fc" id="L128">		return this;</span>
+	}
+
+	/**
+	 * Get the Commandline invocation of the program.
+	 * @return the commandline used to invoke this program
+	 * does as a String;
+	 * may be {@code null} if not provided.
+	 */
+	public String getCommandLine() {
+<span class="nc" id="L138">		return commandLine;</span>
+	}
+
+	/**
+	 * Change the command line of the program,
+	 * if not called, then the built {@link SamProgram#getCommandLine()}
+	 * will return null.
+	 * @param commandLine the commandLine to set;
+	 * may be null.
+	 * @return this
+	 */
+	public SamProgramBuilder setCommandLine(String commandLine) {
+<span class="fc" id="L150">		this.commandLine = commandLine;</span>
+<span class="fc" id="L151">		return this;</span>
+	}
+
+
+	
+	/**
+	 * Get the Id of the previous  {@link SamProgram}
+	 * that operated on this SAM file.
+	 * @return an Id String or
+	 * {@code null} if this is the last
+	 * (or only) program in the chain.
+	 */
+	public String getPrevousProgramId() {
+<span class="nc" id="L164">		return prevousProgramId;</span>
+	}
+	/**
+	 * Change the previous program id of the program,
+	 * if not called, then the built {@link SamProgram#getPreviousProgramId()}
+	 * will return null.
+	 * @param prevousProgramId the  previous program id to set;
+	 * may be null.
+	 * @return this
+	 */
+	public SamProgramBuilder setPrevousProgramId(String prevousProgramId) {
+<span class="fc" id="L175">		this.prevousProgramId = prevousProgramId;</span>
+<span class="fc" id="L176">		return this;</span>
+	}
+
+
+	/**
+	 * Get the unique ID. The value of ID is used in the
+	 * {@link org.jcvi.jillion.sam.attribute.ReservedSamAttributeKeys#PROGRAM}
+	 * tag. PG IDs may be modified when merging SAM files in order to handle
+	 * collisions.
+	 * 
+	 * @return a String; will never be null.
+	 */
+	public String getId() {
+<span class="nc" id="L189">		return id;</span>
+	}
+	/**
+	 * Change the unique ID.
+	 * IDs may be modified when merging SAM files in order to handle
+	 * collisions.
+	 * @param newId the new SamProgram id to use;
+	 * can not be null.
+	 * @throws NullPointerException if newId is null.
+	 * @return this
+	 */
+	public SamProgramBuilder setId(String newId){
+<span class="fc bfc" id="L201" title="All 2 branches covered.">		if(newId ==null){</span>
+<span class="fc" id="L202">			throw new NullPointerException(&quot;new id can not be null&quot;);</span>
+		}
+<span class="fc" id="L204">		this.id = newId;</span>
+<span class="fc" id="L205">		return this;</span>
+	}
+	/**
+	 * Create a new {@link SamProgram}
+	 * instance using the fields set so far.
+	 * @return a new {@link SamProgram} instance;
+	 * will never be null.
+	 */
+	public SamProgramImpl build(){
+<span class="fc" id="L214">		return new SamProgramImpl(this);</span>
+	}
+	
+	private static final class SamProgramImpl implements SamProgram {
+
+	        private final String id;
+	        private final String name;
+	        private final String version;
+	        private final String description;
+	        private final String commandLine;
+	        private final String previousProgramid;
+	        
+<span class="fc" id="L226">	        SamProgramImpl(SamProgramBuilder builder){</span>
+<span class="fc" id="L227">	                this.id = builder.id;</span>
+<span class="fc" id="L228">	                this.name = builder.name;</span>
+<span class="fc" id="L229">	                this.version = builder.version;</span>
+<span class="fc" id="L230">	                this.description = builder.description;</span>
+<span class="fc" id="L231">	                this.commandLine = builder.commandLine;</span>
+<span class="fc" id="L232">	                this.previousProgramid = builder.prevousProgramId;</span>
+<span class="fc" id="L233">	        }</span>
+	        
+	        
+	        /**
+	         * Get the unique ID. The value of ID is used in the
+	         * {@link org.jcvi.jillion.sam.attribute.ReservedSamAttributeKeys#PROGRAM}
+	         * tag.
+	         * 
+	         * @return a String; will never be null.
+	         */
+	        @Override
+	    public String getId() {
+<span class="fc" id="L245">	                return id;</span>
+	        }
+
+
+	        /**
+	         * Get the program name.
+	         * @return the name of this program as a String;
+	         * may be {@code null} if this information is not provided.
+	         */
+	        @Override
+	    public String getName() {
+<span class="fc" id="L256">	                return name;</span>
+	        }
+
+
+	        /**
+	         * Version of the program.
+	         * @return the version as a String;
+	         * may be {@code null} if not provided.
+	         */
+	        @Override
+	    public String getVersion() {
+<span class="fc" id="L267">	                return version;</span>
+	        }
+
+
+	        /**
+	         * Description of the program.
+	         * @return the description of what this program
+	         * does as a String;
+	         * may be {@code null} if not provided.
+	         */
+	        @Override
+	    public String getDescription() {
+<span class="fc" id="L279">	                return description;</span>
+	        }
+
+
+	        /**
+	         * Get the Commandline invocation of the program.
+	         * @return the commandline used to invoke this program
+	         * does as a String;
+	         * may be {@code null} if not provided.
+	         */
+	        @Override
+	    public String getCommandLine() {
+<span class="fc" id="L291">	                return commandLine;</span>
+	        }
+
+
+	        /**
+	         * Get the Id of the previous  {@link SamProgram}
+	         * that operated on this SAM file.
+	         * @return an Id String or
+	         * {@code null} if this is the last
+	         * (or only) program in the chain.
+	         */
+	        @Override
+	    public String getPreviousProgramId() {
+<span class="fc" id="L304">	                return previousProgramid;</span>
+	        }
+
+
+
+	        @Override
+	        public String toString() {
+<span class="nc" id="L311">	                return &quot;SamProgram [id=&quot; + id + &quot;, name=&quot; + name + &quot;, version=&quot; + version</span>
+	                                + &quot;, description=&quot; + description + &quot;, commandLine=&quot;
+	                                + commandLine + &quot;, previousProgramid=&quot; + previousProgramid + &quot;]&quot;;
+	        }
+
+
+
+	        @Override
+	        public int hashCode() {
+<span class="fc" id="L320">	                final int prime = 31;</span>
+<span class="fc" id="L321">	                int result = 1;</span>
+<span class="fc bfc" id="L322" title="All 2 branches covered.">	                result = prime * result</span>
+<span class="fc" id="L323">	                                + ((commandLine == null) ? 0 : commandLine.hashCode());</span>
+<span class="fc bfc" id="L324" title="All 2 branches covered.">	                result = prime * result</span>
+<span class="fc" id="L325">	                                + ((description == null) ? 0 : description.hashCode());</span>
+<span class="pc bpc" id="L326" title="1 of 2 branches missed.">	                result = prime * result + ((id == null) ? 0 : id.hashCode());</span>
+<span class="fc bfc" id="L327" title="All 2 branches covered.">	                result = prime * result + ((name == null) ? 0 : name.hashCode());</span>
+<span class="fc bfc" id="L328" title="All 2 branches covered.">	                result = prime</span>
+	                                * result
+	                                + ((previousProgramid == null) ? 0 : previousProgramid
+<span class="fc" id="L331">	                                                .hashCode());</span>
+<span class="fc bfc" id="L332" title="All 2 branches covered.">	                result = prime * result + ((version == null) ? 0 : version.hashCode());</span>
+<span class="fc" id="L333">	                return result;</span>
+	        }
+
+
+	        @Override
+	        public boolean equals(Object obj) {
+<span class="fc bfc" id="L339" title="All 2 branches covered.">	                if (this == obj) {</span>
+<span class="fc" id="L340">	                        return true;</span>
+	                }
+<span class="fc bfc" id="L342" title="All 2 branches covered.">	                if (obj == null) {</span>
+<span class="fc" id="L343">	                        return false;</span>
+	                }
+<span class="fc bfc" id="L345" title="All 2 branches covered.">	                if (!(obj instanceof SamProgram)) {</span>
+<span class="fc" id="L346">	                        return false;</span>
+	                }
+<span class="fc" id="L348">	                SamProgram other = (SamProgram) obj;</span>
+<span class="pc bpc" id="L349" title="1 of 2 branches missed.">	                if (id == null) {</span>
+<span class="nc bnc" id="L350" title="All 2 branches missed.">	                        if (other.getId() != null) {</span>
+<span class="nc" id="L351">	                                return false;</span>
+	                        }
+<span class="fc bfc" id="L353" title="All 2 branches covered.">	                } else if (!id.equals(other.getId())) {</span>
+<span class="fc" id="L354">	                        return false;</span>
+	                }
+<span class="fc bfc" id="L356" title="All 2 branches covered.">	                if (commandLine == null) {</span>
+<span class="pc bpc" id="L357" title="1 of 2 branches missed.">	                        if (other.getCommandLine() != null) {</span>
+<span class="fc" id="L358">	                                return false;</span>
+	                        }
+<span class="fc bfc" id="L360" title="All 2 branches covered.">	                } else if (!commandLine.equals(other.getCommandLine())) {</span>
+<span class="fc" id="L361">	                        return false;</span>
+	                }
+<span class="fc bfc" id="L363" title="All 2 branches covered.">	                if (description == null) {</span>
+<span class="fc bfc" id="L364" title="All 2 branches covered.">	                        if (other.getDescription() != null) {</span>
+<span class="fc" id="L365">	                                return false;</span>
+	                        }
+<span class="fc bfc" id="L367" title="All 2 branches covered.">	                } else if (!description.equals(other.getDescription())) {</span>
+<span class="fc" id="L368">	                        return false;</span>
+	                }
+	                
+<span class="fc bfc" id="L371" title="All 2 branches covered.">	                if (name == null) {</span>
+<span class="fc bfc" id="L372" title="All 2 branches covered.">	                        if (other.getName() != null) {</span>
+<span class="fc" id="L373">	                                return false;</span>
+	                        }
+<span class="fc bfc" id="L375" title="All 2 branches covered.">	                } else if (!name.equals(other.getName())) {</span>
+<span class="fc" id="L376">	                        return false;</span>
+	                }
+<span class="fc bfc" id="L378" title="All 2 branches covered.">	                if (previousProgramid == null) {</span>
+<span class="fc bfc" id="L379" title="All 2 branches covered.">	                        if (other.getPreviousProgramId() != null) {</span>
+<span class="fc" id="L380">	                                return false;</span>
+	                        }
+<span class="fc bfc" id="L382" title="All 2 branches covered.">	                } else if (!previousProgramid.equals(other.getPreviousProgramId())) {</span>
+<span class="fc" id="L383">	                        return false;</span>
+	                }
+<span class="fc bfc" id="L385" title="All 2 branches covered.">	                if (version == null) {</span>
+<span class="fc bfc" id="L386" title="All 2 branches covered.">	                        if (other.getVersion() != null) {</span>
+<span class="fc" id="L387">	                                return false;</span>
+	                        }
+<span class="fc bfc" id="L389" title="All 2 branches covered.">	                } else if (!version.equals(other.getVersion())) {</span>
+<span class="fc" id="L390">	                        return false;</span>
+	                }
+<span class="fc" id="L392">	                return true;</span>
+	        }
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

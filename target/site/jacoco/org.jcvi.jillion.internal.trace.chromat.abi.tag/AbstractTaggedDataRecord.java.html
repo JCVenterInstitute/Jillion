@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AbstractTaggedDataRecord.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.trace.chromat.abi.tag</a> &gt; <span class="el_source">AbstractTaggedDataRecord.java</span></div><h1>AbstractTaggedDataRecord.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.internal.trace.chromat.abi.tag;
+
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.internal.trace.chromat.abi.AbiUtil;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataName;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataType;
+
+
+public abstract class AbstractTaggedDataRecord&lt;T,D&gt; implements TaggedDataRecord&lt;T,D&gt;{
+	private final TaggedDataName name;
+	private final long tagNumber;
+	private final TaggedDataType dataType;
+	private final int elementLength;
+	private final long numberOfElements;
+	private final long recordLength;
+	private final long dataRecord;
+	private final long crypticValue;
+	
+	
+	
+	public AbstractTaggedDataRecord(TaggedDataName name, long number,
+			TaggedDataType dataType, int elementLength, long numberOfElements,
+<span class="fc" id="L44">			long recordLength, long dataRecord, long crypticValue) {</span>
+<span class="fc" id="L45">		this.name = name;</span>
+<span class="fc" id="L46">		this.tagNumber = number;</span>
+<span class="fc" id="L47">		this.dataType = dataType;</span>
+<span class="fc" id="L48">		this.elementLength = elementLength;</span>
+<span class="fc" id="L49">		this.numberOfElements = numberOfElements;</span>
+<span class="fc" id="L50">		this.recordLength = recordLength;</span>
+<span class="fc" id="L51">		this.dataRecord = dataRecord;</span>
+<span class="fc" id="L52">		this.crypticValue = crypticValue;</span>
+<span class="fc" id="L53">	}</span>
+
+	@Override
+	public long getCrypticValue() {
+<span class="nc" id="L57">		return crypticValue;</span>
+	}
+
+	@Override
+	public long getDataRecord() {
+<span class="nc" id="L62">		return dataRecord;</span>
+	}
+
+	@Override
+	public TaggedDataType getDataType() {
+<span class="fc" id="L67">		return dataType;</span>
+	}
+
+	@Override
+	public int getElementLength() {
+<span class="nc" id="L72">		return elementLength;</span>
+	}
+
+	@Override
+	public TaggedDataName getTagName() {
+<span class="fc" id="L77">		return name;</span>
+	}
+
+	@Override
+	public long getTagNumber() {
+<span class="fc" id="L82">		return tagNumber;</span>
+	}
+
+	@Override
+	public long getNumberOfElements() {
+<span class="nc" id="L87">		return numberOfElements;</span>
+	}
+
+	@Override
+	public long getRecordLength() {
+<span class="nc" id="L92">		return recordLength;</span>
+	}
+
+    /* (non-Javadoc)
+	 * @see org.jcvi.trace.sanger.chromatogram.ab1.tag.TaggedDataRecord#parseDataRecordFrom(byte[])
+	 */
+	@Override
+	public D parseDataRecordFrom(byte[] ab1DataBlock) {
+<span class="fc bfc" id="L100" title="All 2 branches covered.">		if(recordLength&lt;5){</span>
+<span class="fc" id="L101">			return parseDataFrom(IOUtil.convertUnsignedIntToByteArray(dataRecord));</span>
+		}
+<span class="fc" id="L103">		byte[] data = new byte[(int)recordLength];</span>
+<span class="fc" id="L104">		System.arraycopy(ab1DataBlock, </span>
+				(int)(dataRecord-AbiUtil.HEADER_SIZE), 
+				data, 0, data.length);
+<span class="fc" id="L107">		return parseDataFrom(data);</span>
+	}
+
+	protected abstract D parseDataFrom(byte[] data);
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+<span class="nc" id="L116">		final int prime = 31;</span>
+<span class="nc" id="L117">		int result = 1;</span>
+<span class="nc" id="L118">		result = prime * result + (int) (crypticValue ^ (crypticValue &gt;&gt;&gt; 32));</span>
+<span class="nc" id="L119">		result = prime * result + (int) (dataRecord ^ (dataRecord &gt;&gt;&gt; 32));</span>
+<span class="nc" id="L120">		result = prime * result	+ dataType.hashCode();</span>
+<span class="nc" id="L121">		result = prime * result + elementLength;</span>
+<span class="nc" id="L122">		result = prime * result + name.hashCode();</span>
+<span class="nc" id="L123">		result = prime * result + (int) (tagNumber ^ (tagNumber &gt;&gt;&gt; 32));</span>
+<span class="nc" id="L124">		result = prime * result</span>
+				+ (int) (numberOfElements ^ (numberOfElements &gt;&gt;&gt; 32));
+<span class="nc" id="L126">		result = prime * result + (int) (recordLength ^ (recordLength &gt;&gt;&gt; 32));</span>
+<span class="nc" id="L127">		return result;</span>
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+<span class="nc bnc" id="L135" title="All 2 branches missed.">		if (this == obj) {</span>
+<span class="nc" id="L136">			return true;</span>
+		}
+<span class="nc bnc" id="L138" title="All 2 branches missed.">		if (obj == null) {</span>
+<span class="nc" id="L139">			return false;</span>
+		}
+<span class="nc bnc" id="L141" title="All 2 branches missed.">		if (!(obj instanceof TaggedDataRecord)) {</span>
+<span class="nc" id="L142">			return false;</span>
+		}
+		@SuppressWarnings(&quot;rawtypes&quot;)
+<span class="nc" id="L145">		TaggedDataRecord other = (TaggedDataRecord) obj;</span>
+<span class="nc bnc" id="L146" title="All 2 branches missed.">		if (!name.equals(other.getTagName())) {</span>
+<span class="nc" id="L147">			return false;</span>
+		}
+<span class="nc bnc" id="L149" title="All 2 branches missed.">		if (tagNumber != other.getTagNumber()) {</span>
+<span class="nc" id="L150">			return false;</span>
+		}
+		
+<span class="nc bnc" id="L153" title="All 2 branches missed.">		if (!dataType.equals(other.getDataType())) {</span>
+<span class="nc" id="L154">			return false;</span>
+		}
+<span class="nc bnc" id="L156" title="All 2 branches missed.">		if (elementLength != other.getElementLength()) {</span>
+<span class="nc" id="L157">			return false;</span>
+		}
+		
+<span class="nc bnc" id="L160" title="All 2 branches missed.">		if (numberOfElements != other.getNumberOfElements()) {</span>
+<span class="nc" id="L161">			return false;</span>
+		}
+<span class="nc bnc" id="L163" title="All 2 branches missed.">		if (recordLength != other.getRecordLength()) {</span>
+<span class="nc" id="L164">			return false;</span>
+		}
+<span class="nc bnc" id="L166" title="All 2 branches missed.">		if (dataRecord != other.getDataRecord()) {</span>
+<span class="nc" id="L167">			return false;</span>
+		}
+<span class="nc bnc" id="L169" title="All 2 branches missed.">		if (crypticValue != other.getCrypticValue()) {</span>
+<span class="nc" id="L170">			return false;</span>
+		}
+<span class="nc" id="L172">		return true;</span>
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+<span class="nc" id="L180">		return String.format(&quot;%s[%s(%d) %d]&quot;,this.getClass().getName(),name,tagNumber,dataRecord);</span>
+		
+	}
+
+	
+	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

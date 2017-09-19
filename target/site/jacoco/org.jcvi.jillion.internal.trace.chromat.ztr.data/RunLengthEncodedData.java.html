@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>RunLengthEncodedData.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.trace.chromat.ztr.data</a> &gt; <span class="el_source">RunLengthEncodedData.java</span></div><h1>RunLengthEncodedData.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Oct 30, 2006
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.internal.trace.chromat.ztr.data;
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.internal.core.seq.trace.sanger.chromat.ztr.data.Data;
+import org.jcvi.jillion.internal.core.util.RunLength;
+import org.jcvi.jillion.internal.trace.chromat.ztr.ZTRUtil;
+
+
+
+/**
+ * &lt;code&gt;RunLengthEncodedData&lt;/code&gt; replaces 
+ * a series of N identical bytes of value V with the guard byte G followed
+ * by N and V. Non-series are stored as normal unless it the value
+ * happens to be the guard byte, which is stored G 0.
+ * @author dkatzel
+ * @see &lt;a href=&quot;http://staden.sourceforge.net/ztr.html&quot;&gt;ZTR SPEC v1.2&lt;/a&gt;
+ *
+ *
+ */
+<span class="pc" id="L51">public enum RunLengthEncodedData implements Data {</span>
+	
+	
+    /**
+     * Singleton instance of ZTR RunLengthEncodedData.
+     */
+<span class="fc" id="L57">    INSTANCE;</span>
+    private static final byte GUARD_ESCAPE = 0;
+	private static final int MIN_RUN_LENGTH = 4;
+	private static final int MAX_RUN_LENGTH = 255;
+	/**
+     * IO_Lib uses 150 as the guard byte 
+     * when encoding Run Length chunks
+     * so that's what we will use as default.
+     */
+    public static final byte DEFAULT_GUARD = (byte)150;
+    /**
+     * 
+    * {@inheritDoc}
+     */
+    @Override
+    public byte[] parseData(byte[] data) throws IOException {
+       //read uncompressed length
+<span class="fc" id="L74">        int uncompressedLength = computeUncompressedLength(data);</span>
+<span class="fc" id="L75">        ByteBuffer in = ByteBuffer.wrap(data);</span>
+<span class="fc" id="L76">        in.position(5);</span>
+       //read guard
+<span class="fc" id="L78">        byte guard = in.get();</span>
+<span class="fc" id="L79">        ByteBuffer out = ByteBuffer.allocate(uncompressedLength);</span>
+<span class="fc" id="L80">        parse(in, guard, out);</span>
+<span class="fc" id="L81">        return out.array();</span>
+    }
+
+    private void parse(ByteBuffer in, byte guard, ByteBuffer out) {
+<span class="fc" id="L85">        List&lt;RunLength&lt;Byte&gt;&gt; runLengthList = parseIntoRunLength(in, guard);        </span>
+<span class="fc" id="L86">        write(runLengthList,out);</span>
+<span class="fc" id="L87">    }</span>
+
+    private List&lt;RunLength&lt;Byte&gt;&gt; parseIntoRunLength(ByteBuffer in, byte guard) {
+<span class="fc" id="L90">        List&lt;RunLength&lt;Byte&gt;&gt; runLengthList = new ArrayList&lt;RunLength&lt;Byte&gt;&gt;();</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">        while(in.hasRemaining()){</span>
+<span class="fc" id="L92">            byte value = in.get();</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">            if( value == guard){          </span>
+<span class="fc" id="L94">                int count = getCount(in);</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">                if(count ==0){</span>
+                	//count is 0 so guard byte must be actual value.
+<span class="fc" id="L97">                    runLengthList.add(new RunLength&lt;Byte&gt;(Byte.valueOf(guard),1));</span>
+                }
+                else{
+<span class="fc" id="L100">                    byte repValue = in.get();                   </span>
+<span class="fc" id="L101">                    runLengthList.add(new RunLength&lt;Byte&gt;(Byte.valueOf(repValue),count));</span>
+                }
+<span class="fc" id="L103">            }else{</span>
+            	//not guard, just output token
+<span class="fc" id="L105">                runLengthList.add(new RunLength&lt;Byte&gt;(Byte.valueOf(value),1));</span>
+            }
+<span class="fc" id="L107">        }</span>
+<span class="fc" id="L108">        return runLengthList;</span>
+    }
+
+    private void write(List&lt;RunLength&lt;Byte&gt;&gt; runLengthList, ByteBuffer out) {
+<span class="fc bfc" id="L112" title="All 2 branches covered.">        for(RunLength&lt;Byte&gt; runLength : runLengthList){</span>
+<span class="fc" id="L113">            putConsecutiveValues(out, runLength.getLength(), runLength.getValue().byteValue());</span>
+<span class="fc" id="L114">        }</span>
+        
+<span class="fc" id="L116">    }</span>
+
+    private void putConsecutiveValues(ByteBuffer out, int count, byte repValue) {
+<span class="fc" id="L119">        byte[] consecutiveValues = new byte[count];</span>
+<span class="fc" id="L120">        Arrays.fill(consecutiveValues, repValue);</span>
+<span class="fc" id="L121">        out.put(consecutiveValues);</span>
+<span class="fc" id="L122">    }</span>
+
+    private int computeUncompressedLength(byte[] data) {
+<span class="fc" id="L125">        byte uncompressedLengthArray[] = new byte[4];</span>
+        /* dkatzel :
+         * uncompressed length is wrong endian in IO_Lib source code
+         * compared to the 1.2 ZTR spec but I am going to use IO_Lib version 
+         * because it seems to work.
+         */
+<span class="fc bfc" id="L131" title="All 2 branches covered.">        for(int i=1; i&lt; 5; i++){</span>
+<span class="fc" id="L132">            uncompressedLengthArray[4-i] = data[i];</span>
+        }        
+<span class="fc" id="L134">        return (int)ZTRUtil.readInt(uncompressedLengthArray);</span>
+    }
+
+    private int getCount(ByteBuffer in) {
+<span class="fc" id="L138">        return IOUtil.toUnsignedByte(in.get());</span>
+    }
+    /**
+     * Same as {@link #encodeData(byte[], byte) encodeData(data, DEFAULT_GUARD)}
+     */
+	@Override
+	public byte[] encodeData(byte[] data) throws IOException {
+<span class="nc" id="L145">		return encodeData(data, DEFAULT_GUARD);</span>
+	}
+	/**
+	 * Encodes the given data as run length encoded data.
+	 * @param data the data to encode.
+	 * @param guard the guard byte used to specify run length blocks.
+	 * @return a byte array containing the given input data but as
+	 * run length encoded.
+	 * @throws IOException if there is a problem
+	 * encoding the data.
+	 */
+	@Override
+	public byte[] encodeData(byte[] data, byte guard) throws IOException {
+<span class="fc" id="L158">		ByteBuffer encodedBuffer = ByteBuffer.allocate(2*data.length+6);</span>
+<span class="fc" id="L159">		encodedBuffer.put(DataHeader.RUN_LENGTH_ENCODED);</span>
+<span class="fc" id="L160">		ByteBuffer lengthBuffer = ByteBuffer.allocate(4);</span>
+<span class="fc" id="L161">        lengthBuffer.putInt(data.length);</span>
+<span class="fc" id="L162">        encodedBuffer.put(IOUtil.switchEndian(lengthBuffer.array()));</span>
+<span class="fc" id="L163">        encodedBuffer.put(guard);      </span>
+<span class="fc" id="L164">        runLengthEncode(data, guard,encodedBuffer);</span>
+<span class="fc" id="L165">		encodedBuffer.flip();</span>
+<span class="fc" id="L166">        return Arrays.copyOfRange(encodedBuffer.array(), 0, encodedBuffer.limit());</span>
+	}
+	
+	private void runLengthEncode(byte[] dataToEncode, byte guard, ByteBuffer out){
+<span class="fc" id="L170">		int i=0;</span>
+<span class="fc bfc" id="L171" title="All 2 branches covered.">		while(i&lt;dataToEncode.length){</span>
+<span class="fc" id="L172">			int runLength = getNextRunLength(dataToEncode, i);</span>
+<span class="fc bfc" id="L173" title="All 2 branches covered.">			if (runLengthIsTooSmall(runLength)) {</span>
+<span class="fc" id="L174">				encodeUnrunLenghEncodedBlock(dataToEncode, guard, out, i, runLength); </span>
+			}else{			
+<span class="fc" id="L176">				encodeRunLengthEncodedBlock(dataToEncode, guard, out, i, runLength); </span>
+			}
+<span class="fc" id="L178">			i+=runLength;</span>
+<span class="fc" id="L179">		}</span>
+<span class="fc" id="L180">	}</span>
+
+	private void encodeRunLengthEncodedBlock(byte[] dataToEncode, byte guard,
+			ByteBuffer out, int i, int runLength) {
+<span class="fc" id="L184">		out.put( guard);</span>
+<span class="fc" id="L185">		out.put((byte)runLength);</span>
+<span class="fc" id="L186">		out.put( dataToEncode[i]);</span>
+<span class="fc" id="L187">	}</span>
+
+	private void encodeUnrunLenghEncodedBlock(byte[] dataToEncode, byte guard,
+			ByteBuffer out, int i, int runLength) {
+<span class="fc bfc" id="L191" title="All 2 branches covered.">		for (int j =0; j&lt;runLength; j++) {</span>
+			//if  our next byte is the same as 
+			//guard, escape it
+<span class="fc" id="L194">			byte nextByte = dataToEncode[i+j];</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">			if (nextByte == guard) {</span>
+<span class="fc" id="L196">				out.put(guard);</span>
+<span class="fc" id="L197">				out.put(GUARD_ESCAPE);</span>
+			} else {
+<span class="fc" id="L199">				out.put(nextByte);</span>
+			}
+		}
+<span class="fc" id="L202">	}</span>
+
+	private boolean runLengthIsTooSmall(int runLength) {
+<span class="fc bfc" id="L205" title="All 2 branches covered.">		return runLength&lt; MIN_RUN_LENGTH;</span>
+	}
+
+	private int getNextRunLength(byte[] dataToEncode, int currentOffset) {
+<span class="fc" id="L209">		int k = currentOffset;</span>
+<span class="fc bfc" id="L210" title="All 6 branches covered.">		while(k &lt; dataToEncode.length &amp;&amp; dataToEncode[currentOffset] == dataToEncode[k] &amp;&amp; k-currentOffset != MAX_RUN_LENGTH){</span>
+<span class="fc" id="L211">		    k++;</span>
+		}
+<span class="fc" id="L213">		return k-currentOffset;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

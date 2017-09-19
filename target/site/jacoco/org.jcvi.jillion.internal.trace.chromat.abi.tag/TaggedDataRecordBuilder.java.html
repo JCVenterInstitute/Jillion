@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>TaggedDataRecordBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.trace.chromat.abi.tag</a> &gt; <span class="el_source">TaggedDataRecordBuilder.java</span></div><h1>TaggedDataRecordBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.internal.trace.chromat.abi.tag;
+
+import org.jcvi.jillion.internal.trace.chromat.abi.tag.rate.DefaultScanRateTaggedDataType;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataName;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataType;
+
+
+public class TaggedDataRecordBuilder implements org.jcvi.jillion.core.util.Builder&lt;TaggedDataRecord&lt;?,?&gt;&gt;{
+	private final TaggedDataName name;
+	private final long number;
+	private TaggedDataType dataType;
+	private int elementLength;
+	private long numberOfElements;
+	private long recordLength;
+	private long dataRecord;
+	private long crypticValue;
+	
+	
+	
+<span class="fc" id="L41">	public TaggedDataRecordBuilder(TaggedDataName name, long number) {</span>
+<span class="pc bpc" id="L42" title="1 of 2 branches missed.">		if(name ==null){</span>
+<span class="nc" id="L43">			throw new NullPointerException(&quot;name can not be null&quot;);</span>
+		}
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">		if(number&lt;0){</span>
+<span class="nc" id="L46">			throw new IllegalArgumentException(&quot;tag number must be &gt;=0&quot;);</span>
+		}
+<span class="fc" id="L48">		this.name = name;</span>
+<span class="fc" id="L49">		this.number = number;</span>
+<span class="fc" id="L50">	}</span>
+
+
+	public TaggedDataRecordBuilder setDataType(TaggedDataType dataType, int elementLength){
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">		if(dataType ==null){</span>
+<span class="nc" id="L55">			throw new NullPointerException(&quot;dataType can not be null&quot;);</span>
+		}
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">		if(elementLength&lt;1){</span>
+<span class="nc" id="L58">			throw new IllegalArgumentException(&quot;elementLength must be &gt;0&quot;);</span>
+		}
+<span class="fc" id="L60">		this.dataType= dataType;</span>
+<span class="fc" id="L61">		this.elementLength = elementLength;</span>
+<span class="fc" id="L62">		return this;</span>
+	}
+	public TaggedDataRecordBuilder setRecordLength(long recordLength){
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">		if(recordLength&lt;1){</span>
+<span class="nc" id="L66">			throw new IllegalArgumentException(&quot;recordLength must be &gt;0&quot;);</span>
+		}
+<span class="fc" id="L68">		this.recordLength = recordLength;</span>
+<span class="fc" id="L69">		return this;</span>
+	}
+	public TaggedDataRecordBuilder setNumberOfElements(long numberOfElements){
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">		if(numberOfElements&lt;1){</span>
+<span class="nc" id="L73">			throw new IllegalArgumentException(&quot;numberOfElements must be &gt;0&quot;);</span>
+		}
+<span class="fc" id="L75">		this.numberOfElements = numberOfElements;</span>
+<span class="fc" id="L76">		return this;</span>
+	}
+	public TaggedDataRecordBuilder setDataRecord(long dataRecord){			
+<span class="fc" id="L79">		this.dataRecord = dataRecord;</span>
+<span class="fc" id="L80">		return this;</span>
+	}
+	public TaggedDataRecordBuilder setCrypticValue(long crypticValue){			
+<span class="fc" id="L83">		this.crypticValue = crypticValue;</span>
+<span class="fc" id="L84">		return this;</span>
+	}
+	@Override
+	public TaggedDataRecord&lt;?,?&gt; build() {
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">		if(numberOfElements * elementLength != recordLength){</span>
+<span class="nc" id="L89">			throw new IllegalStateException(</span>
+<span class="nc" id="L90">					String.format(&quot;invalid record length: expected(%d) but was %d&quot;,</span>
+<span class="nc" id="L91">							recordLength,</span>
+<span class="nc" id="L92">							numberOfElements * elementLength</span>
+							));
+		}
+		
+<span class="pc bfc" id="L96" title="All 7 branches covered.">		switch(dataType){</span>
+			case FLOAT:
+<span class="fc" id="L98">					return new DefaultFloatTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);</span>
+			case PASCAL_STRING:
+<span class="fc" id="L100">					return new DefaultPascalStringTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);</span>
+			case TIME:
+<span class="fc" id="L102">					return new DefaultTimeTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);</span>
+			case DATE:
+<span class="fc" id="L104">					return new DefaultDateTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);</span>
+			case INTEGER:
+<span class="fc" id="L106">			    return handleNumberCase();</span>
+				
+			case USER_DEFINED:
+<span class="fc" id="L109">			    return handleUserDefinedCase();</span>
+
+			default:
+<span class="fc" id="L112">			  return handleDefaultCase();</span>
+		}
+	}
+
+
+    private TaggedDataRecord&lt;?,?&gt; handleNumberCase() {
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">        if(elementLength ==2){</span>
+<span class="fc" id="L119">        	return new DefaultShortArrayTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);</span>
+        }
+<span class="nc" id="L121">        return new DefaultIntegerArrayTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);</span>
+    }
+
+
+    private TaggedDataRecord&lt;?,?&gt; handleUserDefinedCase() {
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">        if(name == TaggedDataName.Rate){</span>
+<span class="fc" id="L127">            return new DefaultScanRateTaggedDataType(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);</span>
+        }
+<span class="nc" id="L129">        return new DefaultUserDefinedTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);</span>
+    }
+
+
+    private TaggedDataRecord&lt;?,?&gt; handleDefaultCase() {
+        //special case for known null-terminated strings
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        if(name.usesNullTerminatedStringValues()){</span>
+<span class="fc" id="L136">            return new DefaultAsciiTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);</span>
+             
+        }
+<span class="fc" id="L139">    	return new DefaultTaggedDataRecord(name, number, dataType, elementLength, numberOfElements, recordLength, dataRecord, crypticValue);</span>
+    }
+	
+	
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

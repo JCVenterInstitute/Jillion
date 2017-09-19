@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ResourceHelper.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal</a> &gt; <span class="el_source">ResourceHelper.java</span></div><h1>ResourceHelper.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Jul 29, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.internal;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLDecoder;
+/**
+ * {@code ResourceHelper}  wraps a Class's classLoader's getResource methods.
+ * @author dkatzel
+ *
+ */
+public class ResourceHelper{
+
+    
+    private final Class&lt;?&gt; clazz;
+    /**
+     * Construct a new {@link ResourceHelper} using
+     * the given class's ClassLoader to as the file server.
+     * @param clazz the class all paths will be relative from.
+     */
+<span class="fc" id="L48">    public ResourceHelper(Class&lt;?&gt; clazz){</span>
+<span class="fc" id="L49">    	this.clazz = clazz;</span>
+<span class="fc" id="L50">    }</span>
+    /**
+     * Construct a new instance using the given's object's class.
+     * 
+     * @apiNote this is the same as {@code new ResourceHelper( classInstance.getClass()); }.
+     * 
+     * @param classInstance the object whose class to use; can not be null.
+     * 
+     * @throws NullPointerException if classInstance is null.
+     */
+    public ResourceHelper(Object classInstance){
+<span class="fc" id="L61">        this(classInstance.getClass());</span>
+<span class="fc" id="L62">    }</span>
+   
+  
+    /**
+     * Get the File associated with the given path
+     * @param relativePath the path to the file to get relative to the base class
+     * of this Helper object.
+     * @return a {@link File} if it exists, or {@code null} otherwise.
+     * @throws IOException if there is a problem decoding the path into a File object.
+     */
+    public File getFile(String relativePath) throws IOException{
+
+<span class="fc" id="L74">			URL url = clazz.getResource(relativePath);</span>
+			
+<span class="pc bpc" id="L76" title="1 of 2 branches missed.">			if(url==null){</span>
+<span class="nc" id="L77">				return null;</span>
+			}
+<span class="fc" id="L79">			return new File(urlDecode(url.getFile()));</span>
+        
+    }
+    /**
+     * Get the InputStream associated with the given path.
+     * @param relativePath the path to the file to get relative to the base class
+     * of this Helper object.
+     * @return an {@link InputStream} if it exists, or {@code null} otherwise.
+     * 
+     */
+    public InputStream getFileAsStream(String relativePath) {
+<span class="fc" id="L90">        return clazz.getResourceAsStream(relativePath);</span>
+    }
+
+    /**
+     * Replace any URL encoding in the file path with the UTF-8 equivalent.
+     * This is needed so paths like in Windows &quot;{@code Documents%20and%20Settings}&quot;
+     * becomes &quot;Documents and Settings&quot;
+     * @param path
+     * @return
+     * @throws UnsupportedEncodingException
+     */
+    private String urlDecode(String path) throws UnsupportedEncodingException{
+<span class="fc" id="L102">    	return URLDecoder.decode(path, &quot;UTF-8&quot;);</span>
+    }
+    public File getRootDir(){
+<span class="nc" id="L105">        return new File(clazz.getName().replaceAll(&quot;\\.&quot;, &quot;/&quot;)).getParentFile();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

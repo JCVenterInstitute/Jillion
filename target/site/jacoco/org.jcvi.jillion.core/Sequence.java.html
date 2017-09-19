@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Sequence.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.core</a> &gt; <span class="el_source">Sequence.java</span></div><h1>Sequence.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Jan 15, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.core;
+
+import java.util.Iterator;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Function;
+
+import org.jcvi.jillion.core.util.streams.ThrowingIndexedConsumer;
+
+
+/**
+ * {@code Sequence} is an interface for an
+ * ordered list of objects.  How
+ * this sequence is stored is abstracted
+ * away so that different implementations
+ * may encode or compress the symbols
+ * so that they take up less memory.
+ * @author dkatzel
+ *
+ *
+ */
+public interface Sequence&lt;T&gt; extends Iterable&lt;T&gt;{
+   
+    /**
+     * Gets the specific element at the specified index.
+     * @param offset the 0-based offset of the element to get.
+     * @return the element at the specified index;
+     * will never be null.
+     * @throws IndexOutOfBoundsException if the given offset
+     * is negative or beyond the last offset in
+     * the sequence.
+     */
+    T get(long offset);
+    /**
+     * Get the number of elements that are in
+     * this sequence.
+     * @return the length, will never
+     * be less than {@code 0}.
+     */
+    long getLength();
+    @Override
+    int hashCode();
+    /**
+     * Two sequences should be equal
+     * if they are both the same
+     * length and contain the same 
+     * elements in the same order.
+     */
+    @Override
+    boolean equals(Object obj);
+
+    /**
+     * Create a new {@link Iterator}
+     * which only iterates over the specified
+     * Range of elements in this sequence.
+     * @param range the range to iterate over.
+     * @return a new {@link Iterator}; will never
+     * be null.
+     * @throws NullPointerException if range is null.
+     * @throws IndexOutOfBoundsException if Range contains
+     * values outside of the possible sequence offsets.
+     */
+    Iterator&lt;T&gt; iterator(Range range);
+    /**
+     * Iterate over each element in the sequence subrange.
+     * and call the given consumer.
+     * 
+     * @param range the subrange to iterate over.
+     * 
+     * @param consumer the {@link ThrowingIndexedConsumer} that will be called
+     * for each element in the range. Note: the index first parameter will be the index
+     * in the full sequence, not the subrange so for example, if the Range is 10..100,
+     * the consumer will accept values where the index is 10..100 not 0..90.
+     * 
+     * @throws E the exception that may be thrown by the consumer.
+     * 
+     * @throws NullPointerException if any parameter is null.
+     * @throws IndexOutOfBoundsException if range contains
+     * values outside of the possible sequence offsets.
+     * 
+     * @since 5.3
+     */
+    default &lt;E extends Throwable&gt; void forEach(Range range, ThrowingIndexedConsumer&lt;T,E&gt; consumer ) throws E{
+<span class="fc" id="L109">        Objects.requireNonNull(range);</span>
+<span class="fc" id="L110">        Objects.requireNonNull(consumer);</span>
+<span class="fc" id="L111">        Iterator&lt;T&gt; iter = iterator(range);</span>
+        
+<span class="fc" id="L113">        long offset=range.getBegin();</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">        while(iter.hasNext()){</span>
+<span class="fc" id="L115">            consumer.accept(offset++, iter.next());</span>
+        }
+<span class="fc" id="L117">    }</span>
+    
+    /**
+     * Iterate over each element in the sequence subrange.
+     * and call the given consumer.
+     * 
+     * @param range the subrange to iterate over.
+     * 
+     * @param consumer the {@link Consumer} that will be called
+     * for each element in the range.
+     * 
+     * @throws E the exception that may be thrown by the consumer.
+     * 
+     * @throws NullPointerException if any parameter is null.
+     * @throws IndexOutOfBoundsException if range contains
+     * values outside of the possible sequence offsets.
+     * 
+     * @since 5.3
+     */
+    default &lt;E extends Throwable&gt; void forEach(Range range, Consumer&lt;T&gt; consumer ) throws E{
+<span class="fc" id="L137">        Objects.requireNonNull(range);</span>
+<span class="fc" id="L138">        Objects.requireNonNull(consumer);</span>
+<span class="fc" id="L139">        Iterator&lt;T&gt; iter = iterator(range);</span>
+       
+<span class="fc bfc" id="L141" title="All 2 branches covered.">        while(iter.hasNext()){</span>
+<span class="fc" id="L142">            consumer.accept(iter.next());</span>
+        }
+<span class="fc" id="L144">    }</span>
+    default &lt;E extends Throwable&gt; void forEach(ThrowingIndexedConsumer&lt;T,E&gt; consumer ) throws E{
+<span class="fc" id="L146">        Objects.requireNonNull(consumer);</span>
+<span class="fc" id="L147">        Iterator&lt;T&gt; iter = iterator();</span>
+<span class="fc" id="L148">        long offset=0;</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">        while(iter.hasNext()){</span>
+<span class="fc" id="L150">            consumer.accept(offset++, iter.next());</span>
+        }
+<span class="fc" id="L152">    }</span>
+    
+    
+    /**
+     * Create a new SequenceBuilder object that is initialized
+     * to the current sequence.  Any changes made to the returned Builder
+     * will &lt;strong&gt;NOT&lt;/strong&gt; affect this immutable Sequence.
+     * @return a new Builder instance, will never be null.
+     * @since 5.1
+     */
+    SequenceBuilder&lt;T, ? extends Sequence&lt;T&gt;&gt; toBuilder();
+    
+    
+    /**
+     * Convert this sequence into a String using the user defined function 
+     * to write out each element in this sequence..
+     * @param toStringFunction  The Function to convert each element
+     * into a string.  If the function returns {@code null},
+     * then that element is not included in the resulting output String.
+     * @return a new String; will never be null, but may be empty
+     * if either this sequence is empty or the provided function always returns null.
+     * 
+     * @throws NullPointerException if toStringFunction is null.
+     * 
+     * 
+     * 
+     * @since 5.3
+     */
+    default String toString(Function&lt;T, String&gt; toStringFunction){
+<span class="nc" id="L181">        Objects.requireNonNull(toStringFunction);</span>
+        
+<span class="nc" id="L183">        StringBuilder builder = new StringBuilder((int) getLength()*3);</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">        for(T aa : this){</span>
+<span class="nc" id="L185">            String r = toStringFunction.apply(aa);</span>
+<span class="nc bnc" id="L186" title="All 2 branches missed.">            if(r !=null){</span>
+<span class="nc" id="L187">                builder.append(r);</span>
+            }
+<span class="nc" id="L189">        }</span>
+<span class="nc" id="L190">        return builder.toString();</span>
+    }
+    /**
+     * Does this sequence have a length of zero.
+     * @return {@code true} if the length is zero; {@code false} otherwise.
+     * 
+     * @since 5.3
+     */
+    default boolean isEmpty(){
+<span class="nc bnc" id="L199" title="All 2 branches missed.">        return getLength() ==0;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ZLibData.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.trace.chromat.ztr.data</a> &gt; <span class="el_source">ZLibData.java</span></div><h1>ZLibData.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Oct 27, 2006
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.internal.trace.chromat.ztr.data;
+
+
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
+
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.internal.core.seq.trace.sanger.chromat.ztr.data.Data;
+import org.jcvi.jillion.internal.trace.chromat.ztr.ZTRUtil;
+
+/**
+ * &lt;code&gt;ZLibData&lt;/code&gt; is the {@link Data} implementation
+ * that uses the zip algorithm
+ * to compress the data. The {@link #encodeData(byte[])}
+ * method
+ * will encode chromatgoram data but will create about a 5% larger filesize
+ * compared to the staden IO_Lib zip implementation.
+ * This is probably due to the standard Java implementation of zip does not allow
+ * changing the &quot;windowbits&quot; size which could result in better
+ * compression.
+ * @author dkatzel
+ * @see &lt;a href=&quot;http://staden.sourceforge.net/ztr.html&quot;&gt;ZTR SPEC v1.2&lt;/a&gt;
+ *
+ *
+ */
+<span class="pc" id="L55">public enum ZLibData implements Data {</span>
+    /**
+     * Singleton instance of ZLibData.
+     */
+<span class="fc" id="L59">    INSTANCE;</span>
+    /**
+     * 
+    * {@inheritDoc}
+     */
+    @Override
+    public byte[] parseData(byte[] data) throws IOException {
+<span class="fc" id="L66">    	Inflater decompresser=null;</span>
+        try{
+<span class="fc" id="L68">            ByteBuffer size = ByteBuffer.allocate(4);</span>
+<span class="fc" id="L69">            size.put(data,1,4);    </span>
+<span class="fc" id="L70">            int uncompressedLength =(int) ZTRUtil.readInt(IOUtil.switchEndian(size.array()));            </span>
+<span class="fc" id="L71">            ByteBuffer compressedData = ByteBuffer.allocate(data.length-5);</span>
+<span class="fc" id="L72">            compressedData.put(data,5,data.length-5);</span>
+            //decompress the zipped data
+<span class="fc" id="L74">            decompresser = new Inflater();</span>
+<span class="fc" id="L75">            decompresser.setInput(compressedData.array());</span>
+<span class="fc" id="L76">            ByteBuffer byteBuffer = ByteBuffer.allocate(uncompressedLength);</span>
+<span class="fc" id="L77">            decompresser.inflate(byteBuffer.array());</span>
+            
+            
+<span class="fc" id="L80">            return byteBuffer.array();</span>
+<span class="fc" id="L81">        }catch(DataFormatException dfEx){</span>
+<span class="fc" id="L82">            throw new IOException(&quot;could not parse ZLibData&quot;,dfEx);</span>
+        }finally{
+        	//call end in finally block to avoid
+        	//memory leak incase of exception thrown.
+<span class="pc bpc" id="L86" title="2 of 4 branches missed.">        	if(decompresser !=null){</span>
+<span class="fc" id="L87">        		decompresser.end();</span>
+        	}
+        }
+    }
+
+	@Override
+	public byte[] encodeData(byte[] data) throws IOException {
+		
+<span class="fc" id="L95">		Deflater zlibCompresser= new Deflater();</span>
+		try{
+<span class="fc" id="L97">			zlibCompresser.setInput(data);</span>
+<span class="fc" id="L98">			zlibCompresser.finish();</span>
+<span class="fc" id="L99">			byte[] compressedData = new byte[data.length*2];</span>
+<span class="fc" id="L100">			int numberOfCompressedBytes =zlibCompresser.deflate(compressedData);</span>
+			//5 = header length + uncompressed size as int
+<span class="fc" id="L102">			ByteBuffer encodedBuffer = ByteBuffer.allocate(numberOfCompressedBytes+5);</span>
+<span class="fc" id="L103">			encodedBuffer.put(DataHeader.ZLIB_ENCODED);</span>
+			//for some reason length is different endian...
+<span class="fc" id="L105">			byte size[] =IOUtil.switchEndian(IOUtil.convertUnsignedIntToByteArray(data.length));</span>
+<span class="fc" id="L106">			encodedBuffer.put(size);</span>
+<span class="fc" id="L107">			encodedBuffer.put(compressedData,0, numberOfCompressedBytes);</span>
+<span class="fc" id="L108">			encodedBuffer.flip();</span>
+<span class="fc" id="L109">			return Arrays.copyOfRange(encodedBuffer.array(), 0, encodedBuffer.limit());</span>
+		}finally{
+			//always call end() to avoid
+			//memory leaks
+<span class="pc" id="L113">			zlibCompresser.end();</span>
+		}
+	}
+	/**
+	 * This returns the same result as {@link #encodeData(byte[])}
+	 * the optional parameter is ignored. 
+	 */
+	@Override
+	public byte[] encodeData(byte[] data, byte ignored)
+			throws IOException {
+<span class="fc" id="L123">		return encodeData(data);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

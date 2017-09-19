@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>EncodedSequence.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.core</a> &gt; <span class="el_source">EncodedSequence.java</span></div><h1>EncodedSequence.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Aug 1, 2008
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.internal.core;
+
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Sequence;
+/**
+ * {@code EncodedSequence} is a composite object
+ * containing a byte representation of data and an {@link GlyphCodec}
+ * to decode it.  This allows {@link Sequence} data to be encoded
+ * in different forms to take up the minimal amount of memory
+ * possible for a given situation.
+ * @author dkatzel
+ */
+public abstract class  EncodedSequence&lt;T&gt; implements Sequence&lt;T&gt; {
+    /**
+     * codec used to decode the data.
+     */
+    private final GlyphCodec&lt;T&gt; codec;
+    /**
+     * Our data.
+     */
+    protected final byte[] data;
+    
+    private int hash;
+    /**
+     * Create a new EncodedSequence instance.
+     * @param codec the {@link GlyphCodec} to use to encode/decode
+     * the sequence data.
+     * @param data the encoded data for this sequence that has already
+     * been encoded by the same {@link GlyphCodec}.
+     */
+<span class="fc" id="L60">    public EncodedSequence(GlyphCodec&lt;T&gt; codec, byte[] data) {</span>
+<span class="fc" id="L61">        this.codec = codec;</span>
+        //defensive copy
+<span class="fc" id="L63">        this.data = Arrays.copyOf(data, data.length);</span>
+<span class="fc" id="L64">    }</span>
+    @Override
+    public long getLength(){
+<span class="fc" id="L67">        return codec.decodedLengthOf(data);</span>
+    }
+
+    protected GlyphCodec&lt;T&gt; getCodec() {
+<span class="fc" id="L71">		return codec;</span>
+	}
+	@Override
+	public int hashCode() {
+<span class="pc bpc" id="L75" title="1 of 4 branches missed.">		if(hash==0 &amp;&amp; getLength() &gt;0){</span>
+<span class="fc" id="L76">	        final int prime = 31;</span>
+<span class="fc" id="L77">	        int result = 1;</span>
+<span class="fc" id="L78">	        Iterator&lt;T&gt; iter = iterator();</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">	        while(iter.hasNext()){</span>
+<span class="fc" id="L80">	        	result = prime * result + iter.next().hashCode();</span>
+	        }
+<span class="fc" id="L82">	        hash= result;</span>
+		}
+<span class="fc" id="L84">	    return hash;</span>
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">		if (this == obj) {</span>
+<span class="nc" id="L90">			return true;</span>
+		}
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">		if (obj == null) {</span>
+<span class="nc" id="L93">			return false;</span>
+		}
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">		if (!(obj instanceof Sequence)) {</span>
+<span class="nc" id="L96">			return false;</span>
+		}
+<span class="fc" id="L98">		Sequence&lt;?&gt; other = (Sequence&lt;?&gt;) obj;</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">		if(getLength() !=other.getLength()){</span>
+<span class="fc" id="L100">			return false;</span>
+		}
+<span class="fc" id="L102">		Iterator&lt;T&gt; iter = iterator();</span>
+<span class="fc" id="L103">		Iterator&lt;?&gt; otherIter = other.iterator();</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">		while(iter.hasNext()){</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">			if(!iter.next().equals(otherIter.next())){</span>
+<span class="fc" id="L106">				return false;</span>
+			}
+		}
+<span class="fc" id="L109">		return true;</span>
+	}
+
+    @Override
+    public T get(long index) {
+<span class="fc" id="L114">        return codec.decode(data, index);</span>
+    }
+   
+    @Override
+    public String toString() {
+<span class="nc" id="L119">    	Iterator&lt;T&gt; iter = iterator();</span>
+<span class="nc" id="L120">    	StringBuilder builder = new StringBuilder((int)getLength()*5);</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">    	while(iter.hasNext()){</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">    		if(builder.length()&gt;0){</span>
+<span class="nc" id="L123">    			builder.append(&quot; ,&quot;);</span>
+    		}
+<span class="nc" id="L125">    		builder.append(iter.next());</span>
+    	}
+<span class="nc" id="L127">    	return builder.toString();</span>
+    }
+    /**
+     * Default iterator iterates
+     * over the objects in this sequence using
+     * {@link #get(long)}. This method
+     * should be overridden if a more efficient 
+     * iterator could be generated.
+     * {@inheritDoc}
+     */
+    @Override
+    public Iterator&lt;T&gt; iterator() {
+<span class="fc" id="L139">        return new RangedIterator();</span>
+    }
+    /**
+     * Default iterator iterates
+     * over the objects in this sequence using
+     * {@link #get(long)}. This method
+     * should be overridden if a more efficient 
+     * iterator could be generated.
+     * {@inheritDoc}
+     */
+	@Override
+	public Iterator&lt;T&gt; iterator(Range range) {
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">		if(range ==null){</span>
+<span class="nc" id="L152">			return iterator();</span>
+		}
+<span class="fc" id="L154">		return new RangedIterator(range);</span>
+	}
+    
+	private final class RangedIterator implements Iterator&lt;T&gt;{
+		private int currentOffset;
+		private final int stop;
+		
+<span class="fc" id="L161">		public RangedIterator(){</span>
+<span class="fc" id="L162">			currentOffset=0;</span>
+<span class="fc" id="L163">			stop = (int)getLength();</span>
+<span class="fc" id="L164">		}</span>
+<span class="fc" id="L165">		public RangedIterator(Range r){</span>
+<span class="fc" id="L166">			Range maxRange = new Range.Builder(getLength()).build();</span>
+<span class="pc bpc" id="L167" title="1 of 2 branches missed.">			if(!r.isSubRangeOf(maxRange)){</span>
+<span class="nc" id="L168">				throw new IndexOutOfBoundsException(</span>
+<span class="nc" id="L169">						String.format(&quot;range %s contains offsets that are out of bounds of %s&quot;, r, maxRange));</span>
+			}
+<span class="fc" id="L171">			currentOffset=(int)r.getBegin();</span>
+<span class="fc" id="L172">			stop = (int)(r.getEnd()+1);</span>
+<span class="fc" id="L173">		}</span>
+		@Override
+		public boolean hasNext() {
+<span class="fc bfc" id="L176" title="All 2 branches covered.">			return currentOffset&lt;stop;</span>
+		}
+
+		@Override
+		public T next() {
+<span class="pc bpc" id="L181" title="1 of 2 branches missed.">			if(!hasNext()){</span>
+<span class="nc" id="L182">				throw new NoSuchElementException();</span>
+			}
+<span class="fc" id="L184">			T next = get(currentOffset);</span>
+<span class="fc" id="L185">			currentOffset++;</span>
+<span class="fc" id="L186">			return next;</span>
+		}
+		
+	}
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

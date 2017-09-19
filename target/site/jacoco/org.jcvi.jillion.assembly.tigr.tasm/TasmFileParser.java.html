@@ -1,0 +1,566 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>TasmFileParser.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.tigr.tasm</a> &gt; <span class="el_source">TasmFileParser.java</span></div><h1>TasmFileParser.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly.tigr.tasm;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.jcvi.jillion.assembly.tigr.tasm.TasmVisitor.TasmVisitorCallback;
+import org.jcvi.jillion.assembly.tigr.tasm.TasmVisitor.TasmVisitorCallback.TasmVisitorMemento;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Range.CoordinateSystem;
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
+import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
+import org.jcvi.jillion.internal.core.io.TextLineParser;
+/**
+ * {@code TasmFileParser} can create
+ * parser objects that can parse
+ * TIGR Assembler encoded files ({@literal .tasm} files).
+ * Files of this type are produced by
+ * the legacy  TIGR Assembler program
+ * and usually have a file extension of {@literal .tasm} 
+ * or {@literal .asm}.  The {@literal .asm} extension has been deprecated
+ * since it can be easily confused with TIGR Assembler's
+ * replacement, Celera Assembler, which also produces
+ * assembly files with a {@literal .asm} file extension although the data
+ * is encoded completely differently.
+ * 
+ * @author dkatzel
+ *
+ */
+public abstract class TasmFileParser implements TasmParser{
+    /**
+     * Each contig data is separated by a pipe ('|').
+     */
+    private static final String END_OF_CONTIG = &quot;|&quot;;
+    /**
+     * Each line in a tasm file that 
+     * contains record data will be a whitespace separated
+     * key value pair.  These keys correspond to 
+     * TIGR Project Database tables and columns 
+     * while the values correspond to their values
+     * of various types.
+     * 
+     */
+<span class="fc" id="L75">    private static final Pattern KEY_VALUE_PATTERN = Pattern.compile(&quot;(\\S+)\\s+(\\S+.*$)&quot;);</span>
+    /**
+     * Create a new instance of {@link TasmFileParser}
+     * that will parse the given tasm encoded file.
+     * @param tasmFile a tasm encoded file.
+     * @return a new {@link TasmFileParser} instance;
+     * will not be null.
+     * @throws NullPointerException if tasmFile is null.
+     * @throws IOException if tasmFile does not exist
+     * or is not readable.
+     */
+    public static TasmParser create(File tasmFile) throws IOException{
+<span class="fc" id="L87">    	return new FileBasedTasmFileParser(tasmFile);</span>
+    }
+    /**
+     * Create a new instance of {@link TasmFileParser}
+     * that will parse the given tasm encoded {@link InputStream}.
+     * InputStream parsers can not create {@link TasmVisitorMemento}
+     * via {@link TasmVisitorCallback#createMemento()}
+     * and {@link TasmVisitorCallback#canCreateMemento()} 
+     * will always return {@code false}.
+     * @param in a tasm encoded {@link InputStream}.
+     * @return a new {@link TasmFileParser} instance
+     * that is not able to create mementos;
+     * will not be null.
+     * @throws NullPointerException if tasmFile is null.
+     * or is not readable.
+     */
+    public static TasmParser create(InputStream in){
+<span class="nc" id="L104">    	return new InputStreamBasedTasmFileParser(in);</span>
+    }
+<span class="fc" id="L106">    private TasmFileParser(){</span>
+    	//can not instantiate outside of this file
+<span class="fc" id="L108">    }</span>
+    
+     
+    final void parseTasm(TextLineParser parser, TasmVisitor visitor) throws IOException{
+         
+
+<span class="fc" id="L114">         ParserState parserState = new ParserState(visitor);</span>
+<span class="fc bfc" id="L115" title="All 4 branches covered.">         while(parser.hasNextLine() &amp;&amp; parserState.keepParsing()) {</span>
+<span class="fc" id="L116">             String line = parser.nextLine();</span>
+<span class="fc" id="L117">             Matcher matcher = KEY_VALUE_PATTERN.matcher(line);</span>
+             
+<span class="fc bfc" id="L119" title="All 2 branches covered.">             if(matcher.find()){</span>
+<span class="fc" id="L120">                 String key = matcher.group(1);</span>
+<span class="fc" id="L121">                 String value = matcher.group(2).trim();</span>
+<span class="fc" id="L122">                 parserState.handleCurrentAttribute(key, value);</span>
+<span class="fc" id="L123">             }else{</span>
+<span class="fc" id="L124">            	 parserState.fireEndOfContigHeader();</span>
+            	 
+<span class="fc" id="L126">        		 boolean endOfRecord = isEndOfRecord(line);</span>
+<span class="fc" id="L127">        		 boolean endOfContig = isEndOfContig(line);</span>
+<span class="fc bfc" id="L128" title="All 4 branches covered.">        		 if(endOfRecord || endOfContig){                    </span>
+<span class="fc" id="L129">        			 parserState.fireEndOfRead();</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">            		 if(endOfContig){</span>
+<span class="fc" id="L131">            			 parserState.handleEndOfContig();</span>
+<span class="fc" id="L132">            			 parserState.beginNewContig(parser.getPosition());            			 </span>
+            		 }else{
+<span class="fc" id="L134">	            		 parserState.beginNewRead();</span>
+            		 }
+        		 }
+             }
+             
+<span class="fc" id="L139">         }</span>
+<span class="fc" id="L140">         parserState.fireEndOfContigHeader();</span>
+<span class="fc" id="L141">         parserState.fireEndOfRead();</span>
+<span class="fc" id="L142">         parserState.handleEndOfContig();</span>
+         
+<span class="fc" id="L144">         visitor.visitEnd();</span>
+        
+<span class="fc" id="L146">    }</span>
+	
+
+	
+    
+    
+    
+    /**
+     * @param line
+     * @return
+     */
+    private static boolean isEndOfContig(String line) {
+<span class="fc" id="L158">        return line.trim().equals(END_OF_CONTIG);</span>
+    }
+
+    private static final boolean isEndOfRecord(String line) {
+<span class="fc" id="L162">        return line.trim().isEmpty();</span>
+    }
+    abstract AbstractCallback createCallback(long currentOffset);
+    
+    
+    private static class OffsetMementoCallback extends AbstractCallback{
+    
+
+		private final long offset;
+		
+<span class="fc" id="L172">		public OffsetMementoCallback(long offset) {</span>
+<span class="fc" id="L173">			this.offset = offset;</span>
+<span class="fc" id="L174">		}</span>
+		@Override
+		public boolean canCreateMemento() {
+<span class="fc" id="L177">			return true;</span>
+		}
+
+		@Override
+		public TasmVisitorMemento createMemento() {
+<span class="fc" id="L182">			return new OffsetMemento(offset);</span>
+		}
+    	
+    }
+    
+    private static final class OffsetMemento implements TasmVisitorMemento{
+    	private final long offset;
+
+<span class="fc" id="L190">		public OffsetMemento(long offset) {</span>
+<span class="fc" id="L191">			this.offset = offset;</span>
+<span class="fc" id="L192">		}</span>
+
+		private final long getOffset() {
+<span class="fc" id="L195">			return offset;</span>
+		}
+    	
+    }
+<span class="nc" id="L199">    private static class NoMementoCallback extends AbstractCallback{</span>
+
+		@Override
+		public boolean canCreateMemento() {
+<span class="nc" id="L203">			return false;</span>
+		}
+
+		@Override
+		public TasmVisitorMemento createMemento() {
+<span class="nc" id="L208">			throw new UnsupportedOperationException(&quot;can not create mementos&quot;);</span>
+		}
+    	
+    }
+    
+<span class="fc" id="L213">    private abstract static class AbstractCallback implements TasmVisitorCallback{</span>
+<span class="fc" id="L214">    	private volatile boolean keepParsing=true;   	</span>
+    	
+    	@Override
+		public void halt() {
+<span class="fc" id="L218">    		keepParsing = false;			</span>
+<span class="fc" id="L219">		}</span>
+
+
+
+		public boolean keepParsing(){
+<span class="fc" id="L224">    		return keepParsing;</span>
+    	}
+    }
+    /**
+     * {@code ParserState} is an object
+     * that maintains the current {@link ContigState},
+     * {@link ReadState}, {@link TasmContigVisitor}
+     * and {@link TasmVisitorCallback}s
+     * to simplify code and reduce cyclomatic complexity.
+     * @author dkatzel
+     *
+     */
+    private class ParserState{
+<span class="fc" id="L237">    	 ContigState currentContigState=new ContigState();</span>
+<span class="fc" id="L238">         ReadState currentReadState = null;</span>
+<span class="fc" id="L239">         AbstractCallback callback=null;</span>
+<span class="fc" id="L240">         TasmContigVisitor contigVisitor=null;</span>
+         
+         private final TasmVisitor visitor;
+         
+         private long beginContigHeaderOffset;
+         
+<span class="fc" id="L246">         public ParserState(TasmVisitor visitor) {</span>
+<span class="fc" id="L247">			this.visitor = visitor;</span>
+<span class="fc" id="L248">		}</span>
+
+		public boolean keepParsing(){
+<span class="fc bfc" id="L251" title="All 4 branches covered.">        	 return callback==null || callback.keepParsing();</span>
+         }
+         
+         public void handleCurrentAttribute(String key, String value) throws IOException{
+<span class="fc bfc" id="L255" title="All 2 branches covered.">        	 if(currentContigState==null){</span>
+<span class="fc" id="L256">            	 currentReadState.handleAttribute(key, value);</span>
+             }else{
+<span class="fc" id="L258">            	 currentContigState.handleAttribute(key, value);                      </span>
+             }
+<span class="fc" id="L260">         }</span>
+         
+         public void beginNewContig(long currentOffset){        	 
+<span class="fc bfc" id="L263" title="All 2 branches covered.">        	 if(keepParsing()){</span>
+<span class="fc" id="L264">    			 currentContigState=new ContigState();</span>
+<span class="fc" id="L265">    			 this.beginContigHeaderOffset = currentOffset;</span>
+			 }
+<span class="fc" id="L267">         }</span>
+         
+         public void beginNewRead(){
+<span class="fc" id="L270">        	 currentReadState = new ReadState();</span>
+<span class="fc" id="L271">         }</span>
+         
+         protected void fireEndOfRead() {
+<span class="fc bfc" id="L274" title="All 6 branches covered.">     		if(!keepParsing() || currentReadState ==null || contigVisitor==null ){</span>
+<span class="fc" id="L275">     			return;</span>
+     		}
+ 			 final Direction dir;
+ 			 final Range validRange;
+<span class="fc bfc" id="L279" title="All 2 branches covered."> 			 if(currentReadState.seqRight &lt; currentReadState.seqLeft){</span>
+<span class="fc" id="L280"> 				 dir = Direction.REVERSE;</span>
+<span class="fc" id="L281"> 				 validRange = Range.of(CoordinateSystem.RESIDUE_BASED, currentReadState.seqRight, currentReadState.seqLeft);</span>
+ 			 }else{
+<span class="fc" id="L283"> 				 dir = Direction.FORWARD;</span>
+<span class="fc" id="L284"> 				 validRange = Range.of(CoordinateSystem.RESIDUE_BASED, currentReadState.seqLeft, currentReadState.seqRight);</span>
+ 			 }
+<span class="fc" id="L286"> 			 TasmContigReadVisitor readVisitor = contigVisitor.visitRead(currentReadState.id, currentReadState.gappedStartOffset, </span>
+ 					 									dir, validRange);
+<span class="pc bpc" id="L288" title="2 of 4 branches missed."> 			 if(readVisitor !=null &amp;&amp; callback.keepParsing()){</span>
+<span class="fc" id="L289"> 				 readVisitor.visitBasecalls(currentReadState.sequence);</span>
+<span class="fc" id="L290"> 				 readVisitor.visitEnd();</span>
+ 			 }
+<span class="fc" id="L292">     	}</span>
+         
+         public void fireEndOfContigHeader(){
+<span class="fc bfc" id="L295" title="All 2 branches covered.">        	 if(currentContigState!=null){</span>
+<span class="fc" id="L296">        		 callback = createCallback(beginContigHeaderOffset);        		 </span>
+<span class="fc" id="L297">        		 contigVisitor= currentContigState.handleContigHeader(callback, visitor);</span>
+<span class="fc" id="L298">        		 currentReadState=null;</span>
+        	 }
+<span class="fc" id="L300">        	 currentContigState=null;</span>
+<span class="fc" id="L301">         }</span>
+         
+         public void handleEndOfContig(){
+<span class="fc bfc" id="L304" title="All 2 branches covered.">        	 if(contigVisitor !=null){</span>
+<span class="fc bfc" id="L305" title="All 2 branches covered.">    			 if(callback.keepParsing()){</span>
+<span class="fc" id="L306">    				 contigVisitor.visitEnd();</span>
+    			 }else{
+<span class="fc" id="L308">    				 contigVisitor.halted();</span>
+    			 }
+    		 }
+<span class="fc" id="L311">         }</span>
+         
+        
+    }
+    /**
+     * {@code ContigState} keeps track of the current
+     * contig attributes parsed so far.
+     * when the entire contig header has been
+     * parsed (we start seeing read data or end of file for annotation contigs)
+     * we can we can use the data collected as parameters
+     * in the visit contig methods.
+     * @author dkatzel
+     *
+     */
+<span class="fc" id="L325">	private static class ContigState{</span>
+    	private String contigId;
+<span class="fc" id="L327">    	private float avgCoverage=0F;</span>
+    	private NucleotideSequence consensus;
+<span class="fc" id="L329">    	private Long caContigId=null;</span>
+    	private String comment, comName, editPerson, assemblyMethod;
+    	private long editDate;
+<span class="fc" id="L332">    	private boolean isCircular=false;</span>
+<span class="fc" id="L333">    	private int numberOfReads=0;</span>
+    	private Integer bacId;
+    	
+    	public void handleAttribute(String key, String value) throws IOException{
+<span class="fc" id="L337">			TasmContigAttribute attribute = TasmContigAttribute.getAttributeFor(key);</span>
+<span class="pc bpc" id="L338" title="3 of 13 branches missed.">    		switch(attribute){</span>
+<span class="fc" id="L339">    			case ASMBL_ID : contigId = value;</span>
+<span class="fc" id="L340">    							break;</span>
+<span class="fc" id="L341">    			case AVG_COVERAGE : avgCoverage = Float.parseFloat(value);</span>
+<span class="fc" id="L342">    							break;</span>
+<span class="fc" id="L343">    			case CA_CONTIG_ID :caContigId = Long.parseLong(value);</span>
+<span class="fc" id="L344">    							break;</span>
+<span class="nc" id="L345">    			case BAC_ID : bacId = Integer.parseInt(value);</span>
+<span class="nc" id="L346">    						break;</span>
+<span class="nc" id="L347">    			case COM_NAME : comName = value;</span>
+<span class="nc" id="L348">    					break;</span>
+<span class="nc" id="L349">    			case COMMENT : comment = value;</span>
+<span class="nc" id="L350">    				break;</span>
+    			case EDIT_DATE : try {
+<span class="fc" id="L352">									editDate = TasmUtil.parseEditDate(value).getTime();</span>
+<span class="nc" id="L353">								} catch (ParseException e) {</span>
+<span class="nc" id="L354">									throw new IOException(&quot;error parsing edit date &quot; + value, e);</span>
+<span class="fc" id="L355">								}</span>
+    				break;
+<span class="fc" id="L357">    			case EDIT_PERSON : editPerson = value;</span>
+<span class="fc" id="L358">    				break;</span>
+<span class="fc" id="L359">    			case GAPPED_CONSENSUS :consensus = new NucleotideSequenceBuilder(value).build();</span>
+<span class="fc" id="L360">    				break;</span>
+<span class="fc" id="L361">    			case IS_CIRCULAR : isCircular =&quot;1&quot;.equals(value);</span>
+<span class="fc" id="L362">    				break;</span>
+<span class="fc" id="L363">    			case METHOD : assemblyMethod = value;</span>
+<span class="fc" id="L364">    						break;</span>
+<span class="fc" id="L365">    			case NUMBER_OF_READS : numberOfReads = Integer.parseInt(value);</span>
+<span class="fc" id="L366">    								break;</span>
+				default : //do nothing
+    		}
+<span class="fc" id="L369">    	}</span>
+    	
+    	
+    	
+    	public TasmContigVisitor handleContigHeader(AbstractCallback callback, TasmVisitor visitor) {
+     		
+<span class="fc" id="L375">    		TasmContigVisitor contigVisitor =visitor.visitContig(callback, contigId);</span>
+<span class="pc bpc" id="L376" title="1 of 4 branches missed.">    		if(callback.keepParsing() &amp;&amp; contigVisitor !=null){</span>
+<span class="fc" id="L377">     			 contigVisitor.visitConsensus(consensus);</span>
+<span class="fc" id="L378">     			 visitCaId(callback, contigVisitor);</span>
+<span class="fc" id="L379">     			 visitComments(callback, contigVisitor);</span>
+<span class="fc" id="L380">     			 visitCoverage(callback, contigVisitor);</span>
+<span class="fc" id="L381">     			 visitEnd(callback, contigVisitor);</span>
+     		 }
+<span class="fc" id="L383">    		return contigVisitor;</span>
+     	}
+
+
+		private void visitEnd(AbstractCallback callback,
+				TasmContigVisitor contigVisitor) {
+<span class="pc bpc" id="L389" title="1 of 2 branches missed.">			if(callback.keepParsing()){</span>
+<span class="fc" id="L390">				 contigVisitor.visitLastEdited(editPerson, new Date(editDate));</span>
+			 }else{
+<span class="nc" id="L392">				 contigVisitor.halted();</span>
+			 }
+<span class="fc" id="L394">		}</span>
+
+
+		private void visitCoverage(AbstractCallback callback,
+				TasmContigVisitor contigVisitor) {
+<span class="pc bpc" id="L399" title="1 of 2 branches missed.">			if(callback.keepParsing()){</span>
+<span class="fc" id="L400">				 contigVisitor.visitCoverageData(numberOfReads, avgCoverage);</span>
+			 }else{
+<span class="nc" id="L402">				 contigVisitor.halted();</span>
+			 }
+<span class="fc" id="L404">		}</span>
+
+
+		private void visitComments(AbstractCallback callback,
+				TasmContigVisitor contigVisitor) {
+<span class="pc bpc" id="L409" title="1 of 2 branches missed.">			if(callback.keepParsing()){</span>
+<span class="fc" id="L410">				 contigVisitor.visitComments(</span>
+						 bacId, 
+						 comment, 
+						 comName, 
+						 assemblyMethod, 
+						 isCircular);
+			 }else{
+<span class="nc" id="L417">				 contigVisitor.halted();</span>
+			 }
+<span class="fc" id="L419">		}</span>
+
+
+		private void visitCaId(AbstractCallback callback,
+				TasmContigVisitor contigVisitor) {
+<span class="pc bpc" id="L424" title="2 of 4 branches missed.">			if(callback.keepParsing() &amp;&amp; caContigId !=null){</span>
+<span class="fc" id="L425">				 contigVisitor.visitCeleraId(caContigId);</span>
+			 }else{
+<span class="nc" id="L427">				 contigVisitor.halted();</span>
+			 }
+<span class="fc" id="L429">		}</span>
+    }
+	/**
+     * {@code ReadState} keeps track of the current
+     * read attributes parsed so far.
+     * when the entire read has been
+     * parsed (we start seeing the next read data or next contig or end of file)
+     * we can we can use the data collected as parameters
+     * in the visit read methods.
+     * @author dkatzel
+     *
+     */
+<span class="fc" id="L441">	private static class ReadState{</span>
+		private NucleotideSequence sequence;
+		private String id;
+		private long gappedStartOffset;
+		private int seqLeft;
+		private int seqRight;
+		public void handleAttribute(String key, String value) throws IOException{
+<span class="fc" id="L448">    		TasmReadAttribute attribute = TasmReadAttribute.getAttributeFor(key);</span>
+<span class="pc bfc" id="L449" title="All 6 branches covered.">    		switch(attribute){</span>
+<span class="fc" id="L450">    			case GAPPED_SEQUENCE : sequence = new NucleotideSequenceBuilder(value).build();</span>
+<span class="fc" id="L451">    									break;</span>
+<span class="fc" id="L452">    			case NAME : id = value.trim();</span>
+<span class="fc" id="L453">    							break;</span>
+<span class="fc" id="L454">    			case CONTIG_START_OFFSET : gappedStartOffset = Long.parseLong(value);</span>
+<span class="fc" id="L455">    											break;</span>
+<span class="fc" id="L456">    			case SEQUENCE_LEFT : seqLeft = Integer.parseInt(value);</span>
+<span class="fc" id="L457">    										break;</span>
+<span class="fc" id="L458">    			case SEQUENCE_RIGHT : seqRight = Integer.parseInt(value);</span>
+<span class="fc" id="L459">									break;</span>
+    			default : //do nothing
+			}
+<span class="fc" id="L462">		}</span>
+	}
+	
+	
+	private static final class FileBasedTasmFileParser extends TasmFileParser{
+    	private final File tasmFile;
+    	
+<span class="fc" id="L469">    	public FileBasedTasmFileParser(File tasmFile) throws FileNotFoundException{</span>
+<span class="pc bpc" id="L470" title="1 of 2 branches missed.">    		if(!tasmFile.exists()){</span>
+<span class="nc" id="L471">    			throw new FileNotFoundException(&quot;tasm file does not exist : &quot; + tasmFile.getAbsolutePath());</span>
+    		}
+<span class="pc bpc" id="L473" title="1 of 2 branches missed.">    		if(!tasmFile.canRead()){</span>
+<span class="nc" id="L474">    			throw new FileNotFoundException(&quot;tasm file is not readable : &quot; + tasmFile.getAbsolutePath());</span>
+        		
+    		}
+<span class="fc" id="L477">    		this.tasmFile = tasmFile;</span>
+<span class="fc" id="L478">    	}</span>
+
+		@Override
+		protected AbstractCallback createCallback(long offset) {
+<span class="fc" id="L482">			return new OffsetMementoCallback(offset);</span>
+		}
+
+		@Override
+		public void parse(TasmVisitor visitor) throws IOException {
+<span class="fc" id="L487">			InputStream in = new BufferedInputStream(new FileInputStream(tasmFile));</span>
+<span class="fc" id="L488">			TextLineParser parser = new TextLineParser(in);</span>
+			try{
+<span class="fc" id="L490">				parseTasm(parser, visitor);</span>
+			}finally{
+<span class="pc" id="L492">				IOUtil.closeAndIgnoreErrors(parser, in);</span>
+<span class="fc" id="L493">			}			</span>
+<span class="fc" id="L494">		}</span>
+
+		@Override
+		public void parse(TasmVisitor visitor,
+				TasmVisitorMemento memento) throws IOException {
+<span class="pc bpc" id="L499" title="1 of 2 branches missed.">			if(!(memento instanceof OffsetMemento)){</span>
+<span class="nc" id="L500">				throw new IllegalArgumentException(&quot;unknown memento type&quot;);</span>
+			}
+			
+<span class="fc" id="L503">			long startOffset = ((OffsetMemento)memento).getOffset();</span>
+<span class="fc" id="L504">			long fileLength =tasmFile.length();</span>
+<span class="pc bpc" id="L505" title="1 of 2 branches missed.">			if(fileLength&lt;=startOffset){</span>
+<span class="nc" id="L506">				throw new IllegalArgumentException(&quot;memento seeks beyond file&quot;);</span>
+			}
+<span class="fc" id="L508">			InputStream in=null;</span>
+			try{
+<span class="fc" id="L510">				in = new BufferedInputStream( new RandomAccessFileInputStream(tasmFile, startOffset));</span>
+<span class="fc" id="L511">				TextLineParser parser = new TextLineParser(in,startOffset);</span>
+<span class="fc" id="L512">				parseTasm(parser, visitor);</span>
+			}finally{
+<span class="pc" id="L514">				IOUtil.closeAndIgnoreErrors(in);</span>
+<span class="fc" id="L515">			}</span>
+			
+<span class="fc" id="L517">		}</span>
+
+		@Override
+		public boolean canParse() {
+<span class="nc" id="L521">			return true;</span>
+		}
+		
+		
+    	
+    }
+	
+	private static final class InputStreamBasedTasmFileParser extends TasmFileParser{
+    	private final OpenAwareInputStream in;
+    	
+<span class="nc" id="L531">    	public InputStreamBasedTasmFileParser(InputStream in){</span>
+<span class="nc" id="L532">    		this.in = new OpenAwareInputStream(new BufferedInputStream(in));</span>
+<span class="nc" id="L533">    	}</span>
+
+		@Override
+		protected AbstractCallback createCallback(long offset) {
+<span class="nc" id="L537">			return new NoMementoCallback();</span>
+		}
+
+		@Override
+		public void parse(TasmVisitor visitor) throws IOException {
+<span class="nc bnc" id="L542" title="All 2 branches missed.">			if(!canParse()){</span>
+<span class="nc" id="L543">				throw new IOException(&quot;inputstream is closed&quot;);</span>
+			}
+<span class="nc" id="L545">			TextLineParser parser = new TextLineParser(in);</span>
+			try{
+<span class="nc" id="L547">				parseTasm(parser, visitor);</span>
+			}finally{
+<span class="nc" id="L549">				IOUtil.closeAndIgnoreErrors(parser, in);</span>
+<span class="nc" id="L550">			}			</span>
+<span class="nc" id="L551">		}</span>
+		@Override
+		public boolean canParse() {
+<span class="nc" id="L554">			return in.isOpen();</span>
+		}
+
+		@Override
+		public void parse(TasmVisitor visitor,
+				TasmVisitorMemento memento) throws IOException {
+<span class="nc" id="L560">			throw new UnsupportedOperationException(&quot;mementos not supported&quot;);</span>
+			
+		}
+    	
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

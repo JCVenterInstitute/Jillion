@@ -1,0 +1,401 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ZtrChromatogramBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.trace.chromat.ztr</a> &gt; <span class="el_source">ZtrChromatogramBuilder.java</span></div><h1>ZtrChromatogramBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Dec 29, 2008
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.trace.chromat.ztr;
+
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.pos.PositionSequence;
+import org.jcvi.jillion.core.pos.PositionSequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.Builder;
+import org.jcvi.jillion.internal.trace.chromat.BasicChromatogramBuilder;
+import org.jcvi.jillion.internal.trace.chromat.ztr.ZTRChromatogramImpl;
+import org.jcvi.jillion.trace.chromat.Chromatogram;
+
+/**
+ * &lt;code&gt;ZtrChromatogramBuilder&lt;/code&gt; uses the Builder Pattern
+ * to build a {@link ZtrChromatogram} instance.
+ * @author dkatzel
+ *
+ *
+ */
+public final class ZtrChromatogramBuilder implements Builder&lt;ZtrChromatogram&gt;{
+    
+    /**
+     * Hints for valid range of this sequence.
+     */
+    private Range clip;
+
+    private final BasicChromatogramBuilder basicBuilder;
+    
+    /**
+     * Create a new {@link ZtrChromatogramBuilder} instance with
+     * all fields except for the id unset.  In order
+     * to successfully build a valid {@link ZtrChromatogram}
+     * object please use
+     * the various setter methods
+     * in this class to set everything
+     * before calling {@link #build()}.
+     * @param id the id for this {@link Chromatogram} object to have;
+     * can not be null.
+     * @throws NullPointerException if id is null.
+     */
+<span class="fc" id="L71">    public ZtrChromatogramBuilder(String id){</span>
+<span class="fc" id="L72">        basicBuilder = new BasicChromatogramBuilder(id);</span>
+<span class="fc" id="L73">    }</span>
+    /**
+     * Create a new {@link ZtrChromatogramBuilder} instance
+     * with the given id and all fields initially set
+     * to the the values encoded in the given ztr file.
+     * @param id the id for this {@link Chromatogram} object to have;
+     * can not be null. 
+     * @param ztrFile a ZTR encoded file that contains the initial values
+     * that this builder should have; can not be null.
+     * @throws IOException if there is a problem reading the file or if
+     * the given file is not a valid ztr encoded file.
+     * @throws NullPointerException if either field is null.
+     */
+    public ZtrChromatogramBuilder(String id, File ztrFile) throws IOException{
+<span class="fc" id="L87">        this(id);</span>
+<span class="fc" id="L88">        ZTRChromatogramFileBuilderVisitor visitor = new ZTRChromatogramFileBuilderVisitor(this);</span>
+<span class="fc" id="L89">        ZtrChromatogramParser.create(ztrFile).accept(visitor);</span>
+<span class="fc" id="L90">    }</span>
+    /**
+     * Create a new {@link ZtrChromatogramBuilder} instance
+     * with the given id and all fields initially set
+     * to the the values encoded in the given ztr encoded inputStream.
+     * The {@link InputStream} will NOT be closed by this constructor,
+     * client code must close the stream themselves after returning 
+     * from this method (preferably in a finally block).
+     * @param id the id for this {@link Chromatogram} object to have;
+     * can not be null. 
+     * @param ztrStream a ZTR encoded {@link InputStream} that contains the initial values
+     * that this builder should have; can not be null.
+     * @throws IOException if there is a problem reading the file or
+     * if the {@link InputStream} does not contain valid ztr encoded data.
+     * @throws NullPointerException if either field is null.
+     */
+    public ZtrChromatogramBuilder(String id, InputStream ztrStream) throws IOException{
+<span class="fc" id="L107">        this(id);</span>
+<span class="fc" id="L108">        ZTRChromatogramFileBuilderVisitor visitor = new ZTRChromatogramFileBuilderVisitor(this);</span>
+<span class="fc" id="L109">        ZtrChromatogramParser.create(ztrStream).accept(visitor);</span>
+        
+<span class="fc" id="L111">    }</span>
+    /**
+     * Create a new instance of {@link ZtrChromatogramBuilder}
+     * using the given {@link Chromatogram} instance 
+     * to set all the initial fields. Only the fields 
+     * in the {@link Chromatogram} interface will be copied,
+     * any ztr specific fields will be null.  Use the various
+     * ztr specific setter methods to set those values.
+     * @param copy a {@link Chromatogram} object
+     * whose fields are used as the initial values of this
+     * new Builder; can not be null;
+     * @throws NullPointerException if copy is null.
+     */
+<span class="nc" id="L124">    public ZtrChromatogramBuilder(Chromatogram copy){</span>
+<span class="nc" id="L125">       basicBuilder = new BasicChromatogramBuilder(copy);        </span>
+<span class="nc" id="L126">    }</span>
+    /**
+     * Create a new instance of ZtrChromatogramBuilder
+     * using the given {@link ZtrChromatogram} instance 
+     * to set all the initial fields. All the fields 
+     * in the {@link ZtrChromatogram} interface including
+     * ztr specific fields will be copied.
+     * @param copy a {@link ZtrChromatogram} object
+     * whose fields are used as the initial values of this
+     * new Builder; can not be null;
+     * @throws NullPointerException if copy is null.
+     */
+    public ZtrChromatogramBuilder(ZtrChromatogram copy){
+<span class="nc" id="L139">        this((Chromatogram)copy);</span>
+<span class="nc" id="L140">        clip(copy.getClip());</span>
+<span class="nc" id="L141">     }</span>
+   /**
+    * Gets the ZTR's clip points..
+    * @return a Clip, may be null.
+    */
+    public final Range clip() {
+<span class="fc" id="L147">        return clip;</span>
+    }
+    /**
+     * Sets the clip.
+     * @param clip the clip to set.
+     * @return this.
+     */
+    public final ZtrChromatogramBuilder clip(Range clip) {
+<span class="fc" id="L155">        this.clip = clip;</span>
+<span class="fc" id="L156">        return this;</span>
+    }
+    /**
+     * 
+    * {@inheritDoc}
+     */
+    @Override
+    public ZtrChromatogram build() {
+<span class="fc" id="L164">        return new ZTRChromatogramImpl(basicBuilder.build(),</span>
+<span class="fc" id="L165">                clip());</span>
+    }
+    
+    public final PositionSequence peaks() {
+<span class="fc" id="L169">        return basicBuilder.peaks();</span>
+    }
+
+    public ZtrChromatogramBuilder peaks(short[] peaks) {
+<span class="fc" id="L173">        basicBuilder.peaks(new PositionSequenceBuilder(peaks).build());</span>
+<span class="fc" id="L174">        return this;</span>
+    }
+
+    public final NucleotideSequence basecalls() {
+<span class="fc" id="L178">        return basicBuilder.basecalls();</span>
+    }
+
+    public ZtrChromatogramBuilder basecalls(NucleotideSequence basecalls) {
+<span class="fc" id="L182">        basicBuilder.basecalls(basecalls);</span>
+<span class="fc" id="L183">        return this;</span>
+    }
+
+    public final byte[] aQualities() {
+<span class="fc" id="L187">        return basicBuilder.aQualities();</span>
+    }
+
+    public final ZtrChromatogramBuilder aQualities(byte[] qualities) {
+<span class="fc" id="L191">        basicBuilder.aQualities(qualities);</span>
+<span class="fc" id="L192">        return this;</span>
+    }
+
+    public final byte[] cQualities() {
+<span class="fc" id="L196">        return basicBuilder.cQualities();</span>
+    }
+
+    public final ZtrChromatogramBuilder cConfidence(byte[] qualities) {
+<span class="fc" id="L200">        basicBuilder.cQualities(qualities);</span>
+<span class="fc" id="L201">        return this;</span>
+    }
+
+    public final byte[] gQualities() {
+<span class="fc" id="L205">        return basicBuilder.gQualities();</span>
+    }
+
+    public final ZtrChromatogramBuilder gQualities(byte[] qualities) {
+<span class="fc" id="L209">        basicBuilder.gQualities(qualities);</span>
+<span class="fc" id="L210">        return this;</span>
+    }
+
+    public final byte[] tQualities() {
+<span class="fc" id="L214">        return basicBuilder.tQualities();</span>
+    }
+
+    public final ZtrChromatogramBuilder tQualities(byte[] qualities) {
+<span class="fc" id="L218">        basicBuilder.tQualities(qualities);</span>
+<span class="fc" id="L219">        return this;</span>
+    }
+
+    public final short[] aPositions() {
+<span class="fc" id="L223">        return basicBuilder.aPositions();</span>
+    }
+
+    public final ZtrChromatogramBuilder aPositions(short[] positions) {
+<span class="fc" id="L227">        basicBuilder.aPositions(positions);</span>
+<span class="fc" id="L228">        return this;</span>
+    }
+
+    public final short[] cPositions() {
+<span class="fc" id="L232">        return basicBuilder.cPositions();</span>
+    }
+
+    public final ZtrChromatogramBuilder cPositions(short[] positions) {
+<span class="fc" id="L236">        basicBuilder.cPositions(positions);</span>
+<span class="fc" id="L237">        return this;</span>
+    }
+
+    public final short[] gPositions() {
+<span class="fc" id="L241">        return basicBuilder.gPositions();</span>
+    }
+
+    public final ZtrChromatogramBuilder gPositions(short[] positions) {
+<span class="fc" id="L245">        basicBuilder.gPositions(positions);</span>
+<span class="fc" id="L246">        return this;</span>
+    }
+
+    public final short[] tPositions() {
+<span class="fc" id="L250">        return basicBuilder.tPositions();</span>
+    }
+
+    public final ZtrChromatogramBuilder tPositions(short[] positions) {
+<span class="fc" id="L254">        basicBuilder.tPositions(positions);</span>
+<span class="fc" id="L255">        return this;</span>
+    }
+
+    public final Map&lt;String,String&gt; comments() {
+<span class="fc" id="L259">        return basicBuilder.comments();</span>
+    }
+
+    public final ZtrChromatogramBuilder comments(Map&lt;String,String&gt; comments) {
+<span class="fc" id="L263">        basicBuilder.comments(comments);</span>
+<span class="fc" id="L264">        return this;</span>
+    }
+    
+    /**
+     * {@code ZTRChromatogramFileBuilderVisitor} is a helper class
+     * that wraps a {@link ZtrChromatogramBuilder} by a {@link ZtrChromatogramFileVisitor}.
+     * This way when a part of the ZTR is visited, its corresponding objects get built 
+     * by the builder.
+     * @author dkatzel
+     *
+     *
+     */
+    private static final class ZTRChromatogramFileBuilderVisitor implements ZtrChromatogramFileVisitor{
+        private final ZtrChromatogramBuilder builder ;
+        
+<span class="fc" id="L279">        private ZTRChromatogramFileBuilderVisitor(ZtrChromatogramBuilder builder){</span>
+<span class="fc" id="L280">        	this.builder = builder;</span>
+<span class="fc" id="L281">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitAConfidence(byte[] confidence) {
+<span class="fc" id="L288">            builder.aQualities(confidence);            </span>
+<span class="fc" id="L289">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitCConfidence(byte[] confidence) {
+
+<span class="fc" id="L297">            builder.cConfidence(confidence);            </span>
+<span class="fc" id="L298">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitGConfidence(byte[] confidence) {
+
+<span class="fc" id="L306">            builder.gQualities(confidence);            </span>
+<span class="fc" id="L307">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitTConfidence(byte[] confidence) {
+
+<span class="fc" id="L315">            builder.tQualities(confidence);            </span>
+<span class="fc" id="L316">        }</span>
+         /**
+         * {@inheritDoc}
+         */
+         @Override
+         public void visitEnd() {
+        	 //no-op
+<span class="fc" id="L323">         }</span>
+
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitBasecalls(NucleotideSequence basecalls) {
+  
+<span class="fc" id="L332">              builder.basecalls(basecalls);              </span>
+<span class="fc" id="L333">          }</span>
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitPeaks(short[] peaks) {
+  
+<span class="fc" id="L341">              builder.peaks(peaks);              </span>
+<span class="fc" id="L342">          }</span>
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitClipRange(Range clipRange) {
+  
+<span class="fc" id="L350">              builder.clip(clipRange);              </span>
+<span class="fc" id="L351">          }</span>
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitComments(Map&lt;String,String&gt; comments) {
+  
+<span class="fc" id="L359">              builder.comments(comments);              </span>
+<span class="fc" id="L360">          }</span>
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitAPositions(short[] positions) {
+  
+<span class="fc" id="L368">              builder.aPositions(positions);              </span>
+<span class="fc" id="L369">          }</span>
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitCPositions(short[] positions) {
+  
+<span class="fc" id="L377">             builder.cPositions(positions);              </span>
+<span class="fc" id="L378">          }</span>
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitGPositions(short[] positions) {
+  
+<span class="fc" id="L386">              builder.gPositions(positions);              </span>
+<span class="fc" id="L387">          }</span>
+
+          /**
+          * {@inheritDoc}
+          */
+          @Override
+          public void visitTPositions(short[] positions) {
+  
+<span class="fc" id="L395">              builder.tPositions(positions);              </span>
+<span class="fc" id="L396">          }</span>
+
+
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

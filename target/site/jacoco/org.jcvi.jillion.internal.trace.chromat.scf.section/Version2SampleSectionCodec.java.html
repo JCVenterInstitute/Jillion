@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Version2SampleSectionCodec.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.trace.chromat.scf.section</a> &gt; <span class="el_source">Version2SampleSectionCodec.java</span></div><h1>Version2SampleSectionCodec.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Sep 11, 2008
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.internal.trace.chromat.scf.section;
+
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.util.Iterator;
+
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.pos.Position;
+import org.jcvi.jillion.core.pos.PositionSequence;
+import org.jcvi.jillion.internal.trace.chromat.scf.header.pos.PositionStrategy;
+
+
+<span class="fc" id="L39">public class Version2SampleSectionCodec extends AbstractSampleSectionCodec {</span>
+
+    @Override
+    protected void extractActualPositions(PositionStrategy positionStrategy,
+            short[][] positions) {
+        // no-op; version 2 positions are stored uncompressed.
+
+<span class="fc" id="L46">    }</span>
+
+    @Override
+    protected void writePositionsToBuffer(PositionStrategy positionStrategy,
+            PositionSequence aPositions, PositionSequence cPositions,
+            PositionSequence gPositions, PositionSequence tPositions, ByteBuffer buffer)
+            {
+<span class="fc" id="L53">    	Iterator&lt;Position&gt; aIterator = aPositions.iterator();</span>
+<span class="fc" id="L54">    	Iterator&lt;Position&gt; cIterator = cPositions.iterator();</span>
+<span class="fc" id="L55">    	Iterator&lt;Position&gt; gIterator = gPositions.iterator();</span>
+<span class="fc" id="L56">    	Iterator&lt;Position&gt; tIterator = tPositions.iterator();</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">    	while(aIterator.hasNext()){</span>
+<span class="fc" id="L58">    		  positionStrategy.setPosition(IOUtil.toSignedShort(aIterator.next().getValue()), buffer);</span>
+<span class="fc" id="L59">    		  positionStrategy.setPosition(IOUtil.toSignedShort(cIterator.next().getValue()), buffer);</span>
+<span class="fc" id="L60">    		  positionStrategy.setPosition(IOUtil.toSignedShort(gIterator.next().getValue()), buffer);</span>
+<span class="fc" id="L61">    		  positionStrategy.setPosition(IOUtil.toSignedShort(tIterator.next().getValue()), buffer);</span>
+             
+    	}
+       
+<span class="fc" id="L65">    }</span>
+   
+
+
+    /**
+     * Positions are arrayed A[0]C[0]G[0]T[0]A[1]C[1]G[1]T[1] ...
+     */
+    @Override
+    protected short[][] parseRawPositions(DataInputStream in,
+            int numberOfSamples, PositionStrategy positionStrategy)
+            throws IOException {
+<span class="fc" id="L76">        short[][] positions = new short[4][numberOfSamples];</span>
+
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        for(int i=0; i&lt; numberOfSamples; i++){</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">            for(int channel=0; channel&lt;4; channel++){</span>
+<span class="fc" id="L80">                positions[channel][i]=positionStrategy.getPosition(in);</span>
+            }
+        }
+<span class="fc" id="L83">        return positions;</span>
+    }
+
+
+
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

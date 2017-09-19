@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>NucleotideCodec.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.core.residue.nt</a> &gt; <span class="el_source">NucleotideCodec.java</span></div><h1>NucleotideCodec.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.core.residue.nt;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.internal.core.GlyphCodec;
+import org.jcvi.jillion.internal.core.io.StreamUtil;
+
+/**
+ * @author dkatzel
+ *
+ *
+ */
+interface NucleotideCodec extends GlyphCodec&lt;Nucleotide&gt;{
+
+	
+    byte[] encode(int numberOfNucleotides,int[] gapOffsets, Iterator&lt;Nucleotide&gt; nucleotides);
+
+    /**
+     * Get a List of all the offsets into this
+     * sequence which are gaps.  This list SHOULD be
+     * sorted by offset in ascending order.  The size of the returned list should be
+     * the same as the value returned by getNumberOfGaps(byte[]).
+     * 
+     * @return a List of gap offsets as Integers.
+     */
+    List&lt;Integer&gt; getGapOffsets(byte[] encodedData);    
+    /**
+     * Get the number of gaps in this sequence.
+     * @return the number of gaps; will always be {@code &gt;=0}.
+     */
+    int getNumberOfGaps(byte[] encodedData);
+   
+    /**
+     * Is the {@link Nucleotide} at the given gapped index a gap?
+     * @param gappedOffset the gappedOffset to check.
+     * @return {@code true} is it is a gap; {@code false} otherwise.
+     */
+    boolean isGap(byte[] encodedData,int gappedOffset);
+    /**
+     * Get the number of {@link Nucleotide}s in this {@link NucleotideSequence} 
+     * that are not gaps.
+     * @return the number of non gaps as a long.
+     */
+    long getUngappedLength(byte[] encodedData);
+    /**
+     * Compute the number of gaps in the valid range until AND INCLUDING the given
+     * gapped index.
+     * @param gappedOffset the index to count the number of gaps until.
+     * @return the number of gaps in the valid range until AND INCLUDING the given
+     * gapped index.
+     */
+    int getNumberOfGapsUntil(byte[] encodedData,int gappedOffset);
+    /**
+     * Get the ungapped offset equivalent of the 
+     * given gapped offset.
+     * @param encodedData the encoded bytes which contain
+     * all the nucleotides.
+     * @param gappedOffset the gapped offset to use 
+     * to compute the ungapped offset.
+     * @return an int representing the ungapped
+     * offset; will always be &gt;=0.
+     */
+    int getUngappedOffsetFor(byte[] encodedData,int gappedOffset);
+    /**
+     * Get the gapped offset equivalent of the 
+     * given ungapped offset.
+     * @param encodedData the encoded bytes which contain
+     * all the nucleotides.
+     * @param ungappedOffset the ungapped offset to use 
+     * to compute the gapped offset.
+     * @return an int representing the gapped
+     * offset; will always be &gt;=0.
+     */
+    int getGappedOffsetFor(byte[] encodedData,int ungappedOffset);
+    
+    /**
+     * Get the corresponding ungapped Range (where the start and end values
+     * of the range are in ungapped coordinate space) for the given
+     * gapped {@link Range}.
+     * @param encodedData the encoded bytes which contain
+     * all the nucleotides.
+     * @param gappedRange the Range of gapped coordinates; can not be null.
+     * @return a new Range never null.
+     * @throws NullPointerException if the gappedRange is null.
+     * @throws IndexOutOfBoundsException if the given Range goes beyond
+     * the gapped sequence.
+     * 
+     * @since 5.2
+     */
+    default Range toUngappedRange(byte[] encodedData, Range gappedRange){
+       
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">        if(gappedRange ==null){</span>
+<span class="nc" id="L119">            throw new NullPointerException(&quot;gappedRange can not be null&quot;);</span>
+        }
+<span class="fc" id="L121">        return Range.of(</span>
+<span class="fc" id="L122">                getUngappedOffsetFor(encodedData,(int)gappedRange.getBegin()),</span>
+<span class="fc" id="L123">                getUngappedOffsetFor(encodedData, (int)gappedRange.getEnd())</span>
+                );
+    }
+    
+    /**
+     * Get the corresponding gapped Range (where the start and end values
+     * of the range are in gapped coordinate space) for the given
+     * ungapped {@link Range}.
+     * @param encodedData the encoded bytes which contain
+     * all the nucleotides.
+     * @param ungappedRegion the Range of ungapped coordinates; can not be null.
+     * @return a new Range never null.
+     * @throws NullPointerException if the gappedRange is null.
+     * 
+     * @since 5.2
+     */
+    default Range toGappedRange(byte[] encodedData, Range ungappedRange){
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">        if(ungappedRange ==null){</span>
+<span class="nc" id="L141">            throw new NullPointerException(&quot;ungappedRange can not be null&quot;);</span>
+        }
+<span class="fc" id="L143">        return Range.of(</span>
+<span class="fc" id="L144">                getGappedOffsetFor(encodedData, (int)ungappedRange.getBegin()),</span>
+<span class="fc" id="L145">                getGappedOffsetFor(encodedData, (int)ungappedRange.getEnd())</span>
+                );
+    }
+    
+    /**
+     * Convenience method to encode a single nucleotide.
+     * @param nucleotide
+     * @return the byte array which encodes the single given nucleotide.
+     */
+    byte[] encode(Nucleotide nucleotide);
+    /**
+     * Creates a new {@link Iterator}
+     * in an efficient manner.
+     * @return an {@link Iterator} of all the {@link Nucleotide}s.
+     */
+    Iterator&lt;Nucleotide&gt; iterator(byte[] encodedData);
+    
+    /**
+     * Create a new {@link Iterator}
+     * which only iterates over the specified
+     * Range of elements in this sequence.
+     * @param range the range to iterate over.
+     * @return a new {@link Iterator}; will never
+     * be null.
+     * @throws NullPointerException if range is null.
+     * @throws IndexOutOfBoundsException if Range contains
+     * values outside of the possible sequence offsets.
+     */
+    Iterator&lt;Nucleotide&gt; iterator(byte[] encodedData, Range range);
+    /**
+     * Convert the encoded bytes into a String
+     * of Nucleotides.
+     * @param encodedData the byte array of encoded
+     * nucleotide sequence data.
+     * @return a new String that represents the 
+     * same Nucleotide sequence; will never be null.
+     */
+    String toString(byte[] encodedData);
+    
+    default String toString(byte[] encodedData, Range subRange){
+<span class="fc" id="L185">        StringBuilder builder = new StringBuilder((int) subRange.getLength());</span>
+<span class="fc" id="L186">        Iterator&lt;Nucleotide&gt; iter = iterator(encodedData, subRange);</span>
+<span class="fc bfc" id="L187" title="All 2 branches covered.">        while(iter.hasNext()){</span>
+<span class="fc" id="L188">            builder.append(iter.next());</span>
+        }
+<span class="fc" id="L190">        return builder.toString();</span>
+    }
+    
+    List&lt;Range&gt; getNRanges(byte[] encodedData);
+    
+    default Stream&lt;Range&gt; matches(byte[] encodedData, String regex){
+      //override if something better!
+<span class="nc" id="L197">        return matches(encodedData, Pattern.compile(regex));</span>
+    }
+    
+    default Stream&lt;Range&gt; matches(byte[] encodedData, Pattern pattern){
+        //override if something better!
+<span class="fc" id="L202">        Matcher matcher = pattern.matcher(toString(encodedData));</span>
+        
+<span class="fc bfc" id="L204" title="All 2 branches covered.">        return StreamUtil.newGeneratedStream(() -&gt; matcher.find()</span>
+<span class="fc" id="L205">                ? Optional.of(Range.of(matcher.start(), matcher.end() - 1))</span>
+<span class="fc" id="L206">                : Optional.empty());</span>
+       
+    }
+    
+    default Stream&lt;Range&gt; matches(byte[] encodedData, Pattern pattern, Range range){
+        //override if something better!
+<span class="fc" id="L212">        Matcher matcher = pattern.matcher(toString(encodedData, range));</span>
+        
+<span class="fc bfc" id="L214" title="All 2 branches covered.">        return StreamUtil.newGeneratedStream(() -&gt; matcher.find()</span>
+<span class="fc" id="L215">                ? Optional.of(new Range.Builder(matcher.start(), matcher.end() - 1).shift(range.getBegin()).build())</span>
+<span class="fc" id="L216">                : Optional.empty());</span>
+       
+    }
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

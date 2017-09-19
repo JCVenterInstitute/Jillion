@@ -1,0 +1,605 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Caches.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.core.util</a> &gt; <span class="el_source">Caches.java</span></div><h1>Caches.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/**
+ * LRUCache.java
+ * Created: May 23, 2008
+ *
+ * Copyright 2008: J. Craig Venter Institute
+ */
+package org.jcvi.jillion.internal.core.util;
+
+import java.lang.ref.Reference;
+import java.lang.ref.ReferenceQueue;
+import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import org.jcvi.jillion.core.util.MapUtil;
+
+/**
+ * &lt;code&gt;Caches&lt;/code&gt; is a utility class which contains various 
+ * implementations caches. Some implementations use a Least-Recently-Used
+ * policy (LRU) some implementations use {@link SoftReference}s or {@link WeakReference}s
+ * to avoid memory leaks.  
+ * 
+ * 
+ * @author dkatzel
+ * @author jsitz@jcvi.org
+ * 
+ */
+public final class Caches
+{
+    
+
+    private static final float DEFAULT_LOAD_FACTOR = 0.75F;
+    /**
+     * The value of this constant is {@value}.
+     */
+    public static final int DEFAULT_CAPACITY = 16;
+    
+<span class="nc" id="L67">    private Caches(){</span>
+    	//can not instantiate
+<span class="nc" id="L69">    }</span>
+    
+    /**
+     * Creates an LRUCache of default capacity.  Entries are held
+     * in the map until capacity is exceeded.
+     * @param &lt;K&gt; the (strongly reference) key type
+     * @param &lt;V&gt; the (strongly reference) value type
+     * @return a new Map instance with default capacity {@value #DEFAULT_CAPACITY}.
+     */
+    public static &lt;K,V&gt; Map&lt;K,V&gt; createLRUCache(){
+<span class="nc" id="L79">        return createLRUCache(DEFAULT_CAPACITY);</span>
+    }
+    /**
+     * Creates an LRUCache of the given max capacity.  Entries are held
+     * in the map until capacity is exceeded.
+     * @param &lt;K&gt; the (strongly reference) key type
+     * @param &lt;V&gt; the (strongly reference) value type
+     * @param maxcapacity the max size of this cache before it should start removing
+     * the least recently used.
+     * @return a new Map instance with given capacity
+     */
+    public static &lt;K,V&gt; Map&lt;K,V&gt; createLRUCache(int maxcapacity){
+       
+<span class="fc" id="L92">        return new LRUCache&lt;K,V&gt;(maxcapacity);</span>
+    }
+    /**
+     * Create a map of strong references with an initial default capacity
+     * of {@value #DEFAULT_CAPACITY} which &lt;strong&gt;CAN GROW&lt;/strong&gt;  if more than
+     * that number of entries is inserted.  This should have
+     * the same semantics as {@code new HashMap&lt;K,V&gt;() }.
+     * @param &lt;K&gt; the (strongly reference) key type
+     * @param &lt;V&gt; the (strongly reference) value type
+     * @return a new Map instance with default capacity that can grow
+     * if more entries are added just like a normal Map.
+     */
+    public static &lt;K,V&gt; Map&lt;K,V&gt; createMap(){
+<span class="nc" id="L105">        return createMap(DEFAULT_CAPACITY);</span>
+    }
+    /**
+     * Create a map of strong references with an initial given capacity
+     * which &lt;strong&gt;CAN GROW&lt;/strong&gt; if more than
+     * that number of entries is inserted.  This should have
+     * the same semantics as {@code new HashMap&lt;K,V&gt;() }.
+     * @param &lt;K&gt; the (strongly reference) key type
+     * @param &lt;V&gt; the (strongly reference) value type
+     * @param initialSize the initial size of the map which can later
+     * grow in size as more entries are added.
+     * @return a new Map instance with the given capacity that can grow
+     * if more entries are added just like a normal Map.
+     */
+    public static &lt;K,V&gt; Map&lt;K,V&gt; createMap(int initialSize){
+<span class="nc" id="L120">        return new LinkedHashMap&lt;K,V&gt;(initialSize);</span>
+    }
+    /**
+     * Creates an LRUCache of default capacity where the VALUES in the map
+     * are each wrapped with a {@link SoftReference}.  Entries can
+     * be removed by 3 different ways:
+     * &lt;ol&gt;
+     * &lt;li&gt; If capacity is exceeded, then the least recently used
+     * entry is removed to make room&lt;/li&gt;
+     * &lt;li&gt; Any entries may be removed if its value
+     * is only weakly reachable AND the garbage collector
+     * wants to reclaim memory.&lt;/li&gt;
+     * &lt;li&gt; Any entries may be removed if the {@link Map#remove(Object)}
+     * is called.&lt;/li&gt;
+     * &lt;/ol&gt; 
+     * @param &lt;K&gt; the (strongly reference) key type
+     * @param &lt;V&gt; the softly referenced value type
+     * @return a new Map instance with default capacity
+     */
+    public static &lt;K,V&gt; Map&lt;K,V&gt; createSoftReferencedValueLRUCache(){
+<span class="nc" id="L140">        return createSoftReferencedValueLRUCache(DEFAULT_CAPACITY);</span>
+    }
+    
+    /**
+     * Creates an Map of default capacity {@value #DEFAULT_CAPACITY}
+     *  where the VALUES in the map
+     * are each wrapped with a {@link SoftReference}. The size 
+     * of this map &lt;strong&gt;CAN GROW&lt;/strong&gt; if more
+     * entries are inserted.  Entries can
+     * be removed by 2 different ways:
+     * &lt;ol&gt;
+     * &lt;li&gt; If capacity is exceeded, then the least recently used
+     * entry is removed to make room&lt;/li&gt;
+     * &lt;li&gt; Any entries may be removed if the {@link Map#remove(Object)}
+     * is called.&lt;/li&gt;
+     * &lt;/ol&gt; 
+     * @param &lt;K&gt; the (strongly reference) key type
+     * @param &lt;V&gt; the softly referenced value type
+     * @return a new Map instance with default capacity
+     */
+    public static &lt;K,V&gt; Map&lt;K,V&gt; createSoftReferencedValueCache(){
+<span class="nc" id="L161">        return createSoftReferencedValueCache(DEFAULT_CAPACITY);</span>
+    }
+   
+    /**
+     * Creates an Map using the given capacity where the VALUES in the map
+     * are each wrapped with a {@link SoftReference}. The size 
+     * of this map &lt;strong&gt;CAN GROW&lt;/strong&gt; if more
+     * entries are inserted.  Entries can
+     * be removed by 2 different ways:
+     * &lt;ol&gt;
+     * &lt;li&gt; If capacity is exceeded, then the least recently used
+     * entry is removed to make room&lt;/li&gt;
+     * &lt;li&gt; Any entries may be removed if the {@link Map#remove(Object)}
+     * is called.&lt;/li&gt;
+     * &lt;/ol&gt; 
+     * @param &lt;K&gt; the (strongly reference) key type
+     * @param &lt;V&gt; the softly referenced value type
+     * @param initialCapacity the initialCapacity of this cache which is used
+     * to calculate when the map should grow and be re-hashed.
+     * @return a new Map instance with the given capacity.
+     */
+    public static &lt;K,V&gt; Map&lt;K,V&gt; createSoftReferencedValueCache(int initialCapacity){
+<span class="fc" id="L183">        return new SoftReferenceCache&lt;K, V&gt;(initialCapacity);</span>
+    }
+    
+    /**
+     * Creates an LRUCache where the VALUES in the map
+     * are each wrapped with a {@link SoftReference}.  Entries can
+     * be removed by 3 different ways:
+     * &lt;ol&gt;
+     * &lt;li&gt; If capacity is exceeded, then the least recently used
+     * entry is removed to make room&lt;/li&gt;
+     * &lt;li&gt; Any entries may be removed if its value
+     * is only weakly reachable AND the garbage collector
+     * wants to reclaim memory.&lt;/li&gt;
+     * &lt;li&gt; Any entries may be removed if the {@link Map#remove(Object)}
+     * is called.&lt;/li&gt;
+     * &lt;/ol&gt; 
+     * @param &lt;K&gt; the (strongly reference) key type
+     * @param &lt;V&gt; the softly referenced value type
+     * @param maxSize the max size of this cache before it should start removing
+     * the least recently used.
+     * @return a new Map instance with default capacity
+     */
+    public static &lt;K,V&gt; Map&lt;K,V&gt; createSoftReferencedValueLRUCache(int maxSize){
+<span class="fc" id="L206">        return new SoftReferenceLRUCache&lt;K, V&gt;(maxSize);</span>
+    }
+    
+    /**
+     * Creates an LRUCache with max capacity of {@value #DEFAULT_CAPACITY} where the VALUES in the map
+     * are each wrapped with a {@link WeakReference}.  Entries can
+     * be removed by 3 different ways:
+     * &lt;ol&gt;
+     * &lt;li&gt; If capacity is exceeded, then the least recently used
+     * entry is removed to make room&lt;/li&gt;
+     * &lt;li&gt; Any entries may be removed if its value
+     * is only weakly reachable&lt;/li&gt;
+     * &lt;li&gt; Any entries may be removed if the {@link Map#remove(Object)}
+     * is called.&lt;/li&gt;
+     * &lt;/ol&gt; 
+     * @param &lt;K&gt; the (strongly reference) key type
+     * @param &lt;V&gt; the softly referenced value type
+     * @return a new Map instance with default capacity.
+     */
+    public static &lt;K,V&gt; Map&lt;K,V&gt; createWeakReferencedValueLRUCache(){
+<span class="fc" id="L226">        return createWeakReferencedValueLRUCache(DEFAULT_CAPACITY);</span>
+    }
+    /**
+     * Creates an LRUCache where the VALUES in the map
+     * are each wrapped with a {@link WeakReference}.  Entries can
+     * be removed by 3 different ways:
+     * &lt;ol&gt;
+     * &lt;li&gt; If capacity is exceeded, then the least recently used
+     * entry is removed to make room&lt;/li&gt;
+     * &lt;li&gt; Any entries may be removed if its value
+     * is only weakly reachable&lt;/li&gt;
+     * &lt;li&gt; Any entries may be removed if the {@link Map#remove(Object)}
+     * is called.&lt;/li&gt;
+     * &lt;/ol&gt; 
+     * @param &lt;K&gt; the (strongly reference) key type
+     * @param &lt;V&gt; the softly referenced value type
+     * @param maxSize the max size of this cache before it should start removing
+     * the least recently used.
+     * @return a new Map instance with default capacity
+     */
+    public static &lt;K,V&gt; Map&lt;K,V&gt; createWeakReferencedValueLRUCache(int maxSize){
+<span class="fc" id="L247">        return new WeakReferenceLRUCache&lt;K,V&gt;(maxSize);</span>
+    }
+    
+    /**
+     * Creates an LRUCache where the VALUES in the map
+     * are each wrapped with a {@link WeakReference}.  The size 
+     * of this map &lt;strong&gt;CAN GROW&lt;/strong&gt; if more
+     * entries are inserted.  Entries can
+     * be removed by 2 different ways:
+     * &lt;ol&gt;
+     * &lt;li&gt; if its the value is only weakly reachable.&lt;/li&gt;
+     * &lt;li&gt; Any entries may be removed if the {@link Map#remove(Object)}
+     * is called.&lt;/li&gt;
+     * &lt;/ol&gt; 
+     * @param &lt;K&gt; the (strongly reference) key type
+     * @param &lt;V&gt; the softly referenced value type
+     * @return a new Map instance with default capacity
+     */
+    public static &lt;K,V&gt; Map&lt;K,V&gt; createWeakReferencedValueCache(){
+<span class="nc" id="L266">        return createWeakReferencedValueLRUCache(DEFAULT_CAPACITY);</span>
+    }
+    /**
+     * Creates an LRUCache where the VALUES in the map
+     * are each wrapped with a {@link WeakReference}.  This will
+     * allow the map to remove any entries if its value
+     * is only weakly reachable.
+     * @param &lt;K&gt; the (strongly reference) key type
+     * @param &lt;V&gt; the weakly referenced value type
+     * @param maxSize the max size of this cache before it should start removing
+     * the least recently used.
+     * @return a new Map instance with default capacity
+     */
+    public static &lt;K,V&gt; Map&lt;K,V&gt; createWeakReferencedValueCache(int maxSize){
+<span class="nc" id="L280">        return new WeakReferenceCache&lt;K,V&gt;(maxSize);</span>
+    }
+    
+    private static &lt;K,V&gt; Map&lt;K,V&gt; createNonLRUMap(int maxSize){
+<span class="fc" id="L284">    	return new LinkedHashMap&lt;K, V&gt;(maxSize);</span>
+    }
+    /**
+     * This uses the Java-native implementation of
+    * a {@link LinkedHashMap} with last-access ordering and capacity limitation
+    * to remove the element which was least recently accessed via the 
+    * {@link #get(Object)} method.  This removal only occurs once the capacity
+    * is reached.
+    * &lt;p&gt;
+    * This has the handy effect of creating a simple cache.  The greatest 
+    * benefits when using this cache are seen when elements are accessed in
+    * clusters, since they will generate large numbers of cache hits followed
+    * by steadily dropping out of the cache.
+    */
+    private static final class LRUCache&lt;K,V&gt; extends LinkedHashMap&lt;K, V&gt;{
+ 
+            private static final long serialVersionUID = -9015747210650112857L;
+        private final int maxAllowedSize;
+    
+        protected LRUCache(int maxAllowedSize, float loadFactor)
+        {
+<span class="fc" id="L305">            super(MapUtil.computeMinHashMapSizeWithoutRehashing(maxAllowedSize, loadFactor),loadFactor, true);</span>
+<span class="fc" id="L306">            this.maxAllowedSize = maxAllowedSize;</span>
+<span class="fc" id="L307">        }</span>
+    
+        protected LRUCache(int maxAllowedSize)
+        {
+<span class="fc" id="L311">            this(maxAllowedSize, Caches.DEFAULT_LOAD_FACTOR);</span>
+<span class="fc" id="L312">        }</span>
+    
+        
+        @Override
+        protected boolean removeEldestEntry(Entry&lt;K, V&gt; eldest)
+        {
+<span class="fc bfc" id="L318" title="All 2 branches covered.">            return this.size() &gt; this.maxAllowedSize;</span>
+        }
+    
+    }
+    /**
+     * {@code AbstractReferencedLRUCache} is an adapter so we can make an LRUCache
+     * but the values are not strong Java References.  This will allow
+     * the JVM to remove entries from the cache if we need more memory.
+     * @author dkatzel
+     *
+     *
+     */
+    private abstract static class AbstractReferencedCache&lt;K,V,R extends Reference&lt;V&gt;&gt; extends AbstractMap&lt;K,V&gt;{
+        
+        
+        private final Map&lt;K, R&gt; cache;
+<span class="fc" id="L334">        private final ReferenceQueue&lt;V&gt; referenceQueue = new ReferenceQueue&lt;V&gt;();</span>
+        private final Map&lt;Reference&lt;? extends V&gt;, K&gt; referenceKeyMap;
+        /**
+         * Creates a new AbstractReferencedCache instance using the given map
+         * @param map the map of {@link Reference}s mapped by a Key.
+         * @param initialCapacity the initial size of the references.
+         */
+<span class="fc" id="L341">        AbstractReferencedCache(Map&lt;K,R&gt; map, int initialCapacity) {</span>
+<span class="fc" id="L342">            cache = map;</span>
+<span class="fc" id="L343">            int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(initialCapacity);</span>
+<span class="fc" id="L344">            referenceKeyMap = new HashMap&lt;Reference&lt;? extends V&gt;, K&gt;(mapSize);</span>
+<span class="fc" id="L345">        }</span>
+        protected abstract R createReferenceFor(V value,final ReferenceQueue&lt;V&gt; referenceQueue);
+        
+        /**
+         * Remove any entries in the 
+         * cache that have had their values
+         * garbage collected.  The GC could have collected any of the values
+         * we still have keys for so poll our registered references
+         * to see what was collected and remove them from our cache.
+         */
+        private synchronized void removeAnyGarbageCollectedEntries(){
+            Reference&lt;? extends V&gt; collectedReference;
+<span class="fc bfc" id="L357" title="All 2 branches covered.">            while((collectedReference = referenceQueue.poll()) !=null){</span>
+               
+<span class="fc" id="L359">                K key =referenceKeyMap.remove(collectedReference);</span>
+<span class="fc" id="L360">                cache.remove(key);                </span>
+<span class="fc" id="L361">            }</span>
+<span class="fc" id="L362">        }</span>
+
+        @Override
+        public synchronized int size() {
+<span class="fc" id="L366">            removeAnyGarbageCollectedEntries();</span>
+<span class="fc" id="L367">            return cache.size();</span>
+        }
+
+        @Override
+        public synchronized boolean isEmpty() {
+<span class="nc" id="L372">            removeAnyGarbageCollectedEntries();</span>
+<span class="nc" id="L373">            return cache.isEmpty();</span>
+        }
+
+        @Override
+        public synchronized boolean containsKey(Object key) {
+<span class="fc" id="L378">            removeAnyGarbageCollectedEntries();</span>
+<span class="fc" id="L379">            return cache.containsKey(key);</span>
+        }
+
+        @Override
+        public synchronized V get(Object key) {
+<span class="fc" id="L384">            removeAnyGarbageCollectedEntries();</span>
+<span class="fc" id="L385">            R softReference= cache.get(key);</span>
+<span class="fc" id="L386">            return getReference(softReference);</span>
+        }
+
+        @Override
+        public synchronized V put(K key, V value) {
+<span class="fc" id="L391">            removeAnyGarbageCollectedEntries();</span>
+<span class="fc" id="L392">            R newReference = createReferenceFor(value,referenceQueue);</span>
+<span class="fc" id="L393">            R oldReference= cache.put(key, newReference);</span>
+<span class="fc" id="L394">            referenceKeyMap.put(newReference, key);</span>
+<span class="fc" id="L395">            return getReference(oldReference);</span>
+            
+        }
+
+
+        @Override
+        public synchronized V remove(Object key) {
+<span class="fc" id="L402">            removeAnyGarbageCollectedEntries();</span>
+<span class="fc" id="L403">            R oldReference= cache.remove(key);</span>
+<span class="fc" id="L404">            referenceKeyMap.remove(oldReference);</span>
+<span class="fc" id="L405">            return getReference(oldReference);</span>
+        }
+
+        private V getReference(R ref){
+<span class="fc bfc" id="L409" title="All 2 branches covered.">            if(ref ==null){</span>
+<span class="fc" id="L410">                return null;</span>
+            }
+<span class="fc" id="L412">            return ref.get();</span>
+        }
+
+        @Override
+        public synchronized void clear() {
+<span class="fc" id="L417">            removeAnyGarbageCollectedEntries();</span>
+<span class="fc" id="L418">            cache.clear();</span>
+<span class="fc" id="L419">            referenceKeyMap.clear();</span>
+<span class="fc" id="L420">        }</span>
+        @Override
+        public synchronized Set&lt;K&gt; keySet() {
+<span class="fc" id="L423">            removeAnyGarbageCollectedEntries();</span>
+<span class="fc" id="L424">            return cache.keySet();</span>
+        }
+
+        @Override
+        public synchronized Collection&lt;V&gt; values() {
+<span class="nc" id="L429">            removeAnyGarbageCollectedEntries();</span>
+<span class="nc" id="L430">            Collection&lt;R&gt; softValues =cache.values();</span>
+<span class="nc" id="L431">            List&lt;V&gt; actualValues = new ArrayList&lt;V&gt;(softValues.size());</span>
+<span class="nc bnc" id="L432" title="All 2 branches missed.">            for(R softValue : softValues){</span>
+<span class="nc bnc" id="L433" title="All 2 branches missed.">                if(softValue !=null){</span>
+<span class="nc" id="L434">                    actualValues.add(softValue.get());</span>
+                }
+<span class="nc" id="L436">            }</span>
+<span class="nc" id="L437">            return actualValues;</span>
+        }
+
+
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public synchronized Set&lt;Entry&lt;K, V&gt;&gt; entrySet() {
+<span class="nc" id="L447">            removeAnyGarbageCollectedEntries();</span>
+<span class="nc" id="L448">            Set&lt;Entry&lt;K,V&gt;&gt; result = new LinkedHashSet&lt;Entry&lt;K, V&gt;&gt;();</span>
+<span class="nc bnc" id="L449" title="All 2 branches missed.">            for(final Entry&lt;K,R&gt; entry : cache.entrySet()){</span>
+<span class="nc" id="L450">                final K key = entry.getKey();</span>
+<span class="nc" id="L451">                final V value =entry.getValue().get();</span>
+<span class="nc bnc" id="L452" title="All 2 branches missed.">                if(value !=null){</span>
+                    //we still have it
+<span class="nc" id="L454">                    result.add(new Entry&lt;K, V&gt;() {</span>
+
+                        @Override
+                        public K getKey() {
+<span class="nc" id="L458">                            return key;</span>
+                        }
+
+                        @Override
+                        public V getValue() {
+<span class="nc" id="L463">                            return value;</span>
+                        }
+
+                        @Override
+                        public V setValue(V newValue) {
+<span class="nc" id="L468">                            entry.setValue(createReferenceFor(newValue,referenceQueue));</span>
+<span class="nc" id="L469">                            return value;</span>
+                        }
+                        
+                    });
+                }
+<span class="nc" id="L474">            }</span>
+<span class="nc" id="L475">            return result;</span>
+        }
+        
+    }
+    
+    /**
+     * {@code SoftReferenceLRUCache} creates an LRUCache which uses
+     * {@link SoftReference}s for the values.
+     * @author dkatzel
+     * @see SoftReference
+     *
+     */
+    private static class SoftReferenceCache&lt;K,V&gt; extends AbstractReferencedCache&lt;K,V, SoftReference&lt;V&gt;&gt;{
+       
+       
+        /**
+         * Create a new SoftReferenceCache with the given capacity.
+         * @param initialCapacity the number of references to store in the map;
+         * should be &gt;=1.
+         */
+        public SoftReferenceCache(int initialCapacity) {
+<span class="fc" id="L496">        	super(Caches.&lt;K,SoftReference&lt;V&gt;&gt;createNonLRUMap(initialCapacity), initialCapacity);</span>
+<span class="fc" id="L497">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        protected SoftReference&lt;V&gt; createReferenceFor(V value, ReferenceQueue&lt;V&gt; referenceQueue) {
+<span class="fc" id="L504">            return new SoftReference&lt;V&gt;(value, referenceQueue);</span>
+        }
+
+      
+
+    }
+    /**
+     * {@code SoftReferenceLRUCache} creates an LRUCache which uses
+     * {@link SoftReference}s for the values.
+     * @author dkatzel
+     * @see SoftReference
+     *
+     */
+    private static class SoftReferenceLRUCache&lt;K,V&gt; extends AbstractReferencedCache&lt;K,V, SoftReference&lt;V&gt;&gt;{
+       
+    	 /**
+         * Create a new SoftReferenceLRUCache with the given max capacity.
+         * If the map ever grows beyond the max capacity, then the least
+         * recently used element will be removed to make room.
+         * @param maxSize the max number of references to store in the map;
+         * should be &gt;=1.
+         */
+        public SoftReferenceLRUCache(int maxSize) {
+<span class="fc" id="L527">          super(</span>
+        		  new LRUCache&lt;K,SoftReference&lt;V&gt;&gt;(
+        				  maxSize, 
+        				  DEFAULT_LOAD_FACTOR), 
+				  maxSize);
+<span class="fc" id="L532">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        protected SoftReference&lt;V&gt; createReferenceFor(V value, ReferenceQueue&lt;V&gt; referenceQueue) {
+<span class="fc" id="L539">            return new SoftReference&lt;V&gt;(value, referenceQueue);</span>
+        }
+
+      
+
+    }
+    /**
+     * {@code WeakReferenceLRUCache} creates an LRUCache which uses
+     * {@link WeakReference}s for the values.
+     * @author dkatzel
+     * @see WeakReference
+     *
+     */
+    private static class WeakReferenceLRUCache&lt;K,V&gt; extends AbstractReferencedCache&lt;K,V, WeakReference&lt;V&gt;&gt;{
+        
+        
+    	 /**
+         * Create a new WeakReferenceLRUCache with the given max capacity.
+         * If the map ever grows beyond the max capacity, then the least
+         * recently used element will be removed to make room.
+         * @param maxSize the max number of references to store in the map;
+         * should be &gt;=1.
+         */
+        public WeakReferenceLRUCache(int maxSize) {
+<span class="fc" id="L563">            super(new LRUCache&lt;K,WeakReference&lt;V&gt;&gt;(maxSize, DEFAULT_LOAD_FACTOR), maxSize);</span>
+<span class="fc" id="L564">        }</span>
+        
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        protected WeakReference&lt;V&gt; createReferenceFor(V value, ReferenceQueue&lt;V&gt; referenceQueue) {
+<span class="fc" id="L571">            return new WeakReference&lt;V&gt;(value,referenceQueue);</span>
+        }
+
+    }
+    
+    /**
+     * {@code WeakReferenceCache} creates an Cache which uses
+     * {@link WeakReference}s for the values.
+     * @author dkatzel
+     * @see WeakReference
+     *
+     */
+    private static class WeakReferenceCache&lt;K,V&gt; extends AbstractReferencedCache&lt;K,V, WeakReference&lt;V&gt;&gt;{
+        
+        
+    	/**
+         * Create a new WeakReferenceCache with the given capacity.
+         * @param initialCapacity the number of references to store in the map;
+         * should be &gt;=1.
+         */
+        public WeakReferenceCache(int initialCapacity) {
+<span class="nc" id="L592">        	super(Caches.&lt;K,WeakReference&lt;V&gt;&gt;createNonLRUMap(initialCapacity), initialCapacity);</span>
+<span class="nc" id="L593">        }</span>
+        
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        protected WeakReference&lt;V&gt; createReferenceFor(V value, ReferenceQueue&lt;V&gt; referenceQueue) {
+<span class="nc" id="L600">            return new WeakReference&lt;V&gt;(value,referenceQueue);</span>
+        }
+
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

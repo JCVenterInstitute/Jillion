@@ -1,0 +1,644 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>IndexedAsmFileUnitigDataStore.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.ca.asm</a> &gt; <span class="el_source">IndexedAsmFileUnitigDataStore.java</span></div><h1>IndexedAsmFileUnitigDataStore.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly.ca.asm;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.jcvi.jillion.assembly.ca.asm.AsmVisitor.AsmVisitorCallback.AsmVisitorMemento;
+import org.jcvi.jillion.core.DirectedRange;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreClosedException;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
+import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.datastore.DataStoreFilter;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.MapUtil;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.internal.core.datastore.DataStoreIterator;
+import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
+/**
+ * {@code IndexedAsmFileContigDataStore} is an {@link AsmUnitigDataStore}
+ * implementation that only stores indexes and range offsets
+ * of unitigs in the input asm file.  This allows large files to provide random 
+ * access without taking up much memory.  The downside is each unitig
+ * must be re-parsed each time and the asm file must exist and not
+ * get altered during the entire lifetime of this object.
+ * @author dkatzel
+ */
+final class IndexedAsmFileUnitigDataStore  implements AsmUnitigDataStore{
+	
+private final  DataStore&lt;NucleotideSequence&gt; fullLengthSequences;
+	private final Map&lt;String, AsmVisitorMemento&gt; contigMementos;
+	private final AsmParser parser;
+	
+<span class="fc" id="L61">	private volatile boolean closed =false;</span>
+	
+	public static AsmUnitigDataStore create(File asmFile, DataStore&lt;NucleotideSequence&gt; fullLengthSequences, DataStoreFilter filter) throws IOException{
+<span class="fc" id="L64">		VisitorBuilder visitorBuilder = new VisitorBuilder(filter);</span>
+<span class="fc" id="L65">		AsmParser parser = AsmFileParser.create(asmFile);</span>
+<span class="fc" id="L66">		parser.parse(visitorBuilder);</span>
+<span class="fc" id="L67">		return visitorBuilder.build(parser, fullLengthSequences);</span>
+	}
+	
+	public IndexedAsmFileUnitigDataStore(AsmParser parser,
+			DataStore&lt;NucleotideSequence&gt; fullLengthSequences,
+<span class="fc" id="L72">			Map&lt;String, AsmVisitorMemento&gt; contigMementos) {</span>
+<span class="fc" id="L73">		this.parser = parser;</span>
+<span class="fc" id="L74">		this.fullLengthSequences = fullLengthSequences;</span>
+<span class="fc" id="L75">		this.contigMementos = contigMementos;</span>
+<span class="fc" id="L76">	}</span>
+
+	private void checkNotClosed(){
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">		if(closed){</span>
+<span class="nc" id="L80">			throw new DataStoreClosedException(&quot;datastore is closed&quot;);</span>
+		}
+<span class="fc" id="L82">	}</span>
+	
+	@Override
+	public StreamingIterator&lt;String&gt; idIterator() throws DataStoreException {
+<span class="nc" id="L86">		checkNotClosed();		</span>
+<span class="nc" id="L87">		return DataStoreStreamingIterator.create(this, contigMementos.keySet().iterator());</span>
+	}
+
+
+	@Override
+	public AsmUnitig get(String id) throws DataStoreException {
+<span class="fc" id="L93">		checkNotClosed();</span>
+<span class="fc" id="L94">		AsmVisitorMemento memento = contigMementos.get(id);</span>
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">		if(memento ==null){</span>
+<span class="nc" id="L96">			return null;</span>
+		}
+		//since read valid range and id info is
+		//defined before the memento for the contig
+		//must parse portions of the file 3 times
+		//1. parse unitig starting from memento to get reads we need.
+		//2. parse beginning of file to get read info
+		//3. parse unitig starting from memento again to build unitig object
+		try {
+<span class="fc" id="L105">			UnitigReadIdCollector visitor = new UnitigReadIdCollector(id);</span>
+<span class="fc" id="L106">			parser.parse(visitor, memento);</span>
+<span class="fc" id="L107">			Set&lt;String&gt; reads = visitor.getReadsInContig();</span>
+<span class="fc" id="L108">			ValidRangeVisitor validRangeVisitor = new ValidRangeVisitor(reads);</span>
+<span class="fc" id="L109">			parser.parse(validRangeVisitor);</span>
+<span class="fc" id="L110">			SingleContigVisitorBuilder contigBuilder = new SingleContigVisitorBuilder(validRangeVisitor.getValidRanges());</span>
+<span class="fc" id="L111">			parser.parse(contigBuilder, memento);</span>
+<span class="fc" id="L112">			return contigBuilder.build();</span>
+<span class="nc" id="L113">		} catch (IOException e) {</span>
+<span class="nc" id="L114">			throw new DataStoreException(&quot;error parsing asm file&quot;, e);</span>
+		}		
+	}
+
+
+	@Override
+	public boolean contains(String id) throws DataStoreException {
+<span class="nc" id="L121">		checkNotClosed();</span>
+<span class="nc" id="L122">		return contigMementos.containsKey(id);</span>
+	}
+
+
+	@Override
+	public long getNumberOfRecords() throws DataStoreException {
+<span class="fc" id="L128">		checkNotClosed();</span>
+<span class="fc" id="L129">		return contigMementos.size();</span>
+	}
+
+
+	@Override
+	public boolean isClosed() {
+<span class="nc" id="L135">		return closed;</span>
+	}
+
+
+	@Override
+	public StreamingIterator&lt;AsmUnitig&gt; iterator() throws DataStoreException {
+<span class="nc" id="L141">		return new DataStoreIterator&lt;AsmUnitig&gt;(this);</span>
+	}
+
+
+	@Override
+	public StreamingIterator&lt;DataStoreEntry&lt;AsmUnitig&gt;&gt; entryIterator()
+			throws DataStoreException {
+<span class="nc" id="L148">		 StreamingIterator&lt;DataStoreEntry&lt;AsmUnitig&gt;&gt; iter = new StreamingIterator&lt;DataStoreEntry&lt;AsmUnitig&gt;&gt;(){</span>
+			 
+<span class="nc" id="L150">    		 StreamingIterator&lt;AsmUnitig&gt; delegate =iterator();</span>
+			@Override
+			public boolean hasNext() {
+<span class="nc" id="L153">				return delegate.hasNext();</span>
+			}
+
+			@Override
+			public void close() {
+<span class="nc" id="L158">				delegate.close();</span>
+<span class="nc" id="L159">			}</span>
+
+			@Override
+			public DataStoreEntry&lt;AsmUnitig&gt; next() {
+<span class="nc" id="L163">				AsmUnitig trace = delegate.next();</span>
+<span class="nc" id="L164">				return new DataStoreEntry&lt;AsmUnitig&gt;(trace.getId(), trace);</span>
+			}
+
+			@Override
+			public void remove() {
+<span class="nc" id="L169">				throw new UnsupportedOperationException();</span>
+			}
+    		 
+    	 };
+<span class="nc" id="L173">		return DataStoreStreamingIterator.create(this, iter);</span>
+	}
+
+	@Override
+	public void close() throws IOException {
+<span class="nc" id="L178">		closed=true;		</span>
+<span class="nc" id="L179">	}</span>
+	
+	
+	private static class VisitorBuilder implements AsmVisitor{
+<span class="fc" id="L183">		private final Map&lt;String,AsmVisitorMemento&gt; mementos = new LinkedHashMap&lt;String, AsmVisitorMemento&gt;();</span>
+		private final DataStoreFilter filter;
+<span class="fc" id="L185">		public VisitorBuilder(DataStoreFilter filter) {</span>
+<span class="fc" id="L186">			this.filter = filter;</span>
+<span class="fc" id="L187">		}</span>
+		@Override
+		public void visitLibraryStatistics(String externalId, long internalId,
+				float meanOfDistances, float stdDev, long min, long max,
+				List&lt;Long&gt; histogram) {
+			//no-op			
+<span class="fc" id="L193">		}</span>
+		@Override
+		public void visitRead(String externalId, long internalId,
+				MateStatus mateStatus, boolean isSingleton, Range clearRange) {
+			//no-op
+			
+<span class="fc" id="L199">		}</span>
+		@Override
+		public void visitMatePair(String externalIdOfRead1,
+				String externalIdOfRead2, MateStatus mateStatus) {
+			//no-op			
+<span class="nc" id="L204">		}</span>
+		@Override
+		public AsmUnitigVisitor visitUnitig(AsmVisitorCallback callback,
+				String externalId, long internalId, float aStat,
+				float measureOfPolymorphism, UnitigStatus status,
+				NucleotideSequence consensusSequence,
+				QualitySequence consensusQualities, long numberOfReads) {
+<span class="pc bpc" id="L211" title="1 of 2 branches missed.">			if(filter.accept(externalId)){</span>
+<span class="pc bpc" id="L212" title="1 of 2 branches missed.">				if(!callback.canCreateMemento()){</span>
+<span class="nc" id="L213">					throw new IllegalStateException(&quot;must be able to create mementos&quot;);</span>
+				}
+<span class="fc" id="L215">				mementos.put(externalId, callback.createMemento());</span>
+			}
+<span class="fc" id="L217">			return null;</span>
+		}
+		@Override
+		public void visitUnitigLink(String externalUnitigId1,
+				String externalUnitigId2, LinkOrientation orientation,
+				OverlapType overlapType, OverlapStatus status,
+				boolean isPossibleChimera, int numberOfEdges,
+				float meanDistance, float stddev,
+				Set&lt;MatePairEvidence&gt; matePairEvidence) {
+			//no-op			
+<span class="nc" id="L227">		}</span>
+		@Override
+		public void visitContigLink(String externalContigId1,
+				String externalContigId2, LinkOrientation orientation,
+				OverlapType overlapType, OverlapStatus status,
+				int numberOfEdges, float meanDistance, float stddev,
+				Set&lt;MatePairEvidence&gt; matePairEvidence) {
+			//no-op			
+<span class="nc" id="L235">		}</span>
+		@Override
+		public AsmContigVisitor visitContig(AsmVisitorCallback callback,
+				String externalId, long internalId, boolean isDegenerate,
+				NucleotideSequence consensusSequence,
+				QualitySequence consensusQualities, long numberOfReads,
+				long numberOfUnitigs, long numberOfVariants) {
+			
+			//always skip since we don't care about underlying contig data here
+<span class="fc" id="L244">			return null;</span>
+		}
+		@Override
+		public AsmScaffoldVisitor visitScaffold(AsmVisitorCallback callback,
+				String externalId, long internalId, int numberOfContigPairs) {
+			//no-op 
+<span class="nc" id="L250">			return null;</span>
+		}
+		@Override
+		public void visitScaffold(AsmVisitorCallback callback,
+				String externalId, long internalId, String externalContigId) {
+			//no-op 			
+<span class="fc" id="L256">		}</span>
+		@Override
+		public void visitScaffoldLink(String externalScaffoldId1,
+				String externalScaffoldId2, LinkOrientation orientation,
+				OverlapType overlapType, OverlapStatus status,
+				int numberOfEdges, float meanDistance, float stddev,
+				Set&lt;MatePairEvidence&gt; matePairEvidence) {
+			//no-op 			
+<span class="nc" id="L264">		}</span>
+		
+		@Override
+		public void visitEnd() {
+			//no-op			
+<span class="fc" id="L269">		}</span>
+
+		@Override
+		public void halted() {
+			//no-op
+			
+<span class="nc" id="L275">		}</span>
+		
+		public AsmUnitigDataStore build(AsmParser parser, DataStore&lt;NucleotideSequence&gt; fullLengthSequences){
+<span class="fc" id="L278">			return new IndexedAsmFileUnitigDataStore(parser, fullLengthSequences, mementos);</span>
+		}
+	}
+
+	private static class UnitigReadIdCollector implements AsmVisitor{
+		private Set&lt;String&gt; readsInContig;
+		private final String contigId;
+		
+<span class="fc" id="L286">		public UnitigReadIdCollector(String contigId) {</span>
+<span class="fc" id="L287">			this.contigId = contigId;</span>
+<span class="fc" id="L288">		}</span>
+
+		@Override
+		public void visitLibraryStatistics(String externalId, long internalId,
+				float meanOfDistances, float stdDev, long min, long max,
+				List&lt;Long&gt; histogram) {
+			//no-op			
+<span class="nc" id="L295">		}</span>
+
+		@Override
+		public void visitRead(String externalId, long internalId,
+				MateStatus mateStatus, boolean isSingleton, Range clearRange) {
+			//no-op				
+<span class="nc" id="L301">		}</span>
+
+		@Override
+		public void visitMatePair(String externalIdOfRead1,
+				String externalIdOfRead2, MateStatus mateStatus) {
+			//no-op			
+<span class="nc" id="L307">		}</span>
+
+		@Override
+		public AsmUnitigVisitor visitUnitig(final AsmVisitorCallback callback,
+				String externalId, long internalId, float aStat,
+				float measureOfPolymorphism, UnitigStatus status,
+				NucleotideSequence consensusSequence,
+				QualitySequence consensusQualities, long numberOfReads) {
+<span class="pc bpc" id="L315" title="1 of 2 branches missed.">			if(contigId.equals(externalId)){</span>
+<span class="fc" id="L316">				readsInContig = new HashSet&lt;String&gt;((int)numberOfReads);</span>
+<span class="fc" id="L317">				return new AsmUnitigVisitor() {</span>
+					
+					@Override
+					public void visitReadLayout(char readType, String externalReadId,
+							DirectedRange readRange, List&lt;Integer&gt; gapOffsets) {
+<span class="fc" id="L322">						readsInContig.add(externalReadId);						</span>
+<span class="fc" id="L323">					}</span>
+					
+					@Override
+					public void halted() {
+						//no-op						
+<span class="nc" id="L328">					}</span>
+					
+					@Override
+					public void visitEnd() {
+						//we finished the current contig
+						//halt parsing
+<span class="fc" id="L334">						callback.haltParsing();					</span>
+<span class="fc" id="L335">					}</span>
+					
+					
+				};
+			}
+<span class="nc" id="L340">			return null;</span>
+		}
+
+		@Override
+		public void visitUnitigLink(String externalUnitigId1,
+				String externalUnitigId2, LinkOrientation orientation,
+				OverlapType overlapType, OverlapStatus status,
+				boolean isPossibleChimera, int numberOfEdges,
+				float meanDistance, float stddev,
+				Set&lt;MatePairEvidence&gt; matePairEvidence) {
+			//no-op			
+<span class="nc" id="L351">		}</span>
+
+		@Override
+		public void visitContigLink(String externalContigId1,
+				String externalContigId2, LinkOrientation orientation,
+				OverlapType overlapType, OverlapStatus status,
+				int numberOfEdges, float meanDistance, float stddev,
+				Set&lt;MatePairEvidence&gt; matePairEvidence) {
+			//no-op			
+<span class="nc" id="L360">		}</span>
+
+		@Override
+		public AsmContigVisitor visitContig(final AsmVisitorCallback callback,
+				String externalId, long internalId, boolean isDegenerate,
+				NucleotideSequence consensusSequence,
+				QualitySequence consensusQualities, long numberOfReads,
+				long numberOfUnitigs, long numberOfVariants) {
+			//always skip
+<span class="fc" id="L369">			return null;</span>
+		}
+
+		@Override
+		public AsmScaffoldVisitor visitScaffold(AsmVisitorCallback callback,
+				String externalId, long internalId, int numberOfContigPairs) {
+			//no-op
+<span class="nc" id="L376">			return null;</span>
+		}
+
+		@Override
+		public void visitScaffold(AsmVisitorCallback callback,
+				String externalId, long internalId, String externalContigId) {
+			//no-op
+			
+<span class="fc" id="L384">		}</span>
+
+		@Override
+		public void visitScaffoldLink(String externalScaffoldId1,
+				String externalScaffoldId2, LinkOrientation orientation,
+				OverlapType overlapType, OverlapStatus status,
+				int numberOfEdges, float meanDistance, float stddev,
+				Set&lt;MatePairEvidence&gt; matePairEvidence) {
+			//no-op			
+<span class="nc" id="L393">		}</span>
+		
+		@Override
+		public void visitEnd() {
+			//no-op			
+<span class="nc" id="L398">		}</span>
+
+		@Override
+		public void halted() {
+			//no-op
+			
+<span class="fc" id="L404">		}</span>
+		public final Set&lt;String&gt; getReadsInContig() {
+<span class="pc bpc" id="L406" title="1 of 2 branches missed.">			if(readsInContig ==null){</span>
+<span class="nc" id="L407">				throw new IllegalStateException(&quot;contig not found&quot;);</span>
+			}
+<span class="fc" id="L409">			return readsInContig;</span>
+		}
+	}
+	
+	private static class ValidRangeVisitor implements AsmVisitor{
+		private final Set&lt;String&gt; readsInContig;
+		private final Map&lt;String,Range&gt; validRanges;
+		
+<span class="fc" id="L417">		public ValidRangeVisitor(Set&lt;String&gt; readsInContig) {</span>
+<span class="fc" id="L418">			this.readsInContig = readsInContig;</span>
+<span class="fc" id="L419">			validRanges = new HashMap&lt;String, Range&gt;(MapUtil.computeMinHashMapSizeWithoutRehashing(readsInContig.size()));</span>
+<span class="fc" id="L420">		}</span>
+
+		public Map&lt;String,Range&gt;  getValidRanges() {
+<span class="fc" id="L423">			return validRanges;</span>
+		}
+
+		@Override
+		public void visitLibraryStatistics(String externalId, long internalId,
+				float meanOfDistances, float stdDev, long min, long max,
+				List&lt;Long&gt; histogram) {
+			//no-op			
+<span class="fc" id="L431">		}</span>
+
+		@Override
+		public void visitRead(String externalId, long internalId,
+				MateStatus mateStatus, boolean isSingleton, Range clearRange) {
+<span class="pc bpc" id="L436" title="1 of 2 branches missed.">			if(readsInContig.contains(externalId)){</span>
+<span class="fc" id="L437">				validRanges.put(externalId, clearRange);</span>
+			}
+			
+<span class="fc" id="L440">		}</span>
+
+		@Override
+		public void visitMatePair(String externalIdOfRead1,
+				String externalIdOfRead2, MateStatus mateStatus) {
+			//no-op			
+<span class="nc" id="L446">		}</span>
+
+		@Override
+		public AsmUnitigVisitor visitUnitig(AsmVisitorCallback callback,
+				String externalId, long internalId, float aStat,
+				float measureOfPolymorphism, UnitigStatus status,
+				NucleotideSequence consensusSequence,
+				QualitySequence consensusQualities, long numberOfReads) {
+			//if we get here stop parsing
+<span class="fc" id="L455">			callback.haltParsing();</span>
+<span class="fc" id="L456">			return null;</span>
+		}
+
+		@Override
+		public void visitUnitigLink(String externalUnitigId1,
+				String externalUnitigId2, LinkOrientation orientation,
+				OverlapType overlapType, OverlapStatus status,
+				boolean isPossibleChimera, int numberOfEdges,
+				float meanDistance, float stddev,
+				Set&lt;MatePairEvidence&gt; matePairEvidence) {
+			//no-op			
+<span class="nc" id="L467">		}</span>
+
+		@Override
+		public void visitContigLink(String externalContigId1,
+				String externalContigId2, LinkOrientation orientation,
+				OverlapType overlapType, OverlapStatus status,
+				int numberOfEdges, float meanDistance, float stddev,
+				Set&lt;MatePairEvidence&gt; matePairEvidence) {
+			//no-op
+			
+<span class="nc" id="L477">		}</span>
+
+		@Override
+		public AsmContigVisitor visitContig(AsmVisitorCallback callback,
+				String externalId, long internalId, boolean isDegenerate,
+				NucleotideSequence consensusSequence,
+				QualitySequence consensusQualities, long numberOfReads,
+				long numberOfUnitigs, long numberOfVariants) {
+			//if we get here stop parsing
+<span class="fc" id="L486">			callback.haltParsing();</span>
+<span class="fc" id="L487">			return null;</span>
+		}
+
+		@Override
+		public AsmScaffoldVisitor visitScaffold(AsmVisitorCallback callback,
+				String externalId, long internalId, int numberOfContigPairs) {
+			//if we get here stop parsing
+<span class="nc" id="L494">			callback.haltParsing();</span>
+<span class="nc" id="L495">			return null;</span>
+		}
+
+		@Override
+		public void visitScaffold(AsmVisitorCallback callback,
+				String externalId, long internalId, String externalContigId) {
+			//if we get here stop parsing
+<span class="fc" id="L502">			callback.haltParsing();			</span>
+<span class="fc" id="L503">		}</span>
+
+		@Override
+		public void visitScaffoldLink(String externalScaffoldId1,
+				String externalScaffoldId2, LinkOrientation orientation,
+				OverlapType overlapType, OverlapStatus status,
+				int numberOfEdges, float meanDistance, float stddev,
+				Set&lt;MatePairEvidence&gt; matePairEvidence) {
+			//no-op
+			
+<span class="nc" id="L513">		}</span>
+
+		@Override
+		public void visitEnd() {
+			//no-op			
+<span class="nc" id="L518">		}</span>
+
+		@Override
+		public void halted() {
+			//no-op
+			
+<span class="fc" id="L524">		}</span>
+	}
+	
+	private class SingleContigVisitorBuilder implements AsmVisitor{
+		private final Map&lt;String, Range&gt; validRanges;
+		private AsmUnitigBuilder builder;
+		
+<span class="fc" id="L531">		public SingleContigVisitorBuilder(Map&lt;String, Range&gt; validRanges) {</span>
+<span class="fc" id="L532">			this.validRanges = validRanges;</span>
+<span class="fc" id="L533">		}</span>
+
+		@Override
+		public void visitLibraryStatistics(String externalId, long internalId,
+				float meanOfDistances, float stdDev, long min, long max,
+				List&lt;Long&gt; histogram) {
+			//no-op			
+<span class="nc" id="L540">		}</span>
+
+		@Override
+		public void visitRead(String externalId, long internalId,
+				MateStatus mateStatus, boolean isSingleton, Range clearRange) {
+			//no-op
+			
+<span class="nc" id="L547">		}</span>
+
+		@Override
+		public void visitMatePair(String externalIdOfRead1,
+				String externalIdOfRead2, MateStatus mateStatus) {
+			//no-op			
+<span class="nc" id="L553">		}</span>
+
+		@Override
+		public AsmUnitigVisitor visitUnitig(final AsmVisitorCallback callback,
+				String externalId, long internalId, float aStat,
+				float measureOfPolymorphism, UnitigStatus status,
+				NucleotideSequence consensusSequence,
+				QualitySequence consensusQualities, long numberOfReads) {
+			//should be the first unitig we see
+<span class="fc" id="L562">			return new AbstractAsmUnitigBuilder(externalId,consensusSequence,</span>
+<span class="fc" id="L563">					fullLengthSequences, validRanges) {</span>
+				
+				@Override
+				protected void visitUnitig(AsmUnitigBuilder builder) {
+<span class="fc" id="L567">					SingleContigVisitorBuilder.this.builder = builder;</span>
+<span class="fc" id="L568">					callback.haltParsing();</span>
+<span class="fc" id="L569">				}</span>
+			};
+		}
+
+		@Override
+		public void visitUnitigLink(String externalUnitigId1,
+				String externalUnitigId2, LinkOrientation orientation,
+				OverlapType overlapType, OverlapStatus status,
+				boolean isPossibleChimera, int numberOfEdges,
+				float meanDistance, float stddev,
+				Set&lt;MatePairEvidence&gt; matePairEvidence) {
+			//no-op			
+<span class="nc" id="L581">		}</span>
+
+		@Override
+		public void visitContigLink(String externalContigId1,
+				String externalContigId2, LinkOrientation orientation,
+				OverlapType overlapType, OverlapStatus status,
+				int numberOfEdges, float meanDistance, float stddev,
+				Set&lt;MatePairEvidence&gt; matePairEvidence) {
+			//no-op			
+<span class="nc" id="L590">		}</span>
+
+		@Override
+		public AsmContigVisitor visitContig(final AsmVisitorCallback callback,
+				String externalId, long internalId, boolean isDegenerate,
+				NucleotideSequence consensusSequence,
+				QualitySequence consensusQualities, long numberOfReads,
+				long numberOfUnitigs, long numberOfVariants) {
+			
+<span class="fc" id="L599">			return null;</span>
+		}
+
+		@Override
+		public AsmScaffoldVisitor visitScaffold(AsmVisitorCallback callback,
+				String externalId, long internalId, int numberOfContigPairs) {
+			//no-op
+<span class="nc" id="L606">			return null;</span>
+		}
+
+		@Override
+		public void visitScaffold(AsmVisitorCallback callback,
+				String externalId, long internalId, String externalContigId) {
+			//no-op			
+<span class="fc" id="L613">		}</span>
+
+		@Override
+		public void visitScaffoldLink(String externalScaffoldId1,
+				String externalScaffoldId2, LinkOrientation orientation,
+				OverlapType overlapType, OverlapStatus status,
+				int numberOfEdges, float meanDistance, float stddev,
+				Set&lt;MatePairEvidence&gt; matePairEvidence) {
+			//no-op
+			
+<span class="nc" id="L623">		}</span>
+
+		@Override
+		public void visitEnd() {
+			//no-op
+			
+<span class="nc" id="L629">		}</span>
+
+		@Override
+		public void halted() {
+			//no-op			
+<span class="fc" id="L634">		}</span>
+
+		public AsmUnitig build(){
+<span class="pc bpc" id="L637" title="1 of 2 branches missed.">			if(builder ==null){</span>
+<span class="nc" id="L638">				throw new IllegalStateException(&quot;could not find contig in asm file&quot;);</span>
+			}
+<span class="fc" id="L640">			return builder.build();</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

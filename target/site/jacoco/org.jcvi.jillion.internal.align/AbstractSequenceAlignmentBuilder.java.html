@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AbstractSequenceAlignmentBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.align</a> &gt; <span class="el_source">AbstractSequenceAlignmentBuilder.java</span></div><h1>AbstractSequenceAlignmentBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.internal.align;
+
+import java.util.Iterator;
+
+import org.jcvi.jillion.align.SequenceAlignment;
+import org.jcvi.jillion.core.DirectedRange;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.residue.ResidueSequence;
+import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
+/**
+ * {@code AbstractSequenceAlignmentBuilder} is 
+ * an abstract implementation of {@link SequenceAlignmentBuilder}
+ * that handles all the dirty work of building a valid
+ * {@link SequenceAlignment}.  Subclasses only have
+ * to implement a few simple helper methods
+ * to return the correct types.
+ * @author dkatzel
+ *
+ * @param &lt;R&gt; the {@link Residue} type used.
+ * @param &lt;S&gt; the {@link ResidueSequence} type used.
+ * @param &lt;A&gt; the {@link SequenceAlignment} used.
+ * @param &lt;B&gt; the {@link ResidueSequenceBuilder} used.
+ */
+public abstract class AbstractSequenceAlignmentBuilder
+		&lt;R extends Residue, S extends ResidueSequence&lt;R, S,B&gt;, B extends ResidueSequenceBuilder&lt;R, S&gt;, A extends SequenceAlignment&lt;R, S&gt;&gt; implements SequenceAlignmentBuilder&lt;R, S,B,A&gt;{
+
+	private final B querySequenceBuilder, subjectSequenceBuilder;
+<span class="fc" id="L49">	private int numMatches=0, numMisMatches=0;</span>
+<span class="fc" id="L50">	private int alignmentLength=0;</span>
+<span class="fc" id="L51">	private int numGaps=0;</span>
+	private Integer queryStart, subjectStart;
+	private final boolean builtFromTraceback;
+	
+	private Integer subjectShiftAmount;
+	/**
+	 * Constructs a new instance of a {@link SequenceAlignmentBuilder}.
+	 * @param builtFromTraceback this alignment
+	 * will be built from data collected from some kind
+	 * of traceback algorithm.  This will change the behavior of
+	 * how the query and subject alignment ranges are computed.
+	 * @see #setAlignmentOffsets(int, int)
+	 * 
+	 */
+	public AbstractSequenceAlignmentBuilder(boolean builtFromTraceback){
+<span class="fc" id="L66">		this(builtFromTraceback, null);</span>
+<span class="fc" id="L67">	}</span>
+	/**
+         * Constructs a new instance of a {@link SequenceAlignmentBuilder}.
+         * @param builtFromTraceback this alignment
+         * will be built from data collected from some kind
+         * of traceback algorithm.  This will change the behavior of
+         * how the query and subject alignment ranges are computed.
+         * @see #setAlignmentOffsets(int, int)
+         * 
+         */
+<span class="fc" id="L77">        public AbstractSequenceAlignmentBuilder(boolean builtFromTraceback, Integer subjectShiftAmount){</span>
+<span class="fc" id="L78">                querySequenceBuilder = createSequenceBuilder();</span>
+<span class="fc" id="L79">                subjectSequenceBuilder = createSequenceBuilder();</span>
+<span class="fc" id="L80">                this.builtFromTraceback = builtFromTraceback;</span>
+<span class="fc" id="L81">                this.subjectShiftAmount = null;</span>
+<span class="fc" id="L82">                this.subjectShiftAmount = subjectShiftAmount;</span>
+<span class="fc" id="L83">        }</span>
+	public AbstractSequenceAlignmentBuilder(){
+<span class="fc" id="L85">		this(false);		 </span>
+<span class="fc" id="L86">	}</span>
+	/**
+	 * Create a new instance of a 
+	 * {@link ResidueSequenceBuilder} of the correct
+	 * type.
+	 * @return a new {@link ResidueSequenceBuilder};
+	 * can not be null.
+	 */
+	protected abstract B createSequenceBuilder();
+	
+	protected abstract A createAlignment(double percentIdentity,
+				int alignmentLength, int numMismatches, int numGap,
+				S queryAlignment, S subjectAlignment,
+				Range queryRange, Range subjectRange);
+	/**
+	 * Parse the given string into the 
+	 * correct type of {@link Residue}.
+	 * @param sequence the sequence to parse; will never
+	 * be null.
+	 * @return a new {@link Iterable}; can not be null.
+	 */
+	protected abstract Iterable&lt;R&gt; parse(String sequence);
+	/**
+	 * Parse the given char into the 
+	 * correct type of {@link Residue}.
+	 * @param residue the residue to parse.
+	 * @return a new {@link Iterable}; can not be null.
+	 */
+	protected abstract R parse(char residue);
+	
+	
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public SequenceAlignmentBuilder&lt;R,S,B,A&gt; setAlignmentOffsets(
+			int queryOffset, int subjectOffset) {
+<span class="fc" id="L124">		queryStart = queryOffset;</span>
+<span class="fc" id="L125">		subjectStart = subjectOffset;</span>
+<span class="fc" id="L126">		return this;</span>
+	}
+
+	@Override
+	public SequenceAlignmentBuilder&lt;R, S,B,A&gt; addMatches(String matchedSequence) {
+<span class="fc" id="L131">		return addMatches(parse(matchedSequence));</span>
+	}
+	
+	
+	@Override
+	public SequenceAlignmentBuilder&lt;R,S,B,A&gt; addMismatches(String query,
+			String subject) {
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">		if(query.length() != subject.length()){</span>
+<span class="nc" id="L139">			throw new IllegalArgumentException(</span>
+<span class="nc" id="L140">					String.format(&quot;query and subject have different number of residues: %d vs %d&quot;, query.length(), subject.length()));</span>
+			
+		}
+<span class="fc" id="L143">		Iterator&lt;R&gt; queryBases =parse(query).iterator();</span>
+<span class="fc" id="L144">		Iterator&lt;R&gt; subjectBases =parse(subject).iterator();</span>
+		
+<span class="fc bfc" id="L146" title="All 2 branches covered.">		while(queryBases.hasNext()){</span>
+<span class="fc" id="L147">			R nextQuery = queryBases.next();</span>
+<span class="fc" id="L148">			R nextSubject = subjectBases.next();</span>
+<span class="fc" id="L149">			addMismatch(nextQuery, nextSubject);</span>
+<span class="fc" id="L150">		}</span>
+		
+<span class="fc" id="L152">		return this;</span>
+	}
+	@Override
+	public A build() {
+		final double percentIdentity;
+<span class="fc bfc" id="L157" title="All 2 branches covered.">		if(alignmentLength==0){</span>
+<span class="fc" id="L158">			percentIdentity =0D;</span>
+		}else{
+<span class="fc" id="L160">			percentIdentity = ((double)numMatches)/alignmentLength;</span>
+		}
+		final Range queryRange, subjectRange;
+<span class="fc bfc" id="L163" title="All 2 branches covered.">		if(queryStart ==null){</span>
+<span class="fc" id="L164">			queryStart=0;</span>
+		}
+<span class="fc bfc" id="L166" title="All 2 branches covered.">		if(subjectStart ==null){</span>
+<span class="fc" id="L167">			subjectStart=0;</span>
+		}
+<span class="fc" id="L169">		long shiftedSubjectStart= subjectStart;</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">		if(subjectShiftAmount !=null){</span>
+<span class="fc" id="L171">		    shiftedSubjectStart += subjectShiftAmount;</span>
+		}
+<span class="fc bfc" id="L173" title="All 2 branches covered.">		if(builtFromTraceback){</span>
+<span class="fc" id="L174">			queryRange = Range.of(queryStart-querySequenceBuilder.getUngappedLength()+1, queryStart);</span>
+<span class="fc" id="L175">			subjectRange = Range.of(shiftedSubjectStart-subjectSequenceBuilder.getUngappedLength()+1, shiftedSubjectStart);</span>
+			//we built these sequence backwards
+			//since they were built from a traceback
+			//so reverse (but not complement) the sequences
+			//to make them in the correct order.
+<span class="fc" id="L180">			querySequenceBuilder.reverse();</span>
+<span class="fc" id="L181">			subjectSequenceBuilder.reverse();</span>
+		}else{
+<span class="fc" id="L183">			queryRange = new Range.Builder(querySequenceBuilder.getUngappedLength()).shift(queryStart).build();</span>
+<span class="fc" id="L184">			subjectRange = new Range.Builder(subjectSequenceBuilder.getUngappedLength()).shift(shiftedSubjectStart).build();</span>
+		
+		}
+<span class="fc" id="L187">		return createAlignment(percentIdentity, alignmentLength, numMisMatches, numGaps, </span>
+<span class="fc" id="L188">				querySequenceBuilder.build(), subjectSequenceBuilder.build(),</span>
+				queryRange, subjectRange);
+	}
+
+	@Override
+	public SequenceAlignmentBuilder&lt;R,S,B,A&gt; addMatch(R match) {
+<span class="fc" id="L194">		numMatches++;		</span>
+<span class="fc" id="L195">		return appendToBuilders(match,match);</span>
+	}
+	
+	@Override
+	public SequenceAlignmentBuilder&lt;R,S,B,A&gt; addMatches(Iterable&lt;R&gt; matches) {
+<span class="fc bfc" id="L200" title="All 2 branches covered.">		for(R match : matches){</span>
+<span class="fc" id="L201">			addMatch(match);</span>
+<span class="fc" id="L202">		}</span>
+<span class="fc" id="L203">		return this;</span>
+	}
+
+	@Override
+	public SequenceAlignmentBuilder&lt;R,S,B,A&gt; addMismatch(R query, R subject) {
+<span class="fc" id="L208">		numMisMatches++;</span>
+<span class="fc" id="L209">		appendToBuilders(query, subject);</span>
+<span class="fc" id="L210">		return this;</span>
+	}
+
+	private SequenceAlignmentBuilder&lt;R,S,B,A&gt; appendToBuilders(R query, R subject) {
+<span class="fc" id="L214">		querySequenceBuilder.append(query);</span>
+<span class="fc" id="L215">		subjectSequenceBuilder.append(subject);</span>
+<span class="fc" id="L216">		alignmentLength++;</span>
+<span class="fc" id="L217">		return this;</span>
+	}
+
+	@Override
+	public SequenceAlignmentBuilder&lt;R,S,B,A&gt; addGap(char query, char subject){
+<span class="fc" id="L222">		return addGap(parse(query),</span>
+<span class="fc" id="L223">				parse(subject));</span>
+	}
+			
+	@Override
+	public SequenceAlignmentBuilder&lt;R,S,B,A&gt; addGap(R query, R subject) {
+<span class="fc" id="L228">		numGaps++;</span>
+<span class="fc" id="L229">		return appendToBuilders(query,subject);</span>
+	}
+
+	
+	protected abstract class AbstractSequenceAlignmentImpl implements SequenceAlignment&lt;R, S&gt;{
+
+		private final double percentIdentity;
+		private final int alignmentLength, numMismatches, numGap;
+		private final S queryAlignment, subjectAlignment;
+		private final DirectedRange queryRange, subjectRange;
+		
+		
+		public AbstractSequenceAlignmentImpl(double percentIdentity,
+				int alignmentLength, int numMismatches, int numGap,
+				S queryAlignment, S subjectAlignment,
+<span class="fc" id="L244">				Range queryRange, Range subjectRange) {</span>
+<span class="fc" id="L245">			this.percentIdentity = percentIdentity;</span>
+<span class="fc" id="L246">			this.alignmentLength = alignmentLength;</span>
+<span class="fc" id="L247">			this.numMismatches = numMismatches;</span>
+<span class="fc" id="L248">			this.numGap = numGap;</span>
+<span class="fc" id="L249">			this.queryAlignment = queryAlignment;</span>
+<span class="fc" id="L250">			this.subjectAlignment = subjectAlignment;</span>
+<span class="fc" id="L251">			this.queryRange = DirectedRange.create(queryRange);</span>
+<span class="fc" id="L252">			this.subjectRange = DirectedRange.create(subjectRange);</span>
+<span class="fc" id="L253">		}</span>
+
+		@Override
+		public DirectedRange getQueryRange() {
+<span class="fc" id="L257">			return queryRange;</span>
+		}
+
+		@Override
+		public DirectedRange getSubjectRange() {
+<span class="fc" id="L262">			return subjectRange;</span>
+		}
+
+		@Override
+		public double getPercentIdentity() {
+<span class="fc" id="L267">			return percentIdentity;</span>
+		}
+
+		@Override
+		public int getAlignmentLength() {
+<span class="fc" id="L272">			return alignmentLength;</span>
+		}
+
+		@Override
+		public int getNumberOfMismatches() {
+<span class="fc" id="L277">			return numMismatches;</span>
+		}
+
+		@Override
+		public int getNumberOfGapOpenings() {
+<span class="fc" id="L282">			return numGap;</span>
+		}
+
+		@Override
+		public S getGappedQueryAlignment() {
+<span class="fc" id="L287">			return queryAlignment;</span>
+		}
+
+		@Override
+		public S getGappedSubjectAlignment() {
+<span class="fc" id="L292">			return subjectAlignment;</span>
+		}
+
+		@Override
+		public int hashCode() {
+<span class="fc" id="L297">			final int prime = 31;</span>
+<span class="fc" id="L298">			int result = 1;</span>
+<span class="fc" id="L299">			result = prime * result + alignmentLength;</span>
+<span class="fc" id="L300">			result = prime * result + numGap;</span>
+<span class="fc" id="L301">			result = prime * result + numMismatches;</span>
+			long temp;
+<span class="fc" id="L303">			temp = Double.doubleToLongBits(percentIdentity);</span>
+<span class="fc" id="L304">			result = prime * result + (int) (temp ^ (temp &gt;&gt;&gt; 32));</span>
+<span class="pc bpc" id="L305" title="1 of 2 branches missed.">			result = prime</span>
+					* result
+<span class="fc" id="L307">					+ ((queryAlignment == null) ? 0 : queryAlignment.hashCode());</span>
+<span class="pc bpc" id="L308" title="1 of 2 branches missed.">			result = prime * result</span>
+<span class="fc" id="L309">					+ ((queryRange == null) ? 0 : queryRange.hashCode());</span>
+<span class="pc bpc" id="L310" title="1 of 2 branches missed.">			result = prime</span>
+					* result
+					+ ((subjectAlignment == null) ? 0 : subjectAlignment
+<span class="fc" id="L313">							.hashCode());</span>
+<span class="pc bpc" id="L314" title="1 of 2 branches missed.">			result = prime * result</span>
+<span class="fc" id="L315">					+ ((subjectRange == null) ? 0 : subjectRange.hashCode());</span>
+<span class="fc" id="L316">			return result;</span>
+		}
+
+		@Override
+		public String toString() {
+<span class="nc" id="L321">			return &quot;AbstractSequenceAlignmentImpl [percentIdentity=&quot;</span>
+					+ percentIdentity + &quot;, alignmentLength=&quot; + alignmentLength
+					+ &quot;, numMismatches=&quot; + numMismatches + &quot;, numGap=&quot; + numGap
+					+ &quot;, queryAlignment=&quot; + queryAlignment
+					+ &quot;, subjectAlignment=&quot; + subjectAlignment
+					+ &quot;, queryRange=&quot; + queryRange + &quot;, subjectRange=&quot;
+					+ subjectRange + &quot;]&quot;;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+<span class="fc bfc" id="L332" title="All 2 branches covered.">			if (this == obj){</span>
+<span class="fc" id="L333">				return true;</span>
+			}
+<span class="fc bfc" id="L335" title="All 2 branches covered.">			if (obj == null){</span>
+<span class="fc" id="L336">				return false;</span>
+			}
+<span class="fc bfc" id="L338" title="All 2 branches covered.">			if (!(obj instanceof AbstractSequenceAlignmentBuilder.AbstractSequenceAlignmentImpl)){</span>
+<span class="fc" id="L339">				return false;</span>
+			}
+			@SuppressWarnings(&quot;unchecked&quot;)
+<span class="fc" id="L342">			AbstractSequenceAlignmentImpl other = (AbstractSequenceAlignmentImpl) obj;</span>
+
+<span class="pc bpc" id="L344" title="1 of 2 branches missed.">			if (alignmentLength != other.alignmentLength){</span>
+<span class="nc" id="L345">				return false;</span>
+			}
+<span class="pc bpc" id="L347" title="1 of 2 branches missed.">			if (numGap != other.numGap){</span>
+<span class="nc" id="L348">				return false;</span>
+			}
+<span class="fc bfc" id="L350" title="All 2 branches covered.">			if (numMismatches != other.numMismatches){</span>
+<span class="fc" id="L351">				return false;</span>
+			}
+<span class="fc" id="L353">			if (Double.doubleToLongBits(percentIdentity) != Double</span>
+<span class="pc bpc" id="L354" title="1 of 2 branches missed.">					.doubleToLongBits(other.percentIdentity)){</span>
+<span class="nc" id="L355">				return false;</span>
+			}
+<span class="pc bpc" id="L357" title="1 of 2 branches missed.">			if (queryAlignment == null) {</span>
+<span class="nc bnc" id="L358" title="All 2 branches missed.">				if (other.queryAlignment != null){</span>
+<span class="nc" id="L359">					return false;</span>
+				}
+<span class="pc bpc" id="L361" title="1 of 2 branches missed.">			} else if (!queryAlignment.equals(other.queryAlignment)){</span>
+<span class="nc" id="L362">				return false;</span>
+			}
+<span class="pc bpc" id="L364" title="1 of 2 branches missed.">			if (queryRange == null) {</span>
+<span class="nc bnc" id="L365" title="All 2 branches missed.">				if (other.queryRange != null){</span>
+<span class="nc" id="L366">					return false;</span>
+				}
+<span class="pc bpc" id="L368" title="1 of 2 branches missed.">			} else if (!queryRange.equals(other.queryRange)){</span>
+<span class="nc" id="L369">				return false;</span>
+			}
+<span class="pc bpc" id="L371" title="1 of 2 branches missed.">			if (subjectAlignment == null) {</span>
+<span class="nc bnc" id="L372" title="All 2 branches missed.">				if (other.subjectAlignment != null){</span>
+<span class="nc" id="L373">					return false;</span>
+				}
+<span class="pc bpc" id="L375" title="1 of 2 branches missed.">			} else if (!subjectAlignment.equals(other.subjectAlignment)){</span>
+<span class="nc" id="L376">				return false;</span>
+			}
+<span class="pc bpc" id="L378" title="1 of 2 branches missed.">			if (subjectRange == null) {</span>
+<span class="nc bnc" id="L379" title="All 2 branches missed.">				if (other.subjectRange != null){</span>
+<span class="nc" id="L380">					return false;</span>
+				}
+<span class="pc bpc" id="L382" title="1 of 2 branches missed.">			} else if (!subjectRange.equals(other.subjectRange)){</span>
+<span class="nc" id="L383">				return false;</span>
+			}
+<span class="fc" id="L385">			return true;</span>
+		}
+
+		
+
+		
+		
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

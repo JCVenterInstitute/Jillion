@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CompactProteinSequence.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.core.residue.aa</a> &gt; <span class="el_source">CompactProteinSequence.java</span></div><h1>CompactProteinSequence.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.core.residue.aa;
+
+import java.io.ObjectInputStream;
+
+/**
+ * {@code CompactProteinSequence} is 
+ * a {@link ProteinSequence} that uses a byte array to store each
+ * each {@link AminoAcid} using 5 bits. This is a 37.5% memory reduction compared to 
+ * encoding the data as one byte each or 68% memory reduction compared
+ * to encoding each AminoAcid as one char each.
+ * @author dkatzel
+ *
+ */
+class CompactProteinSequence extends AbstractProteinSequence {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 112126544528540261L;
+
+	public CompactProteinSequence(AminoAcid[] aas) {
+<span class="fc" id="L42">		super(aas, CompactProteinSequenceCodec.INSTANCE);</span>
+<span class="fc" id="L43">	}</span>
+	
+	private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+<span class="nc" id="L46">		throw new java.io.InvalidObjectException(&quot;Proxy required&quot;);</span>
+	}
+
+    @Override
+    public ProteinSequenceBuilder newEmptyBuilder() {
+<span class="nc" id="L51">        return new ProteinSequenceBuilder();</span>
+    }
+
+    @Override
+    public ProteinSequenceBuilder newEmptyBuilder(
+            int initialCapacity) {
+<span class="nc" id="L57">        return new ProteinSequenceBuilder(initialCapacity);</span>
+    }
+	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

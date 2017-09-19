@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CigarElement.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.sam.cigar</a> &gt; <span class="el_source">CigarElement.java</span></div><h1>CigarElement.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.sam.cigar;
+/**
+ * Value object containing a single 
+ * element of a Cigar.
+ * @author dkatzel
+ *
+ */
+public final class CigarElement {
+	//since the BAM file
+	//stores the op_length in 28bits
+	//we can safely use a signed int
+	//which can store 31 bits
+	private final int length;
+	
+	private final CigarOperation op;
+	/**
+	 * Create a new {@link CigarElement} object.
+	 * 
+	 * @param op The {@link CigarOperation}; can not be null.
+	 * 
+	 * @param length the length of this operation; can not be &lt; 1.
+	 * 
+	 * @throws NullPointerException if op is null.
+	 * @throws IllegalArgumentException if length &lt; 1.
+	 */
+<span class="fc" id="L46">	public CigarElement(CigarOperation op, int length) {</span>
+<span class="pc bpc" id="L47" title="1 of 2 branches missed.">		if(op==null){</span>
+<span class="nc" id="L48">			throw new NullPointerException(&quot;cigar op can not be null&quot;);</span>
+		}
+		//length shouldn't be 0
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">		if(length&lt;1){</span>
+<span class="nc" id="L52">			throw new IllegalArgumentException(&quot;length can &lt; 1&quot;);</span>
+		}
+<span class="fc" id="L54">		this.op = op;</span>
+<span class="fc" id="L55">		this.length = length;</span>
+<span class="fc" id="L56">	}</span>
+	/**
+	 * Get the length of this operation.
+	 * @return the length as a positive int.
+	 */
+	public int getLength() {
+<span class="fc" id="L62">		return length;</span>
+	}
+	/**
+	 * Get the {@link CigarOperation} of this element.
+	 * @return a {@link CigarOperation}; will never be null.
+	 */
+	public CigarOperation getOp() {
+<span class="fc" id="L69">		return op;</span>
+	}
+
+	@Override
+	public int hashCode() {
+<span class="fc" id="L74">		final int prime = 31;</span>
+<span class="fc" id="L75">		int result = 1;</span>
+<span class="fc" id="L76">		result = prime * result + length;</span>
+<span class="fc" id="L77">		result = prime * result + op.hashCode();</span>
+<span class="fc" id="L78">		return result;</span>
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+<span class="fc bfc" id="L83" title="All 2 branches covered.">		if (this == obj) {</span>
+<span class="fc" id="L84">			return true;</span>
+		}
+<span class="fc bfc" id="L86" title="All 2 branches covered.">		if (obj == null) {</span>
+<span class="fc" id="L87">			return false;</span>
+		}
+<span class="fc bfc" id="L89" title="All 2 branches covered.">		if (!(obj instanceof CigarElement)) {</span>
+<span class="fc" id="L90">			return false;</span>
+		}
+<span class="fc" id="L92">		CigarElement other = (CigarElement) obj;</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">		if (length != other.length) {</span>
+<span class="fc" id="L94">			return false;</span>
+		}
+<span class="fc bfc" id="L96" title="All 2 branches covered.">		if (op != other.op) {</span>
+<span class="fc" id="L97">			return false;</span>
+		}
+<span class="fc" id="L99">		return true;</span>
+	}
+	
+	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

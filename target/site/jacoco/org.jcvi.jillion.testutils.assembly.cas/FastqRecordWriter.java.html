@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>FastqRecordWriter.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.testutils.assembly.cas</a> &gt; <span class="el_source">FastqRecordWriter.java</span></div><h1>FastqRecordWriter.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.testutils.assembly.cas;
+
+import java.io.File;
+import java.io.IOException;
+
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.trace.fastq.FastqWriterBuilder;
+
+public final class FastqRecordWriter implements RecordWriter{
+	
+	
+	private final org.jcvi.jillion.trace.fastq.FastqWriter writer;
+	private final File fastqFile;
+	private final int maxNumberOfRecordsToWrite;
+<span class="pc" id="L37">	private int counter=0;</span>
+	
+	
+	public FastqRecordWriter(File workingDir) throws IOException{
+<span class="fc" id="L41">		this(workingDir, Integer.MAX_VALUE);</span>
+<span class="fc" id="L42">	}</span>
+<span class="fc" id="L43">	public FastqRecordWriter(File workingDir, int maxRecordsToWrite) throws IOException{</span>
+<span class="fc bfc" id="L44" title="All 2 branches covered.">		if(maxRecordsToWrite &lt;1){</span>
+<span class="fc" id="L45">			throw new IllegalArgumentException(&quot;max records can not &lt; 1&quot;);</span>
+		}
+<span class="fc" id="L47">		fastqFile = File.createTempFile(&quot;reads&quot;, &quot;.fastq&quot;, workingDir);</span>
+<span class="fc" id="L48">		writer = new FastqWriterBuilder(fastqFile).build();</span>
+<span class="fc" id="L49">		maxNumberOfRecordsToWrite = maxRecordsToWrite;</span>
+		
+<span class="fc" id="L51">	}</span>
+	
+<span class="nc" id="L53">	public FastqRecordWriter(File workingDir, String filename, int maxRecordsToWrite) throws IOException{</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">		if(maxRecordsToWrite &lt;1){</span>
+<span class="nc" id="L55">			throw new IllegalArgumentException(&quot;max records can not &lt; 1&quot;);</span>
+		}
+<span class="nc" id="L57">		fastqFile = new File(workingDir, filename);</span>
+<span class="nc" id="L58">		writer = new FastqWriterBuilder(fastqFile).build();</span>
+<span class="nc" id="L59">		maxNumberOfRecordsToWrite = maxRecordsToWrite;</span>
+		
+<span class="nc" id="L61">	}</span>
+	
+	@Override
+	public void close() throws IOException {
+<span class="fc" id="L65">		writer.close();</span>
+<span class="fc" id="L66">	}</span>
+	@Override
+	public void write(String id, NucleotideSequence seq) throws IOException {
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">		if(!canWriteAnotherRecord()){</span>
+<span class="nc" id="L70">			throw new IllegalStateException(&quot;too many records to write&quot;);</span>
+		}
+<span class="fc" id="L72">		counter++;</span>
+		//fake qualities
+<span class="fc" id="L74">		int length = (int)seq.getLength();</span>
+		QualitySequence quals;
+<span class="pc bpc" id="L76" title="1 of 2 branches missed.">		if(length ==0){</span>
+<span class="nc" id="L77">			quals = new QualitySequenceBuilder(0).build();</span>
+		}else{
+
+<span class="fc" id="L80">			QualitySequenceBuilder builder = new QualitySequenceBuilder(length);</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">			for(int i=0; i&lt;length; i++){</span>
+<span class="fc" id="L82">				builder.append(RecordWriter.DEFAULT_QV);</span>
+			}
+<span class="fc" id="L84">			quals = builder.build();</span>
+		}
+		
+<span class="fc" id="L87">		writer.write(id, seq, quals);</span>
+<span class="fc" id="L88">	}</span>
+	
+	public boolean canWriteAnotherRecord(){
+<span class="fc bfc" id="L91" title="All 2 branches covered.">		return counter != maxNumberOfRecordsToWrite;</span>
+	}
+	
+	public File getFile(){
+<span class="fc" id="L95">		return fastqFile;</span>
+	}
+	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

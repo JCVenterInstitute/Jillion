@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CasGappedReferenceDataStoreBuilderVisitor.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.clc.cas</a> &gt; <span class="el_source">CasGappedReferenceDataStoreBuilderVisitor.java</span></div><h1>CasGappedReferenceDataStoreBuilderVisitor.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly.clc.cas;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Predicate;
+
+import org.jcvi.jillion.assembly.GappedReferenceBuilder;
+import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
+import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.datastore.DataStoreFilters;
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.MapUtil;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
+
+/**
+ * {@code CasGappedReferenceDataStoreBuilderVisitor}
+ * is a {@link CasFileVisitor} that will create a 
+ * {@link CasGappedReferenceDataStore} when it visits a {@literal .cas}
+ * encoded file.
+ * 
+ * &lt;p&gt;
+ * CLC {@literal .cas} files don't store the final gapped assembly
+ * consensus sequences.  In order to correctly build valid
+ * contig objects, the gapped consensus must be calculated for each
+ * reference by visiting all the alignment information of all the input reads.
+ * 
+ * &lt;p&gt;
+ * Once the entire cas file has been visited, the {@link #build()}
+ * method can be called to return the {@link CasGappedReferenceDataStore}.
+ * 
+ * &lt;p&gt;
+ * Here is how this class should be used:
+ * &lt;pre&gt;
+ * File casFile = ...
+ CasGappedReferenceDataStoreBuilderVisitor gappedRefVisitor = new CasGappedReferenceDataStoreBuilderVisitor(casFile.getParentFile());
+ 
+ CasFileParser casFileParser = new CasFileParser(casFile);
+ casFileParser.accept(gappedRefVisitor);
+ 
+ CasGappedReferenceDataStore gappedReferenceDataStore = gappedRefVisitor.build();
+        &lt;/pre&gt;
+ * 
+ * 
+ * 
+ * @author dkatzel
+ *
+ */
+public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileVisitor{
+
+	private String[] refIndexToIdMap;
+	
+	private GappedReferenceBuilder[] gappedReferenceBuilders ;
+<span class="fc" id="L84">	private volatile boolean halted=false;</span>
+	
+<span class="fc" id="L86">	private volatile CasGappedReferenceDataStore builtDataStore=null;</span>
+	
+	private final File casDir;
+	private final Predicate&lt;String&gt; refIdFilter;
+<span class="fc" id="L90">	private int refCounter=0;</span>
+	/**
+	 * Create a new Visitor that only makes a gapped
+	 * reference DataStore for all references.
+	 * This is the same as using a refIdFilter that accepts
+	 * all references.
+	 * 
+	 * @param casDir he parent directory that the cas file to be parsed is located in;
+	 * if this value is {@code null} then the cas is located in the current.
+	 */
+	public CasGappedReferenceDataStoreBuilderVisitor(File casDir) {
+<span class="fc" id="L101">		this(casDir, DataStoreFilters.alwaysAccept());</span>
+<span class="fc" id="L102">	}</span>
+	/**
+	 * Create a new Visitor that only makes a gapped
+	 * reference DataStore for the references that pass the given {@link Predicate}.
+	 * 
+	 * @param casDir the parent directory that the cas file to be parsed is located in;
+	 * if this value is {@code null} then the cas is located in the current 
+	 * @param refIdFilter the filter to use to determine if some alignments should be skipped;
+	 * can not be null.
+	 * 
+	 * @throws NullPointerException if refIdFilter is null.
+	 * @since 5.0
+	 */
+<span class="fc" id="L115">	public CasGappedReferenceDataStoreBuilderVisitor(File casDir, Predicate&lt;String&gt; refIdFilter) {</span>
+<span class="fc" id="L116">		Objects.requireNonNull(refIdFilter);</span>
+<span class="fc" id="L117">		this.casDir = casDir;</span>
+<span class="fc" id="L118">		this.refIdFilter = refIdFilter;</span>
+<span class="fc" id="L119">	}</span>
+	
+
+	@Override
+	public void visitAssemblyProgramInfo(String name, String version,
+			String parameters) {
+<span class="fc" id="L125">		checkNotYetBuilt();</span>
+<span class="fc" id="L126">	}</span>
+
+	@Override
+	public void visitMetaData(long numberOfReferenceSequences,	long numberOfReads) {
+<span class="fc" id="L130">		checkNotYetBuilt();</span>
+<span class="fc" id="L131">		gappedReferenceBuilders = new GappedReferenceBuilder[(int)numberOfReferenceSequences];</span>
+<span class="fc" id="L132">		refIndexToIdMap = new String[(int)numberOfReferenceSequences];</span>
+<span class="fc" id="L133">	}</span>
+
+	@Override
+	public void visitNumberOfReadFiles(long numberOfReadFiles) {
+<span class="fc" id="L137">		checkNotYetBuilt();</span>
+<span class="fc" id="L138">	}</span>
+
+	@Override
+	public void visitNumberOfReferenceFiles(long numberOfReferenceFiles) {
+<span class="fc" id="L142">		checkNotYetBuilt();</span>
+<span class="fc" id="L143">	}</span>
+
+	@Override
+	public void visitReferenceFileInfo(CasFileInfo referenceFileInfo) {
+<span class="fc" id="L147">		checkNotYetBuilt();</span>
+		
+<span class="fc bfc" id="L149" title="All 2 branches covered.">		for(String filePath: referenceFileInfo.getFileNames()){</span>
+            try {
+<span class="fc" id="L151">            	File refFile = CasUtil.getFileFor(casDir, filePath);</span>
+<span class="fc" id="L152">            	NucleotideFastaDataStore datastore = new NucleotideFastaFileDataStoreBuilder(refFile)</span>
+<span class="fc" id="L153">            												.build();</span>
+            	
+            	
+<span class="fc" id="L156">            	StreamingIterator&lt;NucleotideFastaRecord&gt; iter=null;</span>
+            	try{            		
+<span class="fc" id="L158">            		iter = datastore.iterator();</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">            		while(iter.hasNext()){</span>
+<span class="fc" id="L160">            			NucleotideFastaRecord next = iter.next();</span>
+<span class="fc" id="L161">            			String id = next.getId();</span>
+            			
+<span class="fc" id="L163">            			refIndexToIdMap[refCounter]= id;</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">            			if(refIdFilter.test(id)){</span>
+<span class="fc" id="L165">	            			gappedReferenceBuilders[refCounter]= new GappedReferenceBuilder(next.getSequence());</span>
+            			}
+<span class="fc" id="L167">            			refCounter++;</span>
+<span class="fc" id="L168">            		}</span>
+            	}finally{
+<span class="pc" id="L170">        			IOUtil.closeAndIgnoreErrors(iter, datastore);</span>
+<span class="fc" id="L171">        		}</span>
+                
+<span class="nc" id="L173">            } catch (Exception e) {</span>
+<span class="nc" id="L174">               throw new IllegalStateException(&quot;could not load read file: &quot;+ filePath,e);</span>
+<span class="fc" id="L175">            }</span>
+<span class="fc" id="L176">        }</span>
+		
+<span class="fc" id="L178">	}</span>
+
+	@Override
+	public void visitReadFileInfo(CasFileInfo readFileInfo) {
+<span class="fc" id="L182">		checkNotYetBuilt();</span>
+<span class="fc" id="L183">	}</span>
+
+	@Override
+	public void visitScoringScheme(CasScoringScheme scheme) {
+<span class="fc" id="L187">		checkNotYetBuilt();</span>
+<span class="fc" id="L188">	}</span>
+
+	@Override
+	public void visitReferenceDescription(CasReferenceDescription description) {
+<span class="fc" id="L192">		checkNotYetBuilt();</span>
+<span class="fc" id="L193">	}</span>
+
+	@Override
+	public void visitContigPair(CasContigPair contigPair) {
+<span class="nc" id="L197">		checkNotYetBuilt();</span>
+<span class="nc" id="L198">	}</span>
+
+	@Override
+	public void visitEnd() {
+<span class="fc" id="L202">		checkNotYetBuilt();</span>
+<span class="fc" id="L203">		int capacity = MapUtil.computeMinHashMapSizeWithoutRehashing(gappedReferenceBuilders.length);</span>
+<span class="fc" id="L204">		Map&lt;String, NucleotideSequence&gt; gappedSequenceMap = new LinkedHashMap&lt;String, NucleotideSequence&gt;(capacity);</span>
+<span class="fc bfc" id="L205" title="All 2 branches covered.">	    for(int j = 0; j&lt; gappedReferenceBuilders.length; j++){</span>
+        	
+<span class="fc" id="L207">        	String refId = refIndexToIdMap[j];</span>
+<span class="fc bfc" id="L208" title="All 2 branches covered.">        	if(refIdFilter.test(refId)){</span>
+<span class="fc" id="L209">        		gappedSequenceMap.put(refId, gappedReferenceBuilders[j].build());</span>
+        	}
+        }
+        
+<span class="fc" id="L213">        builtDataStore = new CasGappedReferenceDataStoreImpl(DataStore.of(gappedSequenceMap), </span>
+        													refIndexToIdMap);
+		
+<span class="fc" id="L216">	}</span>
+
+	private void checkNotYetBuilt(){
+<span class="pc bpc" id="L219" title="1 of 2 branches missed.">		if(builtDataStore !=null){</span>
+<span class="nc" id="L220">			throw new IllegalStateException(&quot;should only parse cas once&quot;);</span>
+		}
+<span class="fc" id="L222">	}</span>
+	
+
+	@Override
+	public void halted() {
+<span class="nc" id="L227">		halted = true;</span>
+<span class="nc" id="L228">	}</span>
+
+	@Override
+	public CasMatchVisitor visitMatches(CasVisitorCallback callback) {
+<span class="fc" id="L232">		return new MaxRefGapVisitor();</span>
+	}
+
+	public CasGappedReferenceDataStore build(){
+<span class="pc bpc" id="L236" title="1 of 2 branches missed.">		if(halted){</span>
+<span class="nc" id="L237">			throw new IllegalStateException(&quot;visiting was halted; can not build datastore&quot;);</span>
+		}
+<span class="pc bpc" id="L239" title="1 of 2 branches missed.">		if(builtDataStore ==null){</span>
+<span class="nc" id="L240">			throw new IllegalStateException(&quot;have not yet completly visited the cas to build the datastore&quot;);</span>
+		}
+<span class="fc" id="L242">		return builtDataStore;</span>
+	}
+	
+<span class="fc" id="L245">	private class MaxRefGapVisitor implements CasMatchVisitor{</span>
+
+		private List&lt;CasAlignmentRegion&gt; getAlignmentRegionsToConsider(
+				CasAlignment alignment) {
+<span class="fc" id="L249">			List&lt;CasAlignmentRegion&gt; regionsToConsider = new ArrayList&lt;CasAlignmentRegion&gt;(alignment.getAlignmentRegions());</span>
+<span class="fc" id="L250">			int lastIndex = regionsToConsider.size()-1;</span>
+			//CLC puts 3' unmapped portion of read as an insertion
+<span class="fc bfc" id="L252" title="All 2 branches covered.">			if(regionsToConsider.get(lastIndex).getType()==CasAlignmentRegionType.INSERT){</span>
+<span class="fc" id="L253">			    regionsToConsider.remove(lastIndex);</span>
+			}
+<span class="fc" id="L255">			return regionsToConsider;</span>
+		}
+
+		@Override
+		public void visitMatch(CasMatch match) {
+<span class="fc bfc" id="L260" title="All 2 branches covered.">			 if(match.matchReported()){</span>
+<span class="fc" id="L261">		            handleMatch(match);</span>
+		        }
+			
+<span class="fc" id="L264">		}</span>
+
+		private void handleMatch(CasMatch match) {
+<span class="fc" id="L267">			CasAlignment alignment =match.getChosenAlignment();</span>
+<span class="fc" id="L268">			long referenceIndex = alignment.getReferenceIndex();		            </span>
+			
+<span class="fc bfc" id="L270" title="All 2 branches covered.">			if(includeReadsFromThisReference(referenceIndex)){</span>
+			
+<span class="fc" id="L272">				addInsertionsToReference(alignment, referenceIndex);</span>
+			}
+<span class="fc" id="L274">		}</span>
+
+		private void addInsertionsToReference(CasAlignment alignment, Long referenceIndex) {
+			
+<span class="fc" id="L278">			GappedReferenceBuilder builder = gappedReferenceBuilders[referenceIndex.intValue()];</span>
+<span class="pc bpc" id="L279" title="1 of 2 branches missed.">			if(builder ==null){</span>
+				//skip read
+<span class="nc" id="L281">				return;</span>
+			}
+<span class="fc" id="L283">			List&lt;CasAlignmentRegion&gt; regionsToConsider = getAlignmentRegionsToConsider(alignment);</span>
+<span class="fc" id="L284">			boolean outsideValidRange=true;</span>
+<span class="fc" id="L285">			int currentOffset = (int)alignment.getStartOfMatch();</span>
+<span class="fc bfc" id="L286" title="All 2 branches covered.">			for(CasAlignmentRegion region: regionsToConsider){</span>
+				//1st non insertion type is beginning of where we map
+<span class="fc bfc" id="L288" title="All 4 branches covered.">			    if(outsideValidRange &amp;&amp; region.getType() != CasAlignmentRegionType.INSERT){</span>
+<span class="fc" id="L289">			        outsideValidRange=false;</span>
+			    }
+<span class="fc bfc" id="L291" title="All 2 branches covered.">			    if(!outsideValidRange){</span>
+			        
+<span class="fc bfc" id="L293" title="All 2 branches covered.">			        if(region.getType() == CasAlignmentRegionType.INSERT){</span>
+<span class="fc" id="L294">			        	builder.addReadInsertion(currentOffset, (int)region.getLength());			            </span>
+			        }else{
+<span class="fc" id="L296">			            currentOffset +=(int)region.getLength();</span>
+			        }
+			    }
+<span class="fc" id="L299">			}</span>
+<span class="fc" id="L300">		}</span>
+
+		
+		private boolean includeReadsFromThisReference(long referenceIndex){
+<span class="fc" id="L304">			int i = (int)referenceIndex;</span>
+<span class="pc bpc" id="L305" title="1 of 4 branches missed.">			if( i&lt; 0 || i &gt;= gappedReferenceBuilders.length){</span>
+<span class="fc" id="L306">				throw new IllegalStateException(&quot;reference file does not contain a reference with index &quot;+ referenceIndex);</span>
+			}
+<span class="fc bfc" id="L308" title="All 2 branches covered.">			return gappedReferenceBuilders[i] !=null;</span>
+		}
+		
+
+		@Override
+		public void visitEnd() {
+			//no-op
+<span class="fc" id="L315">		}</span>
+
+		@Override
+		public void halted() {
+			//no-op
+<span class="nc" id="L320">		}</span>
+		
+	}
+	
+	 
+	 
+	 private static final class CasGappedReferenceDataStoreImpl implements CasGappedReferenceDataStore{
+
+		 private final DataStore&lt;NucleotideSequence&gt; delegate;
+		 private final String[] refIndexToIdMap;
+		 private final Map&lt;String, Long&gt; id2IndexMap;
+		 
+		public CasGappedReferenceDataStoreImpl(
+				DataStore&lt;NucleotideSequence&gt; delegate,
+<span class="fc" id="L334">				String[] refIndexToIdMap) {</span>
+<span class="fc" id="L335">			this.delegate = delegate;</span>
+<span class="fc" id="L336">			this.refIndexToIdMap = refIndexToIdMap;</span>
+<span class="fc" id="L337">			id2IndexMap = new HashMap&lt;String, Long&gt;(MapUtil.computeMinHashMapSizeWithoutRehashing(refIndexToIdMap.length));</span>
+<span class="fc bfc" id="L338" title="All 2 branches covered.">			for(int i=0; i&lt; refIndexToIdMap.length; i++){</span>
+<span class="fc" id="L339">				String id = refIndexToIdMap[i];</span>
+<span class="pc bpc" id="L340" title="1 of 2 branches missed.">				if(id !=null){</span>
+<span class="fc" id="L341">					id2IndexMap.put(id, Long.valueOf(i));</span>
+				}
+			}
+			
+<span class="fc" id="L345">		}</span>
+
+		@Override
+		public Long getIndexById(String id) {
+<span class="nc" id="L349">			return id2IndexMap.get(id);</span>
+		}
+
+		@Override
+		public StreamingIterator&lt;String&gt; idIterator() throws DataStoreException {
+<span class="fc" id="L354">			return delegate.idIterator();</span>
+		}
+
+		@Override
+		public NucleotideSequence get(String id) throws DataStoreException {
+<span class="fc" id="L359">			return delegate.get(id);</span>
+		}
+
+		@Override
+		public boolean contains(String id) throws DataStoreException {
+<span class="fc" id="L364">			return delegate.contains(id);</span>
+		}
+
+		@Override
+		public long getNumberOfRecords() throws DataStoreException {
+<span class="fc" id="L369">			return delegate.getNumberOfRecords();</span>
+		}
+
+		@Override
+		public boolean isClosed() {
+<span class="nc" id="L374">			return delegate.isClosed();</span>
+		}
+
+		@Override
+		public StreamingIterator&lt;NucleotideSequence&gt; iterator()
+				throws DataStoreException {
+<span class="fc" id="L380">			return delegate.iterator();</span>
+		}
+
+		
+		
+		@Override
+		public StreamingIterator&lt;DataStoreEntry&lt;NucleotideSequence&gt;&gt; entryIterator()
+				throws DataStoreException {
+<span class="fc" id="L388">			return delegate.entryIterator();</span>
+		}
+
+		@Override
+		public void close() throws IOException {
+<span class="nc" id="L393">			delegate.close();</span>
+			
+<span class="nc" id="L395">		}</span>
+
+		@Override
+		public NucleotideSequence getReferenceByIndex(long index) throws DataStoreException {
+<span class="fc" id="L399">			return get(getIdByIndex(index));</span>
+		}
+
+		@Override
+		public String getIdByIndex(long index) {
+<span class="fc" id="L404">			return refIndexToIdMap[(int)index];</span>
+		}
+		 
+	 }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

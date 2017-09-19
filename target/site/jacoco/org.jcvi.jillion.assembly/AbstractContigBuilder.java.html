@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AbstractContigBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly</a> &gt; <span class="el_source">AbstractContigBuilder.java</span></div><h1>AbstractContigBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import org.jcvi.jillion.assembly.util.GapQualityValueStrategy;
+import org.jcvi.jillion.assembly.util.Slice;
+import org.jcvi.jillion.assembly.util.SliceBuilder;
+import org.jcvi.jillion.assembly.util.consensus.ConsensusCaller;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+
+/**
+ * {@code AbstractContigBuilder} implements the
+ * {@link ContigBuilder} interface
+ * 
+ * @author dkatzel
+ *
+ *
+ */
+public abstract class AbstractContigBuilder&lt;P extends AssembledRead, C extends Contig&lt;P&gt;&gt; implements ContigBuilder&lt;P,C&gt;{
+	    
+		/**
+	     * default quality value that every basecall will get
+	     * if consensus caller is used to recall the consensus
+	     * but no {@link QualitySequenceDataStore} is given.
+	     */
+<span class="fc" id="L59">	    private static final PhredQuality DEFAULT_QUALITY = PhredQuality.valueOf(30);</span>
+		
+		private final NucleotideSequenceBuilder consensus;
+		
+        private String id;
+        private final Map&lt;String, AssembledReadBuilder&lt;P&gt;&gt; reads;
+        
+        
+      
+    	/**
+    	 * {@link ConsensusCaller} used to update the
+    	 * consensus during {@link #build()}.  If set to {@code null},
+    	 * then no recalling is to be done (null by default).
+    	 */
+<span class="fc" id="L73">    	protected ConsensusCaller consensusCaller =null;</span>
+    	/**
+    	 * {@link QualitySequenceDataStore} used during
+    	 * consensus recalling.  Set to null if 
+    	 * no recalling is to be done. (null by default).
+    	 */
+<span class="fc" id="L79">    	private QualitySequenceDataStore qualityDataStore =null;</span>
+    	
+<span class="fc" id="L81">    	private GapQualityValueStrategy qualityValueStrategy=null;</span>
+        /**
+         * Create a new Builder instance with the given id and consensus.
+         * @param id can not be null.
+         * @param consensus can not be null.
+         * @throws NullPointerException if either id or consensus
+         * are null.
+         */
+<span class="fc" id="L89">        protected AbstractContigBuilder(String id, NucleotideSequence consensus){</span>
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">        	if(id==null){</span>
+<span class="nc" id="L91">        		throw new NullPointerException(&quot;id can not be null&quot;);</span>
+        	}
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">        	if(consensus==null){</span>
+<span class="nc" id="L94">        		throw new NullPointerException(&quot;consensus can not be null&quot;);</span>
+        	}
+<span class="fc" id="L96">            this.id = id;</span>
+<span class="fc" id="L97">            this.consensus = new NucleotideSequenceBuilder(consensus);</span>
+<span class="fc" id="L98">            reads = new LinkedHashMap&lt;String,AssembledReadBuilder&lt;P&gt;&gt;();</span>
+<span class="fc" id="L99">        }</span>
+        public AbstractContigBuilder&lt;P,C&gt; addRead(String id, int offset,Range validRange, String basecalls, Direction dir, int fullUngappedLength){
+<span class="fc" id="L101">            reads.put(id, createPlacedReadBuilder(id,offset,validRange,basecalls,dir,fullUngappedLength));</span>
+<span class="fc" id="L102">            return this;</span>
+        }
+        public  AbstractContigBuilder&lt;P,C&gt;  addRead(P read){
+<span class="fc" id="L105">            reads.put(read.getId(),createPlacedReadBuilder(read));</span>
+<span class="fc" id="L106">            return this;</span>
+        }
+        protected abstract AssembledReadBuilder&lt;P&gt; createPlacedReadBuilder(P read);
+        protected abstract AssembledReadBuilder&lt;P&gt; createPlacedReadBuilder(String id, int offset,Range validRange, String basecalls, Direction dir, int fullUngappedLength);
+
+        
+        /**
+         * Recall the consensus using the given
+         * {@link ConsensusCaller} and {@link QualitySequenceDataStore}
+         * which contains the quality data for all of the reads in this contig.
+         * The consensus will get recalled inside the {@link #build()}
+         * and {@link #recallConsensusNow()}.
+         * method before the {@link Contig} instance is created.
+         * @param consensusCaller the {@link ConsensusCaller}  instance to use
+         * to recall the consensus of this contig; can not be null.
+         * @param qualityDataStore the {@link QualitySequenceDataStore}
+         * which contains all the quality data for all of the reads
+         * in this contig; can not be null.
+         * @return this.
+         * @throws NullPointerException if any parameter is null.
+         */
+        @Override
+        public ContigBuilder&lt;P, C&gt; recallConsensus(ConsensusCaller consensusCaller, 
+        		QualitySequenceDataStore qualityDataStore,
+        		GapQualityValueStrategy qualityValueStrategy){
+<span class="nc bnc" id="L131" title="All 2 branches missed.">        	if(consensusCaller ==null){</span>
+<span class="nc" id="L132">        		throw new NullPointerException(&quot;consensus caller can not be null&quot;);</span>
+        	}
+<span class="nc bnc" id="L134" title="All 2 branches missed.">        	if(qualityDataStore ==null){</span>
+<span class="nc" id="L135">        		throw new NullPointerException(&quot;quality datastore can not be null&quot;);</span>
+        	}
+<span class="nc" id="L137">        	this.consensusCaller=consensusCaller;</span>
+<span class="nc" id="L138">        	this.qualityDataStore = qualityDataStore;</span>
+<span class="nc" id="L139">        	this.qualityValueStrategy = qualityValueStrategy;</span>
+<span class="nc" id="L140">        	return this;</span>
+        }
+        /**
+         * Recall the consensus using the given
+         * {@link ConsensusCaller} using faked quality data
+         * where all basecalls (and gaps) all get the same quality value.
+         * The consensus will get recalled inside the {@link #build()}
+         * and from {@link #recallConsensusNow()}.
+         * method before the {@link Contig} instance is created.
+         * @param consensusCaller the {@link ConsensusCaller}  instance to use
+         * to recall the consensus of this contig; can not be null.
+         * @return this.
+         * @throws NullPointerException if any parameter is null.
+         */
+        public ContigBuilder&lt;P, C&gt; recallConsensus(ConsensusCaller consensusCaller){
+<span class="nc bnc" id="L155" title="All 2 branches missed.">        	if(consensusCaller ==null){</span>
+<span class="nc" id="L156">        		throw new NullPointerException(&quot;consensus caller can not be null&quot;);</span>
+        	}
+<span class="nc" id="L158">        	this.consensusCaller=consensusCaller;</span>
+<span class="nc" id="L159">        	this.qualityDataStore = null;</span>
+<span class="nc" id="L160">        	this.qualityValueStrategy = null;</span>
+<span class="nc" id="L161">        	return this;</span>
+        }
+        
+        /**
+         * Recompute the contig
+         * consensus now using the current reads in the contig
+         * using the {@link ConsensusCaller} and optional quality data
+         * that was set by
+         * {@link #recallConsensus(ConsensusCaller)} or
+         * {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, GapQualityValueStrategy)}.
+         * Only regions of the contig that have read coverage 
+         * get recalled.  The Consensus of &quot;0x&quot; regions
+         * remains unchanged.
+         * 
+         * If this method is called without first
+         * setting a {@link ConsensusCaller}, then this
+         * method will throw an {@link IllegalStateException}.
+         * &lt;p&gt;
+         * Recomputing the contig consensus may be computationally
+         * expensive and time consuming.  So this method
+         * should not be called on a regular basis.
+         * Also, the contig consensus will always
+         * get recalled during {@link #build()}
+         * even if this method has already been called
+         * since it is too hard to track if any underlying read changes occurred
+         * in between.
+         * @return this.
+         * @throws IllegalStateException if a consensus caller
+         * was not first set using {@link #recallConsensus(ConsensusCaller)} or
+         * {@link #recallConsensus(ConsensusCaller, QualitySequenceDataStore, GapQualityValueStrategy)}.
+         * @see #build()
+         */
+        @Override
+        public ContigBuilder&lt;P, C&gt; recallConsensusNow() {
+<span class="nc bnc" id="L195" title="All 2 branches missed.">        	if(consensusCaller==null){</span>
+<span class="nc" id="L196">        		throw new IllegalStateException(&quot;must set consensus caller&quot;);</span>
+        	}
+        	
+<span class="nc" id="L199">        	SliceBuilder builders[] = initializeSliceBuilders(consensus.build());</span>
+        	
+<span class="nc bnc" id="L201" title="All 2 branches missed.">        	for(AssembledReadBuilder&lt;P&gt; aceReadBuilder : reads.values()){</span>
+<span class="nc" id="L202">        		int start = (int)aceReadBuilder.getBegin();</span>
+<span class="nc" id="L203">    			String id =aceReadBuilder.getId();</span>
+<span class="nc" id="L204">    			Direction dir = aceReadBuilder.getDirection();</span>
+<span class="nc" id="L205">    			QualitySequence fullQualities =null;</span>
+<span class="nc bnc" id="L206" title="All 2 branches missed.">    			if(qualityDataStore!=null){</span>
+    				try {
+<span class="nc" id="L208">    					fullQualities = qualityDataStore.get(id);</span>
+<span class="nc" id="L209">    				} catch (DataStoreException e) {</span>
+<span class="nc" id="L210">    					throw new IllegalStateException(&quot;error recalling consensus&quot;,e);</span>
+<span class="nc" id="L211">    				}    				</span>
+<span class="nc bnc" id="L212" title="All 2 branches missed.">        			if(fullQualities ==null){</span>
+<span class="nc" id="L213">        				throw new NullPointerException(&quot;could not get qualities for &quot;+id);</span>
+        			}
+    			}
+<span class="nc" id="L216">    			NucleotideSequence readSequence = aceReadBuilder.getCurrentNucleotideSequence();</span>
+<span class="nc bnc" id="L217" title="All 2 branches missed.">    			if(fullQualities==null){</span>
+<span class="nc" id="L218">    				byte[] qualArray = new byte[(int)readSequence.getUngappedLength()];</span>
+<span class="nc" id="L219">    				Arrays.fill(qualArray, DEFAULT_QUALITY.getQualityScore());</span>
+<span class="nc" id="L220">    				fullQualities = new QualitySequenceBuilder(qualArray).build();</span>
+    			}
+<span class="nc" id="L222">    			QualitySequence gappedValidRangequalities = </span>
+<span class="nc" id="L223">    					qualityValueStrategy.getGappedValidRangeQualitySequenceFor(readSequence, fullQualities, </span>
+<span class="nc" id="L224">    							aceReadBuilder.getClearRange(), dir);	</span>
+    			
+<span class="nc" id="L226">    			Iterator&lt;Nucleotide&gt; baseIter = readSequence.iterator();</span>
+<span class="nc" id="L227">    			Iterator&lt;PhredQuality&gt; qualIter = gappedValidRangequalities.iterator();</span>
+<span class="nc" id="L228">    			int i=0;</span>
+<span class="nc bnc" id="L229" title="All 2 branches missed.">    			while(baseIter.hasNext()){</span>
+<span class="nc" id="L230">    				Nucleotide base = baseIter.next();</span>
+<span class="nc" id="L231">    				PhredQuality quality = qualIter.next();</span>
+<span class="nc" id="L232">    				builders[start+i].add(id, base, quality, dir);</span>
+<span class="nc" id="L233">    				i++;</span>
+<span class="nc" id="L234">    			}</span>
+<span class="nc" id="L235">        	}</span>
+<span class="nc bnc" id="L236" title="All 2 branches missed.">        	for(int i=0; i&lt;builders.length; i++){</span>
+<span class="nc" id="L237">        		SliceBuilder builder = builders[i];</span>
+        		//skip 0x
+<span class="nc bnc" id="L239" title="All 2 branches missed.">        		if(builder.getCurrentCoverageDepth() &gt;0){</span>
+<span class="nc" id="L240">    				Slice slice = builder.build();            </span>
+<span class="nc" id="L241">    	    		consensus.replace(i,consensusCaller.callConsensus(slice).getConsensus());</span>
+        		}
+        	}
+<span class="nc" id="L244">        	return this;</span>
+    	}
+        
+        private SliceBuilder[] initializeSliceBuilders(NucleotideSequence consensus){
+<span class="nc" id="L248">        	SliceBuilder builders[] = new SliceBuilder[(int)consensus.getLength()];</span>
+<span class="nc" id="L249">    		int i=0;</span>
+<span class="nc" id="L250">    		Iterator&lt;Nucleotide&gt; iter = consensus.iterator();</span>
+<span class="nc bnc" id="L251" title="All 2 branches missed.">    		while(iter.hasNext()){</span>
+<span class="nc" id="L252">    			builders[i++] = new SliceBuilder().setConsensus(iter.next());</span>
+    		}
+<span class="nc" id="L254">        	return builders;</span>
+        }
+       
+        /**
+         * 
+        * {@inheritDoc}
+         */
+        @Override
+        public abstract C build();
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public ContigBuilder&lt;P, C&gt; setContigId(String contigId) {
+<span class="nc" id="L268">            id = contigId;</span>
+<span class="nc" id="L269">            return this;</span>
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public String getContigId() {
+<span class="fc" id="L276">            return id;</span>
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public int numberOfReads() {
+<span class="fc" id="L283">            return reads.size();</span>
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public ContigBuilder&lt;P, C&gt; addAllReads(Iterable&lt;P&gt; reads) {
+<span class="nc bnc" id="L290" title="All 2 branches missed.">            for(P read : reads){</span>
+<span class="nc" id="L291">                addRead(read);</span>
+<span class="nc" id="L292">            }</span>
+<span class="nc" id="L293">            return this;</span>
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public Collection&lt;? extends AssembledReadBuilder&lt;P&gt;&gt; getAllAssembledReadBuilders() {
+<span class="fc" id="L300">            return reads.values();</span>
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public AssembledReadBuilder&lt;P&gt; getAssembledReadBuilder(String readId) {
+<span class="nc" id="L307">            return reads.get(readId);</span>
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public ContigBuilder&lt;P, C&gt; removeRead(String readId) {
+<span class="fc" id="L314">            reads.remove(readId);</span>
+<span class="fc" id="L315">            return this;</span>
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public NucleotideSequenceBuilder getConsensusBuilder() {
+<span class="fc" id="L322">            return consensus;</span>
+        }
+		
+        
+        
+   
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

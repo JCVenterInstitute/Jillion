@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>MergedSortedRecordIterator.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.core.util.iter</a> &gt; <span class="el_source">MergedSortedRecordIterator.java</span></div><h1>MergedSortedRecordIterator.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.internal.core.util.iter;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+
+import org.jcvi.jillion.core.util.iter.IteratorUtil;
+import org.jcvi.jillion.core.util.iter.PeekableStreamingIterator;
+
+/**
+ * Combine a list of pre-sorted Iterators into a single sorted iterator.
+ * Each call to {@link #next()} will peek at the next elements in the wrapped
+ * iterators and return the value that has the lowest sort value as determined
+ * by the comparator (and advance that iterator).
+ * @author dkatzel
+ *
+ */
+public class MergedSortedRecordIterator&lt;T&gt; implements Iterator&lt;T&gt; {
+		private final List&lt;PeekableStreamingIterator&lt;T&gt;&gt; iterators;
+		
+		private T next;
+		private final Comparator&lt;T&gt; comparator;
+		
+		
+<span class="fc" id="L46">		public MergedSortedRecordIterator(List&lt;? extends Iterator&lt;T&gt;&gt; iterators, Comparator&lt;T&gt; comparator) {</span>
+<span class="fc" id="L47">			this.iterators = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">			for(Iterator&lt;T&gt; iter : iterators){</span>
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">			    if(iterators.isEmpty()){</span>
+			        //skip empties
+<span class="nc" id="L51">			        continue;</span>
+			    }
+<span class="fc" id="L53">			    this.iterators.add(IteratorUtil.createPeekableStreamingIterator(iter));</span>
+<span class="fc" id="L54">			}</span>
+<span class="fc" id="L55">			this.comparator =comparator;</span>
+			
+<span class="fc" id="L57">			next= getNext();</span>
+<span class="fc" id="L58">		}</span>
+		
+		private T getNext(){
+<span class="fc" id="L61">			T bestElement = null;</span>
+<span class="fc" id="L62">			PeekableStreamingIterator&lt;T&gt; bestIter =null;</span>
+			
+<span class="fc" id="L64">			Iterator&lt;PeekableStreamingIterator&lt;T&gt;&gt; iter = iterators.iterator();</span>
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">			if(!iter.hasNext()){</span>
+<span class="nc" id="L66">				return null;</span>
+			}
+			do{
+<span class="fc" id="L69">				PeekableStreamingIterator&lt;T&gt; currentIter = iter.next();</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">				if(currentIter.hasNext()){</span>
+<span class="fc" id="L71">					bestElement = currentIter.peek();</span>
+<span class="fc" id="L72">					bestIter = currentIter;</span>
+				}
+<span class="fc bfc" id="L74" title="All 4 branches covered.">			}while(iter.hasNext() &amp;&amp; bestElement ==null);</span>
+			
+<span class="fc bfc" id="L76" title="All 2 branches covered.">			while(iter.hasNext()){</span>
+<span class="fc" id="L77">				PeekableStreamingIterator&lt;T&gt; currentIter = iter.next();</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">				if(currentIter.hasNext()){</span>
+<span class="fc" id="L79">					T currentElement = currentIter.peek();</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">					if(comparator.compare(currentElement, bestElement) &lt; 0){</span>
+						//found new best
+<span class="fc" id="L82">						bestIter = currentIter;</span>
+<span class="fc" id="L83">						bestElement = currentElement;</span>
+					}
+					
+				}
+<span class="fc" id="L87">			}</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">			if(bestIter ==null){</span>
+<span class="fc" id="L89">				return null;</span>
+			}
+			//advance best iterator
+<span class="fc" id="L92">			return bestIter.next();</span>
+
+			
+		}
+
+		@Override
+		public boolean hasNext() {
+<span class="fc bfc" id="L99" title="All 2 branches covered.">			return next!=null;</span>
+		}
+		
+		
+		@Override
+		public T next() {
+			//don't need to check has next
+			//since we can make sure we don't call it incorrectly
+<span class="fc" id="L107">			T ret= next;</span>
+<span class="fc" id="L108">			next = getNext();</span>
+<span class="fc" id="L109">			return ret;</span>
+		}
+		
+		@Override
+		public void remove() {
+<span class="nc" id="L114">			throw new UnsupportedOperationException();				</span>
+		}
+		
+		
+	                
+	        
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

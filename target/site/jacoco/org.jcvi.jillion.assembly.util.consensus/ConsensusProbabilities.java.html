@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ConsensusProbabilities.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.util.consensus</a> &gt; <span class="el_source">ConsensusProbabilities.java</span></div><h1>ConsensusProbabilities.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Jun 8, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.assembly.util.consensus;
+
+import static org.jcvi.jillion.assembly.util.consensus.ConsensusUtil.BASES_TO_CONSIDER;
+
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+/**
+ * {@code ConsensusProbabilities} contains the probabilities
+ * that each non-ambiguous base is the consensus.
+ * @author dkatzel
+ *
+ *
+ */
+final class ConsensusProbabilities{
+
+    private static final double ONE_TENTH = 0.1D;
+
+    private static final double ONE_QUARTER = 0.25D;
+    
+    private final Map&lt;Nucleotide, Double&gt; probabilityMap;
+    
+<span class="fc" id="L52">    ConsensusProbabilities(Map&lt;Nucleotide, Double&gt; probabilityMap){</span>
+<span class="fc" id="L53">        this.probabilityMap = Collections.unmodifiableMap(new EnumMap&lt;Nucleotide, Double&gt;(probabilityMap));</span>
+<span class="fc" id="L54">    }</span>
+    
+    @SuppressWarnings(&quot;PMD.CompareObjectsWithEquals&quot;)
+<span class="fc" id="L57">    ConsensusProbabilities(Nucleotide consensus,int cumulativeQualityValue){</span>
+<span class="fc" id="L58">        double probability = Math.pow(ONE_TENTH, cumulativeQualityValue*ONE_TENTH);</span>
+<span class="fc" id="L59">        probabilityMap = new EnumMap&lt;Nucleotide, Double&gt;(Nucleotide.class);</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">        for(Nucleotide currentBase : BASES_TO_CONSIDER){</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">            if(currentBase == consensus){</span>
+<span class="fc" id="L62">                probabilityMap.put(currentBase, Double.valueOf(1 - probability));</span>
+            }
+            else{
+                //evenly distribute probability around
+                //to the rest of the basecalls.
+<span class="fc" id="L67">                probabilityMap.put(currentBase, probability* ONE_QUARTER);</span>
+            }
+<span class="fc" id="L69">        }</span>
+<span class="fc" id="L70">    }</span>
+    /**
+     * Get the probability that the given nucleotide is
+     * the consensus, may be null if the probability
+     * of that base isn't specified.
+     * @param base the nucleotide to get the probability 
+     * of.
+     * @return the probability as a Double or null
+     */
+    public Double getProbabilityFor(Nucleotide base){
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">        if(base==null){</span>
+<span class="nc" id="L81">            throw new NullPointerException(&quot;base can not be null&quot;);</span>
+        }
+<span class="fc" id="L83">        return probabilityMap.get(base);</span>
+    }
+    
+    public ConsensusProbabilities normalize(){
+<span class="fc" id="L87">        double sumOfRawProbabilities= 0D;</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">        for(Nucleotide currentBase : ConsensusUtil.BASES_TO_CONSIDER){</span>
+<span class="fc" id="L89">            sumOfRawProbabilities+= probabilityMap.get(currentBase);</span>
+<span class="fc" id="L90">        }</span>
+<span class="fc" id="L91">        Map&lt;Nucleotide, Double&gt; newMap = new EnumMap&lt;Nucleotide, Double&gt;(Nucleotide.class);</span>
+<span class="fc" id="L92">        newMap.put(Nucleotide.Adenine, computeNormalizedProbabilityFor(Nucleotide.Adenine, sumOfRawProbabilities));</span>
+<span class="fc" id="L93">        newMap.put(Nucleotide.Cytosine, computeNormalizedProbabilityFor(Nucleotide.Cytosine, sumOfRawProbabilities));</span>
+<span class="fc" id="L94">        newMap.put(Nucleotide.Guanine, computeNormalizedProbabilityFor(Nucleotide.Guanine, sumOfRawProbabilities));</span>
+<span class="fc" id="L95">        newMap.put(Nucleotide.Thymine, computeNormalizedProbabilityFor(Nucleotide.Thymine, sumOfRawProbabilities));</span>
+<span class="fc" id="L96">        newMap.put(Nucleotide.Gap, computeNormalizedProbabilityFor(Nucleotide.Gap, sumOfRawProbabilities));</span>
+        
+<span class="fc" id="L98">        return new ConsensusProbabilities(newMap);</span>
+    }
+    
+    @SuppressWarnings(&quot;PMD.CompareObjectsWithEquals&quot;)
+    private Double computeNormalizedProbabilityFor(Nucleotide base, double sumOfRawProbabilities){
+<span class="fc" id="L103">        double result= 0D;</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">        for(Nucleotide currentBase : BASES_TO_CONSIDER){</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">            if(currentBase != base){</span>
+<span class="fc" id="L106">                result+= probabilityMap.get(currentBase);</span>
+            }
+<span class="fc" id="L108">        }</span>
+<span class="fc" id="L109">        return result/sumOfRawProbabilities;</span>
+    }
+    
+    public Set&lt;Entry&lt;Nucleotide, Double&gt;&gt; entrySet(){
+<span class="fc" id="L113">        return probabilityMap.entrySet();</span>
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public String toString() {
+<span class="nc" id="L120">        return &quot;ProbabilityStruct [probabilityMap=&quot; + probabilityMap + &quot;]&quot;;</span>
+    }
+    
+    
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -1,0 +1,526 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DefaultAceAssembledRead.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.consed.ace</a> &gt; <span class="el_source">DefaultAceAssembledRead.java</span></div><h1>DefaultAceAssembledRead.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Feb 9, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.assembly.consed.ace;
+
+import java.util.List;
+
+import org.jcvi.jillion.assembly.AssembledRead;
+import org.jcvi.jillion.assembly.AssembledReadBuilder;
+import org.jcvi.jillion.assembly.ReadInfo;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
+import org.jcvi.jillion.internal.assembly.DefaultAssembledRead;
+
+final class DefaultAceAssembledRead implements AceAssembledRead {
+    private final PhdInfo phdInfo;
+    private final AssembledRead placedRead;
+    
+    
+    public static AceAssembledReadBuilder createBuilder(String readId, NucleotideSequence validBases,int offset,
+            Direction dir, Range clearRange, PhdInfo phdInfo,int ungappedFullLength,
+            AceContigBuilder callback){
+<span class="fc" id="L49">        return new Builder(readId, validBases, offset, </span>
+                dir, clearRange, phdInfo, ungappedFullLength,callback);
+    }
+<span class="fc" id="L52">    private DefaultAceAssembledRead(AssembledRead placedRead, PhdInfo phdInfo) {</span>
+<span class="fc" id="L53">        this.placedRead = placedRead;</span>
+<span class="fc" id="L54">        this.phdInfo =phdInfo;</span>
+<span class="fc" id="L55">    }</span>
+
+    @Override
+	public ReadInfo getReadInfo() {
+<span class="fc" id="L59">		return placedRead.getReadInfo();</span>
+	}
+	@Override
+    public PhdInfo getPhdInfo() {
+<span class="fc" id="L63">        return phdInfo;</span>
+    }
+
+
+    @Override
+	public String toString() {
+<span class="nc" id="L69">		return &quot;DefaultAcePlacedRead [placedRead=&quot; + placedRead + &quot;, phdInfo=&quot;</span>
+				+ phdInfo + &quot;]&quot;;
+	}
+	/**
+    * {@inheritDoc}
+    */
+    @Override
+    public String getId() {
+<span class="fc" id="L77">        return placedRead.getId();</span>
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public ReferenceMappedNucleotideSequence getNucleotideSequence() {
+<span class="fc" id="L85">        return placedRead.getNucleotideSequence();</span>
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public long getGappedLength() {
+<span class="fc" id="L93">        return placedRead.getGappedLength();</span>
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public long getGappedStartOffset() {
+<span class="fc" id="L101">        return placedRead.getGappedStartOffset();</span>
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public long getGappedEndOffset() {
+<span class="fc" id="L109">        return placedRead.getGappedEndOffset();</span>
+    }
+    @Override
+	public Range getGappedContigRange() {
+<span class="nc" id="L113">		return placedRead.getGappedContigRange();</span>
+	}
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Range asRange() {
+<span class="fc" id="L120">        return placedRead.asRange();</span>
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Direction getDirection() {
+<span class="fc" id="L128">        return placedRead.getDirection();</span>
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public long toGappedValidRangeOffset(long referenceIndex) {
+<span class="nc" id="L136">        return placedRead.toGappedValidRangeOffset(referenceIndex);</span>
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public long toReferenceOffset(long validRangeIndex) {
+<span class="nc" id="L144">        return placedRead.toReferenceOffset(validRangeIndex);</span>
+    }
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int hashCode() {
+<span class="nc" id="L151">        final int prime = 31;</span>
+<span class="nc" id="L152">        int result = 1;</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">        result = prime * result + ((phdInfo == null) ? 0 : phdInfo.hashCode());</span>
+<span class="nc bnc" id="L154" title="All 2 branches missed.">        result = prime * result</span>
+<span class="nc" id="L155">                + ((placedRead == null) ? 0 : placedRead.hashCode());</span>
+<span class="nc" id="L156">        return result;</span>
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public boolean equals(Object obj) {
+<span class="pc bpc" id="L164" title="1 of 2 branches missed.">        if (this == obj){</span>
+<span class="nc" id="L165">            return true;</span>
+        }
+<span class="pc bpc" id="L167" title="1 of 2 branches missed.">        if (obj == null){</span>
+<span class="nc" id="L168">            return false;</span>
+        }
+<span class="pc bpc" id="L170" title="1 of 2 branches missed.">        if (getClass() != obj.getClass()){</span>
+<span class="nc" id="L171">            return false;</span>
+        }
+<span class="fc" id="L173">        DefaultAceAssembledRead other = (DefaultAceAssembledRead) obj;</span>
+<span class="pc bpc" id="L174" title="1 of 2 branches missed.">        if (phdInfo == null) {</span>
+<span class="nc bnc" id="L175" title="All 2 branches missed.">            if (other.phdInfo != null){</span>
+<span class="nc" id="L176">                return false;</span>
+            }
+<span class="pc bpc" id="L178" title="1 of 2 branches missed.">        } else if (!phdInfo.equals(other.phdInfo)){</span>
+<span class="nc" id="L179">            return false;</span>
+        }
+<span class="pc bpc" id="L181" title="1 of 2 branches missed.">        if (placedRead == null) {</span>
+<span class="nc bnc" id="L182" title="All 2 branches missed.">            if (other.placedRead != null){</span>
+<span class="nc" id="L183">                return false;</span>
+            }
+<span class="pc bpc" id="L185" title="1 of 2 branches missed.">        } else if (!placedRead.equals(other.placedRead)){</span>
+<span class="nc" id="L186">            return false;</span>
+        }        
+<span class="fc" id="L188">        return true;</span>
+    }
+
+
+    static final class Builder implements AceAssembledReadBuilder{
+        private final PhdInfo phdInfo;        
+        private final AssembledReadBuilder&lt;AssembledRead&gt; delegateBuilder;
+        private AceContigBuilder contigBuilder;
+        
+        public Builder(String readId, NucleotideSequence validBases,int offset,
+                            Direction dir, Range clearRange, PhdInfo phdInfo,int ungappedFullLength,
+<span class="fc" id="L199">                            AceContigBuilder callback){</span>
+<span class="fc" id="L200">            this.delegateBuilder = DefaultAssembledRead.createBuilder(</span>
+                    readId, validBases, offset, dir,
+                    clearRange, ungappedFullLength);
+<span class="fc" id="L203">            this.phdInfo = phdInfo;</span>
+<span class="fc" id="L204">            this.contigBuilder = callback;</span>
+<span class="fc" id="L205">        }</span>
+        
+<span class="fc" id="L207">        private Builder(Builder copy){</span>
+<span class="fc" id="L208">        	 this.delegateBuilder = copy.delegateBuilder.copy();</span>
+<span class="fc" id="L209">        	 this.phdInfo = copy.phdInfo;</span>
+<span class="fc" id="L210">        }</span>
+        
+        
+        @Override
+		public AceAssembledReadBuilder trim(Range trimRange) {
+<span class="fc" id="L215">			delegateBuilder.trim(trimRange);</span>
+<span class="fc" id="L216">			fireContigSizeUpdate();</span>
+<span class="fc" id="L217">			return this;</span>
+		}
+
+		@Override
+		public AceAssembledReadBuilder copy() {
+<span class="fc" id="L222">			return new Builder(this);</span>
+		}
+		
+		public void setParentContigBuilder(AceContigBuilder contigBuilder){
+<span class="fc" id="L226">			this.contigBuilder = contigBuilder;</span>
+			
+<span class="fc" id="L228">		}</span>
+		
+		private void fireContigSizeUpdate(){
+<span class="fc bfc" id="L231" title="All 2 branches covered.">			if(contigBuilder !=null){</span>
+<span class="fc" id="L232">				contigBuilder.updatedReadRange(getId(), getBegin(), getEnd());</span>
+			}
+<span class="fc" id="L234">		}</span>
+		
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public long getBegin(){
+<span class="fc" id="L241">            return delegateBuilder.getBegin();</span>
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public String getId(){
+<span class="fc" id="L248">            return delegateBuilder.getId();</span>
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public Builder setStartOffset(int newOffset){
+<span class="fc" id="L255">            delegateBuilder.setStartOffset(newOffset);</span>
+<span class="fc" id="L256">            fireContigSizeUpdate();</span>
+<span class="fc" id="L257">            return this;</span>
+        }
+      
+
+
+		/**
+        * {@inheritDoc}
+        */
+        @Override
+        public Builder shift(int numberOfBases){
+<span class="fc" id="L267">            delegateBuilder.shift(numberOfBases);</span>
+<span class="fc" id="L268">            fireContigSizeUpdate();</span>
+<span class="fc" id="L269">            return this;</span>
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public Range getClearRange() {
+<span class="fc" id="L276">            return delegateBuilder.getClearRange();</span>
+        }
+
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public PhdInfo getPhdInfo() {
+<span class="fc" id="L285">            return phdInfo;</span>
+        }
+
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public Direction getDirection() {
+<span class="fc" id="L294">            return delegateBuilder.getDirection();</span>
+        }
+
+        
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public int getUngappedFullLength() {
+<span class="fc" id="L304">            return delegateBuilder.getUngappedFullLength();</span>
+        }
+
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public DefaultAceAssembledRead build(NucleotideSequence consensus){
+<span class="fc" id="L313">            return new DefaultAceAssembledRead(delegateBuilder.build(consensus),phdInfo);</span>
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public Builder reAbacus(Range gappedValidRangeToChange, NucleotideSequence newBasecalls){
+<span class="fc" id="L320">            delegateBuilder.reAbacus(gappedValidRangeToChange, newBasecalls);</span>
+<span class="fc" id="L321">            fireContigSizeUpdate();</span>
+<span class="fc" id="L322">            return this;</span>
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public synchronized long getLength(){
+<span class="fc" id="L329">            return delegateBuilder.getLength();</span>
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public long getEnd(){
+<span class="fc" id="L336">            return delegateBuilder.getEnd();</span>
+        }
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public Range asRange(){
+<span class="fc" id="L343">            return delegateBuilder.asRange();</span>
+        }
+        
+        
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public synchronized NucleotideSequence getCurrentNucleotideSequence(){
+<span class="fc" id="L352">            return delegateBuilder.getCurrentNucleotideSequence();</span>
+        }
+
+		@Override
+		public AceAssembledReadBuilder append(Nucleotide base) {
+<span class="nc" id="L357">			delegateBuilder.append(base);</span>
+<span class="nc" id="L358">			fireContigSizeUpdate();</span>
+<span class="nc" id="L359">			return this;</span>
+		}
+
+
+		@Override
+		public AceAssembledReadBuilder append(
+				Iterable&lt;Nucleotide&gt; sequence) {
+<span class="nc" id="L366">			delegateBuilder.append(sequence);</span>
+<span class="nc" id="L367">			fireContigSizeUpdate();</span>
+<span class="nc" id="L368">			return this;</span>
+		}
+
+
+		@Override
+		public AceAssembledReadBuilder append(String sequence) {
+<span class="fc" id="L374">			delegateBuilder.append(sequence);</span>
+<span class="fc" id="L375">			fireContigSizeUpdate();</span>
+<span class="fc" id="L376">			return this;</span>
+		}
+
+
+		@Override
+		public AceAssembledReadBuilder insert(int offset,
+				String sequence) {
+<span class="fc" id="L383">			delegateBuilder.insert(offset, sequence);</span>
+<span class="fc" id="L384">			fireContigSizeUpdate();</span>
+<span class="fc" id="L385">			return this;</span>
+		}
+
+
+		@Override
+		public AceAssembledReadBuilder replace(int offset,
+				Nucleotide replacement) {
+<span class="fc" id="L392">			delegateBuilder.replace(offset, replacement);</span>
+<span class="fc" id="L393">			fireContigSizeUpdate();</span>
+<span class="fc" id="L394">			return this;</span>
+		}
+
+
+		@Override
+		public AceAssembledReadBuilder delete(Range range) {
+<span class="fc" id="L400">			delegateBuilder.delete(range);</span>
+<span class="fc" id="L401">			fireContigSizeUpdate();</span>
+<span class="fc" id="L402">			return this;</span>
+		}
+
+
+		@Override
+		public int getNumGaps() {
+<span class="nc" id="L408">			return delegateBuilder.getNumGaps();</span>
+		}
+
+
+		@Override
+		public int getNumNs() {
+<span class="nc" id="L414">			return delegateBuilder.getNumNs();</span>
+		}
+
+
+		@Override
+		public int getNumAmbiguities() {
+<span class="nc" id="L420">			return delegateBuilder.getNumAmbiguities();</span>
+		}
+
+
+		@Override
+		public AceAssembledReadBuilder prepend(String sequence) {
+<span class="fc" id="L426">			delegateBuilder.prepend(sequence);</span>
+<span class="fc" id="L427">			fireContigSizeUpdate();</span>
+<span class="fc" id="L428">			return this;</span>
+		}
+
+
+		@Override
+		public AceAssembledReadBuilder insert(int offset,
+				Iterable&lt;Nucleotide&gt; sequence) {
+<span class="nc" id="L435">			delegateBuilder.insert(offset, sequence);</span>
+<span class="nc" id="L436">			fireContigSizeUpdate();</span>
+<span class="nc" id="L437">			return this;</span>
+		}
+
+
+		@Override
+		public AceAssembledReadBuilder insert(int offset,
+				Nucleotide base) {
+<span class="fc" id="L444">			delegateBuilder.insert(offset, base);</span>
+<span class="fc" id="L445">			fireContigSizeUpdate();</span>
+<span class="fc" id="L446">			return this;</span>
+		}
+
+
+		@Override
+		public AceAssembledReadBuilder prepend(
+				Iterable&lt;Nucleotide&gt; sequence) {
+<span class="nc" id="L453">			delegateBuilder.prepend(sequence);</span>
+<span class="nc" id="L454">			fireContigSizeUpdate();</span>
+<span class="nc" id="L455">			return this;</span>
+		}
+
+
+		
+
+
+		/**
+        * {@inheritDoc}
+        */
+        @Override
+        public int hashCode() {
+<span class="nc" id="L467">            final int prime = 31;</span>
+<span class="nc" id="L468">            int result = 1;</span>
+<span class="nc bnc" id="L469" title="All 2 branches missed.">            result = prime</span>
+                    * result
+                    + ((delegateBuilder == null) ? 0 : delegateBuilder
+<span class="nc" id="L472">                            .hashCode());</span>
+<span class="nc bnc" id="L473" title="All 2 branches missed.">            result = prime * result</span>
+<span class="nc" id="L474">                    + ((phdInfo == null) ? 0 : phdInfo.hashCode());</span>
+<span class="nc" id="L475">            return result;</span>
+        }
+
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public boolean equals(Object obj) {
+<span class="fc bfc" id="L484" title="All 2 branches covered.">            if (this == obj) {</span>
+<span class="fc" id="L485">                return true;</span>
+            }
+<span class="pc bpc" id="L487" title="1 of 2 branches missed.">            if (obj == null) {</span>
+<span class="nc" id="L488">                return false;</span>
+            }
+<span class="pc bpc" id="L490" title="1 of 2 branches missed.">            if (!(obj instanceof Builder)) {</span>
+<span class="nc" id="L491">                return false;</span>
+            }
+<span class="fc" id="L493">            Builder other = (Builder) obj;</span>
+<span class="pc bpc" id="L494" title="1 of 2 branches missed.">            if (delegateBuilder == null) {</span>
+<span class="nc bnc" id="L495" title="All 2 branches missed.">                if (other.delegateBuilder != null) {</span>
+<span class="nc" id="L496">                    return false;</span>
+                }
+<span class="pc bpc" id="L498" title="1 of 2 branches missed.">            } else if (!delegateBuilder.equals(other.delegateBuilder)) {</span>
+<span class="fc" id="L499">                return false;</span>
+            }
+<span class="nc bnc" id="L501" title="All 2 branches missed.">            if (phdInfo == null) {</span>
+<span class="nc bnc" id="L502" title="All 2 branches missed.">                if (other.phdInfo != null) {</span>
+<span class="nc" id="L503">                    return false;</span>
+                }
+<span class="nc bnc" id="L505" title="All 2 branches missed.">            } else if (!phdInfo.equals(other.phdInfo)) {</span>
+<span class="nc" id="L506">                return false;</span>
+            }
+<span class="nc" id="L508">            return true;</span>
+        }
+    }
+
+    protected static final class IllegalReAbacus extends IllegalArgumentException{
+
+        private static final long serialVersionUID = -8272559886165301526L;
+
+        public IllegalReAbacus(List&lt;Nucleotide&gt; oldUngappedBasecalls, List&lt;Nucleotide&gt; newUngappedBasecalls){
+<span class="nc" id="L517">            super(String.format(&quot;reAbacusing must retain same ungapped basecalls! '%s' vs '%s'&quot;, </span>
+<span class="nc" id="L518">                    new NucleotideSequenceBuilder(oldUngappedBasecalls).toString(),</span>
+<span class="nc" id="L519">                    new NucleotideSequenceBuilder(newUngappedBasecalls).toString()</span>
+                    ));
+<span class="nc" id="L521">        }</span>
+    }
+
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

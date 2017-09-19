@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SamFileParser.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.sam</a> &gt; <span class="el_source">SamFileParser.java</span></div><h1>SamFileParser.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.sam;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.io.FileUtil;
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.internal.core.io.TextLineParser;
+import org.jcvi.jillion.internal.sam.SamUtil;
+import org.jcvi.jillion.sam.SamVisitor.SamVisitorCallback;
+import org.jcvi.jillion.sam.SamVisitor.SamVisitorCallback.SamVisitorMemento;
+import org.jcvi.jillion.sam.attribute.InvalidAttributeException;
+import org.jcvi.jillion.sam.attribute.ReservedAttributeValidator;
+import org.jcvi.jillion.sam.attribute.ReservedSamAttributeKeys;
+import org.jcvi.jillion.sam.attribute.SamAttribute;
+import org.jcvi.jillion.sam.attribute.SamAttributeKey;
+import org.jcvi.jillion.sam.attribute.SamAttributeKeyFactory;
+import org.jcvi.jillion.sam.attribute.SamAttributeType;
+import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
+import org.jcvi.jillion.sam.cigar.Cigar;
+import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
+
+final class SamFileParser extends AbstractSamFileParser{
+	
+<span class="fc" id="L56">	private static final Pattern SPLIT_LINE_PATTERN = Pattern.compile(&quot;\t&quot;);</span>
+	
+<span class="fc" id="L58">	private static final Pattern TYPED_TAG_VALUE_PATTERN = Pattern.compile(&quot;([A-Za-z][A-Za-z0-9]):(([AifZHB]):)?(.+)&quot;);</span>
+	
+	@FunctionalInterface
+	private static interface CallbackSupplier{
+	    SamVisitorCallback create(AtomicBoolean keepParsing, long currentOffset);
+	}
+	
+	private final File samFile;
+	private final SamAttributeValidator validator;
+	
+	public SamFileParser(File samFile) throws IOException{
+<span class="nc" id="L69">		this(samFile,ReservedAttributeValidator.INSTANCE );</span>
+<span class="nc" id="L70">	}</span>
+<span class="fc" id="L71">	public SamFileParser(File samFile, SamAttributeValidator validator) throws IOException {</span>
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">		if(samFile ==null){</span>
+<span class="nc" id="L73">			throw new NullPointerException(&quot;sam file can not be null&quot;);</span>
+		}
+<span class="pc bpc" id="L75" title="1 of 2 branches missed.">		if(!&quot;sam&quot;.equals(FileUtil.getExtension(samFile))){</span>
+<span class="nc" id="L76">			throw new IllegalArgumentException(&quot;must be .sam file&quot; + samFile.getAbsolutePath());</span>
+		}
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">		if(!samFile.exists()){</span>
+<span class="nc" id="L79">			throw new FileNotFoundException(samFile.getAbsolutePath());</span>
+		}
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">		if(!samFile.canRead()){</span>
+<span class="nc" id="L82">			throw new IllegalArgumentException(&quot;sam file not readable &quot; + samFile.getAbsolutePath());</span>
+		}
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">		if(validator ==null){</span>
+<span class="nc" id="L85">			throw new NullPointerException(&quot;validator can not be null&quot;);</span>
+		}
+<span class="fc" id="L87">		this.samFile = samFile;</span>
+<span class="fc" id="L88">		this.validator = validator;</span>
+<span class="fc" id="L89">	}</span>
+
+	@Override
+	public boolean canParse() {
+<span class="nc" id="L93">		return true;</span>
+	}
+
+	       @Override
+	       public void parse(SamParserOptions options, SamVisitor visitor)
+	               throws IOException {
+	               Predicate&lt;SamRecord&gt; predicate;
+<span class="pc bpc" id="L100" title="1 of 2 branches missed.">	           if(options.getReferenceName().isPresent()){</span>
+//	               verifyReferenceInHeader(options.getReferenceName().get());
+	               
+<span class="nc bnc" id="L103" title="All 2 branches missed.">	               if(options.getReferenceRange().isPresent()){</span>
+<span class="nc" id="L104">	                   predicate = SamUtil.alignsToReference(options.getReferenceName().get(), options.getReferenceRange().get());</span>
+	               }else{
+<span class="nc" id="L106">	                   predicate = SamUtil.alignsToReference(options.getReferenceName().get());</span>
+	               }
+	               
+	           }else{
+<span class="fc" id="L110">	               predicate = record -&gt; true;</span>
+	           }
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">	           CallbackSupplier supplier = options.shouldCreateMementos() ? </span>
+<span class="nc" id="L113">	                   (keepParsing, pos)-&gt; new SamCallback(keepParsing, pos) :</span>
+<span class="fc" id="L114">	                       (keepParsing, pos)-&gt; new MementoLessSamCallback(keepParsing) ;</span>
+	                       
+<span class="fc" id="L116">	           accept(visitor, predicate, supplier);</span>
+	           
+<span class="fc" id="L118">	       }</span>
+	@Override
+	public void parse(SamVisitor visitor, SamVisitorMemento memento) throws IOException {
+<span class="nc" id="L121">		Objects.requireNonNull(visitor);</span>
+<span class="nc" id="L122">		Objects.requireNonNull(memento);</span>
+		
+<span class="nc bnc" id="L124" title="All 2 branches missed.">		if( !(memento instanceof SamFileMemento)){</span>
+<span class="nc" id="L125">			throw new IllegalArgumentException(&quot;memento must be for sam files&quot;);</span>
+		}
+<span class="nc" id="L127">		SamFileMemento samMemento = (SamFileMemento) memento;</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">		if(this != samMemento.parserInstance){</span>
+<span class="nc" id="L129">			throw new IllegalArgumentException(&quot;memento must be for this SamParser instance&quot;);</span>
+		}
+<span class="nc bnc" id="L131" title="All 2 branches missed.">		if(samMemento.position ==0){</span>
+			//start at the beginning including header?
+<span class="nc" id="L133">			parse(visitor);</span>
+<span class="nc" id="L134">			return;</span>
+		}
+<span class="nc" id="L136">		TextLineParser parser=null;</span>
+		try{
+<span class="nc" id="L138">			parser = new TextLineParser(samFile, samMemento.position);</span>
+			
+<span class="nc" id="L140">			AtomicBoolean keepParsing = new AtomicBoolean(true);</span>
+			
+<span class="nc" id="L142">			SamCallback callback = new SamCallback(keepParsing, parser.getPosition());</span>
+<span class="nc" id="L143">			SamHeader header = parseHeader(parser).build();</span>
+<span class="nc" id="L144">			visitor.visitHeader(callback, header);</span>
+<span class="nc bnc" id="L145" title="All 4 branches missed.">			while(keepParsing.get() &amp;&amp; parser.hasNextLine()){</span>
+<span class="nc" id="L146">				callback = new SamCallback(keepParsing, parser.getPosition());</span>
+<span class="nc" id="L147">				String line = parser.nextLine().trim();</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">				if(line.isEmpty()){</span>
+					//skip blanks?
+<span class="nc" id="L150">					continue;</span>
+				}			
+<span class="nc" id="L152">				SamRecord record = parseRecord(header, line);</span>
+				
+<span class="nc" id="L154">				visitor.visitRecord(callback, record, null, null);</span>
+				
+<span class="nc" id="L156">			}</span>
+<span class="nc bnc" id="L157" title="All 2 branches missed.">			if(keepParsing.get()){</span>
+<span class="nc" id="L158">				visitor.visitEnd();</span>
+			}else{
+<span class="nc" id="L160">				visitor.halted();</span>
+			}
+		}finally{
+<span class="nc" id="L163">			IOUtil.closeAndIgnoreErrors(parser);</span>
+<span class="nc" id="L164">		}</span>
+		
+<span class="nc" id="L166">	}</span>
+	@Override
+	public void parse(String referenceName, SamVisitor visitor) throws IOException {
+<span class="nc" id="L169">	    parse(new SamParserOptions().reference(referenceName), </span>
+	            visitor);	
+<span class="nc" id="L171">	}</span>
+	@Override
+	public void parse(String referenceName, Range alignmentRange, SamVisitor visitor) throws IOException {
+<span class="nc" id="L174">	    parse(new SamParserOptions().reference(referenceName, alignmentRange), </span>
+                    visitor);		
+<span class="nc" id="L176">	}</span>
+	@Override
+	public void parse(SamVisitor visitor) throws IOException {
+<span class="fc" id="L179">		parse(new SamParserOptions(), visitor);</span>
+<span class="fc" id="L180">	}</span>
+	
+	
+	
+	private void accept(SamVisitor visitor, Predicate&lt;SamRecord&gt; filter, CallbackSupplier callbackSupplier) throws IOException {
+<span class="pc bpc" id="L185" title="1 of 2 branches missed.">		if(visitor ==null){</span>
+<span class="nc" id="L186">			throw new NullPointerException(&quot;visitor can not be null&quot;);</span>
+		}
+<span class="fc" id="L188">		TextLineParser parser =null;</span>
+		
+		try{
+<span class="fc" id="L191">			parser= new TextLineParser(samFile);</span>
+<span class="fc" id="L192">			AtomicBoolean keepParsing = new AtomicBoolean(true);</span>
+			
+<span class="fc" id="L194">			SamVisitorCallback callback = callbackSupplier.create(keepParsing, parser.getPosition());</span>
+<span class="fc" id="L195">			SamHeader header = parseHeader(parser).build();</span>
+<span class="fc" id="L196">			visitor.visitHeader(callback, header);</span>
+<span class="fc bfc" id="L197" title="All 4 branches covered.">			while(keepParsing.get() &amp;&amp; parser.hasNextLine()){</span>
+<span class="fc" id="L198">				callback = callbackSupplier.create(keepParsing, parser.getPosition());</span>
+<span class="fc" id="L199">				String line = parser.nextLine().trim();</span>
+<span class="pc bpc" id="L200" title="1 of 2 branches missed.">				if(line.isEmpty()){</span>
+					//skip blanks?
+<span class="nc" id="L202">					continue;</span>
+				}			
+<span class="fc" id="L204">				SamRecord record = parseRecord(header, line);</span>
+<span class="pc bpc" id="L205" title="1 of 2 branches missed.">				if(filter.test(record)){</span>
+<span class="fc" id="L206">					visitor.visitRecord(callback, record, null, null);</span>
+				}
+<span class="fc" id="L208">			}</span>
+<span class="fc bfc" id="L209" title="All 2 branches covered.">			if(keepParsing.get()){</span>
+<span class="fc" id="L210">				visitor.visitEnd();</span>
+			}else{
+<span class="fc" id="L212">				visitor.halted();</span>
+			}
+		}finally{
+<span class="pc" id="L215">			IOUtil.closeAndIgnoreErrors(parser);</span>
+<span class="fc" id="L216">		}</span>
+<span class="fc" id="L217">	}</span>
+	
+	
+	
+	private SamRecord parseRecord(SamHeader header, String line) throws IOException{
+<span class="fc" id="L222">		String[] fields = SPLIT_LINE_PATTERN.split(line);</span>
+<span class="pc bpc" id="L223" title="1 of 2 branches missed.">		if(fields.length &lt;11){</span>
+			//not a sam line?
+<span class="nc" id="L225">			throw new IOException(&quot;invalid sam record line : &quot; + line);</span>
+		}
+<span class="fc" id="L227">		SamRecordBuilder builder = new SamRecordBuilder(header, validator);</span>
+		
+<span class="fc" id="L229">		builder.setQueryName(fields[0]);</span>
+<span class="fc" id="L230">		builder.setFlags(Integer.parseInt(fields[1]));</span>
+<span class="fc" id="L231">		builder.setReferenceName(fields[2]);</span>
+<span class="fc" id="L232">		builder.setStartPosition(Integer.parseInt(fields[3]));</span>
+<span class="fc" id="L233">		builder.setMappingQuality(Byte.parseByte(fields[4]));</span>
+<span class="fc" id="L234">		builder.setCigar(Cigar.parse(fields[5]));</span>
+<span class="fc" id="L235">		builder.setNextReferenceName(fields[6]);</span>
+<span class="fc" id="L236">		builder.setNextPosition(Integer.parseInt(fields[7]));</span>
+<span class="fc" id="L237">		builder.setObservedTemplateLength(Integer.parseInt(fields[8]));</span>
+<span class="fc" id="L238">		builder.setSequence(parseSequence(fields[9]));</span>
+<span class="fc" id="L239">		builder.setQualities(parseQualities(fields[10]));</span>
+		
+		//anything else is an optional field
+<span class="fc bfc" id="L242" title="All 2 branches covered.">		for(int i=11; i&lt;fields.length; i++){</span>
+<span class="fc" id="L243">			Matcher matcher = TYPED_TAG_VALUE_PATTERN.matcher(fields[i]);</span>
+<span class="pc bpc" id="L244" title="1 of 2 branches missed.">			if(matcher.matches()){</span>
+<span class="fc" id="L245">				String key = matcher.group(1);</span>
+<span class="fc" id="L246">				String optionalType = matcher.group(3);</span>
+<span class="fc" id="L247">				String value = matcher.group(4);</span>
+<span class="pc bpc" id="L248" title="1 of 2 branches missed.">				if(optionalType == null){</span>
+					//type not specified, check is reserved?
+<span class="nc" id="L250">					ReservedSamAttributeKeys reserved =ReservedSamAttributeKeys.parseKey(key);</span>
+<span class="nc bnc" id="L251" title="All 2 branches missed.">					if(reserved ==null){</span>
+						//not reserved...
+<span class="nc" id="L253">						throw new IOException(&quot;unknown optional attribute without type information (not reserved) : &quot;  + fields[i]);</span>
+					}
+					try {
+<span class="nc" id="L256">						builder.addAttribute(new SamAttribute(reserved, value));</span>
+<span class="nc" id="L257">					} catch (InvalidAttributeException e) {</span>
+<span class="nc" id="L258">						throw new IOException(&quot;invalid attribute value for &quot; + fields[i], e);</span>
+<span class="nc" id="L259">					}</span>
+<span class="nc" id="L260">				}else{</span>
+<span class="fc" id="L261">					SamAttributeKey customKey = SamAttributeKeyFactory.getKey(key);</span>
+<span class="fc" id="L262">					SamAttributeType type = SamAttributeType.parseType(optionalType.charAt(0), value);</span>
+					try {
+<span class="fc" id="L264">						builder.addAttribute(new SamAttribute(customKey, type, value));</span>
+<span class="nc" id="L265">					} catch (InvalidAttributeException e) {</span>
+<span class="nc" id="L266">						throw new IOException(&quot;invalid attribute value for &quot; + fields[i], e);</span>
+<span class="fc" id="L267">					}</span>
+				}
+<span class="fc" id="L269">			}else{</span>
+<span class="nc" id="L270">				throw new IOException(&quot;invalid attribute format &quot; + fields[i]);</span>
+			}
+		}
+<span class="fc" id="L273">		return builder.build();</span>
+	}
+
+	private static NucleotideSequence parseSequence(String s){
+<span class="fc bfc" id="L277" title="All 2 branches covered.">		if(SamRecord.UNAVAILABLE.equals(s)){</span>
+<span class="fc" id="L278">			return null;</span>
+		}
+<span class="fc" id="L280">		return new NucleotideSequenceBuilder(s)</span>
+<span class="fc" id="L281">						.turnOffDataCompression(true)</span>
+<span class="fc" id="L282">						.build();</span>
+	}
+	private static QualitySequence parseQualities(String s){
+<span class="pc bpc" id="L285" title="1 of 2 branches missed.">		if(SamRecord.UNAVAILABLE.equals(s)){</span>
+<span class="fc" id="L286">			return null;</span>
+		}
+		//always encoded in sanger format
+<span class="nc" id="L289">		return FastqQualityCodec.SANGER.decode(s, true);</span>
+
+	}
+
+	
+	private final class MementoLessSamCallback extends AbstractCallback{
+
+<span class="fc" id="L296">            public MementoLessSamCallback(AtomicBoolean keepParsing) {</span>
+<span class="fc" id="L297">                super(keepParsing);</span>
+<span class="fc" id="L298">            }</span>
+    
+            @Override
+            public boolean canCreateMemento() {
+<span class="nc" id="L302">                return false;</span>
+            }
+    
+            @Override
+            public SamVisitorMemento createMemento() {
+<span class="nc" id="L307">                throw new UnsupportedOperationException();</span>
+            }        
+	    
+	}
+	private final class SamCallback extends AbstractCallback{
+		private final long currentPosition;
+		
+		
+<span class="nc" id="L315">		public SamCallback(AtomicBoolean keepParsing, long currentPosition) {</span>
+<span class="nc" id="L316">			super(keepParsing);</span>
+<span class="nc" id="L317">			this.currentPosition = currentPosition;</span>
+<span class="nc" id="L318">		}</span>
+		
+		
+
+		@Override
+		public boolean canCreateMemento() {
+<span class="nc" id="L324">			return true;</span>
+		}
+
+		@Override
+		public SamVisitorMemento createMemento() {
+<span class="nc" id="L329">			return new SamFileMemento(SamFileParser.this, currentPosition);</span>
+		}
+		
+	}
+	
+	private static final class SamFileMemento implements SamVisitorMemento{
+		private final SamFileParser parserInstance;
+		private final long position;
+		
+<span class="nc" id="L338">		public SamFileMemento(SamFileParser parserInstance, long position) {</span>
+<span class="nc" id="L339">			this.parserInstance = parserInstance;</span>
+<span class="nc" id="L340">			this.position = position;</span>
+<span class="nc" id="L341">		}</span>
+
+		@Override
+		public int hashCode() {
+<span class="nc" id="L345">			final int prime = 31;</span>
+<span class="nc" id="L346">			int result = 1;</span>
+<span class="nc bnc" id="L347" title="All 2 branches missed.">			result = prime</span>
+					* result
+<span class="nc" id="L349">					+ ((parserInstance == null) ? 0 : parserInstance.hashCode());</span>
+<span class="nc" id="L350">			result = prime * result + (int) (position ^ (position &gt;&gt;&gt; 32));</span>
+<span class="nc" id="L351">			return result;</span>
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+<span class="nc bnc" id="L356" title="All 2 branches missed.">			if (this == obj) {</span>
+<span class="nc" id="L357">				return true;</span>
+			}
+<span class="nc bnc" id="L359" title="All 2 branches missed.">			if (obj == null) {</span>
+<span class="nc" id="L360">				return false;</span>
+			}
+<span class="nc bnc" id="L362" title="All 2 branches missed.">			if (!(obj instanceof SamFileMemento)) {</span>
+<span class="nc" id="L363">				return false;</span>
+			}
+<span class="nc" id="L365">			SamFileMemento other = (SamFileMemento) obj;</span>
+			//has to be EXACT same instance
+<span class="nc bnc" id="L367" title="All 2 branches missed.">			if (parserInstance != other.parserInstance) {</span>
+<span class="nc" id="L368">				return false;</span>
+			}
+<span class="nc bnc" id="L370" title="All 2 branches missed.">			if (position != other.position) {</span>
+<span class="nc" id="L371">				return false;</span>
+			}
+<span class="nc" id="L373">			return true;</span>
+		}
+		
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

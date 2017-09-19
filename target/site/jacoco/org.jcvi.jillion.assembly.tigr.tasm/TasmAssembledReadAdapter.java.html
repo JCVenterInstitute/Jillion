@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>TasmAssembledReadAdapter.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.tigr.tasm</a> &gt; <span class="el_source">TasmAssembledReadAdapter.java</span></div><h1>TasmAssembledReadAdapter.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly.tigr.tasm;
+
+import org.jcvi.jillion.assembly.AssembledRead;
+import org.jcvi.jillion.assembly.ReadInfo;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
+/**
+ * {@code TasmAssembledReadAdapter} is a Adapter which allows
+ * an {@link AssembledRead} to conform to the {@link TasmAssembledRead}
+ *  interface.
+ * @author dkatzel
+ *
+ */
+final class TasmAssembledReadAdapter implements TasmAssembledRead{
+
+	private final AssembledRead delegatePlacedRead;
+	
+	/**
+	 * Adapt the given placedRead into a {@link TasmAssembledRead}.
+	 * @param read the {@link AssembledRead} instance to adapt
+	 * (may not be null).
+	 * @throws NullPointerException if delegatePlacedRead is null.
+	 */
+<span class="fc" id="L45">	public TasmAssembledReadAdapter(AssembledRead read) {</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">		if(read ==null){</span>
+<span class="fc" id="L47">			throw new NullPointerException(&quot;adapted read can not be null&quot;);</span>
+		}
+<span class="fc" id="L49">		this.delegatePlacedRead = read;</span>
+<span class="fc" id="L50">	}</span>
+	
+
+	@Override
+	public long toGappedValidRangeOffset(long referenceIndex) {
+<span class="nc" id="L55">		return delegatePlacedRead.toGappedValidRangeOffset(referenceIndex);</span>
+	}
+
+	@Override
+	public long toReferenceOffset(long validRangeIndex) {
+<span class="nc" id="L60">		return delegatePlacedRead.toReferenceOffset(validRangeIndex);</span>
+	}
+
+	@Override
+	public Direction getDirection() {
+<span class="fc" id="L65">		return delegatePlacedRead.getDirection();</span>
+	}
+
+	@Override
+	public ReadInfo getReadInfo() {
+<span class="fc" id="L70">		return delegatePlacedRead.getReadInfo();</span>
+	}
+
+	@Override
+	public ReferenceMappedNucleotideSequence getNucleotideSequence() {
+<span class="fc" id="L75">		return delegatePlacedRead.getNucleotideSequence();</span>
+	}
+
+	@Override
+	public String getId() {
+<span class="fc" id="L80">		return delegatePlacedRead.getId();</span>
+	}
+
+	@Override
+	public long getGappedLength() {
+<span class="fc" id="L85">		return delegatePlacedRead.getGappedLength();</span>
+	}
+
+	@Override
+	public long getGappedEndOffset() {
+<span class="fc" id="L90">		return delegatePlacedRead.getGappedEndOffset();</span>
+	}
+
+	@Override
+	public long getGappedStartOffset() {
+<span class="fc" id="L95">		return delegatePlacedRead.getGappedStartOffset();</span>
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+<span class="nc" id="L103">		final int prime = 31;</span>
+<span class="nc" id="L104">		int result = 1;</span>
+<span class="nc" id="L105">		result = prime</span>
+				* result
+<span class="nc" id="L107">				+ delegatePlacedRead.hashCode();</span>
+<span class="nc" id="L108">		return result;</span>
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+<span class="nc bnc" id="L116" title="All 2 branches missed.">		if (this == obj) {</span>
+<span class="nc" id="L117">			return true;</span>
+		}
+<span class="nc bnc" id="L119" title="All 2 branches missed.">		if (obj == null) {</span>
+<span class="nc" id="L120">			return false;</span>
+		}
+<span class="nc bnc" id="L122" title="All 2 branches missed.">		if (!(obj instanceof TasmAssembledRead)) {</span>
+<span class="nc" id="L123">			return false;</span>
+		}
+<span class="nc" id="L125">		AssembledRead other = (AssembledRead) obj;</span>
+		
+<span class="nc bnc" id="L127" title="All 2 branches missed.">		if (!delegatePlacedRead.equals(other)) {</span>
+<span class="nc" id="L128">			return false;</span>
+		}
+		
+		
+<span class="nc" id="L132">		return true;</span>
+	}
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Range asRange() {
+<span class="nc" id="L139">        return delegatePlacedRead.asRange();</span>
+    }
+    
+    
+    @Override
+	public Range getGappedContigRange() {
+<span class="nc" id="L145">		return delegatePlacedRead.getGappedContigRange();</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>TigrContigFileParser.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.tigr.contig</a> &gt; <span class="el_source">TigrContigFileParser.java</span></div><h1>TigrContigFileParser.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly.tigr.contig;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.jcvi.jillion.assembly.tigr.contig.TigrContigFileVisitor.TigrContigVisitorCallback;
+import org.jcvi.jillion.assembly.tigr.contig.TigrContigFileVisitor.TigrContigVisitorCallback.TigrContigVisitorMemento;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Range.CoordinateSystem;
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
+import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
+import org.jcvi.jillion.internal.core.io.TextLineParser;
+/**
+ * {@code TigrContigFileParser} can parse
+ * TIGR &quot;{@literal .contig}&quot; formatted files that are produced
+ * by legacy TIGR assembly programs.
+ * @author dkatzel
+ *
+ */
+public abstract class TigrContigFileParser implements TigrContigParser{
+
+<span class="fc" id="L51">	private static final Pattern NEW_CONTIG_PATTERN = Pattern.compile(&quot;##(\\S+).+&quot;);</span>
+<span class="fc" id="L52">	private static final Pattern NEW_READ_PATTERN = Pattern.compile(&quot;#(\\S+)\\((-?\\d+)\\)\\s+\\[(.*)\\].+\\{(-?\\d+) (-?\\d+)\\}.+&quot;);</span>
+	  
+	/**
+	 * Creates a new {@link TigrContigFileParser}
+	 * instance that will parse the given contig file.
+	 * @param contigFile the contig file to parse.
+	 * @return a new {@link TigrContigFileParser};
+	 * will never be null.
+	 * @throws IOException if the given contig file does
+	 * not exist
+	 * @throws NullPointerException if the contig file is null.
+	 */
+	public static TigrContigParser create(File contigFile) throws IOException{
+<span class="fc" id="L65">		return new FileBasedTigrContigParser(contigFile);</span>
+	}
+	/**
+	 * Creates a new {@link TigrContigFileParser}
+	 * instance that will parse the given {@link InputStream} 
+	 * that contains {@literal .contig} formatted data.
+	 * @param contigFileStream the {@link InputStream} 
+	 * that containing {@literal .contig} formatted data.
+	 * @return a new {@link TigrContigFileParser};
+	 * will never be null.
+	 * @throws NullPointerException if the inputstream is null.
+	 */
+	public static TigrContigParser create(InputStream contigFileStream){
+<span class="nc" id="L78">		return new InputStreamBasedTigrContigParser(contigFileStream);</span>
+	}
+<span class="fc" id="L80">	private TigrContigFileParser(){</span>
+		//can not instantiate outside of this file
+<span class="fc" id="L82">	}</span>
+	/**
+	 * Parse the contig file from the beginning and call the 
+	 * appropriate visit methods on the given visitor.
+	 * @param visitor the visitor instance to call
+	 * the visit methods on as the file is parsed.
+	 * @throws IOException if there are any problems parsing
+	 * the contig file.
+	 * @throws NullPointerException if visitor is null.
+	 */
+	public void parse(TigrContigFileVisitor visitor) throws IOException{
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">		if(visitor==null){</span>
+<span class="nc" id="L94">			throw new NullPointerException(&quot;visitor can not be null&quot;);</span>
+		}
+<span class="fc" id="L96">		TextLineParser lineParser =new TextLineParser(getInputStream());</span>
+		try{
+<span class="fc" id="L98">			parse(visitor, lineParser);</span>
+		}finally{
+<span class="pc" id="L100">			IOUtil.closeAndIgnoreErrors(lineParser);</span>
+<span class="fc" id="L101">		}</span>
+<span class="fc" id="L102">	}</span>
+	/**
+	 * Parse the contig file from starting from
+	 * the position provided by the given memento and call the 
+	 * appropriate visit methods on the given visitor.
+	 * @param visitor the visitor instance to call
+	 * the visit methods on as the file is parsed.
+	 * @throws IOException if there are any problems parsing
+	 * the contig file.
+	 * @throws NullPointerException if either visitor  or memento are null.
+	 * @throws UnsupportedOperationException if the parser implementation
+	 * does not support mementos.
+	 * @throws IllegalArgumentException if the memento instance was produced
+	 * by this class.
+	 */
+	public abstract void parse(TigrContigFileVisitor visitor,TigrContigVisitorMemento memento) throws IOException;
+
+	final void parse(TigrContigFileVisitor visitor,
+			TextLineParser parser) throws IOException {
+		
+<span class="fc" id="L122">		State state = new State(visitor,parser);</span>
+<span class="fc" id="L123">		Handler[] handlers = Handler.values();</span>
+<span class="fc bfc" id="L124" title="All 2 branches covered.">		while(state.notDone()){</span>
+<span class="fc" id="L125">			String peekedLine = state.peekLine();			</span>
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">			for(Handler handler : handlers){</span>
+<span class="fc bfc" id="L127" title="All 2 branches covered.">				if(handler.handle(state, peekedLine)){</span>
+<span class="fc" id="L128">					break;</span>
+				}
+			}
+<span class="fc" id="L131">			state.advanceLine();</span>
+<span class="fc" id="L132">		}</span>
+<span class="fc" id="L133">		state.finishedParsing();</span>
+<span class="fc" id="L134">	}</span>
+	/**
+	 * {@code State} keeps track of our
+	 * state as we read the lines in the file.
+	 * 
+	 * @author dkatzel
+	 *
+	 */
+	private final class State{
+<span class="fc" id="L143">		private boolean inConsensus =true;</span>
+<span class="fc" id="L144">		private TigrContigVisitor contigVisitor=null;</span>
+<span class="fc" id="L145">		private TigrContigReadVisitor readVisitor=null;</span>
+<span class="fc" id="L146">		private NucleotideSequenceBuilder currentBasesBuilder =new NucleotideSequenceBuilder();</span>
+	
+<span class="fc" id="L148">		private AbstractTigrContigVisitorCallback callback=null;</span>
+		private final TextLineParser parser;
+		private final TigrContigFileVisitor visitor;
+		
+		
+<span class="fc" id="L153">		public State(TigrContigFileVisitor visitor, TextLineParser parser){</span>
+<span class="fc" id="L154">			this.visitor= visitor;</span>
+<span class="fc" id="L155">			this.parser = parser;</span>
+<span class="fc" id="L156">		}</span>
+
+		public void visitReadBases(){
+<span class="fc bfc" id="L159" title="All 2 branches covered.">			if (readVisitor != null) {</span>
+<span class="fc" id="L160">				readVisitor.visitBasecalls(currentBasesBuilder.build());</span>
+<span class="fc" id="L161">				readVisitor.visitEnd();</span>
+			}
+<span class="fc" id="L163">			currentBasesBuilder = new NucleotideSequenceBuilder();</span>
+<span class="fc" id="L164">		}</span>
+		
+		public void appendBasecalls(String basecalls){
+<span class="fc" id="L167">			currentBasesBuilder.append(basecalls);</span>
+<span class="fc" id="L168">		}</span>
+		
+		/**
+		 * We have finished parsing the file
+		 * (either we got to the end of the file
+		 * or parsing was halted) call the final
+		 * visit methods on any visitors still
+		 * referenced depending.
+		 */
+		public void finishedParsing(){
+<span class="pc bpc" id="L178" title="1 of 4 branches missed.">			if (readVisitor != null &amp;&amp; keepParsing()){</span>
+<span class="fc" id="L179">				readVisitor.visitBasecalls(currentBasesBuilder.build());</span>
+<span class="fc" id="L180">				readVisitor.visitEnd();</span>
+			}
+<span class="fc bfc" id="L182" title="All 2 branches covered.">			if(contigVisitor !=null){</span>
+<span class="pc bpc" id="L183" title="1 of 2 branches missed.">				if(keepParsing()){</span>
+<span class="fc" id="L184">					contigVisitor.visitEnd();</span>
+				}else{
+<span class="nc" id="L186">					contigVisitor.halted();</span>
+				}
+			}
+<span class="fc bfc" id="L189" title="All 2 branches covered.">			if(keepParsing()){</span>
+<span class="fc" id="L190">				visitor.visitEnd();</span>
+			}else{
+<span class="fc" id="L192">				visitor.halted();</span>
+			}
+<span class="fc" id="L194">		}</span>
+		
+		public boolean keepParsing(){
+<span class="fc bfc" id="L197" title="All 2 branches covered.">			if(callback !=null){</span>
+<span class="fc" id="L198">				return callback.keepParsing();</span>
+			}
+<span class="fc" id="L200">			return true;</span>
+		}
+		
+		public boolean notDone(){
+<span class="fc bfc" id="L204" title="All 4 branches covered.">			return keepParsing() &amp;&amp; parser.hasNextLine();</span>
+		}
+		
+		public void advanceLine() throws IOException{
+<span class="fc" id="L208">			parser.nextLine();</span>
+<span class="fc" id="L209">		}</span>
+		public String peekLine(){
+<span class="fc" id="L211">			return parser.peekLine();</span>
+		}
+		
+		public void visitEndContig(){
+<span class="fc bfc" id="L215" title="All 2 branches covered.">			if(contigVisitor !=null){</span>
+<span class="fc" id="L216">				contigVisitor.visitEnd();</span>
+			}
+<span class="fc" id="L218">			readVisitor=null;	</span>
+<span class="fc" id="L219">			contigVisitor =null;</span>
+<span class="fc" id="L220">		}</span>
+	
+
+		public void visitNewContig(String contigId) {
+<span class="fc" id="L224">			inConsensus = true;</span>
+<span class="fc" id="L225">			callback = createCallback(parser.getPosition());</span>
+<span class="fc" id="L226">			contigVisitor = visitor.visitContig(callback, contigId);</span>
+<span class="fc" id="L227">			currentBasesBuilder = new NucleotideSequenceBuilder();</span>
+			
+<span class="fc" id="L229">		}</span>
+
+		
+
+		public void beginNewRead(String seqId, int offset, Direction dir,
+				Range validRange) {
+<span class="fc bfc" id="L235" title="All 4 branches covered.">			if (inConsensus &amp;&amp; contigVisitor != null) {</span>
+<span class="fc" id="L236">				contigVisitor.visitConsensus(currentBasesBuilder.build());</span>
+			}
+<span class="fc bfc" id="L238" title="All 2 branches covered.">			if(readVisitor !=null){</span>
+<span class="fc" id="L239">				readVisitor.visitBasecalls(currentBasesBuilder.build());</span>
+<span class="fc" id="L240">				readVisitor.visitEnd();</span>
+			}
+<span class="fc" id="L242">			currentBasesBuilder = new NucleotideSequenceBuilder();</span>
+<span class="fc" id="L243">			inConsensus = false;</span>
+			
+<span class="fc bfc" id="L245" title="All 2 branches covered.">			if(contigVisitor==null){</span>
+<span class="fc" id="L246">				readVisitor=null;</span>
+			}else{	       
+<span class="fc" id="L248">				readVisitor= contigVisitor.visitRead(seqId, offset, dir, validRange);</span>
+			}
+			
+<span class="fc" id="L251">		}</span>
+		
+	}
+	/**
+	 * {@code Handler} instances handle the types of
+	 * lines that exist in a contig file.  Each Handler
+	 * only can handle one type of line.
+	 * The order of the Handles is defined from the
+	 * most restrictive handler to the most permissive handler.
+	 * 
+	 * 
+	 * @author dkatzel
+	 *
+	 */
+<span class="pc" id="L265">	private enum Handler{</span>
+<span class="fc" id="L266">		NEW_CONTIG{</span>
+
+			@Override
+			protected boolean handle(State state, String line){
+<span class="fc" id="L270">				Matcher matcher = NEW_CONTIG_PATTERN.matcher(line);</span>
+<span class="fc bfc" id="L271" title="All 2 branches covered.">				if(!matcher.find()){</span>
+<span class="fc" id="L272">					return false;</span>
+				}
+<span class="fc" id="L274">				state.visitReadBases();				</span>
+				
+<span class="pc bpc" id="L276" title="1 of 2 branches missed.">				if(state.keepParsing()){</span>
+<span class="fc" id="L277">					state.visitEndContig();					</span>
+				}
+<span class="fc bfc" id="L279" title="All 2 branches covered.">				if(state.keepParsing()){</span>
+					
+<span class="fc" id="L281">					String contigId = matcher.group(1);</span>
+<span class="fc" id="L282">					state.visitNewContig(contigId);</span>
+				}
+<span class="fc" id="L284">				return true;</span>
+			}
+			
+		},
+<span class="fc" id="L288">		NEW_READ{</span>
+			@Override
+			protected boolean handle(State state, String line){
+<span class="fc" id="L291">				Matcher matcher = NEW_READ_PATTERN.matcher(line);</span>
+<span class="fc bfc" id="L292" title="All 2 branches covered.">				if(!matcher.find()){</span>
+<span class="fc" id="L293">					return false;</span>
+				}
+<span class="fc" id="L295">				String seqId = matcher.group(1);</span>
+<span class="fc" id="L296">		        int offset = Integer.parseInt(matcher.group(2));</span>
+<span class="fc bfc" id="L297" title="All 2 branches covered.">		        Direction dir= parseComplimentedFlag(matcher)?Direction.REVERSE: Direction.FORWARD;</span>
+<span class="fc" id="L298">		        Range validRange = parseValidRange(matcher, dir);</span>
+		        
+<span class="fc" id="L300">				state.beginNewRead(seqId, offset, dir, validRange);</span>
+<span class="fc" id="L301">				return true;</span>
+			}
+		},
+<span class="fc" id="L304">		BASECALL_LINE{</span>
+
+			@Override
+			protected boolean handle(State state, String line) {
+<span class="fc" id="L308">				state.appendBasecalls(line);</span>
+<span class="fc" id="L309">				return true;</span>
+			}
+			
+		}
+		;
+		/**
+		 * Try to handle the given line given the current {@link State}.
+		 * @param state the current state.
+		 * @param line the peeked line to handle.
+		 * @return {@code true} if we successfully handled this line;
+		 * {@code false} otherwise.
+		 */
+		protected abstract boolean handle(State state, String line);
+	}
+	
+	abstract AbstractTigrContigVisitorCallback createCallback(long currentOffset);
+
+	
+	
+	 private static Range parseValidRange(Matcher newSequenceMatcher,
+	            Direction dir) {
+<span class="fc" id="L330">	            int left = Integer.parseInt(newSequenceMatcher.group(4));</span>
+<span class="fc" id="L331">	           int right = Integer.parseInt(newSequenceMatcher.group(5));</span>
+	           Range validRange;
+<span class="fc bfc" id="L333" title="All 2 branches covered.">	           if(dir == Direction.REVERSE){</span>
+<span class="fc" id="L334">	               validRange = Range.of(CoordinateSystem.RESIDUE_BASED,right, left);</span>
+	           }
+	           else{
+<span class="fc" id="L337">	               validRange = Range.of(CoordinateSystem.RESIDUE_BASED,left, right);</span>
+	           }
+<span class="fc" id="L339">	        return validRange;</span>
+	    }
+	 
+	 private static boolean parseComplimentedFlag(Matcher newSequenceMatcher) {
+<span class="fc bfc" id="L343" title="All 2 branches covered.">	        return !newSequenceMatcher.group(3).isEmpty();</span>
+	    }
+	
+	abstract InputStream getInputStream() throws IOException;
+	
+	private static class InputStreamBasedTigrContigParser extends TigrContigFileParser{
+		private final OpenAwareInputStream in;
+		
+<span class="nc" id="L351">		public InputStreamBasedTigrContigParser(InputStream in){</span>
+<span class="nc" id="L352">			this.in = new OpenAwareInputStream(in);</span>
+<span class="nc" id="L353">		}</span>
+
+		@Override
+		public void parse(TigrContigFileVisitor visitor,
+				TigrContigVisitorMemento memento) throws IOException {
+<span class="nc" id="L358">			throw new UnsupportedOperationException(&quot;inputstream parser does not support mementos&quot;);</span>
+			
+		}
+
+		@Override
+		protected AbstractTigrContigVisitorCallback createCallback(
+				long currentOffset) {
+<span class="nc" id="L365">			return NoMementoCallback.INSTANCE;</span>
+		}
+
+		@Override
+		protected InputStream getInputStream() throws IOException {
+<span class="nc bnc" id="L370" title="All 2 branches missed.">			if(!canParse()){</span>
+<span class="nc" id="L371">				throw new IOException(&quot;inputstream is closed&quot;);</span>
+			}
+<span class="nc" id="L373">			return in;</span>
+		}
+		
+		@Override
+		public boolean canParse() {
+<span class="nc" id="L378">			return in.isOpen();</span>
+		}
+		
+	}
+	
+	private static class FileBasedTigrContigParser extends TigrContigFileParser{
+		private final File contigFile;
+
+<span class="fc" id="L386">		public FileBasedTigrContigParser(File contigFile) throws FileNotFoundException {</span>
+<span class="pc bpc" id="L387" title="1 of 2 branches missed.">			if(contigFile==null){</span>
+<span class="nc" id="L388">				throw new NullPointerException(&quot;contig file can not be null&quot;);</span>
+			}
+<span class="pc bpc" id="L390" title="1 of 2 branches missed.">			if(!contigFile.exists()){</span>
+<span class="nc" id="L391">				throw new FileNotFoundException(contigFile.getAbsolutePath());</span>
+			}
+<span class="fc" id="L393">			this.contigFile = contigFile;</span>
+<span class="fc" id="L394">		}</span>
+
+		@Override
+		public boolean canParse() {
+<span class="nc" id="L398">			return true;</span>
+		}
+
+		@Override
+		protected InputStream getInputStream() throws IOException {
+<span class="fc" id="L403">			return new BufferedInputStream(new FileInputStream(contigFile));</span>
+		}
+
+		@Override
+		protected AbstractTigrContigVisitorCallback createCallback(long currentOffset) {
+<span class="fc" id="L408">			return new MementoCallback(currentOffset);</span>
+		}
+
+		@Override
+		public void parse(TigrContigFileVisitor visitor,
+				TigrContigVisitorMemento memento) throws IOException {
+<span class="pc bpc" id="L414" title="1 of 2 branches missed.">			if(memento ==null){</span>
+<span class="nc" id="L415">				throw new NullPointerException(&quot;memento can not be null&quot;);</span>
+			}
+<span class="pc bpc" id="L417" title="1 of 2 branches missed.">			if(!(memento instanceof OffsetMemento)){</span>
+<span class="nc" id="L418">				throw new IllegalArgumentException(&quot;unknown memento type, must use instance created by this parser&quot;);</span>
+			}
+<span class="fc" id="L420">			long startOffset = ((OffsetMemento)memento).getOffset();</span>
+<span class="fc" id="L421">			TextLineParser in=null;</span>
+			try{
+<span class="fc" id="L423">				in = new TextLineParser(new RandomAccessFileInputStream(contigFile, startOffset));</span>
+<span class="fc" id="L424">				parse(visitor, in);</span>
+			}finally{
+<span class="pc" id="L426">				IOUtil.closeAndIgnoreErrors(in);</span>
+<span class="fc" id="L427">			}</span>
+			
+<span class="fc" id="L429">		}</span>
+		
+	}
+	
+<span class="fc" id="L433">	private  abstract static class AbstractTigrContigVisitorCallback implements TigrContigVisitorCallback{</span>
+<span class="fc" id="L434">		private volatile boolean keepParsing=true;</span>
+		
+		@Override
+		public void haltParsing() {
+<span class="fc" id="L438">			keepParsing=false;</span>
+			
+<span class="fc" id="L440">		}</span>
+
+		public final boolean keepParsing() {
+<span class="fc" id="L443">			return keepParsing;</span>
+		}
+	}
+	
+<span class="nc" id="L447">	private static class NoMementoCallback extends AbstractTigrContigVisitorCallback{</span>
+
+<span class="nc" id="L449">		static NoMementoCallback INSTANCE = new NoMementoCallback();</span>
+		
+		
+		@Override
+		public boolean canCreateMemento() {
+<span class="nc" id="L454">			return false;</span>
+		}
+
+		@Override
+		public TigrContigVisitorMemento createMemento() {
+<span class="nc" id="L459">			throw new UnsupportedOperationException(&quot;can not create memento&quot;);</span>
+		}
+		
+	}
+	
+	private static class MementoCallback extends AbstractTigrContigVisitorCallback{
+
+		private final long offset;
+		
+<span class="fc" id="L468">		public MementoCallback(long offset){</span>
+<span class="fc" id="L469">			this.offset = offset;</span>
+<span class="fc" id="L470">		}</span>
+
+		@Override
+		public boolean canCreateMemento() {
+<span class="fc" id="L474">			return true;</span>
+		}
+
+		@Override
+		public TigrContigVisitorMemento createMemento() {
+<span class="fc" id="L479">			return new OffsetMemento(offset);</span>
+		}
+		
+	}
+	
+	private static class OffsetMemento implements TigrContigVisitorMemento{
+		private final long offset;
+
+<span class="fc" id="L487">		public OffsetMemento(long offset) {</span>
+<span class="fc" id="L488">			this.offset = offset;</span>
+<span class="fc" id="L489">		}</span>
+
+		public final long getOffset() {
+<span class="fc" id="L492">			return offset;</span>
+		}
+		
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

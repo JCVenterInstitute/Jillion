@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>NucleotideFastaRecordBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.fasta.nt</a> &gt; <span class="el_source">NucleotideFastaRecordBuilder.java</span></div><h1>NucleotideFastaRecordBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.fasta.nt;
+
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.shared.fasta.AbstractFastaRecordBuilder;
+/**
+ * {@code NucleotideFastaRecordBuilder} is a builder class
+ * that makes instances of {@link NucleotideFastaRecord}s.
+ * Depending on the different parameters, this builder might
+ * choose to return different implementations.
+ * @author dkatzel
+ *
+ */
+public final class NucleotideFastaRecordBuilder extends AbstractFastaRecordBuilder&lt;Nucleotide, NucleotideSequence, NucleotideFastaRecord, NucleotideFastaRecordBuilder&gt;{
+	/**
+	 * Create a new {@link NucleotideFastaRecordBuilder}
+	 * instance that has the given id and sequence.  
+	 * @param id the id of the fasta record can not be null.
+	 * @param sequence the sequence of the fasta record; can not be null.
+	 * @throws NullPointerException if either id or sequence are null.
+	 */
+	public NucleotideFastaRecordBuilder(String id,
+			NucleotideSequence sequence) {
+<span class="fc" id="L45">		super(id, sequence);</span>
+<span class="fc" id="L46">	}</span>
+	/**
+	 * Convenience constructor that converts a String into
+	 * a {@link NucleotideSequence}.  This is the same
+	 * as {@link #NucleotideFastaRecordBuilder(String, NucleotideSequence)
+	 * new NucleotideFastaRecordBuilder(id, new NucleotideSequenceBuilder(sequence).build())}.
+	 * @param id the id of the fasta record can not be null.
+	 * @param sequence the nucleotide sequence as a string.  May contain whitespace
+	 * which will get removed. can not be null.
+	 * @throws IllegalArgumentException if any non-whitespace
+     * in character in the sequence can not be converted
+     * into a {@link Nucleotide}.
+     * @throws NullPointerException if either id or sequence are null.
+     * @see NucleotideSequenceBuilder
+	 */
+	public NucleotideFastaRecordBuilder(String id,
+			String sequence) {
+<span class="fc" id="L63">		super(id, new NucleotideSequenceBuilder(sequence).build());</span>
+<span class="fc" id="L64">	}</span>
+	
+	@Override
+	protected NucleotideFastaRecord createNewInstance(String id,
+			NucleotideSequence sequence, String comment) {
+<span class="fc bfc" id="L69" title="All 2 branches covered.">		if(comment==null){</span>
+<span class="fc" id="L70">			return new UnCommentedNucleotideSequenceFastaRecord(id, sequence);</span>
+		}
+<span class="fc" id="L72">		return new CommentedNucleotideSequenceFastaRecord(id, sequence,comment);</span>
+	}
+    @Override
+    protected NucleotideFastaRecordBuilder getThis() {
+<span class="fc" id="L76">        return this;</span>
+    }
+    @Override
+    protected NucleotideFastaRecordBuilder newBuilder(String id,
+            NucleotideSequence seq, String comment) {
+<span class="nc" id="L81">        return new NucleotideFastaRecordBuilder(id, seq).comment(comment);</span>
+    }
+
+
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SamReferenceSequenceBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.sam.header</a> &gt; <span class="el_source">SamReferenceSequenceBuilder.java</span></div><h1>SamReferenceSequenceBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.sam.header;
+
+public final class SamReferenceSequenceBuilder{
+	String name;
+	int length;
+	
+	String genomeAssemblyId;
+	String species;
+	String uri;
+	String md5;
+	
+	/**
+	 * Create a new Builder instance
+	 * which is initialized to have 
+	 * it's name and length set to the specified
+	 * values and all other values set to {@code null}. 
+	 * @param name the name of this ReferenceSequence;
+	 * can not be null.
+	 * @param length the length of this ReferenceSequence;
+	 * can not be &lt;1. 
+	 * @throws NullPointerException if name is null.
+	 * @throws IllegalArgumentException if length &lt;1.
+	 */
+<span class="fc" id="L44">	public SamReferenceSequenceBuilder(String name, int length){</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">		if(name ==null){</span>
+<span class="fc" id="L46">			throw new NullPointerException(&quot;name can not be null&quot;);</span>
+		}
+<span class="fc bfc" id="L48" title="All 2 branches covered.">		if(length&lt;1){</span>
+<span class="fc" id="L49">			throw new IllegalArgumentException(&quot;length must &gt;=1&quot;);</span>
+		}
+<span class="fc" id="L51">		this.name = name;</span>
+<span class="fc" id="L52">		this.length = length;</span>
+<span class="fc" id="L53">	}</span>
+
+	/**
+	 * Create a new Builder instance
+	 * which is initialized to have 
+	 * all the same values as the given 
+	 * ReferenceSequence.
+	 * @param copy the ReferenceSequence to copy 
+	 * the values of; can not be null.
+	 * @throws NullPointerException if copy is null.
+	 */
+<span class="fc" id="L64">	public SamReferenceSequenceBuilder(SamReferenceSequence copy) {</span>
+<span class="fc" id="L65">		name = copy.getName();</span>
+<span class="fc" id="L66">		length = copy.getLength();</span>
+		
+<span class="fc" id="L68">		genomeAssemblyId = copy.getGenomeAssemblyId();</span>
+<span class="fc" id="L69">		species = copy.getSpecies();</span>
+<span class="fc" id="L70">		uri=copy.getUri();</span>
+<span class="fc" id="L71">		md5= copy.getMd5();</span>
+<span class="fc" id="L72">	}</span>
+
+	/**
+	 * Change this reference's name.
+	 * @param name the name to change it to;
+	 * can not be null.
+	 * @return this.
+	 * @throws NullPointerException if name is null.
+	 */
+	public SamReferenceSequenceBuilder setName(String name) {
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">		if(name ==null){</span>
+<span class="nc" id="L83">			throw new NullPointerException(&quot;name can not be null&quot;);</span>
+		}
+<span class="fc" id="L85">		this.name = name;</span>
+<span class="fc" id="L86">		return this;</span>
+	}
+	/**
+	 * Change the length of this reference.
+	 * @param length the length of this ReferenceSequence;
+	 * can not be &lt;1. 
+	 * @throws IllegalArgumentException if length &lt;1.
+	 * @return this.
+	 */
+	public SamReferenceSequenceBuilder setLength(int length) {
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">		if(length&lt;1){</span>
+<span class="nc" id="L97">			throw new IllegalArgumentException(&quot;length must &gt;=1&quot;);</span>
+		}
+<span class="fc" id="L99">		this.length = length;</span>
+<span class="fc" id="L100">		return this;</span>
+	}
+
+	public String getGenomeAssemblyId() {
+<span class="nc" id="L104">		return genomeAssemblyId;</span>
+	}
+
+
+	public SamReferenceSequenceBuilder setGenomeAssemblyId(String genomeAssemblyId) {
+<span class="fc" id="L109">		this.genomeAssemblyId = genomeAssemblyId;</span>
+<span class="fc" id="L110">		return this;</span>
+	}
+
+
+	public String getSpecies() {
+<span class="nc" id="L115">		return species;</span>
+	}
+
+
+	public SamReferenceSequenceBuilder setSpecies(String species) {
+<span class="fc" id="L120">		this.species = species;</span>
+<span class="fc" id="L121">		return this;</span>
+	}
+
+
+	public String getUri() {
+<span class="nc" id="L126">		return uri;</span>
+	}
+
+
+	public SamReferenceSequenceBuilder setUri(String uri) {
+<span class="fc" id="L131">		this.uri = uri;</span>
+<span class="fc" id="L132">		return this;</span>
+	}
+
+
+	public String getMd5() {
+<span class="nc" id="L137">		return md5;</span>
+	}
+
+
+	public SamReferenceSequenceBuilder setMd5(String md5) {
+<span class="fc" id="L142">		this.md5 = md5;</span>
+<span class="fc" id="L143">		return this;</span>
+	}
+
+
+	public String getName() {
+<span class="nc" id="L148">		return name;</span>
+	}
+
+
+	public int getLength() {
+<span class="nc" id="L153">		return length;</span>
+	}
+	/**
+	 * Create a new {@link ReferenceSequence}
+	 * instance using the current values in this Builder.
+	 * @return a  new {@link ReferenceSequence},
+	 * will never be null.
+	 */
+	public SamReferenceSequenceImpl build(){
+<span class="fc" id="L162">		return new SamReferenceSequenceImpl(this);</span>
+	}
+	
+	private static class SamReferenceSequenceImpl implements SamReferenceSequence {
+
+	        private final String name;
+	        private final int length;
+	        
+	        private final String genomeAssemblyId;
+	        private final String species;
+	        private final String uri;
+	        private final String md5;
+	        
+	        
+<span class="fc" id="L176">	        SamReferenceSequenceImpl(SamReferenceSequenceBuilder builder){</span>
+<span class="fc" id="L177">	                this.name = builder.name;</span>
+<span class="fc" id="L178">	                this.length = builder.length;</span>
+	                
+<span class="fc" id="L180">	                this.genomeAssemblyId = builder.genomeAssemblyId;</span>
+<span class="fc" id="L181">	                this.species = builder.species;</span>
+<span class="fc" id="L182">	                this.uri = builder.uri;</span>
+<span class="fc" id="L183">	                this.md5 = builder.md5;</span>
+<span class="fc" id="L184">	        }</span>
+	        
+	        
+	        
+	        
+	        @Override
+	        public String toString() {
+<span class="nc" id="L191">	                return &quot;ReferenceSequence [name=&quot; + name + &quot;, length=&quot; + length</span>
+	                                + &quot;, genomeAssemblyId=&quot; + genomeAssemblyId + &quot;, species=&quot;
+	                                + species + &quot;, uri=&quot; + uri + &quot;, md5=&quot; + md5 + &quot;]&quot;;
+	        }
+
+
+
+	        /**
+	         * Get the human readable name of this reference sequence.
+	         * @return a String; will never be null.
+	         */
+	        @Override
+	    public String getName() {
+<span class="fc" id="L204">	                return name;</span>
+	        }
+
+
+
+	        /**
+	         * Get the number of bases in this reference sequence.
+	         * @return the number of bases; will always be &gt; 0.
+	         */
+	        @Override
+	    public int getLength() {
+<span class="fc" id="L215">	                return length;</span>
+	        }
+
+
+
+	        
+	        @Override
+	    public String getGenomeAssemblyId() {
+<span class="fc" id="L223">	                return genomeAssemblyId;</span>
+	        }
+
+
+
+
+	        @Override
+	    public String getSpecies() {
+<span class="fc" id="L231">	                return species;</span>
+	        }
+
+
+
+
+	        @Override
+	    public String getUri() {
+<span class="fc" id="L239">	                return uri;</span>
+	        }
+
+
+
+
+	        @Override
+	    public String getMd5() {
+<span class="fc" id="L247">	                return md5;</span>
+	        }
+
+
+
+
+	        @Override
+	        public int hashCode() {
+<span class="fc" id="L255">	                final int prime = 31;</span>
+<span class="fc" id="L256">	                int result = 1;</span>
+<span class="fc" id="L257">	                result = prime * result + name.hashCode();</span>
+<span class="fc" id="L258">	                result = prime * result + length;</span>
+<span class="pc bpc" id="L259" title="1 of 2 branches missed.">	                result = prime</span>
+	                                * result
+<span class="fc" id="L261">	                                + ((genomeAssemblyId == null) ? 0 : genomeAssemblyId.hashCode());</span>
+	                
+<span class="pc bpc" id="L263" title="1 of 2 branches missed.">	                result = prime * result + ((md5 == null) ? 0 : md5.hashCode());</span>
+	                
+<span class="pc bpc" id="L265" title="1 of 2 branches missed.">	                result = prime * result + ((species == null) ? 0 : species.hashCode());</span>
+<span class="pc bpc" id="L266" title="1 of 2 branches missed.">	                result = prime * result + ((uri == null) ? 0 : uri.hashCode());</span>
+<span class="fc" id="L267">	                return result;</span>
+	        }
+
+
+
+
+	        @Override
+	        public boolean equals(Object obj) {
+<span class="fc bfc" id="L275" title="All 2 branches covered.">	                if (this == obj) {</span>
+<span class="fc" id="L276">	                        return true;</span>
+	                }
+<span class="fc bfc" id="L278" title="All 2 branches covered.">	                if (obj == null) {</span>
+<span class="fc" id="L279">	                        return false;</span>
+	                }
+<span class="pc bpc" id="L281" title="1 of 2 branches missed.">	                if (!(obj instanceof SamReferenceSequence)) {</span>
+<span class="nc" id="L282">	                        return false;</span>
+	                }
+<span class="fc" id="L284">	                SamReferenceSequence other = (SamReferenceSequence) obj;</span>
+<span class="fc bfc" id="L285" title="All 2 branches covered.">	                if (!name.equals(other.getName())) {</span>
+<span class="fc" id="L286">	                        return false;</span>
+	                }
+<span class="fc bfc" id="L288" title="All 2 branches covered.">	                if (length != other.getLength()) {</span>
+<span class="fc" id="L289">	                        return false;</span>
+	                }
+<span class="fc bfc" id="L291" title="All 2 branches covered.">	                if (genomeAssemblyId == null) {</span>
+<span class="pc bpc" id="L292" title="1 of 2 branches missed.">	                        if (other.getGenomeAssemblyId() != null) {</span>
+<span class="nc" id="L293">	                                return false;</span>
+	                        }
+<span class="fc bfc" id="L295" title="All 2 branches covered.">	                } else if (!genomeAssemblyId.equals(other.getGenomeAssemblyId())) {</span>
+<span class="fc" id="L296">	                        return false;</span>
+	                }
+	                
+<span class="fc bfc" id="L299" title="All 2 branches covered.">	                if (md5 == null) {</span>
+<span class="pc bpc" id="L300" title="1 of 2 branches missed.">	                        if (other.getMd5() != null) {</span>
+<span class="nc" id="L301">	                                return false;</span>
+	                        }
+<span class="fc bfc" id="L303" title="All 2 branches covered.">	                } else if (!md5.equals(other.getMd5())) {</span>
+<span class="fc" id="L304">	                        return false;</span>
+	                }
+	                
+<span class="fc bfc" id="L307" title="All 2 branches covered.">	                if (species == null) {</span>
+<span class="pc bpc" id="L308" title="1 of 2 branches missed.">	                        if (other.getSpecies() != null) {</span>
+<span class="nc" id="L309">	                                return false;</span>
+	                        }
+<span class="fc bfc" id="L311" title="All 2 branches covered.">	                } else if (!species.equals(other.getSpecies())) {</span>
+<span class="fc" id="L312">	                        return false;</span>
+	                }
+<span class="fc bfc" id="L314" title="All 2 branches covered.">	                if (uri == null) {</span>
+<span class="pc bpc" id="L315" title="1 of 2 branches missed.">	                        if (other.getUri() != null) {</span>
+<span class="nc" id="L316">	                                return false;</span>
+	                        }
+<span class="fc bfc" id="L318" title="All 2 branches covered.">	                } else if (!uri.equals(other.getUri())) {</span>
+<span class="fc" id="L319">	                        return false;</span>
+	                }
+<span class="fc" id="L321">	                return true;</span>
+	        }
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

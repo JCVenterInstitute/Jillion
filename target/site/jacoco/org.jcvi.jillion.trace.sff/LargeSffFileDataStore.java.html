@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>LargeSffFileDataStore.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.trace.sff</a> &gt; <span class="el_source">LargeSffFileDataStore.java</span></div><h1>LargeSffFileDataStore.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Jan 28, 2010
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.trace.sff;
+
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
+import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.datastore.DataStoreFilter;
+import org.jcvi.jillion.core.datastore.DataStoreFilters;
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.internal.core.datastore.AbstractDataStore;
+import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
+import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
+/**
+ * {@code LargeSffFileDataStore} is a {@link SffFileDataStore}
+ * implementation that doesn't store any read information in memory.
+ *  No data contained in this
+ * sff file is stored in memory except it's size (which is lazy loaded).
+ * This means that each get() or contain() requires re-parsing the sff file
+ * which can take some time.  It is recommended that instances are wrapped
+ * in  a cached datastore using
+ * {@link DataStoreUtil#createNewCachedDataStore(Class, org.jcvi.jillion.core.datastore.DataStore, int)}.
+ * @author dkatzel
+ *
+ */
+final class LargeSffFileDataStore extends AbstractDataStore&lt;SffFlowgram&gt; implements SffFileDataStore{
+
+    private final File sffFile;
+<span class="fc" id="L60">    private Long size=null;</span>
+    private final DataStoreFilter filter;
+    private final NucleotideSequence keySequence,flowSequence;
+    /**
+     * Create a new instance of {@link LargeSffFileDataStore}.
+     * @param sffFile the sff file to parse.
+     * @return a new SffDataStore; never null.
+     * @throws NullPointerException if sffFile is null.
+     * @throws IOException if sffFile does not exist or is not a valid sff file.
+     */
+    public static SffFileDataStore create(File sffFile) throws IOException{
+<span class="fc" id="L71">    	return create(sffFile, DataStoreFilters.alwaysAccept());</span>
+    }
+    
+    /**
+     * Create a new instance of {@link LargeSffFileDataStore}.
+     * @param sffFile the sff file to parse.
+     * @return a new SffDataStore; never null.
+     * @throws NullPointerException if sffFile is null.
+     * @throws IOException if sffFile does not exist or is not a valid sff file.
+     */
+    public static SffFileDataStore create(File sffFile, DataStoreFilter filter) throws IOException{
+<span class="fc" id="L82">    	verifyFileExists(sffFile);</span>
+<span class="fc" id="L83">    	verifyIsValidSff(sffFile);</span>
+    	
+<span class="fc" id="L85">    	return new LargeSffFileDataStore(sffFile,filter);</span>
+    }
+	private static void verifyFileExists(File sffFile)
+			throws FileNotFoundException {
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">		if(sffFile ==null){</span>
+<span class="nc" id="L90">    		throw new NullPointerException(&quot;file can not be null&quot;);</span>
+    	}
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">    	if(!sffFile.exists()){</span>
+<span class="nc" id="L93">    		throw new FileNotFoundException(&quot;sff file does not exist&quot;);</span>
+    	}
+<span class="fc" id="L95">	}</span>
+    private static void verifyIsValidSff(File f) throws IOException {
+<span class="fc" id="L97">    	DataInputStream in=null;</span>
+    	try{
+<span class="fc" id="L99">    		in = new DataInputStream(new BufferedInputStream(new FileInputStream(f)));</span>
+    		//don't care about return value
+    		//this will throw IOException if the file isn't valid
+<span class="fc" id="L102">    		DefaultSFFCommonHeaderDecoder.INSTANCE.decodeHeader(in);</span>
+    	}finally{
+<span class="pc" id="L104">    		IOUtil.closeAndIgnoreErrors(in);</span>
+<span class="fc" id="L105">    	}</span>
+		
+<span class="fc" id="L107">	}</span>
+	/**
+     * @param sffFile
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
+     */
+<span class="fc" id="L113">    private LargeSffFileDataStore(File sffFile, DataStoreFilter filter) throws FileNotFoundException, IOException {</span>
+<span class="fc" id="L114">    	SffParser parser = SffFileParser.create(sffFile);</span>
+<span class="fc" id="L115">    	this.sffFile = sffFile;</span>
+<span class="fc" id="L116">        this.filter = filter;</span>
+        
+        
+<span class="fc" id="L119">        HeaderVisitor visitor = new HeaderVisitor();</span>
+<span class="fc" id="L120">		parser.parse(visitor);</span>
+<span class="fc" id="L121">        SffCommonHeader header = visitor.getHeader();</span>
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">        if(header ==null){</span>
+<span class="nc" id="L123">        	throw new IOException(&quot;could not parse sff header&quot;);</span>
+        }
+<span class="fc" id="L125">        this.keySequence = header.getKeySequence();</span>
+<span class="fc" id="L126">        this.flowSequence = header.getFlowSequence();</span>
+        
+<span class="fc" id="L128">    }</span>
+
+    @Override
+	public NucleotideSequence getKeySequence() {
+<span class="nc" id="L132">		return keySequence;</span>
+	}
+
+	@Override
+	public NucleotideSequence getFlowSequence() {
+<span class="nc" id="L137">		return flowSequence;</span>
+	}
+
+	@Override
+	protected boolean containsImpl(String id) throws DataStoreException {
+<span class="fc bfc" id="L142" title="All 2 branches covered.">		return get(id)!=null;</span>
+	}
+	@Override
+	protected SffFlowgram getImpl(String id) throws DataStoreException {
+<span class="pc bpc" id="L146" title="1 of 2 branches missed.">		if(!filter.accept(id)){</span>
+<span class="nc" id="L147">			return null;</span>
+		}
+		try{
+<span class="fc" id="L150">        	SingleFlowgramVisitor singleVisitor = new SingleFlowgramVisitor(id);</span>
+<span class="fc" id="L151">        	SffFileParser.create(sffFile).parse(singleVisitor);</span>
+<span class="fc" id="L152">        	return singleVisitor.getFlowgram();</span>
+<span class="nc" id="L153">        } catch (IOException e) {</span>
+<span class="nc" id="L154">            throw new DataStoreException(&quot;could not read sffFile &quot;,e);</span>
+        }
+	}
+	@Override
+	protected synchronized long getNumberOfRecordsImpl() throws DataStoreException {
+<span class="pc bpc" id="L159" title="1 of 2 branches missed.">		if(this.size ==null){</span>
+			//since filter could mean we won't
+			//accept everything we can't just
+			//look at the value in the common header
+			//must iterate through everything
+<span class="fc" id="L164">			StreamingIterator&lt;SffFlowgram&gt; iter=null;</span>
+			
+        	
+        	try{
+<span class="fc" id="L168">        		iter = iterator();</span>
+<span class="fc" id="L169">        		long count=0;</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">        		while(iter.hasNext()){</span>
+<span class="fc" id="L171">        			iter.next();</span>
+<span class="fc" id="L172">        			count++;</span>
+        		}
+<span class="fc" id="L174">        		size = count;</span>
+<span class="nc" id="L175">        	}catch(Exception e){</span>
+<span class="nc" id="L176">        		 throw new DataStoreException(&quot;could not parse sffFile &quot;,e);</span>
+        	}finally{
+<span class="pc" id="L178">        		IOUtil.closeAndIgnoreErrors(iter);</span>
+<span class="fc" id="L179">        	}</span>
+        }
+<span class="fc" id="L181">        return size;</span>
+	}
+	@Override
+	protected StreamingIterator&lt;String&gt; idIteratorImpl()
+			throws DataStoreException {
+<span class="fc" id="L186">		SffFileIdIterator iter = SffFileIdIterator.createNewIteratorFor(sffFile,filter);</span>
+<span class="fc" id="L187">		return DataStoreStreamingIterator.create(this, iter);</span>
+	}
+	@Override
+	protected StreamingIterator&lt;SffFlowgram&gt; iteratorImpl()
+			throws DataStoreException {
+<span class="fc" id="L192">		return DataStoreStreamingIterator.create(this,</span>
+<span class="fc" id="L193">				SffFileIterator.createNewIteratorFor(sffFile,filter));</span>
+	}
+	
+	
+   
+
+   
+
+    @Override
+	protected StreamingIterator&lt;DataStoreEntry&lt;SffFlowgram&gt;&gt; entryIteratorImpl()
+			throws DataStoreException {
+<span class="nc" id="L204">    	StreamingIterator&lt;DataStoreEntry&lt;SffFlowgram&gt;&gt; iter = new StreamingIterator&lt;DataStoreEntry&lt;SffFlowgram&gt;&gt;(){</span>
+<span class="nc" id="L205">    		StreamingIterator&lt;SffFlowgram&gt; flowgramIter = SffFileIterator.createNewIteratorFor(sffFile,filter);</span>
+
+			@Override
+			public boolean hasNext() {
+<span class="nc" id="L209">				return flowgramIter.hasNext();</span>
+			}
+
+			@Override
+			public void close() {
+<span class="nc" id="L214">				flowgramIter.close();</span>
+<span class="nc" id="L215">			}</span>
+
+			@Override
+			public DataStoreEntry&lt;SffFlowgram&gt; next() {
+<span class="nc" id="L219">				SffFlowgram flowgram = flowgramIter.next();</span>
+<span class="nc" id="L220">				return new DataStoreEntry&lt;SffFlowgram&gt;(flowgram.getId(), flowgram);</span>
+			}
+
+			@Override
+			public void remove() {
+<span class="nc" id="L225">				throw new UnsupportedOperationException();</span>
+			}
+    		
+    	};
+<span class="nc" id="L229">		return DataStoreStreamingIterator.create(this,iter);</span>
+	}
+
+	@Override
+	protected void handleClose() throws IOException {
+		//no-op
+		
+<span class="nc" id="L236">	}</span>
+	
+    private static final class SffFileIdIterator extends AbstractBlockingStreamingIterator&lt;String&gt;{
+
+    	private final File sffFile;
+    	private final DataStoreFilter filter;
+
+        public static SffFileIdIterator createNewIteratorFor(File sffFile, DataStoreFilter filter){
+<span class="fc" id="L244">        	SffFileIdIterator iter = new SffFileIdIterator(sffFile,filter);</span>
+<span class="fc" id="L245">			iter.start();</span>
+    		
+        	
+<span class="fc" id="L248">        	return iter;</span>
+        }
+    	
+<span class="fc" id="L251">    	private SffFileIdIterator(File sffFile, DataStoreFilter filter){</span>
+<span class="fc" id="L252">    		this.sffFile = sffFile;</span>
+<span class="fc" id="L253">    		 this.filter =filter;</span>
+<span class="fc" id="L254">    	}</span>
+
+    	@Override
+    	protected void backgroundThreadRunMethod() {
+    		 try {
+<span class="fc" id="L259">             	SffVisitor visitor = new SffVisitor() {</span>
+             		
+
+             		@Override
+					public void visitHeader(SffVisitorCallback callback,
+							SffCommonHeader header) {
+						//no-op						
+<span class="fc" id="L266">					}</span>
+
+					@Override
+					public SffFileReadVisitor visitRead(
+							SffVisitorCallback callback,
+							SffReadHeader readHeader) {
+<span class="fc" id="L272">						String readId = readHeader.getId();</span>
+<span class="pc bpc" id="L273" title="1 of 2 branches missed.">						if(filter.accept(readId)){</span>
+<span class="fc" id="L274">							SffFileIdIterator.this.blockingPut(readId);</span>
+						}
+						//always skip underlying read data
+<span class="fc" id="L277">						return null;</span>
+					}
+
+					@Override
+					public void end() {
+						//no-op
+<span class="fc" id="L283">					}</span>
+
+					
+             	};
+<span class="fc" id="L287">                 SffFileParser.create(sffFile).parse(visitor);</span>
+<span class="nc" id="L288">             } catch (IOException e) {</span>
+                 //should never happen
+<span class="nc" id="L290">                 throw new RuntimeException(e);</span>
+<span class="fc" id="L291">             }</span>
+    		
+<span class="fc" id="L293">    	}</span>
+    	
+    	
+
+    }
+    
+    
+    private static final class SingleFlowgramVisitor implements SffVisitor{
+        private final String idToFind;
+<span class="fc" id="L302">        private SffFlowgram flowgram=null;</span>
+<span class="fc" id="L303">        private SingleFlowgramVisitor(String idToFind) {</span>
+<span class="fc" id="L304">			this.idToFind = idToFind;</span>
+<span class="fc" id="L305">		}</span>
+
+		public SffFlowgram getFlowgram() {
+<span class="fc" id="L308">			return flowgram;</span>
+		}
+
+		@Override
+		public void visitHeader(SffVisitorCallback callback,
+				SffCommonHeader header) {
+			//no-op			
+<span class="fc" id="L315">		}</span>
+
+		@Override
+		public SffFileReadVisitor visitRead(final SffVisitorCallback callback,
+				final SffReadHeader readHeader) {
+<span class="fc bfc" id="L320" title="All 2 branches covered.">			if(readHeader.getId().equals(idToFind)){</span>
+<span class="fc" id="L321">				return new SffFileReadVisitor() {</span>
+					
+					@Override
+					public void visitReadData(SffReadData readData) {
+<span class="fc" id="L325">						flowgram = SffFlowgramImpl.create(readHeader, readData);</span>
+						
+<span class="fc" id="L327">					}</span>
+					
+					@Override
+					public void visitEnd() {
+<span class="fc" id="L331">						callback.haltParsing();</span>
+						
+<span class="fc" id="L333">					}</span>
+				};
+			}
+<span class="fc" id="L336">			return null;</span>
+		}
+
+		@Override
+		public void end() {
+			//no-op			
+<span class="fc" id="L342">		}</span>
+    }
+    
+<span class="fc" id="L345">   private static final class HeaderVisitor implements SffVisitor {</span>
+		private SffCommonHeader header;
+		@Override
+		public SffFileReadVisitor visitRead(SffVisitorCallback callback,
+				SffReadHeader readHeader) {
+			//skip
+<span class="nc" id="L351">			return null;</span>
+		}
+		
+		@Override
+		public void visitHeader(SffVisitorCallback callback,
+				SffCommonHeader header) {
+<span class="fc" id="L357">			this.header = header;</span>
+<span class="fc" id="L358">			callback.haltParsing();</span>
+			
+<span class="fc" id="L360">		}</span>
+		
+		@Override
+		public void end() {
+			//no-op
+			
+<span class="nc" id="L366">		}</span>
+
+		public final SffCommonHeader getHeader() {
+<span class="fc" id="L369">			return header;</span>
+		}
+		
+		
+	}
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

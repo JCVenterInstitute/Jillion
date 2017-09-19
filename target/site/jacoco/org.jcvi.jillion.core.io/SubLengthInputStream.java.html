@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SubLengthInputStream.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.core.io</a> &gt; <span class="el_source">SubLengthInputStream.java</span></div><h1>SubLengthInputStream.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.core.io;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Objects;
+/**
+ * Wraps another {@link InputStream}
+ * but only reads up to the specified number of bytes.
+ * This will make it appear as if the InputStream only 
+ * has that number of bytes.
+ * 
+ * @author dkatzel
+ * 
+ * @since 5.1
+ *
+ */
+class SubLengthInputStream extends InputStream{
+
+	
+
+	private final InputStream in;
+	
+	private long bytesLeftToRead;
+	
+	/**
+	 * Create a new instance that wraps the given inputStream and reads
+	 * up to the specified number of bytes.
+	 * @param in the InputStream to wrap; can no be null.
+	 * 
+	 * @param lengthToRead the number of bytes to read; if &lt;0, then
+	 * it will act as if the stream is empty.
+	 * 
+	 * @throws NullPointerException if in is null.
+	 */
+<span class="fc" id="L55">	public SubLengthInputStream(InputStream in, long lengthToRead) {</span>
+<span class="fc" id="L56">		Objects.requireNonNull(in);</span>
+<span class="fc" id="L57">		this.in = in;</span>
+<span class="fc" id="L58">		this.bytesLeftToRead = lengthToRead;</span>
+<span class="fc" id="L59">	}</span>
+
+	@Override
+	public int read() throws IOException {
+<span class="fc bfc" id="L63" title="All 2 branches covered.">		if(bytesLeftToRead &gt;0){</span>
+<span class="fc" id="L64">			bytesLeftToRead--;</span>
+<span class="fc" id="L65">			return in.read();</span>
+		}
+<span class="fc" id="L67">		return -1;</span>
+	}
+
+	
+
+	@Override
+	public int read(byte[] b, int off, int len) throws IOException {
+<span class="fc bfc" id="L74" title="All 2 branches covered.">		if(bytesLeftToRead &lt;=0){</span>
+<span class="fc" id="L75">			return -1;</span>
+		}
+<span class="fc" id="L77">		int bytesRead = in.read(b, off, (int) Math.min(bytesLeftToRead, len));</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">		if(bytesRead != -1){</span>
+<span class="fc" id="L79">			bytesLeftToRead -= bytesRead;</span>
+		}
+<span class="fc" id="L81">		return bytesRead;</span>
+	}
+
+	@Override
+	public void close() throws IOException {
+<span class="fc" id="L86">		in.close();</span>
+<span class="fc" id="L87">	}</span>
+	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

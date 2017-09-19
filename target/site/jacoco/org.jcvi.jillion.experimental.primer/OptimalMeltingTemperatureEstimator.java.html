@@ -1,0 +1,706 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>OptimalMeltingTemperatureEstimator.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.experimental.primer</a> &gt; <span class="el_source">OptimalMeltingTemperatureEstimator.java</span></div><h1>OptimalMeltingTemperatureEstimator.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.experimental.primer;
+
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.NoSuchElementException;
+
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.util.iter.IteratorUtil;
+import org.jcvi.jillion.core.util.iter.PeekableIterator;
+/**
+ * Includes several algorithms
+ * that compute the optimal
+ * melting temperature (T&lt;sub&gt;m&lt;/sub&gt;) for
+ * a primer sequence.
+ * Melting Temperature is when half
+ * of the DNA dissociates and becomes
+ * single stranded.
+ * @author dkatzel
+ *
+ */
+<span class="pc" id="L45">@SuppressWarnings(&quot;checkstyle:magicnumbercheck&quot;)</span>
+<span class="fc" id="L46">public enum OptimalMeltingTemperatureEstimator {</span>
+	/**
+	 * Use the Marmur formaula
+	 * which only takes into account the number of 
+	 * GC and AT nucleotides.  The positions of the nucleotides
+	 * is does not matter.  This is the simplest
+	 * estimation and is not recommended for
+	 * large primers.
+	 * @see &lt;a href=&quot;http://www.pubget.com/paper/14470099&quot;&gt;
+	 Marmur J and Doty P (1962) J Mol Biol 5:109-118; PMID 14470099&lt;/a&gt; 
+	 */
+<span class="fc" id="L57">	MARMUR{</span>
+		/**
+		 * @param nM ignored
+		 * {@inheritDoc}
+		 */
+		@Override
+		public double estimateTm(NucleotideSequence sequence,double nM) {
+<span class="nc" id="L64">			int gc=0, at=0;</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">			for(Nucleotide base : sequence){</span>
+<span class="nc bnc" id="L66" title="All 3 branches missed.">				switch(base){</span>
+				case Adenine:
+<span class="nc" id="L68">				case Thymine: at++;</span>
+<span class="nc" id="L69">						break;</span>
+				case Cytosine:
+<span class="nc" id="L71">				case Guanine: gc++;</span>
+<span class="nc" id="L72">						break;</span>
+				default : //ignore for now
+					break;
+				}
+<span class="nc" id="L76">			}</span>
+<span class="nc" id="L77">			return 4*gc+ 2*at;</span>
+		}
+		
+	},
+	/**
+	 * Use the Wallace et al. formula
+	 * which only takes into account the number of 
+	 * A,C,G and T nucleotides.  The positions of the nucleotides
+	 * is does not matter.  This
+	 * estimation and is not recommended for
+	 * large primers.
+	 * @see &lt;a href=&quot;http://www.ncbi.nlm.nih.gov/pmc/articles/PMC327955/&quot;&gt; 
+	 * RB Wallace, et al. Nucleic Acids Res. 1979;6:3543.&lt;/a&gt; 
+	 */
+<span class="fc" id="L91">	WALLACE{</span>
+		/**
+		 * @param sequence the NucleotideSequence to estimate the temperature.
+		 * @param nM ignored
+		 *
+		 */
+		@Override
+		public double estimateTm(NucleotideSequence sequence, double nM) {
+<span class="nc" id="L99">			int a=0,c=0,g=0,t=0;</span>
+			
+<span class="nc bnc" id="L101" title="All 2 branches missed.">			for(Nucleotide base : sequence){</span>
+<span class="nc bnc" id="L102" title="All 5 branches missed.">				switch(base){</span>
+<span class="nc" id="L103">				case Adenine:	a++;</span>
+<span class="nc" id="L104">								break;</span>
+<span class="nc" id="L105">				case Thymine: t++;</span>
+<span class="nc" id="L106">						break;</span>
+<span class="nc" id="L107">				case Cytosine: c++;</span>
+<span class="nc" id="L108">							break;</span>
+<span class="nc" id="L109">				case Guanine: g++;</span>
+<span class="nc" id="L110">						break;</span>
+				default : //ignore for now
+					break;
+				}
+<span class="nc" id="L114">			}</span>
+<span class="nc" id="L115">			return 64.9F +41*(g+c-16.4D)/(a+t+g+c);</span>
+		}
+		
+	},
+	/**
+	 * Computes the optimal temperature
+	 * using the nearest neighbor algorithm
+	 * as described by Freier et al using the 
+	 * Breslaur 1986 transition tables.
+	 * This is the same algorithm
+	 * (if you add salt correction)
+	 * that primer3 uses.
+	 * @see &lt;a href =&quot;http://www.ncbi.nlm.nih.gov/pubmed/3459152&quot;&gt;
+	Breslauer KJ et al. Predicting DNA duplex stability from the base sequence.
+	Proc Natl Acad Sci U S A. 1986 Jun;83(11):3746-50; PMID 3459152&lt;/a&gt;
+	
+	 * @see &lt;a href= &quot;http://www.ncbi.nlm.nih.gov/pubmed/2432595&quot;&gt;
+	 Freier SM et al
+	 Improved free-energy parameters for predictions of RNA duplex stability.
+	 Proc Natl Acad Sci U S A. 1986 Dec;83(24):9373-7.&lt;/a&gt;
+	 */
+<span class="fc" id="L136">	BRESLAUR{</span>
+<span class="fc" id="L137">		private final LookupTable deltaS = new LookupTable.Builder()</span>
+<span class="fc" id="L138">											.aa(240).ac(173).ag(208).at(239)</span>
+<span class="fc" id="L139">											.ca(129).cc(266).cg(278).ct(208)</span>
+<span class="fc" id="L140">											.ga(135).gc(267).gg(266).gt(173)</span>
+<span class="fc" id="L141">											.ta(169).tc(135).tg(129).tt(240)</span>
+<span class="fc" id="L142">											.build();</span>
+<span class="fc" id="L143">		private final LookupTable deltaH = new LookupTable.Builder()</span>
+<span class="fc" id="L144">											.aa(91).ac(65).ag(78).at(86)</span>
+<span class="fc" id="L145">											.ca(58).cc(110).cg(119).ct(78)</span>
+<span class="fc" id="L146">											.ga(56).gc(111).gg(110).gt(65)</span>
+<span class="fc" id="L147">											.ta(60).tc(56).tg(58).tt(91)</span>
+<span class="fc" id="L148">											.build();</span>
+		
+		@Override
+		public double estimateTm(NucleotideSequence sequence,
+				double molarConcentration) {
+<span class="fc" id="L153">			return estimateTm(sequence, molarConcentration, deltaH, deltaS);</span>
+		}
+
+		@Override
+		protected InitialValues getSymmetryCorrection() {
+<span class="fc" id="L158">			return new InitialValues(13.4, 0D);</span>
+		}
+
+		@Override
+		protected InitialValues getInitialValuesFor(NucleotideSequence sequence) {
+<span class="fc bfc" id="L163" title="All 2 branches covered.">			if(hasGorC(sequence)){</span>
+<span class="fc" id="L164">				return new InitialValues(167.7D, 0D);</span>
+			}
+<span class="fc" id="L166">			return new InitialValues(201.3D, 0D);</span>
+		}
+		
+	},
+	/**
+	 * Computes the optimal melting temperature
+	 * using an improved nearest-neighbor 
+	 * version of Freier et al 
+	 * using updated transition tables
+	 * as described 
+	 * Allawi, H. T. &amp; SantaLucia, J., Jr. (1997), &quot;Thermodynamics and NMR of Internal G-T Mismatches in DNA&quot;, Biochemistry 36, 10581-10594.
+	 */
+<span class="fc" id="L178">	ALLAWI_SANTALUCIA{</span>
+
+<span class="fc" id="L180">		private final LookupTable deltaH = new LookupTable.Builder()</span>
+<span class="fc" id="L181">												.aa(79).ac(84).ag(78).at(72)</span>
+<span class="fc" id="L182">												.ca(85).cc(80).cg(106).ct(78)</span>
+<span class="fc" id="L183">												.ga(82).gc(98).gg(80).gt(84)</span>
+<span class="fc" id="L184">												.ta(72).tc(82).tg(85).tt(79)</span>
+<span class="fc" id="L185">												.build();</span>
+<span class="fc" id="L186">		private final LookupTable deltaS = new LookupTable.Builder()</span>
+<span class="fc" id="L187">												.aa(222).ac(224).ag(210).at(204)</span>
+<span class="fc" id="L188">												.ca(227).cc(199).cg(272).ct(210)</span>
+<span class="fc" id="L189">												.ga(222).gc(244).gg(199).gt(224)</span>
+<span class="fc" id="L190">												.ta(213).tc(222).tg(227).tt(222)</span>
+<span class="fc" id="L191">												.build();</span>
+		@Override
+		public double estimateTm(NucleotideSequence sequence, double molarConcentration) {
+<span class="fc" id="L194">			return estimateTm(sequence, molarConcentration, deltaH, deltaS);</span>
+		}
+		
+		@Override
+		protected InitialValues getSymmetryCorrection() {
+<span class="fc" id="L199">			return new InitialValues(14D, 0D);</span>
+		}
+		
+		@Override
+		protected InitialValues getInitialValuesFor(NucleotideSequence sequence) {
+<span class="fc" id="L204">			Nucleotide firstBase = sequence.get(0);</span>
+<span class="fc" id="L205">			Nucleotide lastBase = sequence.get(sequence.getLength()-1);</span>
+<span class="fc" id="L206">			double entropy=0D;</span>
+<span class="fc" id="L207">			double enthalpy = 0D;</span>
+<span class="pc bpc" id="L208" title="2 of 4 branches missed.">			if(firstBase==Nucleotide.Guanine || firstBase==Nucleotide.Cytosine){</span>
+<span class="nc" id="L209">				entropy +=28;</span>
+<span class="nc" id="L210">				enthalpy -=1;</span>
+<span class="pc bpc" id="L211" title="3 of 4 branches missed.">			}else if(firstBase==Nucleotide.Adenine || firstBase==Nucleotide.Thymine){</span>
+<span class="fc" id="L212">				entropy -=41;</span>
+<span class="fc" id="L213">				enthalpy -=23D;</span>
+			}
+<span class="pc bpc" id="L215" title="2 of 4 branches missed.">			if(lastBase==Nucleotide.Guanine || lastBase==Nucleotide.Cytosine){</span>
+<span class="nc" id="L216">				entropy +=28;</span>
+<span class="nc" id="L217">				enthalpy -=1;</span>
+<span class="pc bpc" id="L218" title="1 of 4 branches missed.">			}else if(lastBase==Nucleotide.Adenine || lastBase==Nucleotide.Thymine){</span>
+<span class="fc" id="L219">				entropy -=41;</span>
+<span class="fc" id="L220">				enthalpy -=23D;</span>
+			}
+<span class="fc" id="L222">			return new InitialValues(entropy,enthalpy);</span>
+		}
+		
+		
+		
+	},
+	/**
+	 * Computes the optimal melting temperature
+	 * using an the same transition tables
+	 * as {@link #ALLAWI_SANTALUCIA} (now calling
+	 * this &quot;unified&quot; transition tables)
+	 * but uses a modified initiation
+	 * parameters for terminal
+	 * G*C and terminal A*T pairs.
+	 * @see &lt;a href=&quot;http://www.ncbi.nlm.nih.gov/pubmed/9465037&quot;&gt;
+	 J J SantaLucia.
+	 A unified view of polymer, dumbbell, and oligonucleotide DNA
+nearest-neighbor thermodynamics. 
+	Proc Natl Acad Sci U S A 95(4):1460-5 (1998), PMID 9465037 
+	 &lt;/a&gt;
+	 */
+<span class="fc" id="L243">	SANTALUCIA_1998{</span>
+			
+<span class="fc" id="L245">		private final LookupTable deltaH = new LookupTable.Builder()</span>
+<span class="fc" id="L246">											.aa(79).ac(84).ag(78).at(72)</span>
+<span class="fc" id="L247">											.ca(85).cc(80).cg(106).ct(78)</span>
+<span class="fc" id="L248">											.ga(82).gc(98).gg(80).gt(84)</span>
+<span class="fc" id="L249">											.ta(72).tc(82).tg(85).tt(79)</span>
+<span class="fc" id="L250">											.build();</span>
+<span class="fc" id="L251">		private final LookupTable deltaS = new LookupTable.Builder()</span>
+<span class="fc" id="L252">											.aa(222).ac(224).ag(210).at(204)</span>
+<span class="fc" id="L253">											.ca(227).cc(199).cg(272).ct(210)</span>
+<span class="fc" id="L254">											.ga(222).gc(244).gg(199).gt(224)</span>
+<span class="fc" id="L255">											.ta(213).tc(222).tg(227).tt(222)</span>
+<span class="fc" id="L256">											.build();</span>
+		
+		@Override
+		public double estimateTm(NucleotideSequence sequence, double molarConcentration) {
+<span class="nc" id="L260">			return estimateTm(sequence, molarConcentration, deltaH, deltaS);</span>
+		}
+
+		
+		@Override
+		protected InitialValues getInitialValuesFor(NucleotideSequence sequence) {
+<span class="nc" id="L266">			double entropy=0D;</span>
+<span class="nc" id="L267">			double enthalpy=0D;</span>
+<span class="nc bnc" id="L268" title="All 2 branches missed.">			if(hasGorC(sequence)){</span>
+<span class="nc" id="L269">				entropy +=59;</span>
+			}else{
+<span class="nc" id="L271">				entropy +=90;</span>
+			}
+<span class="nc" id="L273">			Nucleotide firstBase=sequence.get(0);</span>
+<span class="nc bnc" id="L274" title="All 4 branches missed.">			if(firstBase==Nucleotide.Thymine || firstBase == Nucleotide.Adenine){</span>
+<span class="nc" id="L275">				entropy -=41;</span>
+<span class="nc" id="L276">				enthalpy -=23;</span>
+			}else{
+<span class="nc" id="L278">				entropy +=28;</span>
+<span class="nc" id="L279">				enthalpy -=1;</span>
+			}
+
+<span class="nc" id="L282">			return new InitialValues(entropy, enthalpy);</span>
+		}
+
+
+		@Override
+		protected InitialValues getSymmetryCorrection() {
+<span class="nc" id="L288">			return new InitialValues(14D, 0D);</span>
+		}
+		
+		
+	},
+	/**
+	 * Computes the optimal melting temperature
+	 * using transition tables derived from
+	 *  John SantaLucia, Jr., Hatim T. Allawi, and P. Ananda Seneviratne.
+	Improved Nearest-Neighbor Parameters for Predicting DNA Duplex Stability. 
+	Biochemistry 1996, 35, 3555-3562.
+	 *  @see &lt;a href=&quot;http://www.ncbi.nlm.nih.gov/pubmed/8639506&quot;&gt;
+	 SantaLucia J Jr, Allawi HT, Seneviratne PA.
+	 Improved nearest-neighbor parameters for predicting DNA duplex stability.
+	Biochemistry. 1996 Mar 19;35(11):3555-62; PMID 8639506 &lt;/a&gt;
+	 */
+<span class="fc" id="L304">	SANTALUCIA_1996{</span>
+			
+<span class="fc" id="L306">		private final LookupTable deltaH = new LookupTable.Builder()</span>
+<span class="fc" id="L307">												.aa(84).ac(86).ag(61).at(65)</span>
+<span class="fc" id="L308">												.ca(74).cc(67).cg(101).ct(61)</span>
+<span class="fc" id="L309">												.ga(77).gc(111).gg(67).gt(86)</span>
+<span class="fc" id="L310">												.ta(63).tc(77).tg(74).tt(84)</span>
+<span class="fc" id="L311">												.build();</span>
+<span class="fc" id="L312">		private final LookupTable deltaS = new LookupTable.Builder()</span>
+<span class="fc" id="L313">												.aa(236).ac(230).ag(161).at(188)</span>
+<span class="fc" id="L314">												.ca(193).cc(156).cg(255).ct(161)</span>
+<span class="fc" id="L315">												.ga(203).gc(284).gg(156).gt(230)</span>
+<span class="fc" id="L316">												.ta(185).tc(203).tg(193).tt(236)</span>
+<span class="fc" id="L317">												.build();</span>
+										
+		@Override
+		public double estimateTm(NucleotideSequence sequence, double molarConcentration) {
+<span class="nc" id="L321">			return estimateTm(sequence, molarConcentration, deltaH, deltaS);</span>
+		}
+
+		
+		@Override
+		protected InitialValues getInitialValuesFor(NucleotideSequence sequence) {
+			//this data is set by table 3 in the paper
+			//specifically table 3 footnotes b,c and e
+<span class="nc" id="L329">			double entropy=0D;</span>
+<span class="nc" id="L330">			double enthalpy=0D;</span>
+<span class="nc bnc" id="L331" title="All 2 branches missed.">			if(hasGorC(sequence)){</span>
+				//initiation paramter for duplexes
+				//that contain at least one G*C pair
+<span class="nc" id="L334">				entropy +=59;</span>
+			}else{
+				//initiation paramter for duplexes
+				//that contain only A*T pairs
+<span class="nc" id="L338">				entropy +=90;</span>
+			}
+			//compute penalty for EACH terminal 5'T*A 3'
+			// but not 5' A*T 3'
+<span class="nc" id="L342">			enthalpy -=40 *getNumberOfTerminal5primerTs(sequence);</span>
+			
+
+<span class="nc" id="L345">			return new InitialValues(entropy, enthalpy);</span>
+		}
+
+
+		private int getNumberOfTerminal5primerTs(NucleotideSequence sequence) {
+<span class="nc" id="L350">			NucleotideSequence reversedSeq = new NucleotideSequenceBuilder(sequence)</span>
+<span class="nc" id="L351">												.reverse()</span>
+<span class="nc" id="L352">												.build();</span>
+<span class="nc" id="L353">			Iterator&lt;Nucleotide&gt; iter = reversedSeq.iterator();</span>
+<span class="nc" id="L354">			boolean done=false;</span>
+<span class="nc" id="L355">			int numberOfTerminalTs=0;</span>
+<span class="nc bnc" id="L356" title="All 4 branches missed.">			while(!done &amp;&amp; iter.hasNext()){</span>
+<span class="nc bnc" id="L357" title="All 2 branches missed.">				if(iter.next() == Nucleotide.Thymine){</span>
+<span class="nc" id="L358">					numberOfTerminalTs++;</span>
+				}else{
+<span class="nc" id="L360">					done=true;</span>
+				}
+				
+			}
+<span class="nc" id="L364">			return numberOfTerminalTs;</span>
+		}
+
+
+		@Override
+		protected InitialValues getSymmetryCorrection() {
+			//this data is set by table 3 in the paper
+			//specifically table 3 footnote d
+<span class="nc" id="L372">			return new InitialValues(14D, 0D);</span>
+		}
+		
+		
+	},
+	/**
+	  Computes the optimal melting temperature
+	 * using an improved nearest-neighbor 
+	 * version of Freier et al 
+	 * using updated transition tables
+	 * as described by Sugimoto et all.
+	 * @see &lt;a href=&quot;http://www.ncbi.nlm.nih.gov/pmc/articles/PMC146261/&quot;&gt;
+	 Naoki Sugimoto, Shu-ich Nakano, Mari Yoneyama and Kei-ich Honda.
+	 Improved thermodynamic parameters and helix
+initiation factor to predict stability of DNA duplexes.
+	Nucleic Acids Research. 1996 Vol. 24. No. 22 4501-4505; PMCID: PMC146261 
+	 &lt;/a&gt;
+	 */
+<span class="fc" id="L390">	SUGIMOTO{</span>
+		
+<span class="fc" id="L392">		private final LookupTable deltaH = new LookupTable.Builder()</span>
+<span class="fc" id="L393">											.aa(80).ac(94).ag(66).at(56)</span>
+<span class="fc" id="L394">											.ca(82).cc(109).cg(118).ct(66)</span>
+<span class="fc" id="L395">											.ga(88).gc(105).gg(109).gt(94)</span>
+<span class="fc" id="L396">											.ta(66).tc(88).tg(82).tt(80)</span>
+<span class="fc" id="L397">											.build();</span>
+<span class="fc" id="L398">		private final LookupTable deltaS = new LookupTable.Builder()</span>
+<span class="fc" id="L399">											.aa(219).ac(255).ag(164).at(152)</span>
+<span class="fc" id="L400">											.ca(210).cc(284).cg(290).ct(164)</span>
+<span class="fc" id="L401">											.ga(235).gc(264).gg(284).gt(255)</span>
+<span class="fc" id="L402">											.ta(184).tc(235).tg(210).tt(219)</span>
+<span class="fc" id="L403">											.build();</span>
+		
+		@Override
+		public double estimateTm(NucleotideSequence sequence, double molarConcentration) {
+<span class="fc" id="L407">			return estimateTm(sequence, molarConcentration, deltaH, deltaS);</span>
+		}
+		
+		
+		@Override
+		protected InitialValues getInitialValuesFor(NucleotideSequence sequence) {
+			
+<span class="fc" id="L414">			return new InitialValues(90D, -6D);</span>
+		}
+
+		@Override
+		protected InitialValues getSymmetryCorrection() {
+<span class="fc" id="L419">			return new InitialValues(14D, 0D);</span>
+		}
+		
+	}
+	
+	;
+	private static final double NON_SYMMETRIC_MOLAR_ADJUSTMENT = 4_000_000_000D;
+
+	private static final double SYMMETRIC_MOLAR_ADJUSTMENT = 10_000_000_00D;
+
+	private static final double ABSOLUTE_ZERO_CONVERSION = 273.15D;
+
+	/**
+	 * Entropy lookups are in .1` cal/K/mol
+	 * need to convert them.
+	 */
+	private static final double ENTROPY_CONVERSION = -0.1D;
+	
+	/**
+	 * enthalpy lookups are in 100cal/mol
+	 * need to convert them
+	 */
+	private static final double ENTHALPY_CONVERRSION = -100D;
+	private static final double R = 1.987D;
+	
+	protected final double estimateTm(NucleotideSequence sequence, double nM, 
+			LookupTable enthalpyLookup,  LookupTable entropyLookup){
+<span class="fc" id="L446">		verifyOnlyHasACGT(sequence);</span>
+<span class="pc bpc" id="L447" title="1 of 2 branches missed.">		if(nM&lt;0){</span>
+<span class="nc" id="L448">			throw new IllegalArgumentException(&quot;concentration must be &gt;0&quot;);</span>
+		}
+		//initiation
+<span class="fc" id="L451">		InitialValues initialValues = getInitialValuesFor(sequence);</span>
+<span class="fc" id="L452">		double totalEntropy = initialValues.getInitialEntropy();</span>
+		
+<span class="fc" id="L454">		double totalEnthalpy = initialValues.getInitialEnthalpy();</span>
+		double adjustedMolarConcentration;
+<span class="fc bfc" id="L456" title="All 2 branches covered.">		if(isSymmetric(sequence)){</span>
+<span class="fc" id="L457">			InitialValues symmetryPenalty = getSymmetryCorrection();</span>
+<span class="fc" id="L458">			totalEntropy += symmetryPenalty.getInitialEntropy();</span>
+<span class="fc" id="L459">			totalEnthalpy += symmetryPenalty.getInitialEnthalpy();</span>
+<span class="fc" id="L460">			adjustedMolarConcentration = nM/SYMMETRIC_MOLAR_ADJUSTMENT;</span>
+<span class="fc" id="L461">		}else{</span>
+<span class="fc" id="L462">			adjustedMolarConcentration = nM/NON_SYMMETRIC_MOLAR_ADJUSTMENT;</span>
+		}
+<span class="fc" id="L464">		PeekableIterator&lt;Nucleotide&gt; iter = IteratorUtil.createPeekableIterator(sequence.iterator());</span>
+		
+<span class="fc" id="L466">		Nucleotide previous = iter.next();		</span>
+<span class="fc bfc" id="L467" title="All 2 branches covered.">		while(iter.hasNext()){</span>
+<span class="fc" id="L468">			Nucleotide next = iter.next();</span>
+<span class="fc" id="L469">			NucleotideSequence diNucleotide = new NucleotideSequenceBuilder(2)</span>
+<span class="fc" id="L470">												.append(previous)</span>
+<span class="fc" id="L471">												.append(next)</span>
+<span class="fc" id="L472">												.build();</span>
+<span class="fc" id="L473">			totalEnthalpy += enthalpyLookup.lookup(diNucleotide);</span>
+<span class="fc" id="L474">			totalEntropy += entropyLookup.lookup(diNucleotide);</span>
+<span class="fc" id="L475">			previous = next;</span>
+<span class="fc" id="L476">		}</span>
+		
+<span class="fc" id="L478">		totalEnthalpy *=ENTHALPY_CONVERRSION;</span>
+		
+<span class="fc" id="L480">		totalEntropy *=ENTROPY_CONVERSION;		</span>
+		
+<span class="fc" id="L482">		double tempInKelvin= totalEnthalpy / (totalEntropy + ( R * Math.log(adjustedMolarConcentration)));</span>
+<span class="fc" id="L483">		return tempInKelvin - ABSOLUTE_ZERO_CONVERSION;</span>
+	
+	}
+	protected InitialValues getSymmetryCorrection() {
+<span class="nc" id="L487">		return new InitialValues();</span>
+	}
+	protected InitialValues getInitialValuesFor(NucleotideSequence sequence) {
+<span class="nc" id="L490">		return new InitialValues();</span>
+	}
+	
+	private void verifyOnlyHasACGT(NucleotideSequence sequence) {
+<span class="fc bfc" id="L494" title="All 2 branches covered.">		for(Nucleotide n : sequence){</span>
+<span class="pc bpc" id="L495" title="1 of 8 branches missed.">			if(n != Nucleotide.Adenine &amp;&amp; n != Nucleotide.Cytosine </span>
+					&amp;&amp; n != Nucleotide.Guanine &amp;&amp; n != Nucleotide.Thymine){
+<span class="nc" id="L497">				throw new IllegalArgumentException(</span>
+<span class="nc" id="L498">						String.format(&quot;invalid base %s can only contain ACGTs&quot;, n));</span>
+			}
+<span class="fc" id="L500">		}</span>
+		
+<span class="fc" id="L502">	}</span>
+	/**
+	 * Is this sequence equal
+	 * to its reverse complement?
+	 * @param sequence
+	 * @return
+	 */
+	private static boolean isSymmetric(NucleotideSequence sequence) {
+<span class="fc" id="L510">		NucleotideSequence complement = new NucleotideSequenceBuilder(sequence)</span>
+<span class="fc" id="L511">											.reverseComplement()</span>
+<span class="fc" id="L512">											.build();</span>
+<span class="fc" id="L513">		return sequence.equals(complement);</span>
+	}
+	
+	/**
+	 * Estimate the optimal melting
+	 * temperature in degrees Celsius for the given
+	 * {@link NucleotideSequence} and concentration.
+	 * @param sequence the NucleotideSequence to compute;
+	 * can only have the nucleotides ACG and T.
+	 * @param nM the DNA concentration in nM.
+	 * @return the temperature as a double.
+	 * @throws IllegalArgumentException if sequence contains
+	 * any bases other than ACG and T.
+	 * @throws IllegalArgumentException if nM is negative.
+	 */
+	public abstract double estimateTm(NucleotideSequence sequence, double nM);
+	
+	protected boolean hasGorC(NucleotideSequence sequence) {
+<span class="fc" id="L531">		boolean hasGC=false;</span>
+<span class="fc bfc" id="L532" title="All 2 branches covered.">		for(Nucleotide n : sequence){</span>
+<span class="fc bfc" id="L533" title="All 4 branches covered.">			if(n == Nucleotide.Guanine || n == Nucleotide.Cytosine){</span>
+<span class="fc" id="L534">				hasGC=true;</span>
+<span class="fc" id="L535">				break;</span>
+			}
+<span class="fc" id="L537">		}</span>
+<span class="fc" id="L538">		return hasGC;</span>
+	}
+
+	private static final class InitialValues{
+		private double initialEntropy;
+		private double initialEnthalpy;
+		public InitialValues(){
+<span class="nc" id="L545">			this(0D,0D);</span>
+<span class="nc" id="L546">		}</span>
+<span class="fc" id="L547">		public InitialValues(double initialEntropy, double initialEnthalpy) {</span>
+<span class="fc" id="L548">			this.initialEntropy = initialEntropy;</span>
+<span class="fc" id="L549">			this.initialEnthalpy = initialEnthalpy;</span>
+<span class="fc" id="L550">		}</span>
+		public final double getInitialEntropy() {
+<span class="fc" id="L552">			return initialEntropy;</span>
+		}
+		public final double getInitialEnthalpy() {
+<span class="fc" id="L555">			return initialEnthalpy;</span>
+		}
+		@Override
+		public int hashCode() {
+<span class="nc" id="L559">			final int prime = 31;</span>
+<span class="nc" id="L560">			int result = 1;</span>
+			long temp;
+<span class="nc" id="L562">			temp = Double.doubleToLongBits(initialEnthalpy);</span>
+<span class="nc" id="L563">			result = prime * result + (int) (temp ^ (temp &gt;&gt;&gt; 32));</span>
+<span class="nc" id="L564">			temp = Double.doubleToLongBits(initialEntropy);</span>
+<span class="nc" id="L565">			result = prime * result + (int) (temp ^ (temp &gt;&gt;&gt; 32));</span>
+<span class="nc" id="L566">			return result;</span>
+		}
+		@Override
+		public boolean equals(Object obj) {
+<span class="nc bnc" id="L570" title="All 2 branches missed.">			if (this == obj) {</span>
+<span class="nc" id="L571">				return true;</span>
+			}
+<span class="nc bnc" id="L573" title="All 2 branches missed.">			if (obj == null) {</span>
+<span class="nc" id="L574">				return false;</span>
+			}
+<span class="nc bnc" id="L576" title="All 2 branches missed.">			if (!(obj instanceof InitialValues)) {</span>
+<span class="nc" id="L577">				return false;</span>
+			}
+<span class="nc" id="L579">			InitialValues other = (InitialValues) obj;</span>
+<span class="nc" id="L580">			if (Double.doubleToLongBits(initialEnthalpy) != Double</span>
+<span class="nc bnc" id="L581" title="All 2 branches missed.">					.doubleToLongBits(other.initialEnthalpy)) {</span>
+<span class="nc" id="L582">				return false;</span>
+			}
+<span class="nc" id="L584">			if (Double.doubleToLongBits(initialEntropy) != Double</span>
+<span class="nc bnc" id="L585" title="All 2 branches missed.">					.doubleToLongBits(other.initialEntropy)) {</span>
+<span class="nc" id="L586">				return false;</span>
+			}
+<span class="nc" id="L588">			return true;</span>
+		}
+		
+		
+	}
+	private static final class LookupTable implements Serializable{
+		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		private final Map&lt;NucleotideSequence,Integer&gt; map;
+		
+<span class="fc" id="L601">		LookupTable(Map&lt;NucleotideSequence,Integer&gt; map){</span>
+<span class="fc" id="L602">			this.map = map;</span>
+<span class="fc" id="L603">		}</span>
+		
+		public int lookup(NucleotideSequence diNucleotide){
+<span class="fc" id="L606">			Integer value = map.get(diNucleotide);</span>
+<span class="pc bpc" id="L607" title="1 of 2 branches missed.">			if(value ==null){</span>
+<span class="nc" id="L608">				throw new NoSuchElementException(&quot;no value &quot; + diNucleotide + &quot; in lookup table&quot;);</span>
+			}
+<span class="fc" id="L610">			return value;</span>
+		}
+<span class="fc" id="L612">		private static final class Builder{</span>
+
+<span class="fc" id="L614">			private final Map&lt;NucleotideSequence,Integer&gt; map = new HashMap&lt;NucleotideSequence, Integer&gt;(10);</span>
+			
+			public Builder aa(int value){
+<span class="fc" id="L617">				Integer boxedValue = Integer.valueOf(value);</span>
+<span class="fc" id="L618">				map.put(new NucleotideSequenceBuilder(&quot;AA&quot;).build(), boxedValue);				</span>
+<span class="fc" id="L619">				return this;</span>
+			}
+			public Builder ac(int value){
+<span class="fc" id="L622">				Integer boxedValue = Integer.valueOf(value);</span>
+<span class="fc" id="L623">				map.put(new NucleotideSequenceBuilder(&quot;AC&quot;).build(), boxedValue);				</span>
+<span class="fc" id="L624">				return this;</span>
+			}
+			public Builder ag(int value){
+<span class="fc" id="L627">				Integer boxedValue = Integer.valueOf(value);</span>
+<span class="fc" id="L628">				map.put(new NucleotideSequenceBuilder(&quot;AG&quot;).build(), boxedValue);				</span>
+<span class="fc" id="L629">				return this;</span>
+			}
+			public Builder at(int value){
+<span class="fc" id="L632">				Integer boxedValue = Integer.valueOf(value);</span>
+<span class="fc" id="L633">				map.put(new NucleotideSequenceBuilder(&quot;AT&quot;).build(), boxedValue);				</span>
+<span class="fc" id="L634">				return this;</span>
+			}
+			
+			public Builder ca(int value){
+<span class="fc" id="L638">				Integer boxedValue = Integer.valueOf(value);</span>
+<span class="fc" id="L639">				map.put(new NucleotideSequenceBuilder(&quot;CA&quot;).build(), boxedValue);				</span>
+<span class="fc" id="L640">				return this;</span>
+			}
+			public Builder cc(int value){
+<span class="fc" id="L643">				Integer boxedValue = Integer.valueOf(value);</span>
+<span class="fc" id="L644">				map.put(new NucleotideSequenceBuilder(&quot;CC&quot;).build(), boxedValue);				</span>
+<span class="fc" id="L645">				return this;</span>
+			}
+			public Builder cg(int value){
+<span class="fc" id="L648">				Integer boxedValue = Integer.valueOf(value);</span>
+<span class="fc" id="L649">				map.put(new NucleotideSequenceBuilder(&quot;CG&quot;).build(), boxedValue);				</span>
+<span class="fc" id="L650">				return this;</span>
+			}
+			public Builder ct(int value){
+<span class="fc" id="L653">				Integer boxedValue = Integer.valueOf(value);</span>
+<span class="fc" id="L654">				map.put(new NucleotideSequenceBuilder(&quot;CT&quot;).build(), boxedValue);				</span>
+<span class="fc" id="L655">				return this;</span>
+			}
+			
+			public Builder ga(int value){
+<span class="fc" id="L659">				Integer boxedValue = Integer.valueOf(value);</span>
+<span class="fc" id="L660">				map.put(new NucleotideSequenceBuilder(&quot;GA&quot;).build(), boxedValue);				</span>
+<span class="fc" id="L661">				return this;</span>
+			}
+			public Builder gc(int value){
+<span class="fc" id="L664">				Integer boxedValue = Integer.valueOf(value);</span>
+<span class="fc" id="L665">				map.put(new NucleotideSequenceBuilder(&quot;GC&quot;).build(), boxedValue);				</span>
+<span class="fc" id="L666">				return this;</span>
+			}
+			public Builder gg(int value){
+<span class="fc" id="L669">				Integer boxedValue = Integer.valueOf(value);</span>
+<span class="fc" id="L670">				map.put(new NucleotideSequenceBuilder(&quot;GG&quot;).build(), boxedValue);				</span>
+<span class="fc" id="L671">				return this;</span>
+			}
+			public Builder gt(int value){
+<span class="fc" id="L674">				Integer boxedValue = Integer.valueOf(value);</span>
+<span class="fc" id="L675">				map.put(new NucleotideSequenceBuilder(&quot;GT&quot;).build(), boxedValue);				</span>
+<span class="fc" id="L676">				return this;</span>
+			}
+			public Builder ta(int value){
+<span class="fc" id="L679">				Integer boxedValue = Integer.valueOf(value);</span>
+<span class="fc" id="L680">				map.put(new NucleotideSequenceBuilder(&quot;TA&quot;).build(), boxedValue);				</span>
+<span class="fc" id="L681">				return this;</span>
+			}
+			public Builder tc(int value){
+<span class="fc" id="L684">				Integer boxedValue = Integer.valueOf(value);</span>
+<span class="fc" id="L685">				map.put(new NucleotideSequenceBuilder(&quot;TC&quot;).build(), boxedValue);				</span>
+<span class="fc" id="L686">				return this;</span>
+			}
+			public Builder tg(int value){
+<span class="fc" id="L689">				Integer boxedValue = Integer.valueOf(value);</span>
+<span class="fc" id="L690">				map.put(new NucleotideSequenceBuilder(&quot;TG&quot;).build(), boxedValue);				</span>
+<span class="fc" id="L691">				return this;</span>
+			}
+			public Builder tt(int value){
+<span class="fc" id="L694">				Integer boxedValue = Integer.valueOf(value);</span>
+<span class="fc" id="L695">				map.put(new NucleotideSequenceBuilder(&quot;TT&quot;).build(), boxedValue);				</span>
+<span class="fc" id="L696">				return this;</span>
+			}
+			
+			
+			public LookupTable build() {
+<span class="fc" id="L701">				return new LookupTable(map);</span>
+			}
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

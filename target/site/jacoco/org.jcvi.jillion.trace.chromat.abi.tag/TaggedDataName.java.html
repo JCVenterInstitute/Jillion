@@ -1,0 +1,632 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>TaggedDataName.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.trace.chromat.abi.tag</a> &gt; <span class="el_source">TaggedDataName.java</span></div><h1>TaggedDataName.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.trace.chromat.abi.tag;
+
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+
+<span class="pc" id="L27">public enum TaggedDataName {</span>
+	/**
+	 * the comb used for the sequencing gel.
+	 */
+<span class="fc" id="L31">	GEL_COMB(&quot;CMBF&quot;),</span>
+	/**
+	 * A Tagged block of data.
+	 */
+<span class="fc" id="L35">	DATA(&quot;DATA&quot;),</span>
+	/**
+	 * The order of the 3' terminal nucleotides
+	 * corresponding to these four display trace arrays
+	 */
+<span class="fc" id="L40">	FILTER_WHEEL_ORDER(&quot;FWO_&quot;,true),</span>
+	/**
+	 * 'GEL0' file from which 
+	 * this sample's 'ABI1' data file was extracted.
+	 */
+<span class="fc" id="L45">	GEL_FILE_NAME (&quot;GELN&quot;),</span>
+	/**
+	 * The path of the location of the 'GEL0' file.
+	 */
+<span class="fc" id="L49">	GEL_FILE_PATH (&quot;GELP&quot;),</span>
+	/**
+	 * This sample's lane as loaded onto the gel.
+	 */
+<span class="fc" id="L53">	LANE(&quot;LANE&quot;),</span>
+	/**
+	 * Transformation of the photometer data 
+	 * vector of the filters to the dye vector.
+	 */
+<span class="fc" id="L58">	TRANSFORM_MATRIX(&quot;MTRX&quot;),</span>
+	/**
+	 * The name of an external matrix file.
+	 */
+<span class="fc" id="L62">	TRANSFORM_MATRIX_FILE_NAME(&quot;MTXF&quot;),</span>
+	/**
+	 * Theorized to be the lateral pixel averaging of 
+	 * photometer readings at the tracked pixel position(s)
+	 * and the two flanking pixels at each scan.
+	 */
+<span class="fc" id="L68">	LAT_PIXEL_AVG(&quot;NAVG&quot;),</span>
+	/**
+	 * The number of capillaries.
+	 */
+<span class="fc" id="L72">	NUM_CAPILLARIES(&quot;NLNE&quot;),</span>
+	/**
+	 * The ABI software's basecalls.
+	 * &lt;ol&gt;
+	 * &lt;li&gt;Basecalls edited by user&lt;/li&gt;
+	 * &lt;li&gt;Basecalls called by basecaller&lt;/li&gt;
+	 * &lt;/ol&gt;
+	 */
+<span class="fc" id="L80">	BASECALLS(&quot;PBAS&quot;,true),</span>
+	
+	/**
+	 * external primer-dye mobility
+	 * correction file
+	 */
+<span class="fc" id="L86">	DYE_PRIMER_CORRECTION_FILE(&quot;PDMF&quot;),</span>
+	
+	/**
+	 * &lt;ol&gt;
+	 * &lt;li&gt;Peak Locations edited by user&lt;/li&gt;
+	 * &lt;li&gt;Peak Locations called by basecaller&lt;/li&gt;
+	 * &lt;ol&gt;
+	 */
+<span class="fc" id="L94">	PEAK_LOCATIONS(&quot;PLOC&quot;),</span>
+	
+	/**
+	 * the scan number of the raw data stream at which the
+	 * first ABI basecall is reported
+	 * (linking the time lines of the raw and 
+	 * display trace data streams).
+	 */
+<span class="fc" id="L102">	PEAK_POSITIONS(&quot;PPOS&quot;),</span>
+	    /**
+     * ABI 3500 additional peak information. There are 25 records of this tag
+     * with different value datatypes:
+     * &lt;ol&gt;
+     * &lt;li&gt;Peak 1 short[] The peak dye indices&lt;/li&gt;
+     * &lt;li&gt;Peak 2 int[] The peak data points&lt;/li&gt;
+     * &lt;li&gt;Peak 3 int[] The peak begin data points&lt;/li&gt;
+     * &lt;li&gt;Peak 4 int[] The peak end data points&lt;/li&gt;
+     * &lt;li&gt;Peak 5 short[] FWHM of peak&lt;/li&gt;
+     * &lt;li&gt;Peak 6 double[] Corrected FWHM of peak&lt;/li&gt;
+     * &lt;li&gt;Peak 7 int[] The peak heights&lt;/li&gt;
+     * &lt;li&gt;Peak 8 int[] The peak begin heights&lt;/li&gt;
+     * &lt;li&gt;Peak 9 int[] The peak end heights&lt;/li&gt;
+     * &lt;li&gt;Peak 10 int[] The peak area (in data points)&lt;/li&gt;
+     * &lt;li&gt;Peak 11 double[] The corrected peak area (in data points)&lt;/li&gt;
+     * &lt;li&gt;Peak 12 double[] The peak positions (in bases)&lt;/li&gt;
+     * &lt;li&gt;Peak 13 double[] The peak begin positions (in bases)&lt;/li&gt;
+     * &lt;li&gt;Peak 14 double[] The peak end positions (in base)&lt;/li&gt;
+     * &lt;li&gt;Peak 15 double[] FWHM (in base) of peak&lt;/li&gt;
+     * &lt;li&gt;Peak 16 double[] Corrected FWHM (in base) of peak&lt;/li&gt;
+     * &lt;li&gt;Peak 17 double[] The peak area (in base)&lt;/li&gt;
+     * &lt;li&gt;Peak 18 double[] The corrected peak area (in base)&lt;/li&gt;
+     * &lt;li&gt;Peak 19 cString The peak labels separated by comma&lt;/li&gt;
+     * &lt;li&gt;Peak 20 cString The flag indicating whether peak is size matched
+     * separated by comma&lt;/li&gt;
+     * &lt;li&gt;Peak 21 double[] The base when peak is size matched&lt;/li&gt;
+     * &lt;li&gt;Peak 22 cString The flag indicating whether peak is off-scale
+     * separated by comma&lt;/li&gt;
+     * &lt;li&gt;Peak 23 cString The flag indicating whether peak is user created
+     * separated by comma&lt;/li&gt;
+     * &lt;li&gt;Peak 24 cString The flag indicating whether peak is broaded&lt;/li&gt;
+     * &lt;li&gt;Peak 25 cString The flag indicating whether peak is pullup&lt;/li&gt;
+     * &lt;/ol&gt;
+     */
+<span class="fc" id="L137">	PEAK_3500(&quot;Peak&quot;),</span>
+	/**
+	 * The start and stop dates of the gel run.
+	 */
+<span class="fc" id="L141">	RUN_DATE(&quot;RUND&quot;),</span>
+	
+	/**
+	 * The start and stop times of the gel run.
+	 */
+<span class="fc" id="L146">	RUN_TIME(&quot;RUNT&quot;),</span>
+	
+	/**
+	 * Represents the scaling factors
+	 * for the average signals recovered from the 
+	 * bases.
+	 */
+<span class="fc" id="L153">	SCALE_FACTOR(&quot;S/N%&quot;),</span>
+	
+	/**
+	 * The name of the sample.
+	 */
+<span class="fc" id="L158">	SAMPLE_NAME(&quot;SMPL&quot;),</span>
+	
+	/**
+	 * The average
+	 * spacing between successive oligomer traces.
+	 */
+<span class="fc" id="L164">	SPACING(&quot;SPAC&quot;),</span>
+	
+	/**
+	 * Lane tracking center adjustments 
+	 * which determined the path of data
+	 * excised from the gel image file 
+	 * on creating of this sample data file.
+	 */
+<span class="fc" id="L172">	TRACKING_CENTER_ADJUSTMENT(&quot;TRKC&quot;),</span>
+	
+	/**
+	 * Lane tracking initial adjustments 
+	 * which determined the path of data
+	 * excised from the gel image file 
+	 * on creating of this sample data file.
+	 */
+<span class="fc" id="L180">	TRACKING_INITIAL_ADJUSTMENT(&quot;TRKP&quot;),</span>
+	
+	/**
+	 * First occurrence for initial analysis, 2nd for occurrence for
+	 * last analysis.
+	 */
+<span class="fc" id="L186">	ANALYSIS_ENDING_SCAN_POINT(&quot;AEPt&quot;),</span>
+	/**
+	 * Optional
+	 */
+<span class="fc" id="L190">	ANALYSIS_PARAMETERS_FILE_NAME(&quot;APFN&quot;),</span>
+	
+<span class="fc" id="L192">	ANALYSIS_PROTOCOL_XML_SCHEMA_VERSION(&quot;APXV&quot;,true),</span>
+	
+<span class="fc" id="L194">	ANALYSIS_PROTOCOL_SETTING_NAME(&quot;APrN&quot;,true),</span>
+	
+<span class="fc" id="L196">	ANALYSIS_PROTOCOL_SETTING_VERSION(&quot;APrV&quot;),</span>
+<span class="fc" id="L197">	ANALYSIS_PROTOTCOL_SETTING_XML(&quot;APrX&quot;),</span>
+	/**
+	 * Analysis Return code. Produced only by 5 Prime basecaller {@code 1.0b3}.
+	 */
+<span class="fc" id="L201">	ANALYSIS_RETURN_CODE(&quot;ARTN&quot;),</span>
+	/**
+	 * Flag to indicate whether adaptive processing worked or not
+	 */
+<span class="fc" id="L205">	ADAPTIVE_PROCESSING_FLAG(&quot;ASPF&quot;),</span>
+	/**
+         * First occurrence for initial analysis, 2nd for occurrence for
+         * last analysis.
+         */
+<span class="fc" id="L210">	ANALYSIS_START_SCAN_POINT(&quot;ASPt&quot;),</span>
+	
+<span class="fc" id="L212">	AUDIT_LOG(&quot;AUDT&quot;),</span>
+	/**
+	 * Reference scan number for mobility and spacing curves. first occurrence
+	 * for initial analysis, second for last analysis.
+	 */
+<span class="fc" id="L217">	B1Pt(&quot;B1Pt&quot;),</span>
+	/**
+	 * Time of completion of most recent analysis
+	 */
+<span class="fc" id="L221">	BASECALLER_TIMESTAMP(&quot;BCTS&quot;),</span>
+	
+<span class="fc" id="L223">	COMMENT(&quot;CMNT&quot;),</span>
+	/**
+	 * Container Identifier, a.k.a. plate barcode.
+	 */
+<span class="fc" id="L227">	CONTAINER_ID(&quot;CTID&quot;,true),</span>
+	
+<span class="fc" id="L229">	CONTAINER_NAME(&quot;CTNM&quot;,true),</span>
+	
+<span class="fc" id="L231">	CONTAINER_OWNER(&quot;CTOw&quot;,true),</span>
+	
+<span class="fc" id="L233">	COMMENT_TITLE(&quot;CTTL&quot;),</span>
+	/**
+	 * Capillary type electrophoresis. 1 for a capillary based machine. 
+	 * 0 for a slab gel based machine.
+	 */
+<span class="fc" id="L238">	CAPILLARY_TYPE_ELECTROPHORESIS(&quot;CpEP&quot;),</span>
+	/**
+	 * The detection cell heater temperature setting from the Run Module.
+	 * Reserved for backward compatibility. ; Not used for 3500.
+	 */
+<span class="fc" id="L243">	DETECTION_CELL_HEATER_TEMP(&quot;DCHT&quot;),</span>
+	
+<span class="fc" id="L245">	DOWNSAMPLING_RATE(&quot;DSam&quot;),</span>
+	
+<span class="fc" id="L247">	DYE_SET_NAME(&quot;DySN&quot;),</span>
+	/**
+	 * Number of dyes.
+	 */
+<span class="fc" id="L251">	DYE_NUMBER(&quot;Dye#&quot;),</span>
+	
+<span class="fc" id="L253">	DYE_NAME(&quot;DyeN&quot;),</span>
+	
+<span class="fc" id="L255">	DYE_WAVELENGTH(&quot;DyeW&quot;),</span>
+	
+<span class="fc" id="L257">	ELECTROPHERSIS_VOLTAGE(&quot;EPVt&quot;),</span>
+	/**
+	 * &lt;ol&gt;
+	 * &lt;li&gt;Start Run Event&lt;/li&gt;
+	 * &lt;li&gt;Stop Run Event&lt;/li&gt;
+	 * &lt;li&gt;Start Collection Event&lt;/li&gt;
+	 * &lt;li&gt;Stop Collection Event&lt;/li&gt;
+	 * &lt;/ol&gt;
+	 */
+<span class="fc" id="L266">	EVENT(&quot;EVNT&quot;),</span>
+	/**
+	 * Polymer/Gel Type.
+	 */
+<span class="fc" id="L270">	GEL_TYPE(&quot;GTyp&quot;),</span>
+	/**
+	 * There are usually several instrument information tags.  Each
+	 * succeeding tag is a more specific datum of this particular instrument.
+	 * For example: here is the order for some abi 3100 machine:
+	 * &lt;ol&gt;
+	 * &lt;li&gt;Instrument Class = &quot;CE&quot;&lt;/li&gt;
+	 * &lt;li&gt;Instrument Family = &quot;31XX&quot;&lt;/li&gt;
+	 * &lt;li&gt;Instrument Model = &quot;3130xl&quot;&lt;/li&gt;
+	 * &lt;li&gt;Instrument Parameters = &quot;UnitID=7;CPUBoard=ECPU500;ArraySize=16;SerialNumber=1211-010&quot;&lt;/li&gt;
+	 * &lt;/ol&gt;
+	 */
+<span class="fc" id="L282">	INSTRUMENT_INFORMATION(&quot;HCFG&quot;,true),</span>
+	/**
+	 * Injection time setting in Seconds.
+	 */
+<span class="fc" id="L286">	INJECTION_TIME_SETTINGS(&quot;InSc&quot;),</span>
+	/**
+	 * Injection Voltage setting in Volts
+	 */
+<span class="fc" id="L290">	INJECTION_VOLTAGE_SETTINGS(&quot;InVt&quot;),</span>
+	
+<span class="fc" id="L292">	SAMPLE_TRACKING_ID_FOR_LIMS(&quot;LIMS&quot;),</span>
+	/**
+	 * Length To Detector (capillary length)
+	 */
+<span class="fc" id="L296">	LENGTH_TO_DETECTOR(&quot;LNTD&quot;),</span>
+	/**
+	 * Laser power setting in micro Watts
+	 */
+<span class="fc" id="L300">	LASER_POWER(&quot;LsrP&quot;),</span>
+	
+<span class="fc" id="L302">	MACHINE_NAME(&quot;MCHN&quot;),</span>
+	/**
+	 * Run Module filename. This is redundant with the new tag #RmDn
+	 */
+<span class="fc" id="L306">	RUN_MODULE_FILENAME(&quot;MODF&quot;),</span>
+	/**
+	 * The ABI sequencing machine model number.
+	 */
+<span class="fc" id="L310">	MODEL(&quot;MODL&quot;,true),</span>
+	/**
+	 * The estimate of rms baseline noise (S/N ratio) for each dye for a
+successfully analyzed sample. Corresponds in order to the raw data in
+tags DATA 1-4. KB basecaller only.
+	 */
+<span class="fc" id="L316">	NOISE(&quot;NOIS&quot;),</span>
+	/**
+	 * array of Quality values:
+	 * &lt;ol&gt;
+	 * &lt;li&gt;Array of quality Values (0-255) as edited by user&lt;/li&gt;
+	 * &lt;li&gt;Array of quality values (0-255) as called by Basecaller&lt;/li&gt;
+	 * &lt;/ol&gt;
+	 */
+<span class="fc" id="L324">	QUALITY_VALUES(&quot;PCON&quot;),</span>
+	/**
+	 * The size of the Sequencing Plate being sequenced.
+	 */
+<span class="fc" id="L328">	PLATE_SZE(&quot;PSZE&quot;),</span>
+	/**
+	 * The type of plate being sequenced.
+	 */
+<span class="fc" id="L332">	PLATE_TYPE(&quot;PTYP&quot;,true),</span>
+	
+<span class="fc" id="L334">	PXLB(&quot;PXLB&quot;),</span>
+	/**
+	 * The name of the &quot;Results Group&quot;
+	 * this data belongs to.
+	 */
+<span class="fc" id="L339">	RESULTS_GROUP_NAME(&quot;RGNm&quot;,true),</span>
+	
+<span class="fc" id="L341">	RMXV(&quot;RMXV&quot;),</span>
+<span class="fc" id="L342">	RMdN(&quot;RMdN&quot;,true),</span>
+<span class="fc" id="L343">	RMdV(&quot;RMdV&quot;),</span>
+	
+<span class="fc" id="L345">	RMdX(&quot;RMdX&quot;,true),</span>
+<span class="fc" id="L346">	RPrN(&quot;RPrN&quot;,true),</span>
+<span class="fc" id="L347">	RPrV(&quot;RPrV&quot;),</span>
+	
+<span class="fc" id="L349">	Rate(&quot;Rate&quot;),</span>
+<span class="fc" id="L350">	RevC(&quot;RevC&quot;),</span>
+<span class="fc" id="L351">	JTC_RUN_NAME(&quot;RunN&quot;,true),</span>
+	/**
+	 * Number of Scans.
+	 */
+<span class="fc" id="L355">	SCAN(&quot;SCAN&quot;),</span>
+	/**
+	 * Separation Medium Lot Exp Date
+	 */
+<span class="fc" id="L359">	SEPARATION_MEDIUM_EXPIRATION_DATE(&quot;SMED&quot;),</span>
+	/**
+	 * Separation Medium Lot Number (polymer lot number)
+	 */
+<span class="fc" id="L363">	SEPARATION_MEDIUM_LOT_NUMBER(&quot;SMLt&quot;),</span>
+	/**
+	 * SVER 1 pString Data Collection version number
+SVER 2 cString Sizecaller version
+SVER 3 pString Firmware version number
+SVER 4 pString Sample File Format Version String
+	 */
+<span class="fc" id="L370">	SOFTWARE_VERSION(&quot;SVER&quot;),</span>
+	/**
+	 * Rescaling Divisor for reducing the dynamic range of the color data.
+	 */
+<span class="fc" id="L374">	Scal(&quot;Scal&quot;),</span>
+	/**
+	 * Number of scans. Redundant with {@link #SCAN}, but lower range. (legacy)
+	 */
+<span class="fc" id="L378">	Scan(&quot;Scan&quot;),</span>
+	/**
+	 * The Tube/ Well this trace came from.
+	 */
+<span class="fc" id="L382">	TUBE(&quot;TUBE&quot;),</span>
+	/**
+	 * Oven Temperature setting in degrees C.
+	 */
+<span class="fc" id="L386">	OVEN_TEMPERATURE(&quot;Tmpr&quot;),</span>
+<span class="fc" id="L387">	USER(&quot;User&quot;),</span>
+	/**
+	 * The flag indicating whether size match results have been edited by the
+user. Unused for 3500. Reserved for backward compatibility.
+	 */
+<span class="fc" id="L392">	USER_EDITED_SIZE_MATCH_RESULTS(&quot;UsrE&quot;),</span>
+	/**
+	 * Trace peak aria ratio.
+	 */
+<span class="fc" id="L396">	PEAK_ARIA_RATIO(&quot;phAR&quot;),</span>
+	/**
+	 * Chemistry type (&quot;term&quot;, &quot;prim&quot;, &quot;unknown&quot;), based on DYE_1
+information
+	 */
+<span class="fc" id="L401">	CHEMISTRY_TYPE(&quot;phCH&quot;),</span>
+	/**
+	 * Dye (&quot;big&quot;, &quot;d-rhod&quot;, &quot;unknown&quot;), based on mob file information
+	 */
+<span class="fc" id="L405">	DYE_TYPE(&quot;phDY&quot;),</span>
+	/**
+	 * Maximum Quality Value.
+	 */
+<span class="fc" id="L409">	MAX_QUAL_VALUE(&quot;phQL&quot;),</span>
+	/**
+	 * phTR 1 short Set Trim region
+phTR 2 float Trim probability
+	 */
+<span class="fc" id="L414">	phTR(&quot;phTR&quot;),</span>
+	
+<span class="fc" id="L416">	MATRIX_FILE_NAME(&quot;MTFX&quot;),</span>
+	/**
+	 * Feature Table.
+	 */
+<span class="fc" id="L420">	FTab(&quot;FTab&quot;),</span>
+	/**
+	 * Feature Vocabulary.
+	 */
+<span class="fc" id="L424">	FVoc(&quot;FVoc&quot;),</span>
+	/**
+	 * Features.
+	 */
+<span class="fc" id="L428">	Feat(&quot;Feat&quot;),</span>
+	/**
+	 * The off-scale data separated by semi-colon(;). Each data consists of five
+numbers separated by comma: start data point, end data point, start
+base, end base, and validity
+	 */
+<span class="fc" id="L434">	OFF_SCALE(&quot;OffS&quot;, true),</span>
+	/**
+	 * Raw data start point. Set to 0 for 3500.data collection.
+	 */
+<span class="fc" id="L438">	RAW_DATA_START_POINT(&quot;ScSt&quot;),</span>
+	/**
+	 * List of scan numbers that are offscale (optional)
+	 */
+<span class="fc" id="L442">	OFF_SCALE_LIST(&quot;OfSc&quot;),</span>
+	/**
+	 * List of scan indexes which were saturated in the camera.
+	 */
+<span class="fc" id="L446">	SATURATED_SCAN_INDEXES(&quot;Satd&quot;),</span>
+	
+<span class="fc" id="L448">	BufT(&quot;BufT&quot;),</span>
+<span class="fc" id="L449">	BufG(&quot;BufG&quot;),</span>
+<span class="fc" id="L450">	BufC(&quot;BufC&quot;),</span>
+<span class="fc" id="L451">	BufA(&quot;BufA&quot;),</span>
+	
+<span class="fc" id="L453">	LAST(&quot;LAST&quot;),</span>
+<span class="fc" id="L454">	P1AM(&quot;P1AM&quot;),</span>
+<span class="fc" id="L455">	P1RL(&quot;P1RL&quot;),</span>
+<span class="fc" id="L456">	P1WD(&quot;P1WD&quot;),</span>
+<span class="fc" id="L457">	P2AM(&quot;P2AM&quot;),</span>
+<span class="fc" id="L458">    P2RL(&quot;P2RL&quot;),  </span>
+<span class="fc" id="L459">    P2BA(&quot;P2BA&quot;),</span>
+<span class="fc" id="L460">    RGOw(&quot;RGOw&quot;),</span>
+    /**
+     * Primary Analysis Audit Active indication. True if system auditing was
+enabled during the last write of this file, false if system auditing was
+disabled.
+     */
+<span class="fc" id="L466">    PRIMARY_ANALYSIS_AUDIT_ACTIVE_INDICATOR(&quot;AAct&quot;),</span>
+    /**
+     * Anode Buffer expiration Date in the format YYYY-MM-DDTHH:MM:SS.ss+/-HH:MM
+     */
+<span class="fc" id="L470">    ANODE_BUFFER_EXPIRATION_DATE(&quot;ABED&quot;),</span>
+	/**
+	 * Date the Anode Buffer was first installed.
+	 */
+<span class="fc" id="L474">    ANODE_BUFFER_INSTALL_DATE(&quot;ABID&quot;),</span>
+    
+<span class="fc" id="L476">    ANODE_BUFFER_LOT_NUMBER(&quot;ABLt&quot;),</span>
+    /**
+     * Number of Runs process by this anode buffer so far.
+     */
+<span class="fc" id="L480">    ANODE_BUFFER_RUN_NUMBER(&quot;ABRn&quot;),</span>
+    
+<span class="fc" id="L482">    ANODE_BUFFER_TYPE(&quot;ABTp&quot;),</span>
+    
+<span class="fc" id="L484">    ASSAY_VALIDATION_FLAG(&quot;AVld&quot;),</span>
+    /**
+     * Assay content as XML
+     */
+<span class="fc" id="L488">    ASSAY_XML(&quot;AsyC&quot;),</span>
+    /**
+     * list of ambient temperature readings.
+     */
+<span class="fc" id="L492">    AMBIENT_TEMP(&quot;AmbT&quot;),</span>
+    
+<span class="fc" id="L494">    ASSAY_NAME(&quot;AsyN&quot;),</span>
+    
+<span class="fc" id="L496">    ASSAY_VERSION(&quot;AsyV&quot;),</span>
+    
+<span class="fc" id="L498">    BASECALL_QC_CODE(&quot;BcRn&quot;),</span>
+    /**
+     * Comma Separated List of Basecall warnings or errors depending on the type.
+     */
+<span class="fc" id="L502">    BASECAL_WARNINGS_OR_ERRORS(&quot;BcRs&quot;),</span>
+    
+<span class="fc" id="L504">    CAPILLARY_ARRAY_EXPIRATION(&quot;CAED&quot;),</span>
+    /**
+     * Capillary array ID ?
+     */
+<span class="fc" id="L508">    CAID(&quot;CAID&quot;),</span>
+    
+<span class="fc" id="L510">    CAPILLARY_ARRAY_LOT_NUM(&quot;CALt&quot;),</span>
+    /**
+     * Number of injections so far through the capillary
+     */
+<span class="fc" id="L514">    CAPILLAY_INJECTION_COUNT(&quot;CARn&quot;),</span>
+    
+<span class="fc" id="L516">    CAPILLARY_ARRAY_SERIAL_NUM(&quot;CASN&quot;),</span>
+    
+<span class="fc" id="L518">    CATHODE_BUFFER_EXPIRATION_DATE(&quot;CBED&quot;),</span>
+    
+<span class="fc" id="L520">    CATHODE_BUFFER_INSTALL_DATE(&quot;CBID&quot;),</span>
+<span class="fc" id="L521">    CATHODE_BUFFER_LOT_NUMBER(&quot;CBLt&quot;),</span>
+    
+<span class="fc" id="L523">    CATHODE_BUFFER_RUN_NUMBER(&quot;CBRn&quot;),</span>
+    
+<span class="fc" id="L525">    CATHODE_BUFFER_TYPE(&quot;CBTp&quot;),</span>
+    /**
+     * The Start of the Clear Range (inclusive) or the Length depending on the number.
+     */
+<span class="fc" id="L529">    CLEAR_RANGE_START_or_LENGTH(&quot;CLRG&quot;),</span>
+    
+<span class="fc" id="L531">    CONTINIOUS_READ_LENGTH_or_PASS_FAIL_CHECK(&quot;CRLn&quot;),</span>
+    
+<span class="fc" id="L533">    FILE_CHECKSUM(&quot;CkSm&quot;),</span>
+    
+<span class="fc" id="L535">    DCMD(&quot;DCMD&quot;),</span>
+    
+<span class="fc" id="L537">    INJECTION_NAME(&quot;InjN&quot;),</span>
+    
+<span class="fc" id="L539">    MEDIUM_PUPSCORE(&quot;PuSc&quot;),</span>
+    
+<span class="fc" id="L541">    QV20(&quot;QV20&quot;),</span>
+    
+<span class="fc" id="L543">    QC_PARAMS(&quot;QcPa&quot;),</span>
+    
+<span class="fc" id="L545">    QC_TRIMCODE(&quot;QcRn&quot;),</span>
+    
+<span class="fc" id="L547">    QC_WARNINGS_OR_ERRORS(&quot;QcRs&quot;),</span>
+    
+<span class="fc" id="L549">    RAMAN_NORMALIZATION_FACTOR(&quot;RNmF&quot;),</span>
+    
+<span class="fc" id="L551">    POLYMER_INSTALL_DATE(&quot;SMID&quot;),</span>
+    
+<span class="fc" id="L553">    POLYMER_RUN_NUMBER(&quot;SMRn&quot;),</span>
+    
+<span class="fc" id="L555">    ACTIVE_SPECTRAL_CALIBRATION_NAME(&quot;SpeN&quot;),</span>
+    
+<span class="fc" id="L557">    TRIMMING_PARAMETERS(&quot;TrPa&quot;),</span>
+    
+    /**
+     * The root directory entry in the ab1 file.
+     */
+<span class="fc" id="L562">    DIRECTORY(&quot;tdir&quot;),</span>
+    
+<span class="fc" id="L564">    TRACE_SCORE(&quot;TrSc&quot;)</span>
+	;
+	
+	
+	public static TaggedDataName getTagFromIntCode(int code){
+<span class="nc" id="L569">	    return INT_MAP.get(code);</span>
+	}
+	public static TaggedDataName parseTaggedDataName(String taggedDataName){
+<span class="pc bpc" id="L572" title="1 of 2 branches missed.">		if(MAP.containsKey(taggedDataName)){</span>
+<span class="fc" id="L573">		    return MAP.get(taggedDataName);</span>
+		}
+<span class="nc" id="L575">		throw new IllegalArgumentException(&quot;unknown tag data name '&quot;+ taggedDataName + &quot;'&quot;);</span>
+		
+	}
+	private final String name;
+	private final boolean isNullTerminated;
+	
+	private static final Map&lt;Integer, TaggedDataName&gt; INT_MAP;
+	private static final Map&lt;String, TaggedDataName&gt; MAP;
+        
+	static{
+<span class="fc" id="L585">	    TaggedDataName[] values = TaggedDataName.values();</span>
+<span class="fc" id="L586">	    INT_MAP = new HashMap&lt;&gt;(values.length);</span>
+	    
+<span class="fc" id="L588">	    MAP = new HashMap&lt;String, TaggedDataName&gt;(values.length);</span>
+	    
+<span class="fc bfc" id="L590" title="All 2 branches covered.">            for(TaggedDataName tag : values){</span>
+<span class="fc" id="L591">                    MAP.put(tag.name, tag);</span>
+<span class="fc" id="L592">                    byte[] bytes = tag.name.getBytes(StandardCharsets.US_ASCII);</span>
+<span class="fc" id="L593">                    int value=0;</span>
+<span class="fc bfc" id="L594" title="All 2 branches covered.">                    for(int i=bytes.length-1; i&gt;=0; i--){</span>
+<span class="fc" id="L595">                        value&lt;&lt;=8;</span>
+<span class="fc" id="L596">                        value |= bytes[i];</span>
+                        
+                    }
+                    
+<span class="fc" id="L600">                    INT_MAP.put(value, tag);</span>
+                    
+            }
+<span class="fc" id="L603">	}</span>
+	
+<span class="fc" id="L605">	private TaggedDataName(String name,boolean isNullTerminated){</span>
+<span class="fc" id="L606">	    this.name = name;</span>
+<span class="fc" id="L607">	    this.isNullTerminated=isNullTerminated;</span>
+<span class="fc" id="L608">	}</span>
+	private TaggedDataName(String name) {
+<span class="fc" id="L610">		this(name,false);</span>
+<span class="fc" id="L611">	}</span>
+
+	/**
+     * Does this tag use null terminated values.
+     * Some tags are known to have data values that are null-terminated.
+     * @return {@code true} if this tag uses null terminated values,
+     * {@code false} otherwise.
+     */
+    public boolean usesNullTerminatedStringValues() {
+<span class="fc" id="L620">        return isNullTerminated;</span>
+    }
+    /* (non-Javadoc)
+	 * @see java.lang.Enum#toString()
+	 */
+	@Override
+	public String toString() {
+<span class="nc" id="L627">	   return name;</span>
+	}
+	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

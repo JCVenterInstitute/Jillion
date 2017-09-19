@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DefaultCasAlignmentScore.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.clc.cas</a> &gt; <span class="el_source">DefaultCasAlignmentScore.java</span></div><h1>DefaultCasAlignmentScore.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Oct 28, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.assembly.clc.cas;
+
+final class DefaultCasAlignmentScore implements CasAlignmentScore {
+
+    private final int firstInsertion, insertionExtension,
+                firstDeletion, deletionExtension,
+                match,
+                transition, transversion,unknown;
+    
+  
+    public DefaultCasAlignmentScore(int firstInsertion, int insertionExtension,
+            int firstDeletion, int deletionExtension, int match,
+<span class="fc" id="L38">            int transition, int transversion, int unknown) {</span>
+<span class="fc" id="L39">        this.firstInsertion = firstInsertion;</span>
+<span class="fc" id="L40">        this.insertionExtension = insertionExtension;</span>
+<span class="fc" id="L41">        this.firstDeletion = firstDeletion;</span>
+<span class="fc" id="L42">        this.deletionExtension = deletionExtension;</span>
+<span class="fc" id="L43">        this.match = match;</span>
+<span class="fc" id="L44">        this.transition = transition;</span>
+<span class="fc" id="L45">        this.transversion = transversion;</span>
+<span class="fc" id="L46">        this.unknown = unknown;</span>
+<span class="fc" id="L47">    }</span>
+
+    @Override
+    public int getDeletionExtensionCost() {
+<span class="nc" id="L51">        return deletionExtension;</span>
+    }
+
+    @Override
+    public int getFirstDeletionCost() {
+<span class="nc" id="L56">        return firstDeletion;</span>
+    }
+
+    @Override
+    public int getFirstInsertionCost() {
+<span class="nc" id="L61">        return firstInsertion;</span>
+    }
+
+    @Override
+    public int getInsertionExtensionCost() {
+<span class="nc" id="L66">        return insertionExtension;</span>
+    }
+
+    @Override
+    public int getMatchScore() {
+<span class="nc" id="L71">        return match;</span>
+    }
+
+    @Override
+    public int getTransitionScore() {
+<span class="nc" id="L76">        return transition;</span>
+    }
+
+    @Override
+    public int getTransversionScore() {
+<span class="nc" id="L81">        return transversion;</span>
+    }
+
+    @Override
+    public int getUnknownScore() {
+<span class="nc" id="L86">        return unknown;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L91">        return &quot;DefaultCasAlignmentScore [deletionExtension=&quot;</span>
+                + deletionExtension + &quot;, firstDeletion=&quot; + firstDeletion
+                + &quot;, firstInsertion=&quot; + firstInsertion
+                + &quot;, insertionExtension=&quot; + insertionExtension + &quot;, match=&quot;
+                + match + &quot;, transition=&quot; + transition + &quot;, transversion=&quot;
+                + transversion + &quot;, unknown=&quot; + unknown + &quot;]&quot;;
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

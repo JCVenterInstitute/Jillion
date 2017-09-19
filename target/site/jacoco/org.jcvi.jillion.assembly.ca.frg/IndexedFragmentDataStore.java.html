@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>IndexedFragmentDataStore.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.ca.frg</a> &gt; <span class="el_source">IndexedFragmentDataStore.java</span></div><h1>IndexedFragmentDataStore.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Jul 21, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.assembly.ca.frg;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStoreClosedException;
+import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
+import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
+/**
+ * {@code IndexedFragmentDataStore} is an implementation of 
+ * {@link FragmentDataStore} that only stores an index containing
+ * file offsets to the various phd records contained
+ * inside the phdball file.  This allows large files to provide random 
+ * access without taking up much memory.  The downside is each phd
+ * must be re-parsed each time.
+ * @author dkatzel
+ *
+ *
+ */
+public final class IndexedFragmentDataStore extends AbstractFragmentDataStore{
+
+    private final Map&lt;String,Range&gt; fragmentInfoIndexFileRange, mateInfoIndexFileRange;
+    private final File fragFile;
+    private final Frg2Parser parser;
+<span class="fc" id="L62">    private int currentStart=0;</span>
+<span class="fc" id="L63">    private int currentPosition=-1;</span>
+    private volatile boolean closed;
+    
+    public static FragmentDataStore create(File frgFile) throws FileNotFoundException{
+<span class="fc" id="L67">        Frg2Parser parserInstance = new Frg2Parser();</span>
+<span class="fc" id="L68">        IndexedFragmentDataStore datastore = new IndexedFragmentDataStore(frgFile, parserInstance);</span>
+<span class="fc" id="L69">        InputStream in = null;</span>
+        try{
+<span class="fc" id="L71">            in = new FileInputStream(frgFile);</span>
+<span class="fc" id="L72">            parserInstance.parse(in, datastore);</span>
+<span class="fc" id="L73">            return datastore;</span>
+        }finally{
+<span class="pc" id="L75">            IOUtil.closeAndIgnoreErrors(in);</span>
+        }
+       
+    }
+    
+<span class="fc" id="L80">    private IndexedFragmentDataStore(File file, Map&lt;String,Range&gt; fragmentInfoIndexFileRange, Map&lt;String,Range&gt; mateInfoIndexFileRange, Frg2Parser parser){</span>
+<span class="fc" id="L81">        this.fragmentInfoIndexFileRange = fragmentInfoIndexFileRange;</span>
+<span class="fc" id="L82">        this.mateInfoIndexFileRange = mateInfoIndexFileRange;</span>
+<span class="fc" id="L83">        this.parser = parser;</span>
+<span class="fc" id="L84">        this.fragFile = file;</span>
+<span class="fc" id="L85">    }</span>
+    private IndexedFragmentDataStore(File file, Frg2Parser parser){
+<span class="fc" id="L87">        this(file, new LinkedHashMap&lt;String,Range&gt;(), new LinkedHashMap&lt;String,Range&gt;(),parser);</span>
+<span class="fc" id="L88">    }</span>
+    
+    @Override
+    public boolean isClosed() {
+<span class="fc" id="L92">        return closed;</span>
+    }
+
+    
+    protected void throwErrorIfClosed() {
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">        if(isClosed()){</span>
+<span class="nc" id="L98">            throw new DataStoreClosedException(&quot;datastore is closed&quot;);</span>
+        }
+        
+<span class="fc" id="L101">    }</span>
+    @Override
+    public void visitFragment(FrgAction action, String fragmentId,
+            String libraryId, NucleotideSequence bases,
+            QualitySequence qualities, Range validRange,
+            Range vectorClearRange, String source) {
+<span class="fc" id="L107">        throwErrorIfAlreadyInitialized();</span>
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">        if(this.isAddOrModify(action)){</span>
+<span class="fc" id="L109">            Range fragmentRange = Range.of(currentStart, currentPosition);</span>
+<span class="fc" id="L110">            fragmentInfoIndexFileRange.put(fragmentId, fragmentRange);</span>
+<span class="fc" id="L111">            updateRangeStartPosition();</span>
+<span class="fc" id="L112">        }</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">        else if (this.isDelete(action)){</span>
+<span class="nc" id="L114">        	handleDelete(fragmentId);</span>
+        }
+        
+<span class="fc" id="L117">    }</span>
+
+    private void handleDelete(String frgId){
+    	/*
+    	 * Delete no longer supported:
+    	 * From email from Brian Walenz 2012-08-22
+    	 * 
+    	 * We can still delete reads from the store, 
+    	 * but there are simpler methods than the D action.  
+    	 * If the D action is still coded, it is essentially dead.
+    	 * 
+    	 * The only use case I can think of would be to delete bad
+    	 * reads in a partially completed assembly.  
+    	 * Advanced usage, and not that common.
+    	 */
+    	
+    	
+<span class="nc" id="L134">    }</span>
+    @Override
+    public void visitLibrary(FrgAction action, String id,
+            MateOrientation orientation, Distance distance) {
+<span class="fc" id="L138">        super.visitLibrary(action, id, orientation, distance);</span>
+<span class="fc" id="L139">        updateRangeStartPosition();</span>
+<span class="fc" id="L140">    }</span>
+    private void updateRangeStartPosition() {
+<span class="fc" id="L142">        currentStart = currentPosition +1;</span>
+<span class="fc" id="L143">    }</span>
+    
+    @Override
+    public void visitLine(String line) {
+<span class="fc" id="L147">        throwErrorIfAlreadyInitialized();</span>
+<span class="fc" id="L148">        currentPosition+=line.length();</span>
+        
+<span class="fc" id="L150">    }</span>
+
+    @Override
+    public boolean contains(String fragmentId) throws DataStoreException {
+<span class="fc" id="L154">        throwErrorIfClosed();</span>
+<span class="fc" id="L155">        return fragmentInfoIndexFileRange.containsKey(fragmentId);</span>
+    }
+
+    @Override
+    public Fragment get(String id) throws DataStoreException {
+<span class="fc" id="L160">        throwErrorIfClosed();</span>
+<span class="fc" id="L161">        Range range =fragmentInfoIndexFileRange.get(id);</span>
+        InputStream in;
+        try {
+<span class="fc" id="L164">            in = IOUtil.createInputStreamFromFile(fragFile, (int)range.getBegin(), (int)range.getLength());</span>
+           
+<span class="fc" id="L166">            final SingleFragVisitor singleFragVisitor = new SingleFragVisitor();</span>
+<span class="fc" id="L167">            parser.parse(in, singleFragVisitor);</span>
+<span class="fc" id="L168">            return singleFragVisitor.getFragmentToReturn();</span>
+<span class="nc" id="L169">        } catch (IOException e) {</span>
+<span class="nc" id="L170">            throw new DataStoreException(&quot;error reading frg file&quot;, e);</span>
+        }
+    }
+    
+
+    @Override
+    public StreamingIterator&lt;String&gt; idIterator() {
+<span class="fc" id="L177">        throwErrorIfClosed();</span>
+<span class="fc" id="L178">        return DataStoreStreamingIterator.create(this, fragmentInfoIndexFileRange.keySet().iterator());</span>
+    }
+
+    @Override
+    public long getNumberOfRecords() throws DataStoreException {
+<span class="nc" id="L183">        throwErrorIfClosed();</span>
+<span class="nc" id="L184">        return fragmentInfoIndexFileRange.size();</span>
+    }
+
+    @Override
+    public void close() throws IOException {
+<span class="nc" id="L189">        super.close();</span>
+<span class="nc" id="L190">        closed =true;</span>
+        
+<span class="nc" id="L192">    }</span>
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public StreamingIterator&lt;Fragment&gt; iterator() {
+<span class="fc" id="L199">        FrgIterator iter= new FrgIterator();</span>
+<span class="fc" id="L200">        iter.start();</span>
+<span class="fc" id="L201">        return DataStoreStreamingIterator.create(this, iter);</span>
+    }
+
+    @Override
+    public Fragment getMateOf(Fragment fragment) throws DataStoreException {
+<span class="fc" id="L206">        throwErrorIfClosed();</span>
+<span class="fc" id="L207">        final String fragId = fragment.getId();</span>
+        try {
+<span class="fc" id="L209">            String mateId = getMateIdOf(fragId);</span>
+<span class="fc" id="L210">            return get(mateId);</span>
+<span class="nc" id="L211">        } catch (IOException e) {</span>
+<span class="nc" id="L212">            throw new DataStoreException(&quot;error parsing mate info from frg file&quot;,e);</span>
+        }
+        
+    }
+    @Override
+    public boolean hasMate(Fragment fragment) throws DataStoreException {
+<span class="fc" id="L218">        throwErrorIfClosed();</span>
+<span class="fc" id="L219">        final String fragId = fragment.getId();</span>
+        try {
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">            return getMateIdOf(fragId) !=null;</span>
+<span class="nc" id="L222">        } catch (IOException e) {</span>
+<span class="nc" id="L223">            throw new DataStoreException(&quot;error parsing mate info from frg file&quot;,e);</span>
+        }
+    }
+    private String getMateIdOf(final String fragId) throws IOException {
+<span class="fc" id="L227">        Range range = mateInfoIndexFileRange.get(fragId);</span>
+<span class="fc" id="L228">        InputStream in = IOUtil.createInputStreamFromFile(fragFile, (int)range.getBegin(), (int)range.getLength());</span>
+<span class="fc" id="L229">        SingleLinkVisitor singleLinkVisitor = new SingleLinkVisitor(fragId);</span>
+<span class="fc" id="L230">        parser.parse(in, singleLinkVisitor);</span>
+<span class="fc" id="L231">        return singleLinkVisitor.getMateId();</span>
+    }
+    @Override
+    public void visitLink(FrgAction action, List&lt;String&gt; fragIds) {
+<span class="fc" id="L235">        throwErrorIfAlreadyInitialized();</span>
+<span class="pc bpc" id="L236" title="1 of 2 branches missed.">        if(this.isAddOrModify(action)){</span>
+<span class="fc" id="L237">            Range fragmentRange = Range.of(currentStart, currentPosition);</span>
+<span class="fc bfc" id="L238" title="All 2 branches covered.">            for(String fragmentId: fragIds){</span>
+<span class="fc" id="L239">                mateInfoIndexFileRange.put(fragmentId, fragmentRange);</span>
+<span class="fc" id="L240">            }</span>
+<span class="fc" id="L241">            updateRangeStartPosition();</span>
+<span class="fc" id="L242">        }</span>
+<span class="nc bnc" id="L243" title="All 2 branches missed.">        else if (this.isDelete(action)){</span>
+<span class="nc bnc" id="L244" title="All 2 branches missed.">            for(String fragmentId: fragIds){</span>
+<span class="nc" id="L245">            	handleDelete(fragmentId);</span>
+<span class="nc" id="L246">            }</span>
+        }
+        
+<span class="fc" id="L249">    }</span>
+    
+<span class="fc" id="L251">    private class SingleFragVisitor implements Frg2Visitor{</span>
+<span class="fc" id="L252">        Fragment fragmentToReturn=null;</span>
+        
+        public Fragment getFragmentToReturn() {
+<span class="fc" id="L255">            return fragmentToReturn;</span>
+        }
+
+        @Override
+        public void visitFragment(FrgAction action,
+                String fragmentId, String libraryId,
+                NucleotideSequence bases,
+                QualitySequence qualities, Range validRange,
+                Range vectorClearRange, String source) {
+            Library library;
+            try {
+<span class="fc" id="L266">                library = getLibrary(libraryId);</span>
+<span class="nc" id="L267">            } catch (DataStoreException e) {</span>
+<span class="nc" id="L268">                throw new IllegalStateException(&quot;Fragment uses library &quot;+ libraryId + &quot;before it is declared&quot;,e);</span>
+<span class="fc" id="L269">            }</span>
+<span class="fc" id="L270">            fragmentToReturn = new DefaultFragment(fragmentId, bases, </span>
+                                    qualities, validRange, vectorClearRange, 
+                                    library, source);
+            
+<span class="fc" id="L274">        }</span>
+
+        @Override
+        public void visitLibrary(FrgAction action, String id,
+                MateOrientation orientation, Distance distance) {
+        	//no-op
+<span class="nc" id="L280">        }</span>
+        @Override
+        public void visitLink(FrgAction action, List&lt;String&gt; fragIds) {
+        	//no-op
+<span class="nc" id="L284">        }</span>
+        @Override
+        public void visitEndOfFile(){
+        	//no-op
+<span class="fc" id="L288">        }</span>
+        @Override
+        public void visitLine(String line) {
+        	//no-op
+<span class="fc" id="L292">        }</span>
+
+        @Override
+        public void visitFile() {           
+        	//no-op
+<span class="nc" id="L297">        }</span>
+    }
+    
+    
+    private static class SingleLinkVisitor implements Frg2Visitor{
+<span class="fc" id="L302">        private String mateId=null;</span>
+        
+        
+        private final String fragmentIdToGetMateOf;
+        
+<span class="fc" id="L307">        public SingleLinkVisitor(String fragmentIdToGetMateOf){</span>
+<span class="fc" id="L308">            this.fragmentIdToGetMateOf = fragmentIdToGetMateOf;</span>
+<span class="fc" id="L309">        }</span>
+        public String getMateId() {
+<span class="fc" id="L311">            return mateId;</span>
+        }
+        @Override
+        public void visitFragment(FrgAction action,
+                String fragmentId, String libraryId,
+                NucleotideSequence bases,
+                QualitySequence qualities, Range validRange,
+                Range vectorClearRange, String source) {
+        	//no-op
+<span class="nc" id="L320">        }</span>
+
+        @Override
+        public void visitLibrary(FrgAction action, String id,
+                MateOrientation orientation, Distance distance) {
+        	//no-op
+<span class="nc" id="L326">        }</span>
+        @Override
+        public void visitLink(FrgAction action, List&lt;String&gt; fragIds) {
+<span class="fc bfc" id="L329" title="All 2 branches covered.">            for(String fragId : fragIds){</span>
+<span class="fc bfc" id="L330" title="All 2 branches covered.">                if(!fragId.equals(fragmentIdToGetMateOf)){</span>
+<span class="fc" id="L331">                    mateId = fragId;</span>
+                }
+<span class="fc" id="L333">            }</span>
+<span class="fc" id="L334">        }</span>
+        @Override
+        public void visitEndOfFile(){
+        	//no-op
+<span class="fc" id="L338">        }</span>
+        @Override
+        public void visitLine(String line) {
+        	//no-op
+<span class="fc" id="L342">        }</span>
+        @Override
+        public void visitFile() {        
+        	//no-op
+<span class="nc" id="L346">        }</span>
+    }
+    
+    
+<span class="fc" id="L350">    private class FrgIterator extends AbstractBlockingStreamingIterator&lt;Fragment&gt;{</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        protected void backgroundThreadRunMethod() {
+<span class="fc" id="L357">            Frg2Visitor visitor = new Frg2Visitor(){</span>
+
+                @Override
+                public void visitLine(String line) {
+                	//no-op
+<span class="fc" id="L362">                }</span>
+
+                @Override
+                public void visitFile() {
+                	//no-op
+<span class="nc" id="L367">                }</span>
+
+                @Override
+                public void visitEndOfFile() {
+                	//no-op
+<span class="fc" id="L372">                }</span>
+
+                @Override
+                public void visitLibrary(FrgAction action, String id,
+                        MateOrientation orientation, Distance distance) {
+                	//no-op
+<span class="fc" id="L378">                }</span>
+
+                @Override
+                public void visitFragment(FrgAction action, String fragmentId,
+                        String libraryId, NucleotideSequence bases,
+                        QualitySequence qualities, Range validRange,
+                        Range vectorClearRange, String source) {
+<span class="pc bpc" id="L385" title="1 of 2 branches missed.">                    if(fragmentInfoIndexFileRange.containsKey(fragmentId)){</span>
+                        //only add frgs we care about
+                        try {
+<span class="fc" id="L388">                            Library library = getLibrary(libraryId);</span>
+<span class="fc" id="L389">                            Fragment frg =  new DefaultFragment(fragmentId, bases, </span>
+                                    qualities, validRange, vectorClearRange, 
+                                    library, source);
+<span class="fc" id="L392">                            FrgIterator.this.blockingPut(frg);</span>
+<span class="nc" id="L393">                        } catch (DataStoreException e) {</span>
+<span class="nc" id="L394">                            throw new IllegalStateException(&quot;could not get library &quot;+ libraryId,e);</span>
+<span class="fc" id="L395">                        }</span>
+                    }
+                    
+<span class="fc" id="L398">                }</span>
+
+                @Override
+                public void visitLink(FrgAction action, List&lt;String&gt; fragIds) {
+                	//no-op
+<span class="fc" id="L403">                }</span>
+                
+            };
+<span class="fc" id="L406">            InputStream in =null;</span>
+            try{
+<span class="fc" id="L408">                in = new FileInputStream(fragFile);</span>
+<span class="fc" id="L409">                new Frg2Parser().parse(in, visitor);</span>
+<span class="nc" id="L410">            } catch (FileNotFoundException e) {</span>
+<span class="nc" id="L411">               throw new IllegalStateException(&quot;error reading frg file&quot;,e);</span>
+            }finally{
+<span class="pc" id="L413">                IOUtil.closeAndIgnoreErrors(in);</span>
+<span class="fc" id="L414">            }</span>
+<span class="fc" id="L415">        }</span>
+        
+    }
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

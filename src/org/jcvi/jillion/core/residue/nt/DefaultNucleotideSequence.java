@@ -120,9 +120,16 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
         return codec.matches(data, pattern, subSequenceRange);
     }
 
+    @Override
+    public Stream<Range> findMatches(Pattern pattern,boolean nested) {
+        return codec.matches(data, pattern,nested);
+    }
 
-
-
+    @Override
+    public Stream<Range> findMatches(Pattern pattern, Range subSequenceRange,boolean nested) {
+        return codec.matches(data, pattern, subSequenceRange,nested);
+    }
+    
     /**
      * Check the input Range boundaries against this sequence.
      * @param gappedRange the range to check.

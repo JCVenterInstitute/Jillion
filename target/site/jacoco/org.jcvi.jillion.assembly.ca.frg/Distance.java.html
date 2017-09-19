@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Distance.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.ca.frg</a> &gt; <span class="el_source">Distance.java</span></div><h1>Distance.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Mar 25, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.assembly.ca.frg;
+/**
+ * {@code Distance} is class that represents
+ * genomic library mate distances.
+ * @author dkatzel
+ *
+ */
+public final class Distance {
+    /**
+     * 
+     */
+    private static final float SIX = 6F;
+
+    /**
+     * Celera Assembly's Gatekeeper doesn't
+     * like it when the 3 standard Deviations from
+     * the mean falls below zero.
+     */
+    private static final int CA_GATEKEEPER_STDDEV_LIMIT = 3;
+
+    private static final float MAX_ROUNDING_ERROR = 1.015F;
+    private final int min, max;
+    private final float mean;
+    private final float stdDev;
+    /**
+     * Builds a new {@link Distance} using the given mean and standard deviation.
+     * 
+     * @param min the minimum distance.
+     * @param max the max distance.
+     * @param mean the mean distance.
+     * @param stdDev the standard deviation.
+     * 
+     * @return a new {@link Distance}.
+     */
+    public static Distance buildDistance(int min, int max,float mean, float stdDev){
+<span class="fc" id="L61">        return new Distance(min,max,mean, stdDev);</span>
+    }
+    /**
+     * Builds a new {@link Distance} using the given mean and standard deviation.
+     * @param mean the mean distance.
+     * @param stdDev the standard deviation.
+     * @return a new {@link Distance}.
+     */
+    public static Distance buildDistance(float mean, float stdDev){
+<span class="fc" id="L70">        float delta = calculateDelta(stdDev);</span>
+<span class="fc" id="L71">        int plusDelta = (int)(mean+delta);</span>
+<span class="fc" id="L72">        int minusDelta = (int)(mean-delta);</span>
+<span class="fc" id="L73">        return new Distance(Math.min(plusDelta, minusDelta),</span>
+<span class="fc" id="L74">                Math.max(plusDelta, minusDelta),</span>
+                mean, stdDev);
+    }
+    private static float calculateDelta(float stdDev) {
+<span class="fc" id="L78">        return  CA_GATEKEEPER_STDDEV_LIMIT*stdDev;</span>
+    }
+    /**
+     * Build a new {@link Distance} based on the given min and max values.
+     * @param min the minimum distance
+     * @param max the max distance 
+     * @return a new {@link Distance}.
+     */
+    public static Distance buildDistance(int min, int max){       
+<span class="fc" id="L87">        float mean = computeMean(min, max);</span>
+<span class="fc" id="L88">        float stdDev = computeStandardDeviation(min, max);</span>
+<span class="fc" id="L89">        return new Distance(min,max,mean, stdDev);</span>
+    }
+    
+    
+    private static float computeStandardDeviation(int min, int max) {
+<span class="fc" id="L94">        return (max-min)/SIX;</span>
+    }
+    private static float computeMean(int min, int max) {
+        //divide by 2 first to avoid buffer overflow of large numbers
+<span class="fc" id="L98">        return min/2F + max/2F;</span>
+    }
+    /**
+     * Build a new {@link Distance} which is guaranteed to 
+     * have values that conform to Celera Assembler Standard Deviation
+     * Distance constraints.  If no transformation is needed, 
+     * this method will return the same object that was passed in.
+     * @param distance a {@link Distance} containing the library distance information;
+     * can not be null.
+     * @return a new {@link Distance} that conforms to the CA distance constraints.
+     * @throws NullPointerException if distance is null.
+     */
+    public static Distance transformIntoCeleraAssemblerDistance(Distance distance){
+<span class="fc" id="L111">        float mean = distance.getMean();</span>
+<span class="fc" id="L112">        float stdDev = distance.getStdDev();</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">         if(mean &lt; calculateDelta(stdDev)){</span>
+<span class="fc" id="L114">            final float correctedStdDev = (mean-MAX_ROUNDING_ERROR)/CA_GATEKEEPER_STDDEV_LIMIT;</span>
+<span class="fc" id="L115">            return new Distance(distance.getMin(), distance.getMax(),mean,correctedStdDev);</span>
+        }
+<span class="fc" id="L117">         return distance;</span>
+    }
+
+<span class="fc" id="L120">    private Distance(int min, int max,float mean, float stdDev){</span>
+<span class="fc" id="L121">        this.min = min;</span>
+<span class="fc" id="L122">        this.max = max;</span>
+<span class="fc" id="L123">        this.mean = mean;</span>
+<span class="fc" id="L124">        this.stdDev = stdDev;</span>
+<span class="fc" id="L125">    }</span>
+    /**
+     * Get the mean (average) distance between
+     * mates.
+     * @return the mean as a floating point number.
+     */
+    public float getMean(){
+<span class="fc" id="L132">        return mean;</span>
+    }
+    /**
+     * Get the standard deviation of the mean between
+     * mates.
+     * @return the std dev as a floating point number.
+     */
+    public float getStdDev(){
+<span class="fc" id="L140">        return stdDev;</span>
+    }
+    /**
+     * Get the minimum distance between
+     * mates.
+     * @return the min as an int, should always be &amp;ge;0.
+     */
+    public int getMin() {
+<span class="fc" id="L148">        return min;</span>
+    }
+    /**
+     * Get the max distance between
+     * mates.
+     * @return the max as an int, should always be &amp;ge; {@link #getMin()}.
+     */
+    public int getMax() {
+<span class="fc" id="L156">        return max;</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L161">        final int prime = 31;</span>
+<span class="fc" id="L162">        int result = 1;</span>
+<span class="fc" id="L163">        result = prime * result + max;</span>
+<span class="fc" id="L164">        result = prime * result + Float.floatToIntBits(mean);</span>
+<span class="fc" id="L165">        result = prime * result + min;</span>
+<span class="fc" id="L166">        result = prime * result + Float.floatToIntBits(stdDev);</span>
+<span class="fc" id="L167">        return result;</span>
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+<span class="fc bfc" id="L172" title="All 2 branches covered.">        if (this == obj){</span>
+<span class="fc" id="L173">            return true;</span>
+        }
+<span class="fc bfc" id="L175" title="All 2 branches covered.">        if (obj == null){</span>
+<span class="fc" id="L176">            return false;</span>
+        }
+<span class="fc bfc" id="L178" title="All 2 branches covered.">        if (!(obj instanceof Distance)){</span>
+<span class="fc" id="L179">            return false;</span>
+        }
+<span class="fc" id="L181">        Distance other = (Distance) obj;</span>
+<span class="fc bfc" id="L182" title="All 2 branches covered.">        if (max != other.max){</span>
+<span class="fc" id="L183">            return false;</span>
+        }
+<span class="pc bpc" id="L185" title="1 of 2 branches missed.">        if (Float.floatToIntBits(mean) != Float.floatToIntBits(other.mean)){</span>
+<span class="nc" id="L186">            return false;</span>
+        }
+<span class="pc bpc" id="L188" title="1 of 2 branches missed.">        if (min != other.min){</span>
+<span class="nc" id="L189">            return false;</span>
+        }
+<span class="pc bpc" id="L191" title="1 of 2 branches missed.">        if (Float.floatToIntBits(stdDev) != Float.floatToIntBits(other.stdDev)){</span>
+<span class="nc" id="L192">            return false;</span>
+        }
+<span class="fc" id="L194">        return true;</span>
+    }
+
+    @Override
+    public String toString() {
+        
+<span class="nc" id="L200">        return String.format(&quot;%.3f, std: %.3f&quot;, mean, stdDev);</span>
+    }
+    
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

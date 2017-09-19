@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CigarOperation.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.sam.cigar</a> &gt; <span class="el_source">CigarOperation.java</span></div><h1>CigarOperation.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.sam.cigar;
+/**
+ * {@code CigarOperation} is an enumeration
+ * of all the different kinds of trimming and alignment
+ * operations that can be expressed in a CIGAR string.
+ * 
+ * @author dkatzel
+ *
+ */
+<span class="pc" id="L30">public enum CigarOperation {</span>
+	/**
+	 * Alignment match
+	 * (can be a sequence match
+	 * or mismatch).
+	 */
+<span class="fc" id="L36">	ALIGNMENT_MATCH('M'),</span>
+	/**
+	 * Insertion to the reference. This causes the reference
+	 * to insert a gap.  
+	 * &lt;p&gt;
+	 * For example: this read has an insertion of 2 bp
+	 * with respect to the reference:
+	 * &lt;pre&gt;
+	 * ref		TTAGTAA**GATA
+	 * read		TTAGTAAAGGATA
+	 * &lt;/pre&gt;
+	 * &lt;/p&gt;
+	 */
+<span class="fc" id="L49">	INSERTION('I'),</span>
+	/**
+	 * Insertion from the reference. This causes the READ
+	 * to insert a gap.  
+	 * &lt;p&gt;
+	 * For example: this read has an deletion of 1 bp
+	 * with respect to the reference:
+	 * &lt;pre&gt;
+	 * ref		GATAGCTG
+	 * read		GATA*CTG
+	 * &lt;/pre&gt;
+	 * &lt;/p&gt;
+	 */
+<span class="fc" id="L62">	DELETION('D'),</span>
+	/**
+	 * Skipped region from the reference.
+	 * For mRNA-to-genome alignments, this is an intron;
+	 * for all other types of alignments, this operation
+	 * is undefined.
+	 */
+<span class="fc" id="L69">	SKIPPED('N'),</span>
+	/**
+	 * Clipped sequences present in the sequence.
+	 */
+<span class="fc" id="L73">	SOFT_CLIP('S'),</span>
+	/**
+	 * Clipped sequences NOT present in the sequence.
+	 */
+<span class="fc" id="L77">	HARD_CLIP('H'),</span>
+	/**
+	 * Silent deletion from padded reference. This is 
+	 * caused when the read AND the reference both have a 
+	 * deletion.  This is caused by another read
+	 * giving the reference an insertion:
+	 * &lt;p&gt;
+	 * For example: this read2 has an padd 1 bp
+	 * at position 8:
+	 * &lt;pre&gt;
+	 * ref		TTAGTAA**GATA
+	 * 
+	 * read1		TTAGTAAAGGATA
+	 * read2		TTAGTAA*GGATA
+	 * &lt;/pre&gt;
+	 */
+<span class="fc" id="L93">	PADDING('P'),</span>
+	/**
+	 * Sequence match.
+	 */
+<span class="fc" id="L97">	SEQUENCE_MATCH('='),</span>
+	/**
+	 * Sequence mismatch.
+	 */
+<span class="fc" id="L101">	SEQUENCE_MISMATCH('X')</span>
+	;
+	
+	
+<span class="fc" id="L105">	private static final CigarOperation[] VALUES = values();</span>
+	
+	private static final CigarOperation[] SAM_CHARS;
+	
+	static{
+		//from '=' to 'X' is 28 elements
+<span class="fc" id="L111">		SAM_CHARS = new CigarOperation[28];</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">		for(int i=0; i&lt;VALUES.length; i++){</span>
+<span class="fc" id="L113">			CigarOperation cigarOperation = VALUES[i];</span>
+<span class="fc" id="L114">			char opCode = cigarOperation.opCode;</span>
+<span class="fc" id="L115">			int offset = opCode - '=';</span>
+<span class="fc" id="L116">			SAM_CHARS[offset] = cigarOperation;</span>
+		}
+<span class="fc" id="L118">	}</span>
+	private final char opCode;
+	
+<span class="fc" id="L121">	CigarOperation(char opCode){</span>
+<span class="fc" id="L122">		this.opCode = opCode;</span>
+<span class="fc" id="L123">	}</span>
+	
+	
+	/**
+	 * Get this opCode for this operation
+	 * that is used in SAM files.
+	 * 
+	 * @return an opCode as a single character.
+	 */
+	public char getOpCode() {
+<span class="fc" id="L133">		return opCode;</span>
+	}
+	/**
+	 * Get this opCode for this operation
+	 * that is used in BAM files.
+	 * 
+	 * @return an opCode as an int.
+	 */
+	public int getBinaryOpCode() {
+<span class="fc" id="L142">		return ordinal();</span>
+	}
+	/**
+	 * Parse the binary op code from a BAM encoded
+	 * file into the {@link CigarOperation}.
+	 * @param bit the binary opcode;
+	 * @return the {@link CigarOperation}
+	 * 
+	 * @throws IndexOutOfBoundsException if the opcode is invalid.
+	 */
+	public static CigarOperation parseBinary(int bit){
+<span class="fc" id="L153">		return VALUES[bit];</span>
+	}
+
+	/**
+	 * Parse the first character of the given String into a
+	 * {@link CigarOperation}. This is the same as
+	 * {@link #parseOp(char) parseOp(op.charAt(0));}
+	 * @param op the opcode to parse.
+	 * @return the {@link CigarOperation};
+	 * will never return null.
+	 * @throws IllegalArgumentException if the character
+	 * is an invalid opcode.
+	 * @throws NullPointerException if op is null.
+	 */
+	public static CigarOperation parseOp(String op){
+<span class="fc" id="L168">		return parseOp(op.charAt(0));</span>
+	}
+	/**
+	 * Parse the given character into a
+	 * {@link CigarOperation}.
+	 * @param op the opcode to parse.
+	 * @return the {@link CigarOperation};
+	 * will never return null.
+	 * @throws IllegalArgumentException if the character
+	 * is an invalid opcode.
+	 */
+	public static CigarOperation parseOp(char op){
+<span class="fc" id="L180">		int offset = op - '=';</span>
+<span class="pc bpc" id="L181" title="1 of 4 branches missed.">		if(offset &gt;=0 &amp;&amp; offset &lt; SAM_CHARS.length){</span>
+<span class="fc" id="L182">			CigarOperation cigarOperation = SAM_CHARS[offset];</span>
+<span class="pc bpc" id="L183" title="1 of 2 branches missed.">			if(cigarOperation !=null){</span>
+<span class="fc" id="L184">				return cigarOperation;</span>
+			}
+		}
+<span class="fc" id="L187">		throw new IllegalArgumentException(&quot;invalid cigar opcode : &quot; + op);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

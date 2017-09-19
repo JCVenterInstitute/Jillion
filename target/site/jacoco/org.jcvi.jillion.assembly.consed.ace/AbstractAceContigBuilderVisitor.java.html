@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AbstractAceContigBuilderVisitor.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.consed.ace</a> &gt; <span class="el_source">AbstractAceContigBuilderVisitor.java</span></div><h1>AbstractAceContigBuilderVisitor.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly.consed.ace;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.jcvi.jillion.assembly.AssemblyUtil;
+import org.jcvi.jillion.assembly.consed.ConsedUtil;
+import org.jcvi.jillion.assembly.consed.ConsedUtil.ClipPointsType;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Range.CoordinateSystem;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.util.MapUtil;
+/**
+ * {@code AbstractAceContigBuilderVisitor} is an {@link AceContigVisitor}
+ * that will create a {@link AceContigBuilder} and populate it using the
+ * visit calls. 
+ * @author dkatzel
+ *
+ */
+public abstract class AbstractAceContigBuilderVisitor implements AceContigVisitor{
+
+	private final String contigId;
+	private final NucleotideSequenceBuilder consensusBuilder;
+	private AceContigBuilder builder;
+	private final Map&lt;String, AlignedReadInfo&gt; currentAlignedReadInfoMap;
+	/**
+	 * Create a new instance of {@link AbstractAceContigBuilderVisitor} that will
+	 * populate an {@link AceContigBuilder} as visit methods are called.
+	 * @param contigId the contig id of the contig to build.
+	 * @param consensusLength the expected initial consensus length; must be &amp;gt; 1.
+	 * @param numberOfReads the expected initial number of reads that will be in this builder;
+	 * must be &amp;ge; 0.  This value is only used to initialize the size of internal hashes,
+	 * the number of reads actually visited may be greater or less than this value.
+	 * @throws IllegalArgumentException if consensusLength &amp;lt; 1 or numberOfReads &amp;lt; 0.
+	 */
+<span class="fc" id="L60">	public AbstractAceContigBuilderVisitor(String contigId, int consensusLength, int numberOfReads) {</span>
+<span class="fc" id="L61">		this.contigId = contigId;</span>
+<span class="fc" id="L62">		consensusBuilder = new NucleotideSequenceBuilder(consensusLength);</span>
+<span class="fc" id="L63">		int mapCapacity = MapUtil.computeMinHashMapSizeWithoutRehashing(numberOfReads);</span>
+<span class="fc" id="L64">		currentAlignedReadInfoMap = new HashMap&lt;String, AlignedReadInfo&gt;(mapCapacity);</span>
+<span class="fc" id="L65">	}</span>
+
+	@Override
+	public final void visitBasesLine(String mixedCaseBasecalls) {
+<span class="fc" id="L69">		consensusBuilder.append(mixedCaseBasecalls);</span>
+		
+<span class="fc" id="L71">	}</span>
+	/**
+	 * Ignored by default, users may override this method if they wish.
+	 * &lt;p&gt;
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void visitConsensusQualities(
+			QualitySequence ungappedConsensusQualities) {
+		//no-op ? do we care?		
+<span class="fc" id="L81">	}</span>
+
+	@Override
+	public final void visitAlignedReadInfo(String readId, Direction dir,
+			int gappedStartOffset) {		
+<span class="fc" id="L86">		createContigBuilderIfNeeded();</span>
+		
+<span class="fc" id="L88">		final AlignedReadInfo alignedInfo = new AlignedReadInfo(gappedStartOffset, dir);</span>
+<span class="fc" id="L89">        currentAlignedReadInfoMap.put(readId, alignedInfo);</span>
+		
+<span class="fc" id="L91">	}</span>
+
+	private void createContigBuilderIfNeeded() {
+<span class="fc bfc" id="L94" title="All 2 branches covered.">		if(builder ==null){</span>
+<span class="fc" id="L95">			builder = new AceContigBuilder(contigId, consensusBuilder.build(), currentAlignedReadInfoMap.size());</span>
+		}
+<span class="fc" id="L97">	}</span>
+	/**
+	 * Ignored by default, users may override this method if they wish.
+	 * &lt;p&gt;
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void visitBaseSegment(Range gappedConsensusRange, String readId) {
+		//no-op		
+<span class="nc" id="L106">	}</span>
+	/**
+	 * This method is only called if a read in this contig
+	 * being visited contains invalid data so that the read 
+	 * can not be added to the contig builder.  The most common
+	 * reason why a read is ignored is the read does not 
+	 * contain any high quality bases that aligned to
+	 * the consensus.
+	 * &lt;p&gt;
+	 * By default this method does not do anything,
+	 * users are encouraged to implement this method
+	 * to perform some kind of logging.
+	 * @param readId the read id that will be ignored
+	 * by the contig builder.
+	 * @param reason the reason why the read will be ignored.
+	 */
+	protected void readIgnored(String readId, String reason){
+		//no-op
+<span class="nc" id="L124">	}</span>
+
+	@Override
+	public final AceContigReadVisitor visitBeginRead(String readId, int gappedLength) {
+<span class="fc" id="L128">		return new ReadVisitor(readId, gappedLength, currentAlignedReadInfoMap.get(readId));</span>
+	}
+
+	@Override
+	public final void visitEnd() {
+		//create new builder incase
+		//contig doesn't have any reads
+<span class="fc" id="L135">		createContigBuilderIfNeeded();</span>
+<span class="fc" id="L136">		visitContig(builder);</span>
+		
+<span class="fc" id="L138">	}</span>
+	/**
+     * The entire contig has been visited.  This method
+     * will only be called from inside {@link #visitEnd()}.
+     * Subclasses may modify the builder as they see fit.
+     * @param builder a completely populated {@link AceContigBuilder}
+     * instance containing all the contig data gathered from
+     * the visit methods; will never be null.
+     */
+	protected abstract void visitContig(AceContigBuilder builder);
+	/**
+	 * By default does nothing, users may override this method
+	 * to handle a halted visitor.
+	 */
+	@Override
+	public void halted() {
+		//no-op		
+<span class="fc" id="L155">	}</span>
+	/**
+	 * {@code ReadVisitor} is a  {@link AceContigReadVisitor}
+	 * that will collect all the visit data for a single read
+	 * to create an {@link AceAssembledRead} to add to our
+	 * {@link AceContigBuilder}.  The read is added
+	 * to our builder during the {@link AceContigReadVisitor#visitEnd()}
+	 * call.  If the read contains invalid data then the read is 
+	 * not added to the builder and the method 
+	 * {@link AbstractAceContigBuilderVisitor#readIgnored(String, String)}}
+	 * is called passing the read id along with a string explaining the reason
+	 * why this read was ignored.
+	 * @author dkatzel
+	 *
+	 */
+	private final class ReadVisitor implements AceContigReadVisitor{
+		private final String readId;
+		private final AlignedReadInfo alignedInfo;
+		private final NucleotideSequenceBuilder fullLengthSequenceBuilder;
+<span class="fc" id="L174">		private boolean skipCurrentRead =false;</span>
+		private NucleotideSequence validSequence;
+		private int ungappedFullLength;
+		
+		private int currentOffset;
+		private Range currentClearRange;
+		
+		private PhdInfo currentPhdInfo;
+		
+		
+<span class="fc" id="L184">		public ReadVisitor(String readId, int fullGappedLength,AlignedReadInfo alignedInfo){</span>
+<span class="fc" id="L185">			this.readId = readId;</span>
+<span class="fc" id="L186">			this.alignedInfo = alignedInfo;</span>
+<span class="fc" id="L187">			fullLengthSequenceBuilder = new NucleotideSequenceBuilder(fullGappedLength);			</span>
+<span class="fc" id="L188">		}</span>
+		
+		@Override
+		public void visitQualityLine(int qualLeft, int qualRight,
+				int alignLeft, int alignRight) {
+<span class="fc" id="L193">			ClipPointsType clipPointsType = ConsedUtil.ClipPointsType.getType(qualLeft, qualRight, alignLeft, alignRight);</span>
+<span class="pc bpc" id="L194" title="1 of 2 branches missed.">			if(clipPointsType != ClipPointsType.VALID){</span>
+<span class="nc" id="L195">				handleInvalidRead(qualLeft, qualRight, clipPointsType);</span>
+<span class="nc" id="L196">				return;</span>
+			}
+			//dkatzel 4/2011 - There have been cases when qual coords and align coords
+	        //do not match; usually qual is a sub set of align
+	        //but occasionally, qual goes beyond the align coords.
+	        //I guess this happens in a referenced based alignment for
+	        //reads at the edges when the reads have good quality 
+	        //beyond the reference.
+	        //It might also be possible that the read has been 
+	        //edited and that could have changed the coordinates.
+
+			//dkatzel 10/2013 : the align coordinates
+	        //are the coordinates that have been
+	        //aligned to the consensus
+	        //this may be edited by users using consed
+	        //which may extend the read into the trimmed range
+	        //therefore, we need to rely on the aligned range
+			//to get the edited start offset
+			
+<span class="fc" id="L215">	        Range gappedValidRange = Range.of(CoordinateSystem.RESIDUE_BASED, alignLeft,alignRight);</span>
+	      
+	        
+<span class="fc" id="L218">	        currentOffset = computeReadOffset(gappedValidRange.getBegin(CoordinateSystem.RESIDUE_BASED));            </span>
+	        
+	       
+	        //this will set currentValidBasecalls to only be the valid range
+<span class="fc" id="L222">	        validSequence =  fullLengthSequenceBuilder.copy().trim(gappedValidRange)</span>
+<span class="fc" id="L223">          						.build();</span>
+<span class="fc" id="L224">	        NucleotideSequence gappedFullLengthSequence = fullLengthSequenceBuilder.build();</span>
+<span class="fc" id="L225">          final int numberOfFullLengthGaps = gappedFullLengthSequence.getNumberOfGaps();</span>
+<span class="fc" id="L226">          ungappedFullLength = (int) gappedFullLengthSequence.getLength() - numberOfFullLengthGaps;</span>
+          //dkatzel 2011-11-18
+          //It is possible that there are gaps outside of the valid
+          //range (maybe from editing the ace in consed?)
+          //we need to account for that
+          //the one problem is that this could cause minor
+          //differences if we then re-write the ace since
+          //we will lose the gaps outside of the valid range
+          //but that won't affect real assembly data
+          //it will only show up if both versions (before and after)
+          //of the file were diff'ed.
+<span class="fc" id="L237">          int ungappedClearLeft = gappedFullLengthSequence.getUngappedOffsetFor((int)gappedValidRange.getBegin());</span>
+<span class="fc" id="L238">          int ungappedClearRight = gappedFullLengthSequence.getUngappedOffsetFor((int)gappedValidRange.getEnd());</span>
+<span class="fc" id="L239">          Range ungappedValidRange = Range.of(ungappedClearLeft, ungappedClearRight );</span>
+<span class="fc bfc" id="L240" title="All 2 branches covered.">          if(alignedInfo.getDirection() == Direction.REVERSE){</span>
+<span class="fc" id="L241">              ungappedValidRange = AssemblyUtil.reverseComplementValidRange(ungappedValidRange, ungappedFullLength);            </span>
+          }
+<span class="fc" id="L243">          currentClearRange = ungappedValidRange;</span>
+			
+<span class="fc" id="L245">		}</span>
+		private void handleInvalidRead(int qualLeft, int qualRight,
+				ClipPointsType clipPointsType) {
+<span class="nc" id="L248">			skipCurrentRead = true;</span>
+<span class="nc bnc" id="L249" title="All 4 branches missed.">			switch(clipPointsType){</span>
+				case NEGATIVE_VALID_RANGE:					
+<span class="nc" id="L251">					readIgnored(readId, String.format(&quot;has a negative valid range %d%n&quot;,</span>
+<span class="nc" id="L252">			                    (qualRight-qualLeft)));</span>
+<span class="nc" id="L253">					 break;</span>
+				case ALL_LOW_QUALITY :
+<span class="nc" id="L255">					readIgnored(readId, &quot;entire read is low quality&quot;);</span>
+<span class="nc" id="L256">			        break;</span>
+				case NO_HIGH_QUALITY_ALIGNMENT_INTERSECTION:
+<span class="nc" id="L258">					readIgnored(readId, &quot;read does not have a high quality aligned range&quot;);</span>
+<span class="nc" id="L259">			    	break;</span>
+<span class="nc" id="L260">				default: throw new IllegalStateException(&quot;unknown clipPointType &quot;+ clipPointsType);</span>
+			}				       
+<span class="nc" id="L262">		}</span>
+
+		private int computeReadOffset(long startPosition) {
+<span class="fc" id="L265">			return alignedInfo.getStartOffset() + (int) startPosition - 2;</span>
+		}
+		@Override
+		public void visitTraceDescriptionLine(String traceName, String phdName,
+				Date date) {
+<span class="fc" id="L270">			currentPhdInfo =new PhdInfo(traceName, phdName, date);			</span>
+<span class="fc" id="L271">		}</span>
+
+		@Override
+		public void visitBasesLine(String mixedCaseBasecalls) {
+<span class="fc" id="L275">			fullLengthSequenceBuilder.append(mixedCaseBasecalls);</span>
+			
+<span class="fc" id="L277">		}</span>
+
+		@Override
+		public void visitEnd() {
+<span class="pc bpc" id="L281" title="1 of 2 branches missed.">			if(skipCurrentRead){</span>
+<span class="nc" id="L282">				return;</span>
+			}
+<span class="pc bpc" id="L284" title="1 of 2 branches missed.">			if(validSequence ==null){</span>
+<span class="nc" id="L285">				throw new IllegalStateException(String.format(&quot;Incomplete visitation : did not visit quality line for read %s&quot;,readId));</span>
+			}
+<span class="pc bpc" id="L287" title="1 of 2 branches missed.">			if(currentPhdInfo ==null){</span>
+<span class="nc" id="L288">				throw new IllegalStateException(String.format(&quot;Incomplete visitation : did not visit trace line for read %s&quot;,readId));</span>
+			}
+<span class="fc" id="L290">			builder.addRead(readId, validSequence, currentOffset, alignedInfo.getDirection(), </span>
+					currentClearRange, currentPhdInfo, ungappedFullLength);
+<span class="fc" id="L292">		}</span>
+
+		@Override
+		public void halted() {
+			//no-op			
+<span class="fc" id="L297">		}</span>
+		
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ValueSizeStrategy.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.core.io</a> &gt; <span class="el_source">ValueSizeStrategy.java</span></div><h1>ValueSizeStrategy.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Dec 30, 2008
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.internal.core.io;
+
+import java.nio.ByteBuffer;
+
+import org.jcvi.jillion.core.io.IOUtil;
+
+
+/**
+ * &lt;code&gt;ValueSizeStrategy&lt;/code&gt; is a strategy pattern
+ * implementation to abstract away the number of bytes
+ * read/written to a {@link ByteBuffer}.  This simplifies algorithms
+ * and allows read/write operations to be written once and re-used by
+ * different implementations that need to read/write different sized data.
+ * @author dkatzel
+ *
+ *
+ */
+<span class="pc" id="L43">public enum ValueSizeStrategy {</span>
+	/**
+	 * No values can be read or written.  Takes up zero bytes.
+	 * Will throw {@link IllegalArgumentException}s
+	 * if {@link #getNext(ByteBuffer)} or {@link #put(ByteBuffer, int)}
+	 * are called.
+	 */
+<span class="fc" id="L50">	NONE{</span>
+		/**
+		 * Not allowed, will throw {@link IllegalArgumentException}
+		 * if called.
+		 * &lt;p/&gt;
+		 * {@inheritDoc}
+		 * @throws IllegalArgumentException always
+		 */
+		@Override
+		public int getNext(ByteBuffer buf) {
+<span class="nc" id="L60">			throw new IllegalArgumentException(&quot;can not call getNext()&quot;);</span>
+		}
+		/**
+		 * Not allowed, will throw {@link IllegalArgumentException}
+		 * if called.
+		 * &lt;p/&gt;
+		 * {@inheritDoc}
+		 * @throws IllegalArgumentException always
+		 */
+		@Override
+		public void put(ByteBuffer buf, int value) {
+<span class="nc" id="L71">			throw new IllegalArgumentException(&quot;can not call put()&quot;);</span>
+			
+		}
+
+		@Override
+		public int getNumberOfBytesPerValue() {
+<span class="fc" id="L77">			return 0;</span>
+		}
+		
+	},
+<span class="fc" id="L81">	BYTE{</span>
+		@Override
+		public int getNumberOfBytesPerValue() {
+<span class="fc" id="L84">			return 1;</span>
+		}
+		/**
+	     * get the next (unsigned) byte from the buffer.
+	     * @param buf the buffer to read the byte from.
+	     * @return an unsigned byte value as an int.
+	     */
+	    @Override
+	    public int getNext(ByteBuffer buf) {
+<span class="fc" id="L93">	        return IOUtil.toUnsignedByte(buf.get());</span>
+	    }
+	    /**
+	     * puts the given byte value into the given buffer.
+	     * @param buf the Buffer to write to.
+	     * @param value the value to write (must be able to be cast to a &lt;code&gt;byte&lt;/code&gt;)
+	     */
+	    @Override
+	    public void put(ByteBuffer buf, int value) {
+<span class="fc" id="L102">	        buf.put((byte)value);</span>
+
+<span class="fc" id="L104">	    }    </span>
+	},
+<span class="fc" id="L106">	SHORT{</span>
+		
+		@Override
+		public int getNumberOfBytesPerValue() {
+<span class="fc" id="L110">			return 2;</span>
+		}
+		/**
+	     * get the next short from the buffer.
+	     * @param buf the buffer to read the byte from.
+	     * @return a short value as an int.
+	     */
+	    @Override
+	    public int getNext(ByteBuffer buf) {
+<span class="fc" id="L119">	        return IOUtil.toUnsignedShort(buf.getShort());</span>
+	    }
+	    /**
+	     * puts the given short value into the given buffer.
+	     * @param buf the Buffer to write to.
+	     * @param value the value to write (must be able to be cast to a &lt;code&gt;short&lt;/code&gt;)
+	     */
+	    @Override
+	    public void put(ByteBuffer buf, int value) {
+<span class="fc" id="L128">	        buf.putShort((short)value);</span>
+
+<span class="fc" id="L130">	    }</span>
+		
+	},
+<span class="fc" id="L133">	INTEGER{</span>
+		@Override
+		public int getNumberOfBytesPerValue() {
+<span class="nc" id="L136">			return 4;</span>
+		}
+		 /**
+	     * 
+	    * {@inheritDoc}
+	     */
+	    @Override
+	    public int getNext(ByteBuffer buf) {
+<span class="fc" id="L144">	        return buf.getInt();</span>
+	    }
+	    /**
+	     * 
+	    * {@inheritDoc}
+	     */
+	    @Override
+	    public void put(ByteBuffer buf, int value) {
+<span class="fc" id="L152">	        buf.putInt(value);</span>
+<span class="fc" id="L153">	    }</span>
+	};
+    /**
+     * Gets the next value from the given buffer.
+     * @param buf the ByteBuffer to read from.
+     * @return the value read from the buffer as an int.
+     */
+	public abstract int getNext(ByteBuffer buf);
+    /**
+     * puts the given value into the buffer. If this
+     * implementation reads/writes data smaller than an int,
+     * the passed in value will be cast down to the appropriate size.
+     * @param buf the buffer to write to.
+     * @param value the value to write (must not be larger than 
+     * the MAX_SIZE of the implementation value size.
+     */
+    public abstract void put(ByteBuffer buf, int value);
+    /**
+     * Get the number of bytes used to store
+     * each value in a buffer.
+     * @return the number of bytes used; never &lt; 1.
+     */
+    public abstract int getNumberOfBytesPerValue();
+    /**
+     * Get the {@link ValueSizeStrategy} implementation
+     * given the largest possible input value.
+     * @param largestValue the largest input value 
+     * that will be written to a buffer.
+     * @return the {@link ValueSizeStrategy} implementation
+     * that can read and write up to and including
+     * the given largestValue but use the least amount
+     * of bytes to do it.
+     */
+    public static ValueSizeStrategy getStrategyFor(int largestValue){
+		 //used unsigned values for twice the storage space
+		 //since these values will always be positive.
+<span class="fc bfc" id="L189" title="All 2 branches covered.">		 if(largestValue &lt;= 0xFF){</span>
+<span class="fc" id="L190">			 return BYTE;</span>
+		 }
+<span class="pc bpc" id="L192" title="1 of 2 branches missed.">		 if(largestValue &lt;= 0xFFFF){</span>
+<span class="fc" id="L193">			 return SHORT;</span>
+		 }
+<span class="nc" id="L195">		 return INTEGER;</span>
+	 }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

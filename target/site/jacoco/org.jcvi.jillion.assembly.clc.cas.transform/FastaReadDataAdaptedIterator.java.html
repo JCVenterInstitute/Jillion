@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>FastaReadDataAdaptedIterator.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.clc.cas.transform</a> &gt; <span class="el_source">FastaReadDataAdaptedIterator.java</span></div><h1>FastaReadDataAdaptedIterator.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly.clc.cas.transform;
+
+import java.io.File;
+import java.net.URI;
+
+import org.jcvi.jillion.assembly.clc.cas.transform.ReadData.Builder;
+import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.io.FileUtil;
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
+import org.jcvi.jillion.fasta.qual.QualityFastaDataStore;
+import org.jcvi.jillion.fasta.qual.QualityFastaFileDataStoreBuilder;
+import org.jcvi.jillion.fasta.qual.QualityFastaRecord;
+/**
+ * {@code FastaConsedPhdAdaptedIterator}
+ * 
+ *  that will try to find a corresponding qual file
+ * and look up the quality scores.
+ *  
+ *  is a PhdReadRecord generator
+ * for chromatograms.  Since CLC's reference mappers don't handle chromatograms,
+ * they have to be passed in as fasta files.  This class will find the chromatogram in the 
+ * chromat_dir folder with the same name as the current read id in the fasta and create a {@link PhdReadRecord}
+ * with the correct sequence, qualities and postions from the chromatogram as well
+ * as a correctly formatted {@link PhdInfo} so consed can correctly display the chromatogram
+ * wave forms.
+ * @author dkatzel
+ *
+ */
+class FastaReadDataAdaptedIterator implements StreamingIterator&lt;ReadData&gt;{
+	
+	private final StreamingIterator&lt;NucleotideFastaRecord&gt; fastaIterator;
+	private final QualityFastaDataStore qualDataStore;
+	
+	private final URI fastaFileUri;
+	
+	public FastaReadDataAdaptedIterator(
+			StreamingIterator&lt;NucleotideFastaRecord&gt; fastaIterator,
+<span class="fc" id="L60">			File fastaFile){</span>
+<span class="fc" id="L61">		this.fastaIterator = fastaIterator;	</span>
+<span class="fc" id="L62">		this.fastaFileUri = fastaFile.toURI();</span>
+		
+<span class="fc" id="L64">		File qualFile = new File(fastaFile.getParentFile(), FileUtil.getBaseName(fastaFile)+&quot;.qual&quot;);</span>
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">		if(qualFile.exists()){</span>
+			try {
+<span class="nc" id="L67">				qualDataStore = new QualityFastaFileDataStoreBuilder(qualFile)</span>
+<span class="nc" id="L68">									.build();</span>
+<span class="nc" id="L69">			} catch (Exception e) {</span>
+<span class="nc" id="L70">				throw new IllegalStateException(&quot;error parsing corresponding qual file : &quot; + qualFile.getAbsolutePath(), e);</span>
+<span class="nc" id="L71">			}</span>
+		}else{
+<span class="fc" id="L73">			qualDataStore = null;</span>
+		}
+<span class="fc" id="L75">	}</span>
+	@Override
+	public boolean hasNext() {
+<span class="fc" id="L78">		return fastaIterator.hasNext();</span>
+	}
+
+	@Override
+	public ReadData next() {
+<span class="fc" id="L83">		NucleotideFastaRecord nextFasta = fastaIterator.next();</span>
+<span class="fc" id="L84">		String id = nextFasta.getId();</span>
+<span class="fc" id="L85">		ReadData.Builder builder = new ReadData.Builder(nextFasta.getId(), nextFasta.getSequence())</span>
+<span class="fc" id="L86">										.setUri(fastaFileUri);</span>
+		//check for qualities
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">		if(qualDataStore != null){</span>
+			try {
+<span class="nc" id="L90">				QualityFastaRecord qualRecord = qualDataStore.get(id);</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">				if(qualRecord !=null){</span>
+<span class="nc" id="L92">					builder.setQualities(qualRecord.getSequence());</span>
+				}
+<span class="nc" id="L94">			} catch (DataStoreException e) {</span>
+<span class="nc" id="L95">				throw new IllegalStateException(&quot;error getting qualities from fasta&quot;, e);</span>
+<span class="nc" id="L96">			}</span>
+			
+		}
+		
+<span class="fc" id="L100">		updateField(builder);</span>
+<span class="fc" id="L101">		return builder.build();</span>
+				
+	}
+	
+	protected void updateField(Builder builder) {
+		// TODO Auto-generated method stub
+		
+<span class="fc" id="L108">	}</span>
+	
+	@Override
+	public void remove() {
+<span class="nc" id="L112">		fastaIterator.remove();</span>
+		
+<span class="nc" id="L114">	}</span>
+	@Override
+	public void close() {
+<span class="fc" id="L117">		fastaIterator.close();</span>
+<span class="fc" id="L118">		IOUtil.closeAndIgnoreErrors(qualDataStore);</span>
+<span class="fc" id="L119">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

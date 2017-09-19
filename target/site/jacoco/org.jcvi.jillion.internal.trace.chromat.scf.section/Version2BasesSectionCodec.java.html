@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Version2BasesSectionCodec.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.trace.chromat.scf.section</a> &gt; <span class="el_source">Version2BasesSectionCodec.java</span></div><h1>Version2BasesSectionCodec.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Sep 12, 2008
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.internal.trace.chromat.scf.section;
+
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ShortBuffer;
+import java.util.Iterator;
+
+import org.jcvi.jillion.core.pos.Position;
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.trace.chromat.ChannelGroup;
+import org.jcvi.jillion.trace.chromat.Chromatogram;
+import org.jcvi.jillion.trace.chromat.ChromatogramFileVisitor;
+import org.jcvi.jillion.trace.chromat.scf.ScfChromatogram;
+import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramBuilder;
+import org.jcvi.jillion.trace.chromat.scf.ScfChromatogramFileVisitor;
+
+<span class="fc" id="L46">public class Version2BasesSectionCodec extends AbstractBasesSectionCodec{</span>
+
+    @Override
+    protected void readBasesData(DataInputStream in, ScfChromatogramBuilder c,
+            int numberOfBases) throws IOException {
+<span class="fc" id="L51">        ShortBuffer peaks = ShortBuffer.allocate(numberOfBases);</span>
+<span class="fc" id="L52">        byte[][] probability = new byte[4][numberOfBases];</span>
+<span class="fc" id="L53">        ByteBuffer substitutionConfidence = ByteBuffer.allocate(numberOfBases);</span>
+<span class="fc" id="L54">        ByteBuffer insertionConfidence = ByteBuffer.allocate(numberOfBases);</span>
+<span class="fc" id="L55">        ByteBuffer deletionConfidence = ByteBuffer.allocate(numberOfBases);</span>
+
+<span class="fc" id="L57">        NucleotideSequenceBuilder bases = new NucleotideSequenceBuilder();</span>
+<span class="fc" id="L58">        populateFields(in, numberOfBases, peaks, probability,</span>
+                substitutionConfidence, insertionConfidence,
+                deletionConfidence, bases);
+<span class="fc" id="L61">        setConfidences(c, probability)</span>
+<span class="fc" id="L62">        .substitutionConfidence(substitutionConfidence.array())</span>
+<span class="fc" id="L63">        .insertionConfidence(insertionConfidence.array())</span>
+<span class="fc" id="L64">        .deletionConfidence(deletionConfidence.array())</span>
+<span class="fc" id="L65">        .peaks(peaks.array())</span>
+<span class="fc" id="L66">        .basecalls(bases.build());</span>
+
+
+<span class="fc" id="L69">    }</span>
+
+    private void populateFields(DataInputStream in, int numberOfBases,
+            ShortBuffer peaks, byte[][] probability,
+            ByteBuffer substitutionConfidence, ByteBuffer insertionConfidence,
+            ByteBuffer deletionConfidence, NucleotideSequenceBuilder bases)
+            throws IOException {
+<span class="fc bfc" id="L76" title="All 2 branches covered.">        for(int i=0; i&lt;numberOfBases; i++){</span>
+<span class="fc" id="L77">            peaks.put((short)in.readInt());</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">            for(int channel =0; channel&lt;4; channel++){</span>
+<span class="fc" id="L79">                probability[channel][i]=(byte)(in.readUnsignedByte());</span>
+            }
+<span class="fc" id="L81">            bases.append(Nucleotide.parse((char)in.readUnsignedByte()));</span>
+<span class="fc" id="L82">            substitutionConfidence.put((byte)(in.readUnsignedByte()));</span>
+<span class="fc" id="L83">            insertionConfidence.put((byte)(in.readUnsignedByte()));</span>
+<span class="fc" id="L84">            deletionConfidence.put((byte)(in.readUnsignedByte()));</span>
+        }
+<span class="fc" id="L86">        peaks.flip();</span>
+<span class="fc" id="L87">        substitutionConfidence.flip();</span>
+<span class="fc" id="L88">        insertionConfidence.flip();</span>
+<span class="fc" id="L89">        deletionConfidence.flip();</span>
+<span class="fc" id="L90">    }</span>
+
+
+
+    protected void writeBasesDataToBuffer(ByteBuffer buffer, Chromatogram c, int numberOfBases) {
+        
+     
+<span class="fc" id="L97">        Iterator&lt;Position&gt; peaks = c.getPeakSequence().iterator();</span>
+<span class="fc" id="L98">        final ChannelGroup channelGroup = c.getChannelGroup();</span>
+        
+<span class="fc" id="L100">        Iterator&lt;PhredQuality&gt; aQualities = channelGroup.getAChannel().getQualitySequence().iterator();</span>
+<span class="fc" id="L101">        Iterator&lt;PhredQuality&gt; cQualities = channelGroup.getCChannel().getQualitySequence().iterator();</span>
+<span class="fc" id="L102">        Iterator&lt;PhredQuality&gt; gQualities = channelGroup.getGChannel().getQualitySequence().iterator();</span>
+<span class="fc" id="L103">        Iterator&lt;PhredQuality&gt; tQualities = channelGroup.getTChannel().getQualitySequence().iterator();</span>
+      
+<span class="fc" id="L105">        Iterator&lt;Nucleotide&gt; bases = c.getNucleotideSequence().iterator();</span>
+        
+<span class="fc" id="L107">        final ByteBuffer substitutionConfidence = getOptionalSubsitutionConfidence(c);</span>
+<span class="fc" id="L108">        final ByteBuffer insertionConfidence = getOptionalInsertionConfidence(c);</span>
+<span class="fc" id="L109">        final ByteBuffer deletionConfidence = getOptionalDeletionConfidence(c);</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">        while(bases.hasNext()){</span>
+<span class="fc" id="L111">        	buffer.putInt(peaks.next().getValue());</span>
+<span class="fc" id="L112">        	putQualityValue(buffer, aQualities);</span>
+<span class="fc" id="L113">        	putQualityValue(buffer, cQualities);</span>
+<span class="fc" id="L114">        	putQualityValue(buffer, gQualities);</span>
+<span class="fc" id="L115">        	putQualityValue(buffer, tQualities);</span>
+<span class="fc" id="L116">        	buffer.put((byte)bases.next().getCharacter().charValue());</span>
+<span class="fc" id="L117">			handleOptionalField(buffer, substitutionConfidence);</span>
+<span class="fc" id="L118">			handleOptionalField(buffer, insertionConfidence);</span>
+<span class="fc" id="L119">			handleOptionalField(buffer, deletionConfidence);</span>
+        }
+             
+       
+<span class="fc" id="L123">    }</span>
+
+    private ByteBuffer getOptionalSubsitutionConfidence(Chromatogram c){
+<span class="pc bpc" id="L126" title="1 of 2 branches missed.">    	if(c instanceof ScfChromatogram){</span>
+<span class="fc" id="L127">    		return getOptionalField(((ScfChromatogram)c).getSubstitutionConfidence());</span>
+    	}
+<span class="nc" id="L129">    	return createEmptyBuffer();</span>
+    }
+    private ByteBuffer getOptionalInsertionConfidence(Chromatogram c){
+<span class="pc bpc" id="L132" title="1 of 2 branches missed.">    	if(c instanceof ScfChromatogram){</span>
+<span class="fc" id="L133">    		return getOptionalField(((ScfChromatogram)c).getInsertionConfidence());</span>
+    	}
+<span class="nc" id="L135">    	return createEmptyBuffer();</span>
+    }
+    private ByteBuffer getOptionalDeletionConfidence(Chromatogram c){
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">    	if(c instanceof ScfChromatogram){</span>
+<span class="fc" id="L139">    		return getOptionalField(((ScfChromatogram)c).getDeletionConfidence());</span>
+    	}
+<span class="nc" id="L141">    	return createEmptyBuffer();</span>
+    }
+    private void putQualityValue(ByteBuffer dest, Iterator&lt;PhredQuality&gt; iter){
+<span class="fc bfc" id="L144" title="All 2 branches covered.">    	if(iter.hasNext()){</span>
+<span class="fc" id="L145">    		dest.put(iter.next().getQualityScore());</span>
+    	}else{
+<span class="fc" id="L147">    		dest.put((byte)0);</span>
+    	}
+<span class="fc" id="L149">    }</span>
+    private ByteBuffer getOptionalField(QualitySequence confidence){
+        
+<span class="fc bfc" id="L152" title="All 2 branches covered.">        if(confidence !=null){</span>
+<span class="fc" id="L153">        	ByteBuffer buf = ByteBuffer.allocate((int)confidence.getLength());</span>
+<span class="fc bfc" id="L154" title="All 2 branches covered.">        	for(PhredQuality qual : confidence){</span>
+<span class="fc" id="L155">        		buf.put(qual.getQualityScore());</span>
+<span class="fc" id="L156">        	}</span>
+<span class="fc" id="L157">        	buf.rewind();     </span>
+<span class="fc" id="L158">        	return buf;</span>
+        }
+<span class="fc" id="L160">        return createEmptyBuffer();</span>
+        
+    }
+
+	private ByteBuffer createEmptyBuffer() {
+<span class="fc" id="L165">		return ByteBuffer.allocate(0);</span>
+	}
+    private void handleOptionalField(ByteBuffer buffer,
+            final ByteBuffer optionalConfidence) {
+<span class="fc bfc" id="L169" title="All 2 branches covered.">        if(optionalConfidence.hasRemaining()){</span>
+<span class="fc" id="L170">            buffer.put(optionalConfidence.get());</span>
+        }
+        else{
+<span class="fc" id="L173">            buffer.put((byte)0);</span>
+        }
+<span class="fc" id="L175">    }</span>
+
+    
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    protected void readBasesData(DataInputStream in, ChromatogramFileVisitor visitor,
+            int numberOfBases) throws IOException {
+<span class="fc" id="L185">        ShortBuffer peaks = ShortBuffer.allocate(numberOfBases);</span>
+<span class="fc" id="L186">        byte[][] probability = new byte[4][numberOfBases];</span>
+<span class="fc" id="L187">        ByteBuffer substitutionConfidence = ByteBuffer.allocate(numberOfBases);</span>
+<span class="fc" id="L188">        ByteBuffer insertionConfidence = ByteBuffer.allocate(numberOfBases);</span>
+<span class="fc" id="L189">        ByteBuffer deletionConfidence = ByteBuffer.allocate(numberOfBases);</span>
+
+<span class="fc" id="L191">        NucleotideSequenceBuilder bases = new NucleotideSequenceBuilder();</span>
+<span class="fc" id="L192">        populateFields(in, numberOfBases, peaks, probability,</span>
+                substitutionConfidence, insertionConfidence,
+                deletionConfidence, bases);
+<span class="fc" id="L195">        visitor.visitAConfidence(probability[0]);</span>
+<span class="fc" id="L196">        visitor.visitCConfidence(probability[1]);</span>
+<span class="fc" id="L197">        visitor.visitGConfidence(probability[2]);</span>
+<span class="fc" id="L198">        visitor.visitTConfidence(probability[3]);</span>
+
+<span class="fc" id="L200">        visitor.visitPeaks(peaks.array());</span>
+<span class="fc" id="L201">        visitor.visitBasecalls(bases.build());</span>
+<span class="pc bpc" id="L202" title="1 of 2 branches missed.">        if(visitor instanceof ScfChromatogramFileVisitor){</span>
+<span class="fc" id="L203">            ScfChromatogramFileVisitor scfVisitor = (ScfChromatogramFileVisitor) visitor;</span>
+<span class="fc" id="L204">            scfVisitor.visitSubstitutionConfidence(substitutionConfidence.array());</span>
+<span class="fc" id="L205">            scfVisitor.visitInsertionConfidence(insertionConfidence.array());</span>
+<span class="fc" id="L206">            scfVisitor.visitDeletionConfidence(deletionConfidence.array());</span>
+        }
+
+        
+<span class="fc" id="L210">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

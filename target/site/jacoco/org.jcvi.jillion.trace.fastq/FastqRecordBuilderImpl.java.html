@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>FastqRecordBuilderImpl.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.trace.fastq</a> &gt; <span class="el_source">FastqRecordBuilderImpl.java</span></div><h1>FastqRecordBuilderImpl.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.trace.fastq;
+
+import java.util.Objects;
+import java.util.Optional;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+/**
+ * {@code FastqRecordBuilder} is a {@link Builder} implementation
+ * that can create new instances of {@link FastqRecord}s.
+ * @author dkatzel
+ *
+ */
+final class FastqRecordBuilderImpl implements FastqRecordBuilder{
+<span class="pc" id="L36">	private String comments=null;</span>
+	private String id;
+	private NucleotideSequence basecalls;
+	private QualitySequence qualities;
+	
+<span class="pc" id="L41">	private boolean lengthsModified=false;</span>
+	/**
+	 * Create a new builder using the values from the given
+	 * {@link FastqRecord}.
+	 * 
+	 * @param record the fastqRecord to use; can not be null.
+	 * @throws NullPointerException if record is null.
+	 *  @throws IllegalArgumentException if the length of the
+         *  {@link NucleotideSequence} and {@link QualitySequence}
+         *  don't match.
+         *  
+         *  @since 5.3
+	 */
+<span class="nc" id="L54">	public FastqRecordBuilderImpl(FastqRecord record){</span>
+<span class="nc" id="L55">	    this.id = record.getId();</span>
+<span class="nc" id="L56">	    this.basecalls = record.getNucleotideSequence();</span>
+<span class="nc" id="L57">	    this.qualities = record.getQualitySequence();</span>
+<span class="nc" id="L58">	    this.comments = record.getComment();</span>
+	    
+<span class="nc" id="L60">	    assertValidLength(basecalls, qualities);</span>
+<span class="nc" id="L61">	}</span>
+	/**
+	 * Create a new instance of {@link FastqRecordBuilder}
+	 * with the given required parameters.
+	 * @param id the id of this fastq record;
+	 * can not be null but may contain whitespace.
+	 * @param basecalls the {@link NucleotideSequence} for this fastq record;
+	 * can not be null.
+	 * @param qualities the {@link QualitySequence} for this fastq record;
+	 * can not be null.
+	 * @throws NullPointerException if any parameters are null.
+	 * @throws IllegalArgumentException if the length of the
+	 *  {@link NucleotideSequence} and {@link QualitySequence}
+	 *  don't match.
+	 */
+<span class="fc" id="L76">	public FastqRecordBuilderImpl(String id, NucleotideSequence basecalls, QualitySequence qualities){</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">		if(id ==null){</span>
+<span class="fc" id="L78">			throw new NullPointerException(&quot;id can not be null&quot;);</span>
+		}
+<span class="fc bfc" id="L80" title="All 2 branches covered.">		if(basecalls ==null){</span>
+<span class="fc" id="L81">			throw new NullPointerException(&quot;basecalls can not be null&quot;);</span>
+		}
+<span class="fc bfc" id="L83" title="All 2 branches covered.">		if(qualities ==null){</span>
+<span class="fc" id="L84">			throw new NullPointerException(&quot;qualities can not be null&quot;);</span>
+		}
+<span class="fc" id="L86">		assertValidLength(basecalls, qualities);</span>
+<span class="fc" id="L87">		this.id = id;</span>
+<span class="fc" id="L88">		this.basecalls = basecalls;</span>
+<span class="fc" id="L89">		this.qualities=qualities;</span>
+<span class="fc" id="L90">	}</span>
+
+    private void assertValidLength(NucleotideSequence basecalls,
+            QualitySequence qualities) {
+<span class="fc" id="L94">        long basecallLength = basecalls.getLength();</span>
+<span class="fc" id="L95">        long qualityLength = qualities.getLength();</span>
+        
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        if (basecallLength != qualityLength) {</span>
+<span class="fc" id="L98">            throw new IllegalArgumentException(String.format(</span>
+                    &quot;basecalls and qualities must have the same length! %d vs %d&quot;,
+<span class="fc" id="L100">                    basecallLength, qualityLength));</span>
+        }
+<span class="fc" id="L102">    }</span>
+	/**
+	 * Add the given String to this fastq record as a comment
+	 * which will get returned by {@link FastqRecord#getComment()}.
+	 * Calling this method more than once will cause the last value to
+	 * overwrite the previous value.
+	 * @param comments the comment to make for this record;
+	 * if this is set to null (the default) then this
+	 * record has no comment.
+	 * @return this.
+	 */
+	@Override
+    public FastqRecordBuilderImpl comment(String comments){
+<span class="fc" id="L115">		this.comments = comments;</span>
+<span class="fc" id="L116">		return this;</span>
+	}
+
+    /**
+     * Create a new {@link FastqRecord} instance using the given parameters.
+     * 
+     * @return a new {@link FastqRecord}; will never be null.
+     * 
+     * @throws IllegalArgumentException
+     *             if the length of the {@link NucleotideSequence} and
+     *             {@link QualitySequence} don't match. (Since 5.3)
+     */
+    @Override
+    public FastqRecord build() {
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">        if (lengthsModified) {</span>
+<span class="nc" id="L131">            assertValidLength(basecalls, qualities);</span>
+        }
+<span class="fc bfc" id="L133" title="All 2 branches covered.">        if (comments == null) {</span>
+<span class="fc" id="L134">            return new UncommentedFastqRecord(id, basecalls, qualities);</span>
+        }
+<span class="fc" id="L136">        return new CommentedFastqRecord(id, basecalls, qualities, comments);</span>
+    }
+    /**
+     * Get the current value for the comments.
+     * @return an Optional which either contains a non-null
+     * String if there are current comments; or empty Optional if there are
+     * no comments.
+     * 
+     * @since 5.3
+     */
+    @Override
+    public Optional&lt;String&gt; comment() {
+<span class="nc" id="L148">        return Optional.ofNullable(comments);</span>
+    }
+    /**
+     * Get the current id value.
+     * @return the id of this record as a String; will never be null
+     * but may contain spaces.
+     * 
+     * @since 5.3
+     */
+    @Override
+    public String id() {
+<span class="nc" id="L159">        return id;</span>
+    }
+    /**
+     * Set the new value of the id for this record.
+     * @param id the new id to use; can not be null.
+     * @throws NullPointerException if id is null.
+     * @since 5.3
+     */
+    @Override
+    public FastqRecordBuilder id(String id) {
+<span class="nc" id="L169">        this.id = Objects.requireNonNull(id);</span>
+<span class="nc" id="L170">        return this;</span>
+    }
+    /**
+     * Get the current basecalls value.
+     * @return the basecalls of this record as a String; will never be null.
+     * 
+     * @since 5.3
+     */
+    @Override
+    public NucleotideSequence basecalls() {
+<span class="nc" id="L180">        return basecalls;</span>
+    }
+    /**
+     * Set the new value of the basecalls for this record.
+     * @param basecalls the new basecalls to use; can not be null.
+     * @throws NullPointerException if basecalls is null.
+     * @since 5.3
+     */
+    @Override
+    public FastqRecordBuilder basecalls(NucleotideSequence basecalls) {
+<span class="nc" id="L190">        this.basecalls = Objects.requireNonNull(basecalls);</span>
+<span class="nc" id="L191">        lengthsModified=true;</span>
+<span class="nc" id="L192">        return this;</span>
+    }
+    /**
+     * Get the current qualities value.
+     * @return the qualities of this record as a String; will never be null.
+     * 
+     * @since 5.3
+     */
+    @Override
+    public QualitySequence qualities() {
+<span class="nc" id="L202">        return qualities;</span>
+    }
+    /**
+     * Set the new value of the qualities for this record.
+     * @param qualities the new qualities to use; can not be null.
+     * @throws NullPointerException if qualities is null.
+     * @since 5.3
+     */
+    @Override
+    public FastqRecordBuilder qualities(QualitySequence qualities) {
+<span class="nc" id="L212">        this.qualities = Objects.requireNonNull(qualities);</span>
+<span class="nc" id="L213">        lengthsModified=true;</span>
+<span class="nc" id="L214">        return this;</span>
+    }
+    @Override
+    public FastqRecordBuilder trim(Range trimRange) {
+<span class="nc" id="L218">        basecalls = basecalls.toBuilder().trim(trimRange).build();</span>
+<span class="nc" id="L219">        qualities = qualities.toBuilder().trim(trimRange).build();</span>
+<span class="nc" id="L220">        lengthsModified=true;</span>
+<span class="nc" id="L221">        return this;</span>
+    }
+	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

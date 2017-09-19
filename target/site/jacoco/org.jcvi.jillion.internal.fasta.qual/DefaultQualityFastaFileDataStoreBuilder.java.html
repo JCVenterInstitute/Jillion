@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DefaultQualityFastaFileDataStoreBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.fasta.qual</a> &gt; <span class="el_source">DefaultQualityFastaFileDataStoreBuilder.java</span></div><h1>DefaultQualityFastaFileDataStoreBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.internal.fasta.qual;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Predicate;
+
+import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
+import org.jcvi.jillion.core.util.Builder;
+import org.jcvi.jillion.fasta.FastaRecordVisitor;
+import org.jcvi.jillion.fasta.FastaVisitor;
+import org.jcvi.jillion.fasta.FastaVisitorCallback;
+import org.jcvi.jillion.fasta.qual.AbstractQualityFastaRecordVisitor;
+import org.jcvi.jillion.fasta.qual.QualityFastaDataStore;
+import org.jcvi.jillion.fasta.qual.QualityFastaRecord;
+import org.jcvi.jillion.internal.fasta.AdaptedFastaDataStore;
+
+public class DefaultQualityFastaFileDataStoreBuilder implements FastaVisitor, Builder&lt;QualityFastaDataStore&gt;{
+
+<span class="fc" id="L42">	private final Map&lt;String, QualityFastaRecord&gt; fastaRecords = new LinkedHashMap&lt;String, QualityFastaRecord&gt;();</span>
+	
+	private final Predicate&lt;String&gt; filter;
+	private final Predicate&lt;QualityFastaRecord&gt; recordFilter;
+	
+<span class="fc" id="L47">	public DefaultQualityFastaFileDataStoreBuilder(Predicate&lt;String&gt; filter, Predicate&lt;QualityFastaRecord&gt; recordFilter){</span>
+<span class="fc" id="L48">		this.filter = filter;</span>
+<span class="fc" id="L49">		this.recordFilter = recordFilter;</span>
+<span class="fc" id="L50">	}</span>
+	@Override
+	public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
+			final String id, String optionalComment) {
+<span class="fc bfc" id="L54" title="All 2 branches covered.">		if(!filter.test(id)){</span>
+<span class="fc" id="L55">			return null;</span>
+		}
+<span class="fc" id="L57">		return new AbstractQualityFastaRecordVisitor(id,optionalComment){</span>
+
+			@Override
+			protected void visitRecord(
+					QualityFastaRecord fastaRecord) {
+<span class="fc bfc" id="L62" title="All 4 branches covered.">			    if(recordFilter==null || recordFilter.test(fastaRecord)){</span>
+<span class="fc" id="L63">				fastaRecords.put(id, fastaRecord);</span>
+			    }
+				
+<span class="fc" id="L66">			}</span>
+			
+		};
+	}
+
+	@Override
+	public void visitEnd() {
+		//no-op			
+<span class="fc" id="L74">	}</span>
+	@Override
+	public void halted() {
+		//no-op			
+<span class="nc" id="L78">	}</span>
+	@Override
+	public QualityFastaDataStore build() {
+<span class="fc" id="L81">		return new AdaptedQualityDataStore(fastaRecords);</span>
+	}
+	
+	
+	private static final class AdaptedQualityDataStore extends AdaptedFastaDataStore&lt;PhredQuality , QualitySequence, QualityFastaRecord, QualitySequenceDataStore&gt; implements QualityFastaDataStore{
+
+	    
+        public AdaptedQualityDataStore(Map&lt;String, QualityFastaRecord&gt; map) {
+<span class="fc" id="L89">            super(map);</span>
+<span class="fc" id="L90">        }</span>
+
+        @Override
+        public QualitySequenceDataStore asSequenceDataStore(){
+<span class="fc" id="L94">            return DataStore.adapt(QualitySequenceDataStore.class, this, QualityFastaRecord::getSequence);</span>
+        }
+	    
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

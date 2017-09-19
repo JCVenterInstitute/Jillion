@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ScfChromatogramWriterBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.trace.chromat.scf</a> &gt; <span class="el_source">ScfChromatogramWriterBuilder.java</span></div><h1>ScfChromatogramWriterBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.trace.chromat.scf;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.util.Builder;
+import org.jcvi.jillion.internal.trace.chromat.scf.SCFCodec;
+import org.jcvi.jillion.internal.trace.chromat.scf.SCFCodecs;
+import org.jcvi.jillion.trace.chromat.Chromatogram;
+import org.jcvi.jillion.trace.chromat.ChromatogramWriter;
+
+public final class ScfChromatogramWriterBuilder implements Builder&lt;ChromatogramWriter&gt;{
+	private final File scfFile; 
+	private final OutputStream out;
+<span class="pc" id="L39">	private SCFCodec codec = SCFCodecs.VERSION_3;</span>
+	
+<span class="nc" id="L41">	public ScfChromatogramWriterBuilder(File scfFile){</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">		if(scfFile ==null){</span>
+<span class="nc" id="L43">			throw new NullPointerException(&quot;output file can not be null&quot;);</span>
+		}
+<span class="nc" id="L45">		this.scfFile = scfFile;</span>
+<span class="nc" id="L46">		this.out =null;</span>
+<span class="nc" id="L47">	}</span>
+	
+<span class="fc" id="L49">	public ScfChromatogramWriterBuilder(OutputStream out){</span>
+<span class="pc bpc" id="L50" title="1 of 2 branches missed.">		if(out ==null){</span>
+<span class="nc" id="L51">			throw new NullPointerException(&quot;output stream can not be null&quot;);</span>
+		}
+<span class="fc" id="L53">		this.scfFile = null;</span>
+<span class="fc" id="L54">		this.out =out;</span>
+<span class="fc" id="L55">	}</span>
+	
+	public ScfChromatogramWriterBuilder useVersion2Encoding(){
+<span class="fc" id="L58">		this.codec = SCFCodecs.VERSION_2;</span>
+<span class="fc" id="L59">		return this;</span>
+	}
+
+	@Override
+	public ChromatogramWriter build() {
+		try {
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">			if(out==null){</span>
+<span class="nc" id="L66">				return new ScfChromatogramWriterImpl(scfFile, codec);</span>
+			}
+<span class="fc" id="L68">			return new ScfChromatogramWriterImpl(out,codec);</span>
+<span class="nc" id="L69">		} catch (IOException e) {</span>
+<span class="nc" id="L70">			throw new IllegalStateException(&quot;error creating scf output file&quot;,e);</span>
+		}
+	}
+	
+	private static class ScfChromatogramWriterImpl implements ChromatogramWriter{
+		private final OutputStream out;
+<span class="pc" id="L76">		private volatile boolean closed=false;</span>
+		private final SCFCodec codec;
+<span class="nc" id="L78">		public ScfChromatogramWriterImpl(File scfFile, SCFCodec codec) throws IOException{</span>
+<span class="nc" id="L79">			IOUtil.mkdirs(scfFile.getParentFile());</span>
+<span class="nc" id="L80">			this.codec= codec;</span>
+<span class="nc" id="L81">			out = new BufferedOutputStream(new FileOutputStream(scfFile));</span>
+<span class="nc" id="L82">		}</span>
+<span class="fc" id="L83">		public ScfChromatogramWriterImpl(OutputStream out, SCFCodec codec) throws IOException{</span>
+<span class="fc" id="L84">			this.out = out;</span>
+<span class="fc" id="L85">			this.codec = codec;</span>
+<span class="fc" id="L86">		}</span>
+		@Override
+		public void close() throws IOException {
+<span class="fc" id="L89">			out.close();</span>
+<span class="fc" id="L90">			closed=true;</span>
+			
+<span class="fc" id="L92">		}</span>
+		@Override
+		public void write(Chromatogram c) throws IOException {
+<span class="pc bpc" id="L95" title="1 of 2 branches missed.">			if(closed){</span>
+<span class="nc" id="L96">				throw new IllegalStateException(&quot;can only write one scf&quot;);</span>
+			}
+<span class="fc" id="L98">			codec.write(c, out);</span>
+<span class="fc" id="L99">			close();</span>
+<span class="fc" id="L100">		}</span>
+		
+		
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

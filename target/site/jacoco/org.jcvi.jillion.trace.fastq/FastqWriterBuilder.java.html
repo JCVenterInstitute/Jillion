@@ -1,0 +1,574 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>FastqWriterBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.trace.fastq</a> &gt; <span class="el_source">FastqWriterBuilder.java</span></div><h1>FastqWriterBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.trace.fastq;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.nio.charset.Charset;
+import java.util.Comparator;
+import java.util.Objects;
+import java.util.function.Function;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.io.BufferSize;
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.Builder;
+import org.jcvi.jillion.internal.core.io.OutputStreamFactory;
+import org.jcvi.jillion.internal.trace.fastq.ParsedFastqRecord;
+/**
+ * {@code FastqWriterBuilder}
+ * is a {@link Builder} that 
+ * builds an instance of {@link FastqWriter}.
+ * @author dkatzel
+ *
+ */
+public final class FastqWriterBuilder implements Builder&lt;FastqWriter&gt;{
+	
+	private static final String CR = &quot;\n&quot;;
+	private static final int ALL_ON_ONE_LINE =-1;
+	
+<span class="fc" id="L53">	private static final Charset DEFAULT_CHARSET = IOUtil.UTF_8;</span>
+<span class="fc" id="L54">	private  static final FastqQualityCodec DEFAULT_CODEC = FastqQualityCodec.SANGER;</span>
+	
+	private static final int  DEFAULT_CACHE_SIZE = 10_000;
+	
+	private final OutputStream out;
+<span class="fc" id="L59">	private int numberOfBasesPerLine=ALL_ON_ONE_LINE;</span>
+<span class="fc" id="L60">	private boolean writeIdOnQualityLine=false;</span>
+<span class="fc" id="L61">	private FastqQualityCodec codec = DEFAULT_CODEC;</span>
+<span class="fc" id="L62">	private Charset charSet = DEFAULT_CHARSET;</span>
+	
+	
+<span class="fc" id="L65">	private Comparator&lt;FastqRecord&gt; comparator=null;</span>
+	private Integer inMemoryCacheSize;
+	private File tmpDir;
+	
+<span class="fc" id="L69">	private Function&lt;FastqRecord, FastqRecord&gt; adapterFunction= null;</span>
+	
+	/**
+	 * Create a new {@link FastqWriterBuilder} that will use
+	 * the given {@link OutputStream} to write
+	 * out the fastq records.
+	 * @param out the {@link OutputStream} to use;
+	 * can not be null.
+	 * @throws NullPointerException if out is null.
+	 */
+<span class="fc" id="L79">	public FastqWriterBuilder(OutputStream out){</span>
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">		if(out==null){</span>
+<span class="nc" id="L81">			throw new NullPointerException(&quot;outputstream can not be null&quot;);</span>
+		}
+<span class="fc" id="L83">		this.out = out;</span>
+<span class="fc" id="L84">	}</span>
+	
+	/**
+	 * Create a new {@link FastqWriterBuilder} that will use
+	 * the given File to write
+	 * out the fastq records.  Any contents
+	 * that previously existed in this file
+	 * will be overwritten.  If the path for the given
+	 * File does not yet exist, then it will be created.
+	 * 
+	 * Since 5.3, if the file extension is either {@code &quot;.gz&quot; or &quot;.zip&quot;}
+	 * then the writer will automatically compress the output for you.
+	 * 
+	 * @param outputFile the File to use;
+	 * can not be null.
+	 * @throws NullPointerException if outputFile is null.
+	 * @throws IOException if there is a problem creating the new file. 
+	 * or cannot be opened for any other reason.
+	 */
+<span class="fc" id="L103">	public FastqWriterBuilder(File outputFile) throws IOException{</span>
+<span class="fc" id="L104">		this.out =OutputStreamFactory.create(outputFile, BufferSize.kb(64));</span>
+<span class="fc" id="L105">	}</span>
+	/**
+	 * Change the {@link Charset} used
+	 * to write out the fasta record.
+	 * If this method is not called,
+	 * then the CharSet will default to
+	 * UTF-8.
+	 * @param charset the {@link Charset} to use;
+	 * can not be null.
+	 * @return this.
+	 * @throws NullPointerException if charset is null.
+	 */
+	public FastqWriterBuilder charset(Charset charset){
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">		if(charset ==null){</span>
+<span class="nc" id="L119">			throw new NullPointerException(&quot;charset can not be null&quot;);</span>
+		}
+<span class="fc" id="L121">		this.charSet=charset;</span>
+<span class="fc" id="L122">		return this;</span>
+	}
+	/**
+	 * Change the method that quality values
+	 * are encoded by providing a {@link FastqQualityCodec}
+	 * implementation.  If this method is not called,
+	 * this writer will default to {@link FastqQualityCodec#SANGER}.
+	 * @param codec the {@link FastqQualityCodec} to use
+	 * when writing out the encoded quality sequence;
+	 * can not be null.
+	 * @return this.
+	 * Throws {@link NullPointerException} if codec is null.
+	 */
+	public FastqWriterBuilder qualityCodec(FastqQualityCodec codec){
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">		if(codec ==null){</span>
+<span class="nc" id="L137">			throw new NullPointerException(&quot;codec can not be null&quot;);</span>
+		}
+<span class="fc" id="L139">		this.codec=codec;</span>
+<span class="fc" id="L140">		return this;</span>
+	}
+	/**
+	 * If this method is called
+	 * then the id of the fastq records
+	 * will be duplicated on the fastq quality deflines.
+	 * This is not recommended since it will usually 
+	 * add several megabytes to the file size and only
+	 * contain duplicate data.  (The id of the record
+	 * will also be on the nucleotide sequence defline).
+	 * @return this.
+	 */
+	public FastqWriterBuilder duplicateIdOnQualityDefLine(){
+<span class="fc" id="L153">		this.writeIdOnQualityLine=true;</span>
+<span class="fc" id="L154">		return this;</span>
+	}
+	/**
+         * Wrap the built FastqWriter wrap the given fastqWriter and intercept any calls
+         * to write() to allow the record to be transformed in some way.  For example,
+         * to change the id or modify or trim the sequences; or even skip the record entirely.
+         * Calling this method multiple times will overwrite the adaptation not nest additional
+         * adapters.  If you need to do that make several calls to 
+         * {@link FastqWriter#adapt(FastqWriter, Function)}
+         * 
+         * @param adapterFunction a Function that is given the input FastqRecord to be written
+         * and will return a possibly new FastqRecord to actually write.  If the function
+         * returns {@code null} then the record is skipped.  If this parameter is null,
+         * then no adapter will be used as if this method was never called at all.
+         * @return this
+         * 
+         * @since 5.3
+         * @see FastqWriter#adapt(FastqWriter, Function)
+         */
+	public FastqWriterBuilder adapt( Function&lt;FastqRecord, FastqRecord&gt; adapterFunction) {
+<span class="nc" id="L174">	        this.adapterFunction = adapterFunction;</span>
+<span class="nc" id="L175">	        return this;</span>
+	}
+	
+	/**
+	 * Change the number of bases per line
+	 * to write for each fastq record.
+	 * If this method is not called,
+	 * then then the each nucleotide and quality sequence will
+	 * be written out on one line each.
+	 * @param basesPerLine the basesPerLine to use
+	 * must be &gt;=1.
+	 * @return this.
+	 * @throws IllegalArgumentException if basesPerLine &lt;1.
+	 */
+	public FastqWriterBuilder basesPerLine(int basesPerLine){
+<span class="pc bpc" id="L190" title="1 of 2 branches missed.">		if(basesPerLine&lt;1){</span>
+<span class="nc" id="L191">			throw new IllegalArgumentException(&quot;number per line must be &gt;=1&quot;);</span>
+		}
+<span class="fc" id="L193">		numberOfBasesPerLine = basesPerLine;</span>
+<span class="fc" id="L194">		return this;</span>
+	}
+	
+	
+	/**
+	 * Write out the {@link FastqRecord}s written by this writer
+	 * sorted by the specified {@link Comparator} but do all the sorting in memory.
+	 * All of the records will be cached in memory so the output can be written sorted
+	 * when the {@link FastqWriter#close()} method is called.  It is not recommended
+	 * to use this method if a large number of records will be written because
+	 * an {@link OutOfMemoryError} may occur.
+	 * 
+	 * @param comparator the {@link Comparator} to use to sort the {@link FastqRecord}s;
+	 * can not be null.
+	 * 
+	 * @return this
+	 * 
+	 * @throws NullPointerException if comparator is null.
+	 * 
+	 * @since 5.0
+	 */
+	public FastqWriterBuilder sortInMemoryOnly(Comparator&lt;FastqRecord&gt; comparator){
+<span class="fc" id="L216">	    Objects.requireNonNull(comparator);</span>
+<span class="fc" id="L217">	    this.comparator = comparator;</span>
+<span class="fc" id="L218">	    this.inMemoryCacheSize = null;</span>
+<span class="fc" id="L219">	    this.tmpDir = null;</span>
+	    
+<span class="fc" id="L221">	    return this;</span>
+	}
+	/**
+         * Write out the {@link FastqRecord}s written by this writer
+         * sorted by the specified {@link Comparator} using a combination of 
+         * in memory sorting and writing out sorted temporary files.  With a default
+         * number of records to keep in memory at any time.  (Currently 10,000 records).
+         * 
+         * &lt;p/&gt;
+         * This is the same as {@link #sort(Comparator, int) sort(comparator, 10_000)}
+         * which uses the default temp area to make temp files.
+         * 
+         * @param comparator the {@link Comparator} to use to sort the {@link FastqRecord}s;
+         * can not be null.
+         * 
+         * @return this.
+         * 
+         * @throws NullPointerException if comparator is null.
+         * 
+         * @see #sort(Comparator, int)
+         * @see #sort(Comparator, int, File)
+         * @see #sortInMemoryOnly(Comparator)
+         * 
+         * @since 5.3
+         */
+        public FastqWriterBuilder sort(Comparator&lt;FastqRecord&gt; comparator){
+<span class="nc" id="L247">            return sort(comparator, DEFAULT_CACHE_SIZE);</span>
+        }
+	/**
+	 * Write out the {@link FastqRecord}s written by this writer
+	 * sorted by the specified {@link Comparator} using a combination of 
+	 * in memory sorting and writing out sorted temporary files.
+	 * 
+	 * &lt;p/&gt;
+	 * This is the same as {@link #sort(Comparator, int, File) sort(comparator, inMemCacheSize, null)}
+	 * which uses the default temp area to make temp files.
+	 * 
+	 * @param comparator the {@link Comparator} to use to sort the {@link FastqRecord}s;
+	 * can not be null.
+	 * @param inMemoryCacheSize the in memory cache size to use; must be positive.
+	 * 
+	 * @return this.
+	 * 
+	 * @throws NullPointerException if comparator is null.
+	 * 
+	 * @throws IllegalArgumentException if inMemoryCacheSize &lt; 1.
+	 * 
+	 * @since 5.0
+	 */
+	public FastqWriterBuilder sort(Comparator&lt;FastqRecord&gt; comparator, int inMemoryCacheSize){
+<span class="nc" id="L271">	    return sort(comparator, inMemoryCacheSize, null);</span>
+	}
+	/**
+	 * Write out the {@link FastqRecord}s written by this writer
+	 * sorted by the specified {@link Comparator} using a combination of 
+	 * in memory sorting and writing out sorted temporary files.
+	 * 
+	 * An in memory cache similar of the specified size will be created
+	 * and whenever the cache fills, the sorted cache contents will be written to a temp file
+	 * in the specified tmpDir and the cache cleared out to make room for more records to write.
+	 * There may be multiple temp files written depending on how many {@link FastqRecord}s are 
+	 * passed to the Writer.
+	 * 
+	 * Once {@link FastqWriter#close()} has been called, the contents of the in memory cache,
+	 * and any temp files written out are merged and written sorted to the final output file.
+	 * 
+	 * &lt;p&gt;
+	 * If any files get written to temp files under {@code dir},
+	 * they will be deleted when the writer is closed.  However {@code dir}
+	 * itself will not be deleted so feel free to provide non-temp directories as well.
+	 * &lt;/p&gt;
+	 * 
+	 * @param comparator the {@link Comparator} to use to sort the {@link FastqRecord}s;
+	 * can not be null.
+	 * @param inMemoryCacheSize the in memory cache size to use; must be positive.
+	 * 
+	 * @param dir the directory to write files to; if set to {@code null}
+	 * then the default system temporary directory is used.  If the value is not null,
+	 * then it must be a directory that already exists.
+	 * 
+	 * @return this.
+	 * 
+	 * @throws NullPointerException if comparator is null.
+	 * 
+	 * @throws IllegalArgumentException if inMemoryCacheSize &lt; 1,
+	 * 			or if a non-null dir does not exist or is not a directory.
+	 * 
+	 * @since 5.0
+	 */
+	public FastqWriterBuilder sort(Comparator&lt;FastqRecord&gt; comparator, int inMemoryCacheSize, File dir){
+<span class="fc" id="L311">	    Objects.requireNonNull(comparator);</span>
+<span class="fc bfc" id="L312" title="All 2 branches covered.">	    if(inMemoryCacheSize &lt;1){</span>
+<span class="fc" id="L313">	        throw new IllegalArgumentException(&quot;in memory cache size must be positive&quot;);</span>
+	    }
+	    
+<span class="pc bpc" id="L316" title="1 of 2 branches missed.">	    if(dir !=null){</span>
+<span class="pc bpc" id="L317" title="1 of 2 branches missed.">	    	if(!dir.exists()){	    </span>
+<span class="nc" id="L318">	    		throw new IllegalArgumentException(&quot;tmpDir does not exist: &quot; + dir.getAbsolutePath());</span>
+	    	}
+<span class="pc bpc" id="L320" title="1 of 2 branches missed.">	    	if(!dir.isDirectory()){</span>
+<span class="nc" id="L321">	    		throw new IllegalArgumentException(&quot;tmpDir is not a directory: &quot; + dir.getAbsolutePath());</span>
+	    	}
+	    }
+<span class="fc" id="L324">            this.comparator = comparator;</span>
+<span class="fc" id="L325">            this.inMemoryCacheSize = inMemoryCacheSize;</span>
+<span class="fc" id="L326">            this.tmpDir = dir;</span>
+<span class="fc" id="L327">	    return this;</span>
+	}
+	
+	
+	@Override
+	public FastqWriter build() {
+<span class="fc" id="L333">	    FastqWriter innerWriter = buildInnerWriter();</span>
+<span class="pc bpc" id="L334" title="1 of 2 branches missed.">	    if(adapterFunction ==null){</span>
+<span class="fc" id="L335">	        return innerWriter;</span>
+	    }
+<span class="nc" id="L337">	    return FastqWriter.adapt(innerWriter, adapterFunction);</span>
+	}
+	
+	private FastqWriter buildInnerWriter(){
+<span class="fc" id="L341">            FastqWriter writer = new FastqRecordWriterImpl(out, charSet, codec,</span>
+                    writeIdOnQualityLine, numberOfBasesPerLine);
+<span class="fc bfc" id="L343" title="All 2 branches covered.">            if (comparator == null) {</span>
+<span class="fc" id="L344">                return writer;</span>
+            }
+<span class="fc bfc" id="L346" title="All 2 branches covered.">            if (inMemoryCacheSize == null) {</span>
+<span class="fc" id="L347">                return new InMemorySortedFastqWriter(writer, comparator);</span>
+            }
+<span class="fc" id="L349">            return new TmpDirSortedFastqWriter(writer, comparator, codec, tmpDir, inMemoryCacheSize);</span>
+	}
+	
+	
+	private static final class FastqRecordWriterImpl implements FastqWriter{
+		
+		private final Writer writer;
+		private final FastqQualityCodec codec;
+		private final boolean writeIdOnQualityLine;
+		private final int numberOfBasesPerLine;
+		
+<span class="fc" id="L360">		private final StringBuilder tempBuilder = new StringBuilder(2000);</span>
+		
+		private FastqRecordWriterImpl(OutputStream out, Charset charset,
+				FastqQualityCodec codec, boolean writeIdOnQualityLine,
+<span class="fc" id="L364">				int numberOfBasesPerLine){</span>
+			//wrap in OutputStream Writer to do char encodings
+			//for us.  If we did String#getBytes(Charset) instead
+			//for each write call that could put unwanted
+			//char encoding headers in each record
+			//which would be incorrect.  This way
+			//the char encoding headers (if any) will
+			//only appear at the beginning of the inputstream
+<span class="fc" id="L372">			this.writer =  new OutputStreamWriter(out,charset);</span>
+<span class="fc" id="L373">			this.codec = codec;</span>
+<span class="fc" id="L374">			this.writeIdOnQualityLine = writeIdOnQualityLine;</span>
+<span class="fc" id="L375">			this.numberOfBasesPerLine = numberOfBasesPerLine;</span>
+<span class="fc" id="L376">		}</span>
+		
+	
+		
+		
+		@Override
+		public void close() throws IOException {
+			//just incase the implementation of
+			//OutputStream is buffering we need to explicitly
+			//call flush
+<span class="fc" id="L386">			writer.flush();</span>
+<span class="fc" id="L387">			writer.close();</span>
+			
+<span class="fc" id="L389">		}</span>
+		@Override
+                public void write(FastqRecord record) throws IOException{
+<span class="fc" id="L392">		    write(record, null);</span>
+<span class="fc" id="L393">		}</span>
+		
+		@Override
+		public void write(FastqRecord record, Range trimRange) throws IOException {
+		    //performance improvement:
+		    //ParsedFastqRecord is a special implementation of FastqRecord
+		    //that delays converting the encoded sequence and qualities
+		    //from Strings into Jillion Sequence objects.
+		    //
+		    //This is actually the implementation returned by FastqParser
+		    //visit methods since Jillion 5.0.
+		    //
+		    //Profiling code to find performance bottlenecks
+		    //revealed all the CPU cycles wasted from
+		    //parsing a fastq file, and then rewriting
+		    //those records practically unaltered
+		    //back out (possibly filtering out records).
+		    //
+		    //It seemed silly to decode the encoded strings
+		    //into Jillion objects only to re-encode them
+		    //back into the same strings again right away during writing.
+		    //
+		    //This code is much uglier, but improves performance by 25%
+<span class="fc bfc" id="L416" title="All 2 branches covered.">		    if(record instanceof ParsedFastqRecord){</span>
+<span class="fc" id="L417">		        ParsedFastqRecord parsedRecord = (ParsedFastqRecord) record;</span>
+<span class="fc" id="L418">		        FastqQualityCodec recordCodec = parsedRecord.getQualityCodec();</span>
+		        String formattedString;
+<span class="fc bfc" id="L420" title="All 2 branches covered.">		        if(codec == recordCodec){</span>
+		            //same quality encoding can use encoded qualities as is
+<span class="fc" id="L422">		            formattedString=  toFormattedString(parsedRecord.getId(),</span>
+<span class="fc" id="L423">		                    encodeNucleotides(parsedRecord.getNucleotideString(), trimRange),</span>
+<span class="fc" id="L424">		                    formatEncodedQualities(parsedRecord.getEncodedQualities(), trimRange), parsedRecord.getComment());</span>
+		        }else{
+		            //not same quality encoding		            
+<span class="fc" id="L427">		            String reEncodedQualities = reEncodeTrimmedQualities(parsedRecord, recordCodec, trimRange);</span>
+		            
+<span class="fc" id="L429">		            formattedString = toFormattedString(parsedRecord.getId(), encodeNucleotides(parsedRecord.getNucleotideString(), trimRange),</span>
+		                    //trimRange is null here because we already trimmed it during reencoding.
+<span class="fc" id="L431">		                    formatEncodedQualities(reEncodedQualities, null), parsedRecord.getComment());</span>
+		        }
+		        
+<span class="fc" id="L434">		        writer.write(formattedString);</span>
+<span class="fc" id="L435">		    }else{</span>
+<span class="fc bfc" id="L436" title="All 2 branches covered.">		        if(trimRange ==null){</span>
+<span class="fc" id="L437">		            write(record.getId(), record.getNucleotideSequence(), record.getQualitySequence(), record.getComment());</span>
+		        }else{
+<span class="fc" id="L439">		            write(record.getId(), </span>
+<span class="fc" id="L440">		                    record.getNucleotideSequence()</span>
+<span class="fc" id="L441">		                            .toBuilder()</span>
+<span class="fc" id="L442">		                            .trim(trimRange)</span>
+<span class="fc" id="L443">		                            .turnOffDataCompression(true)</span>
+<span class="fc" id="L444">		                            .build(), </span>
+<span class="fc" id="L445">		                    record.getQualitySequence()</span>
+<span class="fc" id="L446">		                            .toBuilder()</span>
+<span class="fc" id="L447">		                            .trim(trimRange)</span>
+<span class="fc" id="L448">		                            .turnOffDataCompression(true)</span>
+<span class="fc" id="L449">		                            .build(),</span>
+<span class="fc" id="L450">		                 record.getComment());</span>
+		        }
+		    }
+			
+<span class="fc" id="L454">		}</span>
+
+
+        private String reEncodeTrimmedQualities(ParsedFastqRecord parsedRecord,
+                FastqQualityCodec recordCodec, Range trimRange) {
+<span class="fc" id="L459">            int offsetCorrection = codec.getOffset() - recordCodec.getOffset();</span>
+<span class="fc bfc" id="L460" title="All 2 branches covered.">            char[] chars = trimRange ==null?  parsedRecord.getEncodedQualities().toCharArray()</span>
+<span class="fc" id="L461">                                : parsedRecord.getEncodedQualities().substring((int)trimRange.getBegin(), (int) trimRange.getEnd()+1).toCharArray();</span>
+<span class="fc bfc" id="L462" title="All 2 branches covered.">            for(int i=0; i&lt; chars.length; i++){</span>
+<span class="fc" id="L463">                chars[i] = (char)(chars[i] + offsetCorrection);</span>
+            }
+<span class="fc" id="L465">            return new String(chars);</span>
+        }
+	
+		@Override
+		public void write(String id, NucleotideSequence nucleotides,
+				QualitySequence qualities) throws IOException {
+<span class="fc" id="L471">			write(id,nucleotides,qualities,null);</span>
+			
+<span class="fc" id="L473">		}</span>
+	
+		@Override
+		public void write(String id, NucleotideSequence sequence,
+				QualitySequence qualities, String optionalComment)
+				throws IOException {
+<span class="fc bfc" id="L479" title="All 2 branches covered.">			if(id ==null){</span>
+<span class="fc" id="L480">				throw new NullPointerException(&quot;id can not be null&quot;);</span>
+			}
+<span class="fc bfc" id="L482" title="All 2 branches covered.">			if(sequence ==null){</span>
+<span class="fc" id="L483">				throw new NullPointerException(&quot;nucleotide sequence can not be null&quot;);</span>
+			}
+<span class="fc bfc" id="L485" title="All 2 branches covered.">			if(qualities ==null){</span>
+<span class="fc" id="L486">				throw new NullPointerException(&quot;quality sequence can not be null&quot;);</span>
+			}
+<span class="fc" id="L488">			long nucLength = sequence.getLength();</span>
+<span class="fc" id="L489">			long qualLength = qualities.getLength();</span>
+<span class="fc bfc" id="L490" title="All 2 branches covered.">			if(nucLength != qualLength){</span>
+<span class="fc" id="L491">				throw new IllegalArgumentException(</span>
+<span class="fc" id="L492">						String.format(&quot;nucleotide and quality sequences must be same length: %d vs %d&quot;,nucLength, qualLength));</span>
+			}
+<span class="fc" id="L494">			final String formattedString =toFormattedString(id, encodeNucleotides(sequence.toString(), null), encodeQualities(qualities), optionalComment);</span>
+			//should be threadsafe 
+			//because each call to Writer.write()
+			//synchonizes so each call to write should be atomic.
+<span class="fc" id="L498">			writer.write(formattedString);</span>
+	
+<span class="fc" id="L500">		}</span>
+	
+		private CharSequence encodeNucleotides(String sequence, Range trimRange){
+		    
+<span class="fc bfc" id="L504" title="All 2 branches covered.">		    String nucleotidesToWrite = trimRange==null? sequence : sequence.substring((int)trimRange.getBegin(), (int) trimRange.getEnd()+1);</span>
+	            
+<span class="fc bfc" id="L506" title="All 2 branches covered.">			if(numberOfBasesPerLine==ALL_ON_ONE_LINE){</span>
+<span class="fc" id="L507">				return nucleotidesToWrite;</span>
+			}
+			
+<span class="fc" id="L510">			int numBases = nucleotidesToWrite.length();</span>
+<span class="fc" id="L511">			int numberOfLines = numBases/numberOfBasesPerLine +1;</span>
+<span class="fc" id="L512">			StringBuilder builder = new StringBuilder(numBases+numberOfLines);</span>
+<span class="pc bpc" id="L513" title="1 of 2 branches missed.">			if(numBases ==0){</span>
+<span class="nc" id="L514">				return builder;</span>
+			}
+			
+<span class="fc" id="L517">			char[] charArray = nucleotidesToWrite.toCharArray();</span>
+<span class="fc" id="L518">			builder.append(charArray[0]);</span>
+			
+<span class="fc bfc" id="L520" title="All 2 branches covered.">			for(int i=1; i&lt; numBases; i++){</span>
+<span class="fc bfc" id="L521" title="All 2 branches covered.">				if(i%numberOfBasesPerLine==0){</span>
+<span class="fc" id="L522">					builder.append(CR);</span>
+				}
+<span class="fc" id="L524">				builder.append(charArray[i]);</span>
+			}
+<span class="fc" id="L526">			return builder;</span>
+		}
+		private CharSequence encodeQualities(QualitySequence qualities){
+<span class="fc" id="L529">			String encodedQualities = codec.encode(qualities);</span>
+<span class="fc" id="L530">			return formatEncodedQualities(encodedQualities, null);</span>
+		}
+
+
+        private CharSequence formatEncodedQualities(String encodedQualities, Range trimRange) {
+<span class="fc bfc" id="L535" title="All 2 branches covered.">            String qualitiesToWrite = trimRange==null? encodedQualities : encodedQualities.substring((int)trimRange.getBegin(), (int) trimRange.getEnd()+1);</span>
+            
+<span class="fc bfc" id="L537" title="All 2 branches covered.">            if(numberOfBasesPerLine==ALL_ON_ONE_LINE){</span>
+<span class="fc" id="L538">				return qualitiesToWrite;</span>
+			}
+<span class="fc" id="L540">			int numberOfLines = qualitiesToWrite.length()/numberOfBasesPerLine +1;</span>
+<span class="fc" id="L541">			StringBuilder builder = new StringBuilder(qualitiesToWrite.length()+numberOfLines);</span>
+<span class="fc bfc" id="L542" title="All 2 branches covered.">			for(int i=0; i&lt;qualitiesToWrite.length();i++){</span>
+<span class="fc bfc" id="L543" title="All 4 branches covered.">				if(i&gt;0 &amp;&amp; i%numberOfBasesPerLine ==0){</span>
+<span class="fc" id="L544">					builder.append(CR);</span>
+				}
+<span class="fc" id="L546">				builder.append(qualitiesToWrite.charAt(i));</span>
+			}
+			
+<span class="fc" id="L549">			return builder;</span>
+        }
+		private synchronized String toFormattedString(String id, CharSequence sequence,
+				CharSequence encodedQualities, String optionalComment) {
+<span class="fc" id="L553">		        tempBuilder.setLength(0);</span>
+<span class="fc bfc" id="L554" title="All 2 branches covered.">			boolean hasComment = optionalComment != null;</span>
+//			int numChars = 2 + (hasComment? optionalComment.length():0) + (writeIdOnQualityLine? 2*id.length() : id.length())  + sequence.length() *2 + CRlength*4;
+			
+<span class="fc" id="L557">			tempBuilder.append(&quot;@&quot;).append(id);</span>
+<span class="fc bfc" id="L558" title="All 2 branches covered.">			if (hasComment) {</span>
+<span class="fc" id="L559">			    tempBuilder.append(' ').append(optionalComment);</span>
+			}
+<span class="fc" id="L561">			tempBuilder.append(CR).append(sequence).append(CR).append('+');</span>
+<span class="fc bfc" id="L562" title="All 2 branches covered.">			if (writeIdOnQualityLine) {</span>
+<span class="fc" id="L563">			    tempBuilder.append(id);</span>
+			}
+<span class="fc" id="L565">			tempBuilder.append(CR).append(encodedQualities).append(CR);</span>
+<span class="fc" id="L566">			return tempBuilder.toString();</span>
+		}
+	}
+
+
+
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

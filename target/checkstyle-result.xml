@@ -1,0 +1,2112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="7.8.2">
+<file name="/home/snettem/git/Jillion/src/org/jcvi/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/testutils/NucleotideSequenceTestUtil.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/testutils/assembly/cas/CasParserTestDouble.java">
+<error line="555" column="9" severity="error" message="Cyclomatic Complexity is 13 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/testutils/assembly/cas/RecordWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/testutils/assembly/cas/DefaultCasAlignment.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/testutils/assembly/cas/DefaultCasAlignmentRegion.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/testutils/assembly/cas/SffRecordWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/testutils/assembly/cas/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/testutils/assembly/cas/FastaRecordWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/testutils/assembly/cas/FastqRecordWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/testutils/assembly/cas/CasTestUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/FastaFileParser.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/aa/ProteinFastaFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/aa/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/aa/ProteinFastaRecordBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/aa/AbstractProteinFastaRecordVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/aa/ProteinFastaDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/aa/ProteinFastaWriterBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/aa/ProteinFastaRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/aa/ProteinFastaWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/aa/ProteinFastaFileDataStoreBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/FastaVisitorCallback.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/FastaVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/SplitFastaWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/FastaRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/FastaParser.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/FastaDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/FastaWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/pos/PositionFastaFileDataStoreBuilder.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/pos/PositionFastaWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/pos/AbstractPositionSequenceFastaRecordVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/pos/PositionFastaDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/pos/DefaultPositionFastaFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/pos/PositionFastaWriterBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/pos/PositionFastaRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/pos/LargePositionFastaIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/pos/PositionSequenceDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/pos/LargePositionFastaFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/FastaWriterAdapterImpl.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/qual/QualityFastaRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/qual/QualityFastaFileDataStoreBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/qual/CommentedQualityFastaRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/qual/QualityFastaDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/qual/QualityFastaWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/qual/AbstractQualityFastaRecordVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/qual/QualityFastaWriterBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/qual/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/qual/QualityFastaRecordBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/qual/DefaultQualityFastaFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/qual/UncommentedQualityFastaRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/FastaRecordVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/AbstractFastaRecordVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/nt/NucleotideFastaFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/nt/DefaultNucleotideFastaFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/nt/UnCommentedNucleotideSequenceFastaRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/nt/IndexedNucleotideSequenceFastaFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/nt/LargeNucleotideSequenceFastaIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/nt/FaiNucleotideWriterBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/nt/FaiNucleotideFastaFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/nt/LargeNucleotideSequenceFastaFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/nt/NucleotideFastaRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/nt/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/nt/NucleotideFastaWriterBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/nt/NucleotideFastaDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/nt/NucleotideFastaWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/nt/AbstractNucleotideFastaRecordVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/nt/FaiNucleotideFastaWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/nt/NucleotideFastaFileDataStoreBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/nt/NucleotideFastaFileReader.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/nt/NucleotideFastaRecordBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/fasta/nt/CommentedNucleotideSequenceFastaRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/io/BufferSize.java">
+<error line="36" column="32" severity="error" message="Name &apos;ks&apos; must match pattern &apos;^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$&apos;." source="com.puppycrawl.tools.checkstyle.checks.naming.ConstantNameCheck"/>
+<error line="37" column="32" severity="error" message="Name &apos;mbs&apos; must match pattern &apos;^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$&apos;." source="com.puppycrawl.tools.checkstyle.checks.naming.ConstantNameCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/io/IOUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/io/PushBackBufferedReader.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/io/AbstractFileInputStreamSupplier.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/io/GZipInputStreamSupplier.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/io/FileUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/io/SubLengthInputStream.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/io/FileVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/io/InputStreamSupplier.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/io/RawFileInputStreamSupplier.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/io/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/io/TextFileVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/io/BasicZipInputStreamSupplier.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/io/OutputStreams.java">
+<error line="42" column="30" severity="error" message="Name &apos;_8K&apos; must match pattern &apos;^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$&apos;." source="com.puppycrawl.tools.checkstyle.checks.naming.ConstantNameCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/Rangeable.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/Sequence.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/Frame.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/KmerSpliterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/aa/AminoAcidCodec.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/aa/TranslationVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/aa/ProteinSequenceDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/aa/IupacTranslationTables.java">
+<error line="288" column="5" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/aa/ProteinSequenceBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/aa/AbstractProteinSequence.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/aa/ProteinSequence.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/aa/CompactProteinSequence.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/aa/TranslationTable.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/aa/AminoAcid.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/aa/Codon.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/aa/CompactProteinSequenceCodec.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/aa/UngappedProteinSequence.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/ResidueSequence.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/ResidueSequenceBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/Kmer.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/Residue.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/nt/NucleotideCodec.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/nt/Nucleotide.java">
+<error line="156" column="5" severity="error" message="Cyclomatic Complexity is 17 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/nt/NucleotideSequenceDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/nt/DefaultReferenceEncodedNucleotideSequence.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/nt/Triplet.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/nt/AcgtGapNucleotideCodec.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/nt/NucleotideSequencePermuter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/nt/NucleotideSequenceBuilder.java">
+<error line="1775" column="9" severity="error" message="Cyclomatic Complexity is 17 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+<error line="1811" column="9" severity="error" message="Cyclomatic Complexity is 17 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/nt/AbstractTwoBitEncodedNucleotideCodec.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/nt/DefaultNucleotideSequence.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/nt/ReferenceMappedNucleotideSequence.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/nt/NucleotideSequence.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/nt/BasicNucleotideCodec.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/nt/AcgtnNucloetideCodec.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/residue/nt/AbstractNucleotideCodec.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/SequenceBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/Range.java">
+<error line="1" severity="error" message="File length is 3,236 lines (max allowed is 2,000)." source="com.puppycrawl.tools.checkstyle.checks.sizes.FileLengthCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/Defline.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/ThrowingStream.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/JillionCollectors.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/UnsignedByteArray.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/Builder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/UnsignedShortArray.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/MapValueComparator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/streams/ThrowingBiConsumer.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/streams/ThrowingIndexedConsumer.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/streams/ThrowingConsumer.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/iter/StreamingIteratorAdapter.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/iter/PeekableIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/iter/ChainedStreamingIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/iter/ArrayIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/iter/SingleElementIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/iter/ChainedIteratorOfSuppliers.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/iter/IteratorUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/iter/RollOverListIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/iter/PeekableStreamingIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/iter/ChainedIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/iter/StreamingIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/iter/ChainedStreamingIteratorFromSuppliers.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/GenomeStatistics.java">
+<error line="149" column="31" severity="error" message="&apos;.5D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="178" column="27" severity="error" message="&apos;.5D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="208" column="27" severity="error" message="&apos;.75D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="237" column="27" severity="error" message="&apos;.75D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="268" column="27" severity="error" message="&apos;.9D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="297" column="27" severity="error" message="&apos;.9D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="413" column="32" severity="error" message="&apos;.5D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="443" column="28" severity="error" message="&apos;.5D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="475" column="32" severity="error" message="&apos;.75D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="505" column="28" severity="error" message="&apos;.75D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="536" column="32" severity="error" message="&apos;.9D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="566" column="28" severity="error" message="&apos;.9D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="581" column="33" severity="error" message="&apos;.5D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="594" column="33" severity="error" message="&apos;.75D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="607" column="33" severity="error" message="&apos;.9D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="649" column="48" severity="error" message="&apos;.5D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="667" column="48" severity="error" message="&apos;.75D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="685" column="48" severity="error" message="&apos;.9D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="966" column="43" severity="error" message="&apos;.5D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="990" column="43" severity="error" message="&apos;.9D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="1014" column="43" severity="error" message="&apos;.75D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="1108" column="28" severity="error" message="&apos;.5D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="1131" column="28" severity="error" message="&apos;.9D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="1154" column="28" severity="error" message="&apos;.75D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/FileIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/MultipleWrapper.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/SingleThreadAdder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/DateUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/JoinedStringBuilder.java">
+<error line="164" column="5" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/MapUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/MultipleFileFilter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/ThrowingStreamImpl.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/ObjectsUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/UnsignedIntArray.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/util/Pair.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/Ranges.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/DirectedRange.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/datastore/DataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/datastore/DataStoreException.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/datastore/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/datastore/DataStoreUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/datastore/DataStoreClosedException.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/datastore/DataStoreFilters.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/datastore/DataStoreFilter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/datastore/DataStoreProviderHint.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/datastore/DataStoreEntry.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/DeflineImpl.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/pos/PositionSequenceBuilder.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/pos/PositionSequence.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/pos/DefaultPositionCodec.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/pos/DefaultPositionSequence.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/pos/Position.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/qual/DefaultQualitySymbolCodec.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/qual/QualitySequenceBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/qual/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/qual/QualitySymbolCodec.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/qual/QualitySequenceDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/qual/RunLengthEncodedQualitySequence.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/qual/QualitySequence.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/qual/PhredQuality.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/qual/EncodedQualitySequence.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/qual/RunLengthEncodedQualityCodec.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/core/Direction.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/TraceDataStore.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/TraceNucleotideDataStoreAdapter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/ChromatogramFileVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/ztr/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/ztr/ZtrChromatogramFileVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/ztr/ZtrChromatogramParser.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/ztr/ZtrChromatogramWriterBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/ztr/ZtrChromatogramBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/ztr/ZtrChromatogram.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/ChromatogramWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/Channel.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/abi/AbiChromatogram.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/abi/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/abi/AbiChromatogramFileVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/abi/AbiChromatogramBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/abi/AbiChromatogramParser.java">
+<error line="532" column="5" severity="error" message="Cyclomatic Complexity is 18 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/abi/tag/FloatArrayTaggedDataRecord.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/abi/tag/TimeTaggedDataRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/abi/tag/rate/ScanRate.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/abi/tag/rate/ScanRateTaggedDataType.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/abi/tag/UserDefinedTaggedDataRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/abi/tag/IntArrayTaggedDataRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/abi/tag/StringTaggedDataRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/abi/tag/Ab1LocalDate.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/abi/tag/Ab1LocalTime.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/abi/tag/PascalStringTaggedDataRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/abi/tag/TaggedDataType.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/abi/tag/TaggedDataRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/abi/tag/ShortArrayTaggedDataRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/abi/tag/ByteArrayTaggedDataRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/abi/tag/AsciiTaggedDataRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/abi/tag/TaggedDataName.java">
+<error line="45" column="19" severity="error" message="&apos;(&apos; is preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.MethodParamPadCheck"/>
+<error line="49" column="19" severity="error" message="&apos;(&apos; is preceded with whitespace." source="com.puppycrawl.tools.checkstyle.checks.whitespace.MethodParamPadCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/abi/tag/DateTaggedDataRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/Chromatogram.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/EncodedShortData.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/ChromatogramFactory.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/ChannelGroup.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/scf/ScfChromatogramWriterBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/scf/ScfChromatogramBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/scf/ScfDecoderException.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/scf/ScfChromatogram.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/scf/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/scf/ScfChromatogramParser.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/scf/PrivateData.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/chromat/scf/ScfChromatogramFileVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/LargeFastqFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/IndexedFastqFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/FastqDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/FastqWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/FastqFileParserBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/CommentedFastqRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/IlluminaUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/AbstractFastqRecordVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/SplitFastqWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/FastqParser.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/InMemorySortedFastqWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/FastqRecordBuilderImpl.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/FastqFileDataStoreImpl.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/FastqUtil.java">
+<error line="399" column="9" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/FastqQualityCodec.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/AbstractFastqVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/SolexaUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/FastqVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/FastqFileReader.java">
+<error line="284" column="47" severity="error" message="Name &apos;_forEach&apos; must match pattern &apos;^[a-z][a-zA-Z0-9]*$&apos;." source="com.puppycrawl.tools.checkstyle.checks.naming.MethodNameCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/FastqFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/FastqFileDataStoreBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/DefaultFastqFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/FastqRecordVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/FastqWriterBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/UncommentedFastqRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/FastqWriterAdapter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/FastqRecordBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/FastqRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/FastqFileParser.java">
+<error line="203" column="5" severity="error" message="Cyclomatic Complexity is 13 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/fastq/TmpDirSortedFastqWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/DefaultSffReadDataDecoder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/SffFileDataStoreBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/SffUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/SffParser.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/SffVisitorCallback.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/Sff454NameUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/SffWriterUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/SffReadHeaderDecoder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/DefaultSFFCommonHeaderDecoder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/DefaultSffCommonHeader.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/SffReadData.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/SffFileReadVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/SffCommonHeader.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/SffDecoderException.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/CompletelyParsedIndexedSffFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/SffReadDataDecoder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/SffFileIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/SffFlowgramImpl.java">
+<error line="205" column="5" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/SffFileParser.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/SffWriterBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/ManifestIndexed454SffFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/DefaultSffReadHeader.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/DefaultSffReadData.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/SffReadHeader.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/SffFlowgram.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/LargeSffFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/SffWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/SffVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/SffFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/SffDataStoreBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/SffCommonHeaderDecoder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/DefaultSffReadHeaderDecoder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/sff/DefaultSffFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/TraceQualityDataStoreAdapter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trace/Trace.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/NucleotideSubstitutionMatrices.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/AminoAcidSubstitutionMatrix.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/SubstitutionMatrix.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/exonerate/Exonerate.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/exonerate/Exonerate2.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/exonerate/vulgar/VulgarOperation.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+<error line="43" column="53" severity="error" message="Name &apos;map&apos; must match pattern &apos;^[A-Z][a-zA-Z0-9_]*$&apos;." source="com.puppycrawl.tools.checkstyle.checks.naming.StaticVariableNameCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/exonerate/vulgar/VulgarProtein2Genome.java">
+<error line="212" column="5" severity="error" message="Cyclomatic Complexity is 13 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+<error line="238" column="27" severity="error" message="Inner assignments should be avoided." source="com.puppycrawl.tools.checkstyle.checks.coding.InnerAssignmentCheck"/>
+<error line="238" column="61" severity="error" message="Inner assignments should be avoided." source="com.puppycrawl.tools.checkstyle.checks.coding.InnerAssignmentCheck"/>
+<error line="343" column="9" severity="error" message="Cyclomatic Complexity is 13 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/exonerate/vulgar/VulgarProtein2Genome2.java">
+<error line="123" column="5" severity="error" message="Cyclomatic Complexity is 14 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+<error line="313" column="5" severity="error" message="Cyclomatic Complexity is 13 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+<error line="339" column="27" severity="error" message="Inner assignments should be avoided." source="com.puppycrawl.tools.checkstyle.checks.coding.InnerAssignmentCheck"/>
+<error line="339" column="61" severity="error" message="Inner assignments should be avoided." source="com.puppycrawl.tools.checkstyle.checks.coding.InnerAssignmentCheck"/>
+<error line="444" column="9" severity="error" message="Cyclomatic Complexity is 13 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/exonerate/vulgar/VulgarElement.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/AminoAcidSubstitutionMatrixFileParser.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/SequenceAlignment.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/NucleotideSequenceAlignment.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/NucleotidePropertyFileScoringMatrixParser.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/AbstractSubstitutionMatrixFileParser.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/BlosumMatrices.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/ProteinSequenceAlignment.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/pairwise/PairwiseAlignmentBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/pairwise/NucleotideSmithWatermanAligner.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/pairwise/ResiduePairwiseStrategy.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/pairwise/ProteinSmithWatermanAligner.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/pairwise/AbstractSmithWatermanAligner.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/pairwise/NucleotidePairwiseSequenceAlignment.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/pairwise/AbstractNeedlemanWunschAligner.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/pairwise/NucleotidePairwiseSequenceAlignmentImpl.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/pairwise/PairwiseSequenceAlignment.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/pairwise/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/pairwise/PairwiseSequenceAlignmentWrapper.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/pairwise/AbstractPairwiseAligner.java">
+<error line="147" column="5" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/pairwise/ProteinPairwiseSequenceAlignmentImpl.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/pairwise/ProteinNeedlemanWunschAligner.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/pairwise/AbstractPairwiseSequenceAlignment.java">
+<error line="107" column="5" severity="error" message="Cyclomatic Complexity is 15 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/pairwise/ProteinPairwiseSequenceAlignment.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/pairwise/NucleotideNeedlemanWunschAligner.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/NucleotideSubstitutionMatrixBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/align/NucleotideSubstitutionMatrix.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/shared/fasta/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/shared/fasta/AbstractFastaFileDataStoreBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/shared/fasta/AbstractResidueFastaWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/shared/fasta/AbstractFastaRecordWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/shared/fasta/AbstractFastaRecordBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/shared/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trim/TrimmerPipeline.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+<error line="65" column="5" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+<error line="178" column="5" severity="error" message="Cyclomatic Complexity is 14 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trim/BwaQualityTrimmer.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trim/trimmomatic/SlidingWindowQualityTrimmer.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trim/trimmomatic/AbstractEdgeQualityTrimmer.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trim/trimmomatic/LeadingQualityTrimmer.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trim/trimmomatic/TrailingQualityTrimmer.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trim/trimmomatic/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trim/trimmomatic/MaxInfoTrimmer.java">
+<error line="96" column="48" severity="error" message="&apos;0.1&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="96" column="54" severity="error" message="&apos;0.5&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="96" column="61" severity="error" message="&apos;10.0&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="121" severity="error" message="&apos;if&apos; construct must use &apos;{}&apos;s." source="com.puppycrawl.tools.checkstyle.checks.blocks.NeedBracesCheck"/>
+<error line="132" severity="error" message="&apos;for&apos; construct must use &apos;{}&apos;s." source="com.puppycrawl.tools.checkstyle.checks.blocks.NeedBracesCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trim/NucleotideTrimmer.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trim/TrimmerPipelineBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trim/QualityTrimmer.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trim/Trimmer.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trim/lucy/LucyVectorSpliceTrimmerBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trim/lucy/LucyQualityTrimmerBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/trim/lucy/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/maq/bfq/BfqFileParser.java">
+<error line="271" severity="error" message="Class Callback should be declared as final." source="com.puppycrawl.tools.checkstyle.checks.design.FinalClassCheck"/>
+<error line="321" severity="error" message="Class BfqFileBasedParser should be declared as final." source="com.puppycrawl.tools.checkstyle.checks.design.FinalClassCheck"/>
+<error line="347" severity="error" message="Class BfqInputStreamParser should be declared as final." source="com.puppycrawl.tools.checkstyle.checks.design.FinalClassCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/maq/bfq/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/maq/bfq/BfqFileWriterBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/maq/bfq/BfqFileDataStoreBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/maq/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/maq/bfa/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/maq/bfa/BfaParser.java">
+<error line="138" column="5" severity="error" message="Cyclomatic Complexity is 14 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/maq/bfa/BfaWriterBuilder.java">
+<error line="161" column="9" severity="error" message="Cyclomatic Complexity is 13 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/orf/Orf.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+<error line="49" column="5" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/orf/OrfFinder.java">
+<error line="118" column="45" severity="error" message="Inner assignments should be avoided." source="com.puppycrawl.tools.checkstyle.checks.coding.InnerAssignmentCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/profile/MostFrequentTieBreakerRule.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/profile/ProfileWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/profile/DisplayCountStrategy.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/profile/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/profile/BaseCount.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/profile/SimpleProfileWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/profile/ProfileWriterBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/fasta/FastaUtil.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+<error line="97" column="5" severity="error" message="Cyclomatic Complexity is 15 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/fasta/TmpDirSortedFastaWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/fasta/AdaptedFastaDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/fasta/FastaIndex.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/fasta/aa/LargeProteinFastaFileDataStore.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/fasta/aa/UnCommentedProteinFastaRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/fasta/aa/DefaultProteinFastaDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/fasta/aa/IndexedProteinFastaFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/fasta/aa/CommentedProteinFastaRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/fasta/aa/LargeProteinFastaIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/fasta/FastaIndexRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/fasta/DefaultFastaIndex.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/fasta/InMemorySortedFastaWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/fasta/AbstractLargeFastaFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/fasta/LargeFastaIdIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/fasta/qual/LargeQualityFastaFileDataStore.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/fasta/qual/DefaultQualityFastaFileDataStoreBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/fasta/qual/IndexedQualityFastaFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/fasta/qual/QualitySequenceFastaDataStoreIteratorImpl.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/fasta/AbstractResuseableFastaRecordVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/fasta/nt/AdaptedNucleotideFastaDataStore.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/io/OpenAwareInputStream.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/io/LineParser.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/io/StreamUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/io/PositionlessLineParser.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/io/OutputStreamFactory.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/io/TextLineParser.java">
+<error line="129" column="5" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/io/MagicNumberInputStream.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/io/ByteBufferInputStream.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/io/ValueSizeStrategy.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/io/RandomAccessFileInputStream.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/seq/trace/sanger/chromat/ztr/data/Data.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/residue/AbstractResidueSequence.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/GlyphCodec.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/util/GrowableLongArray.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+<error line="396" column="5" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/util/GrowableByteArray.java">
+<error line="416" column="5" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/util/FIFOQueue.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/util/GrowableShortArray.java">
+<error line="402" column="5" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/util/Caches.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/util/Sneak.java">
+<error line="31" severity="error" message="&apos;if&apos; construct must use &apos;{}&apos;s." source="com.puppycrawl.tools.checkstyle.checks.blocks.NeedBracesCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/util/GrowableBitArray.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/util/Validator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/util/AbstractFOQueue.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/util/GrowableCharArray.java">
+<error line="402" column="5" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/util/iter/PushBackIterator.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/util/iter/AbstractBlockingStreamingIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/util/iter/MergedSortedRecordIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/util/iter/PrimitiveArrayIterators.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/util/ComparableComparator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/util/BoundedPriorityQueue.java">
+<error line="40" severity="error" message="Class BoundedPriorityQueue should be declared as final." source="com.puppycrawl.tools.checkstyle.checks.design.FinalClassCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/util/ValidationException.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/util/GrowableIntArray.java">
+<error line="380" column="5" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/util/RunLength.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/util/JillionUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/util/LIFOQueue.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/util/ArrayUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/EncodedSequence.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/datastore/DataStoreIterator.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/datastore/AbstractDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/datastore/DataStoreStreamingIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/core/datastore/AbstractMapBackedDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/ResourceHelper.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/ztr/chunk/Chunk.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/ztr/chunk/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/ztr/chunk/ChunkType.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/ztr/chunk/ChunkException.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/ztr/ZtrChromatogramWriter.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/ztr/DefaultZTRChromatogramWriterBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/ztr/data/DeltaEncodedData.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/ztr/data/RawData.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/ztr/data/ZLibData.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/ztr/data/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/ztr/data/ShrinkToEightBitData.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/ztr/data/FollowData.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/ztr/data/DataHeader.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/ztr/data/DeltaStrategy.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/ztr/data/DataFactory.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/ztr/data/RunLengthEncodedData.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/ztr/ZTRChromatogramImpl.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/ztr/IOLibLikeZtrChromatogramWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/ztr/ZTRUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/BasicChromatogramBuilder.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/abi/AbiUtil.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/abi/tag/DefaultAsciiTaggedDataRecord.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/abi/tag/rate/DefaultScanRate.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/abi/tag/rate/ScanRateUtils.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/abi/tag/rate/DefaultScanRateTaggedDataType.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/abi/tag/DefaultUserDefinedTaggedDataRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/abi/tag/DefaultPascalStringTaggedDataRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/abi/tag/TaggedDataRecordBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/abi/tag/DefaultIntegerArrayTaggedDataRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/abi/tag/DefaultTimeTaggedDataRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/abi/tag/DefaultTaggedDataRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/abi/tag/DefaultDateTaggedDataRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/abi/tag/AbstractTaggedDataRecord.java">
+<error line="133" column="5" severity="error" message="Cyclomatic Complexity is 12 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/abi/tag/DefaultFloatTaggedDataRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/abi/tag/DefaultShortArrayTaggedDataRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/BasicChromatogram.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/DefaultChannelGroup.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/section/SectionEncoder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/section/Version3SampleSectionCodec.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/section/Version2SampleSectionCodec.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/section/CommentSectionCodec.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/section/PrivateDataCodec.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/section/AbstractBasesSectionCodec.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/section/SectionDecoder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/section/EncodedSection.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/section/Section.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/section/DefaultSectionCodecFactory.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/section/SectionCodec.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/section/SectionDecoderException.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/section/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/section/Version3BasesSectionCodec.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/section/SectionCodecFactory.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/section/NullSectionCodec.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/section/AbstractSampleSectionCodec.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/section/Version2BasesSectionCodec.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/SCFCodec.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/SCFCodecs.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/PrivateDataImpl.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/ScfChromatogramImpl.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/SCFUtils.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/header/SCFHeaderDecoder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/header/SCFHeaderDecoderException.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/header/DefaultSCFHeader.java">
+<error line="217" column="5" severity="error" message="Cyclomatic Complexity is 12 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/header/SCFHeader.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/header/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/header/SCFHeaderCodec.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/header/DefaultSCFHeaderCodec.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/header/pos/PositionStrategy.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/header/pos/BytePositionStrategy.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/header/pos/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/header/pos/PositionStrategyFactory.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/header/pos/ShortPositionStrategy.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/scf/header/SCFHeaderEncoder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/ChromatogramUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/chromat/DefaultChannel.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/fastq/ParsedQualitySequence.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/fastq/ParsedFastqRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/trace/fastq/CommentedParsedFastqRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/align/SequenceAlignmentBuilder.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/align/ProteinSequenceAlignmentBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/align/AbstractSequenceAlignmentBuilder.java">
+<error line="330" column="9" severity="error" message="Cyclomatic Complexity is 20 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/align/NucleotideSequenceAlignmentBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/assembly/util/CompactedSliceMap.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/assembly/util/ConsensusCompactedSlice.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/assembly/util/CompactedSliceElement.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/assembly/util/NoConsensusCompactedSlice.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/assembly/DefaultContig.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/assembly/DefaultAssembledRead.java">
+<error line="111" column="5" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/sam/SamUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/sam/IndexerCallback.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/sam/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/sam/index/BinBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/sam/index/ReferenceIndexBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/sam/index/IndexUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/sam/index/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/sam/index/BaiRefIndex.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/sam/index/BamIndexer.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/internal/sam/index/BaiBin.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/AssembledRead.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ContigDataStoreTransfomationService.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ScaffoldBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ScaffoldDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/AssemblyTransformer.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ContigBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/AbstractAssemblyTransformer.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/AssembledReadBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/DefaultScaffold.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/Scaffold.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/transform/ConsedTransformationService.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+<error line="48" severity="error" message="Class ConsedTransformationService should be declared as final." source="com.puppycrawl.tools.checkstyle.checks.design.FinalClassCheck"/>
+<error line="74" column="5" severity="error" message="Method length is 158 lines (max allowed is 150)." source="com.puppycrawl.tools.checkstyle.checks.sizes.MethodLengthCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ConsedUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/IndividualPhdConsedTransformerHelper.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AceContig.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AceFileWriterBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/MultipleAceContigReadVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/DefaultAceAssembledRead.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AceParser.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AceFileUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AbstractDefaultPlacedAceTag.java">
+<error line="86" column="5" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/IndexedAceFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AceConsensusTagVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/ConsedConsensusQualityComputer.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AceContigBuilder.java">
+<error line="676" column="5" severity="error" message="Cyclomatic Complexity is 13 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+<error line="977" column="9" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/HighLowAceContigPhdDatastore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AbstractAceFileVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AbstractAceContigVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AceAssembledReadBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/DefaultAceBaseSegment.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AceContigVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AlignedReadInfo.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/MultipleAceContigVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/BaseSegmentUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/HighLowPhdAceContigVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/LargeAceFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AceContigVisitorAdapter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/PhdInfo.java">
+<error line="118" column="5" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AbstractAceConsensusTagVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/ConsensusAceTagBuilder.java">
+<error line="117" column="5" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AceFileWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/MultiAceFileVisitorAdapter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AceFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AbstractAceFileWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AbstractDefaultAceTag.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AceFileVisitorCallback.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/DefaultAceFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AbstractAceContigBuilderVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AbstractAceContigReadVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/WholeAssemblyAceTag.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/ConsensusAceTag.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AceBaseSegment.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AceFileParser.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AceAssembledRead.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AceFileDataStoreBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AceTag.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/ReadAceTag.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AceAssembledReadAdapter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AceContigReadVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/RangeableAceTag.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ace/AceFileVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/AceAssemblyTransformerPostProcessor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/ConsedAssemblyTransformerBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/nav/ReadNavigationElement.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/nav/ConsensusNavigationElement.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/nav/AbstractNavigationElement.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/nav/ConsedNavigationWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/nav/ConsedNavigationParser.java">
+<error line="67" column="5" severity="error" message="Cyclomatic Complexity is 15 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/nav/NavigationElement.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/nav/ConsedNavigationVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/PhdDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/PhdBallIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/PhdBallVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/ReadPhdFileFilter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/PhdBallVisitorCallback.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/PhdWholeReadItem.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/PhdDirDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/PhdBallWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/AbstractPhdBallVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/PhdWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/SinglePhdWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/PhdBallIdIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/PhdFileDataStoreBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/PhdVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/TraceDirPhdDataStoreBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/PhdWholeReadItemVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/PhdBallFileParser.java">
+<error line="102" column="5" severity="error" message="Cyclomatic Complexity is 12 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+<error line="265" column="5" severity="error" message="Cyclomatic Complexity is 13 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/DefaultPhdReadTag.java">
+<error line="100" column="5" severity="error" message="Cyclomatic Complexity is 22 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/LargePhdballDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/ArtificialPhd.java">
+<error line="262" column="5" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/PhdBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/DefaultPhdDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/DefaultPhdWholeReadItem.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/PhdReadTag.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/PhdUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/Phd.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/PhdReadTagVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/IndexedPhdDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/DefaultPhd.java">
+<error line="112" column="5" severity="error" message="Cyclomatic Complexity is 13 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/AbstractPhdVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/AbstractPhdReadTagVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/phd/PhdBallParser.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/PhdBallConsedTransformerHelper.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/consed/PhdConsedTransformerHelper.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ReadInfo.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ContigDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/Contig.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/DefaultPlacedContig.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/AssemblyTransformationService.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ScaffoldDataStoreBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/transform/CasFileTransformationService.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/transform/ChromatDirFastaReadDataAdaptedIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/transform/FlowgramReadDataAdaptedIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/transform/FastaReadDataAdaptedIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/transform/ReadData.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/transform/FastqReadDatadAdaptedIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/AbstractCasFileVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/AbstractAlignedReadCasVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/CasUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/CasAlignmentRegionType.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/CasReferenceDescription.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/DefaultCasReferenceDescription.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/CasFileParser.java">
+<error line="166" column="5" severity="error" message="Cyclomatic Complexity is 13 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/CasGappedReferenceDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/CasMatch.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/CasMatchVisitorAdapter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/AbstractReadCasVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/CasAlignmentType.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/DefaultCasAlignment.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/DefaultCasAlignmentRegion.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/consed/Cas2Consed.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/consed/QualFastaConsedPhdAdaptedIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/consed/PhdReadRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/consed/FlowgramConsedPhdAdaptedIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/consed/FastqConsedPhdAdaptedIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/consed/FastaConsedPhdAdaptedIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/consed/ChromatDirFastaConsedPhdAdaptedIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/DefaultCasScoringScheme.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/DefaultCasColorSpaceAlignmentScore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/CasParser.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/read/CasPlacedRead.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/read/DefaultCasPlacedRead.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/CasAlignmentRegion.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/CasFileInfo.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/CasFileInfoValidator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/ReAlignReads.java">
+<error line="56" column="5" severity="error" message="Cyclomatic Complexity is 16 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/CasFileVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/CasAlignmentScore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/CasMatchVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/CasColorSpaceAlignmentScore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/DefaultCasMatch.java">
+<error line="135" column="5" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/CasGappedReferenceDataStoreBuilderVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/CasScoringScheme.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/CasValidator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/DefaultCasAlignmentScore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/DefaultCasFileInfo.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/CasScoreType.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/CasFileVisitorAdapter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/ReadFileType.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/CasAlignment.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/PhaseChangeCasAlignmentRegion.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/CasAlignmentScoreBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/clc/cas/CasContigPair.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/slice/CodonSliceMapBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/slice/VariableWidthSliceElement.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/slice/VariableWidthNucleotideSliceMap.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/slice/SingleNucleotideSliceMap.java">
+<error line="28" severity="error" message="Class SingleNucleotideSliceMap should be declared as final." source="com.puppycrawl.tools.checkstyle.checks.design.FinalClassCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/slice/VariableWidthSliceMap.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/slice/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/slice/SingleNucleotideSliceElement.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/slice/VariableWidthNucleotideSlice.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/slice/VariableWidthNucleotideSliceElement.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/slice/SingleNucleotideSlice.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/slice/VariableWidthSlice.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/SliceElement.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/CoverageMapStatsCollector.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/CoverageMapCollectors.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/CoverageMapBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/SliceBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/AbstractCoverageMapBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/ContigCoverageMapBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/CoverageMapStats.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/DefaultCoverageRegion.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/SliceMapBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/CoverageMapFactory.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/CoverageRegionBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/consensus/ConsensusCombiner.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/consensus/DefaultConsensusResult.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/consensus/AcgtnConsensusCaller.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/consensus/ConsensusCollectors.java">
+<error line="167" column="20" severity="error" message="&apos;abstract&apos; modifier out of order with the JLS suggestions." source="com.puppycrawl.tools.checkstyle.checks.modifier.ModifierOrderCheck"/>
+<error line="253" column="20" severity="error" message="&apos;abstract&apos; modifier out of order with the JLS suggestions." source="com.puppycrawl.tools.checkstyle.checks.modifier.ModifierOrderCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/consensus/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/consensus/ConicConsensusCaller.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/consensus/TigrAnnotationConsensusCaller.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/consensus/ConsensusUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/consensus/AbstractChurchillWatermanConsensusCaller.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/consensus/NextGenReferenceConsensusRecaller.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/consensus/ConsensusProbabilities.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/consensus/ConsensusResult.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/consensus/ChurchillWatermanConsensusCaller.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/consensus/ConsensusCaller.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/consensus/MostFrequentBasecallConsensusCaller.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/consensus/NoAmbiguityConsensusCaller.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/ReadFilter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/CoverageStatsCombiner.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/CoverageRegion.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/GapQualityValueStrategy.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/Slice.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/SliceMap.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/util/CoverageMap.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/DefaultScaffoldDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/AbstractContigBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/PlacedContig.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/GappedReferenceBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/tasm/TasmFileWriterBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/tasm/TasmFileParser.java">
+<error line="336" column="9" severity="error" message="Cyclomatic Complexity is 14 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/tasm/TasmContigVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/tasm/TasmReadAttribute.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/tasm/TasmContig.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/tasm/TasmAssembledReadAdapter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/tasm/TasmContigReadVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/tasm/TasmContigBuilder.java">
+<error line="544" column="9" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+<error line="572" column="9" severity="error" message="Cyclomatic Complexity is 34 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/tasm/TasmContigAttribute.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/tasm/TasmContigFileDataStoreBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/tasm/LargeTasmContigFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/tasm/TasmAssembledRead.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/tasm/TasmParser.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/tasm/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/tasm/TasmContigFileContigIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/tasm/DefaultTasmAssembledRead.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/tasm/TasmFileWriterUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/tasm/TasmVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/tasm/TasmUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/tasm/DefaultTasmFileContigDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/tasm/TasmWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/tasm/AbstractTasmContigBuilderVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/tasm/TasmContigDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/tasm/IndexedTasmFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/tasm/TasmAssembledReadBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/contig/TigrContigFileVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/contig/IndexedTigrContigFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/contig/TigrContigParser.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/contig/CtgContigDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/contig/LargeTigrContigFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/contig/TigrContigDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/contig/TigrContigBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/contig/TigrContigFileContigIterator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/contig/TigrContigReadVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/contig/TigrContigRead.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/contig/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/contig/AbstractTigrContigBuilderVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/contig/TigrContigFileParser.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/contig/DefaultTigrContigFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/contig/TigrContigReadBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/contig/TigrContigFileDataStoreBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/contig/TigrContig.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/contig/TigrContigFileWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/tigr/contig/TigrContigVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/frg/DefaultFragmentDataStore.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/frg/FragmentDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/frg/FragmentUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/frg/Distance.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/frg/DefaultFragment.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/frg/AbstractFragmentDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/frg/Frg2Parser.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/frg/Frg2Visitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/frg/DefaultLibrary.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/frg/Fragment.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/frg/MateOrientation.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/frg/IndexedFragmentDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/frg/Library.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/asm/AsmContig.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/asm/AsmAssembledReadBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/asm/AsmParser.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/asm/AsmVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/asm/DefaultAsmContigDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/asm/AsmFileContigDataStoreBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/asm/DefaultAsmContig.java">
+<error line="129" column="5" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/asm/AsmContigDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/asm/AsmContigVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/asm/AsmFileUnitigDataStoreBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/asm/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/asm/AsmFileParser.java">
+<error line="439" column="13" severity="error" message="Cyclomatic Complexity is 14 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+<error line="1456" column="9" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/asm/AsmUnitigDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/asm/AsmUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/asm/AsmAssembledRead.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/asm/AsmUnitig.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/asm/AsmUnitigBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/asm/AbstractAsmContigBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/asm/IndexedAsmFileUnitigDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/asm/AsmContigBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/asm/DefaultAsmAssembledRead.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/asm/AsmUnitigVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/asm/DefaultAsmUnitigDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/asm/DefaultAsmUnitig.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/asm/AbstractAsmUnitigBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/asm/IndexedAsmFileContigDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/ca/asm/AsmScaffoldVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/assembly/AssemblyUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/SamFileWriterBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/BgzfOutputStream.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/transform/PaddedSamTransformationService.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/transform/SamGappedReferenceBuilderVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/transform/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/transform/SamTransformationService.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/BamFileParser.java">
+<error line="146" column="20" severity="error" message="Name &apos;_parse&apos; must match pattern &apos;^[a-z][a-zA-Z0-9]*$&apos;." source="com.puppycrawl.tools.checkstyle.checks.naming.MethodNameCheck"/>
+<error line="150" column="20" severity="error" message="Name &apos;_parse&apos; must match pattern &apos;^[a-z][a-zA-Z0-9]*$&apos;." source="com.puppycrawl.tools.checkstyle.checks.naming.MethodNameCheck"/>
+<error line="383" column="5" severity="error" message="Cyclomatic Complexity is 12 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/AbstractSamVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/IndexedBamFileParser.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/ReSortSamFileWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/DefaultSamFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/SamRecordImpl.java">
+<error line="220" column="5" severity="error" message="Cyclomatic Complexity is 32 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/SamVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/SamRecordFlags.java">
+<error line="23" severity="error" message="Class SamRecordFlags should be declared as final." source="com.puppycrawl.tools.checkstyle.checks.design.FinalClassCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/SamParser.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/BgzfInputStream.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/SamFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/NullSamAttributeValidator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/cigar/Cigar.java">
+<error line="186" column="5" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+<error line="231" column="5" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+<error line="278" column="5" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+<error line="323" column="5" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+<error line="368" column="5" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+<error line="413" column="5" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+<error line="628" column="9" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+<error line="800" column="5" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/cigar/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/cigar/CigarOperation.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/cigar/CigarElement.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/QuerySortedSamFileDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/Encoding.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/PresortedSamFileWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/attribute/SamAttribute.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/attribute/SamAttributeKeyFactory.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/attribute/InvalidAttributeException.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/attribute/ReservedSamAttributeKeys.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/attribute/NoDuplicateAttributeValidator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/attribute/SamAttributeType.java">
+<error line="213" column="9" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+<error line="955" column="5" severity="error" message="Cyclomatic Complexity is 61 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/attribute/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/attribute/SamAttributeKey.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/attribute/SamAttributeValidator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/attribute/InvalidValueTypeException.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/attribute/ChainedSamAttributeValidatorBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/attribute/ReservedAttributeValidator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/PresortedBamFileWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/AbstractSamFileParser.java">
+<error line="68" column="5" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+<error line="161" column="5" severity="error" message="Cyclomatic Complexity is 13 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/SamAttributed.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/index/BamIndex.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/index/Chunk.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/index/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/index/Bin.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/index/BamIndexFileWriterBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/index/ReferenceIndex.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/SamRecordBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/SamFileDataStoreBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/SortOrder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/SamRecordFlag.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/SamParserFactory.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/SamWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/SamFileParser.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/SamRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/VirtualFileOffset.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/SamValidationException.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/header/SamHeader.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/header/SamReferenceSequence.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/header/SamHeaderTagKey.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/header/SamProgram.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/header/SamHeaderBuilder.java">
+<error line="347" column="9" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/header/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/header/SamReferenceSequenceBuilder.java">
+<error line="273" column="13" severity="error" message="Cyclomatic Complexity is 18 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/header/SamReadGroupBuilder.java">
+<error line="564" column="9" severity="error" message="Cyclomatic Complexity is 12 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+<error line="602" column="13" severity="error" message="Cyclomatic Complexity is 36 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/header/SamProgramBuilder.java">
+<error line="337" column="13" severity="error" message="Cyclomatic Complexity is 22 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/header/SamHeaderTag.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/header/SamReadGroup.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/sam/header/SamVersion.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/trace/archive2/DefaultTraceArchiveRecord.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/trace/archive2/TraceArchiveInfo.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/trace/archive2/TraceArchiveWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/trace/archive2/DefaultTraceArchiveInfo.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/trace/archive2/TraceArchiveRecord.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/trace/archive2/TraceArchiveRecordBuilder.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/trace/archive2/TraceInfoField.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/trace/archive2/XmlTraceArchiveInfoFactory.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/trace/archive2/TraceInfoWriterUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/primer/PrimerUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/primer/OptimalMeltingTemperatureEstimator.java">
+<error line="115" column="20" severity="error" message="&apos;64.9F&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="115" column="35" severity="error" message="&apos;16.4D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="158" column="38" severity="error" message="&apos;13.4&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="164" column="42" severity="error" message="&apos;167.7D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="166" column="38" severity="error" message="&apos;201.3D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="199" column="38" severity="error" message="&apos;14D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="213" column="28" severity="error" message="&apos;23D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="220" column="28" severity="error" message="&apos;23D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="288" column="38" severity="error" message="&apos;14D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="372" column="38" severity="error" message="&apos;14D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="414" column="38" severity="error" message="&apos;90D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="414" column="43" severity="error" message="&apos;-6D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="419" column="38" severity="error" message="&apos;14D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/primer/SaltCorrectionStrategy.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/primer/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/primer/PrimerDetector.java">
+<error line="99" column="5" severity="error" message="Cyclomatic Complexity is 23 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+<error line="197" column="5" severity="error" message="Cyclomatic Complexity is 14 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/ncbi/submit/assemblyArchive/AssemblyArchiveWriterBuilder.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/ncbi/submit/assemblyArchive/AssemblyArchiveMetaData.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/ncbi/submit/assemblyArchive/AssemblyArchiveWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/ncbi/submit/assemblyArchive/AssemblyArchiveConformation.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/ncbi/submit/assemblyArchive/AssemblyArchiveType.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/align/AlnGroupVisitor.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/align/AlnParser.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/align/AlnVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/align/AlnFileParser.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/align/AlnWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/align/AlnUtil.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/align/blast/Hsp.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/align/blast/BlastHitImpl.java">
+<error line="115" column="5" severity="error" message="Cyclomatic Complexity is 28 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/align/blast/TabularBlastParser.java">
+<error line="62" column="5" severity="error" message="Cyclomatic Complexity is 11 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/align/blast/BlastVisitor.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/align/blast/btab/BtabWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/align/blast/btab/BtabWriterBuilder.java">
+<error line="217" column="105" severity="error" message="&apos;100D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+<error line="219" column="103" severity="error" message="&apos;100D&apos; is a magic number." source="com.puppycrawl.tools.checkstyle.checks.coding.MagicNumberCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/align/blast/btab/package-info.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/align/blast/HspBuilder.java">
+<error line="619" column="9" severity="error" message="Cyclomatic Complexity is 32 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/align/blast/BlastParser.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/align/blast/BlastHit.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/align/blast/XmlFileBlastParser.java">
+<error line="245" column="9" severity="error" message="Cyclomatic Complexity is 39 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/align/GappedNucleotideAlignmentDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/align/AlnFileWriter.java">
+<error line="144" column="5" severity="error" message="Cyclomatic Complexity is 12 (max allowed is 10)." source="com.puppycrawl.tools.checkstyle.checks.metrics.CyclomaticComplexityCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/plate/PlateFormat.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/plate/PlatePopulator.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/plate/Well.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/assembly/agp/ScaffoldDataStoreBuilderAgpVisitor.java">
+<error line="0" severity="error" message="Missing package-info.java file." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/assembly/agp/AgpWriter.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/assembly/agp/AgpParser.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/assembly/agp/DefaultAgpScaffoldDataStore.java">
+</file>
+<file name="/home/snettem/git/Jillion/src/org/jcvi/jillion/experimental/assembly/agp/AgpFileVisitor.java">
+</file>
+</checkstyle>

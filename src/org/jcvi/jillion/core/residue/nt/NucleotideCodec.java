@@ -20,11 +20,13 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.nt;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.Range;
@@ -216,5 +218,70 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
                 : Optional.empty());
        
     }
+    
+    
+    default Stream<Range> matches(byte[] encodedData, String regex,boolean nested){
+      //override if something better!
+        return matches(encodedData, Pattern.compile(regex),nested);
+    }
+        
+    
+    default Stream<Range> matches(byte[] encodedData, Pattern pattern,boolean nested){
+        //override if something better!
+        Matcher matcher = pattern.matcher(toString(encodedData));
+        List<Range> nestedOutput =new ArrayList<Range>();
+        List<Range> initOutputList =  StreamUtil.newGeneratedStream(() -> matcher.find()
+                ? Optional.of(Range.of(matcher.start(), matcher.end() - 1))
+                : Optional.empty()).collect(Collectors.toList());
+        
+        if(nested && initOutputList != null && initOutputList.size()>0){
+  
+        	for(int i=0;i<initOutputList.size();i++){
+        		Range currentRange = initOutputList.get(i);
+        		Range nextRange = null;
+        		long end=currentRange.getEnd();
+        		if(i!=initOutputList.size()-1){
+            		nextRange = initOutputList.get(i+1);
+            		}
+        		if(nextRange!=null){
+        			end = nextRange.getEnd()-1;}
+        		Range subRange = Range.of(currentRange.getBegin()+1,end);
+        		nestedOutput.addAll(matches(encodedData,pattern,subRange,nested).collect(Collectors.toList()));
+        	}
+          }
+        nestedOutput.addAll(initOutputList);
+        return nestedOutput.stream();
+       
+    }
+    
+    default Stream<Range> matches(byte[] encodedData, Pattern pattern, Range range,boolean nested){
+        //override if something better!
+        Matcher matcher = pattern.matcher(toString(encodedData, range));
+        List<Range> nestedOutput =new ArrayList<Range>();
+        List<Range> initOutputList = StreamUtil.newGeneratedStream(() -> matcher.find()
+                ? Optional.of(new Range.Builder(matcher.start(), matcher.end() - 1).shift(range.getBegin()).build())
+                : Optional.empty()).collect(Collectors.toList());
+        
+      
+        if(nested && initOutputList.size() > 0){
+        	
+        	for(int i=0;i<initOutputList.size();i++){
+        		Range currentRange = initOutputList.get(i);
+        		Range nextRange = null;
+        		long end=currentRange.getEnd();
+        		if(i!=initOutputList.size()-1){
+            		nextRange = initOutputList.get(i+1);
+            		}
+        		if(nextRange!=null){
+        			end = nextRange.getEnd()-1;}
+        		Range subRange = Range.of(currentRange.getBegin()+1,end);
+        		nestedOutput.addAll(matches(encodedData,pattern,subRange,nested).collect(Collectors.toList()));
+        	}
+          
+         } 
+        nestedOutput.addAll(initOutputList);
+        return nestedOutput.stream();
+    }
+
     
 }

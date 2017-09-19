@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>UncommentedQualityFastaRecord.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.fasta.qual</a> &gt; <span class="el_source">UncommentedQualityFastaRecord.java</span></div><h1>UncommentedQualityFastaRecord.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.fasta.qual;
+
+import org.jcvi.jillion.core.qual.QualitySequence;
+
+class UncommentedQualityFastaRecord implements QualityFastaRecord{
+	private final String id;
+	private final QualitySequence qualities;
+
+<span class="fc" id="L29">    public UncommentedQualityFastaRecord(String id, QualitySequence qualities){</span>
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">        if(id==null){</span>
+<span class="nc" id="L31">        	throw new NullPointerException(&quot;id can not be null&quot;);</span>
+        }
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">        if(qualities==null){</span>
+<span class="nc" id="L34">        	throw new NullPointerException(&quot;qualities can not be null&quot;);</span>
+        }
+<span class="fc" id="L36">    	this.id=id;</span>
+<span class="fc" id="L37">        this.qualities = qualities;</span>
+        
+<span class="fc" id="L39">    }</span>
+    
+    
+    @Override
+	public String getId() {
+<span class="fc" id="L44">		return id;</span>
+	}
+
+    /**
+     * Defaults To null, If a comment
+     * actually exists, please
+     * override this method
+     * to return the comment String.
+     * {@inheritDoc}
+     */
+	@Override
+	public String getComment() {
+<span class="fc" id="L56">		return null;</span>
+	}
+
+
+    
+    @Override
+	public String toString() {
+<span class="nc" id="L63">		return &quot;QualitySequenceFastaRecord [id=&quot; + getId()</span>
+<span class="nc" id="L64">				+ &quot;, comment=&quot; + getComment() + &quot;, sequence =&quot;</span>
+<span class="nc" id="L65">				+ getSequence() + &quot;]&quot;;</span>
+	}
+    
+    
+
+    @Override
+    public QualitySequence getSequence() {
+<span class="fc" id="L72">        return qualities;</span>
+    }
+	@Override
+	public int hashCode() {
+<span class="fc" id="L76">		final int prime = 31;</span>
+<span class="fc" id="L77">		int result = 1;</span>
+<span class="fc" id="L78">		result = prime * result + id.hashCode();</span>
+<span class="fc" id="L79">		result = prime * result</span>
+<span class="fc" id="L80">				+ qualities.hashCode();</span>
+<span class="fc" id="L81">		return result;</span>
+	}
+	@Override
+	public boolean equals(Object obj) {
+<span class="fc bfc" id="L85" title="All 2 branches covered.">		if (this == obj) {</span>
+<span class="fc" id="L86">			return true;</span>
+		}
+<span class="fc bfc" id="L88" title="All 2 branches covered.">		if (obj == null) {</span>
+<span class="fc" id="L89">			return false;</span>
+		}
+<span class="fc bfc" id="L91" title="All 2 branches covered.">		if (!(obj instanceof QualityFastaRecord)) {</span>
+<span class="fc" id="L92">			return false;</span>
+		}
+<span class="fc" id="L94">		QualityFastaRecord other = (QualityFastaRecord) obj;</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">		if (!id.equals(other.getId())) {</span>
+<span class="fc" id="L96">			return false;</span>
+		}
+<span class="fc bfc" id="L98" title="All 2 branches covered.">		if (!qualities.equals(other.getSequence())) {</span>
+<span class="fc" id="L99">			return false;</span>
+		}
+		
+<span class="fc" id="L102">		return true;</span>
+	}
+    
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

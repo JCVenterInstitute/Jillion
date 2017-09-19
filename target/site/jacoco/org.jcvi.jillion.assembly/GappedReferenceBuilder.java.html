@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>GappedReferenceBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly</a> &gt; <span class="el_source">GappedReferenceBuilder.java</span></div><h1>GappedReferenceBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly;
+
+
+import java.util.Arrays;
+
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+/**
+ * {@code GappedReferenceBuilder} builds 
+ * a GAPPED reference {@link NucleotideSequence}
+ * from an initial ungapped reference sequence and 
+ * lots of insertions to various offsets made by 
+ * aligned reads.
+ * 
+ * If many reads have insertions at the same ungapped offset,
+ * the the largest insertion is used. 
+ * @author dkatzel
+ *
+ */
+public final class GappedReferenceBuilder {
+
+	private final NucleotideSequence ungappedReference;
+	private final Insertion[] insertions;
+	
+	/**
+	 * Create a new instance using the given initial
+	 * ungapped reference.
+	 * @param ungappedReference the ungapped reference sequence
+	 * to use; can not be null or have any gaps or have a length
+	 * longer than {@link Integer#MAX_VALUE}
+	 * @throws NullPointerException if ungappedReference is null.
+	 * @throws IllegalArgumentException if ungappedReference is gapped or if
+	 * the length &amp;gt; Integer.MAX_VALUE
+	 */
+<span class="fc" id="L55">	public GappedReferenceBuilder(NucleotideSequence ungappedReference){</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">		if(ungappedReference ==null){</span>
+<span class="nc" id="L57">			throw new NullPointerException(&quot;ungapped reference can not be null&quot;);</span>
+		}
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">		if(ungappedReference.getNumberOfGaps() &gt;0){</span>
+<span class="nc" id="L60">			throw new IllegalArgumentException(&quot;reference can not have gaps&quot;);</span>
+		}
+<span class="fc" id="L62">		long length = ungappedReference.getLength();</span>
+<span class="pc bpc" id="L63" title="1 of 2 branches missed.">		if(length &gt; Integer.MAX_VALUE){</span>
+<span class="nc" id="L64">			throw new IllegalArgumentException(&quot;reference too big &gt; int MAX&quot;);</span>
+		}
+<span class="fc" id="L66">		this.ungappedReference = ungappedReference;</span>
+<span class="fc" id="L67">		insertions = new Insertion[(int)length];</span>
+<span class="fc" id="L68">	}</span>
+	/**
+	 * Add an insertion at the given ungapped offset
+	 * of the given insertion size.
+	 * @param offset the ungapped offset into the reference.
+	 * @param insertionSize the insertion size this read has against the reference.
+	 * @return this
+	 * @throws IllegalArgumentException if insertionSize is negative.
+	 */
+	public GappedReferenceBuilder addReadInsertion(int offset, int insertionSize){
+<span class="fc bfc" id="L78" title="All 2 branches covered.">		if(insertions[offset] ==null){</span>
+<span class="fc" id="L79">        	insertions[offset] = new Insertion(insertionSize);</span>
+        }else{
+<span class="fc" id="L81">        	insertions[offset].updateSize(insertionSize);</span>
+        }
+<span class="fc" id="L83">		return this;</span>
+	}
+	
+	public NucleotideSequence build(){
+		//compute total number of gaps
+		//first so we don't have to keep resizing builder
+<span class="fc" id="L89">		int numberOfGaps = computeTotalNumberOfGaps();		</span>
+<span class="fc" id="L90">		NucleotideSequenceBuilder gappedSequenceBuilder = new NucleotideSequenceBuilder(numberOfGaps+ insertions.length);</span>
+<span class="fc" id="L91">		gappedSequenceBuilder.append(ungappedReference);</span>
+		//iterates in reverse to keep offsets in sync
+<span class="fc bfc" id="L93" title="All 2 branches covered.">		for(int i= insertions.length-1; i&gt;=0; i--){</span>
+<span class="fc" id="L94">    		Insertion insertion = insertions[i];</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">			if(insertion !=null){</span>
+<span class="fc" id="L96">    			gappedSequenceBuilder.insert(i, createGapStringOf(insertion.getSize()));</span>
+    		}    		
+    	}
+<span class="fc" id="L99">		return gappedSequenceBuilder.build();</span>
+	}
+
+	private int computeTotalNumberOfGaps() {
+<span class="fc" id="L103">		int numberOfGaps = 0;</span>
+<span class="fc bfc" id="L104" title="All 2 branches covered.">		for(int i=0; i&lt;insertions.length; i++){</span>
+<span class="fc" id="L105">			Insertion insertion = insertions[i];</span>
+<span class="fc bfc" id="L106" title="All 2 branches covered.">			if(insertion !=null){</span>
+<span class="fc" id="L107">				numberOfGaps += insertion.getSize();</span>
+			}
+		}
+<span class="fc" id="L110">		return numberOfGaps;</span>
+	}
+	
+	
+	private char[] createGapStringOf(int maxGapSize) {
+<span class="fc" id="L115">		char[] gaps = new char[maxGapSize];</span>
+<span class="fc" id="L116">		Arrays.fill(gaps, '-');</span>
+<span class="fc" id="L117">		return gaps;</span>
+	}
+
+
+	private static class Insertion{
+<span class="fc" id="L122">	        private int size=0;</span>
+	        
+<span class="fc" id="L124">	        public  Insertion(int initialSize){</span>
+<span class="pc bpc" id="L125" title="1 of 2 branches missed.">	        	if(initialSize&lt;0){</span>
+<span class="nc" id="L126">	        		throw new IllegalArgumentException(&quot;insertion size can not be negative : &quot; + initialSize);</span>
+	        	}
+<span class="fc" id="L128">	            this.size = initialSize;</span>
+<span class="fc" id="L129">	        }</span>
+	        public void updateSize(int newSize){
+<span class="fc bfc" id="L131" title="All 2 branches covered.">	            if(newSize &gt; size){</span>
+<span class="fc" id="L132">	                this.size = newSize;</span>
+	            }
+<span class="fc" id="L134">	        }</span>
+	        public int getSize(){
+<span class="fc" id="L136">	            return size;</span>
+	        }
+	    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

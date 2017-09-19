@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>GappedNucleotideAlignmentDataStore.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.experimental.align</a> &gt; <span class="el_source">GappedNucleotideAlignmentDataStore.java</span></div><h1>GappedNucleotideAlignmentDataStore.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.experimental.align;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
+import org.jcvi.jillion.core.util.Builder;
+
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public final class GappedNucleotideAlignmentDataStore {
+	 
+<span class="nc" id="L45">	private GappedNucleotideAlignmentDataStore(){</span>
+		//can not instantiate
+<span class="nc" id="L47">	}</span>
+    public static NucleotideSequenceDataStore createFromAlnFile(File alnFile) throws IOException{
+<span class="fc" id="L49">        return createFrom(AlnFileParser.create(alnFile));</span>
+
+    }
+    public static NucleotideSequenceDataStore createFrom(AlnParser parser) throws IOException{
+<span class="fc" id="L53">        GappedAlignmentDataStoreBuilder builder = new GappedAlignmentDataStoreBuilder();</span>
+<span class="fc" id="L54">        parser.parse(builder);</span>
+<span class="fc" id="L55">        return builder.build();</span>
+    }
+
+    
+<span class="fc" id="L59">    private static class GappedAlignmentDataStoreBuilder implements AlnVisitor,AlnGroupVisitor, Builder&lt;NucleotideSequenceDataStore&gt;{</span>
+<span class="fc" id="L60">        private final Map&lt;String, NucleotideSequenceBuilder&gt; builders = new LinkedHashMap&lt;String, NucleotideSequenceBuilder&gt;();</span>
+       
+        
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public NucleotideSequenceDataStore build() {
+<span class="fc" id="L68">            Map&lt;String, NucleotideSequence&gt; map = new LinkedHashMap&lt;String, NucleotideSequence&gt;(builders.size());</span>
+<span class="fc" id="L69">            Iterator&lt;Entry&lt;String, NucleotideSequenceBuilder&gt;&gt; entrySet = builders.entrySet().iterator();</span>
+            //all the sequences in an aln file should be stretched to the same length
+            //so we should be able to dramatically decrease memory usage by making
+            //all the reads reference sequences aligned to the first read
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">            if(entrySet.hasNext()){</span>
+<span class="fc" id="L74">            	Entry&lt;String, NucleotideSequenceBuilder&gt; firstEntry = entrySet.next();</span>
+            	//the 1st sequence will become our reference for all others
+<span class="fc" id="L76">            	NucleotideSequence firstSequence = firstEntry.getValue().build();</span>
+<span class="fc" id="L77">            	map.put(firstEntry.getKey(), firstSequence);</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">            	while(entrySet.hasNext()){</span>
+<span class="fc" id="L79">            		Entry&lt;String, NucleotideSequenceBuilder&gt; entry = entrySet.next();</span>
+<span class="fc" id="L80">            		NucleotideSequence seq = entry.getValue()</span>
+<span class="fc" id="L81">            									.setReferenceHint(firstSequence, 0)</span>
+<span class="fc" id="L82">            									.build();</span>
+<span class="fc" id="L83">            		map.put(entry.getKey(), seq);</span>
+<span class="fc" id="L84">            	}</span>
+<span class="fc" id="L85">	            builders.clear();</span>
+            }
+<span class="fc" id="L87">            return DataStore.of(map, NucleotideSequenceDataStore.class);</span>
+        }
+
+       
+
+       
+
+        @Override
+		public void visitEnd() {
+			// TODO Auto-generated method stub
+			
+<span class="fc" id="L98">		}</span>
+
+
+
+
+
+		@Override
+		public void halted() {
+			// TODO Auto-generated method stub
+			
+<span class="nc" id="L108">		}</span>
+
+
+
+
+
+		@Override
+		public AlnGroupVisitor visitGroup(Set&lt;String&gt; ids,
+				AlnVisitorCallback callback) {
+<span class="fc" id="L117">			return this;</span>
+		}
+
+
+
+
+
+		/**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitAlignedSegment(String id, String gappedAlignment) {
+<span class="fc bfc" id="L129" title="All 2 branches covered.">            if(!builders.containsKey(id)){</span>
+<span class="fc" id="L130">                builders.put(id, new NucleotideSequenceBuilder());</span>
+            }
+<span class="fc" id="L132">            builders.get(id).append(gappedAlignment);</span>
+            
+<span class="fc" id="L134">        }</span>
+
+        @Override
+		public void visitEndGroup() {
+			// TODO Auto-generated method stub
+			
+<span class="fc" id="L140">		}</span>
+
+
+
+
+
+		@Override
+		public void visitConservationInfo(
+				List&lt;ConservationInfo&gt; conservationInfos) {
+			// TODO Auto-generated method stub
+			
+<span class="fc" id="L151">		}</span>
+
+
+
+
+
+		@Override
+		public void visitHeader(String header) {
+			// TODO Auto-generated method stub
+			
+<span class="fc" id="L161">		}</span>
+
+
+        
+    }
+  
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

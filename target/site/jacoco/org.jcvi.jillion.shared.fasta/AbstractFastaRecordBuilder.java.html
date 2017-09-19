@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AbstractFastaRecordBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.shared.fasta</a> &gt; <span class="el_source">AbstractFastaRecordBuilder.java</span></div><h1>AbstractFastaRecordBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.shared.fasta;
+
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.fasta.FastaRecord;
+/**
+ * {@code AbstractFastaRecordBuilder} is an abstract
+ * class that handles all the boilerplate code for building
+ * a {@link FastaRecord}.
+ * @author dkatzel
+ *
+ * @param &lt;T&gt; The type of element in the sequence.
+ * @param &lt;S&gt; the type of {@link Sequence}
+ * @param &lt;F&gt; the type of {@link FastaRecord}
+ */
+public abstract class AbstractFastaRecordBuilder&lt;T, S extends Sequence&lt;T&gt;, F extends FastaRecord&lt;T, S&gt;, B extends AbstractFastaRecordBuilder&lt;T,S,F,B&gt;&gt; {
+
+	private final String id;
+	private final S sequence;
+<span class="fc" id="L39">	private String comment = null;</span>
+
+<span class="fc" id="L41">	public AbstractFastaRecordBuilder(String id, S sequence){</span>
+<span class="fc bfc" id="L42" title="All 2 branches covered.">		if(id ==null){</span>
+<span class="fc" id="L43">			throw new NullPointerException(&quot;id can not be null&quot;);</span>
+		}
+<span class="fc bfc" id="L45" title="All 2 branches covered.">		if(sequence ==null){</span>
+<span class="fc" id="L46">			throw new NullPointerException(&quot;sequence can not be null&quot;);</span>
+		}
+<span class="fc" id="L48">		this.id = id;</span>
+<span class="fc" id="L49">		this.sequence = sequence;</span>
+<span class="fc" id="L50">	}</span>
+	
+	protected abstract B getThis();
+
+	protected abstract B newBuilder(String id, S seq, String comment);
+	/**
+	 * Add an optional comment to this fasta record.
+	 * This will be the value returned by {@link FastaRecord#getComment()}.
+	 * Calling this method more than once will cause the last value to
+	 * overwrite the previous value.
+	 * @param comment the comment for this fasta record;
+	 * if this value is null, then there is no comment.
+	 * @return this.
+	 */
+	public B comment(String comment) {
+<span class="fc" id="L65">		this.comment = comment;</span>
+<span class="fc" id="L66">		return getThis();</span>
+	}
+	
+	/**
+         * Add an optional comment to this fasta record.
+         * This will be the value returned by {@link FastaRecord#getComment()}.
+         * Calling this method more than once will cause the last value to
+         * overwrite the previous value.
+         * @param comment the comment for this fasta record;
+         * if this value is null, then there is no comment.
+         * @return this.
+         */
+        public B withId(String id) {
+<span class="nc" id="L79">                return newBuilder(id, sequence, comment);</span>
+        }
+        
+        
+        public B withSequence(S sequence) {
+<span class="nc" id="L84">                return newBuilder(id, sequence, comment);</span>
+        }
+
+	/**
+	 * Create a new instance of {@link FastaRecord}
+	 * using the given parameters so far.
+	 * @return a new instance of {@link FastaRecord}.
+	 */
+	public F build() {
+<span class="fc" id="L93">		return createNewInstance(id, sequence, comment);</span>
+	}
+	/**
+	 * Create a new instance of {@link FastaRecord}
+	 * using the given parameters.
+	 * @param id the id of the fasta record; can not be null.
+	 * @param sequence the sequence of the fasta record; can not be null.
+	 * @param comment the optional comment
+	 * of the fasta record. May be null or contain white spaces. If the comment is null,
+	 * then there is no comment.
+	 * @return a new {@link FastaRecord} instance; can not be null.
+	 */
+	protected abstract F createNewInstance(String id, S sequence, String comment);
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

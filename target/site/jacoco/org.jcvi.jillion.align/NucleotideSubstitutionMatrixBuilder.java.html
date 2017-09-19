@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>NucleotideSubstitutionMatrixBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.align</a> &gt; <span class="el_source">NucleotideSubstitutionMatrixBuilder.java</span></div><h1>NucleotideSubstitutionMatrixBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.align;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.util.Builder;
+
+/**
+ * {@code NucleotideSubstitutionMatrixBuilder} is a Builder
+ * that will create new {@link NucleotideSubstitutionMatrix}
+ * instances using the given configuration.
+ * @author dkatzel
+ *
+ */
+public final class NucleotideSubstitutionMatrixBuilder  implements Builder&lt;NucleotideSubstitutionMatrix&gt;{
+		
+		
+		private final float[][] matrix;
+		/**
+		 * Create a new Builder instance where the matrix
+		 * is initialized so all substitution scores default 
+		 * to the given default score value.
+		 * All calls to the mutator methods will further modify 
+		 * the matrix.
+		 * @param defaultScore the substitution value a substitution score
+		 * should have if it does not get changed by other mutator
+		 * method calls in this Builder before {@link #build()}
+		 * is called.
+		 */
+<span class="fc" id="L51">		public NucleotideSubstitutionMatrixBuilder(float defaultScore){</span>
+<span class="fc" id="L52">			int size = Nucleotide.VALUES.size();</span>
+			
+<span class="fc" id="L54">			matrix = new float[size][size];</span>
+<span class="fc bfc" id="L55" title="All 2 branches covered.">			for(int i=0; i&lt;size; i++){</span>
+<span class="fc" id="L56">			    Arrays.fill(matrix[i], defaultScore);</span>
+			}
+<span class="fc" id="L58">		}</span>
+		/**
+		 * Sets the substitution score for all
+		 * exact matches (The diagonal in the matrix).
+		 * Any future calls to any mutator methods
+		 * may modify some or all of the scores set by this value.
+		 * @param matchScore the score of an exact match.
+		 * @return this
+		 */
+		public NucleotideSubstitutionMatrixBuilder setMatch(float matchScore){
+<span class="fc bfc" id="L68" title="All 2 branches covered.">			for(int i=0; i&lt; matrix.length; i++){</span>
+<span class="fc" id="L69">				matrix[i][i] = matchScore;</span>
+			}
+<span class="fc" id="L71">			return this;</span>
+		}
+		/**
+		 * Sets the substitution score for all 
+		 * possible combinations of non-ambiguous to ambiguous (The diagonal in the matrix).
+		 * Any future calls to any mutator methods
+		 * may modify some or all of the scores set by this value.
+		 * @param ambiguityScore the score of an ambiguity match.
+		 * @return this
+		 */
+		public NucleotideSubstitutionMatrixBuilder ambiguityScore(float ambiguityScore){
+<span class="fc" id="L82">			List&lt;Nucleotide&gt; values = Nucleotide.VALUES;</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">			for(int i=0; i&lt; values.size(); i++){</span>
+<span class="fc" id="L84">				Nucleotide n = values.get(i);</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">				if(n.isAmbiguity()){</span>
+<span class="fc" id="L86">					Arrays.fill(matrix[i], ambiguityScore);</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">					for(int row=0; row&lt;matrix[0].length; row++){</span>
+<span class="fc" id="L88">						matrix[row][i] = ambiguityScore;</span>
+					}
+				}
+				
+			}
+			
+<span class="fc" id="L94">			return this;</span>
+		}
+		/**
+		 * Explicitly set the substitution score 
+		 * of the given two {@link Nucleotide}s
+		 * to the given value.
+		 * @param a one {@link Nucleotide}; can not be null.
+		 * @param b the {@link Nucleotide}; can not be null
+		 * @param score the substitution score from a to b or b to a.
+		 * @return this
+		 * @throws NullPointerException if a or b are null.
+		 */
+		public NucleotideSubstitutionMatrixBuilder set(Nucleotide a, Nucleotide b, float score){
+<span class="nc" id="L107">			int i = a.ordinal();</span>
+<span class="nc" id="L108">			int j = b.ordinal();</span>
+<span class="nc" id="L109">			matrix[i][j] = score;</span>
+<span class="nc" id="L110">			matrix[j][i] = score;</span>
+<span class="nc" id="L111">			return this;</span>
+		}
+		@Override
+		public NucleotideSubstitutionMatrix build() {
+<span class="fc" id="L115">			return new NucleotideSubstitutionMatrixImpl(matrix);</span>
+		}
+
+	
+	private static final class NucleotideSubstitutionMatrixImpl implements NucleotideSubstitutionMatrix{
+		private final float[][] matrix;
+		
+<span class="fc" id="L122">		private NucleotideSubstitutionMatrixImpl(float[][] matrix) {</span>
+<span class="fc" id="L123">			this.matrix = matrix;</span>
+<span class="fc" id="L124">		}</span>
+
+
+		@Override
+		public float getValue(Nucleotide a, Nucleotide b) {
+<span class="fc" id="L129">			return getScore(a.getOrdinalAsByte(), b.getOrdinalAsByte());</span>
+		}
+
+		
+		private float getScore(byte ordinalOfBase1, byte ordinalOfBase2) {
+<span class="fc" id="L134">			return matrix[ordinalOfBase1][ordinalOfBase2];</span>
+		}
+
+
+		@Override
+		public int hashCode() {
+<span class="nc" id="L140">			final int prime = 31;</span>
+<span class="nc" id="L141">			int result = 1;</span>
+<span class="nc" id="L142">			result = prime * result + Arrays.hashCode(matrix);</span>
+<span class="nc" id="L143">			return result;</span>
+		}
+
+
+		@Override
+		public boolean equals(Object obj) {
+<span class="nc bnc" id="L149" title="All 2 branches missed.">			if (this == obj) {</span>
+<span class="nc" id="L150">				return true;</span>
+			}
+<span class="nc bnc" id="L152" title="All 2 branches missed.">			if (obj == null) {</span>
+<span class="nc" id="L153">				return false;</span>
+			}
+<span class="nc bnc" id="L155" title="All 2 branches missed.">			if (!(obj instanceof NucleotideSubstitutionMatrixImpl)) {</span>
+<span class="nc" id="L156">				return false;</span>
+			}
+<span class="nc" id="L158">			NucleotideSubstitutionMatrixImpl other = (NucleotideSubstitutionMatrixImpl) obj;</span>
+<span class="nc bnc" id="L159" title="All 2 branches missed.">			if (!Arrays.deepEquals(matrix, other.matrix)) {</span>
+<span class="nc" id="L160">				return false;</span>
+			}
+<span class="nc" id="L162">			return true;</span>
+		}
+		
+		
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

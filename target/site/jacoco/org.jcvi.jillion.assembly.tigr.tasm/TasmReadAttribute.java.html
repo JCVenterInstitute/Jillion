@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>TasmReadAttribute.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.tigr.tasm</a> &gt; <span class="el_source">TasmReadAttribute.java</span></div><h1>TasmReadAttribute.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly.tigr.tasm;
+
+import java.util.HashMap;
+import java.util.Map;
+/**
+ * {@code TasmReadAttribute} 
+ * of all possible attribute keys
+ * that can be attributed to 
+ * a {@link TasmAssembledRead}.
+ * These values are fixed since the attributes
+ * correspond to the legacy TIGR
+ * internal database columns that used
+ * to store this information.
+ * @author dkatzel
+ *
+ */
+<span class="pc" id="L37">enum TasmReadAttribute {</span>
+	//dkatzel- these java doc comments
+	//explaining what each tasm attribute means
+	//comes from javadoc from cloe's TDBAssemblySequence object so
+	//I assume it's correct...
+	/**
+	 * The name of the sequence
+	 */
+<span class="fc" id="L45">	NAME(&quot;seq_name&quot;),</span>
+	/**
+	 * The assembly left end (1-based position of the ungapped
+     * consensus at which this sequence begins to provide coverage)
+	 */
+<span class="fc" id="L50">	CONTIG_LEFT(&quot;asm_lend&quot;),</span>
+	/**
+	 * The assembly right end (1-based final position of the ungapped
+     * consensus for which this sequence provides coverage)
+	 */
+<span class="fc" id="L55">	CONTIG_RIGHT(&quot;asm_rend&quot;),</span>
+	/**
+	 * 1-based position of the left end of the valid range of this
+     * ungapped sequence.  The value returned will be greater than
+     * what would be returned by SEQUENCE_RIGHT if this
+     * sequence has been reverse complemented in the assembly.
+	 */
+<span class="fc" id="L62">	SEQUENCE_LEFT(&quot;seq_lend&quot;),</span>
+	/**
+	 * 1-based position of the right end of the valid range of this
+     * ungapped sequence.  The value returned will be less than
+     * what would be returned by SEQUENCE_LEFT if this
+     * sequence has been reverse complemented in the assembly.
+	 */
+<span class="fc" id="L69">	SEQUENCE_RIGHT(&quot;seq_rend&quot;),</span>
+	/**
+	 * A 1 bit flag denoting if this is the best
+	 * read (?). 
+	 * 
+	 * @deprecated This field isn't used anymore
+	 * and defaults to 0.  
+	 */
+<span class="fc" id="L77">	@Deprecated</span>
+	BEST(&quot;best&quot;),
+	/**
+	 * Comment about this read. 
+	 * 
+	 * @deprecated This field isn't
+	 * used anymore and defaults to NULL.
+	 */
+<span class="fc" id="L85">	@Deprecated</span>
+	COMMENT(&quot;comment&quot;),
+	/**
+	 * What database this read is in.  
+	 * 
+	 * @deprecated This field
+	 * isn't used anymore since the TIGR
+	 * Project database separated out reads in different
+	 * databases so this field should always be NULL.
+	 */
+<span class="fc" id="L95">	@Deprecated</span>
+	DB(&quot;db&quot;),
+	/**
+	 * The &lt;b&gt;zero-based&lt;/b&gt; offset of this sequence within the
+     * &lt;b&gt;gapped&lt;/b&gt; consensus
+	 */
+<span class="fc" id="L101">	CONTIG_START_OFFSET(&quot;offset&quot;),</span>
+	/**
+	 * The gapped VALID sequence of this read.  Only the trimmed portion
+	 * of this read that is used in the contig is included.
+	 */
+<span class="fc" id="L106">	GAPPED_SEQUENCE(&quot;lsequence&quot;),</span>
+	
+;
+	
+	private final String assemblyTableColumn;
+<span class="fc" id="L111">	private static final Map&lt;String, TasmReadAttribute&gt; MAP = new HashMap&lt;String, TasmReadAttribute&gt;();</span>
+	static{
+<span class="fc bfc" id="L113" title="All 2 branches covered.">		for(TasmReadAttribute attribute : values()){</span>
+<span class="fc" id="L114">			MAP.put(attribute.getAssemblyTableColumn(), attribute);</span>
+		}
+<span class="fc" id="L116">	}</span>
+<span class="fc" id="L117">	TasmReadAttribute(String assemblyTableColumn){</span>
+<span class="fc" id="L118">		this.assemblyTableColumn = assemblyTableColumn;</span>
+<span class="fc" id="L119">	}</span>
+
+	/**
+	 * @return the assemblyTableColumn
+	 */
+	public String getAssemblyTableColumn() {
+<span class="fc" id="L125">		return assemblyTableColumn;</span>
+	}
+	
+	public static TasmReadAttribute getAttributeFor(String attribute){
+<span class="pc bpc" id="L129" title="1 of 2 branches missed.">		if(MAP.containsKey(attribute)){</span>
+<span class="fc" id="L130">			return MAP.get(attribute);</span>
+		}
+<span class="nc" id="L132">		throw new IllegalArgumentException(&quot;unknown attribute &quot;+attribute);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

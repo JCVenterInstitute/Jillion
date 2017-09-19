@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ArtificialPhd.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.consed.phd</a> &gt; <span class="el_source">ArtificialPhd.java</span></div><h1>ArtificialPhd.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Feb 3, 2010
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.assembly.consed.phd;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import org.jcvi.jillion.core.pos.PositionSequence;
+import org.jcvi.jillion.core.pos.PositionSequenceBuilder;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+
+final class ArtificialPhd implements Phd{
+    /**
+     * The Position of the first peak in a Newbler created
+     * fake 454 phd record.
+     */
+    private static final int NEWBLER_454_START_POSITION = 15;
+    /**
+     * The number of positions between every basecall
+     * in a Newbler created fake 454 phd record.
+     */
+    private static final int NEWBLER_454_PEAK_SPACING = 19;
+    
+    private final NucleotideSequence basecalls;
+    private final QualitySequence qualities;
+   private final Map&lt;String,String&gt; comments;
+   private final List&lt;PhdWholeReadItem&gt; wholeReadItems;
+   
+   private final List&lt;PhdReadTag&gt; readTags;
+   
+<span class="fc" id="L56">   private PositionSequence fakePositions=null;</span>
+   private final int numberOfPositionsForEachPeak;
+   private final int numberOfBases;
+   private final int positionOfFirstPeak;
+   private final String id;
+   /**
+    * Create an {@link Phd} record that matches
+    * the way Newbler creates phd records for 454 reads.
+    * This is needed so tools like consed will correctly
+    * space the fake chromatograms for 454 reads since it uses
+    * 454 developed tools which rely on this spacing.
+    * 
+    * @param id the id for this Phd.
+    * @param basecalls the basecalls for this Phd.
+    * @param qualities the qualities for this Phd.
+    * @param comments the comments for this Phd.
+    * @param wholeReadItems the {@link PhdWholeReadItem}s for this Phd.
+    * @return a new {@link Phd} which has position data that matches
+    * what would have been created by Newbler.
+    */
+   public static ArtificialPhd createNewbler454Phd(
+		   String id,
+		   NucleotideSequence basecalls,
+           QualitySequence qualities,
+           Map&lt;String,String&gt; comments, List&lt;PhdWholeReadItem&gt; wholeReadItems){
+<span class="fc" id="L81">       return new ArtificialPhd(id,basecalls, qualities, comments, wholeReadItems, </span>
+<span class="fc" id="L82">    		   Collections.&lt;PhdReadTag&gt;emptyList(),</span>
+    		   NEWBLER_454_START_POSITION,NEWBLER_454_PEAK_SPACING);
+   }
+   /**
+    * Create an {@link Phd} record that matches
+    * the way Newbler creates phd records for 454 reads.
+    * This is needed so tools like consed will correctly
+    * space the fake chromatograms for 454 reads since it uses
+    * 454 developed tools which rely on this spacing.
+    * 
+    * @param id the id for this Phd.
+    * @param basecalls the basecalls for this Phd.
+    * @param qualities the qualities for this Phd.
+    * @param comments the comments for this Phd.
+    * @return a new {@link Phd} which has position data that matches
+    * what would have been created by Newbler.
+    */
+   public static ArtificialPhd createNewbler454Phd(
+		   String id,
+		   NucleotideSequence basecalls,
+           QualitySequence qualities,
+           Map&lt;String,String&gt; comments){
+<span class="nc" id="L104">	   return ArtificialPhd.createNewbler454Phd(id,basecalls, qualities, </span>
+<span class="nc" id="L105">               comments,Collections.&lt;PhdWholeReadItem&gt;emptyList());</span>
+   }
+   /**
+    * Create an {@link Phd} record that matches
+    * the way Newbler creates phd records for 454 reads.
+    * This is needed so tools like consed will correctly
+    * space the fake chromatograms for 454 reads since it uses
+    * 454 developed tools which rely on this spacing.
+    * @param id the id for this Phd.
+    * @param basecalls the basecalls for this Phd.
+    * @param qualities the qualities for this Phd.
+    * @return a new {@link Phd} which has position data that matches
+    * what would have been created by Newbler.
+    */
+   public static ArtificialPhd createNewbler454Phd(String id,
+		   NucleotideSequence basecalls,
+           QualitySequence qualities){
+<span class="nc" id="L122">       return ArtificialPhd.createNewbler454Phd(id,basecalls, qualities, </span>
+<span class="nc" id="L123">               Collections.&lt;String,String&gt;emptyMap(),Collections.&lt;PhdWholeReadItem&gt;emptyList());</span>
+   }
+   /**
+    * {@code buildArtificalPhd} creates a {@link Phd}
+    * using the given basecalls and qualities
+    * but creates artificial peak data spacing each
+    * peak {@code numberOfPositionsForEachPeak} apart.
+    * This Phd will have no comments and no tags.
+    * 
+    *
+    * @param id the id for this Phd.
+    * @param basecalls the basecalls for this Phd.
+    * @param qualities the qualities for this Phd.
+    * @param numberOfPositionsForEachPeak number of positions each
+    * peak should be separated as.
+    * 
+    */
+   public ArtificialPhd(String id,
+		   NucleotideSequence basecalls,
+           QualitySequence qualities,
+           int numberOfPositionsForEachPeak){
+<span class="fc" id="L144">       this(id,basecalls, qualities, </span>
+<span class="fc" id="L145">    		   Collections.&lt;String,String&gt;emptyMap(),</span>
+<span class="fc" id="L146">    		   Collections.&lt;PhdWholeReadItem&gt;emptyList(),</span>
+<span class="fc" id="L147">    		   Collections.&lt;PhdReadTag&gt;emptyList(),</span>
+    		   numberOfPositionsForEachPeak);
+<span class="fc" id="L149">   }</span>
+   /**
+    * {@code buildArtificalPhd} creates a {@link Phd}
+    * using the given basecalls and qualities, comments and tags
+    * but creates artificial peak data spacing each
+    * peak {@code numberOfPositionsForEachPeak} apart.
+    * @param id the id for this Phd.
+    * @param basecalls the basecalls for this Phd.
+    * @param qualities the qualities for this Phd.
+    * @param comments the comments for this Phd.
+    * @param readTags the {@link PhdReadTag}s for this Phd.
+    * @param wholeReadItems the {@link PhdWholeReadItem}s for this Phd.
+    * @param numberOfPositionsForEachPeak number of positions each
+    * peak should be separated as.
+    */
+    public ArtificialPhd(String id, NucleotideSequence basecalls,
+            QualitySequence qualities,
+            Map&lt;String,String&gt; comments, 
+            List&lt;PhdWholeReadItem&gt; wholeReadItems,
+            List&lt;PhdReadTag&gt; readTags,
+            int numberOfPositionsForEachPeak){
+<span class="fc" id="L170">       this(id,basecalls, qualities,comments, wholeReadItems,readTags, numberOfPositionsForEachPeak,numberOfPositionsForEachPeak);</span>
+        
+        
+<span class="fc" id="L173">    }</span>
+    /**
+     * {@code buildArtificalPhd} creates a {@link Phd}
+     * using the given basecalls and qualities, comments and tags
+     * but creates artificial peak data spacing each
+     * peak {@code numberOfPositionsForEachPeak} apart.
+     * @param id the id for this Phd.
+     * @param basecalls the basecalls for this Phd.
+     * @param qualities the qualities for this Phd.
+     * @param comments the comments for this Phd.
+     * @param wholeReadItems the {@link PhdWholeReadItem}s for this Phd.
+     *  @param readTags the {@link PhdReadTag}s for this Phd.
+     * 
+     * @param numberOfPositionsForEachPeak number of positions each
+     * peak should be separated as.
+     */
+     public ArtificialPhd(String id, NucleotideSequence basecalls,
+             QualitySequence qualities,
+            Map&lt;String,String&gt; comments, List&lt;PhdWholeReadItem&gt; wholeReadItems,
+            List&lt;PhdReadTag&gt; readTags,
+<span class="fc" id="L193">            int positionOfFirstPeak,int numberOfPositionsForEachPeak){</span>
+<span class="fc" id="L194">         this.id = id;</span>
+<span class="fc" id="L195">    	 this.basecalls = basecalls;</span>
+<span class="fc" id="L196">         this.qualities = qualities;</span>
+<span class="fc" id="L197">         this.wholeReadItems = wholeReadItems;</span>
+<span class="fc" id="L198">         this.comments = comments;</span>
+<span class="fc" id="L199">         this.numberOfBases = (int)basecalls.getLength();</span>
+<span class="fc" id="L200">         this.numberOfPositionsForEachPeak = numberOfPositionsForEachPeak;</span>
+<span class="fc" id="L201">         this.positionOfFirstPeak = positionOfFirstPeak;</span>
+<span class="fc" id="L202">         this.readTags = readTags;</span>
+         
+<span class="fc" id="L204">     }</span>
+    @Override
+    public Map&lt;String,String&gt; getComments() {
+<span class="fc" id="L207">        return comments;</span>
+    }
+
+    @Override
+	public List&lt;PhdReadTag&gt; getReadTags() {
+<span class="fc" id="L212">		return readTags;</span>
+	}
+	@Override
+	public List&lt;PhdWholeReadItem&gt; getWholeReadItems() {
+<span class="fc" id="L216">		return wholeReadItems;</span>
+	}
+	@Override
+    public String getId(){
+<span class="fc" id="L220">    	return id;</span>
+    }
+   
+
+    @Override
+    public synchronized PositionSequence getPeakSequence() {
+<span class="fc bfc" id="L226" title="All 2 branches covered.">        if(fakePositions ==null){</span>
+<span class="fc" id="L227">        	PositionSequenceBuilder builder = new PositionSequenceBuilder(numberOfBases);</span>
+            
+<span class="fc bfc" id="L229" title="All 2 branches covered.">            for(int i=0; i&lt; numberOfBases; i++){</span>
+<span class="fc" id="L230">               builder.append(i * numberOfPositionsForEachPeak +positionOfFirstPeak );</span>
+            }
+<span class="fc" id="L232">            this.fakePositions = builder.build();</span>
+        }
+<span class="fc" id="L234">        return fakePositions;</span>
+    }
+
+    @Override
+    public NucleotideSequence getNucleotideSequence() {
+<span class="fc" id="L239">        return basecalls;</span>
+    }
+
+    @Override
+    public QualitySequence getQualitySequence() {
+<span class="fc" id="L244">        return qualities;</span>
+    }
+	@Override
+	public int hashCode() {
+<span class="nc" id="L248">		final int prime = 31;</span>
+<span class="nc" id="L249">		int result = 1;</span>
+<span class="nc bnc" id="L250" title="All 2 branches missed.">		result = prime * result</span>
+<span class="nc" id="L251">				+ ((basecalls == null) ? 0 : basecalls.hashCode());</span>
+<span class="nc bnc" id="L252" title="All 2 branches missed.">		result = prime * result</span>
+<span class="nc" id="L253">				+ ((comments == null) ? 0 : comments.hashCode());</span>
+<span class="nc" id="L254">		PositionSequence positions = getPeakSequence();</span>
+<span class="nc" id="L255">		result = prime * result + positions.hashCode();</span>
+<span class="nc bnc" id="L256" title="All 2 branches missed.">		result = prime * result + ((id == null) ? 0 : id.hashCode());</span>
+<span class="nc bnc" id="L257" title="All 2 branches missed.">		result = prime * result</span>
+<span class="nc" id="L258">				+ ((qualities == null) ? 0 : qualities.hashCode());</span>
+<span class="nc bnc" id="L259" title="All 2 branches missed.">		result = prime * result + ((wholeReadItems == null) ? 0 : wholeReadItems.hashCode());</span>
+<span class="nc" id="L260">		return result;</span>
+	}
+	@Override
+	public boolean equals(Object obj) {
+<span class="pc bpc" id="L264" title="1 of 2 branches missed.">		if (this == obj) {</span>
+<span class="nc" id="L265">			return true;</span>
+		}
+<span class="pc bpc" id="L267" title="1 of 2 branches missed.">		if (obj == null) {</span>
+<span class="nc" id="L268">			return false;</span>
+		}
+<span class="pc bpc" id="L270" title="1 of 2 branches missed.">		if (!(obj instanceof Phd)) {</span>
+<span class="nc" id="L271">			return false;</span>
+		}
+<span class="fc" id="L273">		Phd other = (Phd) obj;</span>
+<span class="pc bpc" id="L274" title="1 of 2 branches missed.">		if (!id.equals(other.getId())) {</span>
+<span class="nc" id="L275">			return false;</span>
+		}
+<span class="pc bpc" id="L277" title="1 of 2 branches missed.">		if (!basecalls.equals(other.getNucleotideSequence())) {</span>
+<span class="nc" id="L278">			return false;</span>
+		}
+<span class="pc bpc" id="L280" title="1 of 2 branches missed.">		if (!comments.equals(other.getComments())) {</span>
+<span class="nc" id="L281">			return false;</span>
+		}
+<span class="pc bpc" id="L283" title="1 of 2 branches missed.">		if (!getPeakSequence().equals(other.getPeakSequence())) {</span>
+<span class="nc" id="L284">			return false;</span>
+		}
+		
+<span class="pc bpc" id="L287" title="1 of 2 branches missed.">		if (!qualities.equals(other.getQualitySequence())) {</span>
+<span class="nc" id="L288">			return false;</span>
+		}
+<span class="pc bpc" id="L290" title="1 of 2 branches missed.">		if (!wholeReadItems.equals(other.getWholeReadItems())) {</span>
+<span class="nc" id="L291">			return false;</span>
+		}
+<span class="pc bpc" id="L293" title="1 of 2 branches missed.">		if (!readTags.equals(other.getReadTags())) {</span>
+<span class="nc" id="L294">			return false;</span>
+		}
+<span class="fc" id="L296">		return true;</span>
+	}
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

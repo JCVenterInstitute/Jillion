@@ -1,0 +1,1321 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>IOUtil.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.core.io</a> &gt; <span class="el_source">IOUtil.java</span></div><h1>IOUtil.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Sep 11, 2008
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.core.io;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.RandomAccessFile;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.BitSet;
+import java.util.Scanner;
+
+import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
+
+/**
+ * {@code IOUtil} is a collection of static utility
+ * methods that make working
+ * with Input and Output easier.
+ * @author dkatzel
+ *
+ */
+public final class IOUtil {
+    private static final int EOF = -1;
+	/**
+     * Some methods need to use Log base 2
+     * a lot so it's easier to factor this out as a constant.
+     */
+<span class="fc" id="L74">    private static final double LOG_2 = Math.log(2);</span>
+    /**
+     * {@value}
+     */
+    public static final String UTF_8_NAME = &quot;UTF-8&quot;;
+    /**
+     * Singleton for the {@link Charset} implementation for 
+     * UTF-8.
+     */
+<span class="fc" id="L83">    public static final Charset UTF_8 = Charset.forName(UTF_8_NAME);</span>
+    
+   
+<span class="nc" id="L86">    private IOUtil(){}</span>
+    /**
+     * Recursively delete the given directory.
+     * If the directory does not exist,
+     * then this method does nothing.
+     * @param dir the root directory to delete.
+     * @throws IOException if deleting the directory or
+     * a file under the directory fails.
+     * @throws NullPointerException if dir is null.    
+     */
+    public static void recursiveDelete(File dir) throws IOException{
+<span class="fc bfc" id="L97" title="All 2 branches covered.">        if(dir.exists()){</span>
+<span class="fc" id="L98">        	deleteChildren(dir);</span>
+            //we are here if dir is an empty dir or a file
+<span class="fc" id="L100">            delete(dir);</span>
+        }
+
+<span class="fc" id="L103">    }</span>
+    /**
+     * Recursively delete the given children (and only the children)
+     * of the given directory.  If the directory does not exist,
+     * then this method does nothing.
+     * 
+     * @param dir the root directory to delete.
+     * 
+     * @throws IOException if deleting the directory or
+     * a file under the directory fails.
+     * @throws NullPointerException if dir is null.    
+     */
+    public static void deleteChildren(File dir) throws IOException{
+<span class="pc bpc" id="L116" title="1 of 4 branches missed.">        if(dir.exists() &amp;&amp; dir.isDirectory()) {</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">            for(File subfile: dir.listFiles()){</span>
+<span class="fc" id="L118">                recursiveDelete(subfile);</span>
+            }
+            
+        }
+
+<span class="fc" id="L123">    }</span>
+    /**
+     * Deletes the given file and throws an Exception
+     * if the delete fails.  This should be used in preference
+     * over {@link File#delete()} since that method returns a boolean
+     * result to indicate success or failure instead of 
+     * throwing an exception.  If the file does not exist,
+     * then this method will not do anything.
+     * @param file the file to be deleted; if this parameter
+     * is null, then method does nothing.
+     * @throws IOException if there is a problem deleting the file.
+     * @see #deleteIgnoreError(File)
+     */
+    public static void delete(File file) throws IOException{
+<span class="pc bpc" id="L137" title="1 of 2 branches missed.">    	if(file !=null){</span>
+<span class="fc" id="L138">    		Files.deleteIfExists(file.toPath());</span>
+    	}
+<span class="fc" id="L140">    }</span>
+    /**
+     * Tries to delete the given File but doesn't
+     * check to see if the delete was successful.
+     * This is the same as calling {@link File#delete()}
+     * without checking the return value.   If the file does not exist,
+     * then this method will not do anything.
+     * @param file the file to delete; if this parameter
+     * is null, then method does nothing.
+     */
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings(
+			value = {&quot;RV_RETURN_VALUE_IGNORED_BAD_PRACTICE&quot;},
+			justification = &quot;This method exists solely so we don't &quot;
+							+ &quot;have file.delete()s without checking return &quot;
+							+ &quot;values littered throughout the codebase.&quot;)
+    public static void deleteIgnoreError(File file){    	
+<span class="pc bpc" id="L156" title="2 of 4 branches missed.">    	if(file!=null &amp;&amp; file.exists()){</span>
+<span class="fc" id="L157">    		file.delete();</span>
+    	}
+<span class="fc" id="L159">    }</span>
+    
+    /**
+     * Make the given directory and any non-existent 
+     * parent directory as well.  This method should be used
+     * in preference over {@link File#mkdirs()} since that method returns a boolean
+     * result to indicate success or failure instead of 
+     * throwing an exception.
+     * @param dir the directory to be created; if dir is null or if it already
+     * exists,
+     * then this method does not do anything.
+     * @throws IOException if there is a problem making the directories.
+     */
+    public static void mkdirs(File dir) throws IOException{
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">    	if(dir==null){</span>
+<span class="nc" id="L174">    		return;</span>
+    	}
+<span class="fc bfc" id="L176" title="All 2 branches covered.">        if(dir.exists()){</span>
+<span class="fc" id="L177">            return;</span>
+        }
+<span class="fc bfc" id="L179" title="All 2 branches covered.">        if(!dir.mkdirs()){</span>
+<span class="fc" id="L180">            throw new IOException(&quot;unable to mkdirs for &quot;+ dir);</span>
+        }
+<span class="fc" id="L182">    }</span>
+    /**
+     * Make the given directory.  This method should be used
+     * in preference over {@link File#mkdir()} since that method returns a boolean
+     * result to indicate success or failure instead of 
+     * throwing an exception.
+     * @param dir the directory to be created; if dir is null
+     * then this method does not do anything. 
+     * @throws IOException if there is a problem making the directory.
+     */
+    public static void mkdir(File dir) throws IOException{
+<span class="pc bpc" id="L193" title="1 of 2 branches missed.">    	if(dir==null){</span>
+<span class="nc" id="L194">    		return;</span>
+    	}
+<span class="fc bfc" id="L196" title="All 2 branches covered.">        if(dir.exists()){</span>
+<span class="fc" id="L197">            return;</span>
+        }
+<span class="fc bfc" id="L199" title="All 2 branches covered.">        if(!dir.mkdir()){</span>
+<span class="fc" id="L200">            throw new IOException(&quot;unable to mkdir for &quot;+ dir);</span>
+        }
+<span class="fc" id="L202">    }</span>
+    /**
+     * Close the given {@link Closeable} and ignore any {@link IOException}s
+     * that are thrown.  Passing in a null will do nothing.
+     * @param closeable the {@link Closeable} object to close.
+     */
+    public static void closeAndIgnoreErrors(Closeable closeable){
+        try {
+<span class="fc bfc" id="L210" title="All 2 branches covered.">            if(closeable !=null){</span>
+<span class="fc" id="L211">                closeable.close();</span>
+            }
+<span class="fc" id="L213">        } catch (IOException ignore) {</span>
+                //ignored on purpose
+<span class="fc" id="L215">        }</span>
+<span class="fc" id="L216">    }</span>
+    /**
+     * Convenience method for closing multiple
+     * {@link Closeable}s at the same time, this
+     * method is the same as calling {@link #closeAndIgnoreErrors(Closeable)}
+     * on each parameter.
+     * @param closeables the closeables to close.
+     */
+    public static void closeAndIgnoreErrors(Closeable...closeables){
+<span class="fc bfc" id="L225" title="All 2 branches covered.">       for(Closeable closeable : closeables){</span>
+<span class="fc" id="L226">           closeAndIgnoreErrors(closeable);</span>
+       }
+<span class="fc" id="L228">    }</span>
+    /**
+     * Close the given Statement and ignore any exceptions
+     * that are thrown.  Passing in a null will do nothing.
+     * @param statement the Statement object to close
+     */
+    public static void closeAndIgnoreErrors(Statement statement){
+        try {
+<span class="nc bnc" id="L236" title="All 2 branches missed.">            if(statement !=null){</span>
+<span class="nc" id="L237">                statement.close();</span>
+            }
+<span class="nc" id="L239">        } catch (SQLException ignore) {</span>
+                //ignored on purpose
+<span class="nc" id="L241">        }</span>
+<span class="nc" id="L242">    }</span>
+    
+    
+    /**
+     * Close the given {@link ResultSet} and ignore any exceptions
+     * that are thrown.  Passing in a null will do nothing.
+     * @param resultSet the ResultSet object to close
+     */
+    public static void closeAndIgnoreErrors(ResultSet resultSet){
+        try {
+<span class="nc bnc" id="L252" title="All 2 branches missed.">            if(resultSet !=null){</span>
+<span class="nc" id="L253">                resultSet.close();</span>
+            }
+<span class="nc" id="L255">        } catch (SQLException ignore) {</span>
+                //ignored on purpose
+<span class="nc" id="L257">        }</span>
+<span class="nc" id="L258">    }</span>
+    /**
+     * Close the given {@link Connection} and ignore any exceptions
+     * that are thrown.  Passing in a null will do nothing.
+     * @param connection the Connection object to close
+     */
+    public static void closeAndIgnoreErrors(Connection connection){
+        try {
+<span class="nc bnc" id="L266" title="All 2 branches missed.">            if(connection !=null){</span>
+<span class="nc" id="L267">                connection.close();</span>
+            }
+<span class="nc" id="L269">        } catch (SQLException ignore) {</span>
+                //ignored on purpose
+<span class="nc" id="L271">        }</span>
+<span class="nc" id="L272">    }</span>
+    /**
+     * Close the given {@link Scanner} and ignore any exceptions
+     * that are thrown.  Passing in a null will do nothing.
+     * @param scanner the {@link Scanner}  object to close
+     */
+    public static void closeAndIgnoreErrors(Scanner scanner){
+<span class="fc bfc" id="L279" title="All 2 branches covered.">        if(scanner !=null){</span>
+<span class="fc" id="L280">            scanner.close();</span>
+        }        
+<span class="fc" id="L282">    }</span>
+    /**
+     * Skip &lt;code&gt;numberOfBytes&lt;/code&gt; in the {@link InputStream} 
+     * and block until those bytes have been skipped. {@link InputStream#skip(long)}
+     * will only skip as many bytes as it can without blocking.
+     * @param in InputStream to skip.
+     * @param numberOfBytes number of bytes to skip.
+     * @throws IOException if there is a problem reading the inputstream
+     * or if the end of file is reached before the number of bytes to skip
+     * has been reached.
+     */
+    public static void blockingSkip(InputStream in, long numberOfBytes) throws IOException{
+
+<span class="fc" id="L295">        long leftToSkip = numberOfBytes;</span>
+<span class="fc bfc" id="L296" title="All 2 branches covered.">        while(leftToSkip &gt;0){</span>
+        	//need to do a read() to see if we
+        	//are at EOF yet. otherwise we loop forever
+        	//since skip will return 0.
+        	//this also is the reason for the -1 and +1 
+        	//sprinkled around the leftToSkip computation.
+<span class="fc" id="L302">        	int value =in.read();</span>
+<span class="fc bfc" id="L303" title="All 2 branches covered.">        	if(value == EOF){ </span>
+<span class="fc" id="L304">        		throw new IOException(&quot;end of file reached before entire block was skipped&quot;);</span>
+        	}
+<span class="fc" id="L306">        	leftToSkip -= in.skip(leftToSkip-1) +1;</span>
+<span class="fc" id="L307">        }</span>
+
+<span class="fc" id="L309">    }</span>
+    /**
+     * Reads {@code buf.length} bytes of the given inputStream and
+     * puts them into the given byte array starting at the given offset.
+     * Will keep reading until length number of bytes have been read (possibly blocking). 
+     * This is the same as {@link #blockingRead(InputStream, byte[], int, int) blockingRead(in,buf,0, buf.length)}
+     * @param in the inputStream to read; can not be null.
+     * @param buf the byte array to write the data from the stream to; can not be null.
+     * @throws EOFException if EOF is unexpectedly reached.
+     * @throws IOException if there is a problem reading the stream.
+     * @throws NullPointerException if either inputStream  or buf are null.
+     * @throws IllegalArgumentException if either offset  or length are negative.
+     * @see #blockingRead(InputStream, byte[], int, int)
+     */
+    public static void blockingRead(InputStream in, byte[] buf) throws IOException{
+<span class="fc" id="L324">    	blockingRead(in, buf, 0, buf.length);</span>
+<span class="fc" id="L325">    }</span>
+    
+    /**
+     * Reads {@code buf.length} bytes of the given {@link RandomAccessFile}
+     * starting at the current file pointer and
+     * puts them into the given byte array starting at the given offset.
+     * Will keep reading until length number of bytes have been read (possibly blocking). 
+     * This is the same as {@link #blockingRead(RandomAccessFile, byte[], int, int) blockingRead(in,buf,0, buf.length)}
+     * @param file the {@link RandomAccessFile} to read; can not be null.
+     * @param buf the byte array to write the data from the stream to; can not be null.
+     * @throws EOFException if EOF is unexpectedly reached.
+     * @throws IOException if there is a problem reading the stream.
+     * @throws NullPointerException if either inputStream  or buf are null.
+     * @throws IllegalArgumentException if either offset  or length are negative.
+     * @see #blockingRead(RandomAccessFile, byte[], int, int)
+     */
+    public static void blockingRead(RandomAccessFile file, byte[] buf) throws IOException{
+<span class="nc" id="L342">    	blockingRead(file, buf, 0, buf.length);</span>
+<span class="nc" id="L343">    }</span>
+    /**
+     * Reads up to length number of bytes of the given inputStream and
+     * puts them into the given byte array starting at the given offset.
+     * Will keep reading until length number of bytes have been read (possibly blocking). 
+     * @param in the inputStream to read; can not be null.
+     * @param buf the byte array to write the data from the stream to; can not be null.
+     * @param offset the offset into the byte array to begin writing 
+     * bytes to must be {@code &gt;= 0}.
+     * @param length the maximum number of bytes to read, must be {@code &gt;= 0}.
+     * This number of bytes will be read unless the inputStream ends prematurely
+     * (which will throw an IOException). 
+     * @throws EOFException if EOF is unexpectedly reached.
+     * @throws IOException if there is a problem reading the stream.
+     * @throws NullPointerException if either inputStream  or buf are null.
+     * @throws IllegalArgumentException if either offset  or length are negative.
+     */
+    public static void blockingRead(InputStream in, byte[] buf, int offset, int length) throws IOException{
+<span class="fc" id="L361">        checkBlockingReadInputsAreOK(in, buf, offset, length);</span>
+<span class="fc" id="L362">    	int currentBytesRead=0;</span>
+<span class="fc" id="L363">        int totalBytesRead=0;</span>
+<span class="fc bfc" id="L364" title="All 2 branches covered.">        while((currentBytesRead =in.read(buf, offset+totalBytesRead, length-totalBytesRead))&gt;0){</span>
+<span class="fc" id="L365">            totalBytesRead+=currentBytesRead;</span>
+<span class="fc bfc" id="L366" title="All 2 branches covered.">            if(totalBytesRead == length){</span>
+<span class="fc" id="L367">                break;</span>
+            }
+        }
+<span class="fc bfc" id="L370" title="All 2 branches covered.">        if(currentBytesRead ==EOF){</span>
+<span class="fc" id="L371">            throw new EOFException(String.format(&quot;end of file after only %d bytes read (expected %d)&quot;,totalBytesRead,length));</span>
+        }
+<span class="fc" id="L373">    }</span>
+    
+
+    
+    
+    /**
+     * Reads up to length number of bytes of the given {@link RandomAccessFile} 
+     * starting at the current file pointer and
+     * puts them into the given byte array starting at the given offset.
+     * Will keep reading until length number of bytes have been read (possibly blocking). 
+     * @param file the {@link RandomAccessFile} to read; can not be null.
+     * @param buf the byte array to write the data from the stream to; can not be null.
+     * @param offset the offset into the byte array to begin writing 
+     * bytes to must be {@code &gt;= 0}.
+     * @param length the maximum number of bytes to read, must be {@code &gt;= 0}.
+     * This number of bytes will be read unless the inputStream ends prematurely
+     * (which will throw an IOException). 
+     * @throws EOFException if EOF is unexpectedly reached.
+     * @throws IOException if there is a problem reading the stream.
+     * @throws NullPointerException if either inputStream  or buf are null.
+     * @throws IllegalArgumentException if either offset  or length are negative.
+     */
+    public static void blockingRead(RandomAccessFile file, byte[] buf, int offset, int length) throws IOException{
+<span class="nc" id="L396">        checkBlockingReadInputsAreOK(file, buf, offset, length);</span>
+<span class="nc" id="L397">    	int currentBytesRead=0;</span>
+<span class="nc" id="L398">        int totalBytesRead=0;</span>
+<span class="nc bnc" id="L399" title="All 2 branches missed.">        while((currentBytesRead =file.read(buf, offset+totalBytesRead, length-totalBytesRead))&gt;0){</span>
+<span class="nc" id="L400">            totalBytesRead+=currentBytesRead;</span>
+<span class="nc bnc" id="L401" title="All 2 branches missed.">            if(totalBytesRead == length){</span>
+<span class="nc" id="L402">                break;</span>
+            }
+        }
+<span class="nc bnc" id="L405" title="All 2 branches missed.">        if(currentBytesRead ==EOF){</span>
+<span class="nc" id="L406">            throw new EOFException(String.format(&quot;end of file after only %d bytes read (expected %d)&quot;,totalBytesRead,length));</span>
+        }
+<span class="nc" id="L408">    }</span>
+	private static void checkBlockingReadInputsAreOK(InputStream in,
+			byte[] buf, int offset, int length) {
+<span class="pc bpc" id="L411" title="1 of 2 branches missed.">		if(buf ==null){</span>
+<span class="nc" id="L412">        	throw new NullPointerException(&quot;byte array can not be null&quot;);</span>
+        }
+<span class="pc bpc" id="L414" title="1 of 2 branches missed.">        if(in ==null){</span>
+<span class="nc" id="L415">        	throw new NullPointerException(&quot;inputstream can not be null&quot;);</span>
+        }
+<span class="pc bpc" id="L417" title="1 of 2 branches missed.">        if(offset &lt;0){</span>
+<span class="nc" id="L418">        	throw new IllegalArgumentException(&quot;offset must be &gt;= 0&quot;);</span>
+        }
+<span class="pc bpc" id="L420" title="1 of 2 branches missed.">        if(length &lt;0){</span>
+<span class="nc" id="L421">        	throw new IllegalArgumentException(&quot;length must be &gt;= 0&quot;);</span>
+        }
+<span class="fc" id="L423">	}</span>
+	
+	private static void checkBlockingReadInputsAreOK(RandomAccessFile in,
+			byte[] buf, int offset, int length) {
+<span class="nc bnc" id="L427" title="All 2 branches missed.">		if(buf ==null){</span>
+<span class="nc" id="L428">        	throw new NullPointerException(&quot;byte array can not be null&quot;);</span>
+        }
+<span class="nc bnc" id="L430" title="All 2 branches missed.">        if(in ==null){</span>
+<span class="nc" id="L431">        	throw new NullPointerException(&quot;inputstream can not be null&quot;);</span>
+        }
+<span class="nc bnc" id="L433" title="All 2 branches missed.">        if(offset &lt;0){</span>
+<span class="nc" id="L434">        	throw new IllegalArgumentException(&quot;offset must be &gt;= 0&quot;);</span>
+        }
+<span class="nc bnc" id="L436" title="All 2 branches missed.">        if(length &lt;0){</span>
+<span class="nc" id="L437">        	throw new IllegalArgumentException(&quot;length must be &gt;= 0&quot;);</span>
+        }
+<span class="nc" id="L439">	}</span>
+   
+    public static short[] readUnsignedByteArray(InputStream in, int expectedLength) throws IOException {
+<span class="fc" id="L442">        short[] array = new short[expectedLength];</span>
+<span class="fc bfc" id="L443" title="All 2 branches covered.">        for(int i=0; i&lt;expectedLength; i++){</span>
+<span class="fc" id="L444">            array[i]=(short)in.read();</span>
+        }
+<span class="fc" id="L446">        return array;</span>
+    }
+    public static short[] readShortArray(InputStream in, int numberOfShortsToRead) throws IOException {
+<span class="fc" id="L449">        short[] array = new short[numberOfShortsToRead];</span>
+<span class="fc bfc" id="L450" title="All 2 branches covered.">        for(int i=0; i&lt;numberOfShortsToRead; i++){</span>
+<span class="fc" id="L451">            array[i]= readSignedShort(in);</span>
+        }
+<span class="fc" id="L453">        return array;</span>
+    }
+    public static byte[] readByteArray(InputStream in, int length) throws IOException {
+<span class="fc" id="L456">        byte[] array = new byte[length];</span>
+<span class="fc" id="L457">        IOUtil.blockingRead(in, array);</span>
+<span class="fc" id="L458">        return array;</span>
+    }
+    
+    public static int[] readIntArray(InputStream in, int numberOfIntsToRead) throws IOException {
+<span class="nc" id="L462">    		int[] array = new int[numberOfIntsToRead];</span>
+<span class="nc bnc" id="L463" title="All 2 branches missed.">         for(int i=0; i&lt;numberOfIntsToRead; i++){</span>
+<span class="nc" id="L464">             array[i]= readSignedInt(in);</span>
+         }
+<span class="nc" id="L466">         return array;</span>
+	}
+    public static long[] readLongArray(InputStream in, int numberOfLongsToRead, ByteOrder endian) throws IOException {
+<span class="fc" id="L469">		long[] array = new long[numberOfLongsToRead];</span>
+<span class="fc bfc" id="L470" title="All 2 branches covered.">	     for(int i=0; i&lt;numberOfLongsToRead; i++){</span>
+<span class="fc" id="L471">	         array[i]= readSignedLong(in, endian);</span>
+	     }
+<span class="fc" id="L473">	     return array;</span>
+    }
+    
+    public static long readSignedLong(InputStream in) throws IOException{
+<span class="nc" id="L477">    	return readSignedLong(in, ByteOrder.BIG_ENDIAN);</span>
+    }
+    
+    public static long readSignedLong(InputStream in, ByteOrder endian) throws IOException {
+		//copied from DataInputStream
+    	//but I added support for both endians
+<span class="fc" id="L483">    	byte[] b = IOUtil.readByteArray(in, 8);</span>
+<span class="fc bfc" id="L484" title="All 2 branches covered.">    	if(endian == ByteOrder.LITTLE_ENDIAN){</span>
+<span class="fc" id="L485">    		return (((long)b[7] &lt;&lt; 56) +</span>
+                    ((long)(b[6] &amp; 255) &lt;&lt; 48) +
+                    ((long)(b[5] &amp; 255) &lt;&lt; 40) +
+                    ((long)(b[4] &amp; 255) &lt;&lt; 32) +
+                    ((long)(b[3] &amp; 255) &lt;&lt; 24) +
+                    ((b[2] &amp; 255) &lt;&lt; 16) +
+                    ((b[1] &amp; 255) &lt;&lt;  8) +
+                    ((b[0] &amp; 255) &lt;&lt;  0));
+    	}else{
+<span class="fc" id="L494">    		return (((long)b[0] &lt;&lt; 56) +</span>
+                ((long)(b[1] &amp; 255) &lt;&lt; 48) +
+                ((long)(b[2] &amp; 255) &lt;&lt; 40) +
+                ((long)(b[3] &amp; 255) &lt;&lt; 32) +
+                ((long)(b[4] &amp; 255) &lt;&lt; 24) +
+                ((b[5] &amp; 255) &lt;&lt; 16) +
+                ((b[6] &amp; 255) &lt;&lt;  8) +
+                ((b[7] &amp; 255) &lt;&lt;  0));
+    	}
+	}
+	public static float[] readFloatArray(InputStream in, int numberOfFloatsToRead) throws IOException {
+<span class="nc" id="L505">		float[] array = new float[numberOfFloatsToRead];</span>
+<span class="nc bnc" id="L506" title="All 2 branches missed.">	     for(int i=0; i&lt;numberOfFloatsToRead; i++){</span>
+<span class="nc" id="L507">	         array[i]= readFloat(in);</span>
+	     }
+<span class="nc" id="L509">	     return array;</span>
+}
+
+    public static void putShortArray(ByteBuffer buf, short[] array){
+<span class="fc bfc" id="L513" title="All 2 branches covered.">        for(int i=0; i&lt; array.length; i++){</span>
+<span class="fc" id="L514">            buf.putShort(array[i]);</span>
+        }
+<span class="fc" id="L516">    }</span>
+    public static void putUnsignedByteArray(ByteBuffer buf, short[] array){
+<span class="fc bfc" id="L518" title="All 2 branches covered.">        for(int i=0; i&lt; array.length; i++){</span>
+<span class="fc" id="L519">            buf.put((byte)array[i]);</span>
+        }
+<span class="fc" id="L521">    }</span>
+    /**
+     * Converts signed java byte value into an unsigned value.
+     * @param value the signed value to convert.
+     * @return the unsigned value as an int.
+     */
+    public static int toUnsignedByte(byte value){
+<span class="fc" id="L528">       return value &amp; 0xFF;</span>
+    }
+    /**
+     * Converts an unsigned signed byte value into a signed value.
+     * @param unsignedByte the unsigned value to convert.
+     * @return the signed value as a byte.
+     */
+    public static byte toSignedByte(int unsignedByte){
+<span class="fc bfc" id="L536" title="All 2 branches covered.">    	if(unsignedByte&gt;127){</span>
+<span class="fc" id="L537">    		return (byte)(unsignedByte-256);</span>
+    	}
+<span class="fc" id="L539">    	return (byte)unsignedByte;</span>
+    }
+
+    public static short toSignedShort(int unsignedShort){
+<span class="fc bfc" id="L543" title="All 2 branches covered.">        if(unsignedShort &gt; Short.MAX_VALUE){</span>
+<span class="fc" id="L544">            return (short)(unsignedShort -(2*(Short.MAX_VALUE+1)));</span>
+        }
+<span class="fc" id="L546">        return (short)unsignedShort;</span>
+    }
+    public static int toSignedInt(long unsignedInt){
+<span class="fc bfc" id="L549" title="All 2 branches covered.">        if(unsignedInt &gt; Integer.MAX_VALUE){</span>
+<span class="fc" id="L550">            return (int)(unsignedInt -(2*(Integer.MAX_VALUE+1)));</span>
+        }
+<span class="fc" id="L552">        return (int)unsignedInt;</span>
+    }
+    /**
+     * Converts signed java short value into an unsigned value.
+     * @param value the signed value to convert.
+     * @return the unsigned value as an int.
+     */
+    public static int toUnsignedShort(short value){
+<span class="fc" id="L560">        return value &amp; 0xFFFF;</span>
+    }
+    
+    
+    /**
+     * Converts signed java short value into an unsigned value.
+     * @param value the signed value to convert.
+     * @return the unsigned value as an long.
+     */
+    public static long toUnsignedInt(int value){
+<span class="fc" id="L570">        return value &amp; 0xFFFFFFFFL;</span>
+    }
+    
+    /**
+     * This method makes a new byte array that contains
+     * the same data as the input byte array, but the endian is reversed.
+     * 
+     * @param byteArray the input byte array to change the endian of.
+     * 
+     * @return a new byte array which represents the same data as the
+     * passed in array, but with the endian switched. (Big Endian to Little Endian
+     * or vice versa)
+     */
+    public static byte[] switchEndian(byte[] byteArray){
+<span class="fc" id="L584">        byte newByteArray[] = new byte[byteArray.length];</span>
+        //only need to swap half the array
+<span class="fc bfc" id="L586" title="All 2 branches covered.">        for(int i=0; i&lt; byteArray.length /2; i++){</span>
+
+<span class="fc" id="L588">            newByteArray[i] = byteArray[byteArray.length-1 -i];</span>
+<span class="fc" id="L589">            newByteArray[byteArray.length-1 -i]=byteArray[i];</span>
+        }
+        //handle case of odd length
+<span class="fc bfc" id="L592" title="All 2 branches covered.">        if(byteArray.length %2 ==1){</span>
+<span class="fc" id="L593">            int center =byteArray.length/2;</span>
+<span class="fc" id="L594">            newByteArray[center]=byteArray[center];</span>
+        }
+<span class="fc" id="L596">        return newByteArray;</span>
+
+    }
+   
+    public static long readUnsignedInt(InputStream in, ByteOrder endian) throws IOException{
+<span class="fc" id="L601">    	byte[] array = IOUtil.toByteArray(in, 4);</span>
+<span class="fc bfc" id="L602" title="All 2 branches covered.">    	if(endian == ByteOrder.LITTLE_ENDIAN	){</span>
+<span class="fc" id="L603">    		long tmp = (array[3] &amp;0xFFL) &lt;&lt; 24;</span>
+<span class="fc" id="L604">    		tmp |=(array[2] &amp; 0xFF) &lt;&lt; 16;</span>
+<span class="fc" id="L605">    		tmp |=(array[1] &amp; 0xFF) &lt;&lt; 8;</span>
+<span class="fc" id="L606">    		tmp |=array[0] &amp; 0xFF;</span>
+<span class="fc" id="L607">        	return tmp;</span>
+        }
+<span class="fc" id="L609">    	long tmp = (array[0] &amp;0xFFL) &lt;&lt; 24;</span>
+<span class="fc" id="L610">		tmp |=(array[1] &amp;0xFF) &lt;&lt; 16;</span>
+<span class="fc" id="L611">		tmp |=(array[2]&amp;0xFF) &lt;&lt; 8;</span>
+<span class="fc" id="L612">		tmp |=array[3] &amp;0xFF;</span>
+<span class="fc" id="L613">    	return tmp;</span>
+    	//default to BIG which is what DataInputStream uses
+    	//return ((array[0] &lt;&lt; 24L) | (array[1] &lt;&lt; 16) | (array[2] &lt;&lt; 8) | (array[3] &lt;&lt; 0)) &amp; 0xFFFF;
+    	
+     }
+   
+    public static int readUnsignedShort(InputStream in, ByteOrder endian) throws IOException{
+<span class="fc" id="L620">    	byte[] array = IOUtil.toByteArray(in, 2);</span>
+<span class="fc bfc" id="L621" title="All 2 branches covered.">    	if(endian == ByteOrder.LITTLE_ENDIAN){</span>
+<span class="fc" id="L622">    		int tmp = (array[1] &amp; 0xFF) &lt;&lt; 8;</span>
+<span class="fc" id="L623">    		tmp |=array[0] &amp; 0xFF;</span>
+<span class="fc" id="L624">        	return tmp;</span>
+    	}
+<span class="fc" id="L626">		int tmp = (array[0] &amp; 0xFF) &lt;&lt; 8;</span>
+<span class="fc" id="L627">		tmp |=array[1] &amp; 0xFF;</span>
+<span class="fc" id="L628">    	return tmp;</span>
+    	
+     }
+    public static short readUnsignedByte(InputStream in, ByteOrder endian) throws IOException{
+<span class="fc" id="L632">    	int value = in.read();</span>
+<span class="pc bpc" id="L633" title="1 of 2 branches missed.">    	if(value == -1){</span>
+<span class="nc" id="L634">    		throw new EOFException();</span>
+    	}
+<span class="fc" id="L636">    	return (short)value;</span>
+     }
+    
+   
+    public static short readSignedShort(InputStream in ) throws IOException {
+    	//taken from DataInputStream
+<span class="fc" id="L642">        int ch1 = in.read();</span>
+<span class="fc" id="L643">        int ch2 = in.read();</span>
+<span class="fc bfc" id="L644" title="All 2 branches covered.">        if ((ch1 | ch2) &lt; 0){</span>
+<span class="fc" id="L645">            throw new EOFException();</span>
+        }
+<span class="fc" id="L647">        return (short)((ch1 &lt;&lt; 8) + (ch2 &lt;&lt; 0));</span>
+    }
+    
+    public static int readSignedInt(InputStream in) throws IOException {
+    	//taken from DataInputStream
+<span class="nc" id="L652">        int ch1 = in.read();</span>
+<span class="nc" id="L653">        int ch2 = in.read();</span>
+<span class="nc" id="L654">        int ch3 = in.read();</span>
+<span class="nc" id="L655">        int ch4 = in.read();</span>
+<span class="nc bnc" id="L656" title="All 2 branches missed.">        if ((ch1 | ch2 | ch3 | ch4) &lt; 0){</span>
+<span class="nc" id="L657">            throw new EOFException();</span>
+        }
+<span class="nc" id="L659">        return ((ch1 &lt;&lt; 24) + (ch2 &lt;&lt; 16) + (ch3 &lt;&lt; 8) + (ch4 &lt;&lt; 0));</span>
+    }
+    
+    public static int readSignedInt(InputStream in, ByteOrder endian) throws IOException {
+    	//taken from DataInputStream
+<span class="fc" id="L664">        int ch1 = in.read();</span>
+<span class="fc" id="L665">        int ch2 = in.read();</span>
+<span class="fc" id="L666">        int ch3 = in.read();</span>
+<span class="fc" id="L667">        int ch4 = in.read();</span>
+<span class="pc bpc" id="L668" title="1 of 2 branches missed.">        if ((ch1 | ch2 | ch3 | ch4) &lt; 0){</span>
+<span class="nc" id="L669">            throw new EOFException();</span>
+        }
+<span class="fc bfc" id="L671" title="All 2 branches covered.">        if(endian == ByteOrder.LITTLE_ENDIAN	){</span>
+<span class="fc" id="L672">        	return ((ch4 &lt;&lt; 24) + (ch3 &lt;&lt; 16) + (ch2 &lt;&lt; 8) + (ch1 &lt;&lt; 0));</span>
+        }
+    	//default to BIG which is what DataInputStream uses
+<span class="fc" id="L675">    	return ((ch1 &lt;&lt; 24) + (ch2 &lt;&lt; 16) + (ch3 &lt;&lt; 8) + (ch4 &lt;&lt; 0));</span>
+        
+        
+	}
+    
+    public static void putInt(OutputStream out, int value, ByteOrder endian) throws IOException {
+		// from data output stream
+		// with modifications for endian-ness
+<span class="pc bpc" id="L683" title="1 of 2 branches missed.">		if (endian == ByteOrder.LITTLE_ENDIAN) {</span>
+<span class="fc" id="L684">			out.write((value &gt;&gt;&gt; 0) &amp; 0xFF);</span>
+<span class="fc" id="L685">			out.write((value &gt;&gt;&gt; 8) &amp; 0xFF);</span>
+<span class="fc" id="L686">			out.write((value &gt;&gt;&gt; 16) &amp; 0xFF);</span>
+<span class="fc" id="L687">			out.write((value &gt;&gt;&gt; 24) &amp; 0xFF);</span>
+		} else { 
+			//assume anything else is BIG endian (the default)
+<span class="nc" id="L690">			out.write((value &gt;&gt;&gt; 24) &amp; 0xFF);</span>
+<span class="nc" id="L691">			out.write((value &gt;&gt;&gt; 16) &amp; 0xFF);</span>
+<span class="nc" id="L692">			out.write((value &gt;&gt;&gt; 8) &amp; 0xFF);</span>
+<span class="nc" id="L693">			out.write((value &gt;&gt;&gt; 0) &amp; 0xFF);</span>
+		}
+		
+<span class="fc" id="L696">	}</span>
+    
+    public static void putLong(OutputStream out, long value, ByteOrder endian) throws IOException{
+<span class="fc" id="L699">    	byte[] writeBuffer = new byte[8];</span>
+    	// from data output stream
+		// with modifications for endian-ness
+<span class="pc bpc" id="L702" title="1 of 2 branches missed.">		if (endian == ByteOrder.LITTLE_ENDIAN) {</span>
+<span class="fc" id="L703">			writeBuffer[0] = (byte) (value &gt;&gt;&gt; 0);</span>
+<span class="fc" id="L704">			writeBuffer[1] = (byte) (value &gt;&gt;&gt; 8);</span>
+<span class="fc" id="L705">			writeBuffer[2] = (byte) (value &gt;&gt;&gt; 16);</span>
+<span class="fc" id="L706">			writeBuffer[3] = (byte) (value &gt;&gt;&gt; 24);</span>
+<span class="fc" id="L707">			writeBuffer[4] = (byte) (value &gt;&gt;&gt; 32);</span>
+<span class="fc" id="L708">			writeBuffer[5] = (byte) (value &gt;&gt;&gt; 40);</span>
+<span class="fc" id="L709">			writeBuffer[6] = (byte) (value &gt;&gt;&gt; 48);</span>
+<span class="fc" id="L710">			writeBuffer[7] = (byte) (value &gt;&gt;&gt; 56);</span>
+		} else {
+			// assume anything else is BIG endian (the default)
+<span class="nc" id="L713">			writeBuffer[0] = (byte) (value &gt;&gt;&gt; 56);</span>
+<span class="nc" id="L714">			writeBuffer[1] = (byte) (value &gt;&gt;&gt; 48);</span>
+<span class="nc" id="L715">			writeBuffer[2] = (byte) (value &gt;&gt;&gt; 40);</span>
+<span class="nc" id="L716">			writeBuffer[3] = (byte) (value &gt;&gt;&gt; 32);</span>
+<span class="nc" id="L717">			writeBuffer[4] = (byte) (value &gt;&gt;&gt; 24);</span>
+<span class="nc" id="L718">			writeBuffer[5] = (byte) (value &gt;&gt;&gt; 16);</span>
+<span class="nc" id="L719">			writeBuffer[6] = (byte) (value &gt;&gt;&gt; 8);</span>
+<span class="nc" id="L720">			writeBuffer[7] = (byte) (value &gt;&gt;&gt; 0);</span>
+		}
+<span class="fc" id="L722">		out.write(writeBuffer,0,8);</span>
+<span class="fc" id="L723">    }</span>
+    
+    
+    public static float readFloat(InputStream in) throws IOException {
+<span class="nc" id="L727">        return Float.intBitsToFloat(readSignedInt(in));</span>
+    }
+    
+    public static BigInteger getUnsignedLong(ByteBuffer buf) throws IOException{
+<span class="nc" id="L731">        byte[] tmp = new byte[8];</span>
+<span class="nc" id="L732">        buf.get(tmp);</span>
+<span class="nc" id="L733">    	return new BigInteger(1,tmp);</span>
+     }
+    public static long getUnsignedInt(ByteBuffer buf) throws IOException{
+<span class="nc" id="L736">        byte[] tmp = new byte[4];</span>
+<span class="nc" id="L737">        buf.get(tmp);</span>
+<span class="nc" id="L738">    	return new BigInteger(1,tmp).longValue();</span>
+     }
+    public static int getUnsignedShort(ByteBuffer buf) throws IOException{
+<span class="nc" id="L741">        byte[] tmp = new byte[2];</span>
+<span class="nc" id="L742">        buf.get(tmp);</span>
+<span class="nc" id="L743">    	return new BigInteger(1,tmp).intValue();</span>
+     }
+    public static short getUnsignedByte(ByteBuffer buf) throws IOException{
+<span class="nc" id="L746">        byte[] tmp = new byte[1];</span>
+<span class="nc" id="L747">        buf.get(tmp);</span>
+<span class="nc" id="L748">    	return new BigInteger(1,tmp).shortValue();</span>
+     }
+    
+    
+    
+    
+    public static BigInteger readUnsignedLong(InputStream in) throws IOException{
+<span class="fc" id="L755">    	return readUnsignedLong(in, ByteOrder.BIG_ENDIAN);</span>
+     }
+    public static BigInteger readUnsignedLong(InputStream in, ByteOrder endian) throws IOException{
+<span class="fc" id="L758">    	return new BigInteger(1,</span>
+<span class="fc" id="L759">                IOUtil.toByteArray(in, 8, endian));</span>
+     }
+    public static long readUnsignedInt(InputStream in) throws IOException{
+<span class="fc" id="L762">        return readUnsignedInt(in, ByteOrder.BIG_ENDIAN);</span>
+      }
+    public static int readUnsignedShort(InputStream in) throws IOException{
+<span class="fc" id="L765">        return readUnsignedShort(in, ByteOrder.BIG_ENDIAN);</span>
+      }
+    public static short readUnsignedByte(InputStream in) throws IOException{
+<span class="fc" id="L768">        return readUnsignedByte(in, ByteOrder.BIG_ENDIAN);</span>
+      }
+    
+    public static byte[] convertUnsignedIntToByteArray(long unsignedInt){
+<span class="fc" id="L772">        byte[] result = new byte[4];</span>
+<span class="fc" id="L773">        long currentValue = unsignedInt;</span>
+<span class="fc bfc" id="L774" title="All 2 branches covered.">        for(int i=result.length-1; i&gt;=0; i--){</span>
+<span class="fc" id="L775">            result[i]=(byte)(currentValue &amp;0xff);</span>
+<span class="fc" id="L776">            currentValue&gt;&gt;&gt;=8;</span>
+        }
+<span class="fc" id="L778">        return result;</span>
+    }
+    /**
+     * Convert an unsigned short into a fully padded
+     * byte array.
+     * &lt;p&gt;
+     * For Example:
+     * &lt;pre&gt;
+     * &lt;code&gt;
+     * 3 =&gt; [0, 3]
+     * 255 =&gt; [0, 255]
+     * 256 =&gt; [1, 255]
+     * &lt;/code&gt;
+     * &lt;/pre&gt;
+     * @param unsignedShort the value of the unsigned value to convert;
+     * must be &amp;ge; 0.
+     * 
+     * @return a new byte array.
+     * 
+     * @throws IllegalArgumentException if unsignedShort is negative.
+     */
+    public static byte[] convertUnsignedShortToByteArray(int unsignedShort){
+    	
+<span class="pc bpc" id="L801" title="1 of 2 branches missed.">    	if(unsignedShort &lt; 0){</span>
+<span class="nc" id="L802">    		throw new IllegalArgumentException(&quot;unsigned value can not be negative&quot;);</span>
+    	}
+<span class="fc" id="L804">        byte[] result = new byte[2];</span>
+<span class="fc" id="L805">        int currentValue = unsignedShort;</span>
+<span class="fc bfc" id="L806" title="All 2 branches covered.">        for(int i=result.length-1; i&gt;=0; i--){</span>
+<span class="fc" id="L807">            result[i]=(byte)(currentValue &amp;0xff);</span>
+<span class="fc" id="L808">            currentValue&gt;&gt;&gt;=8;</span>
+        }
+<span class="fc" id="L810">        return result;</span>
+    }
+    public static byte[] convertUnsignedByteToByteArray(short unsignedByte){
+<span class="fc" id="L813">        byte[] result = new byte[1];       </span>
+<span class="fc" id="L814">        result[0]=(byte)(unsignedByte &amp;0xff);</span>
+          
+<span class="fc" id="L816">        return result;</span>
+    }
+    
+    public static byte[] convertUnsignedLongToByteArray(BigInteger unsignedLong){
+        //BigInteger.toByteArray() only returns the minimum number of bytes
+        //(signed) required to represent the number,
+        //it's easier to convert to hex, padd with 0's then convert
+        //each hex byte than to do the bit math to take an odd number of bits
+        //and compute the padded value.
+<span class="fc" id="L825">        String hexString =convertToPaddedHex(unsignedLong,16);</span>
+<span class="fc" id="L826">        byte[] result = new byte[8];</span>
+<span class="fc bfc" id="L827" title="All 2 branches covered.">        for(int i= 0; i&lt;16; i+=2){</span>
+<span class="fc" id="L828">            String byteInHex = hexString.substring(i, i+2);</span>
+<span class="fc" id="L829">            result[i/2] = (byte) Short.parseShort(byteInHex, 16);</span>
+        }
+        
+<span class="fc" id="L832">       return result;</span>
+    }
+    
+    private static String convertToPaddedHex(BigInteger value, int maxNumberOfHexChars) {
+<span class="fc" id="L836">        String hexString =value.toString(16);</span>
+<span class="fc" id="L837">        int padding = maxNumberOfHexChars-hexString.length();</span>
+<span class="fc" id="L838">        StringBuilder paddingString = new StringBuilder(maxNumberOfHexChars);</span>
+<span class="fc bfc" id="L839" title="All 2 branches covered.">        for(int i=0; i&lt; padding; i++){</span>
+<span class="fc" id="L840">            paddingString.append('0');</span>
+        }
+<span class="fc" id="L842">        paddingString.append(hexString);</span>
+<span class="fc" id="L843">        return paddingString.toString();</span>
+    }
+    
+    public static InputStream createInputStreamFromFile(File file,long startOffset, int length)throws IOException {
+<span class="fc" id="L847">       return new RandomAccessFileInputStream(file, startOffset, length);</span>
+    }
+    /**
+     * Get the number of bits required
+     * to represent this value in binary.
+     * @param value the value as an positive long.
+     * 
+     * @return the number of bits that are required
+     * to represent this value as an unsigned binary
+     * integer.
+     * 
+     * @throws IllegalArgumentException if value is negative.
+     */
+    public static int getUnsignedBitCount(long value) {
+<span class="pc bpc" id="L861" title="1 of 2 branches missed.">        if(value &lt;0){</span>
+<span class="nc" id="L862">            throw new IllegalArgumentException(&quot;value can not be &lt;0&quot;);</span>
+        }
+<span class="fc bfc" id="L864" title="All 2 branches covered.">        if(value ==Long.MAX_VALUE){</span>
+            //special case
+<span class="fc" id="L866">            return 64;</span>
+        }
+<span class="fc" id="L868">        return (int)Math.ceil(Math.log(value+1)/LOG_2);</span>
+    }   
+    
+    /**
+     * Get the number of bytes required
+     * to represent this value in binary.
+     * @param value the value as an positive long.
+     * @return the number of bytes that are required
+     * to represent this value as an unsigned binary
+     * integer.
+     * @throws IllegalArgumentException if value is negative.
+     */
+    public static int getUnsignedByteCount(long value){
+<span class="fc" id="L881">        int numBits = getUnsignedBitCount(value);</span>
+<span class="fc" id="L882">        return (numBits+7)/8;</span>
+    }
+    
+    /**
+     * Convert the given {@link BitSet} into
+     * the corresponding byte array.
+     * For some reason {@link BitSet}
+     * Java API thru java 6 does not include methods for converting
+     * to and from a byte array.
+     * 
+     * @param bitset the bitset to convert.
+     * @param bitLength the number of bits that need to be present
+     * in the byte array.  This needs to be specified because
+     * a {@link BitSet} may have trailing 0's
+     * which would get truncated otherwise.
+     * @return a new byte array containing the smallest 
+     * number of bytes required to store the same data as
+     * the given {@link BitSet}.
+     * @throws NullPointerException if bitset is null.
+     * @throws IllegalArgumentException if bitLength is negative.
+     */
+    public static byte[] toByteArray(BitSet bitset, int bitLength){
+<span class="fc bfc" id="L904" title="All 2 branches covered.">    	if(bitset ==null){</span>
+<span class="fc" id="L905">    		throw new NullPointerException(&quot;bitset can not be null&quot;);</span>
+    	}
+<span class="fc bfc" id="L907" title="All 2 branches covered.">    	if(bitLength&lt;0){</span>
+<span class="fc" id="L908">    		throw new IllegalArgumentException(&quot;bitLength must be &gt;=0&quot;);</span>
+    	}
+    	
+<span class="fc" id="L911">    	byte[] bytes = new byte[(bitLength + 7) / 8];</span>
+<span class="fc bfc" id="L912" title="All 2 branches covered.">    	for(int i=0; i&lt;bitLength; i++){</span>
+<span class="fc bfc" id="L913" title="All 2 branches covered.">    		if(bitset.get(i)){</span>
+<span class="fc" id="L914">    			bytes[bytes.length-i/8-1] |= 1&lt;&lt; (i%8);</span>
+    		}
+    	}
+<span class="fc" id="L917">    	return bytes;</span>
+    }
+    /**
+     * Convert the given byte array into
+     * the corresponding {@link BitSet}
+     * using the &lt;strong&gt;least&lt;/strong&gt;
+     * number of bits possible.
+     * For some reason {@link BitSet}
+     * Java API thru java 6 does not include methods for converting
+     * to and from a byte array.
+     * @param bytes the byte array to convert.
+     * @return a new {@link BitSet} containing the same data as
+     * the given byte array.
+     * @throws NullPointerException if bytes is null.
+     */
+    public static BitSet toBitSet(byte[] bytes){
+    	final BitSet bits;
+<span class="fc" id="L934">    	bits = new BitSet();</span>
+<span class="fc" id="L935">    	int maxNumberOfBits = bytes.length *8;</span>
+<span class="fc bfc" id="L936" title="All 2 branches covered.">    	for(int i=0; i&lt;maxNumberOfBits; i++){</span>
+<span class="fc" id="L937">			int value = bytes[bytes.length-i/8-1] &amp; (1&lt;&lt; (i%8));</span>
+<span class="fc bfc" id="L938" title="All 2 branches covered.">			if(value !=0){</span>
+<span class="fc" id="L939">    			bits.set(i);</span>
+    		}
+    	}
+    	
+<span class="fc" id="L943">    	return bits;</span>
+    }
+    /**
+     * Convert the given byte array into
+     * the corresponding {@link BitSet}
+     * using the &lt;strong&gt;least&lt;/strong&gt;
+     * number of bits possible.
+     * For some reason {@link BitSet}
+     * Java API thru java 6 does not include methods for converting
+     * to and from a byte array.
+     * @param buffer the {@link ByteBuffer} to convert.
+     * @return a new {@link BitSet} containing the same data as
+     * the given byte array.
+     * @throws NullPointerException if bytes is null.
+     */
+    public static BitSet toBitSet(ByteBuffer buffer){
+    	final BitSet bits;
+<span class="nc" id="L960">    	bits = new BitSet(8*buffer.remaining());</span>
+<span class="nc" id="L961">    	int j=0;</span>
+<span class="nc bnc" id="L962" title="All 2 branches missed.">    	while(buffer.remaining() &gt;0){</span>
+<span class="nc" id="L963">    		byte value = buffer.get();</span>
+<span class="nc bnc" id="L964" title="All 2 branches missed.">    		for(int i=0; i&lt;8; i++){</span>
+<span class="nc" id="L965">    			int bit = value &amp; (1&lt;&lt; i);</span>
+<span class="nc bnc" id="L966" title="All 2 branches missed.">    			if(bit !=0){</span>
+<span class="nc" id="L967">        			bits.set(j+i);</span>
+        		}
+    		}
+<span class="nc" id="L970">    		j+=8;</span>
+<span class="nc" id="L971">    	}</span>
+    	
+    	
+<span class="nc" id="L974">    	return bits;</span>
+    }
+    /**
+     * Convert the given single value into
+     * the corresponding {@link BitSet}
+     * using the &lt;strong&gt;least&lt;/strong&gt;
+     * number of bits possible.
+     * For some reason {@link BitSet}
+     * Java API thru java 6 does not include methods for converting
+     * to and from a byte array.
+     * @param singleValue the value to convert.
+     * @return a new {@link BitSet} containing the same data as
+     * the given byte array.
+     */
+    public static BitSet toBitSet(long singleValue){
+<span class="fc" id="L989">    	return toBitSet(BigInteger.valueOf(singleValue).toByteArray());    	</span>
+    }
+    /**
+     * Copy the contents of the given inputStream to the given
+     * outputStream.  This method buffers internally so there is no
+     * need to use a {@link BufferedInputStream}.  This method 
+     * &lt;strong&gt;does not&lt;/strong&gt; close either stream
+     * after processing.
+     * @param in the inputStream to read.
+     * @param out the outputStream to write to.
+     * @return the number of bytes that were copied.
+     * @throws IOException if there is a problem reading or writing
+     * the streams.
+     * @throws NullPointerException if either stream is null.
+     */
+    public static long copy(InputStream in, OutputStream out) throws IOException{
+<span class="fc" id="L1005">    	byte[] buf = new byte[2048];</span>
+<span class="fc" id="L1006">    	long numBytesCopied=0;</span>
+    	while(true){
+<span class="fc" id="L1008">    		int numBytesRead =in.read(buf);</span>
+<span class="fc bfc" id="L1009" title="All 2 branches covered.">    		if(numBytesRead ==EOF){</span>
+<span class="fc" id="L1010">    			break;</span>
+    		}
+<span class="fc" id="L1012">    		numBytesCopied+=numBytesRead;</span>
+<span class="fc" id="L1013">    		out.write(buf, 0, numBytesRead);</span>
+<span class="fc" id="L1014">    		out.flush();</span>
+<span class="fc" id="L1015">    	}</span>
+<span class="fc" id="L1016">    	return numBytesCopied;</span>
+    }
+    /**
+     * Read the contents of the given {@link InputStream}
+     * using the default character encoding
+     * and return the entire contents of the stream
+     * as a String.  This method will not close the stream
+     * when it is done.  There is no need to buffer the {@link InputStream}
+     * since this method will buffer internally.
+     * @param in the inputStream to read as a String; can not be null.
+     * @return a String representing the contents of the given
+     * String using the default character encoding.
+     * @throws IOException if there is a problem reading the Stream.
+     * @throws NullPointerException if inputStream is null.
+     */
+    public static String toString(InputStream in) throws IOException{
+<span class="fc" id="L1032">    	return toString(in,null);</span>
+    }
+    /**
+     * Read the contents of the given {@link InputStream}
+     * using the default character encoding
+     * and return the entire contents of the stream
+     * as a String.  This method will not close the stream
+     * when it is done.  There is no need to buffer the {@link InputStream}
+     * since this method will buffer internally.
+     * 
+     * @param in the inputStream to read as a String; can not be null.
+     * 
+     * @param encoding the name of the {@link Charset} encoding to use; if this value
+     * is null, then use the default as defined by {@link Charset#defaultCharset()}.
+     * 
+     * @return a String representing the contents of the given
+     * String using the default character encoding.
+     * 
+     * @throws IOException if there is a problem reading the InputStream or the charset encoding.
+     * @throws NullPointerException if inputStream is null.
+     * 
+     */
+    public static String toString(InputStream in, String encoding) throws IOException{
+<span class="fc" id="L1055">    	StringWriter writer = new StringWriter();</span>
+    	final Reader reader;
+<span class="fc bfc" id="L1057" title="All 2 branches covered.">    	if(encoding ==null){</span>
+<span class="fc" id="L1058">    		reader= new InputStreamReader(in,Charset.defaultCharset());</span>
+    	}else{
+<span class="fc" id="L1060">    		reader = new InputStreamReader(in,encoding);</span>
+    	}
+<span class="fc" id="L1062">    	char[] buf = new char[1024];</span>
+    	while(true){
+<span class="fc" id="L1064">    		int numBytesRead =reader.read(buf);</span>
+<span class="fc bfc" id="L1065" title="All 2 branches covered.">    		if(numBytesRead ==EOF){</span>
+<span class="fc" id="L1066">    			break;</span>
+    		}
+<span class="fc" id="L1068">    		writer.write(buf, 0, numBytesRead);</span>
+<span class="fc" id="L1069">    	}</span>
+<span class="fc" id="L1070">    	return writer.toString();</span>
+    }
+    
+    /**
+     * Copy the contents of the given {@link File}
+     * and return it as a byte[].
+     * @param f the File to get the bytes of.
+     * @return a new byte array instance containing all the bytes
+     * from the given file.
+     * @throws IOException if there is a problem reading the file.
+     */
+	public static byte[] toByteArray(File f) throws IOException {
+<span class="fc" id="L1082">		InputStream in = null;</span>
+		try{
+<span class="fc" id="L1084">			in = new BufferedInputStream(new FileInputStream(f));</span>
+<span class="fc" id="L1085">			return toByteArray(in);</span>
+		}finally{
+<span class="pc" id="L1087">			IOUtil.closeAndIgnoreErrors(in);</span>
+		}
+		
+	}
+    /**
+     * Copy the contents of the given {@link InputStream}
+     * and return it as a byte[].
+     * @param input the inputStream to convert into a byte[].  
+     * This stream is not closed when the method finishes.
+     * @return a new byte array instance containing all the bytes
+     * from the given inputStream.
+     * @throws IOException if there is a problem reading the Stream.
+     */
+	public static byte[] toByteArray(InputStream input) throws IOException {
+<span class="fc" id="L1101">		ByteArrayOutputStream output = new ByteArrayOutputStream();</span>
+<span class="fc" id="L1102">        copy(input, output);</span>
+        
+<span class="fc" id="L1104">        return output.toByteArray();</span>
+	}
+	 /**
+     * Copy the numberOfBytesToRead of the given {@link InputStream}
+     * and return it as a byte[].  This is the same
+     * as {@link #toByteArray(InputStream, int, ByteOrder)
+     * toByteArray(in,numberOfBytesToRead,ByteOrder.BIG_ENDIAN)}
+     * 
+     * @param in the inputStream to convert into a byte[].  
+     * This stream is not closed when the method finishes.
+     * @param numberOfBytesToRead the number of bytes to read from the stream;
+     * if there aren't enough bytes, then this method will block until
+     * more bytes are available or until the stream reaches end of file
+     * (which will cause an IOException to be thrown).
+     * 
+     * @return a new byte array instance containing all the bytes
+     * from the given inputStream.
+     * @throws EOFException if the end of the file is reached before
+     * the given number of bytes.
+     * @throws IOException if there is a problem reading the inputStream.
+     */
+	 public static byte[] toByteArray(InputStream in, int numberOfBytesToRead) throws IOException {
+<span class="fc" id="L1126">	       return toByteArray(in, numberOfBytesToRead, ByteOrder.BIG_ENDIAN);</span>
+	 }
+	 /**
+     * Copy the numberOfBytesToRead of the given {@link InputStream}
+     * and return it as a byte[] using the given {@link ByteOrder}.
+     * 
+     * @param in the inputStream to convert into a byte[].  
+     * This stream is not closed when the method finishes.
+     * @param numberOfBytesToRead the number of bytes to read from the stream;
+     * if there aren't enough bytes, then this method will block until
+     * more bytes are available or until the stream reaches end of file
+     * (which will cause an IOException to be thrown).
+     * @param endian the {@link ByteOrder} to use; null is considered
+     * {@link ByteOrder#BIG_ENDIAN} (the default).
+     * 
+     * @return a new byte array instance containing all the bytes
+     * from the given inputStream.
+     * @throws EOFException if the end of the file is reached before
+     * the given number of bytes.
+     * @throws IOException if there is a problem reading the inputStream.
+     */
+    public static byte[] toByteArray(InputStream in, int numberOfBytesToRead, ByteOrder endian) throws IOException {
+<span class="fc" id="L1148">        byte[] array = new byte[numberOfBytesToRead];</span>
+<span class="fc" id="L1149">        blockingRead(in,array,0,numberOfBytesToRead);  </span>
+       
+<span class="fc bfc" id="L1151" title="All 2 branches covered.">        if(endian == ByteOrder.LITTLE_ENDIAN){</span>
+<span class="fc" id="L1152">            return IOUtil.switchEndian(array);</span>
+        }
+<span class="fc" id="L1154">        return array;</span>
+    }
+    
+    
+    /**
+     * Compute the number of bits required to
+     * store the given value. For example
+     * the value 2 requires 2 bits and the value 6 requires 3 bits etc.
+     * @param value the value to get the number of bits 
+     * for.
+     * @return the number of bits needed.
+     */
+	public static int computeNumberOfBitsIn(int value){
+<span class="fc bfc" id="L1167" title="All 2 branches covered.">		if(value ==0){</span>
+			//special case
+<span class="fc" id="L1169">			return 1;</span>
+		}
+<span class="fc" id="L1171">		return Integer.SIZE-Integer.numberOfLeadingZeros(value);</span>
+	}
+	/**
+	 * Convenience method for {@link #toInputStream(String, Charset)}
+	 * using UTF-8 charset.
+	 * @param input the String to turn into an inputStream; can not be null.
+	 * @return a new {@link InputStream} instance;
+	 * will never be null, but may be empty.
+	 * @throws NullPointerException if input is null.
+	 */
+	public static InputStream toInputStream(String input) {
+<span class="fc" id="L1182">		return toInputStream(input,IOUtil.UTF_8);</span>
+		
+	}
+	/**
+	 * Create a new {@link InputStream} of the bytes of the given
+	 * String using the given {@link Charset}.
+	 * @param input the String to turn into an inputStream; can not be null.
+	 * @param charset the {@link Charset} to use to convert the characters in the
+	 * String into bytes; can not be null.
+	 * @return a new {@link InputStream} instance;
+	 * will never be null, but may be empty.
+	 * @throws NullPointerException if either parameters are null.
+	 */
+	public static InputStream toInputStream(String input, Charset charset) {
+<span class="fc" id="L1196">		return new ByteArrayInputStream(input.getBytes(charset));</span>
+		
+	}
+	/**
+	 * Similar to {@link File#createTempFile(String, String, File)}
+	 * but makes a directory instead.  The contract of {@link File#createTempFile(String, String, File)}
+	 * is respected:
+	 * &lt;p&gt;
+	 *  Creates a new empty file in the specified directory, 
+	 *  using the given prefix and suffix strings to generate its name.
+	 *   If this method returns successfully then it is guaranteed that:
+	 *   &lt;ol&gt;
+	 *   &lt;li&gt;The file denoted by the returned abstract pathname did 
+	 *   not exist before this method was invoked, and&lt;/li&gt;
+	 *   
+	 *   &lt;li&gt;Neither this method nor any of its variants will 
+	 *   return the same abstract pathname again in the current 
+	 *   invocation of the virtual machine. &lt;/li&gt;
+	 *   &lt;/ol&gt;
+	 
+	 * 
+	 * @param prefix The prefix string to be used in generating the file's name;
+	 *			 must be at least three characters long
+	 * @param suffix The suffix string to be used in generating the file's name;
+	 *			 may be null, in which case the suffix &quot;.tmp&quot; will be used
+	 * @param directory The directory in which the file is to be created, 
+	 *			or null if the default temporary-file directory is to be used.
+	 *			If the directory is not null and does not exist,
+	 *			then it will be created.
+	 * @return a new File object that points to this new created directory.
+	 * 
+	 * @throws IOException if there is a problem creating the directory.
+	 */
+	public static File createTempDir(String prefix, String suffix, File directory) throws IOException{
+<span class="pc bpc" id="L1230" title="1 of 4 branches missed.">		if(directory !=null &amp;&amp; !directory.exists()){</span>
+<span class="nc" id="L1231">			IOUtil.mkdirs(directory);</span>
+		}
+<span class="fc" id="L1233">		File tmpDir = File.createTempFile(prefix, suffix, directory);</span>
+		//now that we have a new empty file
+       //we need to delete it and then create it again, but this
+       //time as a directory
+		//I guess there is a slight race condition
+		//where we create the temp file and some other process
+		//creates an identical temp file?
+		//it probably doesn't matter as long as
+		//no processes have written files under this directory yet.
+<span class="pc bpc" id="L1242" title="2 of 4 branches missed.">       if(!tmpDir.delete() || !tmpDir.mkdir()){</span>
+<span class="nc" id="L1243">           throw new IOException(&quot;Could not create temp directory: &quot; + tmpDir.getAbsolutePath());</span>
+       }
+<span class="fc" id="L1245">       return tmpDir;</span>
+	}
+	/**
+	 * Checks to make sure the given file is readable 
+	 * and throws an descriptive IOException if it's not.
+	 * 
+	 * @param f the File to verify; can not be null
+	 * @throws NullPointerException if f is null.
+	 * @throws FileNotFoundException if the file does not exist.
+	 * @throws IOException if the file is not readable.
+	 */
+	public static void verifyIsReadable(File f) throws IOException {
+<span class="fc bfc" id="L1257" title="All 2 branches covered.">		if (f == null) {</span>
+<span class="fc" id="L1258">			throw new NullPointerException(&quot;file can not be null&quot;);</span>
+		}
+<span class="fc bfc" id="L1260" title="All 2 branches covered.">		if (!f.exists()) {</span>
+<span class="fc" id="L1261">			throw new FileNotFoundException(&quot;file must exist : &quot; + f.getAbsolutePath());</span>
+		}
+<span class="pc bpc" id="L1263" title="1 of 2 branches missed.">		if (!f.canRead()) {</span>
+<span class="nc" id="L1264">			throw new IOException(&quot;file is not readable: &quot; + f.getAbsolutePath());</span>
+		}
+<span class="fc" id="L1266">	}</span>
+	
+	/**
+	 * Create a new {@link BufferedReader} instance
+	 * that reads the given file in the given {@link Charset}.
+	 * 
+	 * @param file the file to read.
+	 * 
+	 * @param charset the name of the {@link Charset} to use.
+	 * 
+	 * @return a new {@link BufferedReader}.
+	 * 
+	 * @throws IOException if there is a problem reading the file or translating the
+	 * charset name into a {@link Charset}.
+	 * @throws NullPointerException if either parameter is null.
+	 */
+	public static BufferedReader createNewBufferedReader(File file, String charset) throws IOException{
+<span class="fc" id="L1283">		 return new BufferedReader(</span>
+					new InputStreamReader(new FileInputStream(file), charset));
+	}
+	
+	/**
+	 * Create a new {@link BufferedWriter} instance
+	 * that reads the given file in the given {@link Charset}.
+	 * 
+	 * @param file the file to write to, will be overwritten; can not be null.
+	 * 
+	 * @param charset the name of the {@link Charset} to use.
+	 * @return a new {@link BufferedWriter}.
+	 * @throws IOException if there is a problem creating the file or translating the
+	 * charset name into a {@link Charset}.
+	 * @throws NullPointerException if either parameter is null.
+	 */
+	public static BufferedWriter createNewBufferedWriter(File file, String charset) throws IOException{
+<span class="fc" id="L1300">		 return createNewBufferedWriter(new FileOutputStream(file), charset);</span>
+	}
+	
+	/**
+	 * Create a new {@link BufferedWriter} instance
+	 * that reads the given file in the given {@link Charset}.
+	 * 
+	 * @param out the OutputStream to write to; can not be null.
+	 * 
+	 * @param charset the name of the {@link Charset} to use.
+	 * @return a new {@link BufferedWriter}.
+	 * @throws IOException if there is a problem creating the file or translating the
+	 * charset name into a {@link Charset}.
+	 * @throws NullPointerException if either parameter is null.
+	 */
+	public static BufferedWriter createNewBufferedWriter(OutputStream out, String charset) throws IOException{
+<span class="fc" id="L1316">		 return new BufferedWriter(</span>
+					new OutputStreamWriter(out, charset));
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

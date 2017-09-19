@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>TigrAnnotationConsensusCaller.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.util.consensus</a> &gt; <span class="el_source">TigrAnnotationConsensusCaller.java</span></div><h1>TigrAnnotationConsensusCaller.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Jun 8, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.assembly.util.consensus;
+
+import java.util.EnumSet;
+import java.util.Set;
+
+import org.jcvi.jillion.assembly.util.Slice;
+import org.jcvi.jillion.assembly.util.SliceElement;
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+/**
+ * &lt;code&gt;AnnotationConsensusCaller&lt;/code&gt; is the Consensus
+ * caller used by the TIGR Annotation Group.  It is much
+ * more sensitive to conflicting basecalls in a slice
+ * than the Conic model.  Any high quality conflict
+ * will contribute towards the consensus call.
+ * @author dkatzel
+ *
+ *
+ */
+public class TigrAnnotationConsensusCaller extends AbstractChurchillWatermanConsensusCaller{
+
+    public TigrAnnotationConsensusCaller(PhredQuality highQualityThreshold) {
+<span class="fc" id="L48">        super(highQualityThreshold);</span>
+<span class="fc" id="L49">    }</span>
+
+    /**
+     * Adds all high quality conflicts to standard Chruchill
+     * Waterman algorithm of computing which bases
+     * to consider towards the ambiguity consensus.
+     */
+    @Override
+    protected Nucleotide getConsensus(
+            ConsensusProbabilities normalizedConsensusProbabilities, Slice slice) {
+<span class="fc" id="L59">        Set&lt;Nucleotide&gt; basesTowardsAmbiguity = getCWBasesTowardsAmbiguity(normalizedConsensusProbabilities, slice);</span>
+<span class="fc" id="L60">        basesTowardsAmbiguity.addAll(findAllHighQualityBases(slice));</span>
+<span class="fc" id="L61">        return Nucleotide.getAmbiguityFor(basesTowardsAmbiguity);</span>
+        
+    }
+
+    private Set&lt;Nucleotide&gt; getCWBasesTowardsAmbiguity(
+            ConsensusProbabilities normalizedErrorProbabilityStruct,
+            Slice slice) {
+<span class="fc" id="L68">    	int numberOfDifferentBasesInSlice=0;</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">    	for(int counts :slice.getNucleotideCounts().values()){</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">    		if(counts &gt;0){</span>
+<span class="fc" id="L71">    			numberOfDifferentBasesInSlice++;</span>
+    		}
+<span class="fc" id="L73">    	}      </span>
+<span class="fc" id="L74">        return getBasesUsedTowardsAmbiguity(normalizedErrorProbabilityStruct, numberOfDifferentBasesInSlice);</span>
+    }
+
+    private Set&lt;Nucleotide&gt; findAllHighQualityBases(Slice slice) {
+<span class="fc" id="L78">        Set&lt;Nucleotide&gt; highQualityDiffs = EnumSet.noneOf(Nucleotide.class);</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">        for(SliceElement sliceElement : slice){</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">            if(sliceElement.getQuality().compareTo(getHighQualityThreshold()) &gt;=0){</span>
+<span class="fc" id="L81">                highQualityDiffs.add(sliceElement.getBase());</span>
+            }
+<span class="fc" id="L83">        }</span>
+<span class="fc" id="L84">        return highQualityDiffs;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

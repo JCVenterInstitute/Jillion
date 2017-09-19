@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>UncommentedFastqRecord.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.trace.fastq</a> &gt; <span class="el_source">UncommentedFastqRecord.java</span></div><h1>UncommentedFastqRecord.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.trace.fastq;
+
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+/**
+ * {@link FastqRecord} implementation that doesn't
+ * have a comment (so {@link FastqRecord#getComment()} returns null).
+ * This saves us 8 bytes per record.
+ * @author dkatzel
+ *
+ */
+class UncommentedFastqRecord implements FastqRecord{
+		private final String id;
+	    private final NucleotideSequence nucleotides;
+	    private final QualitySequence qualities;
+
+	    /**
+	     * Create a new {@link FastqRecord} with the given
+	     * values.
+	     * @param id the id of this fastq record.  This
+	     * id may contain whitespace.
+	     * @param nucleotides the {@link NucleotideSequence}
+	     * associated with this record.
+	     * @param qualities the {@link QualitySequence}
+	     * associated with this record, can not be null.
+	     * @throw NullPointerException if either id, nucleotides or qualities
+	     * is set to null.
+	     */
+	    public UncommentedFastqRecord(String id, NucleotideSequence nucleotides,
+<span class="fc" id="L50">	            QualitySequence qualities) {</span>
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">	    	if(id ==null){</span>
+<span class="nc" id="L52">	    		throw new NullPointerException(&quot;id can not be null&quot;);</span>
+	    	}
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">	    	if(nucleotides ==null){</span>
+<span class="nc" id="L55">	    		throw new NullPointerException(&quot;nucleotides can not be null&quot;);</span>
+	    	}
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">	    	if(qualities ==null){</span>
+<span class="nc" id="L58">	    		throw new NullPointerException(&quot;qualities can not be null&quot;);</span>
+	    	}
+<span class="fc" id="L60">	        this.id = id;</span>
+<span class="fc" id="L61">	        this.nucleotides = nucleotides;</span>
+<span class="fc" id="L62">	        this.qualities = qualities;</span>
+<span class="fc" id="L63">	    }</span>
+	    /**
+	     * 
+	     * {@inheritDoc}
+	     */
+	    @Override
+	    public String getComment() {
+<span class="fc" id="L70">	        return null;</span>
+	    }
+	    /**
+	     * 
+	     * {@inheritDoc}
+	     */
+	    @Override
+	    public String getId() {
+<span class="fc" id="L78">	        return id;</span>
+	    }
+
+	   
+	     /**
+	      * 
+	      * {@inheritDoc}
+	      */
+	    @Override
+	    public NucleotideSequence getNucleotideSequence() {
+<span class="fc" id="L88">	        return nucleotides;</span>
+	    }
+	    /**
+	     * 
+	     * {@inheritDoc}
+	     */
+	    @Override
+	    public QualitySequence getQualitySequence() {
+<span class="fc" id="L96">	        return qualities;</span>
+	    }
+	    @Override
+	    public int hashCode() {
+<span class="nc" id="L100">	        final int prime = 31;</span>
+<span class="nc" id="L101">	        int result = 1;	        </span>
+<span class="nc" id="L102">	        result = prime * result + id.hashCode();</span>
+<span class="nc" id="L103">	        result = prime * result</span>
+<span class="nc" id="L104">	                + nucleotides.hashCode();</span>
+<span class="nc" id="L105">	        result = prime * result</span>
+<span class="nc" id="L106">	                + qualities.hashCode();</span>
+<span class="nc" id="L107">	        return result;</span>
+	    }
+	    @Override
+	    public boolean equals(Object obj) {
+<span class="pc bpc" id="L111" title="1 of 2 branches missed.">	        if (this == obj) {</span>
+<span class="nc" id="L112">	            return true;</span>
+	        }
+<span class="pc bpc" id="L114" title="1 of 2 branches missed.">	        if (obj == null) {</span>
+<span class="nc" id="L115">	            return false;</span>
+	        }
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">	        if (!(obj instanceof FastqRecord)) {</span>
+<span class="nc" id="L118">	            return false;</span>
+	        }
+<span class="fc" id="L120">	        FastqRecord other = (FastqRecord) obj;	       </span>
+<span class="pc bpc" id="L121" title="1 of 2 branches missed.">	        if (!id.equals(other.getId())) {</span>
+<span class="nc" id="L122">	            return false;</span>
+	        }
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">	        if (!nucleotides.equals(other.getNucleotideSequence())) {</span>
+<span class="nc" id="L125">	            return false;</span>
+	        }
+<span class="pc bpc" id="L127" title="1 of 2 branches missed.">	        if (!qualities.equals(other.getQualitySequence())) {</span>
+<span class="nc" id="L128">	            return false;</span>
+	        }
+<span class="fc" id="L130">	        return true;</span>
+	    }
+		@Override
+		public String toString() {
+<span class="nc" id="L134">			return &quot;UncommentedFastqRecord [id=&quot; + id + &quot;, nucleotides=&quot;</span>
+					+ nucleotides + &quot;, qualities=&quot; + qualities + &quot;]&quot;;
+		}
+	    
+	    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

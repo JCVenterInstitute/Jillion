@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DataStoreProviderHint.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.core.datastore</a> &gt; <span class="el_source">DataStoreProviderHint.java</span></div><h1>DataStoreProviderHint.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.core.datastore;
+
+/**
+ * {@code DataStoreProviderHint}
+ * describes implementation hints to 
+ * help datastore factories return
+ * instances of datastore implementations
+ * for the desired scenario. 
+ * &lt;strong&gt;NOTE:&lt;/strong&gt;
+ * These hints are only guidelines;
+ * the factories might
+ * ignore any and all hints.  It is also
+ * possible that  the factory could
+ * return the same implementation
+ * for multiple hint values.
+ * @author dkatzel
+ *
+ */
+<span class="pc" id="L39">public enum DataStoreProviderHint{</span>
+	/**
+	 * Use a {@link DataStore} implementation
+	 * that is optimized for speedily accessing
+	 * records out of order 
+	 * using {@link DataStore#get(String)} or {@link DataStore#contains(String)}
+	 * at the cost
+	 * of possibly taking up more memory.
+	 * For example, an implementation might 
+	 * use a {@link java.util.Map} as a backing store which will
+	 * put all records in memory to allow for very fast lookups.
+	 * This is a very useful implementation if all the data
+	 * fits into memory and the client code that uses
+	 * this implementation will repeatedly require
+	 * random access to the data.
+	 * Therefore, this kind of implementation should not be used
+	 * for {@link DataStore}s that contain many records
+	 * or for {@link DataStore}s whose records take up lots of memory.
+	 */
+<span class="fc" id="L58">	RANDOM_ACCESS_OPTIMIZE_SPEED,</span>
+	/**
+	 * Use a {@link DataStore} implementation
+	 * that requires randomly accessing records
+	 * using {@link DataStore#get(String)} or {@link DataStore#contains(String)}
+	 * but has been optimized to take up as little
+	 * memory as possible. The implementation
+	 * chosen will probably take more time to access records
+	 * than {@link #RANDOM_ACCESS_OPTIMIZE_SPEED} but the {@link DataStore}
+	 * will take up less total memory.
+	 * &lt;p&gt; 
+	 * For example, if the input to this {@link DataStore} was 
+	 * some kind of file containing record data, then perhaps
+	 * and implementation will only store file offsets
+	 * to each record.
+	 * This allows large files to provide random 
+	 * access without taking up much memory.  The down side is 
+	 * lots of I/O must be performed to re-open up the file and seek to the correct file offset
+	 * and re-parse the data each time 
+	 * a call to {@link DataStore#get(String)} or {@link DataStore#contains(String)}
+	 * is called.
+	 * Another limitation to such an implementation is
+	 * the input of the data must exist and not
+	 * get altered during the entire lifetime of this object.
+	 */
+<span class="fc" id="L83">	RANDOM_ACCESS_OPTIMIZE_MEMORY,</span>
+	/**
+	 * Choose this option if the only methods
+	 * in the {@link DataStore} that will be called
+	 * are {@link DataStore#iterator()} and/or {@link DataStore#idIterator()}.
+	 * The {@link DataStore} implementation returned
+	 * will be optimized for iterating over records
+	 * using {@link DataStore#iterator()} and {@link DataStore#idIterator()}
+	 * possibly at the expense of poor performance of 
+	 * randomly accessing records
+	 * with {@link DataStore#get(String)} or {@link DataStore#contains(String)}.
+	 * Such an implementation is ideal 
+	 * for use cases
+	 * where the contents of the datastore
+	 * will only be iterated over in a single pass.
+	 * For example, iterating over each record only once 
+	 * using {@link DataStore#iterator()} inorder to perform
+	 * a processing task.  This implementation choice
+	 * is also an option for datastores
+	 * that contain so many records that storing them in memory would
+	 * cause out of memory errors or if the number of records exceeds
+	 * {@link Integer#MAX_VALUE}. 
+	 * &lt;p&gt;
+	 * Since calls to
+	 * {@link DataStore#get(String)} or {@link DataStore#contains(String)}
+	 * may be so expensive,
+	 * it is recommended that instances of that use 
+	 * this hint
+	 * are wrapped by a cached datastore using
+	 * {@link DataStoreUtil#createNewCachedDataStore(Class, DataStore, int)}
+	 * if random access will be used.
+	 * 
+	 * @see DataStoreUtil#createNewCachedDataStore(Class, DataStore, int) }
+	 */
+<span class="fc" id="L117">	ITERATION_ONLY</span>
+	;
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Frg2Visitor.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.ca.frg</a> &gt; <span class="el_source">Frg2Visitor.java</span></div><h1>Frg2Visitor.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Jul 17, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.assembly.ca.frg;
+
+import java.util.List;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.io.TextFileVisitor;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+
+public interface Frg2Visitor extends TextFileVisitor{
+    
+<span class="pc" id="L37">    public enum FrgAction {</span>
+<span class="fc" id="L38">        ADD,</span>
+<span class="fc" id="L39">        MODIFY,</span>
+<span class="fc" id="L40">        DELETE,</span>
+<span class="fc" id="L41">        IGNORE;</span>
+        
+        public static FrgAction parseAction(char action){
+<span class="pc bpc" id="L44" title="4 of 5 branches missed.">            switch(action){</span>
+<span class="fc" id="L45">                case 'A': return ADD;</span>
+<span class="nc" id="L46">                case 'M': return MODIFY;</span>
+<span class="nc" id="L47">                case 'D': return DELETE;</span>
+<span class="nc" id="L48">                case 'I': return IGNORE;</span>
+                default:
+<span class="nc" id="L50">                    throw new IllegalArgumentException(&quot;not a Frg action : &quot;+ action);</span>
+            }
+        }
+    }
+    
+    void visitLibrary(FrgAction action, 
+                        String id,
+                        MateOrientation orientation,
+                        Distance distance);
+    
+    void visitFragment(FrgAction action,
+                String fragmentId, 
+                String libraryId,
+                NucleotideSequence bases,
+                QualitySequence qualities ,
+                Range validRange,
+                Range vectorClearRange,
+                String source);
+    
+    void visitLink(FrgAction action, List&lt;String&gt; fragIds);
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

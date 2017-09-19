@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DeltaStrategy.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.trace.chromat.ztr.data</a> &gt; <span class="el_source">DeltaStrategy.java</span></div><h1>DeltaStrategy.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Dec 29, 2008
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.internal.trace.chromat.ztr.data;
+
+import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.jcvi.jillion.core.util.MapUtil;
+import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
+/**
+ * There are several different possible Delta strategies
+ * that can be used to compute the delta between 2 consecutive
+ * values.
+ * @author dkatzel
+ *
+ *
+ */
+<span class="pc" id="L42">public enum DeltaStrategy {</span>
+	
+<span class="fc" id="L44">	LEVEL_1{</span>
+		 @Override
+		    protected int computeDelta(int u1, int u2, int u3) {
+<span class="fc" id="L47">		        return u1;</span>
+		    }
+
+		 
+	},
+<span class="fc" id="L52">	LEVEL_2{</span>
+		@Override
+	    protected int computeDelta(int u1, int u2, int u3) {
+<span class="fc" id="L55">	        return  2*u1 - u2;</span>
+	    }
+	},
+<span class="fc" id="L58">	LEVEL_3{</span>
+		@Override
+	    protected int computeDelta(int u1, int u2, int u3) {
+<span class="fc" id="L61">	        return 3*u1 - 3*u2 + u3;</span>
+	    }
+		
+	};
+
+	private static final Map&lt;Integer, DeltaStrategy&gt; MAP;
+	static{
+<span class="fc" id="L68">		int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(DeltaStrategy.values().length);</span>
+<span class="fc" id="L69">		MAP = new HashMap&lt;Integer, DeltaStrategy&gt;(mapSize);</span>
+<span class="fc" id="L70">		MAP.put(Integer.valueOf(1), LEVEL_1);</span>
+<span class="fc" id="L71">		MAP.put(Integer.valueOf(2), LEVEL_2);</span>
+<span class="fc" id="L72">		MAP.put(Integer.valueOf(3), LEVEL_3);</span>
+		
+<span class="fc" id="L74">	}</span>
+	
+	public static DeltaStrategy getStrategyFor(int level){
+<span class="fc" id="L77">		Integer i = Integer.valueOf(level);</span>
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">		if(MAP.containsKey(i)){</span>
+<span class="fc" id="L79">			return MAP.get(i);</span>
+		}
+<span class="nc" id="L81">		throw new IllegalArgumentException(&quot;no delta strategy for level &quot;+level);</span>
+	}
+    /**
+     * use the delta strategy computation
+     * to uncompress the next value from the given compressed buffer
+     * and write it to the given out buffer. 
+     * @param compressed buffer containing compressed data.
+     * @param out buffer to write uncompressed (undelta'ed) value.
+     */    
+    public void unCompress(ByteBuffer compressed, ValueSizeStrategy valueSizeStrategy ,ByteBuffer out) {
+<span class="fc" id="L91">        int u1 = 0,u2 = 0,u3=0;</span>
+        
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        while(compressed.hasRemaining()){</span>
+<span class="fc" id="L94">            int value =valueSizeStrategy.getNext(compressed) + computeDelta(u1, u2, u3);</span>
+<span class="fc" id="L95">            valueSizeStrategy.put(out, value);</span>
+            //update previous values for next round
+<span class="fc" id="L97">            u3 = u2;</span>
+<span class="fc" id="L98">            u2 = u1;            </span>
+<span class="fc" id="L99">            u1 = value;            </span>
+<span class="fc" id="L100">        }</span>
+<span class="fc" id="L101">    }</span>
+    
+    public void compress(ByteBuffer uncompressed, ValueSizeStrategy valueSizeStrategy, ByteBuffer out){
+<span class="fc" id="L104">    	 int u1 = 0,u2 = 0,u3=0;</span>
+<span class="fc bfc" id="L105" title="All 2 branches covered.">    	 while(uncompressed.hasRemaining()){</span>
+<span class="fc" id="L106">             int next = valueSizeStrategy.getNext(uncompressed);</span>
+<span class="fc" id="L107">			int value =next - computeDelta(u1, u2, u3);</span>
+<span class="fc" id="L108">             valueSizeStrategy.put(out, value);</span>
+             //update previous values for next round
+<span class="fc" id="L110">             u3 = u2;</span>
+<span class="fc" id="L111">             u2 = u1;            </span>
+<span class="fc" id="L112">             u1 = next;            </span>
+<span class="fc" id="L113">         }</span>
+<span class="fc" id="L114">    }</span>
+    /**
+     * Computes the current Delta given the previous 3 delta values. 
+     * @param u1 previous delta value.
+     * @param u2 the 2nd previous delta value.
+     * @param u3 the 3rd previous delta value.
+     * @return the current delta value.
+     */
+    protected abstract int computeDelta(int u1, int u2, int u3);
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

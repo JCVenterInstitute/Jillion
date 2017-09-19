@@ -1,0 +1,444 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>VulgarProtein2Genome.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.align.exonerate.vulgar</a> &gt; <span class="el_source">VulgarProtein2Genome.java</span></div><h1>VulgarProtein2Genome.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public Licence.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.align.exonerate.vulgar;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.ToIntFunction;
+
+import org.jcvi.jillion.core.DirectedRange;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Ranges;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.residue.aa.AminoAcid;
+import org.jcvi.jillion.core.residue.aa.IupacTranslationTables;
+import org.jcvi.jillion.core.residue.aa.ProteinSequence;
+import org.jcvi.jillion.core.residue.aa.ProteinSequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+
+public class VulgarProtein2Genome {
+
+    private final List&lt;VulgarElement&gt; elements;
+
+    private final List&lt;Range&gt; targetExons, targetGaps;
+    private final List&lt;Range&gt; queryRanges, queryGaps;
+    
+    private final String queryId, targetId;
+    
+    private final float score;
+    
+    private Direction queryStrand, targetStrand;
+    private final DirectedRange queryRange, targetRange;
+    
+    public VulgarProtein2Genome(String queryId, String targetId, List&lt;VulgarElement&gt; elements, float score,
+<span class="nc" id="L64">            String queryStrand, DirectedRange queryRange, String targetStrand, DirectedRange targetRange) {</span>
+<span class="nc" id="L65">        this.elements = elements;</span>
+<span class="nc" id="L66">        this.queryId = Objects.requireNonNull(queryId);</span>
+<span class="nc" id="L67">        this.targetId = Objects.requireNonNull(targetId);</span>
+<span class="nc" id="L68">        this.score = score;</span>
+<span class="nc" id="L69">        this.queryRange = Objects.requireNonNull(queryRange);</span>
+<span class="nc" id="L70">        this.targetRange = Objects.requireNonNull(targetRange);</span>
+        
+<span class="nc" id="L72">        targetExons = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L73">        targetGaps = new ArrayList&lt;&gt;();</span>
+        
+<span class="nc" id="L75">        queryRanges = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L76">        queryGaps = new ArrayList&lt;&gt;();</span>
+        
+//        BiConsumer&lt;Long, VulgarElement&gt; insertionConsumer = (offset, e) -&gt; queryGaps.add(new Range.Builder(e.getTargetLength() /3).shift(offset - queryRange.getBegin()).build());
+//        BiConsumer&lt;Long, VulgarElement&gt; deletionConsumer = (offset, e) -&gt; targetGaps.add(new Range.Builder(e.getQueryLength() *3).shift(offset - targetRange.getBegin() + queryRange.getBegin()).build());
+//        
+//        
+//        computeRanges(queryRange.getBegin(), VulgarElement::getQueryLength, queryRanges, insertionConsumer);
+//        computeRanges(targetRange.getBegin(), VulgarElement::getTargetLength, targetExons, deletionConsumer);
+//        
+<span class="nc" id="L85">        long queryOffset = 0;</span>
+<span class="nc" id="L86">        long targetOffset = 0;</span>
+        
+<span class="nc bnc" id="L88" title="All 2 branches missed.">        for(VulgarElement e : elements){</span>
+           
+<span class="nc bnc" id="L90" title="All 6 branches missed.">            if(e.getOp() == VulgarOperation.Match || e.getOp() == VulgarOperation.Split_Codon || e.getOp() == VulgarOperation.Gap){</span>
+<span class="nc" id="L91">                queryRanges.add(new Range.Builder(e.getQueryLength()).shift(queryOffset).build());</span>
+<span class="nc" id="L92">                targetExons.add(new Range.Builder(e.getTargetLength()).shift(targetOffset).build());</span>
+                
+<span class="nc bnc" id="L94" title="All 2 branches missed.">                if(e.getOp() == VulgarOperation.Gap){</span>
+<span class="nc" id="L95">                    queryGaps.add(new Range.Builder(e.getTargetLength()/3).shift(queryOffset).build());</span>
+<span class="nc" id="L96">                    targetGaps.add(new Range.Builder(e.getQueryLength()*3).shift(targetOffset).build());</span>
+                }
+            }
+<span class="nc" id="L99">            queryOffset+=e.getQueryLength();</span>
+<span class="nc" id="L100">            targetOffset+=e.getTargetLength();</span>
+            
+<span class="nc" id="L102">        }</span>
+        
+<span class="nc" id="L104">        this.queryStrand = parseStrand(queryStrand);</span>
+<span class="nc" id="L105">        this.targetStrand = parseStrand(targetStrand);</span>
+        
+      
+<span class="nc" id="L108">    }</span>
+    
+    private Direction parseStrand(String strand){
+<span class="nc bnc" id="L111" title="All 2 branches missed.">        if(&quot;.&quot;.equals(strand)){</span>
+<span class="nc" id="L112">            return null;</span>
+        }
+<span class="nc bnc" id="L114" title="All 2 branches missed.">        if(&quot;+&quot;.equals(strand)){</span>
+<span class="nc" id="L115">            return Direction.FORWARD;</span>
+        }
+<span class="nc" id="L117">        return Direction.REVERSE;</span>
+    }
+    
+    public Optional&lt;Direction&gt; getQueryStrand(){
+<span class="nc" id="L121">        return Optional.ofNullable(queryStrand);</span>
+    }
+    
+    public Optional&lt;Direction&gt; getTargetStrand(){
+<span class="nc" id="L125">        return Optional.ofNullable(targetStrand);</span>
+    }
+    
+    public float getScore() {
+<span class="nc" id="L129">        return score;</span>
+    }
+
+
+
+
+    public String getQueryId() {
+<span class="nc" id="L136">        return queryId;</span>
+    }
+
+
+
+
+    public String getTargetId() {
+<span class="nc" id="L143">        return targetId;</span>
+    }
+
+
+
+
+    public List&lt;VulgarElement&gt; getElements() {
+<span class="nc" id="L150">        return elements;</span>
+    }
+
+
+
+
+    public List&lt;Range&gt; getTargetExons() {
+<span class="nc" id="L157">        return targetExons;</span>
+    }
+
+
+
+
+    public List&lt;Range&gt; getQueryRanges() {
+<span class="nc" id="L164">        return queryRanges;</span>
+    }
+
+
+
+
+    private void computeRanges(long startOffset, ToIntFunction&lt;VulgarElement&gt; function,
+            List&lt;Range&gt; exons, BiConsumer&lt;Long, VulgarElement&gt; gapConsumer) {
+
+<span class="nc" id="L173">        long currentOffset=startOffset;</span>
+        
+<span class="nc bnc" id="L175" title="All 2 branches missed.">        for(VulgarElement e : elements){</span>
+<span class="nc" id="L176">            int len = function.applyAsInt(e);</span>
+<span class="nc bnc" id="L177" title="All 4 branches missed.">            if(e.getOp() == VulgarOperation.Match || e.getOp() == VulgarOperation.Split_Codon){</span>
+<span class="nc" id="L178">                exons.add(new Range.Builder(len).shift(currentOffset).build());</span>
+<span class="nc bnc" id="L179" title="All 2 branches missed.">            }else if(e.getOp() == VulgarOperation.Gap){</span>
+<span class="nc" id="L180">                gapConsumer.accept(currentOffset, e);</span>
+<span class="nc" id="L181">                exons.add(new Range.Builder(len).shift(currentOffset).build());</span>
+            }
+<span class="nc" id="L183">            currentOffset+=len;</span>
+<span class="nc" id="L184">        }</span>
+
+        
+<span class="nc" id="L187">        mergeInPlace(exons);</span>
+<span class="nc" id="L188">    }</span>
+   
+    private static void mergeInPlace(List&lt;Range&gt; ranges){
+<span class="nc" id="L191">        List&lt;Range&gt; merged = Ranges.merge(ranges);</span>
+<span class="nc" id="L192">        ranges.clear();</span>
+<span class="nc" id="L193">        ranges.addAll(merged);</span>
+<span class="nc" id="L194">    }</span>
+    //this functional interface is created and used
+    //instead of Function&lt;String, Sequence&gt;
+    //because we will most often use DataStore::get
+    //which throws exceptions
+    //so we have to make our own version that can also throw an Exception.
+    @FunctionalInterface
+    public interface ToSequenceFunction&lt;T extends Sequence&lt;?&gt;, E extends Exception&gt;{
+
+         T apply(String t) throws E;
+        
+    }
+    
+    
+    public &lt;E extends Exception, E2 extends Exception&gt; AlignmentResult align(ToSequenceFunction&lt;NucleotideSequence, E&gt; targetFunction,
+                                 ToSequenceFunction&lt;ProteinSequence, E2&gt; queryFunction) throws E, E2{
+<span class="nc" id="L210">        return align(targetFunction.apply(targetId), queryFunction.apply(queryId));</span>
+    }
+    public AlignmentResult align(NucleotideSequence target, ProteinSequence query){
+        
+       
+<span class="nc" id="L215">        NucleotideSequence cds =getExonSequence(target, targetExons, targetGaps);</span>
+<span class="nc" id="L216">        ProteinSequence translated = IupacTranslationTables.STANDARD.translate(cds);</span>
+        
+<span class="nc" id="L218">        ProteinSequenceBuilder queryBuilder = query.toBuilder(queryRange.asRange());</span>
+<span class="nc bnc" id="L219" title="All 2 branches missed.">        for(int i= queryGaps.size()-1; i&gt;=0; i--){</span>
+<span class="nc" id="L220">            Range gap = queryGaps.get(i);</span>
+<span class="nc" id="L221">            char[] gaps = new char[(int) gap.getLength()];</span>
+<span class="nc bnc" id="L222" title="All 2 branches missed.">            if(gaps.length &gt; 1){</span>
+<span class="nc" id="L223">                System.out.println(&quot;here&quot;);</span>
+            }
+<span class="nc" id="L225">            Arrays.fill(gaps, AminoAcid.Gap.asChar());</span>
+<span class="nc" id="L226">            queryBuilder.insert((int)gap.getBegin(), new String(gaps));</span>
+        }
+       
+<span class="nc" id="L229">        ProteinSequence querySeq = queryBuilder.build();</span>
+<span class="nc" id="L230">        String queryAlignment = querySeq.toString(AminoAcid::get3LetterAbbreviation).replaceAll(&quot;(.{62})&quot;, &quot;$1\n&quot;);</span>
+<span class="nc" id="L231">        String translatedAlignment = translated.toString(AminoAcid::get3LetterAbbreviation).replaceAll(&quot;(.{62})&quot;, &quot;$1\n&quot;);</span>
+<span class="nc" id="L232">        String cdsAlignment = cds.toString().replaceAll(&quot;(.{62})&quot;, &quot;$1\n&quot;);</span>
+        
+<span class="nc" id="L234">        try(BufferedReader qr = new BufferedReader(new StringReader(queryAlignment));</span>
+<span class="nc" id="L235">            BufferedReader tr = new BufferedReader(new StringReader(translatedAlignment));</span>
+<span class="nc" id="L236">                BufferedReader cdsr = new BufferedReader(new StringReader(cdsAlignment))){</span>
+            String qLine, tLine;
+<span class="nc bnc" id="L238" title="All 4 branches missed.">            while( (qLine = qr.readLine()) !=null &amp;&amp; (tLine = tr.readLine()) !=null){</span>
+<span class="nc" id="L239">                System.out.println(qLine);</span>
+<span class="nc" id="L240">                System.out.println(tLine);</span>
+<span class="nc" id="L241">                System.out.println(cdsr.readLine()+&quot;\n&quot;);</span>
+            }
+<span class="nc" id="L243">            System.out.println(&quot;======&quot;);</span>
+<span class="nc bnc" id="L244" title="All 2 branches missed.">            while((qLine = qr.readLine()) !=null){</span>
+<span class="nc" id="L245">                System.out.println(&quot; QLINE REMAINING = &quot; +qLine);</span>
+            }
+<span class="nc bnc" id="L247" title="All 2 branches missed.">            while((tLine = tr.readLine()) !=null){</span>
+<span class="nc" id="L248">                System.out.println(&quot; T_LINE REMAINING = &quot; +tLine);</span>
+            }
+            
+<span class="nc bnc" id="L251" title="All 24 branches missed.">        }catch(IOException impossible){</span>
+<span class="nc" id="L252">            impossible.printStackTrace();</span>
+<span class="nc" id="L253">        }</span>
+        
+        
+        
+       
+        
+<span class="nc" id="L259">        Iterator&lt;AminoAcid&gt; queryIter = querySeq.iterator();</span>
+<span class="nc" id="L260">        Iterator&lt;AminoAcid&gt; subIter = translated.iterator();</span>
+<span class="nc" id="L261">        int matches=0, misMatches=0;</span>
+<span class="nc bnc" id="L262" title="All 4 branches missed.">        while(queryIter.hasNext() &amp;&amp; subIter.hasNext()){</span>
+<span class="nc bnc" id="L263" title="All 2 branches missed.">            if(queryIter.next() == subIter.next()){</span>
+<span class="nc" id="L264">                matches++;</span>
+            }else{
+<span class="nc" id="L266">                misMatches++;</span>
+            }
+        }
+<span class="nc bnc" id="L269" title="All 2 branches missed.">        while(queryIter.hasNext()){</span>
+<span class="nc" id="L270">            queryIter.next();</span>
+<span class="nc" id="L271">            misMatches++;</span>
+        }
+        
+<span class="nc bnc" id="L274" title="All 2 branches missed.">        while(subIter.hasNext()){</span>
+<span class="nc" id="L275">            subIter.next();</span>
+<span class="nc" id="L276">            misMatches++;</span>
+        }
+<span class="nc" id="L278">        System.out.println(&quot;matches = &quot; + matches);</span>
+<span class="nc" id="L279">        System.out.println(&quot;misMatches = &quot; + misMatches);</span>
+<span class="nc" id="L280">        double ident = matches /(double)(matches + misMatches) *100;</span>
+<span class="nc" id="L281">        System.out.println(&quot;percent ident = &quot; + ident);</span>
+<span class="nc" id="L282">        return new AlignmentResult(queryId, targetId, ident, matches, misMatches);</span>
+    }
+    
+    
+    public static class AlignmentResult{
+        private final double percentIdentity;
+        private final int matches, misMatches;
+        private final String queryId, targetId;
+        
+        protected AlignmentResult(String queryId, String targetId, double percentIdentity, int matches,
+<span class="nc" id="L292">                int misMatches) {</span>
+<span class="nc" id="L293">            this.percentIdentity = percentIdentity;</span>
+<span class="nc" id="L294">            this.matches = matches;</span>
+<span class="nc" id="L295">            this.misMatches = misMatches;</span>
+<span class="nc" id="L296">            this.queryId = queryId;</span>
+<span class="nc" id="L297">            this.targetId = targetId;</span>
+<span class="nc" id="L298">        }</span>
+
+        public String getQueryId() {
+<span class="nc" id="L301">            return queryId;</span>
+        }
+
+        public String getTargetId() {
+<span class="nc" id="L305">            return targetId;</span>
+        }
+
+        public double getPercentIdentity() {
+<span class="nc" id="L309">            return percentIdentity;</span>
+        }
+
+        public int getMatches() {
+<span class="nc" id="L313">            return matches;</span>
+        }
+
+        public int getMisMatches() {
+<span class="nc" id="L317">            return misMatches;</span>
+        }
+
+        @Override
+        public String toString() {
+<span class="nc" id="L322">            return &quot;AlignmentResult [percentIdentity=&quot; + percentIdentity</span>
+                    + &quot;, matches=&quot; + matches + &quot;, misMatches=&quot; + misMatches
+                    + &quot;]&quot;;
+        }
+
+        @Override
+        public int hashCode() {
+<span class="nc" id="L329">            final int prime = 31;</span>
+<span class="nc" id="L330">            int result = 1;</span>
+<span class="nc" id="L331">            result = prime * result + matches;</span>
+<span class="nc" id="L332">            result = prime * result + misMatches;</span>
+            long temp;
+<span class="nc" id="L334">            temp = Double.doubleToLongBits(percentIdentity);</span>
+<span class="nc" id="L335">            result = prime * result + (int) (temp ^ (temp &gt;&gt;&gt; 32));</span>
+<span class="nc bnc" id="L336" title="All 2 branches missed.">            result = prime * result</span>
+<span class="nc" id="L337">                    + ((queryId == null) ? 0 : queryId.hashCode());</span>
+<span class="nc bnc" id="L338" title="All 2 branches missed.">            result = prime * result</span>
+<span class="nc" id="L339">                    + ((targetId == null) ? 0 : targetId.hashCode());</span>
+<span class="nc" id="L340">            return result;</span>
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+<span class="nc bnc" id="L345" title="All 2 branches missed.">            if (this == obj) {</span>
+<span class="nc" id="L346">                return true;</span>
+            }
+<span class="nc bnc" id="L348" title="All 2 branches missed.">            if (obj == null) {</span>
+<span class="nc" id="L349">                return false;</span>
+            }
+<span class="nc bnc" id="L351" title="All 2 branches missed.">            if (!(obj instanceof AlignmentResult)) {</span>
+<span class="nc" id="L352">                return false;</span>
+            }
+<span class="nc" id="L354">            AlignmentResult other = (AlignmentResult) obj;</span>
+<span class="nc bnc" id="L355" title="All 2 branches missed.">            if (matches != other.matches) {</span>
+<span class="nc" id="L356">                return false;</span>
+            }
+<span class="nc bnc" id="L358" title="All 2 branches missed.">            if (misMatches != other.misMatches) {</span>
+<span class="nc" id="L359">                return false;</span>
+            }
+<span class="nc" id="L361">            if (Double.doubleToLongBits(percentIdentity) != Double</span>
+<span class="nc bnc" id="L362" title="All 2 branches missed.">                    .doubleToLongBits(other.percentIdentity)) {</span>
+<span class="nc" id="L363">                return false;</span>
+            }
+<span class="nc bnc" id="L365" title="All 2 branches missed.">            if (queryId == null) {</span>
+<span class="nc bnc" id="L366" title="All 2 branches missed.">                if (other.queryId != null) {</span>
+<span class="nc" id="L367">                    return false;</span>
+                }
+<span class="nc bnc" id="L369" title="All 2 branches missed.">            } else if (!queryId.equals(other.queryId)) {</span>
+<span class="nc" id="L370">                return false;</span>
+            }
+<span class="nc bnc" id="L372" title="All 2 branches missed.">            if (targetId == null) {</span>
+<span class="nc bnc" id="L373" title="All 2 branches missed.">                if (other.targetId != null) {</span>
+<span class="nc" id="L374">                    return false;</span>
+                }
+<span class="nc bnc" id="L376" title="All 2 branches missed.">            } else if (!targetId.equals(other.targetId)) {</span>
+<span class="nc" id="L377">                return false;</span>
+            }
+<span class="nc" id="L379">            return true;</span>
+        }
+        
+        
+    }
+
+    private NucleotideSequence getExonSequence(NucleotideSequence t,
+            List&lt;Range&gt; rangesToKeep, List&lt;Range&gt; gaps) {
+       //ranges To keep should be in gapped coords
+        
+<span class="nc" id="L389">        NucleotideSequenceBuilder builder = t.toBuilder(targetRange.asRange());</span>
+<span class="nc" id="L390">        ListIterator&lt;Range&gt; iter = gaps.listIterator(gaps.size());</span>
+<span class="nc bnc" id="L391" title="All 2 branches missed.">        while(iter.hasPrevious()){</span>
+//        for(Range g : gaps){
+<span class="nc" id="L393">            Range g = iter.previous();</span>
+<span class="nc" id="L394">            int offset = (int) g.getBegin();</span>
+<span class="nc" id="L395">            Nucleotide[] array = new Nucleotide[(int) g.getLength()];</span>
+            
+<span class="nc" id="L397">            Arrays.fill(array, Nucleotide.Gap);</span>
+            
+<span class="nc" id="L399">            builder.insert(offset, array);</span>
+<span class="nc" id="L400">        }</span>
+        
+<span class="nc" id="L402">        List&lt;Range.Builder&gt; gappedRangesToKeep = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L403" title="All 2 branches missed.">        for (Range r : rangesToKeep) {</span>
+<span class="nc" id="L404">            gappedRangesToKeep.add(r.toBuilder());</span>
+<span class="nc" id="L405">        }</span>
+<span class="nc bnc" id="L406" title="All 2 branches missed.">        for (Range gap : gaps) {</span>
+<span class="nc bnc" id="L407" title="All 2 branches missed.">            for (Range.Builder b : gappedRangesToKeep) {</span>
+
+<span class="nc bnc" id="L409" title="All 2 branches missed.">                if (b.startsAfter(gap)) {</span>
+<span class="nc" id="L410">                    b.shift(gap.getLength());</span>
+                }
+<span class="nc" id="L412">            }</span>
+<span class="nc" id="L413">        }</span>
+//       
+//        List&lt;Range&gt; allRangesToKeep = gappedRangesToKeep.stream().map(Range.Builder::build).collect(Collectors.toList());
+//        allRangesToKeep.addAll(gaps);
+//        
+//        mergeInPlace(allRangesToKeep);
+//        
+//        NucleotideSequenceBuilder builder = t.toBuilder();
+//        ListIterator&lt;Range&gt; iter = gaps.listIterator(gaps.size());
+//        while(iter.hasPrevious()){
+//            Range r = iter.previous();
+//            int offset = (int) r.getBegin();
+//            Nucleotide[] array = new Nucleotide[(int) r.getLength()];
+//            
+//            Arrays.fill(array, Nucleotide.Gap);
+//            
+//            builder.insert(offset, array);
+//        }
+        
+//        
+//        List&lt;Range&gt; complement = Range.ofLength(builder.getLength()).complement(allRangesToKeep);
+////        List&lt;Range&gt; complement = Range.ofLength(builder.getLength()).complement(rangesToKeep);
+//        for(int i = complement.size()-1; i &gt;=0; i--){
+//            builder.delete(complement.get(i));
+//        }
+       
+<span class="nc" id="L439">        return builder.build();</span>
+    }
+    
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

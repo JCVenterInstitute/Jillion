@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SamParser.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.sam</a> &gt; <span class="el_source">SamParser.java</span></div><h1>SamParser.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.sam;
+
+import java.io.IOException;
+import java.util.Optional;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.sam.SamVisitor.SamVisitorCallback.SamVisitorMemento;
+import org.jcvi.jillion.sam.header.SamHeader;
+/**
+ * {@code SamParser}
+ * is an interface that can parse
+ * SAM or BAM files and call the appropriate
+ * methods on the given {@link SamVisitor}.
+ * @author dkatzel
+ * 
+ * @see SamParserFactory
+ *
+ */
+public interface SamParser {
+	/**
+	 * Can this handler accept new parse requests
+	 * via the various parse() methods.
+	 * 
+	 * Some implementations of {@link SamParser}
+	 * may only allow one parse call in its lifetime 
+	 * (for example, if the sam structure is being parsed via
+	 * an InputStream).
+	 * @return {@code true} if this handler can handle 
+	 * new parse requests; {@code false} otherwise.
+	 */
+	boolean canParse();
+	/**
+	 * Parse the Sam or Bam file and 
+	 * and call the appropriate visit methods
+	 * on the given {@link SamVisitor}.
+	 * 
+	 * @param visitor the {@link SamVisitor}
+	 * to call the visit methods on;
+	 * can not be null.
+	 * @throws IOException if there is a problem parsing the sam or bam file.
+	 * @throws NullPointerException if visitor is null.
+	 */
+	void parse(SamVisitor visitor) throws IOException;
+	
+	/**
+	 * Parse the Sam or Bam file and &lt;strong&gt;
+	 * starting from the offset of the provided memento&lt;/strong&gt;
+	 * and call the appropriate visit methods
+	 * on the given {@link SamVisitor}.
+	 * 
+	 * @param visitor the {@link SamVisitor}
+	 * to call the visit methods on;
+	 * can not be null.
+	 * @throws IOException if there is a problem parsing the sam or bam file.
+	 * @throws NullPointerException if either parameter is null.
+	 * @throws IllegalArgumentException if the memento is invalid for this
+	 * {@link SamParser} instance (wrong file, wrong parser implementation etc).
+	 */
+	void parse(SamVisitor visitor, SamVisitorMemento memento) throws IOException;
+	/**
+	 * Parse the Sam or Bam file and 
+	 * but only visit the {@link SamRecord}s
+	 * that map to the given reference.
+	 * 
+	 * @param referenceName the name of the Reference to visit
+	 * the mapped records of; can not be null.
+	 * 
+	 * @param visitor the {@link SamVisitor}
+	 * to call the visit methods on;
+	 * can not be null.
+	 * @throws IOException if there is a problem parsing the sam or bam file.
+	 * @throws NullPointerException if either referenceName or visitor are null.
+	 * 
+	 * @since 5.0
+	 */
+	void parse(String referenceName, SamVisitor visitor) throws IOException;
+	/**
+	 * Parse the Sam or Bam file and 
+	 * but only visit the {@link SamRecord}s
+	 * that map to the given reference and the read
+	 * alignment intersects the reference
+	 * to the provided Range. 
+	 * 
+	 * 
+	 * @param referenceName the name of the Reference to visit
+	 * the mapped records of; can not be null.
+	 * 
+	 * @param alignmentRange the {@link Range} on the Reference to visit
+	 * the mapped records of; can not be null.
+	 * 
+	 * @param visitor the {@link SamVisitor}
+	 * to call the visit methods on;
+	 * can not be null.
+	 * @throws IOException if there is a problem parsing the sam or bam file.
+	 * @throws NullPointerException if any parameters are null.
+	 * 
+	 * @since 5.0
+	 */
+	void parse(String referenceName, Range alignmentRange, SamVisitor visitor) throws IOException;
+	
+	/**
+         * Parse the Sam or Bam file and 
+         * but only visit the {@link SamRecord}s
+         * that map to the given reference and the read
+         * alignment intersects the reference
+         * to the provided Range. 
+         * 
+         * 
+         * @param options the name of the Reference to visit
+         * the mapped records of; can not be null.
+         *          
+         * 
+         * @param visitor the {@link SamVisitor}
+         * to call the visit methods on;
+         * can not be null.
+         * @throws IOException if there is a problem parsing the sam or bam file.
+         * @throws NullPointerException if any parameters are null.
+         * 
+         * @since 5.3
+         */
+        void parse(SamParserOptions options, SamVisitor visitor) throws IOException;
+	/**
+	 * Get the {@link SamHeader}
+	 * for this SAM or BAM file.
+	 * 
+	 * @apiNote some SamParser implementations may cache the header
+	 * parsed from the file so this calling this method is usually preferable than
+	 * getting the header via one of the parse methods and then halting parsing.
+	 * 
+	 * @return a {@link SamHeader} object; will never be null but may be empty
+	 * if there is no header information in the sam or bam file.
+	 * 
+	 * @throws IOException if there is a problem (re)parsing the header.
+	 */
+	SamHeader getHeader() throws IOException;
+	
+
+        public static class SamParserOptions{
+            private final boolean createMementos;
+            private final String referenceName;
+            private final Range referenceRange;
+            
+            public SamParserOptions(){
+<span class="fc" id="L164">                this(false, null, null);</span>
+<span class="fc" id="L165">            }</span>
+            
+<span class="fc" id="L167">            private SamParserOptions(boolean createMementos, String referenceName, Range range){</span>
+<span class="fc" id="L168">                this.createMementos = createMementos;</span>
+<span class="fc" id="L169">                this.referenceName = referenceName;</span>
+<span class="fc" id="L170">                this.referenceRange = range;</span>
+<span class="fc" id="L171">            }</span>
+            public SamParserOptions reference(String referenceName){
+<span class="nc" id="L173">                return new SamParserOptions(createMementos, referenceName,null);</span>
+             }
+            public SamParserOptions reference(String referenceName, Range referenceRange){
+<span class="nc" id="L176">                return new SamParserOptions(createMementos, referenceName,referenceRange);</span>
+             }
+            public SamParserOptions createMementos(boolean createMementos){
+<span class="nc" id="L179">               return new SamParserOptions(createMementos, referenceName, referenceRange);</span>
+            }
+
+            public boolean shouldCreateMementos() {
+<span class="fc" id="L183">                return createMementos;</span>
+            }
+
+            public Optional&lt;String&gt; getReferenceName() {
+<span class="fc" id="L187">                return Optional.ofNullable(referenceName);</span>
+            }
+            public Optional&lt;Range&gt; getReferenceRange() {
+<span class="nc" id="L190">                return Optional.ofNullable(referenceRange);</span>
+            }
+            
+        }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

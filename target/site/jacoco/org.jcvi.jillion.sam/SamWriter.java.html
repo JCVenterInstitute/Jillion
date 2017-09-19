@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SamWriter.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.sam</a> &gt; <span class="el_source">SamWriter.java</span></div><h1>SamWriter.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.sam;
+
+import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
+import java.util.function.Predicate;
+
+import org.jcvi.jillion.core.io.FileUtil;
+import org.jcvi.jillion.core.util.ThrowingStream;
+import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.sam.index.BamIndexFileWriterBuilder;
+/**
+ * {@code SamWriter} is an interface for
+ * writing SAM or BAM encoded files.
+ * @author dkatzel
+ *
+ */
+public interface SamWriter extends Closeable{
+	/**
+	 * Write the given record to the SAM or BAM file.
+	 * Different implementations of {@link SamWriter}
+	 * might delay actually writing out the {@link SamRecord}
+	 * either to improve disk writing performance
+	 * or to re-sort records.
+	 * @param record the {@link SamRecord} to write;
+	 * can not be null.
+	 * @throws IOException if there is a problem writing the {@link SamRecord}
+	 * @throws NullPointerException if record is null.
+	 */
+	void writeRecord(SamRecord record) throws IOException;
+	
+	/**
+	 * Create a new SamWriter that will write out a sorted BAM file and corresponding index.
+	 * The index file will be named &quot;$outputFile#getName.bam.bai&quot; will also be created in the same directory
+         * as the outputFile. 
+	 * @param outputBam  the output file to write to; can not be null. The file extension must be &quot;.bam&quot;.
+	 * 
+	 * @param header the SamHeader; can not be null.  The sort order specified in the header is ignored
+	 * and overridden to be {@link SortOrder#COORDINATE} to be a valid sorted BAM file.
+	 *  
+	 * @return a new SamWriter that will write a sorted BAM file with a corresponding index file.
+	 * @throws IOException if there is a problem creating the writer.
+	 * 
+	 * @since 5.3
+	 * 
+	 * @apiNote This is a convenience method that is the same as:
+	 * &lt;pre&gt;
+	 * new SamFileWriterBuilder(outputBam, header)
+                   .reSortBy(SortOrder.COORDINATE)
+                    //create index with extra metadata
+                   .createBamIndex(true, true)                             
+                   .build();
+	 * &lt;/pre&gt;
+	 * 
+	 * @see SamFileWriterBuilder
+	 */
+	public static SamWriter newSortedBamWriter(File outputBam, SamHeader header) throws IOException{
+<span class="nc" id="L78">	    String ext = FileUtil.getExtension(outputBam);</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">	    if(!&quot;bam&quot;.equals(ext)){</span>
+<span class="nc" id="L80">	        throw new IllegalArgumentException(&quot;output file must have a '.bam' extension : &quot; + outputBam);</span>
+	    }
+<span class="nc" id="L82">	    return new SamFileWriterBuilder(outputBam, header)</span>
+<span class="nc" id="L83">                    .reSortBy(SortOrder.COORDINATE)</span>
+                    //create index with extra metadata
+<span class="nc" id="L85">                   .createBamIndex(true, true)                             </span>
+<span class="nc" id="L86">                   .build();</span>
+	}
+	/**
+         * Write a new Bam index file ( {@code .bai} file) for the given input BAM that
+         * will write a Bam index file to the same directory as the
+         * input bam and name it {@code sortedBamFile.getName() +&quot;.bai&quot;}.
+         * 
+         * @apiNote this is the same as
+         * &lt;pre&gt;
+         * {@code 
+         * new BamIndexFileWriterBuilder(sortedBamFile)
+                    .includeMetaData(true) //includes metadata that Picard and samtools use
+                    .assumeSorted(true)
+                    .build()
+         * }
+         * &lt;/pre&gt;
+         * @param sortedBamFile the sorted input BAM file to parse and create
+         *                      an index from; can not be null, must exist
+         *                      and end with {@literal &quot;.bam&quot;}.
+         * @throws IOException if there are any problems creating any missing output files or if the
+         * input BAM file does not exist.
+         * 
+         * @throws NullPointerException if inputBamFile is null.
+         * @throws IllegalArgumentException if the file extensions aren't correct.
+         * 
+         * @see BamIndexFileWriterBuilder
+         * 
+         * @since 5.3
+         */
+	public static File writeBamIndexFor(File sortedBamFile) throws IOException{
+<span class="nc" id="L116">	    return new BamIndexFileWriterBuilder(sortedBamFile)</span>
+<span class="nc" id="L117">                    .includeMetaData(true) //includes metadata that Picard and samtools use</span>
+<span class="nc" id="L118">                    .assumeSorted(true)</span>
+<span class="nc" id="L119">                    .build();</span>
+	}
+	
+	
+	public static void writeSorted( File inputSamOrBam, File outputBam) throws IOException{
+<span class="nc" id="L124">	    try(SamFileDataStore datastore = SamFileDataStore.fromFile(inputSamOrBam)){</span>
+<span class="nc" id="L125">	        writeSorted(datastore, outputBam);</span>
+<span class="nc bnc" id="L126" title="All 8 branches missed.">	    }</span>
+<span class="nc" id="L127">	}</span>
+	public static void writeSorted( File inputSamOrBam, File outputBam, Predicate&lt;SamRecord&gt; filter) throws IOException{
+<span class="nc" id="L129">            try(SamFileDataStore datastore = SamFileDataStore.fromFile(inputSamOrBam)){</span>
+<span class="nc" id="L130">                writeSorted(datastore, outputBam, filter);</span>
+<span class="nc bnc" id="L131" title="All 8 branches missed.">            }</span>
+<span class="nc" id="L132">        }</span>
+	
+	
+	public static void writeSorted( SamFileDataStore datastore, File outputBam) throws IOException{
+<span class="nc" id="L136">            try (SamWriter writer = SamWriter.newSortedBamWriter(outputBam, datastore.getHeader());</span>
+    
+<span class="nc" id="L138">                 ThrowingStream&lt;SamRecord&gt; stream = datastore.records()) {</span>
+    
+<span class="nc" id="L140">                stream.throwingForEach(record -&gt; writer.writeRecord(record));</span>
+
+<span class="nc bnc" id="L142" title="All 16 branches missed.">            }</span>
+<span class="nc" id="L143">	}</span>
+	
+	public static void writeSorted( SamFileDataStore datastore, File outputBam, Predicate&lt;SamRecord&gt; filter) throws IOException{
+<span class="nc bnc" id="L146" title="All 2 branches missed.">            if(filter ==null){</span>
+<span class="nc" id="L147">                writeSorted(datastore, outputBam);</span>
+<span class="nc" id="L148">                return;</span>
+            }
+<span class="nc" id="L150">	    try (SamWriter writer = SamWriter.newSortedBamWriter(outputBam, datastore.getHeader());</span>
+    
+<span class="nc" id="L152">                 ThrowingStream&lt;SamRecord&gt; stream = datastore.records()) {</span>
+    
+<span class="nc" id="L154">                stream</span>
+<span class="nc" id="L155">                .filter(filter)</span>
+<span class="nc" id="L156">                .throwingForEach(record -&gt; writer.writeRecord(record));</span>
+
+<span class="nc bnc" id="L158" title="All 16 branches missed.">            }</span>
+<span class="nc" id="L159">        }</span>
+	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

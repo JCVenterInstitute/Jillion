@@ -1,0 +1,767 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AbiChromatogramBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.trace.chromat.abi</a> &gt; <span class="el_source">AbiChromatogramBuilder.java</span></div><h1>AbiChromatogramBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.trace.chromat.abi;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Map;
+
+import org.jcvi.jillion.core.pos.PositionSequence;
+import org.jcvi.jillion.core.pos.PositionSequenceBuilder;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.Builder;
+import org.jcvi.jillion.internal.trace.chromat.BasicChromatogramBuilder;
+import org.jcvi.jillion.trace.chromat.ChannelGroup;
+import org.jcvi.jillion.trace.chromat.Chromatogram;
+import org.jcvi.jillion.trace.chromat.abi.tag.Ab1LocalDate;
+import org.jcvi.jillion.trace.chromat.abi.tag.Ab1LocalTime;
+import org.jcvi.jillion.trace.chromat.abi.tag.ByteArrayTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.DateTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.FloatArrayTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.IntArrayTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.ShortArrayTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.StringTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.TimeTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.UserDefinedTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.rate.ScanRate;
+import org.jcvi.jillion.trace.chromat.abi.tag.rate.ScanRateTaggedDataType;
+
+/**
+ * {@code AbiChromatogramBuilder} uses the Builder pattern
+ * to create a new {@link AbiChromatogram}
+ * instance.
+ * 
+ * @author dkatzel
+ *
+ *
+ */
+public class AbiChromatogramBuilder implements Builder&lt;AbiChromatogram&gt;{
+
+    private final BasicChromatogramBuilder currentBuilder;
+    private final BasicChromatogramBuilder originalBuilder;
+    private String id;
+    /**
+     * Create a new {@link AbiChromatogramBuilder} instance with
+     * all fields except for the id unset.  In order
+     * to successfully build a valid {@link AbiChromatogram}
+     * object please use
+     * the various setter methods
+     * in this class to set everything
+     * before calling {@link #build()}.
+     * @param id the id for this {@link Chromatogram} object to have;
+     * can not be null.
+     * @throws NullPointerException if id is null.
+     */
+<span class="nc" id="L77">    public AbiChromatogramBuilder(String id){</span>
+<span class="nc" id="L78">    	currentBuilder = new BasicChromatogramBuilder(id);</span>
+<span class="nc" id="L79">    	originalBuilder = new BasicChromatogramBuilder(id);</span>
+<span class="nc" id="L80">    	this.id = id;</span>
+<span class="nc" id="L81">    }</span>
+    /**
+     * Create a new {@link AbiChromatogramBuilder} instance
+     * with the given id and all fields initially set
+     * to the the values encoded in the given ab1 file.
+     * @param id the id for this {@link Chromatogram} object to have;
+     * can not be null. 
+     * @param abiFile a AB1 encoded file that contains the initial values
+     * that this builder should have; can not be null.
+     * @throws IOException if there is a problem reading the file or if
+     * the given file is not a valid ab1 encoded file.
+     * @throws NullPointerException if either field is null.
+     */
+<span class="fc" id="L94">    public AbiChromatogramBuilder(String id, File abiFile) throws IOException{</span>
+<span class="fc" id="L95">    	AbiChromatogramBuilderVisitor visitor = new AbiChromatogramBuilderVisitor(id);</span>
+<span class="fc" id="L96">    	AbiChromatogramParser.create(abiFile).accept(visitor);</span>
+<span class="fc" id="L97">    	currentBuilder = visitor.currentBuilder;</span>
+<span class="fc" id="L98">    	originalBuilder = visitor.originalBuilder;</span>
+<span class="fc" id="L99">    	this.id=id;</span>
+<span class="fc" id="L100">    }</span>
+    /**
+     * Create a new {@link AbiChromatogramBuilder} instance
+     * with the given id and all fields initially set
+     * to the the values encoded in the given ab1 encoded inputStream.
+     * The {@link InputStream} will NOT be closed by this constructor,
+     * client code must close the stream themselves after returning 
+     * from this method (preferably in a finally block).
+     * @param id the id for this {@link Chromatogram} object to have;
+     * can not be null. 
+     * @param abiFileStream a ab1 encoded {@link InputStream} that contains the initial values
+     * that this builder should have; can not be null.
+     * @throws IOException if there is a problem reading the file or
+     * if the {@link InputStream} does not contain valid ab1 encoded data.
+     * @throws NullPointerException if either field is null.
+     */
+<span class="fc" id="L116">    public AbiChromatogramBuilder(String id, InputStream abiFileStream) throws IOException{</span>
+<span class="fc" id="L117">    	AbiChromatogramBuilderVisitor visitor = new AbiChromatogramBuilderVisitor(id);</span>
+<span class="fc" id="L118">    	AbiChromatogramParser.create(abiFileStream).accept(visitor);</span>
+<span class="fc" id="L119">    	currentBuilder = visitor.currentBuilder;</span>
+<span class="fc" id="L120">    	originalBuilder = visitor.originalBuilder;</span>
+<span class="fc" id="L121">    	this.id=id;</span>
+<span class="fc" id="L122">    }</span>
+    
+    public String id(){
+<span class="nc" id="L125">    	return id;</span>
+    }
+    /**
+     * Changes the id of both
+     * the current and original trace ids.
+     * @param id the id of this chromatogram, usually the read name.
+     */
+    public AbiChromatogramBuilder id(String id){
+<span class="nc" id="L133">    	this.id = id;</span>
+<span class="nc" id="L134">    	currentBuilder.id(id);</span>
+<span class="nc" id="L135">    	originalBuilder.id(id);</span>
+<span class="nc" id="L136">    	return this;</span>
+    }
+    
+    
+    public final PositionSequence peaks() {
+<span class="nc" id="L141">        return currentBuilder.peaks();</span>
+    }
+
+    public AbiChromatogramBuilder peaks(short[] peaks) {
+<span class="nc" id="L145">        currentBuilder.peaks(new PositionSequenceBuilder(peaks).build());</span>
+<span class="nc" id="L146">        return this;</span>
+    }
+
+    public final NucleotideSequence basecalls() {
+<span class="nc" id="L150">        return currentBuilder.basecalls();</span>
+    }
+
+    public AbiChromatogramBuilder basecalls(NucleotideSequence basecalls) {
+<span class="nc" id="L154">        currentBuilder.basecalls(basecalls);</span>
+<span class="nc" id="L155">        return this;</span>
+    }
+
+    public final byte[] aQualities() {
+<span class="nc" id="L159">        return currentBuilder.aQualities();</span>
+    }
+
+    public final AbiChromatogramBuilder aQualities(byte[] qualities) {
+<span class="nc" id="L163">        currentBuilder.aQualities(qualities);</span>
+<span class="nc" id="L164">        return this;</span>
+    }
+
+    public final byte[] cQualities() {
+<span class="nc" id="L168">        return currentBuilder.cQualities();</span>
+    }
+
+    public final AbiChromatogramBuilder cQualities(byte[] qualities) {
+<span class="nc" id="L172">        currentBuilder.cQualities(qualities);</span>
+<span class="nc" id="L173">        return this;</span>
+    }
+
+    public final byte[] gQualities() {
+<span class="nc" id="L177">        return currentBuilder.gQualities();</span>
+    }
+
+    public final AbiChromatogramBuilder gQualities(byte[] qualities) {
+<span class="nc" id="L181">        currentBuilder.gQualities(qualities);</span>
+<span class="nc" id="L182">        return this;</span>
+    }
+
+    public final byte[] tQualities() {
+<span class="nc" id="L186">        return currentBuilder.tQualities();</span>
+    }
+
+    public final AbiChromatogramBuilder tQualities(byte[] qualities) {
+<span class="nc" id="L190">        currentBuilder.tQualities(qualities);</span>
+<span class="nc" id="L191">        return this;</span>
+    }
+
+    public final short[] aPositions() {
+<span class="nc" id="L195">        return currentBuilder.aPositions();</span>
+    }
+
+    public final AbiChromatogramBuilder aPositions(short[] positions) {
+<span class="nc" id="L199">        currentBuilder.aPositions(positions);</span>
+<span class="nc" id="L200">        return this;</span>
+    }
+
+    public final short[] cPositions() {
+<span class="nc" id="L204">        return currentBuilder.cPositions();</span>
+    }
+
+    public final AbiChromatogramBuilder cPositions(short[] positions) {
+<span class="nc" id="L208">        currentBuilder.cPositions(positions);</span>
+<span class="nc" id="L209">        return this;</span>
+    }
+
+    public final short[] gPositions() {
+<span class="nc" id="L213">        return currentBuilder.gPositions();</span>
+    }
+
+    public final AbiChromatogramBuilder gPositions(short[] positions) {
+<span class="nc" id="L217">        currentBuilder.gPositions(positions);</span>
+<span class="nc" id="L218">        return this;</span>
+    }
+
+    public final short[] tPositions() {
+<span class="nc" id="L222">        return currentBuilder.tPositions();</span>
+    }
+
+    public final AbiChromatogramBuilder tPositions(short[] positions) {
+<span class="nc" id="L226">        currentBuilder.tPositions(positions);</span>
+<span class="nc" id="L227">        return this;</span>
+    }
+
+    public final Map&lt;String,String&gt; comments() {
+<span class="nc" id="L231">        return currentBuilder.comments();</span>
+    }
+
+    public final AbiChromatogramBuilder comments(Map&lt;String,String&gt; comments) {
+<span class="nc" id="L235">        currentBuilder.comments(comments);</span>
+<span class="nc" id="L236">        return this;</span>
+    }
+    
+    public AbiChromatogramBuilder originalPeaks(short[] peaks) {
+<span class="nc" id="L240">        originalBuilder.peaks(new PositionSequenceBuilder(peaks).build());</span>
+<span class="nc" id="L241">        return this;</span>
+    }
+
+    public final NucleotideSequence originalBasecalls() {
+<span class="nc" id="L245">        return originalBuilder.basecalls();</span>
+    }
+
+    public AbiChromatogramBuilder originalBasecalls(NucleotideSequence basecalls) {
+<span class="nc" id="L249">        originalBuilder.basecalls(basecalls);</span>
+<span class="nc" id="L250">        return this;</span>
+    }
+
+    public final byte[] originalAQualities() {
+<span class="nc" id="L254">        return originalBuilder.aQualities();</span>
+    }
+
+    public final AbiChromatogramBuilder originalAQualities(byte[] qualities) {
+<span class="nc" id="L258">        originalBuilder.aQualities(qualities);</span>
+<span class="nc" id="L259">        return this;</span>
+    }
+
+    public final byte[] originalCQualities() {
+<span class="nc" id="L263">        return originalBuilder.cQualities();</span>
+    }
+
+    public final AbiChromatogramBuilder originalCQualities(byte[] qualities) {
+<span class="nc" id="L267">        originalBuilder.cQualities(qualities);</span>
+<span class="nc" id="L268">        return this;</span>
+    }
+
+    public final byte[] originalGQualities() {
+<span class="nc" id="L272">        return originalBuilder.gQualities();</span>
+    }
+
+    public final AbiChromatogramBuilder originalGQualities(byte[] qualities) {
+<span class="nc" id="L276">        originalBuilder.gQualities(qualities);</span>
+<span class="nc" id="L277">        return this;</span>
+    }
+
+    public final byte[] originalTQualities() {
+<span class="nc" id="L281">        return originalBuilder.tQualities();</span>
+    }
+
+    public final AbiChromatogramBuilder originalTQualities(byte[] qualities) {
+<span class="nc" id="L285">        originalBuilder.tQualities(qualities);</span>
+<span class="nc" id="L286">        return this;</span>
+    }
+
+    public final short[] originalAPositions() {
+<span class="nc" id="L290">        return originalBuilder.aPositions();</span>
+    }
+
+    public final AbiChromatogramBuilder originalAPositions(short[] positions) {
+<span class="nc" id="L294">        originalBuilder.aPositions(positions);</span>
+<span class="nc" id="L295">        return this;</span>
+    }
+
+    public final short[] originalCPositions() {
+<span class="nc" id="L299">        return originalBuilder.cPositions();</span>
+    }
+
+    public final AbiChromatogramBuilder originalCPositions(short[] positions) {
+<span class="nc" id="L303">        originalBuilder.cPositions(positions);</span>
+<span class="nc" id="L304">        return this;</span>
+    }
+
+    public final short[] originalGPositions() {
+<span class="nc" id="L308">        return originalBuilder.gPositions();</span>
+    }
+
+    public final AbiChromatogramBuilder originalGPositions(short[] positions) {
+<span class="nc" id="L312">        originalBuilder.gPositions(positions);</span>
+<span class="nc" id="L313">        return this;</span>
+    }
+
+    public final short[] originalTPositions() {
+<span class="nc" id="L317">        return originalBuilder.tPositions();</span>
+    }
+
+    public final AbiChromatogramBuilder originalTPositions(short[] positions) {
+<span class="nc" id="L321">        originalBuilder.tPositions(positions);</span>
+<span class="nc" id="L322">        return this;</span>
+    }
+
+    public final Map&lt;String,String&gt; originalComments() {
+<span class="nc" id="L326">        return originalBuilder.comments();</span>
+    }
+
+    public final AbiChromatogramBuilder originalComments(Map&lt;String,String&gt; comments) {
+<span class="nc" id="L330">        originalBuilder.comments(comments);</span>
+<span class="nc" id="L331">        return this;</span>
+    }
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public AbiChromatogram build() {
+<span class="fc" id="L339">        return new AbiChromatogramImp(id,</span>
+<span class="fc" id="L340">                currentBuilder.build(),</span>
+<span class="fc" id="L341">                this.originalBuilder.build());</span>
+    }
+
+    private static class AbiChromatogramImp implements AbiChromatogram{
+
+        private final Chromatogram delegate;
+        private final Chromatogram originalChromatogram;
+        private final String id;
+<span class="fc" id="L349">        public AbiChromatogramImp(String id, Chromatogram delegate,Chromatogram originalChromatogram) {</span>
+<span class="fc" id="L350">            this.id = id;</span>
+<span class="fc" id="L351">        	this.delegate = delegate;</span>
+<span class="fc" id="L352">            this.originalChromatogram = originalChromatogram;</span>
+<span class="fc" id="L353">        }</span>
+        
+        
+
+        @Override
+		public String getId() {
+<span class="nc" id="L359">			return id;</span>
+		}
+
+
+
+		/**
+         * @return the originalChromatogram
+         */
+        @Override
+        public Chromatogram getOriginalChromatogram() {
+<span class="nc" id="L369">            return originalChromatogram;</span>
+        }
+
+
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public ChannelGroup getChannelGroup() {
+<span class="fc" id="L379">            return delegate.getChannelGroup();</span>
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public Map&lt;String, String&gt; getComments() {
+<span class="fc" id="L387">            return delegate.getComments();</span>
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public int getNumberOfTracePositions() {
+<span class="fc" id="L395">            return delegate.getNumberOfTracePositions();</span>
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public NucleotideSequence getNucleotideSequence() {
+<span class="fc" id="L403">            return delegate.getNucleotideSequence();</span>
+        }
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public QualitySequence getQualitySequence() {
+<span class="fc" id="L411">            return delegate.getQualitySequence();</span>
+        }
+
+		@Override
+		public PositionSequence getPeakSequence() {
+<span class="fc" id="L416">			return delegate.getPeakSequence();</span>
+		}
+
+
+
+		@Override
+		public int hashCode() {
+<span class="nc" id="L423">			final int prime = 31;</span>
+<span class="nc" id="L424">			int result = 1;</span>
+<span class="nc" id="L425">			result = prime * result</span>
+<span class="nc" id="L426">					+ delegate.hashCode();</span>
+<span class="nc" id="L427">			return result;</span>
+		}
+
+
+
+		@Override
+		public boolean equals(Object obj) {
+<span class="pc bpc" id="L434" title="1 of 2 branches missed.">			if (this == obj) {</span>
+<span class="nc" id="L435">				return true;</span>
+			}
+<span class="pc bpc" id="L437" title="1 of 2 branches missed.">			if (obj == null) {</span>
+<span class="nc" id="L438">				return false;</span>
+			}
+<span class="pc bpc" id="L440" title="1 of 2 branches missed.">			if (!(obj instanceof AbiChromatogramImp)) {</span>
+<span class="nc" id="L441">				return false;</span>
+			}
+<span class="fc" id="L443">			AbiChromatogramImp other = (AbiChromatogramImp) obj;			</span>
+<span class="pc bpc" id="L444" title="1 of 2 branches missed.">			if (!delegate.equals(other.delegate)) {</span>
+<span class="nc" id="L445">				return false;</span>
+			}
+<span class="fc" id="L447">			return true;</span>
+		}
+        
+    }
+    
+    
+    public static class AbiChromatogramBuilderVisitor implements AbiChromatogramFileVisitor{
+
+        private final BasicChromatogramBuilder currentBuilder;
+        private final BasicChromatogramBuilder originalBuilder;
+        
+<span class="fc" id="L458">        public AbiChromatogramBuilderVisitor(String id){</span>
+<span class="fc" id="L459">        	currentBuilder = new BasicChromatogramBuilder(id);</span>
+<span class="fc" id="L460">        	originalBuilder = new BasicChromatogramBuilder(id);</span>
+<span class="fc" id="L461">        }</span>
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitAPositions(short[] positions) {
+<span class="fc" id="L467">            currentBuilder.aPositions(positions);</span>
+<span class="fc" id="L468">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitCPositions(short[] positions) {
+<span class="fc" id="L475">            currentBuilder.cPositions(positions);        </span>
+<span class="fc" id="L476">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitGPositions(short[] positions) {
+<span class="fc" id="L483">            currentBuilder.gPositions(positions);        </span>
+<span class="fc" id="L484">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitTPositions(short[] positions) {
+<span class="fc" id="L491">            currentBuilder.tPositions(positions);        </span>
+<span class="fc" id="L492">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitAConfidence(byte[] confidence) {
+<span class="fc" id="L499">            currentBuilder.aQualities(confidence);        </span>
+<span class="fc" id="L500">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitCConfidence(byte[] confidence) {
+<span class="fc" id="L507">            currentBuilder.cQualities(confidence);        </span>
+<span class="fc" id="L508">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitGConfidence(byte[] confidence) {
+<span class="fc" id="L515">            currentBuilder.gQualities(confidence);        </span>
+<span class="fc" id="L516">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitTConfidence(byte[] confidence) {
+<span class="fc" id="L523">            currentBuilder.tQualities(confidence);        </span>
+<span class="fc" id="L524">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitEnd() {
+            // TODO Auto-generated method stub
+            
+<span class="fc" id="L533">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitBasecalls(NucleotideSequence basecalls) {
+<span class="fc" id="L540">           currentBuilder.basecalls(basecalls);        </span>
+<span class="fc" id="L541">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitPeaks(short[] peaks) {
+<span class="fc" id="L548">            currentBuilder.peaks(new PositionSequenceBuilder(peaks).build());        </span>
+<span class="fc" id="L549">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitComments(Map&lt;String, String&gt; comments) {
+<span class="fc" id="L556">            currentBuilder.comments(comments);        </span>
+            //copy comments to original?
+<span class="fc" id="L558">            originalBuilder.comments(comments);</span>
+<span class="fc" id="L559">        }</span>
+
+       
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitOriginalBasecalls(NucleotideSequence originalBasecalls) {
+<span class="fc" id="L568">            originalBuilder.basecalls(originalBasecalls);     </span>
+<span class="fc" id="L569">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitChannelOrder(List&lt;Nucleotide&gt; order) {
+           //no-op
+            
+<span class="fc" id="L578">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitPhotometricData(short[] rawTraceData, int opticalFilterId) {
+            // TODO Auto-generated method stub
+            
+<span class="fc" id="L587">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitGelVoltageData(short[] gelVoltage) {
+            // TODO Auto-generated method stub
+            
+<span class="fc" id="L596">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitGelCurrentData(short[] gelCurrent) {
+            // TODO Auto-generated method stub
+            
+<span class="fc" id="L605">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitElectrophoreticPower(short[] electrophoreticPowerData) {
+            // TODO Auto-generated method stub
+            
+<span class="fc" id="L614">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitGelTemperatureData(short[] gelTemp) {
+            // TODO Auto-generated method stub
+            
+<span class="fc" id="L623">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitOriginalPeaks(short[] originalPeaks) {
+<span class="fc" id="L630">            originalBuilder.peaks(new PositionSequenceBuilder(originalPeaks).build());        </span>
+<span class="fc" id="L631">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitOriginalAConfidence(byte[] originalConfidence) {
+<span class="fc" id="L638">            originalBuilder.aQualities(originalConfidence);        </span>
+<span class="fc" id="L639">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitOriginalCConfidence(byte[] originalConfidence) {
+<span class="fc" id="L646">            originalBuilder.cQualities(originalConfidence);        </span>
+<span class="fc" id="L647">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitOriginalGConfidence(byte[] originalConfidence) {
+<span class="fc" id="L654">            originalBuilder.gQualities(originalConfidence);        </span>
+<span class="fc" id="L655">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitOriginalTConfidence(byte[] originalConfidence) {
+<span class="fc" id="L662">            originalBuilder.tQualities(originalConfidence);        </span>
+<span class="fc" id="L663">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitScaleFactors(short aScale, short cScale, short gScale,
+                short tScale) {
+            // TODO Auto-generated method stub
+            
+<span class="fc" id="L673">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitTaggedDataRecord(ByteArrayTaggedDataRecord record,
+                byte[] data) {
+            // TODO Auto-generated method stub
+            
+<span class="fc" id="L683">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitTaggedDataRecord(UserDefinedTaggedDataRecord&lt;?,?&gt; record,
+                byte[] data) {
+            // TODO Auto-generated method stub
+            
+<span class="nc" id="L693">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitTaggedDataRecord(ScanRateTaggedDataType record,
+                ScanRate scanRate) {
+            // TODO Auto-generated method stub
+            
+<span class="fc" id="L703">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitTaggedDataRecord(ShortArrayTaggedDataRecord record,
+                short[] data) {
+            // TODO Auto-generated method stub
+            
+<span class="fc" id="L713">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitTaggedDataRecord(IntArrayTaggedDataRecord record,
+                int[] data) {
+            // TODO Auto-generated method stub
+            
+<span class="nc" id="L723">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitTaggedDataRecord(FloatArrayTaggedDataRecord record,
+                float[] data) {
+            // TODO Auto-generated method stub
+            
+<span class="fc" id="L733">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitTaggedDataRecord(StringTaggedDataRecord record, String data) {
+            // TODO Auto-generated method stub
+            
+<span class="fc" id="L742">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitTaggedDataRecord(TimeTaggedDataRecord record,
+                Ab1LocalTime time) {
+            // TODO Auto-generated method stub
+            
+<span class="fc" id="L752">        }</span>
+
+        /**
+        * {@inheritDoc}
+        */
+        @Override
+        public void visitTaggedDataRecord(DateTaggedDataRecord record,
+                Ab1LocalDate date) {
+            // TODO Auto-generated method stub
+            
+<span class="fc" id="L762">        }</span>
+
+
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ResidueSequence.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.core.residue</a> &gt; <span class="el_source">ResidueSequence.java</span></div><h1>ResidueSequence.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.core.residue;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Sequence;
+/**
+ * {@code ResidueSequence} is a {@link Sequence}
+ * of {@link Residue} that may contain gaps.  There are extra
+ * methods to get the gap locations and convert from gap offsets to 
+ * ungapped offsets and vice versa.
+ * @author dkatzel
+ *
+ * @param &lt;R&gt; the Type of {@link Residue} in this {@link Sequence}.
+ * @param &lt;T&gt; the ResidueSequence implementation, needed for some of the return types to make sure it returns &quot;this&quot; type.
+ */
+public interface ResidueSequence&lt;R extends Residue, T extends ResidueSequence&lt;R, T, B&gt;, B extends ResidueSequenceBuilder&lt;R, T&gt;&gt; extends Sequence&lt;R&gt; {
+
+	 /**
+     * Get a List of all the offsets into this
+     * sequence which are gaps.  This list SHOULD be
+     * sorted by offset in ascending order.  The size of the returned list should be
+     * the same as the value returned by {@link #getNumberOfGaps()}.
+     * @return a List of gap offsets as Integers.
+     */
+    List&lt;Integer&gt; getGapOffsets();    
+    /**
+     * Get the number of gaps in this sequence.
+     * @return the number of gaps; will always be {@code &gt;=0}.
+     */
+    int getNumberOfGaps();
+   
+    /**
+     * Is the {@link Residue} at the given gapped index a gap?
+     * @param gappedOffset the gappedOffset to check.
+     * @return {@code true} is it is a gap; {@code false} otherwise.
+     */
+    boolean isGap(int gappedOffset);
+    /**
+     * Get the number of {@link Residue}s in this sequence 
+     * that are not gaps.
+     * @return the number of non gaps as a long.
+     */
+    long getUngappedLength();
+    /**
+     * Get the number of gaps in the valid range until AND INCLUDING the given
+     * gapped index.
+     * @param gappedOffset the index to count the number of gaps until.
+     * @return the number of gaps in the valid range until AND INCLUDING the given
+     * gapped index.
+     */
+    int getNumberOfGapsUntil(int gappedOffset);
+    /**
+     * Get the corresponding ungapped offset into
+     * this sequence for the given
+     * gapped offset.
+     * @param gappedOffset the offset into the gapped coordinate
+     * system of the desired nucleotide.  This value must be
+     * a non-negative value that is less than the sequence length.
+     * @return the corresponding offset for the equivalent
+     * location in the ungapped sequence.
+     * @throws IndexOutOfBoundsException if the gappedOffset
+     * is negative or beyond the sequence length.
+     */
+    int getUngappedOffsetFor(int gappedOffset);
+    /**
+     * Get the corresponding gapped offset into
+     * this sequence for the given
+     * ungapped offset. For example
+     * calling this method passing in a value of {@code 0}
+     * will return the number of leading gaps in this sequence.
+     * @param ungappedOffset the offset into the ungapped coordinate
+     * system of the desired nucleotide.  This value must be
+     * a non-negative value that is less than the sequence ungapped length.
+     * @return the corresponding offset for the equivalent
+     * location in the gapped sequence.
+     * @throws IndexOutOfBoundsException if the ungappedOffset
+     * is negative or if the computed
+     * gapped offset would extend beyond the sequence length.
+     */
+    int getGappedOffsetFor(int ungappedOffset);
+    
+    /**
+     * Get the corresponding ungapped Range (where the start and end values
+     * of the range are in ungapped coordinate space) for the given
+     * gapped {@link Range}.
+     * @param gappedRange the Range of gapped coordinates; can not be null.
+     * @return a new Range never null.
+     * @throws NullPointerException if the gappedRange is null.
+     * @throws IndexOutOfBoundsException if the given Range goes beyond
+     * the gapped sequence.
+     * 
+     * @since 5.2
+     */
+    default Range toUngappedRange(Range gappedRange){
+       
+<span class="nc bnc" id="L120" title="All 2 branches missed.">        if(gappedRange ==null){</span>
+<span class="nc" id="L121">            throw new NullPointerException(&quot;gappedRange can not be null&quot;);</span>
+        }
+<span class="nc" id="L123">        return Range.of(</span>
+<span class="nc" id="L124">                getUngappedOffsetFor((int)gappedRange.getBegin()),</span>
+<span class="nc" id="L125">                getUngappedOffsetFor((int)gappedRange.getEnd())</span>
+                );
+    }
+    
+    /**
+     * Get the corresponding gapped Range (where the start and end values
+     * of the range are in gapped coordinate space) for the given
+     * ungapped {@link Range}.
+     * @param ungappedRegion the Range of ungapped coordinates; can not be null.
+     * @return a new Range never null.
+     * @throws NullPointerException if the gappedRange is null.
+     * 
+     * @since 5.2
+     */
+    default Range toGappedRange(Range ungappedRange){
+       
+<span class="nc bnc" id="L141" title="All 2 branches missed.">        if(ungappedRange ==null){</span>
+<span class="nc" id="L142">            throw new NullPointerException(&quot;ungappedRange can not be null&quot;);</span>
+        }
+<span class="nc" id="L144">        return Range.of(</span>
+<span class="nc" id="L145">                getGappedOffsetFor((int)ungappedRange.getBegin()),</span>
+<span class="nc" id="L146">                getGappedOffsetFor((int)ungappedRange.getEnd())</span>
+                );
+    }
+    /**
+     * Get this sequence as a single long string
+     * of characters with no whitespace.
+     * @return the full sequence as a long string.
+     */
+    @Override
+    String toString();
+    /**
+     * Two {@link ResidueSequence}s are equal
+     * if they contain the same residues 
+     * in the same order. 
+     * {@inheritDoc}.
+     * 
+     * @see #isEqualToIgnoringGaps(ResidueSequence)
+     */
+    @Override
+    boolean equals(Object o);
+    
+    /**
+     * Two {@link ResidueSequence}s are considered
+     * equal to ignoring gaps
+     * if their ungapped versions contain the same residues 
+     * in the same order. 
+     * 
+     */
+    default boolean isEqualToIgnoringGaps(ResidueSequence&lt;? extends R, T, B&gt; other){
+<span class="fc bfc" id="L175" title="All 2 branches covered.">    	if(other ==null){</span>
+<span class="fc" id="L176">    		return false;</span>
+    	}
+<span class="fc bfc" id="L178" title="All 2 branches covered.">    	if(getUngappedLength() != other.getUngappedLength()){</span>
+<span class="fc" id="L179">    		return false;</span>
+    	}
+<span class="fc" id="L181">    	Iterator&lt;R&gt; iter = iterator();</span>
+<span class="fc" id="L182">    	Iterator&lt;? extends R&gt; otherIter = other.iterator(); </span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">    	while(iter.hasNext()){</span>
+    		//have to duplicate get non-gap
+    		//code because can't use private helper method
+    		//inside a default method.
+    		R nextNonGap;
+    		do{
+<span class="fc" id="L189">    			nextNonGap =iter.next();</span>
+<span class="fc bfc" id="L190" title="All 4 branches covered.">    		}while(nextNonGap.isGap() &amp;&amp; iter.hasNext());</span>
+    		
+<span class="fc" id="L192">    		R nextOtherNonGap=null;</span>
+    		
+<span class="fc bfc" id="L194" title="All 2 branches covered.">    		if(!nextNonGap.isGap()){    			</span>
+    			//haven't reached the end of our sequence
+    			//yet so check the other sequence for equality
+	    		do{
+<span class="fc" id="L198">	    			nextOtherNonGap =otherIter.next();</span>
+<span class="pc bpc" id="L199" title="1 of 4 branches missed.">	    		}while(nextOtherNonGap.isGap() &amp;&amp; otherIter.hasNext());</span>
+	    		
+	    		//if we get this far,
+	    		//then the our next base is NOT a gap
+	    		//so the other seq better equal
+<span class="fc bfc" id="L204" title="All 2 branches covered.">	    		if(!nextNonGap.equals(nextOtherNonGap)){</span>
+<span class="fc" id="L205">	    			return false;</span>
+	    		}
+    		}
+    		
+<span class="fc" id="L209">    	}</span>
+    	//if we get this far then our entire sequences
+    	//matched. because we previously
+    	//checked that the ungapped lengths matched
+    	//so if either iterator still has elements
+    	//they must all be gaps.
+<span class="fc" id="L215">    	return true;</span>
+    }
+    /**
+     * The HashCode of a {@link ResidueSequence}
+     * is computed by summing the hashcodes
+     * of the residues of this sequence
+     * in sequential order. 
+     */
+    @Override
+    int hashCode();
+    
+    /**
+     * Create a new Builder object that is initialized
+     * to the current sequence.  Any changes made to the returned Builder
+     * will &lt;strong&gt;NOT&lt;/strong&gt; affect this immutable Sequence.
+     * @return a new Builder instance, will never be null.
+     * @since 5.0
+     */
+    B toBuilder();
+    /**
+     * Create a new Builder object that is initialized
+     * to the just the given Range of the current sequence.  Any changes made to the returned Builder
+     * will &lt;strong&gt;NOT&lt;/strong&gt; affect this immutable Sequence.
+     * @return a new Builder instance, will never be null.
+     * @since 5.3
+     */
+    B toBuilder(Range range);
+    /**
+     * Create a new EMPTY Builder object with the default capacity.
+     * 
+     * @return a new Builder instance, will never be null.
+     * @since 5.3
+     * 
+     * @see #newEmptyBuilder(int)
+     */
+    B newEmptyBuilder();
+    /**
+     * Create a new EMPTY Builder object with the given capacity.
+     * 
+     * @param initialCapacity the initial capacity; can not be &amp;le; 0.
+     * 
+     * @return a new Builder instance, will never be null.
+     * @since 5.3
+     * 
+     * @throws IllegalArgumentException if initialCapacity is less than 1.
+     * 
+     */
+    B newEmptyBuilder(int initialCapacity);
+    
+    /**
+     * Get the actual subtype of this implementation.
+     * Ideally, this method should not have been public
+     * but was required for internal methods to function properly
+     * and it was deemed better to add this method than use reflection to figure it out.
+     * 
+     * @return the type of this instance.
+     * @since 5.3
+     */
+    T asSubtype();
+    /**
+     * Create a new {@link Stream} of {@link Kmer}s
+     * for all the k-mers of this entire sequence of the given kmer size.
+     * 
+     * @param k the size of each kmer.  For example a 3-mer would have k=3.
+     * @return a new Stream of Kmers which will never be null but may be empty
+     * if the sequence length is less than k.
+     * 
+     * @throws IllegalArgumentException if k is less than 1.
+     * @since 5.3
+     * 
+     * @see #kmers(int, Range)
+     */
+    default Stream&lt;Kmer&lt;T&gt;&gt; kmers(int k){
+<span class="fc" id="L288">        return kmers(k, Range.ofLength(getLength()));</span>
+    }
+    /**
+     * Create a new {@link Stream} of {@link Kmer}s
+     * for all the k-mers in the specified sub range of this sequence of the given kmer size.
+     * 
+     * @param k the size of each kmer.  For example a 3-mer would have k=3.
+     * @param range the sub range to use; can not be null or out of range of the sequence.
+     * 
+     * @return a new Stream of Kmers which will never be null but may be empty
+     * if the subrange sequence length is less than k.
+     * 
+     * @throws IllegalArgumentException if k is less than 1.
+     * 
+     * @throws IndexOutOfBoundsException if Range contains
+     * values outside of the possible sequence offsets.
+     * 
+     * 
+     * @since 5.3
+     * 
+     */
+    default Stream&lt;Kmer&lt;T&gt;&gt; kmers(int k, Range range){
+<span class="fc" id="L310">       return StreamSupport.stream(new KmerSpliterator&lt;R, T, B&gt;(k, asSubtype(), range), false);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -20,8 +20,10 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.aa;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.jcvi.jillion.core.residue.Frame;
@@ -359,5 +361,40 @@ public enum IupacTranslationTables implements TranslationTable{
 			throw new IllegalArgumentException("unknown table number "+ tableNumber);
 		}
 		return table;
+	}
+	@Override
+	public Map<Frame, List<Long>> findStops(NucleotideSequence sequence) {
+		
+		if(sequence == null){
+            throw new NullPointerException("sequence can not be null");
+        }
+		long length = sequence.getLength();
+		List<Long> coordinates = new ArrayList<Long>();
+		Map<Frame,List<Long>> stops = new HashMap<Frame,List<Long>>();
+		int x=0;
+		Frame frame = Frame.ONE;
+		while(x<3){
+	    if(x>0){
+	    	frame=frame.shift(1);
+	    	coordinates = new ArrayList<Long>();
+	    }	  
+	    x++;
+		Iterator<Triplet> iter = frame.asTriplets(sequence);
+		long currentOffset=frame.ordinal();
+		 
+		while(iter.hasNext() && currentOffset <length){
+			Triplet triplet =iter.next();
+			currentOffset+=3;
+			if(triplet !=null){
+				Codon codon =translate(triplet);
+				if(codon.isStop()){
+					coordinates.add(currentOffset-3);
+					stops.put(frame,coordinates);	
+					}
+		}
+		}
+	    }
+		return stops;
+		
 	}
 }

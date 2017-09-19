@@ -1,0 +1,734 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SamUtil.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.sam</a> &gt; <span class="el_source">SamUtil.java</span></div><h1>SamUtil.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.internal.sam;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.text.DateFormat;
+import java.text.FieldPosition;
+import java.text.ParseException;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.function.Predicate;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.sam.SamRecord;
+import org.jcvi.jillion.sam.attribute.SamAttribute;
+import org.jcvi.jillion.sam.attribute.SamAttributeKey;
+import org.jcvi.jillion.sam.attribute.SamAttributeType;
+import org.jcvi.jillion.sam.cigar.Cigar;
+import org.jcvi.jillion.sam.cigar.CigarElement;
+import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.sam.header.SamProgram;
+import org.jcvi.jillion.sam.header.SamReadGroup;
+import org.jcvi.jillion.sam.header.SamReferenceSequence;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+/**
+ * {@code SamUtil} is a utility class
+ * for working with Sam or Bam encoded data.
+ * @author dkatzel
+ *
+ */
+//SAM formatted data requires '\n' 
+//and not '%n' which will break SAM/BAMs written
+//in Windows
+@SuppressFBWarnings(&quot;VA_FORMAT_STRING_USES_NEWLINE&quot;)
+public final class SamUtil {
+	
+
+	private static final char COLON = ':';
+
+	private static final char TAB = '\t';
+
+	/**
+	 * The max bin number allowed in a BAM file.
+	 * Should be 37449.
+	 */
+	private static final int MAX_BIN = (((1&lt;&lt;18)-1)/7);
+	
+	/**
+	 * From BAM specification section 5.1.1:
+	 * &quot;In BAM, each bin may span 
+	 * 2&lt;sup&gt;29&lt;/sup&gt;, 2&lt;sup&gt;26&lt;/sup&gt;, 2&lt;sup&gt;23&lt;/sup&gt;,
+	 *  2&lt;sup&gt;20&lt;/sup&gt;, 2&lt;sup&gt;17&lt;/sup&gt; or 2&lt;sup&gt;14&lt;/sup&gt; bp. 
+	 *  BinBuilder 0 spans a 512Mbp region,
+	 *  bins 1-8 span 64Mbp, 
+	 *  9-72 8Mbp, 
+	 *  73-584 1Mbp, 
+	 *  585-4680 128Kbp 
+	 *  and bins 4681-37449 span 16Kbp regions.&quot;
+	 *  &lt;p/&gt;
+	 *  Each of those specified bin ranges
+	 *  is a smaller range of the alignment
+	 *  and can be viewed as an R-tree.  Each level
+	 *  in the tree is a more fine grained sub region
+	 *  of the alignment.
+	 *  &lt;p/&gt;
+	 *  &lt;table border = &quot;1&quot; style=&quot;text-align:center;&quot;&gt;
+	 *  &lt;tbody&gt;
+	 *  &lt;tr&gt;&lt;td colspan = &quot;64&quot;&gt;0-512 Mbp&lt;td&gt;&lt;/tr&gt;
+	 *  &lt;tr&gt;&lt;td  colspan = &quot;8&quot;&gt;0-64 Mbp&lt;/td&gt;&lt;td  colspan = &quot;8&quot;&gt;64-128 Mbp&lt;/td&gt;&lt;td  colspan = &quot;8&quot;&gt;128-192 Mbp&lt;/td&gt;&lt;td  colspan = &quot;8&quot;&gt;192-256 Mbp&lt;/td&gt;&lt;td  colspan = &quot;8&quot;&gt;256- 320 Mbp&lt;/td&gt;&lt;td  colspan = &quot;8&quot;&gt;320-384 Mbp&lt;/td&gt;&lt;td  colspan = &quot;8&quot;&gt;384-448 Mbp&lt;/td&gt;&lt;td  colspan = &quot;8&quot;&gt;448-512 Mbp&lt;/td&gt;&lt;/tr&gt;
+	 *  &lt;tr&gt;&lt;td &gt;0-8 Mbp&lt;/td &gt;&lt;td &gt;8-16 Mbp&lt;/td&gt;&lt;td &gt;16-24 Mbp&lt;/td&gt;&lt;td &gt;24-32 Mbp&lt;/td&gt;&lt;td &gt;32-40 Mbp&lt;/td&gt;&lt;td &gt;40-48 Mbp&lt;/td&gt;&lt;td &gt;48-56 Mbp&lt;/td&gt;&lt;td &gt;56-64 Mbp&lt;/td&gt;&lt;td &gt;64-72 Mbp&lt;/td&gt;&lt;td&gt;...&lt;/td&gt;&lt;/tr&gt;
+		 
+	 *  &lt;/tbody&gt;
+	 *  &lt;/table&gt;
+	 *  &lt;br/&gt;
+	 *  And each 8 Mb block has the following levels:
+	 *  &lt;br/&gt;
+	 *  &lt;table border = &quot;1&quot; style=&quot;text-align:center;&quot;&gt;
+	 *  &lt;tbody&gt;
+		 * 	&lt;tr&gt;&lt;td colspan = &quot;512&quot;&gt;0-8 Mbp&lt;/td colspan = &quot;512&quot;&gt;&lt;td colspan = &quot;512&quot;&gt;8-16 Mbp&lt;/td&gt;&lt;td colspan = &quot;512&quot;&gt;16-24 Mbp&lt;/td&gt;&lt;td colspan = &quot;512&quot;&gt;24-32 Mbp&lt;/td&gt;&lt;td colspan = &quot;512&quot;&gt;32-40 Mbp&lt;/td&gt;&lt;td colspan = &quot;512&quot;&gt;40-48 Mbp&lt;/td&gt;&lt;td colspan = &quot;512&quot;&gt;48-56 Mbp&lt;/td&gt;&lt;td colspan = &quot;512&quot;&gt;56-64 Mbp&lt;/td&gt;&lt;td colspan = &quot;512&quot;&gt;64-72 Mbp&lt;/td&gt;&lt;td&gt;...&lt;/td&gt;&lt;/tr&gt;
+		 *  &lt;tr&gt;&lt;td colspan = &quot;64&quot;&gt;0-1 Mbp&lt;/td&gt;&lt;td colspan = &quot;64&quot;&gt;1-2 Mbp&lt;/td&gt;&lt;td colspan = &quot;64&quot;&gt;2-3 Mbp&lt;/td&gt;&lt;td colspan = &quot;64&quot;&gt;3-4 Mbp&lt;/td&gt;&lt;td colspan = &quot;64&quot;&gt;4-5 Mbp&lt;/td&gt;&lt;td colspan = &quot;64&quot;&gt;5-6 Mbp&lt;/td&gt;&lt;td colspan = &quot;64&quot;&gt;6-7 Mbp&lt;/td&gt;&lt;td colspan = &quot;64&quot;&gt;7-8 Mbp&lt;/td&gt;&lt;td colspan = &quot;64&quot;&gt;8-9 Mbp&lt;/td&gt;&lt;td&gt;...&lt;/td&gt;&lt;/tr&gt;
+		 *  &lt;tr&gt;&lt;td colspan = &quot;8&quot;&gt;0-128 Kbp&lt;/td&gt;&lt;td colspan = &quot;8&quot;&gt;128-256 Kbp&lt;/td&gt;&lt;td colspan = &quot;8&quot;&gt;256-384 Kbp&lt;/td&gt;&lt;td colspan = &quot;8&quot;&gt;384-512 Kbp&lt;/td&gt;&lt;td colspan = &quot;8&quot;&gt;512-640 Kbp&lt;/td&gt;&lt;td colspan = &quot;8&quot;&gt;640-768 Kbp&lt;/td&gt;&lt;td colspan = &quot;8&quot;&gt;768-896 Kbp&lt;/td&gt;&lt;td colspan = &quot;8&quot;&gt;896-1024 Kbp&lt;/td&gt;&lt;td colspan = &quot;8&quot;&gt;1024-1152 Kbp&lt;/td&gt;&lt;td  colspan = &quot;8&quot;&gt;...&lt;/td&gt;&lt;/tr&gt;
+		 *  &lt;tr&gt;&lt;td&gt;0-16 Kbp&lt;/td&gt;&lt;td&gt;16-32 Kbp&lt;/td&gt;&lt;td&gt;32-48 Kbp&lt;/td&gt;&lt;td&gt;48-64 Kbp&lt;/td&gt;&lt;td&gt;64-80 Kbp&lt;/td&gt;&lt;td&gt;80-96 Kbp&lt;/td&gt;&lt;td&gt;96-114 Kbp&lt;/td&gt;&lt;td&gt;114-128 Kbp&lt;/td&gt;&lt;td&gt;128 -144 Kbp&lt;/td&gt;&lt;td&gt;...&lt;/td&gt;&lt;/tr&gt;
+		 *  
+		 *  &lt;/tbody&gt;
+	 *  &lt;/table&gt;
+	 *  &lt;p/&gt;
+	 *  
+	 *  To simplify which bin offsets are which levels in the tree
+	 *  we can just store the initial bin for each level.
+	 *  
+	 */
+<span class="fc" id="L125">	private static final int[] BIN_TREE_LEVEL_OFFSETS = new int[]{1, 9, 73, 585, 4681};</span>
+	
+<span class="fc" id="L127">	private static final int[] BIN_TREE_LEVEL_SHIFTS = new int[]{26,23, 20,  17, 14};</span>
+	
+<span class="fc" id="L129">	private static final byte[] BAM_MAGIC_NUMBER = new byte[]{'B','A','M',1};</span>
+	
+	
+<span class="fc" id="L132">	private static ThreadLocal&lt;DateFormat&gt; THREAD_LOCAL_DATE_FORMAT = new ThreadLocal&lt;DateFormat&gt;(){</span>
+
+		  @Override
+		  public DateFormat get() {
+<span class="fc" id="L136">		   return super.get();</span>
+		  }
+
+		  @Override
+		  protected DateFormat initialValue() {			 
+<span class="fc" id="L141">		   return new SamDateFormat();</span>
+		  }
+
+		  @Override
+		  public void remove() {
+<span class="nc" id="L146">		   super.remove();</span>
+<span class="nc" id="L147">		  }</span>
+
+		  @Override
+		  public void set(DateFormat value) {
+<span class="nc" id="L151">		   super.set(value);</span>
+<span class="nc" id="L152">		  }</span>
+
+		 };
+		 
+	 private static final Nucleotide[] BAM_ENCODED_BASES;
+	
+	 private static final byte[] BAM_ORDINAL_TO_ENCODED_BASES;
+	 
+	 //dkatzel - 7/2017 - the PAIR_OF matrices
+	 //are caches to save time doing costly repetitive bit shifting and byte manipulation.
+	 //BAM files store nucleotides 2 per byte
+	 //since BAMs will have millions of records
+	 //and each sequence will be hundreds of bases long
+	 //we'd be doing billions of bit shifts just reading the file once or twice!
+	 //
+	 //This changes it to an array lookup and improves BAM reading performance 
+	 //by about 20%.
+	 
+	 private static final Nucleotide[][] PAIR_OF_BAM_ENCODED_BASES;
+         private static final byte[][] PAIR_OF_BASES_TO_BAM_ENCODE; 
+		
+		static{
+			//`=ACMGRSVTWYHKDBN'
+<span class="fc" id="L175">			BAM_ENCODED_BASES = new Nucleotide[16];</span>
+			//TODO: note [0]set to null to force NPE
+<span class="fc" id="L177">			BAM_ENCODED_BASES[0] = null;</span>
+			
+<span class="fc" id="L179">			BAM_ENCODED_BASES[1] = Nucleotide.Adenine;</span>
+<span class="fc" id="L180">			BAM_ENCODED_BASES[2] = Nucleotide.Cytosine;</span>
+<span class="fc" id="L181">			BAM_ENCODED_BASES[3] = Nucleotide.Amino;</span>
+<span class="fc" id="L182">			BAM_ENCODED_BASES[4] = Nucleotide.Guanine;</span>
+<span class="fc" id="L183">			BAM_ENCODED_BASES[5] = Nucleotide.Purine;</span>
+<span class="fc" id="L184">			BAM_ENCODED_BASES[6] = Nucleotide.Strong;</span>
+<span class="fc" id="L185">			BAM_ENCODED_BASES[7] = Nucleotide.NotThymine;</span>
+<span class="fc" id="L186">			BAM_ENCODED_BASES[8] = Nucleotide.Thymine;</span>
+<span class="fc" id="L187">			BAM_ENCODED_BASES[9] = Nucleotide.Weak;</span>
+<span class="fc" id="L188">			BAM_ENCODED_BASES[10] = Nucleotide.Pyrimidine;</span>
+<span class="fc" id="L189">			BAM_ENCODED_BASES[11] = Nucleotide.NotGuanine;</span>
+<span class="fc" id="L190">			BAM_ENCODED_BASES[12] = Nucleotide.Keto;</span>
+<span class="fc" id="L191">			BAM_ENCODED_BASES[13] = Nucleotide.NotCytosine;</span>
+<span class="fc" id="L192">			BAM_ENCODED_BASES[14] = Nucleotide.NotAdenine;</span>
+<span class="fc" id="L193">			BAM_ENCODED_BASES[15] = Nucleotide.Unknown;</span>
+			
+<span class="fc" id="L195">			BAM_ORDINAL_TO_ENCODED_BASES = new byte[16];</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">			for(int i=0; i&lt;16; i++){</span>
+<span class="fc" id="L197">				Nucleotide n = BAM_ENCODED_BASES[i];</span>
+<span class="fc bfc" id="L198" title="All 2 branches covered.">				if(n !=null){</span>
+<span class="fc" id="L199">					BAM_ORDINAL_TO_ENCODED_BASES[n.ordinal()] = (byte)i;</span>
+				}
+			}
+			
+<span class="fc" id="L203">			PAIR_OF_BAM_ENCODED_BASES = new Nucleotide[256][2];</span>
+			
+<span class="fc bfc" id="L205" title="All 2 branches covered.">			for(int i=1; i&lt;BAM_ENCODED_BASES.length; i++){</span>
+<span class="fc" id="L206">			    int shiftedI = i&lt;&lt;4;</span>
+<span class="fc bfc" id="L207" title="All 2 branches covered.">			    for(int j=1; j&lt;BAM_ENCODED_BASES.length; j++){</span>
+<span class="fc" id="L208">			        int value = shiftedI | j;</span>
+<span class="fc" id="L209">			        PAIR_OF_BAM_ENCODED_BASES[value] = new Nucleotide[]{BAM_ENCODED_BASES[i], BAM_ENCODED_BASES[j]};</span>
+			    }
+			}
+			
+<span class="fc" id="L213">			Nucleotide[] ordinals = Nucleotide.values();</span>
+<span class="fc" id="L214">                        PAIR_OF_BASES_TO_BAM_ENCODE = new byte[ordinals.length][ordinals.length];</span>
+                        
+<span class="fc bfc" id="L216" title="All 2 branches covered.">                        for(Nucleotide a : ordinals){</span>
+<span class="fc bfc" id="L217" title="All 2 branches covered.">                            for(Nucleotide b : ordinals){</span>
+<span class="fc" id="L218">                                PAIR_OF_BASES_TO_BAM_ENCODE[a.ordinal()][b.ordinal()] = (byte)(BAM_ORDINAL_TO_ENCODED_BASES[a.ordinal()]&lt;&lt;4 | BAM_ORDINAL_TO_ENCODED_BASES[b.ordinal()]);</span>
+                            }
+                        }
+<span class="fc" id="L221">		}</span>
+			
+		 
+		 
+<span class="nc" id="L225">	private SamUtil(){</span>
+		//can not instantiate
+<span class="nc" id="L227">	}</span>
+	
+	public static final byte[] getBamMagicNumber(){
+<span class="fc" id="L230">		return Arrays.copyOf(BAM_MAGIC_NUMBER, 4);</span>
+	}
+	public static boolean matchesBamMagicNumber(byte[] b){
+<span class="fc" id="L233">		return Arrays.equals(BAM_MAGIC_NUMBER, b);</span>
+	}
+	
+	public static NucleotideSequence readBamEncodedSequence(InputStream in, int seqLength) throws IOException {
+<span class="fc" id="L237">		byte[] seqBytes = new byte[(seqLength+1)/2];</span>
+<span class="fc" id="L238">		IOUtil.blockingRead(in, seqBytes);</span>
+<span class="fc" id="L239">		NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(seqLength);</span>
+		//we turn off data compression since we
+		//usually stream through millions of these records and
+		//often throw the results away
+		//so we don't care if temporarily we take up more memory
+<span class="fc" id="L244">		builder.turnOffDataCompression(true);</span>
+<span class="pc bpc" id="L245" title="1 of 2 branches missed.">		if(seqBytes.length &gt;1){</span>
+<span class="fc" id="L246">        		Nucleotide[] array = new Nucleotide[(seqBytes.length-1)*2];</span>
+        		//first fully populate all but last byte
+<span class="fc bfc" id="L248" title="All 2 branches covered.">        		for(int i=0, j=0; i&lt;seqBytes.length-1; i++){</span>
+<span class="fc" id="L249">        		    Nucleotide[] pair = PAIR_OF_BAM_ENCODED_BASES[seqBytes[i] &amp; 0xFF];</span>
+<span class="fc" id="L250">        		    array[j++] = pair[0];</span>
+<span class="fc" id="L251">        		    array[j++] = pair[1];</span>
+                   
+        		}
+<span class="fc" id="L254">        		builder.append(array);</span>
+		}
+<span class="fc" id="L256">		byte lastByte = seqBytes[seqBytes.length-1];</span>
+		//for last byte we should always include high nibble
+<span class="fc" id="L258">		builder.append(BAM_ENCODED_BASES[(lastByte&gt;&gt;4) &amp; 0x0F]);</span>
+		//only include lower nibble if we are even
+<span class="fc bfc" id="L260" title="All 2 branches covered.">		if(seqLength %2 ==0){</span>
+<span class="fc" id="L261">			builder.append(BAM_ENCODED_BASES[lastByte &amp; 0x0F]);</span>
+		}
+		//TODO '=' char not supported yet
+		//which is used to mean &quot;same as reference&quot;
+		//we would need to link to the reference seq
+		//to get those.
+		
+<span class="fc" id="L268">		return builder.build();</span>
+	}
+	
+	/**
+	 * Assert that the first key character is a valid letter
+	 * [A-Za-z] and that the second key character is a valid letter or digit
+	 * [A-Za-z0-9].
+	 * @param key1 the first letter in the key.
+	 * @param key2 the second letter in the key.
+	 * @return {@code true} if valid;{@code false}
+	 * otherwise.
+	 */
+	public static boolean isValidKey(char key1, char key2) {
+<span class="pc bpc" id="L281" title="2 of 4 branches missed.">		return assertValid1(key1)  &amp;&amp; assertValid2(key2);</span>
+			
+	}
+	/**
+	 * Assert that the first key character is a valid letter
+	 * [A-Za-z].
+	 * @param c
+	 * @return {@code true} if valid;{@code false}
+	 * otherwise.
+	 */
+	private static boolean assertValid1(char c) {
+		//A-Zz-z
+<span class="pc bpc" id="L293" title="2 of 4 branches missed.">		if(c&lt;65 || c&gt;122){</span>
+<span class="nc" id="L294">			return false;</span>
+		}
+		//check for special chars between Z-a
+		//[91-96] invalid
+<span class="pc bpc" id="L298" title="1 of 4 branches missed.">		if(c &gt; 90 &amp;&amp; c&lt;97){</span>
+<span class="nc" id="L299">			return false;</span>
+		}
+<span class="fc" id="L301">		return true;</span>
+	}
+	/**
+	 * Assert that the second key character is a valid letter or digit
+	 * [A-Za-z0-9].
+	 * @param c
+	 * @return {@code true} if valid;{@code false}
+	 * otherwise.
+	 */
+	private static boolean assertValid2(char c) {
+<span class="pc bpc" id="L311" title="1 of 4 branches missed.">		if(c &gt;=48 &amp;&amp; c&lt;=57){</span>
+			//digit is good
+<span class="fc" id="L313">			return true;</span>
+		}
+<span class="fc" id="L315">		return assertValid1(c);</span>
+		
+	}
+	
+	public static Date toDate(String dateString) throws ParseException{
+<span class="fc" id="L320">		return THREAD_LOCAL_DATE_FORMAT.get().parse(dateString);</span>
+	}
+	
+	public static String formatIsoDate(Date date){
+<span class="fc" id="L324">		return THREAD_LOCAL_DATE_FORMAT.get().format(date);</span>
+	}
+	/**
+	 *  Calculate the BAM bin for a given Range
+	 *  same as
+	 *  {@code computeBinFor((int)range.getBegin(), (int)range.getEnd()+1); }
+	 * @param range the alignment range, can not be null.
+	 * @return the BAM bin.
+	 * @see #computeBinFor(int,int)
+	 * @throws NullPointerException if range is null.
+	 */
+	public static int computeBinFor(Range range){
+<span class="fc" id="L336">		return computeBinFor((int)range.getBegin(), (int)range.getEnd()+1);</span>
+	}
+	/**
+	 * Calculate the BAM bin for a given alignment
+	 * covering [begin, end) zero based.
+	 * @param begin the begin coordinate zero-based
+	 * inclusive.
+	 * @param endExclusive the end coordinate
+	 * zero based EXCLUSIVE.
+	 * @return the BAM bin.
+	 * @throws IllegalArgumentException if endExclusive &lt;= begin
+	 */
+	public static int computeBinFor(int begin, int endExclusive){
+<span class="pc bpc" id="L349" title="1 of 2 branches missed.">		if(endExclusive &lt;= begin){</span>
+<span class="nc" id="L350">			throw new IllegalArgumentException(&quot;end must be &gt; begin : &quot; +  begin + &quot;  &quot; + endExclusive );</span>
+		}
+<span class="fc" id="L352">		int end = endExclusive-1;</span>
+<span class="fc" id="L353">		int beg = begin;</span>
+		//taken directly from C source example in SAMv1 file spec
+<span class="fc bfc" id="L355" title="All 2 branches covered.">		if (beg &gt;&gt; 14 == end &gt;&gt; 14) {</span>
+<span class="fc" id="L356">			return ((1 &lt;&lt; 15) - 1) / 7 + (beg &gt;&gt; 14);</span>
+		}
+<span class="fc bfc" id="L358" title="All 2 branches covered.">		if (beg &gt;&gt; 17 == end &gt;&gt; 17) {</span>
+<span class="fc" id="L359">			return ((1 &lt;&lt; 12) - 1) / 7 + (beg &gt;&gt; 17);</span>
+		}
+<span class="fc bfc" id="L361" title="All 2 branches covered.">		if (beg &gt;&gt; 20 == end &gt;&gt; 20) {</span>
+<span class="fc" id="L362">			return ((1 &lt;&lt; 9) - 1) / 7 + (beg &gt;&gt; 20);</span>
+		}
+<span class="fc bfc" id="L364" title="All 2 branches covered.">		if (beg &gt;&gt; 23 == end &gt;&gt; 23) {</span>
+<span class="fc" id="L365">			return ((1 &lt;&lt; 6) - 1) / 7 + (beg &gt;&gt; 23);</span>
+		}
+<span class="fc bfc" id="L367" title="All 2 branches covered.">		if (beg &gt;&gt; 26 == end &gt;&gt; 26) {</span>
+<span class="fc" id="L368">			return ((1 &lt;&lt; 3) - 1) / 7 + (beg &gt;&gt; 26);</span>
+		}
+		//if we've gotten this far
+		//then we must be in bin 0
+<span class="fc" id="L372">		return 0;</span>
+		/*
+		 *  
+     * calculate the bin given an alignment in [beg,end)
+     * Copied from SAM spec.
+     * @param beg 0-based start of read (inclusive)
+     * @param end 0-based end of read (exclusive)
+     *
+    static int reg2bin(final int beg, int end)
+    {
+        --end;
+
+        if (beg&gt;&gt;14 == end&gt;&gt;14) return ((1&lt;&lt;15)-1)/7 + (beg&gt;&gt;14);
+        if (beg&gt;&gt;17 == end&gt;&gt;17) return ((1&lt;&lt;12)-1)/7 + (beg&gt;&gt;17);
+        if (beg&gt;&gt;20 == end&gt;&gt;20) return  ((1&lt;&lt;9)-1)/7 + (beg&gt;&gt;20);
+        if (beg&gt;&gt;23 == end&gt;&gt;23) return  ((1&lt;&lt;6)-1)/7 + (beg&gt;&gt;23);
+        if (beg&gt;&gt;26 == end&gt;&gt;26) return  ((1&lt;&lt;3)-1)/7 + (beg&gt;&gt;26);
+        return 0;
+    }
+		 */
+		
+	}
+	/**
+	 * Get an array which contains
+	 * all the potential BAM bins that the given alignment range
+	 * overlaps.  The contents in the array is not necessarily 
+	 * contigious values and the actual bins used may only be the first
+	 * few elements in this array depending on the length of the reference.
+	 * @param range the alignment range; can not be null.
+	 * @return a new array will never be null and will
+	 * always have at least one element [0] = 0 (which is bin 0).
+	 * @throws NullPointerException if range is null.
+	 */
+	public static int[] getCandidateOverlappingBins(Range range){
+<span class="fc" id="L406">		return getCandidateOverlappingBins((int)range.getBegin(), (int)range.getEnd() +1);</span>
+	}
+	/**
+	 * Get an array which contains
+	 * all the potential BAM bins that the given alignment range
+	 * overlaps.  The contents in the array is not necessarily 
+	 * contigious values and the actual bins used may only be the first
+	 * few elements in this array depending on the length of the reference.
+	 * @param begin the begin coordinate zero-based
+	 * inclusive.
+	 * @param endExclusive the end coordinate
+	 * zero based EXCLUSIVE.
+	 * @return a new array will never be null and will
+	 * always have at least one element [0] = 0 (which is bin 0).
+	 */
+	public static int[] getCandidateOverlappingBins(int begin, int endExclusive){
+<span class="pc bpc" id="L422" title="1 of 2 branches missed.">		if(endExclusive &lt;= begin){</span>
+<span class="nc" id="L423">			throw new IllegalArgumentException(&quot;end must be &gt; begin&quot;);</span>
+		}
+<span class="fc" id="L425">		int end = endExclusive-1;</span>
+<span class="fc" id="L426">		int beg = begin;</span>
+		//taken directly from C source example in SAMv1 file spec
+		//with some slight re-formatting 
+		//and minor conversion to more Java friendly syntax	
+		//and moving all magic numbers to either
+		//constants or arrays with intent revealing
+		//names and comments.
+		//TODO this refactoring
+		//may make the actual computation slower
+		//than hardcoding magic numbers
+		//if it becomes a bottleneck
+		//replace with C code from spec.
+<span class="fc" id="L438">		int[] list = new int[MAX_BIN];</span>
+		
+<span class="fc" id="L440">		int i=0, k;</span>
+		//bin 0 is always a candidate since it covers everything
+<span class="fc" id="L442">		list[i++]=0;</span>
+		
+<span class="fc bfc" id="L444" title="All 2 branches covered.">		for(int level = 0; level &lt; BIN_TREE_LEVEL_OFFSETS.length; level++){</span>
+<span class="fc" id="L445">			int shiftAmount = BIN_TREE_LEVEL_SHIFTS[level];</span>
+<span class="fc" id="L446">			int initialK = BIN_TREE_LEVEL_OFFSETS[level];</span>
+<span class="fc bfc" id="L447" title="All 2 branches covered.">			for (k = initialK + (beg&gt;&gt;shiftAmount); k &lt;= initialK + (end&gt;&gt;shiftAmount); ++k){</span>
+<span class="fc" id="L448">				list[i++] = k;</span>
+			}
+		}		
+		//at this point 
+		//i is the length of elements
+		//we populated in the array
+<span class="fc" id="L454">		return Arrays.copyOf(list, i);</span>
+	}
+	
+	
+	public static void writeAsBamRecord(OutputStream out, SamHeader header, SamRecord record, int refIndex, int nextNameIndex) throws IOException{
+		//TODO compute buffer size first?
+		//it would be hard because
+		//we would have to know how many bytes
+		//the attributes are encoded as...
+		//for now just pick a large buffer size
+		//and hope we don't overflow...
+<span class="fc" id="L465">		ByteBuffer buf = ByteBuffer.allocate(8096);</span>
+<span class="fc" id="L466">		buf.order(ByteOrder.LITTLE_ENDIAN);</span>
+		//skip first 4 bytes so we can write the length of record last
+<span class="fc" id="L468">		buf.position(4);</span>
+<span class="fc" id="L469">		buf.putInt(refIndex); //header.getReferenceIndexFor(referenceName));</span>
+<span class="fc" id="L470">		int startOffset = record.getStartPosition() -1;</span>
+<span class="fc" id="L471">		buf.putInt(startOffset);</span>
+		long bin;
+		final Cigar cigar;
+<span class="fc bfc" id="L474" title="All 2 branches covered.">		if(record.mapped()){</span>
+<span class="fc" id="L475">			cigar = record.getCigar();</span>
+			//binMapNameLength =computeBinFor(startOffset, startOffset + cigar.getPaddedReadLength(ClipType.SOFT_CLIPPED) -1);
+<span class="fc" id="L477">			int refAlignLength = cigar.getNumberOfReferenceBasesAligned();</span>
+			/*
+			 * int readStartOffset = record.getStartPosition() -1;
+			int readLength = record.getCigar().getNumberOfReferenceBasesAligned();
+			
+			 */
+<span class="fc" id="L483">			bin =computeBinFor(startOffset, startOffset + refAlignLength);</span>
+<span class="fc" id="L484">		}else{</span>
+<span class="fc" id="L485">			bin =4680;</span>
+<span class="fc" id="L486">			cigar = Cigar.EMPTY_CIGAR;</span>
+		}
+<span class="fc" id="L488">		bin&lt;&lt;=16;</span>
+<span class="fc" id="L489">		bin |= (record.getMappingQuality() &lt;&lt;8);</span>
+		//name length is null terminated
+<span class="fc" id="L491">		bin |= (record.getQueryName().length() +1);</span>
+		
+<span class="fc" id="L493">		long flagsAndNumCigarOps = record.getFlags().asInt() &lt;&lt;16;</span>
+<span class="fc" id="L494">		flagsAndNumCigarOps |= cigar.getNumberOfElements();</span>
+		//cast should be fine since our masks
+		//makes sure we only have lower 4 bytes of data
+<span class="fc" id="L497">		buf.putInt((int) (bin &amp; 0x00000000FFFFFFFFL ));</span>
+<span class="fc" id="L498">		buf.putInt((int) (flagsAndNumCigarOps &amp; 0x00000000FFFFFFFFL ));</span>
+<span class="fc" id="L499">		NucleotideSequence seq =record.getSequence();</span>
+<span class="pc bpc" id="L500" title="1 of 2 branches missed.">		int seqLength = seq ==null ? 0 :(int)seq.getLength();			</span>
+		
+<span class="fc" id="L502">		buf.putInt(seqLength);</span>
+<span class="fc" id="L503">		buf.putInt(nextNameIndex);</span>
+<span class="fc" id="L504">		buf.putInt(record.getNextOffset() -1);</span>
+<span class="fc" id="L505">		buf.putInt(record.getObservedTemplateLength());</span>
+<span class="fc" id="L506">		buf.put(writeNullTerminatedStringAsBytes(record.getQueryName()));</span>
+<span class="fc bfc" id="L507" title="All 2 branches covered.">		for(CigarElement cigarElement : cigar){</span>
+<span class="fc" id="L508">			int encodedCigar = cigarElement.getLength() &lt;&lt;4;</span>
+<span class="fc" id="L509">			encodedCigar |= cigarElement.getOp().getBinaryOpCode();</span>
+<span class="fc" id="L510">			buf.putInt(encodedCigar);</span>
+<span class="fc" id="L511">		}</span>
+<span class="pc bpc" id="L512" title="1 of 2 branches missed.">		if(seqLength &gt;0){</span>
+<span class="fc" id="L513">			writeSequence(buf, seqLength, seq);</span>
+<span class="fc" id="L514">			writeQualities(buf, seqLength, record.getQualities());</span>
+		}
+<span class="fc bfc" id="L516" title="All 2 branches covered.">		for(SamAttribute attribute : record.getAttributes()){</span>
+<span class="fc" id="L517">			SamAttributeKey key =attribute.getKey();</span>
+			
+<span class="fc" id="L519">			buf.put((byte)(key.getFirstChar() &amp; 0xFF));</span>
+<span class="fc" id="L520">			buf.put((byte)(key.getSecondChar() &amp; 0xFF));</span>
+			
+<span class="fc" id="L522">			SamAttributeType type = attribute.getType();</span>
+			
+<span class="fc" id="L524">			type.encodeInBam(attribute.getValue(), buf);</span>
+<span class="fc" id="L525">		}</span>
+		
+<span class="fc" id="L527">		int bytesWritten =buf.position();</span>
+<span class="fc" id="L528">		buf.position(0);</span>
+<span class="fc" id="L529">		buf.putInt(bytesWritten -4);</span>
+
+<span class="fc" id="L531">		out.write(Arrays.copyOf(buf.array(), bytesWritten));</span>
+<span class="fc" id="L532">	}</span>
+	
+	
+	private static void writeQualities(ByteBuffer in, int seqLength, QualitySequence qualities) throws IOException {
+<span class="fc bfc" id="L536" title="All 2 branches covered.">		if(qualities ==null){</span>
+<span class="fc" id="L537">			byte[] fake = new byte[seqLength];</span>
+<span class="fc" id="L538">			Arrays.fill(fake, (byte)-1);</span>
+<span class="fc" id="L539">			in.put(fake);</span>
+<span class="fc" id="L540">		}else{</span>
+<span class="fc" id="L541">			in.put(qualities.toArray());</span>
+		}
+		
+<span class="fc" id="L544">	}</span>
+
+	private static void writeSequence(ByteBuffer buf, int seqLength, NucleotideSequence seq) throws IOException {
+<span class="fc" id="L547">		byte[] data = new byte[(seqLength+1)/2];</span>
+<span class="fc" id="L548">		Iterator&lt;Nucleotide&gt; iter = seq.iterator();</span>
+		//write all but last byte which 
+		//will use all bits
+<span class="fc bfc" id="L551" title="All 2 branches covered.">		for(int i=0; i&lt;data.length -1; i++){</span>
+//			int value = BAM_ENCODED_BASES_TO_ORDINAL[iter.next().ordinal()] &lt;&lt;4;
+//			value |= BAM_ENCODED_BASES_TO_ORDINAL[iter.next().ordinal()];
+//			data[i] = (byte)value;	
+<span class="fc" id="L555">		        data[i] = PAIR_OF_BASES_TO_BAM_ENCODE[iter.next().ordinal()][iter.next().ordinal()];</span>
+		}
+		//last byte will def use higher order bits
+<span class="fc" id="L558">		int value = BAM_ORDINAL_TO_ENCODED_BASES[iter.next().ordinal()] &lt;&lt;4;</span>
+		//only include lower bits if we are even
+<span class="fc bfc" id="L560" title="All 2 branches covered.">		if(seqLength%2==0){</span>
+<span class="fc" id="L561">			value |= BAM_ORDINAL_TO_ENCODED_BASES[iter.next().ordinal()];</span>
+		}
+<span class="fc" id="L563">		data[data.length -1] = (byte)value;</span>
+<span class="fc" id="L564">		buf.put(data);</span>
+		
+<span class="fc" id="L566">	}</span>
+	private static byte[] writeNullTerminatedStringAsBytes(String s){
+<span class="fc" id="L568">		char[] chars =s.toCharArray();</span>
+<span class="fc" id="L569">		byte[] bytes = new byte[chars.length +1];</span>
+<span class="fc bfc" id="L570" title="All 2 branches covered.">		for(int i=0; i&lt;chars.length; i++){</span>
+<span class="fc" id="L571">			bytes[i] = (byte)chars[i];</span>
+		}
+		//last byte should be null by default
+		//so we don't have to write it
+<span class="fc" id="L575">		return bytes;</span>
+	}
+	/**
+	 * Encode the given {@link SamHeader}
+	 * into SAM formatted String (returned as a StringBuilder).
+	 * @param header the header to encode;
+	 * can not be null.
+	 * @return the SAM formatted String
+	 * as a StringBuilder.
+	 * @throws NullPointerException if header is null.
+	 */
+	public static StringBuilder encodeHeader(SamHeader header){
+<span class="fc" id="L587">		StringBuilder out = new StringBuilder(1024);</span>
+<span class="pc bpc" id="L588" title="1 of 2 branches missed.">		if(header.getVersion() != null){</span>
+<span class="fc" id="L589">			out.append(String.format(&quot;@HD\tVN:%s\tSO:%s\n&quot;, </span>
+<span class="fc" id="L590">					header.getVersion(), </span>
+<span class="fc" id="L591">					header.getSortOrder().getEncodedName()));</span>
+		}
+<span class="fc bfc" id="L593" title="All 2 branches covered.">		for(SamReferenceSequence seq : header.getReferenceSequences()){</span>
+<span class="fc" id="L594">			StringBuilder builder = new StringBuilder(300);</span>
+			
+<span class="fc" id="L596">			builder.append(&quot;@SQ\tSN:&quot;).append(seq.getName())</span>
+<span class="fc" id="L597">					.append(&quot;\tLN:&quot;).append(seq.getLength());</span>
+			
+<span class="fc" id="L599">			appendIfNotNull(builder, &quot;AS&quot;, seq.getGenomeAssemblyId());</span>
+<span class="fc" id="L600">			appendIfNotNull(builder, &quot;M5&quot;, seq.getMd5());</span>
+<span class="fc" id="L601">			appendIfNotNull(builder, &quot;SP&quot;, seq.getSpecies());</span>
+<span class="fc" id="L602">			appendIfNotNull(builder, &quot;UR&quot;, seq.getUri());</span>
+<span class="fc" id="L603">			out.append(String.format(&quot;%s\n&quot;,builder.toString()));</span>
+<span class="fc" id="L604">		}</span>
+		
+<span class="fc bfc" id="L606" title="All 2 branches covered.">		for(SamReadGroup readGroup : header.getReadGroups()){</span>
+<span class="fc" id="L607">			StringBuilder builder = new StringBuilder(1024);</span>
+			
+<span class="fc" id="L609">			builder.append(&quot;@RG\tID:&quot;).append(readGroup.getId());</span>
+			
+<span class="fc" id="L611">			appendIfNotNull(builder, &quot;CN&quot;, readGroup.getSequencingCenter());</span>
+<span class="fc" id="L612">			appendIfNotNull(builder, &quot;DS&quot;, readGroup.getDescription());</span>
+			
+<span class="fc" id="L614">			appendIsoDateIfNotNull(builder, &quot;DT&quot;,readGroup.getRunDate());</span>
+			
+<span class="fc" id="L616">			appendIfNotNull(builder, &quot;FO&quot;, readGroup.getFlowOrder());</span>
+<span class="fc" id="L617">			appendIfNotNull(builder, &quot;KS&quot;, readGroup.getKeySequence());</span>
+<span class="fc" id="L618">			appendIfNotNull(builder, &quot;LB&quot;, readGroup.getLibrary());</span>
+<span class="fc" id="L619">			appendIfNotNull(builder, &quot;PG&quot;, readGroup.getPrograms());</span>
+<span class="fc" id="L620">			appendIfNotNull(builder, &quot;PI&quot;, readGroup.getPredictedInsertSize());</span>
+<span class="fc" id="L621">			appendIfNotNull(builder, &quot;PL&quot;, readGroup.getPlatform());</span>
+<span class="fc" id="L622">			appendIfNotNull(builder, &quot;PU&quot;, readGroup.getPlatformUnit());</span>
+<span class="fc" id="L623">			appendIfNotNull(builder, &quot;SM&quot;, readGroup.getSampleOrPoolName());</span>
+<span class="fc" id="L624">			out.append(String.format(&quot;%s\n&quot;,builder.toString()));</span>
+<span class="fc" id="L625">		}</span>
+	
+<span class="fc bfc" id="L627" title="All 2 branches covered.">		for(SamProgram program : header.getPrograms()){</span>
+<span class="fc" id="L628">			StringBuilder builder = new StringBuilder(1024);</span>
+<span class="fc" id="L629">			builder.append(String.format(&quot;@PG\tID:%s&quot;, program.getId()));</span>
+<span class="fc" id="L630">			appendIfNotNull(builder, &quot;PN&quot;, program.getName());</span>
+<span class="fc" id="L631">			appendIfNotNull(builder, &quot;CL&quot;,program.getCommandLine());</span>
+<span class="fc" id="L632">			appendIfNotNull(builder, &quot;PP&quot;, program.getPreviousProgramId());</span>
+<span class="fc" id="L633">			appendIfNotNull(builder, &quot;DS&quot;, program.getDescription());</span>
+<span class="fc" id="L634">			appendIfNotNull(builder, &quot;VN&quot;, program.getVersion());</span>
+			
+<span class="fc" id="L636">			out.append(String.format(&quot;%s\n&quot;, builder.toString()));</span>
+<span class="fc" id="L637">		}</span>
+		
+<span class="fc bfc" id="L639" title="All 2 branches covered.">		for(String comment : header.getComments()){</span>
+<span class="fc" id="L640">			out.append(String.format(&quot;@CO\t%s\n&quot;, comment));</span>
+<span class="fc" id="L641">		}</span>
+		
+<span class="fc" id="L643">		return out;</span>
+		
+	}
+	private static void appendIsoDateIfNotNull(StringBuilder builder, String key, Date value){
+<span class="pc bpc" id="L647" title="1 of 2 branches missed.">		if(value !=null){</span>
+<span class="fc" id="L648">			builder.append(TAB).append(key).append(COLON).append(SamUtil.formatIsoDate(value));</span>
+		}
+<span class="fc" id="L650">	}</span>
+	private static void appendIfNotNull(StringBuilder builder, String key, Object value){
+<span class="fc bfc" id="L652" title="All 2 branches covered.">		if(value !=null){</span>
+<span class="fc" id="L653">			builder.append(TAB).append(key).append(COLON).append(value);</span>
+		}
+<span class="fc" id="L655">	}</span>
+	
+	/**
+	 * {@code SamDateFormat} is a {@link DateFormat}
+	 * that can fall back to multiple date formats if needed.
+	 * This is used because apparently some older sam files
+	 * use a different date format string.
+	 * 
+	 * @author dkatzel
+	 *
+	 */
+<span class="fc" id="L666">	private static final class SamDateFormat extends DateFormat{</span>
+
+		/**
+		 * Default serial version id.
+		 */
+		private static final long serialVersionUID = 1L;
+
+		//these date formats have been seen in example SAM/BAMS
+		//the expected format described in SAM spec
+		private static final String DATE_FULL_FORMAT = &quot;yyyy-MM-dd'T'HH:mm:ssZ&quot;;
+		//in older SAM files?
+		private static final String DAY_ONLY_FORMAT = &quot;yyyy-MM-dd&quot;;
+		//this format is seen from bams produced from bwa sampe ?
+		private static final String NO_SECONDS_FORMAT = &quot;yyyy-MM-dd'T'HH:mm&quot;;
+
+		private static final int DAY_ONLY_LENGTH = 10;
+		private static final int NOT_SECONDS_LENGTH = 16;
+		
+<span class="fc" id="L684">		final DateFormat full = new SimpleDateFormat(DATE_FULL_FORMAT, Locale.US);</span>
+<span class="fc" id="L685">		final DateFormat dayOnly = new SimpleDateFormat(DAY_ONLY_FORMAT, Locale.US);</span>
+<span class="fc" id="L686">		final DateFormat noSeconds = new SimpleDateFormat(NO_SECONDS_FORMAT, Locale.US);</span>
+
+		@Override
+		public StringBuffer format(Date date, StringBuffer toAppendTo,
+				FieldPosition fieldPosition) {
+			// always format to full length
+			// to support spec
+<span class="fc" id="L693">			return full.format(date, toAppendTo, fieldPosition);</span>
+		}
+
+		@Override
+		public Date parse(String source, ParsePosition pos) {
+			//if the length to parse is only long enough 
+			//to use the day only format, then use that.
+<span class="fc" id="L700">			int inputLength = source.length() - pos.getIndex();</span>
+<span class="fc bfc" id="L701" title="All 2 branches covered.">			if (inputLength == DAY_ONLY_LENGTH) {</span>
+<span class="fc" id="L702">				return dayOnly.parse(source, pos);</span>
+<span class="pc bpc" id="L703" title="1 of 2 branches missed.">			}else if(inputLength == NOT_SECONDS_LENGTH) {</span>
+<span class="nc" id="L704">				return noSeconds.parse(source, pos);				</span>
+			}
+<span class="fc" id="L706">			return full.parse(source, pos);</span>
+
+		}
+	}
+	
+	
+	public static Predicate&lt;SamRecord&gt; alignsToReference(String referenceName){
+<span class="fc" id="L713">		Objects.requireNonNull(referenceName, &quot;reference name can not be null&quot;);</span>
+<span class="fc" id="L714">		return (record) -&gt; referenceName.equals(record.getReferenceName());</span>
+	}
+	
+	public static Predicate&lt;SamRecord&gt; alignsToReference(String referenceName, Range alignmentRegionOfInterest){
+<span class="fc" id="L718">		Objects.requireNonNull(referenceName, &quot;reference name can not be null&quot;);</span>
+<span class="fc" id="L719">		Objects.requireNonNull(alignmentRegionOfInterest, &quot;alignment range can not be null&quot;);</span>
+		
+		
+		
+<span class="fc" id="L723">		return (record) -&gt; {</span>
+<span class="pc bpc" id="L724" title="1 of 2 branches missed.">			if(referenceName.equals(record.getReferenceName())){</span>
+				
+<span class="fc" id="L726">					return alignmentRegionOfInterest.intersects(record.getAlignmentRange());</span>
+			}
+<span class="nc" id="L728">			return false;</span>
+			
+		};
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

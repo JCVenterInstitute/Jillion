@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Rangeable.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.core</a> &gt; <span class="el_source">Rangeable.java</span></div><h1>Rangeable.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.core;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * {@code Rangeable} is a interface
+ * to denote that an object can be expressed
+ * as a {@link Range}.
+ * @author dkatzel
+ *
+ */
+public interface Rangeable {
+        /**
+         * Get this {@link Rangeable} expressed
+         * as a {@link Range}.
+         * @return a {@link Range} object, the
+         * return value might be cached.
+         */
+	Range asRange();
+	/**
+	 * Get the length of this Rangeable.
+	 * 
+	 * @return the length.
+	 * 
+	 * @implNote by default, this method should return
+	 * {@code asRange().getLength();}.
+	 * 
+	 * @since 5.2
+	 * 
+	 * @see Range#getLength()
+	 */
+	default long getLength(){
+<span class="nc" id="L55">	    return asRange().getLength();</span>
+	}
+	/**
+         * Get the begin coordinate of this Rangeable.
+         * 
+         * @return the begin coordinate as a long.
+         * 
+         * @implNote by default, this method should return
+         * {@code asRange().getBegin();}.
+         * 
+         * @since 5.2
+         * 
+         * @see Range#getBegin()
+         */
+	default long getBegin(){
+<span class="fc" id="L70">	    return asRange().getBegin();</span>
+	}
+	/**
+         * Get the end coordinate of this Rangeable.
+         * 
+         * @return the end coordinate as a long.
+         * 
+         * @implNote by default, this method should return
+         * {@code asRange().getEnd();}.
+         * 
+         * @since 5.2
+         * 
+         * @see Range#getEnd()
+         */
+	default long getEnd(){
+<span class="fc" id="L85">	    return asRange().getEnd();</span>
+	}
+	/**
+         * Is this Rangeable empty.
+         * 
+         * @return {@code true} if this
+         * Rangeable is emtpy; {@code false} otherwise..
+         * 
+         * @implNote by default, this method should return
+         * {@code asRange().isEmpty();}.
+         * 
+         * @since 5.2
+         * 
+         * @see Range#isEmpty()
+         */
+	default boolean isEmpty(){
+<span class="nc" id="L101">	    return asRange().isEmpty();</span>
+	}
+	
+	
+    /**
+     * Checks to see if the given {@link Rangeable} intersects this one. An
+     * empty range will never intersect any other range (even itself).
+     * 
+     * @param target
+     *            The {@link Rangeable} to check.
+     * @return &lt;code&gt;true&lt;/code&gt; if the coordinates of the two ranges overlap
+     *         each other in at least one point.
+     * @throws NullPointerException
+     *             if target is null.
+     * 
+     * @since 5.3
+     */
+    default boolean intersects(Rangeable target) {
+<span class="nc" id="L119">        return asRange().intersects(target.asRange());</span>
+    }
+    
+    
+    /**
+     * Get the List of Ranges that represents the 
+     * {@code this - other}.  This is similar to the 
+     * Set of all coordinates that don't intersect. 
+     * 
+     * @param other the range to complement with.
+     * 
+     * @return a List of {@link Ranges}; will never be null but may be empty.
+     * 
+     * @since 5.3
+     */
+    default List&lt;Range&gt; complement(Rangeable other){
+<span class="nc" id="L135">        return asRange().complement(other.asRange());</span>
+    }
+    
+    /**
+     * Get the List of Ranges that represents 
+     * {@code this - others}.  This is similar to the 
+     * Set of all coordinates in this Range
+     * that do not intersect the ranges in others.
+     * If the Ranges contained in others extends beyond
+     * this Range, then only coordinates within 
+     * this Range are returned.
+     * @param others the ranges to complement from.
+     * @return a List of Ranges; may be empty
+     * if this Range is entirely covered by others.
+     * @throws NullPointerException if others is null.
+     * 
+     * @since 5.3
+     */
+    default List&lt;Range&gt; complementOf(Collection&lt;? extends Rangeable&gt; others){
+<span class="fc" id="L154">        List&lt;Range&gt; otherRanges = others.stream().map(Rangeable::asRange).collect(Collectors.toList());</span>
+<span class="fc" id="L155">        return asRange().complement(otherRanges);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

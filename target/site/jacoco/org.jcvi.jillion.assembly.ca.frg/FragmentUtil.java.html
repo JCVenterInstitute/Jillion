@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>FragmentUtil.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.ca.frg</a> &gt; <span class="el_source">FragmentUtil.java</span></div><h1>FragmentUtil.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly.ca.frg;
+
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.io.TextFileVisitor;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+
+/**
+ * @author dkatzel
+ *
+ *
+ */
+public final class FragmentUtil {
+    public static final String CR = &quot;\n&quot;;
+<span class="fc" id="L41">    private static final Pattern FRG_BASES_PATTERN = Pattern.compile(&quot;seq:\\s+&quot;);</span>
+<span class="fc" id="L42">    private static final Pattern FRG_QUALITY_PATTERN = Pattern.compile(&quot;qlt:\\s+&quot;);</span>
+<span class="fc" id="L43">    private static final Pattern FRG_VALID_RANGE_PATTERN = Pattern.compile(&quot;clr:(\\d+,\\d+)&quot;);</span>
+    
+    /** ASCII code for zero. */
+    public static final int ENCODING_ORIGIN = 0x30;
+    
+<span class="nc" id="L48">    private FragmentUtil(){</span>
+    	//can not instantiate
+<span class="nc" id="L50">    }</span>
+    public static String readRestOfBlock(Scanner scanner,TextFileVisitor visitor){
+<span class="fc" id="L52">        StringBuilder sb  = new StringBuilder();</span>
+<span class="fc" id="L53">        boolean done = false;</span>
+<span class="fc bfc" id="L54" title="All 4 branches covered.">        while (scanner.hasNextLine() &amp;&amp; !done){</span>
+<span class="fc" id="L55">            String line = scanner.nextLine();</span>
+<span class="fc" id="L56">            visitor.visitLine(line+CR);</span>
+<span class="fc" id="L57">            sb.append(line).append(CR);</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">            if(&quot;}&quot;.equals(line)){</span>
+<span class="fc" id="L59">                done =true;</span>
+            }
+<span class="fc" id="L61">        }</span>
+<span class="fc" id="L62">        return sb.toString();</span>
+    }
+    
+    public static  QualitySequence parseEncodedQualitySequence(String frg){
+<span class="fc" id="L66">    	 Scanner scanner = new Scanner(frg);</span>
+<span class="fc" id="L67">         scanner.findWithinHorizon(FRG_QUALITY_PATTERN, 0);</span>
+<span class="fc" id="L68">         StringBuilder encodedQualities = new StringBuilder();</span>
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">         while(scanner.hasNextLine()){</span>
+<span class="fc" id="L70">             String line = scanner.nextLine();</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">             if(endOfMultilineField(line)){</span>
+<span class="fc" id="L72">                 break;</span>
+             }
+<span class="fc" id="L74">             encodedQualities.append(line);</span>
+<span class="fc" id="L75">         }</span>
+<span class="fc" id="L76">         scanner.close();</span>
+<span class="fc" id="L77">    	QualitySequenceBuilder builder = new QualitySequenceBuilder(encodedQualities.length());</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">    	for(int i=0; i&lt; encodedQualities.length(); i++){</span>
+<span class="fc" id="L79">    		builder.append(encodedQualities.charAt(i) - ENCODING_ORIGIN);</span>
+    	}
+<span class="fc" id="L81">    	return builder.build();</span>
+    }
+   
+    public static  boolean endOfMultilineField(String line) {
+<span class="fc" id="L85">        return line.contains(&quot;.&quot;);</span>
+    }
+    
+    public static  Range parseValidRangeFrom(String frg) {
+<span class="fc" id="L89">        Matcher matcher =FRG_VALID_RANGE_PATTERN.matcher(frg);</span>
+<span class="fc" id="L90">        return parseRangeFrom(matcher);</span>
+    }
+    
+    public static  Range parseRangeFrom(Matcher m){
+<span class="fc bfc" id="L94" title="All 2 branches covered.">        if(m.find()){</span>
+<span class="fc" id="L95">            Range celeraClearRange= Range.parseRange(m.group(1));</span>
+<span class="fc" id="L96">            return Range.of(celeraClearRange.getBegin(), celeraClearRange.getEnd()-1);</span>
+        }
+<span class="fc" id="L98">        return null;</span>
+    }
+    
+    public static  NucleotideSequence parseBasesFrom(String frg) {
+<span class="fc" id="L102">        Scanner scanner = new Scanner(frg);</span>
+<span class="fc" id="L103">        scanner.findWithinHorizon(FRG_BASES_PATTERN, 0);</span>
+<span class="fc" id="L104">        StringBuilder bases = new StringBuilder();</span>
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">        while(scanner.hasNextLine()){</span>
+<span class="fc" id="L106">            String line = scanner.nextLine();</span>
+<span class="fc bfc" id="L107" title="All 2 branches covered.">            if(endOfMultilineField(line)){</span>
+<span class="fc" id="L108">                break;</span>
+            }
+<span class="fc" id="L110">            bases.append(line);</span>
+<span class="fc" id="L111">        }</span>
+<span class="fc" id="L112">       return new NucleotideSequenceBuilder(bases.toString()).build();</span>
+    }
+    
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>PositionFastaFileDataStoreBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.fasta.pos</a> &gt; <span class="el_source">PositionFastaFileDataStoreBuilder.java</span></div><h1>PositionFastaFileDataStoreBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.fasta.pos;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Objects;
+import java.util.function.Predicate;
+
+import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
+import org.jcvi.jillion.fasta.FastaFileParser;
+import org.jcvi.jillion.fasta.FastaParser;
+/**
+ * Factory class that can create new instances
+ * of {@link PositionFastaDataStore}s
+ * using data from a given input fasta file
+ * and filtering options.
+ * 
+ * @author dkatzel
+ * 
+ * @since 5.0 - added to keep API consistent with
+ * other Fasta DataStore implementations
+ *
+ */
+public class PositionFastaFileDataStoreBuilder {
+
+	private final FastaParser parser;
+<span class="fc" id="L47">	private Predicate&lt;String&gt; idFilter = id-&gt;true;</span>
+<span class="fc" id="L48">	private Predicate&lt;PositionFastaRecord&gt; recordFilter = null;</span>
+	
+<span class="fc" id="L50">	private DataStoreProviderHint hint = DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_SPEED;</span>
+	
+	public PositionFastaFileDataStoreBuilder(File positionFastaFile) throws IOException{
+<span class="fc" id="L53">		this(FastaFileParser.create(positionFastaFile));</span>
+<span class="fc" id="L54">	}</span>
+	
+	public PositionFastaFileDataStoreBuilder(InputStream positionFastaFileStream) throws IOException{
+<span class="nc" id="L57">		this(FastaFileParser.create(positionFastaFileStream));</span>
+<span class="nc" id="L58">	}</span>
+	
+<span class="fc" id="L60">	public PositionFastaFileDataStoreBuilder(FastaParser parser){</span>
+<span class="fc" id="L61">		Objects.requireNonNull(parser);</span>
+<span class="fc" id="L62">		this.parser = parser;</span>
+<span class="fc" id="L63">	}</span>
+	/**
+	 * Provide a {@link DataStoreProviderHint} to this builder
+	 * to let it know the implementation preferences of the client.
+	 * If no hint is given, then this builder will
+	 * try to store all the fasta records in memory
+	 * which may cause an Exception if there isn't enough memory.
+	 * The {@link DataStoreProviderHint}  is just a guideline 
+	 * and may be ignored by this builder when determining
+	 * which {@link FastaDataStore} implementation to chose
+	 * to build in {@link #build()}.
+	 * @param hint an instance of {@link DataStoreProviderHint};
+	 * can not be null.
+	 * @return this
+	 * @throws NullPointerException if hint is null.
+	 * @see DataStoreProviderHint
+	 */
+	protected PositionFastaFileDataStoreBuilder hint(DataStoreProviderHint hint) {
+<span class="nc bnc" id="L81" title="All 2 branches missed.">		if(hint==null){</span>
+<span class="nc" id="L82">			throw new NullPointerException(&quot;hint can not be null&quot;);</span>
+		}
+<span class="nc" id="L84">		this.hint = hint;</span>
+<span class="nc" id="L85">		return this;</span>
+	}
+	 /**
+	 * Only include the {@link PositionFastaRecord}s which pass
+	 * the given {@link Predicate} for the ID.  If a filter
+	 * is not given to this builder, then all records
+	 * in the fasta file will be included in the built
+	 * {@link PositionFastaDataStore}.
+	 * &lt;p&gt;
+     * If both this method and {@link #filter(Predicate)}
+     * are used, then the ID filter is applied first
+     * and then any remaining records are filtered with this
+     * filter.
+     * &lt;p&gt;
+     * If this method is called multiple times, then the previous
+     * filters are overwritten and only the last filter is used.
+     * 
+	 * @param filter a {@link Predicate} instance that can be
+	 * used to filter out specified fasta records BY ID; can not be null. 
+	 * @return this.
+	 * 
+	 * @throws NullPointerException if filter is null.
+	 * 
+	 * @apiNote This is different than {@link #filterRecords(Predicate)}
+     * because the latter needs to parse the entire record before
+     * filtering can be determined while this filter only needs the ID. If you are only filtering
+     * by ID, use this method which may have better
+     * performance since the position values don't have to be parsed
+     * on reads that aren't accepted by the id filter.
+	 * 
+	 * @see #filterRecords(Predicate)
+	 */
+	public PositionFastaFileDataStoreBuilder filter(Predicate&lt;String&gt; filter) {
+<span class="nc bnc" id="L118" title="All 2 branches missed.">		if(filter==null){</span>
+<span class="nc" id="L119">			throw new NullPointerException(&quot;filter can not be null&quot;);</span>
+		}
+<span class="nc" id="L121">		this.idFilter = filter;</span>
+<span class="nc" id="L122">		return this;</span>
+	}
+	
+	/**
+     * Only include the {@link PositionFastaRecord}s which pass
+     * the given {@link Predicate}.  If no predicates
+     * are given to this builder, then all records
+     * in the fasta file will be included in the built
+     * {@link PositionFastaDataStore}.
+     * &lt;p&gt;
+     * If both this method and {@link #filter(Predicate)} to filter by ID
+     * are used, then the ID filter is applied first
+     * and then any remaining records are filtered with this
+     * filter.
+     * &lt;p&gt;
+     * If this method is called multiple times, then the previous
+     * filters are overwritten and only the last filter is used.
+     * 
+     * @param filter a {@link Predicate} instance that can be
+     * used to filter out specified fasta records; can not be null. 
+     * 
+     * @return this.
+     * @throws NullPointerException if filter is null.
+     * 
+     * @apiNote This is different than {@link #filter(Predicate)}
+     * because the latter can only filter by ID. If you are only filtering
+     * by ID, use {@link #filter(Predicate)} which may have better
+     * performance since the position values don't have to be parsed
+     * on reads that aren't accepted by the id filter.
+     * &lt;p&gt;
+     * Also, we had to keep the
+     * old filter method to maintain compatibility with old versions of Jillion
+     * 
+     * @since 5.0
+     * @see #filter(Predicate)
+     */
+    public PositionFastaFileDataStoreBuilder filterRecords(Predicate&lt;PositionFastaRecord&gt; filter) {
+<span class="nc bnc" id="L159" title="All 2 branches missed.">        if(filter==null){</span>
+<span class="nc" id="L160">                throw new NullPointerException(&quot;filter can not be null&quot;);</span>
+        }
+<span class="nc" id="L162">        this.recordFilter = filter;</span>
+<span class="nc" id="L163">        return this;</span>
+    } 
+	
+    /**
+     * Create a new {@link PositionFastaDataStore} object
+     * from the records in the provided fasta file
+     * but only including the records that pass the filters.
+     * 
+     * @return a new {@link PositionFastaDataStore}; will never be null.
+     * 
+     * @throws IOException if there is a problem parsing the input fasta data.
+     */
+	public PositionFastaDataStore build() throws IOException{
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">		if(hint == DataStoreProviderHint.ITERATION_ONLY){</span>
+<span class="nc" id="L177">			return LargePositionFastaFileDataStore.create(parser, idFilter, recordFilter);</span>
+		}
+<span class="fc" id="L179">		return DefaultPositionFastaFileDataStore.create(parser, idFilter, recordFilter);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

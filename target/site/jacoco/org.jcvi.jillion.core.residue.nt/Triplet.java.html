@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Triplet.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.core.residue.nt</a> &gt; <span class="el_source">Triplet.java</span></div><h1>Triplet.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.core.residue.nt;
+
+/**
+ * {@code Triplet} is a group of three
+ * consecutive {@link Nucleotide}s.
+ * @author dkatzel
+ *
+ */
+public final class Triplet {
+
+	private final byte first,second,third;
+	/**
+	 * Our cache of all unique triplets.  Uses the fly-weight
+	 * design pattern to not create more instances
+	 * that we need to.
+	 * &lt;p/&gt;
+	 * NOTE: We don't synchronize the cache because it is 
+	 * too expensive
+	 */
+<span class="fc" id="L40">	private static final Triplet[][][] CACHE = new Triplet[16][16][16];</span>
+	
+	public static Triplet create(char first, char second, char third){
+<span class="fc" id="L43">		return create(Nucleotide.parse(first), Nucleotide.parse(second), Nucleotide.parse(third));</span>
+	}
+	public static Triplet create(Nucleotide first, Nucleotide second, Nucleotide third){
+<span class="fc" id="L46">		int o1 = first.ordinal();</span>
+<span class="fc" id="L47">		int o2 = second.ordinal();</span>
+<span class="fc" id="L48">		int o3 = third.ordinal();</span>
+<span class="fc" id="L49">		Triplet fromCache = CACHE[o1][o2][o3];</span>
+<span class="fc bfc" id="L50" title="All 2 branches covered.">		if(fromCache !=null){</span>
+<span class="fc" id="L51">			return fromCache;</span>
+		}
+<span class="fc" id="L53">		Triplet newTriplet = new Triplet(o1,o2,o3);</span>
+<span class="fc" id="L54">		CACHE[o1][o2][o3] = newTriplet;</span>
+<span class="fc" id="L55">		return newTriplet;</span>
+	}
+	
+	static void clearCache(){
+<span class="fc bfc" id="L59" title="All 2 branches covered.">		for(int i=0; i&lt;CACHE.length; i++){</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">			for(int j=0; j&lt;CACHE[i].length; j++){</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">				for(int k=0; k&lt;CACHE[i][j].length; k++){</span>
+<span class="fc" id="L62">					CACHE[i][j][k]= null;</span>
+				}
+			}
+		}
+<span class="fc" id="L66">	}</span>
+<span class="fc" id="L67">	private Triplet(int first, int second, int third){</span>
+<span class="fc" id="L68">		this.first = (byte)first;</span>
+<span class="fc" id="L69">		this.second = (byte)second;</span>
+<span class="fc" id="L70">		this.third = (byte)third;</span>
+<span class="fc" id="L71">	}</span>
+
+	@Override
+	public int hashCode() {
+<span class="fc" id="L75">		final int prime = 31;</span>
+<span class="fc" id="L76">		int result = 1;</span>
+<span class="fc" id="L77">		result = prime * result + first;</span>
+<span class="fc" id="L78">		result = prime * result + second;</span>
+<span class="fc" id="L79">		result = prime * result + third;</span>
+<span class="fc" id="L80">		return result;</span>
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+<span class="fc bfc" id="L85" title="All 2 branches covered.">		if (this == obj) {</span>
+<span class="fc" id="L86">			return true;</span>
+		}
+<span class="fc bfc" id="L88" title="All 2 branches covered.">		if (obj == null) {</span>
+<span class="fc" id="L89">			return false;</span>
+		}
+<span class="fc bfc" id="L91" title="All 2 branches covered.">		if (!(obj instanceof Triplet)) {</span>
+<span class="fc" id="L92">			return false;</span>
+		}
+<span class="fc" id="L94">		Triplet other = (Triplet) obj;</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">		if (first != other.first) {</span>
+<span class="fc" id="L96">			return false;</span>
+		}
+<span class="fc bfc" id="L98" title="All 2 branches covered.">		if (second != other.second) {</span>
+<span class="fc" id="L99">			return false;</span>
+		}
+<span class="fc bfc" id="L101" title="All 2 branches covered.">		if (third != other.third) {</span>
+<span class="fc" id="L102">			return false;</span>
+		}
+<span class="fc" id="L104">		return true;</span>
+	}
+	
+	
+	@Override
+	public String toString(){
+<span class="fc" id="L110">		return new StringBuilder(3)</span>
+<span class="fc" id="L111">					.append(Nucleotide.VALUES.get(first))</span>
+<span class="fc" id="L112">					.append(Nucleotide.VALUES.get(second))</span>
+<span class="fc" id="L113">					.append(Nucleotide.VALUES.get(third))</span>
+<span class="fc" id="L114">					.toString();</span>
+					
+	}
+	
+	public Nucleotide getFirst(){
+<span class="fc" id="L119">		return Nucleotide.VALUES.get(first);</span>
+	}
+	public Nucleotide getSecond(){
+<span class="fc" id="L122">		return Nucleotide.VALUES.get(second);</span>
+	}
+	public Nucleotide getThrid(){
+<span class="fc" id="L125">		return Nucleotide.VALUES.get(third);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

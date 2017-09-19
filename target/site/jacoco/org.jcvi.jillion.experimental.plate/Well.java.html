@@ -1,0 +1,542 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Well.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.experimental.plate</a> &gt; <span class="el_source">Well.java</span></div><h1>Well.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.experimental.plate;
+
+import java.io.Serializable;
+import java.util.Comparator;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.jcvi.jillion.internal.core.util.JillionUtil;
+
+/**
+ * {@code Well} is a class that represents a single well
+ * in a reaction plate.
+ * @author dkatzel
+ *
+ *
+ */
+public final class Well implements Comparable&lt;Well&gt;{
+    
+<span class="fc" id="L39">    private static final Pattern WELL_NAME_PATTERN = Pattern.compile(&quot;([A-P])(\\d+)&quot;);</span>
+    
+    /**
+     * A cache of all possible wells we could ever
+     * try to create.  This will keep us from
+     * needlessly making more instances
+     * than we need.
+     * The Well is queried and populated by 
+     * {@link #getWell(char, int)}.
+     */
+<span class="fc" id="L49">    private static final Well[][] CACHE = new Well[16][24];</span>
+    /**
+     * the row of this well.
+     */
+    private final char row;
+    /**
+     * the column of this well.
+     */
+    private final byte column;
+    /**
+     * Create a Well.getWell instance for the given well name
+     * as a string.
+     * @param wellName a well name for 96 or 384 well plates.
+     * @return a new Well object
+     * 
+     * @throws IllegalArgumentException if the name is not in 96 or 384 well format.
+     * @throws NullPointerException if wellName is null.
+     */
+    public static Well create(String wellName){
+<span class="fc bfc" id="L68" title="All 2 branches covered.">        if(wellName ==null){</span>
+<span class="fc" id="L69">            throw new NullPointerException(&quot;input can not be null&quot;);</span>
+        }
+<span class="fc" id="L71">        Matcher m = WELL_NAME_PATTERN.matcher(wellName);</span>
+
+<span class="fc bfc" id="L73" title="All 2 branches covered.">        if(m.find()){</span>
+<span class="fc" id="L74">            char row = m.group(1).charAt(0);</span>
+<span class="fc" id="L75">            byte col = Byte.parseByte(m.group(2));</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">            if(col &gt;24){</span>
+<span class="fc" id="L77">                throw new IllegalArgumentException(&quot;invalid column &quot; + col);</span>
+            }
+<span class="fc" id="L79">            return getWell(row, col);</span>
+        }
+<span class="fc" id="L81">        throw new IllegalArgumentException(</span>
+                &quot;string does not contain a parseable Well : &quot;+ wellName);
+    }
+    /**
+     * Gets a well from our Cache.  If the
+     * well hasn't been created yet, then create a new 
+     * instance and put it in the cache before returning.
+     * @param row the row of the well
+     * @param column the column of the well.
+     * @return the cached Well instance (never null).
+     */
+    private static synchronized Well getWell(char row, int column){
+<span class="fc" id="L93">        int rowIndex = (row -'A');</span>
+<span class="fc" id="L94">        int columIndex = column-1;</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">        if(CACHE[rowIndex][columIndex]!=null){</span>
+<span class="fc" id="L96">            return CACHE[rowIndex][columIndex];</span>
+        }
+<span class="fc" id="L98">        Well newWell = new Well(row,column);</span>
+<span class="fc" id="L99">        CACHE[rowIndex][columIndex] = newWell;</span>
+<span class="fc" id="L100">        return newWell;</span>
+    }
+    
+    /**
+     * Compute the Well for a given index for a 384 well plate.
+     * If an index &gt;= 384 is given, then this method will &quot;rollover&quot;
+     * the index to make it under 384.
+     *
+     * @param i the index of the well to get
+     * @param order the {@link IndexOrder} to use for the given index.
+     * @return a {@link Well} representing the &lt;code&gt;i&lt;/code&gt;th index 
+     * in the given IndexOrder.
+     * @throws NullPointerException if order is null.
+     * @throws IllegalArgumentException if i &lt;0.
+     */
+    public static Well compute384Well(int i,IndexOrder order) {
+<span class="fc" id="L116">        return computeWell(PlateFormat._384,i, order);</span>
+       
+    }
+    /**
+     * Compute the Well for a given index for a 96 well plate.
+     * If an index &gt;= 96 is given, then this method will &quot;rollover&quot;
+     * the index to make it under 96.
+     *
+     * @param i the index of the well to get
+     * @param order the {@link IndexOrder} to use for the given index.
+     * @return a {@link Well} representing the &lt;code&gt;i&lt;/code&gt;th index 
+     * in the given IndexOrder.
+     * @throws NullPointerException if order is null.
+     * @throws IllegalArgumentException if i &lt;0.
+     */
+    public static Well compute96Well(int i,IndexOrder order) {
+<span class="fc" id="L132">        return computeWell(PlateFormat._96,i, order);</span>
+       
+    }
+    /**
+     * Compute the Well for the given index for the given plate format.
+     * This method will &quot;rollover&quot; the index to make it under the max number
+     * of wells per plate.
+     * @param format the {@link PlateFormat} to use.
+     *@param i the index of the well to get
+     * @param order the {@link IndexOrder} to use for the given index.
+     * @return a {@link Well} representing the &lt;code&gt;i&lt;/code&gt;th index 
+     * in the given IndexOrder.
+     * @throws NullPointerException if order or format is null.
+     * @throws IllegalArgumentException if i &lt;0.
+     */
+    public static Well computeWell(PlateFormat format, int i, IndexOrder order){
+<span class="pc bpc" id="L148" title="1 of 2 branches missed.">        if(format ==null){</span>
+<span class="nc" id="L149">            throw new NullPointerException(&quot;format can not be null&quot;);</span>
+        }
+<span class="fc" id="L151">        return order.getWell(i, format);</span>
+    }
+    private static void verifyPositiveIndex(int index) {
+<span class="pc bpc" id="L154" title="1 of 2 branches missed.">		if(index &lt;0){</span>
+<span class="nc" id="L155">		    throw new IllegalArgumentException(&quot;index can not be &lt;0&quot;);</span>
+		}
+<span class="fc" id="L157">	}</span>
+	
+    /**
+     * Constructor.
+     * @param row the row of this well
+     * @param column the column of this well
+     */
+<span class="fc" id="L164">    private Well(char row, int column){</span>
+<span class="pc bpc" id="L165" title="2 of 4 branches missed.">        if(row &gt;'P' || row &lt;'A'){</span>
+<span class="nc" id="L166">            throw new IllegalArgumentException(&quot;invalid row &quot;+ row);</span>
+        }
+<span class="pc bpc" id="L168" title="2 of 4 branches missed.">        if(column &lt;1 || column &gt;24){</span>
+<span class="nc" id="L169">            throw new IllegalArgumentException(&quot;invalid column &quot;+ column);</span>
+        }
+<span class="fc" id="L171">        this.row = row;</span>
+<span class="fc" id="L172">        this.column = (byte)column;</span>
+<span class="fc" id="L173">    }</span>
+
+    /**
+     * @return the row
+     */
+    public char getRow() {
+<span class="fc" id="L179">        return row;</span>
+    }
+
+    /**
+     * @return the column
+     */
+    public byte getColumn() {
+<span class="fc" id="L186">        return column;</span>
+    }
+    
+    public int get96WellIndex(){
+<span class="fc" id="L190">        return get96WellIndex(IndexOrder.ROW_MAJOR);</span>
+    }
+    public int get384WellIndex(){
+<span class="fc" id="L193">        return get384WellIndex(IndexOrder.ROW_MAJOR);</span>
+    }
+
+    public int get96WellIndex(IndexOrder order){
+<span class="fc" id="L197">        return getWellIndex(PlateFormat._96,order);</span>
+    }
+    public int get384WellIndex(IndexOrder order){
+<span class="fc" id="L200">        return getWellIndex(PlateFormat._384,order);</span>
+    }
+    
+    public int getWellIndex(PlateFormat format, IndexOrder order){
+<span class="fc" id="L204">        return order.getIndex(this,format);</span>
+    }
+    public int getQuadrantIndex(PlateFormat format, IndexOrder order){
+<span class="fc" id="L207">        return order.getQuadrantIndex(this,format);</span>
+    }
+    public int get96WellQuadrantIndex(IndexOrder order){
+<span class="fc" id="L210">        return getQuadrantIndex(PlateFormat._96,order);</span>
+    }
+    public int get384WellQuadrantIndex(IndexOrder order){
+<span class="fc" id="L213">        return getQuadrantIndex(PlateFormat._384,order);</span>
+    }
+    
+    /**
+     * Returns the hash code value for this object.
+     * @return the hash code for this object.
+     */
+    @Override
+    public int hashCode() {
+<span class="fc" id="L222">        final int prime = 31;</span>
+<span class="fc" id="L223">        int result = 1;</span>
+<span class="fc" id="L224">        result = prime * result + row;</span>
+<span class="fc" id="L225">        result = prime * result + column;</span>
+<span class="fc" id="L226">        return result;</span>
+    }
+
+    /**
+     * Compares two {@link Well}s for equality.
+     * The result is &lt;code&gt;true&lt;/code&gt; if and only
+     * if the argument is not &lt;code&gt;null&lt;/code&gt;
+     * and is a {@link Well} object that
+     * has the similar row and column as this object.
+     * @param obj the {@link Object} to compare with.
+     * @return &lt;code&gt;true&lt;/code&gt; if the objects are
+     *  the same; &lt;code&gt;false&lt;/code&gt; otherwise.
+     */
+    @Override
+    public boolean equals(Object obj) {
+<span class="fc bfc" id="L241" title="All 2 branches covered.">        if (this == obj){</span>
+<span class="fc" id="L242">            return true;</span>
+        }
+<span class="pc bpc" id="L244" title="1 of 2 branches missed.">        if(!(obj instanceof Well)){</span>
+<span class="fc" id="L245">            return false;</span>
+        }
+<span class="nc" id="L247">        final Well other = (Well) obj;</span>
+<span class="nc bnc" id="L248" title="All 4 branches missed.">        return this.row == other.row &amp;&amp; this.column == other.column;</span>
+    }
+  
+    /**
+     * delegates to {@link #toZeroPaddedString()}.
+     */
+    @Override
+    public String toString() {
+<span class="fc" id="L256">        return toZeroPaddedString();</span>
+    }
+    /**
+     * Converts this Well into a String of the form:
+     * &lt;pre&gt;
+     *&amp;lt;row&amp;gt;&amp;lt;column&amp;gt;
+     * &lt;/pre&gt;
+     * .
+     * @return the {@link String} representation of this object.
+     */
+    public String toUnpaddedString() {
+<span class="nc" id="L267">        return new StringBuilder(3)</span>
+<span class="nc" id="L268">			        .append(row)</span>
+<span class="nc" id="L269">			        .append(String.format(&quot;%d&quot;, column))</span>
+<span class="nc" id="L270">			        .toString();</span>
+
+    }
+    /**
+     * Converts this Well into a String of the form:
+     * &lt;pre&gt;
+     *&amp;lt;row&amp;gt;&amp;lt;0-padded column&amp;gt;
+     * &lt;/pre&gt;
+     * .
+     * @return the {@link String} representation of this object.
+     */
+    public String toZeroPaddedString() {
+<span class="fc" id="L282">    	return new StringBuilder(3)</span>
+<span class="fc" id="L283">		        .append(row)</span>
+<span class="fc" id="L284">		        .append(String.format(&quot;%02d&quot;, column))</span>
+<span class="fc" id="L285">		        .toString();</span>
+    }
+    
+    /**
+     * Wells are compared based on their String values returned by
+     * {@link #toZeroPaddedString()}.
+     */
+     @Override
+     public int compareTo(Well o) {
+<span class="nc" id="L294">         return this.toZeroPaddedString().compareTo(o.toZeroPaddedString());</span>
+     }
+    
+    /**
+     * {@code IndexOrder} defines the well order of indexes
+     * into a plate.
+     * @author dkatzel
+     *
+     *
+     */
+<span class="pc" id="L304">    public static enum IndexOrder{</span>
+        /**
+         * Each row is filled first, once the row is full,
+         * then the next row starts to get populated.
+         * &lt;p&gt;
+         * Ex: A01, A02, A03...B01, B02, B03...
+         */
+<span class="fc" id="L311">        ROW_MAJOR{</span>
+            @Override
+            int getIndex(Well well, PlateFormat type){
+<span class="fc" id="L314">                return (well.getRow() -'A') * type.getNumberOfColumns() +well.getColumn() -1;</span>
+            }
+
+            @Override
+            Well getWell(int index, PlateFormat type) {
+<span class="fc" id="L319">                verifyPositiveIndex(index);</span>
+<span class="fc" id="L320">                int modIndex = index%type.getNumberOfWells();</span>
+<span class="fc" id="L321">                int column =  (modIndex % type.getNumberOfColumns())+1;</span>
+<span class="fc" id="L322">                char row = (char)( 'A'+(modIndex %type.getNumberOfWells())/ type.getNumberOfColumns());</span>
+<span class="fc" id="L323">                return Well.getWell(row,column);</span>
+            }
+            
+        },
+        /**
+         * Each column is filled first, once the column is full,
+         * then the next column starts to get populated.
+         * &lt;p&gt;
+         * Ex: A01, B01, C01...A02, B02, C02...
+         */
+<span class="fc" id="L333">        COLUMN_MAJOR{</span>
+            int getIndex(Well well, PlateFormat type){
+<span class="fc" id="L335">                 return ((well.getColumn()-1) * type.getNumberOfRows()) + (well.getRow() -'A');</span>
+            }
+            @Override
+            Well getWell(int index, PlateFormat type) { 
+<span class="fc" id="L339">                verifyPositiveIndex(index);</span>
+<span class="fc" id="L340">                int modIndex = index%type.getNumberOfWells();</span>
+<span class="fc" id="L341">                char row = (char)( 'A'+(modIndex %type.getNumberOfRows()));</span>
+<span class="fc" id="L342">                int column =  (modIndex / type.getNumberOfRows()) +1;</span>
+                
+<span class="fc" id="L344">                return Well.getWell(row,column);</span>
+            }
+        },
+        /**
+         * The wells are filled in a quadrant by quadrant
+         * using a checkerboard pattern
+         * where every other well in each row is initially skipped
+         * to be filled in later by a different quadrant.
+         * &lt;p&gt;
+         * First quadrant:
+         * A01, A03, A05...A23, C01, C03...&lt;br/&gt;
+         * Second quadrant:
+         * A02, A04, A06...A24, C02, C04...&lt;br/&gt;
+         * Third quadrant:
+         * B01, B03, B05...B23, D01, D03...&lt;br/&gt;
+         * Fourth quadrant:
+         * B02, B04, B06...B24, D02, D04...
+         */
+<span class="fc" id="L362">        CHECKERBOARD{</span>
+            int getIndex(Well well, PlateFormat type){
+<span class="fc" id="L364">                int column = well.getColumn()-1;</span>
+<span class="fc" id="L365">                int row = well.getRow()-'A';</span>
+<span class="fc" id="L366">                final int quadrantIndex = computeQuadrantIndex(column, row);</span>
+<span class="fc" id="L367">                int fullRows = computeNumberOfFilledRows(type, row);</span>
+<span class="fc" id="L368">                int partialRow = (column/2 +1)-1;</span>
+<span class="fc" id="L369">                int offsetIntoQuadrant =fullRows+partialRow;</span>
+<span class="fc" id="L370">                return type.getNumberOfWellsPerQuadrant()*quadrantIndex+offsetIntoQuadrant;</span>
+            }
+            private int computeNumberOfFilledRows(PlateFormat type, int row) {
+<span class="fc bfc" id="L373" title="All 2 branches covered.">                return row&gt;1 ? (row/2) * type.getNumberOfColumns()/2 : 0;</span>
+            }
+            private int computeQuadrantIndex(int column, int row) {
+                final int block;
+<span class="fc bfc" id="L377" title="All 2 branches covered.">                if(row%2==0){</span>
+<span class="fc bfc" id="L378" title="All 2 branches covered.">                    if(column%2==0){</span>
+<span class="fc" id="L379">                        block=0;</span>
+                    }
+                    else{
+<span class="fc" id="L382">                        block=1;</span>
+                    }
+                }else{
+<span class="fc bfc" id="L385" title="All 2 branches covered.">                    if(column%2==0){</span>
+<span class="fc" id="L386">                        block=2;</span>
+                    }else{
+<span class="fc" id="L388">                        block=3;</span>
+                    }
+                }
+<span class="fc" id="L391">                return block;</span>
+            }
+            @Override
+            Well getWell(int index, PlateFormat type) { 
+<span class="fc" id="L395">                verifyPositiveIndex(index);</span>
+<span class="fc" id="L396">                int modIndex = index%type.getNumberOfWells();</span>
+<span class="fc" id="L397">                int quadrantIndex = modIndex/type.getNumberOfWellsPerQuadrant();</span>
+<span class="fc" id="L398">                int offsetIntoQuadrant = modIndex % type.getNumberOfWellsPerQuadrant();</span>
+<span class="fc" id="L399">                int rowIndex = (offsetIntoQuadrant /(type.getNumberOfColumns()/2)) *2 + (quadrantIndex /2);</span>
+<span class="fc" id="L400">                int column =((offsetIntoQuadrant % (type.getNumberOfColumns()/2)) *2)+1 +(quadrantIndex%2);</span>
+<span class="fc" id="L401">                char row = (char)('A'+rowIndex);</span>
+                
+<span class="fc" id="L403">                return Well.getWell(row,column);</span>
+            }
+        },
+        /**
+         * Order of a 384 well plate to get picked a quickly 
+         * as possible using the hamilton robot.  The wells are arrayed so that 
+         * all 8 spans can be used at the same time.  Each column is filled one at a time,
+         * but the odd wells are used first then the evens.
+         * Once the column is full, then the next column starts to get populated.
+         * &lt;p&gt;
+         * Ex: A01, C01, E01...B01, D01,...A02, C02, E02...
+         */
+<span class="fc" id="L415">        HAMILTON_OPTIMIZED_COLUMN_MAJOR{</span>
+            int getIndex(Well well, PlateFormat type){
+<span class="fc" id="L417">                int rowOffset = well.getRow() -'A';</span>
+<span class="fc" id="L418">                int rowIndex =rowOffset/2;</span>
+<span class="fc bfc" id="L419" title="All 2 branches covered.">                if(rowOffset %2!=0){</span>
+<span class="fc" id="L420">                    rowIndex += type.getNumberOfRows()/2;</span>
+                }
+<span class="fc" id="L422">                 return ((well.getColumn()-1) * type.getNumberOfRows()) + rowIndex;</span>
+            }
+            @Override
+            Well getWell(int index, PlateFormat type) { 
+<span class="fc" id="L426">                verifyPositiveIndex(index);</span>
+<span class="fc" id="L427">                int modIndex = index%type.getNumberOfWells();</span>
+<span class="fc" id="L428">                int colIndex = modIndex / type.getNumberOfRows();</span>
+<span class="fc" id="L429">                int rowIndex = modIndex%type.getNumberOfRows();</span>
+<span class="fc bfc" id="L430" title="All 2 branches covered.">                if(rowIndex &gt;= type.getNumberOfRows()/2){</span>
+<span class="fc" id="L431">                    rowIndex = (rowIndex%(type.getNumberOfRows()/2))*2 +1;</span>
+                }else{
+<span class="fc" id="L433">                    rowIndex = (rowIndex%(type.getNumberOfRows()/2))*2;</span>
+                }
+<span class="fc" id="L435">                char row = (char)( 'A'+rowIndex);</span>
+<span class="fc" id="L436">                int column =  colIndex+1;</span>
+                
+<span class="fc" id="L438">                return Well.getWell(row,column);</span>
+            }
+        },
+        /**
+         * Well order for an Applied Biosystems
+         * 3130 machine using 16 capillaries at a time.
+         * Only {@link PlateFormat#_96} is supported.
+         * &lt;p&gt;
+         * Ex: A01, A02, B01, B02,...H02, A03, A04, B03, B04....
+         */
+<span class="fc" id="L448">        ABI_3130_16_CAPILLARIES{</span>
+            int getIndex(Well well, PlateFormat type){
+<span class="pc bpc" id="L450" title="1 of 2 branches missed.">                if(type != PlateFormat._96){</span>
+<span class="nc" id="L451">                    throw new IllegalArgumentException(&quot;only 96 well plates supported&quot;);</span>
+                }
+<span class="fc" id="L453">                int rowIndex =well.getRow() -'A';</span>
+<span class="fc" id="L454">                int colIndex =well.getColumn()-1;</span>
+<span class="fc" id="L455">                int capilaryIndex =colIndex /2;</span>
+<span class="fc" id="L456">                return capilaryIndex*16 + rowIndex*2 + colIndex%2;</span>
+                
+           }
+           @Override
+           Well getWell(int index, PlateFormat type) { 
+<span class="fc" id="L461">               verifyPositiveIndex(index);</span>
+<span class="pc bpc" id="L462" title="1 of 2 branches missed.">               if(type != PlateFormat._96){</span>
+<span class="nc" id="L463">                   throw new IllegalArgumentException(&quot;only 96 well plates supported&quot;);</span>
+               }
+<span class="fc" id="L465">               int modIndex = index%type.getNumberOfWells();</span>
+<span class="fc" id="L466">               int capilaryIndex = modIndex/16;</span>
+<span class="fc" id="L467">               int i = modIndex % 16;</span>
+               
+<span class="fc" id="L469">               char row = (char)( 'A'+(i /2));</span>
+              
+<span class="fc" id="L471">               int column =   (modIndex%2) +capilaryIndex*2+1;</span>
+<span class="fc" id="L472">               return Well.getWell(row, column);</span>
+           }
+        }
+        
+        ;
+        
+        abstract  int getIndex(Well well, PlateFormat type);
+        
+        
+        
+        abstract Well getWell(int index, PlateFormat type);
+        /**
+         * Create a new {@link Comparator} instance
+         * that compares wells using this IndexOrder's
+         * index for 96 well plates.
+         * @return a new Comparator instance.
+         */
+        public Comparator&lt;Well&gt; create96WellComparator(){
+<span class="nc" id="L490">            return createWellComparator(PlateFormat._96);</span>
+        }
+        /**
+         * Create a new {@link Comparator} instance
+         * that compares wells using this IndexOrder's
+         * index for 384 well plates.
+         * @return a new Comparator instance.
+         */
+        public Comparator&lt;Well&gt; create384WellComparator(){
+<span class="nc" id="L499">            return createWellComparator(PlateFormat._384);</span>
+        }
+        
+        public Comparator&lt;Well&gt; createWellComparator(PlateFormat format){
+<span class="fc" id="L503">            return new IndexOrderComparator(format, this);</span>
+        }
+        
+        public int getQuadrantIndex(Well well, PlateFormat type){
+<span class="fc" id="L507">            int wellIndex = getIndex(well, type);</span>
+<span class="fc" id="L508">            return wellIndex/type.getNumberOfWellsPerQuadrant();</span>
+        }
+        
+    }
+    /**
+     * {@code IndexOrderComparator} is a Comparator
+     * that will compare Wells based on PlateFormat
+     * and IndexOrder.
+     * 
+     * @author dkatzel
+     */
+    private static final class IndexOrderComparator implements Comparator&lt;Well&gt;, Serializable{
+        
+        private static final long serialVersionUID = 8181294609649588216L;
+        
+        private final PlateFormat type;
+        private final IndexOrder order;
+        
+
+<span class="fc" id="L527">        private IndexOrderComparator(PlateFormat type, IndexOrder order) {</span>
+<span class="fc" id="L528">            this.type = type;</span>
+<span class="fc" id="L529">            this.order = order;</span>
+<span class="fc" id="L530">        }</span>
+
+
+        @Override
+        public int compare(Well o1, Well o2) {
+<span class="fc" id="L535">            return JillionUtil.compare(o1.getWellIndex(type, order), o2.getWellIndex(type, order));</span>
+        }
+        
+        
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

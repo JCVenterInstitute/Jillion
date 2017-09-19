@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SimpleProfileWriter.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.profile</a> &gt; <span class="el_source">SimpleProfileWriter.java</span></div><h1>SimpleProfileWriter.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.profile;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+
+class SimpleProfileWriter implements ProfileWriter {
+
+	
+	
+	private final MostFrequentTieBreakerRule tieBreakerRule;
+	
+	private final PrintWriter writer;
+	private final DisplayCountStrategy lineWriterStrategy;
+	//private final NucleotideSequence referenceOrConsensus;
+	private final double[][] counts;
+	
+	private final NucleotideSequence reference;
+	private final boolean include0xEdges;
+	private final boolean ignoreGappedConsensusPositions;
+<span class="fc" id="L53">	private volatile boolean isOpen=true;</span>
+	
+	public SimpleProfileWriter(File outputFile, DisplayCountStrategy displayStrategy, MostFrequentTieBreakerRule tieBreakerRule,
+<span class="fc" id="L56">			NucleotideSequence referenceOfConsensus,boolean include0xEdges, boolean ignoreGappedConsensusPositions) throws IOException {</span>
+<span class="fc" id="L57">		IOUtil.mkdirs(outputFile.getParentFile());</span>
+<span class="fc" id="L58">		this.writer = new PrintWriter(outputFile, IOUtil.UTF_8_NAME);</span>
+<span class="fc" id="L59">		this.lineWriterStrategy = displayStrategy;</span>
+<span class="fc" id="L60">		this.counts = new double[(int)referenceOfConsensus.getLength()][5];</span>
+<span class="fc" id="L61">		this.tieBreakerRule = tieBreakerRule;</span>
+<span class="fc" id="L62">		this.reference = referenceOfConsensus;</span>
+<span class="fc" id="L63">		this.include0xEdges = include0xEdges;</span>
+<span class="fc" id="L64">		this.ignoreGappedConsensusPositions = ignoreGappedConsensusPositions;</span>
+
+<span class="fc" id="L66">	}</span>
+
+<span class="fc" id="L68">	public SimpleProfileWriter(OutputStream out, DisplayCountStrategy displayStrategy,MostFrequentTieBreakerRule tieBreakerRule, NucleotideSequence referenceOfConsensus,boolean include0xEdges, boolean ignoreGappedConsensusPositions){</span>
+<span class="fc" id="L69">		this.writer = new PrintWriter(new OutputStreamWriter(out, IOUtil.UTF_8));</span>
+<span class="fc" id="L70">		this.lineWriterStrategy = displayStrategy;</span>
+<span class="fc" id="L71">		this.counts = new double[(int)referenceOfConsensus.getLength()][5];</span>
+<span class="fc" id="L72">		this.tieBreakerRule = tieBreakerRule;</span>
+<span class="fc" id="L73">		this.reference = referenceOfConsensus;</span>
+<span class="fc" id="L74">		this.include0xEdges = include0xEdges;</span>
+<span class="fc" id="L75">		this.ignoreGappedConsensusPositions = ignoreGappedConsensusPositions;</span>
+<span class="fc" id="L76">	}</span>
+	
+	@Override
+	public void close() throws IOException {
+		//no-op is already closed
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">		if(!isOpen){</span>
+<span class="nc" id="L82">			return;</span>
+		}
+		try{
+<span class="fc" id="L85">			isOpen=false;</span>
+<span class="fc" id="L86">		writer.printf(&quot;#Major\t-\tA\tC\tG\tT%n&quot;);</span>
+<span class="fc" id="L87">		int start = getStartOffset();</span>
+<span class="fc" id="L88">		int end = getEndOffset();</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">		if(ignoreGappedConsensusPositions){</span>
+<span class="fc" id="L90">			int[] gapOffsets = reference.getGapOffsets().stream().mapToInt(i -&gt; i.intValue()).toArray();</span>
+<span class="fc bfc" id="L91" title="All 2 branches covered.">			for(int i=start; i&lt;= end; i++){</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">				if(Arrays.binarySearch(gapOffsets, i)&gt;=0){</span>
+					//i is a gap skip it
+<span class="fc" id="L94">					continue;</span>
+				}
+				
+<span class="fc" id="L97">				Nucleotide mostFreq = getMostFrequentBase(i,</span>
+													counts[i][0],
+													counts[i][1],
+													counts[i][2],
+													counts[i][3]);
+<span class="fc" id="L102">				lineWriterStrategy.write(writer, mostFreq, counts[i][4],</span>
+							counts[i][0],
+							counts[i][1],
+							counts[i][2],
+							counts[i][3]
+							);
+			}
+			
+<span class="fc" id="L110">		}else{</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">			for(int i=start; i&lt;= end; i++){</span>
+				
+				
+<span class="fc" id="L114">				Nucleotide mostFreq = getMostFrequentBase(i,</span>
+													counts[i][0],
+													counts[i][1],
+													counts[i][2],
+													counts[i][3]);
+<span class="fc" id="L119">				lineWriterStrategy.write(writer, mostFreq, counts[i][4],</span>
+							counts[i][0],
+							counts[i][1],
+							counts[i][2],
+							counts[i][3]
+							);
+			}
+		}
+		}finally{
+<span class="pc" id="L128">			IOUtil.closeAndIgnoreErrors(writer);</span>
+<span class="fc" id="L129">		}</span>
+
+<span class="fc" id="L131">	}</span>
+	
+	protected double getAs(int offset){
+<span class="fc" id="L134">		return counts[offset][0];</span>
+	}
+	protected double getCs(int offset){
+<span class="fc" id="L137">		return counts[offset][1];</span>
+	}
+	protected double getGs(int offset){
+<span class="fc" id="L140">		return counts[offset][2];</span>
+	}
+	protected double getTs(int offset){
+<span class="fc" id="L143">		return counts[offset][3];</span>
+	}
+	protected double getGaps(int offset){
+<span class="fc" id="L146">		return counts[offset][4];</span>
+	}
+
+	private boolean is0x(int i) {
+<span class="pc bpc" id="L150" title="3 of 10 branches missed.">		return getAs(i) ==0D &amp;&amp; getCs(i) ==0D &amp;&amp; getGs(i)==0D &amp;&amp; getTs(i) ==0D &amp;&amp; getGaps(i) ==0D;</span>
+	}
+
+	
+	protected int getStartOffset() {
+<span class="fc bfc" id="L155" title="All 2 branches covered.">		if(include0xEdges){</span>
+<span class="fc" id="L156">			return 0;</span>
+		}
+<span class="pc bpc" id="L158" title="1 of 2 branches missed.">		for(int i=0; i&lt; getLength(); i++){</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">			if(!is0x(i)){</span>
+<span class="fc" id="L160">				return i;</span>
+			}
+		}
+<span class="nc" id="L163">		return -1;</span>
+	}
+	
+	protected int getEndOffset() {
+<span class="fc bfc" id="L167" title="All 2 branches covered.">		if(include0xEdges){</span>
+<span class="fc" id="L168">			return getLength()-1;</span>
+		}
+<span class="pc bpc" id="L170" title="1 of 2 branches missed.">		for(int i=getLength()-1; i&gt;0; i--){</span>
+<span class="fc bfc" id="L171" title="All 2 branches covered.">			if(!is0x(i)){</span>
+<span class="fc" id="L172">				return i;</span>
+			}
+		}
+<span class="nc" id="L175">		return -1;</span>
+	}
+
+	
+	protected int getLength(){
+<span class="fc" id="L180">		return counts.length;</span>
+	}
+	protected Nucleotide getMostFrequentBase(int i,double a,double c,double g,double t) {
+<span class="fc bfc" id="L183" title="All 10 branches covered.">		if(a==0D &amp;&amp; c==0D &amp;&amp; g ==0D &amp;&amp; t==0D &amp;&amp; getGaps(i) ==0D){</span>
+			//0x use reference ?
+<span class="fc" id="L185">			return reference.get(i);</span>
+		}
+<span class="fc" id="L187">		return getMostFrequentNonGapBase(a,c,g,t);</span>
+	}
+
+	@Override
+	public void addSequence(int startOffset, NucleotideSequence sequence) {
+<span class="fc" id="L192">		int currentOffset = startOffset;</span>
+<span class="fc bfc" id="L193" title="All 2 branches covered.">		for (Nucleotide n : sequence) {</span>
+<span class="fc" id="L194">			Set&lt;Nucleotide&gt; bases = n.getBasesFor();</span>
+<span class="fc" id="L195">			double fraction = 1D / bases.size();</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">			for (Nucleotide base : bases) {</span>
+<span class="pc bpc" id="L197" title="1 of 6 branches missed.">				switch (base) {</span>
+					case Adenine:
+<span class="fc" id="L199">						counts[currentOffset][0] += fraction;</span>
+<span class="fc" id="L200">						break;</span>
+					case Cytosine:
+<span class="fc" id="L202">						counts[currentOffset][1] += fraction;</span>
+<span class="fc" id="L203">						break;</span>
+					case Guanine:
+<span class="fc" id="L205">						counts[currentOffset][2] += fraction;</span>
+<span class="fc" id="L206">						break;</span>
+					case Thymine:
+<span class="fc" id="L208">						counts[currentOffset][3] += fraction;						</span>
+<span class="fc" id="L209">						break;</span>
+					case Gap:
+<span class="fc" id="L211">						counts[currentOffset][4] += fraction;</span>
+<span class="fc" id="L212">						break;</span>
+					default:
+<span class="nc" id="L214">						throw new IllegalStateException(&quot;not ACGT- : &quot; + base);</span>
+				}
+<span class="fc" id="L216">			}</span>
+<span class="fc" id="L217">			currentOffset++;</span>
+<span class="fc" id="L218">		}</span>
+
+<span class="fc" id="L220">	}</span>
+	
+	
+	private Nucleotide getMostFrequentNonGapBase(double a, double c, double g, double t){
+<span class="fc" id="L224">		List&lt;BaseCount&gt; list = new ArrayList&lt;BaseCount&gt;(4);</span>
+<span class="fc" id="L225">		list.add(new BaseCount(Nucleotide.Adenine, a));</span>
+<span class="fc" id="L226">		list.add( new BaseCount(Nucleotide.Cytosine, c));</span>
+<span class="fc" id="L227">		list.add( new BaseCount(Nucleotide.Guanine, g));</span>
+<span class="fc" id="L228">		list.add( new BaseCount(Nucleotide.Thymine, t));</span>
+<span class="fc" id="L229">		Collections.sort(list);</span>
+		
+<span class="fc" id="L231">		List&lt;Nucleotide&gt; mostFrequent = new ArrayList&lt;&gt;(4);</span>
+<span class="fc" id="L232">		Iterator&lt;BaseCount&gt; iter = list.iterator();</span>
+<span class="fc" id="L233">		BaseCount first = iter.next();</span>
+<span class="fc" id="L234">		mostFrequent.add(first.getBase());</span>
+		
+<span class="fc" id="L236">		double value = first.getCount();</span>
+<span class="fc" id="L237">		boolean done = false;</span>
+		do{
+<span class="fc" id="L239">			BaseCount next = iter.next();</span>
+<span class="fc bfc" id="L240" title="All 2 branches covered.">			done = next.getCount() &lt; value;</span>
+<span class="fc bfc" id="L241" title="All 2 branches covered.">			if(!done){</span>
+<span class="fc" id="L242">				mostFrequent.add(next.getBase());</span>
+			}
+<span class="fc bfc" id="L244" title="All 4 branches covered.">		}while(!done &amp;&amp; iter.hasNext());</span>
+		
+<span class="fc bfc" id="L246" title="All 2 branches covered.">		if(mostFrequent.size()&gt;1){</span>
+<span class="fc" id="L247">			return tieBreakerRule.getMostFrequent(mostFrequent);</span>
+		}
+		
+<span class="fc" id="L250">		return mostFrequent.get(0);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

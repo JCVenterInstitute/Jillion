@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>RandomAccessFileInputStream.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.core.io</a> &gt; <span class="el_source">RandomAccessFileInputStream.java</span></div><h1>RandomAccessFileInputStream.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.internal.core.io;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
+/**
+ * {@code RandomAccessFileInputStream} wraps
+ * the given {@link RandomAccessFile} in an {@link InputStream}.
+ * The RandomAccessFile &lt;strong&gt;may&lt;/strong&gt; have its
+ * position adjusted via {@link RandomAccessFile#seek(long)}
+ * by external clients.
+ * @author dkatzel
+ *
+ */
+public final class RandomAccessFileInputStream extends InputStream{
+
+	private final RandomAccessFile randomAccessFile;
+<span class="fc" id="L39">	private long bytesRead=0;</span>
+	/**
+	 * The number of bytes to read in the stream;
+	 * or {@code null} if we should read the whole thing.
+	 */
+	private final Long length;
+	private final boolean ownFile;
+	/**
+	 * Creates a new {@link RandomAccessFileInputStream}
+	 * of the given file starting at the given position.
+	 * Internally, a new {@link RandomAccessFile} is created
+	 * and is seek'ed to the given startOffset
+	 * before reading any bytes.  The internal 
+	 * {@link RandomAccessFile} instance is managed by this
+	 * class and will be closed when {@link #close()} is called.
+	 * @param file the {@link File} to read.
+	 * @param startOffset the start offset to start reading
+	 * bytes from.
+	 * @throws IOException if the given file does not exist 
+	 * @throws IllegalArgumentException if the startOffset is less than 0.
+	 */
+<span class="fc" id="L60">	public RandomAccessFileInputStream(File file, long startOffset) throws IOException{</span>
+<span class="fc" id="L61">		assertStartOffValid(file, startOffset);</span>
+<span class="fc" id="L62">		this.randomAccessFile = new RandomAccessFile(file, &quot;r&quot;);</span>
+<span class="fc" id="L63">		randomAccessFile.seek(startOffset);</span>
+<span class="fc" id="L64">		this.length = null;</span>
+<span class="fc" id="L65">		ownFile =true;</span>
+<span class="fc" id="L66">	}</span>
+	/**
+	 * Creates a new {@link RandomAccessFileInputStream}
+	 * of the given file starting at the given position
+	 * but will only read the given length.
+	 * Internally, a new {@link RandomAccessFile} is created
+	 * and is seek'ed to the given startOffset
+	 * before reading any bytes.  The internal 
+	 * {@link RandomAccessFile} instance is managed by this
+	 * class and will be closed when {@link #close()} is called.
+	 * @param file the {@link File} to read.
+	 * @param startOffset the start offset to start reading
+	 * bytes from.
+	 * @param length the maximum number of bytes to read from the file.
+	 *  this inputStream will only as many bytes are in the file.
+	 * @throws IOException if the given file does not exist
+	 * @throws IllegalArgumentException if either startOffset or length are less than 0
+	 * or if startOffset &lt; file.length().
+	 */
+<span class="fc" id="L85">	public RandomAccessFileInputStream(File file, long startOffset, long length) throws IOException{</span>
+<span class="fc" id="L86">		assertStartOffValid(file, startOffset);</span>
+<span class="fc" id="L87">		this.randomAccessFile = new RandomAccessFile(file, &quot;r&quot;);</span>
+<span class="fc" id="L88">		randomAccessFile.seek(startOffset);</span>
+<span class="fc" id="L89">		this.length = length;</span>
+<span class="fc" id="L90">		ownFile =true;</span>
+<span class="fc" id="L91">	}</span>
+	private void assertStartOffValid(File file, long startOffset) {
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">		if(startOffset &lt; 0){</span>
+<span class="nc" id="L94">			throw new IllegalArgumentException(&quot;start offset can not be less than 0&quot;);</span>
+		}
+		
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">		if(file.length() &lt; startOffset){</span>
+<span class="nc" id="L98">			throw new IllegalArgumentException(</span>
+<span class="nc" id="L99">					String.format(&quot;invalid startOffset %d: file is only %d bytes&quot; ,</span>
+<span class="nc" id="L100">							startOffset,</span>
+<span class="nc" id="L101">							file.length()));</span>
+		}
+<span class="fc" id="L103">	}</span>
+	/**
+	 * Creates a new RandomAccessFileInputStream that reads
+	 * bytes from the given {@link RandomAccessFile}.
+	 * Any external changes to the file pointer
+	 * via {@link RandomAccessFile#seek(long)} or similar
+	 * methods will also alter the subsequent bytes read
+	 * by this {@link InputStream}.
+	 * Closing the inputStream returned by this constructor
+	 * DOES NOT close the {@link RandomAccessFile} which 
+	 * must be closed separately by the caller.
+	 * @param file the {@link RandomAccessFile} instance 
+	 * to read as an {@link InputStream}; can not be null.
+	 * @throws NullPointerException if file is null.
+	 */
+<span class="fc" id="L118">	public RandomAccessFileInputStream(RandomAccessFile file){</span>
+<span class="pc bpc" id="L119" title="1 of 2 branches missed.">		if(file ==null){</span>
+<span class="nc" id="L120">			throw new NullPointerException(&quot;file can not be null&quot;);</span>
+		}
+<span class="fc" id="L122">		this.randomAccessFile = file;</span>
+<span class="fc" id="L123">		length = null;</span>
+<span class="fc" id="L124">		ownFile =false;</span>
+<span class="fc" id="L125">	}</span>
+	
+	@Override
+	public synchronized int read() throws IOException {
+<span class="fc bfc" id="L129" title="All 4 branches covered.">		if(length !=null &amp;&amp; bytesRead &gt;=length){</span>
+<span class="fc" id="L130">			return -1;</span>
+		}
+<span class="fc" id="L132">		int value = randomAccessFile.read();</span>
+<span class="fc bfc" id="L133" title="All 2 branches covered.">		if(value !=-1){</span>
+<span class="fc" id="L134">			bytesRead++;</span>
+		}
+<span class="fc" id="L136">		return value;</span>
+
+	}
+
+	@Override
+	public synchronized int read(byte[] b, int off, int len) throws IOException {
+<span class="fc bfc" id="L142" title="All 4 branches covered.">		if(length != null &amp;&amp; bytesRead &gt;=length){</span>
+<span class="fc" id="L143">			return -1;</span>
+		}
+<span class="fc" id="L145">		final int reducedLength = computeReducedLength(len);</span>
+<span class="fc" id="L146">		int numberOfBytesRead = randomAccessFile.read(b, off, reducedLength);</span>
+<span class="fc" id="L147">		bytesRead+=numberOfBytesRead;</span>
+<span class="fc" id="L148">		return numberOfBytesRead;</span>
+	}
+	private int computeReducedLength(int len) {
+<span class="fc bfc" id="L151" title="All 2 branches covered.">		if(length ==null){</span>
+<span class="fc" id="L152">			return len;			</span>
+		}
+<span class="fc" id="L154">		return Math.min(len, (int)(length - bytesRead));</span>
+	}
+	/**
+	 * If this instance was creating
+	 * using the {@link #RandomAccessFileInputStream(RandomAccessFile)}
+	 * constructor, then this method does nothing- the RandomAccessFile
+	 * will still be open.
+	 * If constructed using {@link #RandomAccessFileInputStream(File, long)}
+	 * or {@link #RandomAccessFileInputStream(File, long, long)},
+	 * then the internal {@link RandomAccessFile} will be closed.
+	 */
+	@Override
+	public void close() throws IOException {
+		//if we created this randomaccessfile
+		//then its our job to close it.
+<span class="fc bfc" id="L169" title="All 2 branches covered.">		if(ownFile){</span>
+<span class="fc" id="L170">			randomAccessFile.close();</span>
+		}
+<span class="fc" id="L172">	}</span>
+
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

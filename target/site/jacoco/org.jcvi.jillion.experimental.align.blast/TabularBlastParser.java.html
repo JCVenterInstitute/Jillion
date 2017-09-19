@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>TabularBlastParser.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.experimental.align.blast</a> &gt; <span class="el_source">TabularBlastParser.java</span></div><h1>TabularBlastParser.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.experimental.align.blast;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.jcvi.jillion.core.DirectedRange;
+import org.jcvi.jillion.core.Range.CoordinateSystem;
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
+import org.jcvi.jillion.internal.core.io.TextLineParser;
+
+/**
+ * {@code TabularBlastParser}
+ * can parse the &quot;tabular&quot; encoded blast output
+ * that is usually created using the &quot;-m 8&quot; or &quot;-m 9&quot; options in blast. 
+ * 
+ * @author dkatzel
+ *
+ *
+ */
+public abstract class TabularBlastParser implements BlastParser{
+
+<span class="fc" id="L48">	private static final Pattern TYPE_PATTERN = Pattern.compile(&quot;^# (\\S*BLAST\\S+).*&quot;);</span>
+<span class="fc" id="L49">    private static final Pattern HIT_PATTERN = Pattern.compile(</span>
+       //AF178033 EMORG:AF031391  85.48             806     117          0       1       806         99       904     1e-179     644.8
+            &quot;(\\S+)\\s+(\\S+)\\s+(\\d+\\.?\\d*)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\d+)\\s+(\\S+)\\s+(\\d+\\.?\\d*)&quot;);
+           
+   
+<span class="fc" id="L54">    private TabularBlastParser(){}</span>
+    
+    public static BlastParser create(File file) throws IOException{
+<span class="fc" id="L57">        return new FileBasedTabularBlastParser(file);</span>
+    }
+    public static BlastParser create(InputStream in) throws IOException{
+<span class="fc" id="L60">        return new InputStreamBasedTabularBlastParser(in);</span>
+    }
+    protected void parse(InputStream tabularBlastOutput, BlastVisitor visitor) throws IOException{
+<span class="fc" id="L63">        TextLineParser parser = new TextLineParser(tabularBlastOutput);</span>
+<span class="fc" id="L64">        boolean parsedHeader=false;</span>
+<span class="fc" id="L65">        String type=null;</span>
+        try{
+<span class="fc" id="L67">        	 BlastHitImpl.Builder blastHitBuilder=null;</span>
+<span class="fc" id="L68">        	 String prevQuery=null, prevSubject=null;</span>
+	           
+<span class="fc bfc" id="L70" title="All 2 branches covered.">	        while(parser.hasNextLine()){</span>
+<span class="fc" id="L71">	            String line = parser.nextLine();</span>
+<span class="pc bpc" id="L72" title="1 of 4 branches missed.">	            if(!parsedHeader &amp;&amp; type==null){</span>
+<span class="fc" id="L73">	            	Matcher headerMatcher = TYPE_PATTERN.matcher(line);</span>
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">	            	if(headerMatcher.find()){</span>
+<span class="nc" id="L75">	            		type = headerMatcher.group(1);</span>
+<span class="nc" id="L76">	            		parsedHeader=true;</span>
+	            	}
+	            }
+<span class="fc" id="L79">	            Matcher matcher = HIT_PATTERN.matcher(line);</span>
+	            
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">	            if(matcher.find()){</span>
+<span class="fc" id="L82">	            	parsedHeader=true;</span>
+<span class="fc" id="L83">	                DirectedRange queryRange = DirectedRange.parse(matcher.group(7), matcher.group(8), CoordinateSystem.RESIDUE_BASED);</span>
+<span class="fc" id="L84">	                DirectedRange subjectRange = DirectedRange.parse(matcher.group(9), matcher.group(10), CoordinateSystem.RESIDUE_BASED);</span>
+	           
+					HspBuilder&lt;?, ?,?&gt; hspBuilder;
+<span class="pc bpc" id="L87" title="1 of 2 branches missed.">					if(type==null){</span>
+						//doesn't really matter since we don't have
+						//sequences anyway ?
+<span class="fc" id="L90">						hspBuilder= HspBuilder.forBlastN();</span>
+					}else{						
+<span class="nc" id="L92">						hspBuilder= HspBuilder.forType(type);</span>
+					}
+<span class="fc" id="L94">					String queryId = matcher.group(1);</span>
+<span class="fc" id="L95">					String subjectId = matcher.group(2);</span>
+					
+<span class="fc" id="L97">					Hsp&lt;?,?,?&gt; hsp =hspBuilder.query(queryId)</span>
+<span class="fc" id="L98">	                                .subject(subjectId)</span>
+<span class="fc" id="L99">	                                .percentIdentity(Double.parseDouble(matcher.group(3)))</span>
+<span class="fc" id="L100">	                                .alignmentLength(Integer.parseInt(matcher.group(4)))</span>
+<span class="fc" id="L101">	                                .numMismatches(Integer.parseInt(matcher.group(5)))</span>
+<span class="fc" id="L102">	                                .numGapOpenings(Integer.parseInt(matcher.group(6)))                                </span>
+<span class="fc" id="L103">	                                .eValue(new BigDecimal(matcher.group(11)))</span>
+<span class="fc" id="L104">	                                .bitScore(new BigDecimal(matcher.group(12)))              </span>
+<span class="fc" id="L105">	                                .queryRange(queryRange)</span>
+<span class="fc" id="L106">	                                .subjectRange(subjectRange)</span>
+<span class="fc" id="L107">	                                .build();</span>
+					//accumulate consecutive HSPs if the subject and query match previous?
+<span class="fc bfc" id="L109" title="All 4 branches covered.">					if(!queryId.equals(prevQuery) || !subjectId.equals(prevSubject)){</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">						if(blastHitBuilder !=null){</span>
+<span class="fc" id="L111">							visitor.visitHit(blastHitBuilder.build());</span>
+						}
+<span class="fc" id="L113">						blastHitBuilder = new BlastHitImpl.Builder(queryId, subjectId);</span>
+					}
+<span class="fc" id="L115">	                blastHitBuilder.addHsp(hsp);</span>
+<span class="fc" id="L116">	                prevQuery = queryId;</span>
+<span class="fc" id="L117">	                prevSubject = subjectId;</span>
+	                
+	            }
+<span class="fc" id="L120">	        }</span>
+<span class="pc bpc" id="L121" title="1 of 2 branches missed.">	        if(blastHitBuilder !=null){</span>
+<span class="fc" id="L122">				visitor.visitHit(blastHitBuilder.build());</span>
+			}
+<span class="fc" id="L124">	        visitor.visitEnd();</span>
+        }finally{
+<span class="pc" id="L126">        	IOUtil.closeAndIgnoreErrors(parser);</span>
+<span class="fc" id="L127">        }</span>
+<span class="fc" id="L128">    }</span>
+    
+    
+   
+
+
+	private static final class FileBasedTabularBlastParser extends TabularBlastParser{
+    	private final File file;
+    	
+    	
+<span class="fc" id="L138">		public FileBasedTabularBlastParser(File file) {</span>
+<span class="fc" id="L139">			this.file = file;</span>
+<span class="fc" id="L140">		}</span>
+
+		@Override
+		public boolean canParse() {
+<span class="fc" id="L144">			return true;</span>
+		}
+
+		@Override
+		public void parse(BlastVisitor visitor) throws IOException {
+<span class="pc" id="L149">			try(InputStream in = new FileInputStream(file)){</span>
+<span class="fc" id="L150">				parse(in, visitor);</span>
+<span class="pc bpc" id="L151" title="6 of 8 branches missed.">			}</span>
+<span class="fc" id="L152">		}</span>
+    	
+    }
+    
+    private static final class InputStreamBasedTabularBlastParser extends TabularBlastParser{
+    	private final OpenAwareInputStream in;
+    	
+    	
+<span class="fc" id="L160">		public InputStreamBasedTabularBlastParser(InputStream in) {</span>
+<span class="fc" id="L161">			this.in = new OpenAwareInputStream(in);</span>
+<span class="fc" id="L162">		}</span>
+
+		@Override
+		public boolean canParse() {
+<span class="fc" id="L166">			return in.isOpen();</span>
+		}
+
+		@Override
+		public void parse(BlastVisitor visitor) throws IOException {
+<span class="pc bpc" id="L171" title="1 of 2 branches missed.">			if(!canParse()){</span>
+<span class="nc" id="L172">				throw new IllegalStateException(&quot;can not parse inputstream, already closed&quot;	);</span>
+			}			
+<span class="fc" id="L174">			parse(in, visitor);</span>
+<span class="fc" id="L175">		}</span>
+    	
+    }
+   
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

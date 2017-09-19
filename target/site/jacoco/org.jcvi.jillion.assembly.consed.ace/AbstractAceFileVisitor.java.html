@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AbstractAceFileVisitor.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.consed.ace</a> &gt; <span class="el_source">AbstractAceFileVisitor.java</span></div><h1>AbstractAceFileVisitor.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly.consed.ace;
+
+import java.util.Date;
+/**
+ * {@code AbstractAceFileVisitor} is an {@link AceFileVisitor}
+ * that implements all the methods as stubs.  By default
+ * all non-void methods return {@code null}.  Users should
+ * create subclasses that override the methods they wish to handle.
+ * @author dkatzel
+ *
+ */
+<span class="fc" id="L32">public abstract class AbstractAceFileVisitor implements AceFileVisitor{</span>
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void visitHeader(int numberOfContigs, long totalNumberOfReads) {
+		//no-op		
+<span class="fc" id="L39">	}</span>
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public AceContigVisitor visitContig(AceFileVisitorCallback callback,
+			String contigId, int consensusLength, int numberOfReads,
+			int numberOfBaseSegments, boolean reverseComplemented) {
+		//always skip
+<span class="nc" id="L48">		return null;</span>
+	}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void visitReadTag(String id, String type, String creator,
+			long gappedStart, long gappedEnd, Date creationDate,
+			boolean isTransient) {
+		//no-op
+		
+<span class="fc" id="L59">	}</span>
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public AceConsensusTagVisitor visitConsensusTag(String id, String type,
+			String creator, long gappedStart, long gappedEnd,
+			Date creationDate, boolean isTransient) {
+		//always skip
+<span class="fc" id="L68">		return null;</span>
+	}
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void visitWholeAssemblyTag(String type, String creator,
+			Date creationDate, String data) {
+		//no-op		
+<span class="fc" id="L77">	}</span>
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void visitEnd() {
+		//no-op
+<span class="fc" id="L84">	}</span>
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void halted() {
+		//no-op
+<span class="nc" id="L91">	}</span>
+
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

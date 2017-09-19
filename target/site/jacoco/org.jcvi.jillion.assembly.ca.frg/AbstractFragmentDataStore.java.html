@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AbstractFragmentDataStore.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.ca.frg</a> &gt; <span class="el_source">AbstractFragmentDataStore.java</span></div><h1>AbstractFragmentDataStore.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Jul 21, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.assembly.ca.frg;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.jcvi.jillion.core.datastore.DataStoreClosedException;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
+import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.internal.core.datastore.DataStoreIterator;
+import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
+
+<span class="fc" id="L39">abstract class AbstractFragmentDataStore implements Frg2Visitor, FragmentDataStore{</span>
+
+    private boolean initialized;
+    private boolean closed;
+    
+    
+<span class="fc" id="L45">    private final Map&lt;String,Library&gt; libraries = new HashMap&lt;String, Library&gt;();</span>
+    
+    
+    protected boolean isInitialized() {
+<span class="fc" id="L49">        return initialized;</span>
+    }
+    @Override
+    public boolean isClosed() {
+<span class="fc" id="L53">        return closed;</span>
+    }
+
+    
+    protected void throwErrorIfClosed() {
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">        if(isClosed()){</span>
+<span class="nc" id="L59">            throw new DataStoreClosedException(&quot;datastore is closed&quot;);</span>
+        }
+        
+<span class="fc" id="L62">    }</span>
+    
+
+    protected boolean isDelete(FrgAction action) {
+<span class="nc bnc" id="L66" title="All 2 branches missed.">        return action == FrgAction.DELETE;</span>
+    }
+
+    protected boolean isAddOrModify(FrgAction action) {
+<span class="pc bpc" id="L70" title="3 of 4 branches missed.">        return action == FrgAction.ADD || action == FrgAction.MODIFY;</span>
+    }
+
+    protected void throwErrorIfAlreadyInitialized() {
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">        if(isInitialized()){</span>
+<span class="nc" id="L75">            throw new IllegalStateException(&quot;can not add Fragments after initialization&quot;);</span>
+        }
+<span class="fc" id="L77">    }</span>
+    
+    @Override
+    public void close() throws IOException {
+<span class="nc" id="L81">        closed= true;</span>
+        
+<span class="nc" id="L83">    }</span>
+    
+
+    @Override
+    public void visitEndOfFile() {
+<span class="fc" id="L88">        initialized = true;</span>
+        
+<span class="fc" id="L90">    }</span>
+    
+    @Override
+    public void visitFile() {
+<span class="nc" id="L94">        throwErrorIfClosed();</span>
+        
+<span class="nc" id="L96">    }</span>
+    @Override
+    public StreamingIterator&lt;Fragment&gt; iterator() {
+<span class="fc" id="L99">        throwErrorIfClosed();</span>
+<span class="fc" id="L100">        return new DataStoreIterator&lt;Fragment&gt;(this);</span>
+    }
+    
+    
+    
+    @Override
+	public StreamingIterator&lt;DataStoreEntry&lt;Fragment&gt;&gt; entryIterator()
+			throws DataStoreException {
+<span class="nc" id="L108">    	 throwErrorIfClosed();</span>
+<span class="nc" id="L109">    	 StreamingIterator&lt;DataStoreEntry&lt;Fragment&gt;&gt; iter = new StreamingIterator&lt;DataStoreEntry&lt;Fragment&gt;&gt;(){</span>
+<span class="nc" id="L110">    		 StreamingIterator&lt;Fragment&gt; delegate = iterator();</span>
+			@Override
+			public boolean hasNext() {
+<span class="nc" id="L113">				return delegate.hasNext();</span>
+			}
+
+			@Override
+			public void close() {
+<span class="nc" id="L118">				delegate.close();</span>
+<span class="nc" id="L119">			}</span>
+
+			@Override
+			public DataStoreEntry&lt;Fragment&gt; next() {
+<span class="nc" id="L123">				Fragment frag = delegate.next();</span>
+<span class="nc" id="L124">				return new DataStoreEntry&lt;Fragment&gt;(frag.getId(), frag);</span>
+			}
+
+			@Override
+			public void remove() {
+<span class="nc" id="L129">				throw new UnsupportedOperationException();</span>
+			}
+    		 
+    	 };
+<span class="nc" id="L133">		return DataStoreStreamingIterator.create(this, iter);</span>
+	}
+	@Override
+    public void visitLibrary(FrgAction action, String id,
+            MateOrientation orientation, Distance distance) {
+<span class="fc" id="L138">        throwErrorIfAlreadyInitialized();</span>
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">        if(isAddOrModify(action)){</span>
+<span class="fc" id="L140">            Library library = new DefaultLibrary(id, distance, orientation);</span>
+<span class="fc" id="L141">            libraries.put(id, library);</span>
+<span class="fc" id="L142">        }</span>
+<span class="nc bnc" id="L143" title="All 2 branches missed.">        else if(isDelete(action)){</span>
+<span class="nc" id="L144">            libraries.remove(id);</span>
+        }
+<span class="fc" id="L146">    }</span>
+    
+    
+    @Override
+    public boolean containsLibrary(String libraryId) throws DataStoreException{
+<span class="fc" id="L151">        throwErrorIfClosed();</span>
+<span class="fc" id="L152">        return libraries.containsKey(libraryId);</span>
+    }
+
+    @Override
+    public Library getLibrary(String libraryId) throws DataStoreException{
+<span class="fc" id="L157">        throwErrorIfClosed();</span>
+<span class="fc" id="L158">        return libraries.get(libraryId);</span>
+    }
+    
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

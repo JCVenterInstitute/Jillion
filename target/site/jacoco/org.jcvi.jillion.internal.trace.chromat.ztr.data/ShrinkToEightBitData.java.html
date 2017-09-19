@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ShrinkToEightBitData.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.trace.chromat.ztr.data</a> &gt; <span class="el_source">ShrinkToEightBitData.java</span></div><h1>ShrinkToEightBitData.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Dec 24, 2008
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.internal.trace.chromat.ztr.data;
+
+import java.io.IOException;
+import java.math.BigInteger;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+
+import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
+import org.jcvi.jillion.internal.core.seq.trace.sanger.chromat.ztr.data.Data;
+
+/**
+ * &lt;code&gt;AbstractToEightBitData&lt;/code&gt; is an abstract
+ * implementation of the ZTR data formats &quot;X to 8 bits&quot;.
+ * these formats try to store a number in only 8 bits.  If the number is too
+ * large to fit in only 8 bits, then a guard value of -128 followed by the
+ * actual value is used.  These formats are work well following a delta
+ * format since after a delta format, most values can fit in a single byte.
+ * @author dkatzel
+ */
+<span class="pc" id="L45">public enum ShrinkToEightBitData implements Data {</span>
+    /**
+     * {@code SHORT_TO_BYTE} is the implementation 
+     * of the ZTR 16 bit to 8 bit conversion format.
+     */
+<span class="fc" id="L50">    SHORT_TO_BYTE(ValueSizeStrategy.SHORT, 2,DataHeader.SHRINK_SHORT_TO_BYTE_ENCODED ),</span>
+    /**
+     * {@code INTEGER_TO_BYTE} is the implementation
+     *  of the ZTR 32 bit to 8 bit conversion format.
+     */
+<span class="fc" id="L55">    INTEGER_TO_BYTE(ValueSizeStrategy.INTEGER,4, DataHeader.SHRINK_INTEGER_TO_BYTE_ENCODED)</span>
+      ;
+    /**
+     * guard value which tells decoder that the the following
+     * byte values are are number larger than can fit in a single byte.
+     */
+    private static final byte GUARD = -128;
+    private final ValueSizeStrategy valueSizeStrategy;
+    private final byte formatByte;
+    private final int numberOfBytesPerElement;
+    /**
+     * Constructor.
+     * @param valueSizeStrategy the implementation 
+     * of {@link ValueSizeStrategy} to use.
+     */
+<span class="fc" id="L70">    private ShrinkToEightBitData(ValueSizeStrategy valueSizeStrategy, int numberOfBytesPerElement, byte formatByte){</span>
+<span class="fc" id="L71">        this.valueSizeStrategy = valueSizeStrategy;</span>
+<span class="fc" id="L72">        this.formatByte = formatByte;</span>
+<span class="fc" id="L73">        this.numberOfBytesPerElement = numberOfBytesPerElement;</span>
+<span class="fc" id="L74">    }</span>
+    
+    private boolean isGuard(byte value){
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        return value == GUARD;</span>
+    }
+    
+    private ByteBuffer getInput(byte[] data) {
+<span class="fc" id="L81">        ByteBuffer in = ByteBuffer.allocate(data.length-1);</span>
+<span class="fc" id="L82">        in.put(data, 1, data.length-1);</span>
+<span class="fc" id="L83">        in.flip();</span>
+<span class="fc" id="L84">        return in;</span>
+    }
+    
+    protected byte[] toByteArray(ByteBuffer out) {
+        //we need to return a byte array
+        //and byteBuffer.array() returns the full
+        //backing array including space we didn't use
+        //so make another byteArray with only
+        //the data we need.
+<span class="fc" id="L93">        out.flip();</span>
+<span class="fc" id="L94">        int size = out.remaining();</span>
+<span class="fc" id="L95">        ByteBuffer result = ByteBuffer.allocate(size);</span>
+<span class="fc" id="L96">        result.put(out);</span>
+<span class="fc" id="L97">        return result.array();</span>
+    }
+    /**
+     * 
+    * {@inheritDoc}
+     */
+    @Override
+    public byte[] parseData(byte[] data){
+<span class="fc" id="L105">        ByteBuffer in = getInput(data);</span>
+        //data.length -1 to ignore format byte
+<span class="fc" id="L107">        ByteBuffer result = ByteBuffer.allocate(getMaxPossibleDecodedSize(data.length -1));</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">        while(in.hasRemaining()){</span>
+<span class="fc" id="L109">            byte value = in.get();</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">            if(isGuard(value)){</span>
+<span class="fc" id="L111">                valueSizeStrategy.put(result, valueSizeStrategy.getNext(in));                </span>
+            }
+            else{
+<span class="fc" id="L114">                valueSizeStrategy.put(result, value);   </span>
+            }
+<span class="fc" id="L116">        }</span>
+<span class="fc" id="L117">        return toByteArray(result);</span>
+    }
+    /**
+     * Gets the maximum possible size the decoded data can be for
+     * this format.
+     * @param numberOfEncodedBytes the number of encoded bytes of data.
+     * @return the length of the largest possible decoded data.
+     */
+    protected int getMaxPossibleDecodedSize(int numberOfEncodedBytes){
+<span class="fc" id="L126">    	return numberOfEncodedBytes*numberOfBytesPerElement;</span>
+    }
+
+	/* (non-Javadoc)
+	 * @see org.jcvi.trace.sanger.chromatogram.ztr.data.Data#encodeData(byte[])
+	 */
+	@Override
+	public byte[] encodeData(byte[] data) throws IOException {
+<span class="fc" id="L134">		ByteBuffer encodedBuffer = ByteBuffer.allocate(4*data.length);</span>
+<span class="fc" id="L135">		encodedBuffer.put(formatByte);</span>
+<span class="fc" id="L136">		ByteBuffer inputBuffer = ByteBuffer.wrap(data);</span>
+<span class="fc bfc" id="L137" title="All 2 branches covered.">		while(inputBuffer.hasRemaining()){</span>
+<span class="fc" id="L138">			byte[] next = getNext(inputBuffer);</span>
+<span class="fc" id="L139">			 int nextAsInt = new BigInteger(next).intValue();</span>
+<span class="fc bfc" id="L140" title="All 4 branches covered.">			 if(nextAsInt &lt;=127 &amp;&amp; nextAsInt &gt;= -127){</span>
+<span class="fc" id="L141">				 encodedBuffer.put((byte)nextAsInt);</span>
+			 }else{
+<span class="fc" id="L143">				 encodedBuffer.put(GUARD);</span>
+<span class="fc" id="L144">				 encodedBuffer.put(next);</span>
+			 }
+			
+<span class="fc" id="L147">		}</span>
+<span class="fc" id="L148">		encodedBuffer.flip();</span>
+<span class="fc" id="L149">		return Arrays.copyOfRange(encodedBuffer.array(), 0, encodedBuffer.limit());</span>
+	}
+
+	protected byte[] getNext(ByteBuffer inputBuffer){
+<span class="fc" id="L153">		byte[] array = new byte[numberOfBytesPerElement];</span>
+<span class="fc" id="L154">		inputBuffer.get(array);</span>
+<span class="fc" id="L155">		return array;</span>
+	}
+	/**
+	 * This returns the same result as {@link #encodeData(byte[])}
+	 * the optional parameter is ignored. 
+	 */
+	@Override
+	public byte[] encodeData(byte[] data, byte ignored)
+			throws IOException {
+<span class="fc" id="L164">		return encodeData(data);</span>
+	}
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

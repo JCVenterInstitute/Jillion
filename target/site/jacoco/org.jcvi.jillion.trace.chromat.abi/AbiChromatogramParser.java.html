@@ -1,0 +1,946 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AbiChromatogramParser.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.trace.chromat.abi</a> &gt; <span class="el_source">AbiChromatogramParser.java</span></div><h1>AbiChromatogramParser.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.trace.chromat.abi;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Properties;
+
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.internal.trace.chromat.abi.AbiUtil;
+import org.jcvi.jillion.internal.trace.chromat.abi.tag.DefaultShortArrayTaggedDataRecord;
+import org.jcvi.jillion.internal.trace.chromat.abi.tag.TaggedDataRecordBuilder;
+import org.jcvi.jillion.internal.trace.chromat.abi.tag.rate.ScanRateUtils;
+import org.jcvi.jillion.trace.chromat.ChromatogramFileVisitor;
+import org.jcvi.jillion.trace.chromat.abi.tag.Ab1LocalDate;
+import org.jcvi.jillion.trace.chromat.abi.tag.Ab1LocalTime;
+import org.jcvi.jillion.trace.chromat.abi.tag.AsciiTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.ByteArrayTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.DateTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.FloatArrayTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.IntArrayTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.PascalStringTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.ShortArrayTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.StringTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataName;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.TaggedDataType;
+import org.jcvi.jillion.trace.chromat.abi.tag.TimeTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.UserDefinedTaggedDataRecord;
+import org.jcvi.jillion.trace.chromat.abi.tag.rate.ScanRateTaggedDataType;
+/**
+ * {@code Ab1FileParser} can parse an
+ * Applied BioSystems &quot;ab1&quot; formatted chromatogram
+ * file.
+ * @author dkatzel
+ *
+ */
+public abstract class AbiChromatogramParser {
+
+	
+	private static final byte ZERO_QUALITY = (byte)0;
+	
+	/**
+	 * Use {@link ThreadLocal} since each DateFormat instance
+	 * is mutable and not Thread safe.
+	 * This should let us avoid synchronization.
+	 */
+<span class="fc" id="L85">	private static ThreadLocal&lt;DateFormat&gt; DATE_FORMATTER = new ThreadLocal&lt;DateFormat&gt;(){</span>
+
+		  @Override
+		  public DateFormat get() {
+<span class="fc" id="L89">		   return super.get();</span>
+		  }
+
+		  @Override
+		  protected DateFormat initialValue() {
+<span class="fc" id="L94">		   return new SimpleDateFormat(&quot;EEE dd MMM HH:mm:ss yyyy&quot;, Locale.US);</span>
+		  }
+
+		  @Override
+		  public void remove() {
+<span class="nc" id="L99">		   super.remove();</span>
+<span class="nc" id="L100">		  }</span>
+
+		  @Override
+		  public void set(DateFormat value) {
+<span class="nc" id="L104">		   super.set(value);</span>
+<span class="nc" id="L105">		  }</span>
+
+		 };
+	
+	/**
+	 * ABI files store both the original and current
+	 * (possibly edited) data.  This is the index
+	 * order the original version
+	 * of the tag when both are present.
+	 */
+	private static final int ORIGINAL_VERSION = 0;
+	/**
+	 * ABI files store both the original and current
+	 * (possibly edited) data.  This is the index
+	 * order the current version
+	 * of the tag when both are present.
+	 */
+	private static final int CURRENT_VERSION =1;
+	
+	
+	public static AbiChromatogramParser create(File abiFile){
+<span class="fc" id="L126">		return new AbiFileChromatogramParser(abiFile);</span>
+	}
+	public static AbiChromatogramParser create(InputStream in){
+<span class="fc" id="L129">		return new InputStreamChromatogramParser(in);</span>
+	}
+	
+<span class="fc" id="L132">	private AbiChromatogramParser() {</span>
+		//can not instantiate outside this file
+<span class="fc" id="L134">	}</span>
+	/**
+	 * Parse the given Applied BioSystems 
+	 * &quot;ab1&quot; formatted chromatogram file
+	 * and call the appropriate visitXXX
+	 * methods on the given {@link ChromatogramFileVisitor}.
+	 * @param visitor  {@link ChromatogramFileVisitor} to call visitXXX
+	 * methods on.
+	 * @throws IOException if there are problems 
+	 * parsing the chromatogram.
+	 */
+	public abstract void accept(ChromatogramFileVisitor visitor) throws IOException;
+	
+	/**
+	 * Parse the given Applied BioSystems 
+	 * &quot;ab1&quot; formatted chromatogram InputStream.
+	 * and call the appropriate visitXXX
+	 * methods on the given {@link ChromatogramFileVisitor}.
+	 * @param in the ab1 formatted InputStream to be parsed.
+	 * @param visitor  {@link ChromatogramFileVisitor} to call visitXXX
+	 * methods on.
+	 * @throws IOException if there are problems 
+	 * parsing the chromatogram.
+	 */
+	private static void parse(InputStream in, ChromatogramFileVisitor visitor) throws IOException{
+<span class="fc" id="L159">			verifyMagicNumber(in);</span>
+<span class="fc" id="L160">			long numberOfTaggedRecords = parseNumTaggedRecords(in);</span>
+<span class="fc" id="L161">			int datablockOffset = parseTaggedRecordOffset(in);</span>
+			//All the record info is actually stored
+			//AFTER the raw data.
+			//In order to avoid re-parsing the stream
+			//(we can't guarantee being able to seek backwards
+			//from all inputstream implementations)
+			//we have to cache the raw data into a byte array for
+			//later handling.
+<span class="fc" id="L169">			byte[] traceData = parseTraceDataBlock(in, datablockOffset-AbiUtil.HEADER_SIZE);</span>
+<span class="fc" id="L170">			GroupedTaggedRecords groupedDataRecordMap = parseTaggedDataRecords(in,numberOfTaggedRecords,traceData,visitor);</span>
+	
+<span class="fc" id="L172">			List&lt;Nucleotide&gt; channelOrder =parseChannelOrder(groupedDataRecordMap);</span>
+<span class="fc" id="L173">			visitChannelOrderIfAble(visitor, channelOrder);			</span>
+<span class="fc" id="L174">			List&lt;NucleotideSequence&gt; basecalls =parseBasecallsFrom(groupedDataRecordMap,traceData,visitor);	</span>
+<span class="fc" id="L175">			String signalScale =parseSignalScalingFactor(groupedDataRecordMap, channelOrder, traceData,visitor);</span>
+<span class="fc" id="L176">			Map&lt;String,String&gt; comments =parseDataChannels(groupedDataRecordMap,channelOrder,traceData,visitor);</span>
+<span class="fc" id="L177">			parsePeakData(groupedDataRecordMap,traceData,visitor);</span>
+<span class="fc" id="L178">			parseQualityData(groupedDataRecordMap,traceData,basecalls,visitor);</span>
+<span class="fc" id="L179">			parseCommentsFrom(comments,groupedDataRecordMap,channelOrder,traceData,signalScale,basecalls,visitor);</span>
+<span class="fc" id="L180">            visitor.visitEnd();</span>
+<span class="fc" id="L181">	}</span>
+
+	private static String parseSignalScalingFactor(
+			GroupedTaggedRecords groupedDataRecordMap,
+			List&lt;Nucleotide&gt; channelOrder, byte[] traceData,
+			ChromatogramFileVisitor visitor) {		
+		
+<span class="fc" id="L188">			ShortArrayTaggedDataRecord scalingFactors =groupedDataRecordMap.shortArrayDataRecords.get(TaggedDataName.SCALE_FACTOR).get(0);</span>
+<span class="fc" id="L189">			List&lt;Short&gt; list = convertToShortList(traceData, scalingFactors);</span>
+<span class="fc" id="L190">			SignalScalingFactor scalingFactor = SignalScalingFactor.create(channelOrder, list);</span>
+			
+<span class="pc bpc" id="L192" title="1 of 2 branches missed.">			if(visitor instanceof AbiChromatogramFileVisitor){</span>
+<span class="fc" id="L193">			    ((AbiChromatogramFileVisitor) visitor).visitScaleFactors(</span>
+<span class="fc" id="L194">			            scalingFactor.aScale,scalingFactor.cScale,scalingFactor.gScale,scalingFactor.tScale);</span>
+			}
+<span class="fc" id="L196">			return scalingFactor.toString();</span>
+		
+	}
+    private static List&lt;Short&gt; convertToShortList(byte[] traceData,
+            ShortArrayTaggedDataRecord scalingFactors) {
+<span class="fc" id="L201">        List&lt;Short&gt; list = new ArrayList&lt;Short&gt;();</span>
+<span class="fc bfc" id="L202" title="All 2 branches covered.">        for(short s: scalingFactors.parseDataRecordFrom(traceData)){</span>
+<span class="fc" id="L203">        	list.add(Short.valueOf(s));</span>
+        }
+<span class="fc" id="L205">        return list;</span>
+    }
+
+	private static void parseQualityData(
+			GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
+			List&lt;NucleotideSequence&gt; basecallsList,
+			ChromatogramFileVisitor visitor) {
+		
+<span class="fc" id="L213">		List&lt;ByteArrayTaggedDataRecord&gt; qualityRecords =groupedDataRecordMap.byteArrayRecords.get(TaggedDataName.QUALITY_VALUES);</span>
+<span class="fc bfc" id="L214" title="All 2 branches covered.">		for(int i=0; i&lt;qualityRecords.size(); i++){</span>
+<span class="fc" id="L215">		    ByteArrayTaggedDataRecord qualityRecord = qualityRecords.get(i);</span>
+<span class="fc" id="L216">		    NucleotideSequence basecalls = basecallsList.get(i);</span>
+<span class="fc" id="L217">			byte[][] qualities = splitQualityDataByChannel(basecalls, qualityRecord.parseDataRecordFrom(traceData));</span>
+<span class="pc bpc" id="L218" title="1 of 4 branches missed.">			if(i == ORIGINAL_VERSION &amp;&amp; visitor instanceof AbiChromatogramFileVisitor){</span>
+<span class="fc" id="L219">				AbiChromatogramFileVisitor ab1Visitor = (AbiChromatogramFileVisitor)visitor;</span>
+<span class="fc" id="L220">				handleOriginalConfidenceValues(qualities, ab1Visitor);</span>
+			}
+<span class="fc bfc" id="L222" title="All 2 branches covered.">			if(i == CURRENT_VERSION){</span>
+<span class="fc" id="L223">				handleCurrentConfidenceValues(visitor, qualities);</span>
+			}
+		}
+<span class="fc" id="L226">	}</span>
+    private static void handleCurrentConfidenceValues(
+            ChromatogramFileVisitor visitor, byte[][] qualities) {
+<span class="fc" id="L229">        visitor.visitAConfidence(qualities[0]);</span>
+<span class="fc" id="L230">        visitor.visitCConfidence(qualities[1]);</span>
+<span class="fc" id="L231">        visitor.visitGConfidence(qualities[2]);</span>
+<span class="fc" id="L232">        visitor.visitTConfidence(qualities[3]);</span>
+<span class="fc" id="L233">    }</span>
+    private static void handleOriginalConfidenceValues(byte[][] qualities,
+            AbiChromatogramFileVisitor ab1Visitor) {
+<span class="fc" id="L236">        ab1Visitor.visitOriginalAConfidence(qualities[0]);</span>
+<span class="fc" id="L237">        ab1Visitor.visitOriginalCConfidence(qualities[1]);</span>
+<span class="fc" id="L238">        ab1Visitor.visitOriginalGConfidence(qualities[2]);</span>
+<span class="fc" id="L239">        ab1Visitor.visitOriginalTConfidence(qualities[3]);</span>
+<span class="fc" id="L240">    }</span>
+	/**
+	 * To conform with {@link ChromatogramFileVisitor},
+	 * each Channel must have its own quality data.
+	 * ABI traces don't have that information,
+	 * so we must create it based on the basecalls.
+	 * Any called base that is not an A,C or G is put in the T
+	 * quality channel.
+	 * @param basecalls the basecalls to use to split the qualities.
+	 * @param qualities the quality values of the called base.
+	 * @return a byte matrix containing the quality channel
+	 * data for A,C,G,T in that order.
+	 */
+	private static byte[][] splitQualityDataByChannel(NucleotideSequence basecalls,byte[] qualities ){
+		//The channel of the given basecall gets that
+		// quality value, the other channels get zero
+<span class="fc" id="L256">		int size = (int)basecalls.getLength();</span>
+<span class="fc" id="L257">		ByteBuffer aQualities = ByteBuffer.allocate(size);</span>
+<span class="fc" id="L258">		ByteBuffer cQualities = ByteBuffer.allocate(size);</span>
+<span class="fc" id="L259">		ByteBuffer gQualities = ByteBuffer.allocate(size);</span>
+<span class="fc" id="L260">		ByteBuffer tQualities = ByteBuffer.allocate(size);</span>
+		
+<span class="fc" id="L262">		populateQualities(basecalls, qualities, aQualities, cQualities, gQualities, tQualities);</span>
+<span class="fc" id="L263">		return new byte[][]{aQualities.array(),cQualities.array(),gQualities.array(),tQualities.array()};</span>
+	}
+    private static void populateQualities(NucleotideSequence basecalls,
+            byte[] qualities, ByteBuffer aQualities, ByteBuffer cQualities,
+            ByteBuffer gQualities, ByteBuffer tQualities) {
+<span class="fc" id="L268">    	Iterator&lt;Nucleotide&gt; basecallIterator = basecalls.iterator();</span>
+<span class="fc bfc" id="L269" title="All 2 branches covered.">        for(int i=0; i&lt;qualities.length; i++){</span>
+<span class="fc" id="L270">			populateQualities(aQualities, cQualities, gQualities, tQualities, basecallIterator.next(), qualities[i]);</span>
+		}
+<span class="fc" id="L272">    }</span>
+    private static void populateQualities(ByteBuffer aQualities, ByteBuffer cQualities,
+            ByteBuffer gQualities, ByteBuffer tQualities, Nucleotide basecall, byte quality) {
+<span class="pc bfc" id="L275" title="All 4 branches covered.">        switch(basecall){</span>
+        	case Adenine:
+<span class="fc" id="L277">        		handleAQuality(aQualities, cQualities, gQualities, tQualities, quality);</span>
+<span class="fc" id="L278">        		break;</span>
+        		
+        	case Cytosine:
+<span class="fc" id="L281">        		handleCQuality(aQualities, cQualities, gQualities, tQualities, quality);</span>
+<span class="fc" id="L282">        		break;</span>
+        	case Guanine:
+<span class="fc" id="L284">        		handleGQuality(aQualities, cQualities, gQualities, tQualities, quality);</span>
+<span class="fc" id="L285">        		break;</span>
+        	//anything else is automatically a T
+        	default:
+<span class="fc" id="L288">        		handleTQuality(aQualities, cQualities, gQualities, tQualities, quality);				</span>
+        		break;
+        }
+<span class="fc" id="L291">    }</span>
+    private static void handleTQuality(ByteBuffer aQualities,
+            ByteBuffer cQualities, ByteBuffer gQualities,
+            ByteBuffer tQualities, byte quality) {
+<span class="fc" id="L295">        aQualities.put(ZERO_QUALITY);</span>
+<span class="fc" id="L296">        cQualities.put(ZERO_QUALITY);</span>
+<span class="fc" id="L297">        gQualities.put(ZERO_QUALITY);</span>
+<span class="fc" id="L298">        tQualities.put(quality);</span>
+<span class="fc" id="L299">    }</span>
+    private static void handleGQuality(ByteBuffer aQualities,
+            ByteBuffer cQualities, ByteBuffer gQualities,
+            ByteBuffer tQualities, byte quality) {
+<span class="fc" id="L303">        aQualities.put(ZERO_QUALITY);</span>
+<span class="fc" id="L304">        cQualities.put(ZERO_QUALITY);</span>
+<span class="fc" id="L305">        gQualities.put(quality);</span>
+<span class="fc" id="L306">        tQualities.put(ZERO_QUALITY);</span>
+<span class="fc" id="L307">    }</span>
+    private static void handleCQuality(ByteBuffer aQualities,
+            ByteBuffer cQualities, ByteBuffer gQualities,
+            ByteBuffer tQualities, byte quality) {
+<span class="fc" id="L311">        aQualities.put(ZERO_QUALITY);</span>
+<span class="fc" id="L312">        cQualities.put(quality);</span>
+<span class="fc" id="L313">        gQualities.put(ZERO_QUALITY);</span>
+<span class="fc" id="L314">        tQualities.put(ZERO_QUALITY);</span>
+<span class="fc" id="L315">    }</span>
+    private static void handleAQuality(ByteBuffer aQualities,
+            ByteBuffer cQualities, ByteBuffer gQualities,
+            ByteBuffer tQualities, byte quality) {
+<span class="fc" id="L319">        aQualities.put(quality);</span>
+<span class="fc" id="L320">        cQualities.put(ZERO_QUALITY);</span>
+<span class="fc" id="L321">        gQualities.put(ZERO_QUALITY);</span>
+<span class="fc" id="L322">        tQualities.put(ZERO_QUALITY);</span>
+<span class="fc" id="L323">    }</span>
+	private static void parsePeakData(
+			GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
+			ChromatogramFileVisitor visitor) {
+<span class="fc" id="L327">		List&lt;ShortArrayTaggedDataRecord&gt; peakRecords =groupedDataRecordMap.shortArrayDataRecords.get(TaggedDataName.PEAK_LOCATIONS);</span>
+		
+<span class="pc bpc" id="L329" title="1 of 2 branches missed.">		if(visitor instanceof AbiChromatogramFileVisitor){</span>
+<span class="fc" id="L330">			short[] originalPeakData =peakRecords.get(ORIGINAL_VERSION).parseDataRecordFrom(traceData);</span>
+			
+<span class="fc" id="L332">			((AbiChromatogramFileVisitor) visitor).visitOriginalPeaks(originalPeakData);</span>
+		}
+<span class="fc" id="L334">		short[] peakData =peakRecords.get(CURRENT_VERSION).parseDataRecordFrom(traceData);</span>
+<span class="fc" id="L335">		visitor.visitPeaks(peakData);</span>
+<span class="fc" id="L336">	}</span>
+
+	private static Map&lt;String,String&gt; parseDataChannels(
+			GroupedTaggedRecords groupedDataRecordMap,
+			List&lt;Nucleotide&gt; channelOrder,
+			byte[] traceData,
+			ChromatogramFileVisitor visitor) {
+<span class="fc" id="L343">		List&lt;ShortArrayTaggedDataRecord&gt; dataRecords =groupedDataRecordMap.shortArrayDataRecords.get(TaggedDataName.DATA);</span>
+<span class="pc bpc" id="L344" title="1 of 2 branches missed.">		if(visitor instanceof AbiChromatogramFileVisitor){</span>
+<span class="fc" id="L345">			AbiChromatogramFileVisitor ab1Visitor = (AbiChromatogramFileVisitor) visitor;</span>
+			//parse extra ab1 data
+<span class="fc" id="L347">			visitAb1ExtraChannels(traceData, dataRecords, ab1Visitor);			</span>
+		}
+<span class="fc" id="L349">		Map&lt;String,String&gt; props = new HashMap&lt;String, String&gt;();</span>
+<span class="fc bfc" id="L350" title="All 2 branches covered.">		for(int i=0; i&lt;4; i++){</span>
+<span class="fc" id="L351">			Nucleotide channel = channelOrder.get(i);</span>
+<span class="fc" id="L352">			short[] channelData =dataRecords.get(i+8).parseDataRecordFrom(traceData);</span>
+<span class="fc" id="L353">			props.put(&quot;NPTS&quot;, &quot;&quot;+channelData.length);</span>
+<span class="fc" id="L354">			visitChannel(visitor, channel, channelData);</span>
+		}
+<span class="fc" id="L356">		return props;</span>
+	}
+    private static void visitChannel(ChromatogramFileVisitor visitor,
+            Nucleotide channel, short[] channelData) {
+<span class="pc bpc" id="L360" title="1 of 5 branches missed.">        switch(channel){</span>
+        	case Adenine:
+<span class="fc" id="L362">        		visitor.visitAPositions(channelData);					</span>
+<span class="fc" id="L363">        		break;</span>
+        	case Thymine:
+<span class="fc" id="L365">        		visitor.visitTPositions(channelData);</span>
+<span class="fc" id="L366">        		break;</span>
+        	case Guanine:
+<span class="fc" id="L368">        		visitor.visitGPositions(channelData);</span>
+<span class="fc" id="L369">        		break;</span>
+        	case Cytosine:
+<span class="fc" id="L371">        		visitor.visitCPositions(channelData);</span>
+<span class="fc" id="L372">        		break;</span>
+        	default:
+<span class="nc" id="L374">        		throw new IllegalStateException(&quot;invalid channel &quot;+ channel);	</span>
+        }
+<span class="fc" id="L376">    }</span>
+    private static void visitAb1ExtraChannels(byte[] traceData,
+            List&lt;ShortArrayTaggedDataRecord&gt; dataRecords,
+            AbiChromatogramFileVisitor ab1Visitor) {
+<span class="fc bfc" id="L380" title="All 2 branches covered.">        for(int i=0; i&lt; 4; i++){</span>
+<span class="fc" id="L381">        	short[] rawTraceData =dataRecords.get(i).parseDataRecordFrom(traceData);</span>
+<span class="fc" id="L382">        	ab1Visitor.visitPhotometricData(rawTraceData,i);</span>
+        }
+<span class="fc" id="L384">        ab1Visitor.visitGelVoltageData(dataRecords.get(4).parseDataRecordFrom(traceData));</span>
+<span class="fc" id="L385">        ab1Visitor.visitGelCurrentData(dataRecords.get(5).parseDataRecordFrom(traceData));</span>
+<span class="fc" id="L386">        ab1Visitor.visitElectrophoreticPower(dataRecords.get(6).parseDataRecordFrom(traceData));</span>
+<span class="fc" id="L387">        ab1Visitor.visitGelTemperatureData(dataRecords.get(7).parseDataRecordFrom(traceData));</span>
+<span class="fc" id="L388">    }</span>
+
+	private static void visitChannelOrderIfAble(
+			ChromatogramFileVisitor visitor, List&lt;Nucleotide&gt; channelOrder) {
+<span class="pc bpc" id="L392" title="1 of 2 branches missed.">		if(visitor instanceof AbiChromatogramFileVisitor){</span>
+<span class="fc" id="L393">			((AbiChromatogramFileVisitor) visitor).visitChannelOrder(channelOrder);</span>
+		}
+<span class="fc" id="L395">	}</span>
+	/**
+	 * create comments to match IO_LIb implementation for 100%
+	 * compatibility.
+	 * @param groupedDataRecordMap
+	 * @param traceData
+	 * @param visitor
+	 */
+	private static void parseCommentsFrom(
+	        Map&lt;String,String&gt; props,
+			GroupedTaggedRecords groupedDataRecordMap, 
+			List&lt;Nucleotide&gt; channelOrder,byte[] traceData,
+			String signalScale, List&lt;NucleotideSequence&gt; basecalls,
+			ChromatogramFileVisitor visitor) {
+<span class="fc" id="L409">		props.put(&quot;SIGN&quot;, signalScale);</span>
+		//the following methods all add entries
+		//to the props Map where applicable
+<span class="fc" id="L412">		addStringComments(groupedDataRecordMap, traceData, props);</span>
+<span class="fc" id="L413">		addSingleShortValueComments(groupedDataRecordMap, traceData, props);</span>
+<span class="fc" id="L414">		addChannelOrderComment(channelOrder,props);</span>
+<span class="fc" id="L415">		addSpacingComment(groupedDataRecordMap, traceData, props);</span>
+<span class="fc" id="L416">		addTimeStampComment(groupedDataRecordMap, traceData, props);</span>
+<span class="fc" id="L417">		addNoiseComment(groupedDataRecordMap, channelOrder,traceData,props);</span>
+<span class="fc" id="L418">		addNumberOfBases(basecalls,props);</span>
+<span class="fc" id="L419">		parseSamplingRateFrom(groupedDataRecordMap, traceData, props);</span>
+		 
+<span class="fc" id="L421">		visitor.visitComments(props);</span>
+<span class="fc" id="L422">	}</span>
+
+
+   
+    private static void parseSamplingRateFrom(
+            GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
+            Map&lt;String,String&gt; props) {
+<span class="fc" id="L429">        Map&lt;TaggedDataName, List&lt;UserDefinedTaggedDataRecord&lt;?,?&gt;&gt;&gt;map= groupedDataRecordMap.userDefinedDataRecords;</span>
+<span class="pc bpc" id="L430" title="1 of 2 branches missed.">        if(map.containsKey(TaggedDataName.Rate)){</span>
+<span class="fc" id="L431">            ScanRateTaggedDataType scanRate = (ScanRateTaggedDataType)map.get(TaggedDataName.Rate).get(0);</span>
+<span class="fc" id="L432">            props.put(&quot;SamplingRate&quot;, String.format(&quot;%.3f&quot;,</span>
+<span class="fc" id="L433">                    ScanRateUtils.getSamplingRateFor(scanRate.parseDataRecordFrom(traceData))));</span>
+        }
+<span class="fc" id="L435">    }</span>
+
+   
+    private static void addNumberOfBases(
+            List&lt;NucleotideSequence&gt; basecalls,
+            Map&lt;String,String&gt; props) {
+<span class="fc" id="L441">        props.put(&quot;NBAS&quot;, &quot;&quot;+basecalls.get(ORIGINAL_VERSION).getLength());</span>
+<span class="fc" id="L442">    }</span>
+
+   
+    private static void addNoiseComment(
+            GroupedTaggedRecords groupedDataRecordMap,
+            List&lt;Nucleotide&gt; channelOrder,
+            byte[] traceData,
+            Map&lt;String,String&gt; props) {
+<span class="fc" id="L450">        Map&lt;TaggedDataName, List&lt;FloatArrayTaggedDataRecord&gt;&gt; map= groupedDataRecordMap.floatDataRecords;</span>
+<span class="pc bpc" id="L451" title="1 of 2 branches missed.">        if(map.containsKey(TaggedDataName.NOISE)){</span>
+<span class="fc" id="L452">            float[] noiseData = map.get(TaggedDataName.NOISE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData);</span>
+<span class="fc" id="L453">            Noise noise = Noise.create(channelOrder, noiseData);</span>
+            
+<span class="fc" id="L455">            props.put(&quot;NOIS&quot;,noise.toString()); </span>
+        }
+<span class="fc" id="L457">    }</span>
+
+    
+    private static void addTimeStampComment(
+            GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
+            Map&lt;String,String&gt; props) {
+<span class="fc" id="L463">        Map&lt;TaggedDataName, List&lt;DateTaggedDataRecord&gt;&gt; dates= groupedDataRecordMap.dateDataRecords;</span>
+<span class="fc" id="L464">        Map&lt;TaggedDataName, List&lt;TimeTaggedDataRecord&gt;&gt; times= groupedDataRecordMap.timeDataRecords;</span>
+<span class="pc bpc" id="L465" title="2 of 4 branches missed.">        if(dates.containsKey(TaggedDataName.RUN_DATE) &amp;&amp; times.containsKey(TaggedDataName.RUN_TIME)){</span>
+<span class="fc" id="L466">        	Ab1LocalDate startDate =dates.get(TaggedDataName.RUN_DATE).get(0).parseDataRecordFrom(traceData);</span>
+<span class="fc" id="L467">        	Ab1LocalDate endDate =dates.get(TaggedDataName.RUN_DATE).get(1).parseDataRecordFrom(traceData);</span>
+            
+<span class="fc" id="L469">            Ab1LocalTime startTime = times.get(TaggedDataName.RUN_TIME).get(0).parseDataRecordFrom(traceData);</span>
+<span class="fc" id="L470">            Ab1LocalTime endTime = times.get(TaggedDataName.RUN_TIME).get(1).parseDataRecordFrom(traceData);</span>
+            
+<span class="fc" id="L472">            final Date startDateTime = startDate.toDate(startTime);</span>
+<span class="fc" id="L473">            final Date endDateTime = endDate.toDate(endTime);</span>
+<span class="fc" id="L474">            props.put(&quot;DATE&quot;, String.format(&quot;%s to %s&quot;,</span>
+<span class="fc" id="L475">            		DATE_FORMATTER.get().format(startDateTime),</span>
+<span class="fc" id="L476">            		DATE_FORMATTER.get().format(endDateTime)</span>
+            		));
+            
+            
+<span class="fc" id="L480">            props.put(&quot;RUND&quot;, String.format(&quot;%04d%02d%02d.%02d%02d%02d - %04d%02d%02d.%02d%02d%02d&quot;,</span>
+<span class="fc" id="L481">            		startDate.getYear(), startDate.getMonth()+1, startDate.getDay(),</span>
+<span class="fc" id="L482">            		startTime.getHour(), startTime.getMin(), startTime.getSec(),</span>
+            		
+<span class="fc" id="L484">            		endDate.getYear(), endDate.getMonth()+1, endDate.getDay(),</span>
+<span class="fc" id="L485">            		endTime.getHour(), endTime.getMin(), endTime.getSec()</span>
+            		
+            ));
+        }
+<span class="fc" id="L489">    }</span>
+
+    private static void addSpacingComment(
+            GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
+            Map&lt;String,String&gt; props) {
+<span class="fc" id="L494">        Map&lt;TaggedDataName, List&lt;FloatArrayTaggedDataRecord&gt;&gt; map= groupedDataRecordMap.floatDataRecords;</span>
+<span class="pc bpc" id="L495" title="1 of 2 branches missed.">        if(map.containsKey(TaggedDataName.SPACING)){</span>
+<span class="fc" id="L496">            props.put(&quot;SPAC&quot;, String.format(&quot;%-6.2f&quot;,map.get(TaggedDataName.SPACING).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]));</span>
+        }
+
+<span class="fc" id="L499">    }</span>
+
+    private static void addChannelOrderComment(
+            List&lt;Nucleotide&gt; channelOrder, Map&lt;String,String&gt; props) {
+<span class="fc" id="L503">        StringBuilder order = new StringBuilder();</span>
+<span class="fc bfc" id="L504" title="All 2 branches covered.">        for(Nucleotide channel: channelOrder){</span>
+<span class="fc" id="L505">            order.append(channel.getCharacter());</span>
+<span class="fc" id="L506">        }</span>
+<span class="fc" id="L507">        props.put(&quot;FWO_&quot;, order.toString() );</span>
+<span class="fc" id="L508">    }</span>
+
+    private static Properties extractSingleIntValueComments(
+            GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
+            Properties props) {
+<span class="nc" id="L513">        Map&lt;TaggedDataName, List&lt;IntArrayTaggedDataRecord&gt;&gt; map= groupedDataRecordMap.intArrayDataRecords;</span>
+<span class="nc bnc" id="L514" title="All 2 branches missed.">        if(map.containsKey(TaggedDataName.OVEN_TEMPERATURE)){</span>
+<span class="nc" id="L515">            props.put(&quot;Tmpr&quot;, map.get(TaggedDataName.OVEN_TEMPERATURE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]);</span>
+        }
+<span class="nc bnc" id="L517" title="All 2 branches missed.">        if(map.containsKey(TaggedDataName.ELECTROPHERSIS_VOLTAGE)){</span>
+<span class="nc" id="L518">            props.put(&quot;EPVt&quot;, map.get(TaggedDataName.ELECTROPHERSIS_VOLTAGE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]);</span>
+        }
+<span class="nc" id="L520">        return props;</span>
+    }
+    private static void addSingleShortValueComments(
+            GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
+            Map&lt;String,String&gt; props) {
+<span class="fc" id="L525">        Map&lt;TaggedDataName, List&lt;ShortArrayTaggedDataRecord&gt;&gt; map= groupedDataRecordMap.shortArrayDataRecords;</span>
+        
+<span class="fc bfc" id="L527" title="All 2 branches covered.">        for(ShortTaggedDataRecordPropertyHandler handler : ShortTaggedDataRecordPropertyHandler.values()){</span>
+<span class="fc" id="L528">            handler.handle(map, traceData, props);</span>
+        }
+<span class="fc" id="L530">    }</span>
+
+    private static void addStringComments(
+            GroupedTaggedRecords groupedDataRecordMap,byte[] traceData, Map&lt;String,String&gt; props) {
+<span class="fc" id="L534">        Map&lt;TaggedDataName, List&lt;PascalStringTaggedDataRecord&gt;&gt; pascalStrings= groupedDataRecordMap.pascalStringDataRecords;</span>
+		//asciiStrings
+<span class="fc" id="L536">        Map&lt;TaggedDataName, List&lt;AsciiTaggedDataRecord&gt;&gt; asciiStrings= groupedDataRecordMap.asciiDataRecords;</span>
+        
+        
+<span class="pc bpc" id="L539" title="1 of 2 branches missed.">        if(pascalStrings.containsKey(TaggedDataName.COMMENT)){</span>
+<span class="fc" id="L540">		    props.put(&quot;COMM&quot;, pascalStrings.get(TaggedDataName.COMMENT).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());</span>
+		}
+<span class="pc bpc" id="L542" title="1 of 2 branches missed.">		if(pascalStrings.containsKey(TaggedDataName.SAMPLE_NAME)){</span>
+<span class="fc" id="L543">            props.put(&quot;NAME&quot;, pascalStrings.get(TaggedDataName.SAMPLE_NAME).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());</span>
+        }
+<span class="pc bpc" id="L545" title="1 of 2 branches missed.">		if(pascalStrings.containsKey(TaggedDataName.DYE_PRIMER_CORRECTION_FILE)){</span>
+<span class="fc" id="L546">            props.put(&quot;DYEP&quot;, pascalStrings.get(TaggedDataName.DYE_PRIMER_CORRECTION_FILE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());</span>
+        }
+<span class="pc bpc" id="L548" title="1 of 2 branches missed.">		if(pascalStrings.containsKey(TaggedDataName.MACHINE_NAME)){</span>
+<span class="fc" id="L549">            props.put(&quot;MCHN&quot;, pascalStrings.get(TaggedDataName.MACHINE_NAME).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());</span>
+        }
+<span class="pc bpc" id="L551" title="1 of 2 branches missed.">		if(asciiStrings.containsKey(TaggedDataName.MODEL)){</span>
+<span class="fc" id="L552">            props.put(&quot;MODL&quot;, asciiStrings.get(TaggedDataName.MODEL).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());</span>
+        }
+<span class="pc bpc" id="L554" title="1 of 2 branches missed.">		if(pascalStrings.containsKey(TaggedDataName.RUN_MODULE_FILENAME)){</span>
+<span class="fc" id="L555">            props.put(&quot;MODF&quot;, pascalStrings.get(TaggedDataName.RUN_MODULE_FILENAME).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());</span>
+        }
+<span class="pc bpc" id="L557" title="1 of 2 branches missed.">		if(pascalStrings.containsKey(TaggedDataName.MATRIX_FILE_NAME)){</span>
+<span class="nc" id="L558">            props.put(&quot;MTFX&quot;, pascalStrings.get(TaggedDataName.MATRIX_FILE_NAME).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());</span>
+        }
+<span class="pc bpc" id="L560" title="1 of 2 branches missed.">		if(pascalStrings.containsKey(TaggedDataName.SPACING)){</span>
+<span class="fc" id="L561">            props.put(&quot;BCAL&quot;, pascalStrings.get(TaggedDataName.SPACING).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());</span>
+        }
+<span class="pc bpc" id="L563" title="1 of 2 branches missed.">		if(pascalStrings.containsKey(TaggedDataName.SEPARATION_MEDIUM_LOT_NUMBER)){</span>
+<span class="fc" id="L564">            props.put(&quot;SMLt&quot;, pascalStrings.get(TaggedDataName.SEPARATION_MEDIUM_LOT_NUMBER).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());</span>
+        }
+<span class="pc bpc" id="L566" title="1 of 2 branches missed.">		if(pascalStrings.containsKey(TaggedDataName.SEPARATION_MEDIUM_EXPIRATION_DATE)){</span>
+<span class="fc" id="L567">            props.put(&quot;SMED&quot;, pascalStrings.get(TaggedDataName.SEPARATION_MEDIUM_EXPIRATION_DATE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());</span>
+        }
+<span class="pc bpc" id="L569" title="1 of 2 branches missed.">		if(pascalStrings.containsKey(TaggedDataName.SOFTWARE_VERSION)){</span>
+<span class="fc" id="L570">            final List&lt;PascalStringTaggedDataRecord&gt; versions = pascalStrings.get(TaggedDataName.SOFTWARE_VERSION);</span>
+            //match IO_Lib and only get the first 2 software version records...
+<span class="pc bpc" id="L572" title="1 of 4 branches missed.">            for(int i=0; i&lt;versions.size() &amp;&amp; i&lt;2;i++){</span>
+<span class="fc" id="L573">                props.put(&quot;VER&quot;+(i+1), versions.get(i).parseDataRecordFrom(traceData).trim());</span>
+             }
+        }
+<span class="pc bpc" id="L576" title="1 of 2 branches missed.">		if(pascalStrings.containsKey(TaggedDataName.ANALYSIS_PARAMETERS_FILE_NAME)){</span>
+<span class="fc" id="L577">            props.put(&quot;PRON&quot;, pascalStrings.get(TaggedDataName.ANALYSIS_PARAMETERS_FILE_NAME).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());</span>
+        }
+		
+		
+<span class="pc bpc" id="L581" title="1 of 2 branches missed.">		if(pascalStrings.containsKey(TaggedDataName.TUBE)){</span>
+<span class="fc" id="L582">            props.put(&quot;TUBE&quot;, pascalStrings.get(TaggedDataName.TUBE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());</span>
+        }
+<span class="pc bpc" id="L584" title="1 of 2 branches missed.">		if(asciiStrings.containsKey(TaggedDataName.JTC_RUN_NAME)){</span>
+<span class="fc" id="L585">            props.put(&quot;RUNN&quot;, asciiStrings.get(TaggedDataName.JTC_RUN_NAME).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());</span>
+        }
+<span class="pc bpc" id="L587" title="1 of 2 branches missed.">		if(asciiStrings.containsKey(TaggedDataName.ANALYSIS_PROTOCOL_XML_SCHEMA_VERSION)){</span>
+<span class="fc" id="L588">            props.put(&quot;PROV&quot;, asciiStrings.get(TaggedDataName.ANALYSIS_PROTOCOL_XML_SCHEMA_VERSION).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());</span>
+        }
+<span class="fc" id="L590">    }</span>
+
+	
+	private static List&lt;NucleotideSequence&gt; parseBasecallsFrom(
+			GroupedTaggedRecords groupedDataRecordMap, byte[] ab1DataBlock,
+			ChromatogramFileVisitor visitor) {
+<span class="fc" id="L596">		List&lt;NucleotideSequence&gt; basecallsList = new ArrayList&lt;NucleotideSequence&gt;(2);</span>
+<span class="fc bfc" id="L597" title="All 2 branches covered.">		for(AsciiTaggedDataRecord basecallRecord : groupedDataRecordMap.asciiDataRecords.get(TaggedDataName.BASECALLS)){</span>
+<span class="fc" id="L598">			NucleotideSequence basecalls = new NucleotideSequenceBuilder( basecallRecord.parseDataRecordFrom(ab1DataBlock))</span>
+<span class="fc" id="L599">											.build();</span>
+<span class="fc" id="L600">			basecallsList.add(basecalls);</span>
+<span class="fc bfc" id="L601" title="All 2 branches covered.">			if(basecallRecord.getTagNumber()==CURRENT_VERSION){</span>
+<span class="fc" id="L602">				visitor.visitBasecalls(basecalls);</span>
+<span class="pc bpc" id="L603" title="1 of 2 branches missed.">			}else if(visitor instanceof AbiChromatogramFileVisitor){</span>
+<span class="fc" id="L604">				((AbiChromatogramFileVisitor) visitor).visitOriginalBasecalls(basecalls);</span>
+				
+			}
+<span class="fc" id="L607">		}</span>
+		
+<span class="fc" id="L609">		return basecallsList;</span>
+		
+	}
+
+	private static List&lt;Nucleotide&gt; parseChannelOrder(GroupedTaggedRecords dataRecordMap ){
+<span class="fc" id="L614">		AsciiTaggedDataRecord order = dataRecordMap.asciiDataRecords.get(TaggedDataName.FILTER_WHEEL_ORDER).get(0);</span>
+		
+<span class="fc" id="L616">		return asList(new NucleotideSequenceBuilder(order.parseDataRecordFrom(null)));</span>
+
+	}
+	private static List&lt;Nucleotide&gt; asList(NucleotideSequenceBuilder builder){
+<span class="fc" id="L620">    	List&lt;Nucleotide&gt; list = new ArrayList&lt;Nucleotide&gt;((int)builder.getLength());</span>
+<span class="fc bfc" id="L621" title="All 2 branches covered.">    	for(Nucleotide n : builder){</span>
+<span class="fc" id="L622">    		list.add(n);</span>
+<span class="fc" id="L623">    	}</span>
+<span class="fc" id="L624">    	return list;</span>
+    }
+	private static GroupedTaggedRecords parseTaggedDataRecords(
+			InputStream in,
+			long numberOfTaggedRecords,
+			byte[] abiDataBlock,
+			ChromatogramFileVisitor visitor) throws IOException {
+<span class="fc" id="L631">		GroupedTaggedRecords map = new GroupedTaggedRecords();</span>
+<span class="fc" id="L632">		boolean isAb1ChromatogramVisitor = visitor instanceof AbiChromatogramFileVisitor;</span>
+		try{
+<span class="fc bfc" id="L634" title="All 2 branches covered.">			for(long i=0; i&lt;numberOfTaggedRecords; i++){</span>
+<span class="fc" id="L635">				String rawTagName = new String(IOUtil.toByteArray(in, 4),&quot;UTF-8&quot;);</span>
+				
+<span class="fc" id="L637">				TaggedDataName tagName = TaggedDataName.parseTaggedDataName(rawTagName);</span>
+				
+<span class="fc" id="L639">				long tagNumber = IOUtil.readUnsignedInt(in);</span>
+<span class="fc" id="L640">				TaggedDataRecordBuilder builder = </span>
+					new TaggedDataRecordBuilder(tagName, tagNumber)
+<span class="fc" id="L642">						.setDataType(</span>
+<span class="fc" id="L643">							TaggedDataType.parseTaggedDataName(IOUtil.readUnsignedShort(in)), </span>
+<span class="fc" id="L644">							IOUtil.readUnsignedShort(in))</span>
+<span class="fc" id="L645">						.setNumberOfElements(IOUtil.readUnsignedInt(in))</span>
+<span class="fc" id="L646">						.setRecordLength(IOUtil.readUnsignedInt(in))</span>
+<span class="fc" id="L647">						.setDataRecord(IOUtil.readUnsignedInt(in))</span>
+<span class="fc" id="L648">						.setCrypticValue(IOUtil.readUnsignedInt(in));</span>
+<span class="fc" id="L649">				TaggedDataRecord&lt;?,?&gt; record = builder.build();</span>
+<span class="pc bpc" id="L650" title="1 of 2 branches missed.">				if(isAb1ChromatogramVisitor){</span>
+<span class="fc" id="L651">				    visitCorrectTaggedDataRecordViaReflection((AbiChromatogramFileVisitor) visitor,record, abiDataBlock);</span>
+				}
+<span class="fc" id="L653">				map.add(record);</span>
+			}
+<span class="nc" id="L655">		}catch(IOException e){</span>
+<span class="nc" id="L656">			throw new IOException(&quot;could parse not tagged data record&quot;, e);</span>
+<span class="fc" id="L657">		}</span>
+<span class="fc" id="L658">		return map;</span>
+	}
+
+	private static void visitCorrectTaggedDataRecordViaReflection(AbiChromatogramFileVisitor visitor, TaggedDataRecord&lt;?,?&gt; record, byte[] abiDataBlock){
+	    try {
+<span class="fc" id="L663">            Method method =visitor.getClass().getMethod(&quot;visitTaggedDataRecord&quot;, record.getType(),record.getParsedDataType());</span>
+            
+<span class="fc" id="L665">            method.invoke(visitor, record, record.parseDataRecordFrom(abiDataBlock));</span>
+<span class="nc" id="L666">	    } catch (Exception e) {</span>
+<span class="nc" id="L667">            throw new IllegalArgumentException(&quot;could not visit tagged data record &quot;+ record,e);</span>
+<span class="fc" id="L668">        }</span>
+<span class="fc" id="L669">	}</span>
+	private static byte[] parseTraceDataBlock(InputStream in, int lengthOfDataBlock) throws IOException{
+		
+		try {
+<span class="fc" id="L673">			return IOUtil.toByteArray(in, lengthOfDataBlock);</span>
+<span class="nc" id="L674">		} catch (IOException e) {</span>
+<span class="nc" id="L675">			throw new IOException(&quot;could not parse trace data block&quot;, e);</span>
+		}
+	}
+	private static int parseTaggedRecordOffset(InputStream in) throws IOException {
+		try{
+<span class="fc" id="L680">			IOUtil.blockingSkip(in, 4);</span>
+<span class="fc" id="L681">			return (int)IOUtil.readUnsignedInt(in);</span>
+<span class="nc" id="L682">			}catch(IOException e){</span>
+<span class="nc" id="L683">				throw new IOException(&quot;could not parse number of tagged records&quot;, e);</span>
+			}
+	}
+
+	private static long parseNumTaggedRecords(InputStream in) throws IOException{
+		try{
+<span class="fc" id="L689">		IOUtil.blockingSkip(in, 14);</span>
+<span class="fc" id="L690">		return IOUtil.readUnsignedInt(in);</span>
+<span class="nc" id="L691">		}catch(IOException e){</span>
+<span class="nc" id="L692">			throw new IOException(&quot;could not parse number of tagged records&quot;, e);</span>
+		}
+	}
+
+	private static void verifyMagicNumber(InputStream in) throws IOException {
+		try {
+<span class="fc" id="L698">			byte[] magicNumber = IOUtil.toByteArray(in, 4);</span>
+<span class="pc bpc" id="L699" title="1 of 2 branches missed.">			if(!AbiUtil.isABIMagicNumber(magicNumber)){</span>
+<span class="nc" id="L700">				throw new IOException(&quot;magic number does not match AB1 format &quot;+ Arrays.toString(magicNumber));</span>
+			}
+<span class="nc" id="L702">		} catch (IOException e) {</span>
+<span class="nc" id="L703">			throw new IOException(&quot;could not read magic number&quot;, e);</span>
+<span class="fc" id="L704">		}</span>
+		
+		
+<span class="fc" id="L707">	}</span>
+	/**
+	 * {@code GroupedTaggedRecords} groups all the different types
+	 * of {@link TaggedDataRecord}s by class and provides mappings
+	 * for each type by TaggedDataName.  This simplifies searching for data
+	 * and allows the same taggedDataName to return differnt TaggedDataRecord
+	 * types.
+	 * @author dkatzel
+	 *
+	 *
+	 */
+<span class="fc" id="L718">	private static class GroupedTaggedRecords{</span>
+<span class="fc" id="L719">		private final Map&lt;TaggedDataName,List&lt;AsciiTaggedDataRecord&gt;&gt; asciiDataRecords = new EnumMap&lt;TaggedDataName, List&lt;AsciiTaggedDataRecord&gt;&gt;(TaggedDataName.class);</span>
+	
+<span class="fc" id="L721">		private final Map&lt;TaggedDataName,List&lt;FloatArrayTaggedDataRecord&gt;&gt; floatDataRecords = new EnumMap&lt;TaggedDataName, List&lt;FloatArrayTaggedDataRecord&gt;&gt;(TaggedDataName.class);</span>
+<span class="fc" id="L722">		private final Map&lt;TaggedDataName,List&lt;ByteArrayTaggedDataRecord&gt;&gt; byteArrayRecords = new EnumMap&lt;TaggedDataName, List&lt;ByteArrayTaggedDataRecord&gt;&gt;(TaggedDataName.class);</span>
+	    
+<span class="fc" id="L724">		private final Map&lt;TaggedDataName,List&lt;ShortArrayTaggedDataRecord&gt;&gt; shortArrayDataRecords = new EnumMap&lt;TaggedDataName, List&lt;ShortArrayTaggedDataRecord&gt;&gt;(TaggedDataName.class);</span>
+		
+<span class="fc" id="L726">		private final Map&lt;TaggedDataName,List&lt;IntArrayTaggedDataRecord&gt;&gt; intArrayDataRecords = new EnumMap&lt;TaggedDataName, List&lt;IntArrayTaggedDataRecord&gt;&gt;(TaggedDataName.class);</span>
+		
+<span class="fc" id="L728">		private final Map&lt;TaggedDataName,List&lt;PascalStringTaggedDataRecord&gt;&gt; pascalStringDataRecords = new EnumMap&lt;TaggedDataName, List&lt;PascalStringTaggedDataRecord&gt;&gt;(TaggedDataName.class);</span>
+
+<span class="fc" id="L730">		private final Map&lt;TaggedDataName,List&lt;DateTaggedDataRecord&gt;&gt; dateDataRecords = new EnumMap&lt;TaggedDataName, List&lt;DateTaggedDataRecord&gt;&gt;(TaggedDataName.class);</span>
+		
+<span class="fc" id="L732">		private final Map&lt;TaggedDataName,List&lt;TimeTaggedDataRecord&gt;&gt; timeDataRecords = new EnumMap&lt;TaggedDataName, List&lt;TimeTaggedDataRecord&gt;&gt;(TaggedDataName.class);</span>
+<span class="fc" id="L733">		private final Map&lt;TaggedDataName,List&lt;UserDefinedTaggedDataRecord&lt;?,?&gt;&gt;&gt; userDefinedDataRecords = new EnumMap&lt;TaggedDataName, List&lt;UserDefinedTaggedDataRecord&lt;?,?&gt;&gt;&gt;(TaggedDataName.class);</span>
+        
+		public void add(TaggedDataRecord&lt;?,?&gt; record){
+<span class="pc bfc" id="L736" title="All 7 branches covered.">			switch(record.getDataType()){</span>
+							
+			case DATE:
+<span class="fc" id="L739">				add(record, dateDataRecords);</span>
+<span class="fc" id="L740">				break;</span>
+			case FLOAT:
+<span class="fc" id="L742">				add(record, floatDataRecords);</span>
+<span class="fc" id="L743">				break;</span>
+			case INTEGER:
+<span class="pc bpc" id="L745" title="1 of 2 branches missed.">				if(record instanceof DefaultShortArrayTaggedDataRecord){</span>
+<span class="fc" id="L746">					add(record, shortArrayDataRecords);</span>
+				}else{
+<span class="nc" id="L748">					add(record, intArrayDataRecords);</span>
+				}
+<span class="nc" id="L750">				break;</span>
+			case PASCAL_STRING:
+<span class="fc" id="L752">				add(record, pascalStringDataRecords);</span>
+<span class="fc" id="L753">				break;</span>
+			case TIME:
+<span class="fc" id="L755">				add(record, timeDataRecords);</span>
+<span class="fc" id="L756">				break;</span>
+			case USER_DEFINED:
+<span class="fc" id="L758">			    add(record, userDefinedDataRecords);</span>
+<span class="fc" id="L759">			    break;</span>
+			default:
+<span class="fc bfc" id="L761" title="All 2 branches covered.">			    if(record instanceof StringTaggedDataRecord){</span>
+<span class="fc" id="L762">			        add(record, asciiDataRecords);</span>
+			    }else{
+<span class="fc" id="L764">			        add(record, byteArrayRecords);</span>
+			    }
+				break;
+			}
+<span class="fc" id="L768">		}</span>
+		
+		@SuppressWarnings(&quot;unchecked&quot;)
+		private &lt;T extends TaggedDataRecord&lt;?,?&gt;&gt; void add(TaggedDataRecord&lt;?,?&gt; record, Map&lt;TaggedDataName,List&lt;T&gt;&gt; map){
+<span class="fc" id="L772">			TaggedDataName name = record.getTagName();</span>
+<span class="fc bfc" id="L773" title="All 2 branches covered.">			if(!map.containsKey(name)){</span>
+<span class="fc" id="L774">				map.put(name, new ArrayList&lt;T&gt;());</span>
+			}
+<span class="fc" id="L776">			map.get(name).add((T)record);</span>
+<span class="fc" id="L777">		}</span>
+	}
+	/**
+	 * {@code Noise} contains the noise factor for
+	 * each channel.
+	 * @author dkatzel
+	 * @see SignalScalingFactor
+	 *
+	 */
+<span class="fc" id="L786">	private static class Noise{</span>
+	    private float aNoise,cNoise,gNoise,tNoise;
+	    
+	    static Noise create(List&lt;Nucleotide&gt; channelOrder, float[] noise){
+<span class="fc" id="L790">	        Noise n = new Noise();</span>
+<span class="fc" id="L791">            int i=0;</span>
+<span class="fc bfc" id="L792" title="All 2 branches covered.">            for(Nucleotide channel:channelOrder){</span>
+<span class="fc bfc" id="L793" title="All 4 branches covered.">                switch(channel){</span>
+<span class="fc" id="L794">                    case Adenine:   n.aNoise= noise[i];</span>
+<span class="fc" id="L795">                                    break;</span>
+<span class="fc" id="L796">                    case Cytosine:   n.cNoise= noise[i];</span>
+<span class="fc" id="L797">                                    break;</span>
+<span class="fc" id="L798">                    case Guanine:   n.gNoise= noise[i];</span>
+<span class="fc" id="L799">                                    break;</span>
+<span class="fc" id="L800">                    default:        n.tNoise= noise[i];</span>
+                                    break;
+                }
+<span class="fc" id="L803">                i++;</span>
+<span class="fc" id="L804">            }</span>
+<span class="fc" id="L805">            return n;</span>
+	    }
+	    
+	    @Override
+	    public String toString(){
+<span class="fc" id="L810">	        return String.format(&quot;A:%f,C:%f,G:%f,T:%f&quot;, aNoise,cNoise,gNoise,tNoise);</span>
+	    }
+         
+	}
+	/**
+	 * {@code SignalScalingFactor} contains the scaling factor
+	 * for each of the 4 channels.  This metric can be useful
+	 * to determine if there is too much or too little DNA
+	 * being sequenced.
+	 * @author dkatzel
+	 *
+	 *
+	 */
+<span class="fc" id="L823">	private static class SignalScalingFactor{</span>
+	    
+<span class="fc" id="L825">	    private short aScale=-1,cScale=-1,gScale=-1,tScale =-1;</span>
+	    
+	    static SignalScalingFactor create(List&lt;Nucleotide&gt; channelOrder, List&lt;Short&gt; scalingFactors){
+<span class="fc" id="L828">	        SignalScalingFactor sf= new SignalScalingFactor();	         </span>
+<span class="fc" id="L829">    	    Iterator&lt;Short&gt; scaleIterator = scalingFactors.iterator();</span>
+<span class="fc bfc" id="L830" title="All 2 branches covered.">    	    for(Nucleotide channel : channelOrder){</span>
+<span class="fc" id="L831">    	        short scale = scaleIterator.next();</span>
+<span class="fc bfc" id="L832" title="All 4 branches covered.">    	        switch(channel){</span>
+    	            case Adenine:
+<span class="fc" id="L834">    	                sf.aScale = scale;</span>
+<span class="fc" id="L835">    	                break;</span>
+    	            case Cytosine:
+<span class="fc" id="L837">    	                sf.cScale = scale;</span>
+<span class="fc" id="L838">    	                break;</span>
+    	            case Guanine:
+<span class="fc" id="L840">    	                sf.gScale = scale;</span>
+<span class="fc" id="L841">    	                break;</span>
+    	            default:
+<span class="fc" id="L843">    	                sf.tScale = scale;</span>
+    	                break;
+    	        }
+<span class="fc" id="L846">    	    }</span>
+<span class="fc" id="L847">    	    return sf;</span>
+	}
+	    
+	    @Override
+	    public String toString(){
+<span class="fc" id="L852">	        return String.format(&quot;A:%d,C:%d,G:%d,T:%d&quot;, </span>
+<span class="fc" id="L853">                    aScale,cScale,gScale,tScale);</span>
+	    }
+	}
+	/**
+	 * {@code ShortTaggedDataRecordPropertyHandler} sets
+	 * the appropriate chromatogram properites (comments)
+	 * based on the Ab1 ShortTaggedDataRecord encountered.
+	 * @author dkatzel
+	 *
+	 *
+	 */
+<span class="pc" id="L864">	private enum ShortTaggedDataRecordPropertyHandler{</span>
+	    
+<span class="fc" id="L866">	    LANE(TaggedDataName.LANE,&quot;LANE&quot;),</span>
+<span class="fc" id="L867">	    LASER_POWER(TaggedDataName.LASER_POWER,&quot;LsrP&quot;),</span>
+<span class="fc" id="L868">	    B1Pt(TaggedDataName.B1Pt,&quot;B1Pt&quot;),</span>
+<span class="fc" id="L869">	    Scan(TaggedDataName.Scan,&quot;Scan&quot;),</span>
+<span class="fc" id="L870">	    LENGTH_OF_DETECTOR(TaggedDataName.LENGTH_TO_DETECTOR,&quot;LNTD&quot;),</span>
+<span class="fc" id="L871">	    JTC_START_POINT(TaggedDataName.ANALYSIS_START_SCAN_POINT,&quot;ASPT&quot;),</span>
+<span class="fc" id="L872">	    JTC_END_POINT(TaggedDataName.ANALYSIS_ENDING_SCAN_POINT,&quot;AEPT&quot;),</span>
+	    ;
+	    private final TaggedDataName dataName;
+	    private final String propertyKey;
+
+        private ShortTaggedDataRecordPropertyHandler(TaggedDataName dataName,
+<span class="fc" id="L878">                String propertyKey) {</span>
+<span class="fc" id="L879">            this.dataName = dataName;</span>
+<span class="fc" id="L880">            this.propertyKey = propertyKey;</span>
+<span class="fc" id="L881">        }</span>
+
+
+        /**
+         * If the given map of TaggedData contains the appropriate record,
+         * then generate a key, value comment and add it to the given property map.
+         * @param map the map of TaggedDataName to {@link ShortArrayTaggedDataRecord}s.
+         * @param traceData the ab1 trace data which may need to be parsed to generate the comment.
+         * @param props the key value pair map of comments which is to be modified.
+         */
+        void handle(Map&lt;TaggedDataName, List&lt;ShortArrayTaggedDataRecord&gt;&gt; map,byte[] traceData, Map&lt;String,String&gt; props){
+<span class="fc bfc" id="L892" title="All 2 branches covered.">	        if(map.containsKey(dataName)){</span>
+<span class="fc" id="L893">	           props.put(propertyKey, &quot;&quot;+map.get(dataName).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]);</span>
+	        }
+<span class="fc" id="L895">	    }</span>
+	}
+	
+	 private static final class AbiFileChromatogramParser  extends AbiChromatogramParser{
+	    	private final File abiFile;
+
+<span class="fc" id="L901">			public AbiFileChromatogramParser(File abiFile) {</span>
+<span class="pc bpc" id="L902" title="1 of 2 branches missed.">				if(abiFile ==null){</span>
+<span class="nc" id="L903">					throw new NullPointerException(&quot;abi file can not be null&quot;);</span>
+				}
+<span class="fc" id="L905">				this.abiFile = abiFile;</span>
+<span class="fc" id="L906">			}</span>
+
+			@Override
+			public void accept(ChromatogramFileVisitor visitor) throws IOException {
+<span class="fc" id="L910">				InputStream in = new BufferedInputStream(new FileInputStream(abiFile));</span>
+				try{
+<span class="fc" id="L912">					parse(in, visitor);</span>
+				}finally{
+<span class="pc" id="L914">					IOUtil.closeAndIgnoreErrors(in);</span>
+<span class="fc" id="L915">				}</span>
+				
+<span class="fc" id="L917">			}</span>
+	    	
+	    	
+	    }
+	    
+	    private static final class InputStreamChromatogramParser  extends AbiChromatogramParser{
+	    	private final InputStream in;
+<span class="fc" id="L924">	    	private volatile boolean readAlready=false;</span>
+	    	
+<span class="fc" id="L926">			public InputStreamChromatogramParser(InputStream in) {</span>
+<span class="pc bpc" id="L927" title="1 of 2 branches missed.">				if(in ==null){</span>
+<span class="nc" id="L928">					throw new NullPointerException(&quot;inputstream can not be null&quot;);</span>
+				}
+<span class="fc" id="L930">				this.in = in;</span>
+<span class="fc" id="L931">			}</span>
+
+			@Override
+			public synchronized void accept(ChromatogramFileVisitor visitor) throws IOException {
+<span class="pc bpc" id="L935" title="1 of 2 branches missed.">				if(readAlready){</span>
+<span class="nc" id="L936">					throw new IllegalStateException(&quot;already parsed inputstream&quot;);</span>
+				}
+<span class="fc" id="L938">				readAlready=true;</span>
+<span class="fc" id="L939">				parse(in, visitor);			</span>
+				
+<span class="fc" id="L941">			}</span>
+	    	
+	    	
+	    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

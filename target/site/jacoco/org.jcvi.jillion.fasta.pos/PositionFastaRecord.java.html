@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>PositionFastaRecord.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.fasta.pos</a> &gt; <span class="el_source">PositionFastaRecord.java</span></div><h1>PositionFastaRecord.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.fasta.pos;
+
+
+import org.jcvi.jillion.core.pos.Position;
+import org.jcvi.jillion.core.pos.PositionSequence;
+import org.jcvi.jillion.core.util.ObjectsUtil;
+import org.jcvi.jillion.fasta.FastaRecord;
+
+
+public final class PositionFastaRecord implements FastaRecord&lt;Position, PositionSequence&gt;{
+	
+	private final String identifier;
+	private final String comments;
+    private final PositionSequence positions;
+    
+    public PositionFastaRecord(String id, PositionSequence positions){
+<span class="fc" id="L37">        this(id, null, positions);</span>
+<span class="fc" id="L38">    }</span>
+<span class="fc" id="L39">    public PositionFastaRecord(String id, String comments, PositionSequence positions){</span>
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">    	if(id ==null){</span>
+<span class="nc" id="L41">    		throw new NullPointerException(&quot;id can not be null&quot;);</span>
+    	}
+<span class="pc bpc" id="L43" title="1 of 2 branches missed.">    	if(positions ==null){</span>
+<span class="nc" id="L44">    		throw new NullPointerException(&quot;positions can not be null&quot;);</span>
+    	}
+<span class="fc" id="L46">        this.identifier = id;</span>
+<span class="fc" id="L47">        this.comments = comments;</span>
+<span class="fc" id="L48">        this.positions = positions;</span>
+        
+<span class="fc" id="L50">    }</span>
+    /**
+     * @return A &lt;code&gt;String&lt;/code&gt;.
+     */
+    public String getId()
+    {
+<span class="fc" id="L56">        return this.identifier;</span>
+    }
+
+	/**
+     * @return A &lt;code&gt;String&lt;/code&gt;.
+     */
+    public String getComment()
+    {
+<span class="fc" id="L64">        return this.comments;</span>
+    }
+  
+   
+    
+    @Override
+	public String toString() {
+<span class="nc" id="L71">		return &quot;PositionSequenceFastaRecord [identifier=&quot; + identifier</span>
+				+ &quot;, comments=&quot; + comments + &quot;, positions=&quot; + positions + &quot;]&quot;;
+	}
+    
+    @Override
+    public int hashCode()
+    {
+<span class="nc" id="L78">        final int prime = 31;</span>
+<span class="nc" id="L79">        int result = 1;</span>
+<span class="nc" id="L80">        result = prime * result + this.identifier.hashCode();</span>
+<span class="nc" id="L81">        result = prime * result + this.getSequence().hashCode();</span>
+<span class="nc" id="L82">        return result;</span>
+    }
+    
+    @Override
+    public boolean equals(Object obj)
+    {
+<span class="pc bpc" id="L88" title="1 of 2 branches missed.">        if (this == obj){</span>
+<span class="nc" id="L89">            return true;</span>
+        }
+<span class="pc bpc" id="L91" title="1 of 2 branches missed.">        if (!(obj instanceof PositionFastaRecord)){</span>
+<span class="nc" id="L92">            return false;</span>
+        }
+<span class="fc" id="L94">        PositionFastaRecord other = (PositionFastaRecord)obj;</span>
+<span class="fc" id="L95">		return </span>
+        
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">        ObjectsUtil.nullSafeEquals(getId(), other.getId())</span>
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">         &amp;&amp; ObjectsUtil.nullSafeEquals(getSequence(), other.getSequence());</span>
+    }   
+
+   
+
+   
+    @Override
+    public PositionSequence getSequence() {
+<span class="fc" id="L106">        return positions;</span>
+    }
+    
+    
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

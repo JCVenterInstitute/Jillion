@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ProteinSequence.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.core.residue.aa</a> &gt; <span class="el_source">ProteinSequence.java</span></div><h1>ProteinSequence.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.core.residue.aa;
+
+import java.io.Serializable;
+import java.util.function.Function;
+
+import org.jcvi.jillion.core.residue.ResidueSequence;
+
+/**
+ * {@code ProteinSequence} is a marker interface for
+ * {@link Sequence}s that contain {@link AminoAcid}s.
+ * &lt;br&gt;
+ * {@link ProteinSequence} is {@link Serializable} in a (hopefully)
+ * forwards compatible way. However, there is no 
+ * guarantee that the implementation will be the same
+ * or even that the implementation class will be the same;
+ * but the deserialized object should always be equal
+ * to the sequence that was serialized.
+ *
+ * @author dkatzel
+ */
+public interface ProteinSequence extends ResidueSequence&lt;AminoAcid, ProteinSequence, ProteinSequenceBuilder&gt;, Serializable {
+
+	@Override
+	ProteinSequenceBuilder toBuilder();
+	/**
+	 * Convert this sequence into a String using the user defined function 
+	 * to write out each AminoAcid.
+	 * @param toStringFunction  The Function to convert each amino acid
+	 * into a string.  If the function returns {@code null},
+	 * then that amino acid is not included in the resulting output String.
+	 * @return a new String; will never be null, but may be empty
+	 * if either this sequence is empty or the provided function always returns null.
+	 * 
+	 * @throws NullPointerException if toStringFunction is null.
+	 * 
+	 * @apiNote for example, to print each amino acid by its 3 letter code
+	 * instead of the one letter code:
+	 * &lt;pre&gt;
+	 * {@code sequence.toString(AminoAcid::get3LetterAbbreviation)}
+	 * &lt;/pre&gt;
+	 * 
+	 * @since 5.3
+	 */
+	@Override
+	default String toString(Function&lt;AminoAcid, String&gt; toStringFunction){
+<span class="nc" id="L66">	    return ResidueSequence.super.toString(toStringFunction);</span>
+	}
+    public static ProteinSequence of(String seq) {
+<span class="fc" id="L69">        return new ProteinSequenceBuilder(seq).build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

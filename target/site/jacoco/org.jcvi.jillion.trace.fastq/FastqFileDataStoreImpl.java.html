@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>FastqFileDataStoreImpl.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.trace.fastq</a> &gt; <span class="el_source">FastqFileDataStoreImpl.java</span></div><h1>FastqFileDataStoreImpl.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.trace.fastq;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Objects;
+import java.util.Optional;
+
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
+import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
+/**
+ * Simple implementation of {@link FastqFileDataStore}.
+ * 
+ * @author dkatzel
+ * @since 5.0
+ */
+final class FastqFileDataStoreImpl implements FastqFileDataStore{
+
+    private final FastqDataStore datastore;
+    private final FastqQualityCodec codec;
+    
+    private final File fastqFile;
+    
+    public FastqFileDataStoreImpl(FastqDataStore datastore,
+<span class="fc" id="L45">            FastqQualityCodec codec, File fastqFile) {</span>
+<span class="fc" id="L46">        Objects.requireNonNull(datastore);</span>
+<span class="fc" id="L47">        Objects.requireNonNull(codec);</span>
+        
+<span class="fc" id="L49">        this.datastore = datastore;</span>
+<span class="fc" id="L50">        this.codec = codec;</span>
+<span class="fc" id="L51">        this.fastqFile = fastqFile;</span>
+<span class="fc" id="L52">    }</span>
+
+    
+    @Override
+    public Optional&lt;File&gt; getFile() {
+<span class="nc" id="L57">        return Optional.ofNullable(fastqFile);</span>
+    }
+
+
+    @Override
+    public StreamingIterator&lt;String&gt; idIterator() throws DataStoreException {
+<span class="fc" id="L63">        return datastore.idIterator();</span>
+    }
+
+    @Override
+    public FastqRecord get(String id) throws DataStoreException {
+<span class="fc" id="L68">        return datastore.get(id);</span>
+    }
+
+    @Override
+    public boolean contains(String id) throws DataStoreException {
+<span class="fc" id="L73">        return datastore.contains(id);</span>
+    }
+
+    @Override
+    public long getNumberOfRecords() throws DataStoreException {
+<span class="fc" id="L78">        return datastore.getNumberOfRecords();</span>
+    }
+
+    @Override
+    public boolean isClosed() {
+<span class="nc" id="L83">        return datastore.isClosed();</span>
+    }
+
+    @Override
+    public StreamingIterator&lt;FastqRecord&gt; iterator() throws DataStoreException {
+<span class="fc" id="L88">        return datastore.iterator();</span>
+    }
+
+    @Override
+    public StreamingIterator&lt;DataStoreEntry&lt;FastqRecord&gt;&gt; entryIterator()
+            throws DataStoreException {
+<span class="fc" id="L94">        return datastore.entryIterator();</span>
+    }
+
+    @Override
+    public void close() throws IOException {
+<span class="fc" id="L99">        datastore.close();</span>
+<span class="fc" id="L100">    }</span>
+
+    @Override
+    public FastqQualityCodec getQualityCodec() {
+<span class="fc" id="L104">        return codec;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

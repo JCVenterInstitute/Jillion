@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>MultipleWrapper.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.core.util</a> &gt; <span class="el_source">MultipleWrapper.java</span></div><h1>MultipleWrapper.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Oct 28, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.core.util;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+/**
+ * {@code MultipleWrapper} uses dymanic proxies to wrap
+ * several instances of an interface.  This allows
+ * all wrapped instances to be called by only a single
+ * call to the wrapper.
+ * @author dkatzel
+ * 
+ * @param &lt;T&gt; the interface type to wrap to make several instances appear as a single one.
+ */
+public final class  MultipleWrapper&lt;T&gt; implements InvocationHandler{
+    
+	private final ReturnPolicy policy;
+<span class="fc" id="L47">    private final List&lt;T&gt; delegates = new ArrayList&lt;T&gt;();</span>
+	/**
+     * Since methods can only return a single
+     * return value, only one of the wrapped
+     * methods can be returned to the caller (even though
+     * they will all be called).
+     * @author dkatzel
+     */
+<span class="pc" id="L55">    public static enum ReturnPolicy{</span>
+        /**
+         * Return the first wrapped instance.
+         */
+<span class="fc" id="L59">        RETURN_FIRST,</span>
+        /**
+         * Return the last wrapped instance.
+         */
+<span class="fc" id="L63">        RETURN_LAST</span>
+    }
+    /**
+     * Create a dynamic proxy to wrap the given delegate instances.
+
+     * @param classType the class object of T.
+     * @param policy the return policy to use on methods that return something.
+     * @param delegates the list of delegates to wrap in the order in which 
+     * they will be called.
+     * @return a new instance of T that wraps the delegates.
+     * @throws IllegalArgumentException if no delegates are given
+     * @throws NullPointerException if classType ==null or policy ==null or any delegate ==null.
+     * 
+     * @param &lt;T&gt; the interface type to wrap to make several instances appear as a single one.
+     * 
+     */
+    @SuppressWarnings(&quot;unchecked&quot;)
+    public static &lt;T&gt; T createMultipleWrapper(Class&lt;T&gt; classType,ReturnPolicy policy, Iterable&lt;? extends T&gt; delegates){
+        
+<span class="fc" id="L82">        return (T) Proxy.newProxyInstance(classType.getClassLoader(), new Class&lt;?&gt;[]{classType}, </span>
+                new MultipleWrapper&lt;T&gt;(policy,delegates));
+    }
+    /**
+     * Convenience constructor which is the same as calling
+     * {@link #createMultipleWrapper(Class, ReturnPolicy, Object...)
+     * createMultipleWrapper(classType,ReturnPolicy.RETURN_FIRST,delegates)}
+     * 
+     * @param classType the {@link Class} of T
+     * 
+     * @param delegates the instances to wrap; can not be null.
+     * 
+     * @see #createMultipleWrapper(Class, ReturnPolicy, Object...)
+     */
+    public static &lt;T&gt; T createMultipleWrapper(Class&lt;T&gt; classType,Iterable&lt;? extends T&gt; delegates){
+<span class="fc" id="L97">       return createMultipleWrapper(classType,ReturnPolicy.RETURN_FIRST,delegates);</span>
+    }
+    /**
+     * Convenience constructor which is the same as calling
+     * {@link #createMultipleWrapper(Class, ReturnPolicy, Object...)
+     * createMultipleWrapper(classType,ReturnPolicy.RETURN_FIRST,delegates)}
+     * @see #createMultipleWrapper(Class, ReturnPolicy, Object...)
+     * 
+     * @param classType the {@link Class} of T
+     * 
+     * @param delegates the instances to wrap; can not be null.
+     */
+    @SafeVarargs
+    public static &lt;T&gt; T createMultipleWrapper(Class&lt;T&gt; classType,T... delegates){
+<span class="fc" id="L111">       return createMultipleWrapper(classType,ReturnPolicy.RETURN_FIRST,Arrays.asList(delegates));</span>
+    }
+    /**
+     * Convenience constructor which is the same as calling
+     * {@link #createMultipleWrapper(Class, ReturnPolicy, Object...)
+     * createMultipleWrapper(classType,ReturnPolicy.RETURN_FIRST,delegates)}
+     * @see #createMultipleWrapper(Class, ReturnPolicy, Object...)
+     * 
+     * 
+     * @param classType the {@link Class} of T
+     * @param policy the {@link ReturnPolicy} to use for methods that return a value.
+     * 
+     * @param delegates the instances to wrap; can not be null.
+     */
+    @SafeVarargs
+    public static &lt;T&gt; T createMultipleWrapper(Class&lt;T&gt; classType,ReturnPolicy policy,T... delegates){
+<span class="fc" id="L127">       return createMultipleWrapper(classType,policy,Arrays.asList(delegates));</span>
+    }
+    
+    
+<span class="fc" id="L131">    private MultipleWrapper(ReturnPolicy policy,Iterable&lt;? extends T&gt; delegates){</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">        if(policy==null){</span>
+<span class="fc" id="L133">            throw new NullPointerException(&quot;policy can not be null&quot;);</span>
+        }
+        
+<span class="fc" id="L136">        this.policy = policy;</span>
+<span class="fc bfc" id="L137" title="All 2 branches covered.">        for(T delegate : delegates){</span>
+<span class="fc bfc" id="L138" title="All 2 branches covered.">            if(delegate ==null){</span>
+<span class="fc" id="L139">                throw new NullPointerException(&quot;delegate can not be null&quot;);</span>
+            }
+<span class="fc" id="L141">            this.delegates.add(delegate);</span>
+<span class="fc" id="L142">        }    </span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">        if(this.delegates.size()==0){</span>
+<span class="fc" id="L144">            throw new IllegalArgumentException(&quot;must wrap at least one delegate&quot;);</span>
+        }
+<span class="fc" id="L146">    }</span>
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args)
+            throws Throwable {
+<span class="fc" id="L150">        List&lt;Object&gt; returns = new ArrayList&lt;Object&gt;(delegates.size());</span>
+        try{
+<span class="fc bfc" id="L152" title="All 2 branches covered.">	        for(T delegate :delegates){</span>
+<span class="fc" id="L153">	            returns.add(method.invoke(delegate, args));</span>
+<span class="fc" id="L154">	        }</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">	        if(policy == ReturnPolicy.RETURN_LAST){</span>
+<span class="fc" id="L156">	            return returns.get(returns.size()-1);</span>
+	        }
+<span class="fc" id="L158">	        return returns.get(0);</span>
+<span class="nc" id="L159">        }catch(InvocationTargetException e){</span>
+<span class="nc" id="L160">        	throw e.getCause();</span>
+        }
+      
+    }
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

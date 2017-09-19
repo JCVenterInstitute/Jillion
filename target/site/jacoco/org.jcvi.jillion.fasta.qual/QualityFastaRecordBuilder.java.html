@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>QualityFastaRecordBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.fasta.qual</a> &gt; <span class="el_source">QualityFastaRecordBuilder.java</span></div><h1>QualityFastaRecordBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.fasta.qual;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.shared.fasta.AbstractFastaRecordBuilder;
+/**
+ * {@code QualityFastaRecordBuilder} is a factory class
+ * that makes instances of {@link QualityFastaRecord}s.
+ * Depending on the different parameters, the factory might
+ * choose to return different implementations.
+ * @author dkatzel
+ *
+ */
+public final class QualityFastaRecordBuilder extends AbstractFastaRecordBuilder&lt;PhredQuality, QualitySequence,QualityFastaRecord,QualityFastaRecordBuilder&gt; {
+	/**
+	 * Pattern used to pull out individual quality
+	 * values from the body of a string (or fasta file).
+	 */
+<span class="fc" id="L43">	private static final Pattern QUAL_BODY_PATTERN = Pattern.compile(&quot;\\d+&quot;);</span>
+	/**
+	 * Create a new builder instance for the given id and 
+	 * entire quality values as a human readable string.
+	 * @param id the id of the quality fasta record; can not be null.
+	 * @param entireRecordBody a string representation of the quality sequence,
+     *  must contain whitespace to separate quality values; each quality value
+     *  may have leading
+     *  zeros but can not be null.
+     *  @throws NullPointerException if either parameter is null.
+	 */
+	public QualityFastaRecordBuilder(String id, String entireRecordBody){
+<span class="fc" id="L55">		this(id,parseQualitySequence(entireRecordBody));</span>
+<span class="fc" id="L56">	}</span>
+	/**
+	 * Create a new builder instance for the given id and {@link QualitySequence}.
+	 * @param id the id of the quality fasta record; can not be null.
+	 * @param sequence the quality values of this 
+	 *  @throws NullPointerException if either parameter is null.
+	 */
+	
+	private static QualitySequence parseQualitySequence(String sequence) {
+<span class="fc" id="L65">		QualitySequenceBuilder builder = new QualitySequenceBuilder(sequence.length());</span>
+		
+<span class="fc" id="L67">		Matcher m = QUAL_BODY_PATTERN.matcher(sequence);</span>
+<span class="fc bfc" id="L68" title="All 2 branches covered.">		while(m.find()){</span>
+<span class="fc" id="L69">			builder.append(Byte.parseByte(m.group()));</span>
+		}
+		
+<span class="fc" id="L72">    	return builder.build();</span>
+	}
+	public QualityFastaRecordBuilder(String id, QualitySequence sequence) {
+<span class="fc" id="L75">		super(id, sequence);</span>
+<span class="fc" id="L76">	}</span>
+	@Override
+	protected QualityFastaRecord createNewInstance(String id, QualitySequence sequence,
+			String comment) {
+<span class="fc bfc" id="L80" title="All 2 branches covered.">		if(comment ==null){</span>
+<span class="fc" id="L81">			return new UncommentedQualityFastaRecord(id, sequence);</span>
+		}
+<span class="fc" id="L83">		return new CommentedQualityFastaRecord(id, sequence, comment);</span>
+	}
+    @Override
+    protected QualityFastaRecordBuilder getThis() {
+<span class="fc" id="L87">        return this;</span>
+    }
+    @Override
+    protected QualityFastaRecordBuilder newBuilder(String id,
+            QualitySequence seq, String comment) {
+<span class="nc" id="L92">        return new QualityFastaRecordBuilder(id, seq).comment(comment);</span>
+    }
+	
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

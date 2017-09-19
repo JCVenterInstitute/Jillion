@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Encoding.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.sam</a> &gt; <span class="el_source">Encoding.java</span></div><h1>Encoding.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.sam;
+
+import java.io.File;
+import java.io.IOException;
+
+import org.jcvi.jillion.internal.sam.index.BamIndexer;
+import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
+import org.jcvi.jillion.sam.header.SamHeader;
+
+/**
+ * {@code Encoding}
+ * handles writing out 
+ * the different SAM or BAM encoded files.
+ * 
+ * @author dkatzel
+ *
+ */
+<span class="pc" id="L38">enum Encoding{</span>
+	/**
+	 * Encode data as SAM files.
+	 */
+<span class="fc" id="L42">	SAM(&quot;.sam&quot;){</span>
+		@Override
+		SamWriter createPreSortedOutputWriter(File out, SamHeader header, SamAttributeValidator validator, BamIndexer indexer, boolean includeIndexMetaData)
+				throws IOException {
+			//indexer parameter ignored
+			//since it is only used in BAM files.
+<span class="fc" id="L48">			return new PresortedSamFileWriter(out, header, validator);</span>
+		}
+		@Override
+		SamParser createNewNoValidationSamParser(File f) throws IOException {
+<span class="nc" id="L52">			return new SamFileParser(f, NullSamAttributeValidator.INSTANCE);</span>
+		}
+	},
+	/**
+	 * Encode data as BAM files.
+	 */
+<span class="fc" id="L58">	BAM(&quot;.bam&quot;){</span>
+		@Override
+		SamWriter createPreSortedOutputWriter(File out, SamHeader header, SamAttributeValidator validator, BamIndexer indexer, boolean includeIndexMetaData)
+				throws IOException {
+<span class="fc" id="L62">			return new PresortedBamFileWriter(header, out, indexer, validator,includeIndexMetaData);</span>
+		}
+
+		@Override
+		SamParser createNewNoValidationSamParser(File f) throws IOException {
+<span class="nc" id="L67">			return new BamFileParser(f, NullSamAttributeValidator.INSTANCE);</span>
+		}
+		
+		
+	};
+	
+	private final String suffix;
+	
+<span class="fc" id="L75">	private Encoding(String suffix){</span>
+<span class="fc" id="L76">		this.suffix = suffix;</span>
+<span class="fc" id="L77">	}</span>
+	/**
+	 * Get the suffix for this encoding
+	 * for example BAM files suffix is {@literal &quot;.bam&quot;}.
+	 * @return a String will never be null.
+	 */
+	public String getSuffix() {
+<span class="nc" id="L84">		return suffix;</span>
+	}
+	/**
+	 * Create a new {@link SamWriter}
+	 * that will write out {@link SamRecord}s to the given file
+	 * without any validation performed by a 
+	 * {@link SamAttributeValidator}.
+	 * This should only be used when the {@link SamRecord}s to write
+	 * have been previously
+	 * validated and presorted.
+	 * @param out the output file to write to if the file
+	 * already exists, it will be overwritten.
+	 * @param header the {@link SamHeader} to use.
+	 * @return a new {@link SamWriter} will never be null.
+	 * @throws IOException if there is a problem creating the new output file.
+	 */
+	SamWriter createPreSortedNoValidationOutputWriter(File out, SamHeader header, BamIndexer indexer, boolean includeIndexMetaData) throws IOException{
+		//no validation since we have already validated
+		//the reads when we added them to our in memcheck
+<span class="fc" id="L103">		return createPreSortedOutputWriter(out, header, NullSamAttributeValidator.INSTANCE, indexer, includeIndexMetaData);</span>
+	}
+	
+	
+	abstract SamParser createNewNoValidationSamParser(File f) throws IOException;
+	/**
+	 * Create a new {@link SamWriter}
+	 * that will write out {@link SamRecord}s to the given file
+	 * and validate those {@link SamRecord}s using the given
+	 * {@link SamAttributeValidator}.
+	 * This should only be used when the {@link SamRecord}s to write
+	 * have been previously
+	 * validated and presorted.
+	 * @param out the output file to write to if the file
+	 * already exists, it will be overwritten.
+	 * @param header the {@link SamHeader} to use; can not be null.
+	 * @param validator the {@link SamAttributeValidator} to use;
+	 * can not be null.
+	 * @return a new {@link SamWriter} will never be null.
+	 * @throws IOException if there is a problem creating the new output file.
+	 */
+	abstract SamWriter createPreSortedOutputWriter(File out, SamHeader header, SamAttributeValidator validator, BamIndexer indexer, boolean includeIndexMetaData)throws IOException;
+
+	/**
+	 * Create a new {@link SamWriter} implementation
+	 * that can take {@link SamRecord}s given to it via
+	 * the {@link #writeRecord(SamRecord)}
+	 * in ANY ORDER and write out the SAM or BAM file
+	 * sorted by the manner specified in the given {@link SamHeader#getSortOrder()}.
+	 * @param out the output file to write.
+	 * @param tmpDirRoot the temp directory root to write temp files underneath.
+	 * If this value is null, then the system default temp dir is used.
+	 * @param header the {@link SamHeader} to write and to validate against.
+	 * @param maxRecordsToKeepInMemory the maximum number of {@link SamRecord}s
+	 * to save in memory at any one time, once this threshold has been reached,
+	 * the records are persisted to a temp file under the given tempDirRoot.
+	 * @param validator  the {@link SamAttributeValidator} to use;
+	 * can not be null. 
+	 * @param includeIndexMetaData if the provided {@link BamIndexer} is not null,
+	 * should the samtools/picard specific additional metadata be included also.
+	 * 
+	 * @return a new {@link SamWriter} will never be null.
+	 * @throws IOException if there is a problem creating the new output file.
+	 */
+	SamWriter createReSortedOutputWriter(File out, File tmpDirRoot,
+			SamHeader header, int maxRecordsToKeepInMemory, SamAttributeValidator validator, BamIndexer indexer, boolean includeIndexMetaData)
+			throws IOException {
+<span class="fc" id="L150">		return new ReSortSamFileWriter(out, tmpDirRoot,header, maxRecordsToKeepInMemory, validator, this, indexer, includeIndexMetaData);</span>
+	}
+	
+	
+	/**
+	 * Parse the given file extension (no {@literal &quot;.&quot;})
+	 * and return the correct Encoding implementation.
+	 * @param extension the extension; may be null
+	 * or empty.
+	 * @return {@link Encoding#BAM}
+	 * if the extension is &quot;bam&quot; ignoring case,
+	 * &quot;sam&quot; otherwise.
+	 */
+	static Encoding parseEncoding(String extension){
+<span class="fc bfc" id="L164" title="All 2 branches covered.">		if(&quot;bam&quot;.equalsIgnoreCase(extension)){</span>
+<span class="fc" id="L165">			return BAM;</span>
+		}
+		//assume sam for all else ?
+<span class="fc" id="L168">		return SAM;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

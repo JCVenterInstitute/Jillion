@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DataHeader.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.trace.chromat.ztr.data</a> &gt; <span class="el_source">DataHeader.java</span></div><h1>DataHeader.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.internal.trace.chromat.ztr.data;
+
+/**
+ * {@code DataHeader} contains the various supported ZTR 1.2
+ * Header byte values which determines how a data block is encoded.
+ * @author dkatzel
+ *
+ *
+ */
+public final class DataHeader {
+
+    
+    /**
+     * Data header value specifying that this data block will not be encoded (raw).
+     */
+<span class="fc" id="L36">    public static final Byte RAW = Byte.valueOf((byte)0);</span>
+    /**
+     * Data header value specifying that this data block
+     *  will be encoded in run length encoding format.
+     */
+<span class="fc" id="L41">    public static final Byte RUN_LENGTH_ENCODED = Byte.valueOf((byte)1);</span>
+    /**
+     * Data header value specifying that this data block
+     *  will be compressed using zlib (probably Huffman).
+     */
+<span class="fc" id="L46">    public static final Byte ZLIB_ENCODED = Byte.valueOf((byte)2);</span>
+    /**
+     * Data header value specifying that this data block will be encoded
+     * as a (possibly multi level) delta encoding of byte values.
+     */
+<span class="fc" id="L51">    public static final Byte BYTE_DELTA_ENCODED = Byte.valueOf((byte)64);</span>
+    /**
+     * Data header value specifying that this data block will be encoded
+     * as a (possibly multi level) delta encoding of short values.
+     */
+<span class="fc" id="L56">    public static final Byte SHORT_DELTA_ENCODED = Byte.valueOf((byte)65);</span>
+    /**
+     * Data header value specifying that this data block will be encoded
+     * as a (possibly multi level) delta encoding of int values.
+     */
+<span class="fc" id="L61">    public static final Byte INTEGER_DELTA_ENCODED = Byte.valueOf((byte)66);</span>
+    /**
+     * Data header value specifying that this data block will be encoded
+     * to convert a signed short value into a byte value(assuming it fits).
+     */
+<span class="fc" id="L66">    public static final Byte SHRINK_SHORT_TO_BYTE_ENCODED = Byte.valueOf((byte)70);</span>
+    /**
+     * Data header value specifying that this data block will be encoded
+     * to convert a signed int value into a byte value(assuming it fits).
+     */
+<span class="fc" id="L71">    public static final Byte SHRINK_INTEGER_TO_BYTE_ENCODED = Byte.valueOf((byte)71);</span>
+    /**
+     * Data header value specifying that this data block will be encoded
+     * using a computing most frequent follow symbol table.
+     */
+<span class="fc" id="L76">    public static final Byte FOLLOW_DATA_ENCODED = Byte.valueOf((byte)72);</span>
+    
+<span class="nc" id="L78">    private DataHeader(){</span>
+    	//can not instantiate
+<span class="nc" id="L80">    }</span>
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

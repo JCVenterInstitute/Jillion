@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CodonSliceMapBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.util.slice</a> &gt; <span class="el_source">CodonSliceMapBuilder.java</span></div><h1>CodonSliceMapBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly.util.slice;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Objects;
+
+import org.jcvi.jillion.core.DirectedRange;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+
+
+public class CodonSliceMapBuilder{
+
+	private VariableWidthNucleotideSliceMap.Builder builder;
+	private final RnaEdit rnaEdit;
+	
+	public static CodonSliceMapBuilder create(NucleotideSequence fullgappedSequence, Collection&lt;DirectedRange&gt; ungappedExons){
+<span class="nc" id="L40">	    return new CodonSliceMapBuilder(ungappedExons, fullgappedSequence);</span>
+	}
+	
+<span class="nc" id="L43">	public CodonSliceMapBuilder(NucleotideSequence fullgappedSequence, Range ungappedExon){</span>
+<span class="nc" id="L44">		this.builder = new VariableWidthNucleotideSliceMap.Builder(fullgappedSequence, 3,ungappedExon);</span>
+<span class="nc" id="L45">		this.rnaEdit = null;</span>
+<span class="nc" id="L46">	}</span>
+<span class="nc" id="L47">	public CodonSliceMapBuilder(NucleotideSequence fullgappedSequence, Collection&lt;Range&gt; ungappedExons){</span>
+<span class="nc" id="L48">		this.builder = new VariableWidthNucleotideSliceMap.Builder(fullgappedSequence, 3,</span>
+<span class="nc" id="L49">									ungappedExons.toArray(new Range[ungappedExons.size()]));</span>
+<span class="nc" id="L50">		this.rnaEdit = null;</span>
+<span class="nc" id="L51">	}</span>
+	//order of parameters different to differentiate after type erasure...
+<span class="nc" id="L53">	private CodonSliceMapBuilder(Collection&lt;DirectedRange&gt; ungappedExons, NucleotideSequence fullgappedSequence){</span>
+	    //convert ungapped to gapped
+<span class="nc" id="L55">	    DirectedRange[] gappedExons = new DirectedRange[ungappedExons.size()];</span>
+<span class="nc" id="L56">	    int i=0;</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">	    for(DirectedRange r : ungappedExons){</span>
+<span class="nc" id="L58">	        gappedExons[i++] = DirectedRange.create(fullgappedSequence.toGappedRange(r.getRange()), r.getDirection());</span>
+<span class="nc" id="L59">	    }</span>
+	    
+<span class="nc" id="L61">            this.builder = new VariableWidthNucleotideSliceMap.Builder(fullgappedSequence, 3, gappedExons);</span>
+<span class="nc" id="L62">            this.rnaEdit = null;</span>
+<span class="nc" id="L63">    }</span>
+	
+<span class="fc" id="L65">	public CodonSliceMapBuilder(NucleotideSequence fullgappedSequence, Range ungappedExon, RnaEdit rnaEdit){</span>
+<span class="fc" id="L66">		this.rnaEdit = rnaEdit;</span>
+<span class="fc" id="L67">		NucleotideSequence editedReference = rnaEdit.editReference(fullgappedSequence)</span>
+<span class="fc" id="L68">													.build();</span>
+<span class="fc" id="L69">		Range updatedUngappedExon = new Range.Builder(ungappedExon)</span>
+<span class="fc" id="L70">											  .expandEnd(rnaEdit.getNumberOfBasesAdded())</span>
+<span class="fc" id="L71">											  .build();</span>
+<span class="fc" id="L72">		Range gappedEditedExon = Range.of(editedReference.getGappedOffsetFor((int)updatedUngappedExon.getBegin()),</span>
+<span class="fc" id="L73">										editedReference.getGappedOffsetFor((int)updatedUngappedExon.getEnd()));</span>
+<span class="fc" id="L74">		this.builder = new VariableWidthNucleotideSliceMap.Builder(editedReference, 3,gappedEditedExon);</span>
+<span class="fc" id="L75">	}</span>
+	
+	public CodonSliceMapBuilder add(int offset, NucleotideSequence seq){
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">		if(rnaEdit ==null){</span>
+<span class="nc" id="L79">			builder.add(offset, seq);</span>
+		}else{
+			//edit read's sequence
+			
+			//offset is affected
+			//if it is downstream of edit region
+<span class="fc" id="L85">			int adjustedStartOffset = rnaEdit.adjustStartOffset(offset);</span>
+<span class="fc" id="L86">			NucleotideSequenceBuilder editedReadBuilder = rnaEdit.editRead(</span>
+																	seq, 
+<span class="fc" id="L88">																	new Range.Builder(seq.getLength())</span>
+<span class="fc" id="L89">																				.shift(adjustedStartOffset)</span>
+<span class="fc" id="L90">																				.build());</span>
+			
+			
+<span class="fc" id="L93">			int lastNonGapOffset = editedReadBuilder.getGappedOffsetFor((int)(editedReadBuilder.getUngappedLength() -1));</span>
+<span class="fc" id="L94">			long numberOfTrailingGaps = editedReadBuilder.getLength() -	lastNonGapOffset -1;</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">			if(numberOfTrailingGaps &gt;0){</span>
+<span class="fc" id="L96">				editedReadBuilder.delete(new Range.Builder(numberOfTrailingGaps)</span>
+<span class="fc" id="L97">											.shift(lastNonGapOffset +1)</span>
+<span class="fc" id="L98">											.build());</span>
+			}
+			
+<span class="fc" id="L101">			builder.add(adjustedStartOffset, editedReadBuilder.build());</span>
+			
+		}
+<span class="fc" id="L104">		return this;</span>
+	}
+	
+	public VariableWidthNucleotideSliceMap build(){
+<span class="fc" id="L108">		return builder.build();</span>
+	}
+	
+	
+	public static class RnaEdit{
+		private final Range ungappedRegion;
+		private Range gappedCdsRange;
+		private final NucleotideSequence inputSequence, editedSequence;
+
+		private final int numberOfBasesAdded;
+		
+<span class="fc" id="L119">		public RnaEdit(Range ungappedRegion, NucleotideSequence inputSequence, NucleotideSequence editedSequence) {</span>
+<span class="fc" id="L120">			Objects.requireNonNull(ungappedRegion);</span>
+<span class="fc" id="L121">			Objects.requireNonNull(inputSequence);</span>
+<span class="fc" id="L122">			Objects.requireNonNull(editedSequence);</span>
+			
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">			if(ungappedRegion.getLength() != inputSequence.getUngappedLength()){</span>
+<span class="nc" id="L125">				throw new IllegalArgumentException(&quot;ungapped region does not match ungapped input sequence length &quot;+</span>
+<span class="nc" id="L126">			ungappedRegion.getLength() + &quot;  vs  &quot; + inputSequence.getUngappedLength());</span>
+			}
+<span class="fc" id="L128">			this.ungappedRegion = ungappedRegion;</span>
+<span class="fc" id="L129">			this.inputSequence = inputSequence;</span>
+<span class="fc" id="L130">			this.editedSequence = editedSequence;</span>
+<span class="fc" id="L131">			this.numberOfBasesAdded = (int)(editedSequence.getLength() - inputSequence.getLength());</span>
+<span class="fc" id="L132">		}</span>
+		
+		
+		public int getNumberOfBasesAdded() {
+<span class="fc" id="L136">			return numberOfBasesAdded;</span>
+		}
+
+		public int adjustStartOffset(int oldGappedOffset){
+<span class="fc bfc" id="L140" title="All 2 branches covered.">			if(oldGappedOffset &gt; gappedCdsRange.getEnd()){</span>
+				//need to shift it downstream by number of added bases
+<span class="fc" id="L142">				return oldGappedOffset + numberOfBasesAdded;</span>
+			}
+<span class="fc" id="L144">			return oldGappedOffset;</span>
+			
+		}
+
+		//plan:
+		//change this method to instead only pass in the seqBuilder
+		//which has been trimmed down to the rna edit region
+		//this way we will be able to reuse the method for both refs and reads
+		//and not have to worry the user about how to change things
+		//possibly provide the builder and an extra parameter of the start position
+		//or Range of interest that has to be edited.
+		protected void doEdit(int offset, NucleotideSequenceBuilder seq){
+			//only make edit if matches exactly
+			//ignoring gaps
+<span class="fc bfc" id="L158" title="All 2 branches covered.">			if(seq.isEqualToIgnoringGaps(inputSequence)){</span>
+				
+<span class="fc" id="L160">				int[] gaps =seq.getGapOffsets();</span>
+<span class="fc" id="L161">				seq.clear()</span>
+<span class="fc" id="L162">					.append(editedSequence);</span>
+				//add the gaps back in
+				//in the same locations
+				//to keep alignment
+<span class="fc bfc" id="L166" title="All 2 branches covered.">				for(int i=0; i&lt;gaps.length; i++){</span>
+<span class="fc" id="L167">					seq.insert(gaps[i], Nucleotide.Gap);</span>
+				}
+<span class="fc" id="L169">			}else{</span>
+				//all gaps in this edit region
+				//just add more gaps to account for
+				//added bases.
+				//downstream we will trim off trailing gaps
+				//so we can add gaps here without worry
+				//and maintain the alignment if we have more seq
+				//in this read beyond edit region
+<span class="fc" id="L177">				char[] gaps = new char[numberOfBasesAdded];</span>
+<span class="fc" id="L178">				Arrays.fill(gaps, '-');</span>
+<span class="fc" id="L179">				seq.append(gaps);		</span>
+				
+			}
+			
+<span class="fc" id="L183">		}</span>
+		protected void doEditMissing(NucleotideSequenceBuilder builder, long numberOfLeadingBasesMissing){
+			
+<span class="fc" id="L186">			char[] trailingGaps = new char[numberOfBasesAdded];</span>
+<span class="fc" id="L187">			Arrays.fill(trailingGaps, '-');</span>
+<span class="fc" id="L188">			builder.append(trailingGaps);</span>
+
+<span class="fc" id="L190">		}</span>
+		
+		public final NucleotideSequenceBuilder editReference(NucleotideSequence ref){
+<span class="fc" id="L193">			NucleotideSequenceBuilder builder = ref.toBuilder();</span>
+			
+<span class="fc" id="L195">			gappedCdsRange = builder.toGappedRange(ungappedRegion);</span>
+<span class="fc" id="L196">			NucleotideSequenceBuilder portionToEdit = builder.copy(gappedCdsRange);</span>
+			
+<span class="fc" id="L198">			doEdit((int)gappedCdsRange.getBegin(),portionToEdit);</span>
+			
+			
+<span class="fc" id="L201">			return builder.replace(gappedCdsRange, portionToEdit);</span>
+									
+		}
+		
+		public final NucleotideSequenceBuilder editRead(NucleotideSequence seq, Range gappedRefRange){
+<span class="fc" id="L206">			Range intersection = gappedRefRange.intersection(gappedCdsRange);</span>
+<span class="fc bfc" id="L207" title="All 2 branches covered.">			if(intersection.isEmpty()){</span>
+				//does not intersect
+				//so do not make any edits
+<span class="fc" id="L210">				return seq.toBuilder();</span>
+			}
+<span class="fc" id="L212">			NucleotideSequenceBuilder builder = seq.toBuilder();</span>
+<span class="fc" id="L213">			Range editRegion = new Range.Builder(intersection)</span>
+<span class="fc" id="L214">											.shift(-gappedRefRange.getBegin())</span>
+<span class="fc" id="L215">											.build();</span>
+<span class="fc" id="L216">			NucleotideSequenceBuilder portionToEdit =builder.copy(editRegion);</span>
+			
+<span class="fc" id="L218">			long numberOfLeadingBasesMissing = intersection.getBegin() - gappedCdsRange.getBegin(); </span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">			if(numberOfLeadingBasesMissing &gt;0){</span>
+				//we are missing the beginning of the edit region
+<span class="fc" id="L221">				doEditMissing(portionToEdit, numberOfLeadingBasesMissing);</span>
+			}else{			
+<span class="fc" id="L223">				doEdit((int)gappedCdsRange.getBegin(),portionToEdit);</span>
+			}
+<span class="fc" id="L225">			return builder.replace(editRegion, portionToEdit);</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

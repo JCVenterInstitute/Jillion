@@ -1,0 +1,413 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>BfqFileParser.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.maq.bfq</a> &gt; <span class="el_source">BfqFileParser.java</span></div><h1>BfqFileParser.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.maq.bfq;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.ByteOrder;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.zip.GZIPInputStream;
+
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
+import org.jcvi.jillion.trace.fastq.FastqParser;
+import org.jcvi.jillion.trace.fastq.FastqRecordVisitor;
+import org.jcvi.jillion.trace.fastq.FastqVisitor;
+import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback;
+import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback.FastqVisitorMemento;
+
+/**
+ * {@code BfqFileParser} is a {@link FastqParser}
+ * implementation that can read 
+ * MAQ's binary fastq file format ({@literal .bfq} files).
+ * @author dkatzel
+ *
+ */
+public abstract class BfqFileParser implements FastqParser{
+
+	
+	private final ByteOrder endian;
+	/**
+	 * Create a new {@link FastqParser} instance
+	 * to parse the given binary fastq file (bfq) using
+	 * the system endian.
+	 * This is the same as calling: 
+	 * {@link #create(File, ByteOrder) create(bfqFile, ByteOrder.nativeOrder())}
+	 * @param bfqFile the binary fastq file to parse.
+	 * @return a new {@link FastqParser} instance;
+	 * will never be null.
+	 * @throws IOException if the file does not exist.
+	 * @throws NullPointerException if bfqFile is null.
+	 */
+	public static FastqParser create(File bfqFile) throws IOException{
+<span class="nc" id="L67">		return create(bfqFile, ByteOrder.nativeOrder());</span>
+	}
+	/**
+	 * Create a new {@link FastqParser} instance
+	 * to parse the given binary fastq file (bfq) using
+	 * the given {@link ByteOrder}.
+	 * @param bfqFile the binary fastq file to parse.
+	 * @param endian the {@link ByteOrder} to use to parse the file.
+	 * Make sure the endian matches the endian of the machine that 
+	 * Maq was run on (or matches the {@link ByteOrder}
+	 * used by the {@link BfqFileWriterBuilder} )
+	 * that produced the file.
+	 * @return a new {@link FastqParser} instance;
+	 * will never be null.
+	 * @throws IOException if there is a problem file does not exist.
+	 * @throws NullPointerException if either parameter is null.
+	 */
+	public static FastqParser create(File bfqFile, ByteOrder endian) throws IOException{
+<span class="fc" id="L85">		return new BfqFileBasedParser(bfqFile, endian);</span>
+	}
+	
+	/**
+	 * Create a new {@link FastqParser} instance
+	 * to parse the given binary fastq (bfq) enoded inputStream using
+	 * the system endian.
+	 * This is the same as calling: 
+	 * {@link #create(InputStream, ByteOrder) create(bfqFileStream, ByteOrder.nativeOrder())}
+	 * @param bfqFileStream the binary fastq encoded {@link InputStream}to parse.
+	 * @return a new {@link FastqParser} instance;
+	 * will never be null.
+	 * @throws IOException if the file does not exist.
+	 * @throws NullPointerException if bfqFile is null.
+	 */
+	public static FastqParser create(InputStream bfqFileStream) throws IOException{
+<span class="nc" id="L101">		return create(bfqFileStream, ByteOrder.nativeOrder());</span>
+	}
+	/**
+	 * Create a new {@link FastqParser} instance
+	 * to parse the given binary fastq (bfq) enoded inputStream using
+	 * the given {@link ByteOrder}.
+	 * @param bfqFileStream the binary fastq encoded {@link InputStream}to parse.
+	 * @param endian the {@link ByteOrder} to use to parse the file.
+	 * Make sure the endian matches the endian of the machine that 
+	 * Maq was run on (or matches the {@link ByteOrder}
+	 * used by the {@link BfqFileWriterBuilder} )
+	 * that produced the file.
+	 * @return a new {@link FastqParser} instance;
+	 * will never be null.
+	 * @throws IOException if there is a problem file does not exist.
+	 * @throws NullPointerException if either parameter is null.
+	 */
+	public static FastqParser create(InputStream bfqFileStream, ByteOrder endian) throws IOException{
+<span class="nc" id="L119">		return new BfqInputStreamParser(bfqFileStream, endian);</span>
+	}
+	
+	
+<span class="fc" id="L123">	private BfqFileParser(ByteOrder endian) throws IOException {	</span>
+<span class="pc bpc" id="L124" title="1 of 2 branches missed.">		if(endian ==null){</span>
+<span class="nc" id="L125">			throw new NullPointerException(&quot;endian can not be null&quot;);</span>
+		}
+<span class="fc" id="L127">		this.endian = endian;</span>
+<span class="fc" id="L128">	}</span>
+
+	
+	@Override
+	public boolean canCreateMemento() {
+<span class="fc" id="L133">		return true;</span>
+	}
+	
+	@Override
+	public boolean isReadOnceOnly() {
+<span class="nc" id="L138">		return false;</span>
+	}
+	@Override
+	public boolean canParse() {
+<span class="nc" id="L142">		return true;</span>
+	}
+
+	@Override
+	public void parse(FastqVisitor visitor) throws IOException {
+<span class="pc bpc" id="L147" title="1 of 2 branches missed.">		if(visitor ==null){</span>
+<span class="nc" id="L148">			throw new NullPointerException(&quot;visitor can not be null&quot;);</span>
+		}
+<span class="fc" id="L150">		OpenAwareInputStream in =null;</span>
+		try{
+<span class="fc" id="L152">			in = createInputStream();		</span>
+<span class="fc" id="L153">			parseBqfData(visitor, in, 0);</span>
+		}finally{
+<span class="pc" id="L155">			IOUtil.closeAndIgnoreErrors(in);</span>
+<span class="fc" id="L156">		}</span>
+		
+<span class="fc" id="L158">	}</span>
+
+	private void parseBqfData(FastqVisitor visitor, OpenAwareInputStream in, long offset) throws IOException {
+<span class="fc" id="L161">		FastqRecordVisitor recordVisitor =null;</span>
+<span class="fc" id="L162">		long currentOffset = offset;</span>
+<span class="fc" id="L163">		Callback callback = createCallback(currentOffset);</span>
+<span class="fc bfc" id="L164" title="All 4 branches covered.">		while(in.isOpen() &amp;&amp; callback.keepParsing()){</span>
+<span class="fc" id="L165">			callback.updateCurrentOffset(currentOffset);</span>
+<span class="fc" id="L166">			int nameLength =IOUtil.readSignedInt(in, endian);</span>
+<span class="fc" id="L167">			String name = readNullTerminatedString(in, nameLength);</span>
+<span class="fc" id="L168">			int numBases =IOUtil.readSignedInt(in, endian);</span>
+<span class="fc" id="L169">			recordVisitor =visitor.visitDefline(callback, name, null);</span>
+			//each record is 8 bytes for the length fields
+			//plus the number of bases 
+			//plus the name length (which includes null terminal)
+<span class="fc" id="L173">			currentOffset += 8 + numBases + nameLength;</span>
+<span class="fc bfc" id="L174" title="All 2 branches covered.">			if(recordVisitor ==null){</span>
+				//skip
+<span class="fc" id="L176">				IOUtil.blockingSkip(in, numBases);</span>
+			}else{				
+<span class="fc" id="L178">				byte[] basesAndQualities= IOUtil.readByteArray(in, numBases);</span>
+				
+<span class="fc" id="L180">				StringBuilder basesBuilder = new StringBuilder(numBases);</span>
+<span class="fc" id="L181">				QualitySequenceBuilder qualitiesBuilder = new QualitySequenceBuilder(numBases)</span>
+<span class="fc" id="L182">																.turnOffDataCompression(true);</span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">				for(int i=0; i&lt;basesAndQualities.length; i++){</span>
+<span class="fc" id="L184">					int value = basesAndQualities[i];</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">					if(value ==0){</span>
+						//this is how MAQ encodes
+						//not an ACGT 
+						//should be converted into an N
+						//with quality 0
+<span class="fc" id="L190">						basesBuilder.append(Nucleotide.Unknown);</span>
+<span class="fc" id="L191">						qualitiesBuilder.append(0);</span>
+					}else{
+<span class="fc" id="L193">						int qv = value &amp; 0x3F;</span>
+<span class="fc" id="L194">						int base = value&gt;&gt;6 &amp; 0x3;</span>
+<span class="fc" id="L195">						basesBuilder.append(getBaseFromInt(base));</span>
+<span class="fc" id="L196">						qualitiesBuilder.append(qv);</span>
+					}
+				}
+				
+<span class="fc" id="L200">				recordVisitor.visitNucleotides(basesBuilder.toString());</span>
+<span class="pc bpc" id="L201" title="1 of 2 branches missed.">				if(callback.keepParsing()){</span>
+<span class="fc" id="L202">					recordVisitor.visitQualities(qualitiesBuilder.build());</span>
+				}
+<span class="pc bpc" id="L204" title="1 of 2 branches missed.">				if(callback.keepParsing()){</span>
+<span class="fc" id="L205">					recordVisitor.visitEnd();</span>
+				}
+			}
+<span class="fc" id="L208">		}</span>
+<span class="fc bfc" id="L209" title="All 2 branches covered.">		if(!callback.keepParsing()){</span>
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">			if(recordVisitor !=null){</span>
+<span class="fc" id="L211">				recordVisitor.halted();</span>
+			}
+<span class="fc" id="L213">			visitor.halted();</span>
+		}
+<span class="fc" id="L215">		visitor.visitEnd();</span>
+<span class="fc" id="L216">	}</span>
+	
+	private static Nucleotide getBaseFromInt(int b){
+<span class="pc bpc" id="L219" title="1 of 5 branches missed.">		switch(b){</span>
+<span class="fc" id="L220">			case 0 : return Nucleotide.Adenine;</span>
+<span class="fc" id="L221">			case 1 : return Nucleotide.Cytosine;</span>
+<span class="fc" id="L222">			case 2: return Nucleotide.Guanine;</span>
+<span class="fc" id="L223">			case 3 : return Nucleotide.Thymine;</span>
+			//can't happen since b has to be between 0-3
+<span class="nc" id="L225">			default: throw new IllegalStateException(&quot;invalid byte value&quot;);</span>
+		}
+	}
+
+	private String readNullTerminatedString(OpenAwareInputStream in,
+			int nameLength) throws IOException {
+<span class="fc" id="L231">		byte[] b= IOUtil.readByteArray(in, nameLength);</span>
+		//last byte should be null so don't need to read that
+<span class="fc" id="L233">		return new String(b, 0, nameLength-1, IOUtil.UTF_8);</span>
+	}
+
+	@Override
+	public void parse(FastqVisitor visitor, FastqVisitorMemento memento)
+			throws IOException {
+<span class="pc bpc" id="L239" title="1 of 2 branches missed.">		if(visitor ==null){</span>
+<span class="nc" id="L240">			throw new NullPointerException(&quot;visitor can not be null&quot;);</span>
+		}
+<span class="pc bpc" id="L242" title="1 of 2 branches missed.">		if(memento == null){</span>
+<span class="nc" id="L243">			throw new NullPointerException(&quot;memento can not be null&quot;);</span>
+		}
+<span class="pc bpc" id="L245" title="1 of 2 branches missed.">		if(!(memento instanceof BfqMemento)){</span>
+<span class="nc" id="L246">			throw new IllegalArgumentException(&quot;invalid memento type, must be created by this class&quot;);</span>
+		}
+<span class="fc" id="L248">		BfqMemento bfqMemento = (BfqMemento) memento;</span>
+<span class="pc bpc" id="L249" title="1 of 2 branches missed.">		if(bfqMemento.parserInstance != this){</span>
+<span class="nc" id="L250">			throw new IllegalArgumentException(&quot;invalid memento, must be created by this parser instance&quot;);</span>
+		}
+<span class="fc" id="L252">		OpenAwareInputStream in =null;</span>
+		try{
+<span class="fc" id="L254">			in = createInputStream();</span>
+<span class="fc" id="L255">			long startOffset = bfqMemento.startOffset;</span>
+<span class="fc" id="L256">			IOUtil.blockingSkip(in, startOffset);</span>
+			
+			
+<span class="fc" id="L259">			parseBqfData(visitor, in, startOffset);</span>
+		}finally{
+<span class="pc" id="L261">			IOUtil.closeAndIgnoreErrors(in);</span>
+<span class="fc" id="L262">		}</span>
+		
+<span class="fc" id="L264">	}</span>
+	
+	abstract OpenAwareInputStream createInputStream() throws IOException;
+	
+	abstract Callback createCallback(long startOffset);
+	
+	
+	private class Callback implements FastqVisitorCallback{
+		private final AtomicBoolean keepParsing;
+		private long currentOffset;
+		
+		
+<span class="fc" id="L276">		private Callback(long startOffset){</span>
+<span class="fc" id="L277">			this.currentOffset = startOffset;</span>
+<span class="fc" id="L278">			keepParsing = new AtomicBoolean(true);</span>
+<span class="fc" id="L279">		}</span>
+		@Override
+		public boolean canCreateMemento() {
+<span class="fc" id="L282">			return true;</span>
+		}
+
+		@Override
+		public FastqVisitorMemento createMemento() {
+<span class="fc" id="L287">			return new BfqMemento(BfqFileParser.this, currentOffset);</span>
+		}
+
+		@Override
+		public void haltParsing() {
+<span class="fc" id="L292">			keepParsing.set(false);</span>
+<span class="fc" id="L293">		}</span>
+		
+		public boolean keepParsing(){
+<span class="fc" id="L296">			return keepParsing.get();</span>
+		}
+		
+		public void updateCurrentOffset(long offset){
+<span class="fc" id="L300">			this.currentOffset = offset;</span>
+<span class="fc" id="L301">		}</span>
+		
+		
+		
+	}
+	
+	private static final class BfqMemento implements FastqVisitorMemento{
+		private final BfqFileParser parserInstance;
+		private final long startOffset;
+		
+<span class="fc" id="L311">		public BfqMemento(BfqFileParser parserInstance, long startOffset) {</span>
+<span class="fc" id="L312">			this.parserInstance = parserInstance;</span>
+<span class="fc" id="L313">			this.startOffset = startOffset;</span>
+<span class="fc" id="L314">		}</span>
+		
+		
+	}
+	
+	
+	
+	private static class BfqFileBasedParser extends BfqFileParser{
+		private final File bfqFile;
+		
+		private BfqFileBasedParser(File bfqFile, ByteOrder endian) throws IOException {
+<span class="fc" id="L325">			super(endian);</span>
+<span class="fc" id="L326">			this.bfqFile = bfqFile;</span>
+<span class="fc" id="L327">		}</span>
+
+		@Override
+		protected OpenAwareInputStream createInputStream() throws IOException {
+<span class="fc" id="L331">			return new OpenAwareInputStream(new GZIPInputStream(new BufferedInputStream(new FileInputStream(bfqFile))));</span>
+		}
+
+		@Override
+		protected Callback createCallback(long startOffset) {
+<span class="fc" id="L336">			return new Callback(startOffset);</span>
+		}
+
+        @Override
+        public Optional&lt;File&gt; getFile() {
+<span class="fc" id="L341">            return Optional.of(bfqFile);</span>
+        }
+
+		
+	}
+	
+	private static class BfqInputStreamParser extends BfqFileParser{
+		
+
+		private final OpenAwareInputStream in;
+<span class="nc" id="L351">		private boolean hasBeenReadBefore=false;</span>
+		private BfqInputStreamParser(InputStream in, ByteOrder endian) throws IOException {
+<span class="nc" id="L353">			super(endian);</span>
+<span class="nc" id="L354">			this.in = new OpenAwareInputStream(in);</span>
+<span class="nc" id="L355">		}</span>
+
+		@Override
+		protected synchronized OpenAwareInputStream createInputStream() throws IOException {
+<span class="nc bnc" id="L359" title="All 2 branches missed.">			if(!hasBeenReadBefore){</span>
+<span class="nc" id="L360">				hasBeenReadBefore = true;</span>
+<span class="nc" id="L361">				return in;</span>
+			}
+<span class="nc" id="L363">			throw new IOException(&quot;already read&quot;);</span>
+			
+		}
+
+		@Override
+        public Optional&lt;File&gt; getFile() {
+<span class="nc" id="L369">            return Optional.empty();</span>
+        }
+
+        @Override
+		public boolean canCreateMemento() {
+<span class="nc" id="L374">			return false;</span>
+		}
+
+		@Override
+		public boolean isReadOnceOnly() {
+<span class="nc" id="L379">			return true;</span>
+		}
+
+		@Override
+		public void parse(FastqVisitor visitor, FastqVisitorMemento memento)
+				throws IOException {
+<span class="nc" id="L385">			throw new UnsupportedOperationException(&quot;mementos not supported&quot;);</span>
+		}
+
+		@Override
+		protected Callback createCallback(long startOffset) {
+<span class="nc" id="L390">			return new NoMementoCallback(startOffset);</span>
+		}
+
+		
+	}
+	
+	private final class NoMementoCallback extends Callback {
+<span class="nc" id="L397">		private NoMementoCallback(long startOffset) {</span>
+<span class="nc" id="L398">			super(startOffset);</span>
+<span class="nc" id="L399">		}</span>
+
+		@Override
+		public boolean canCreateMemento() {
+<span class="nc" id="L403">			return false;</span>
+		}
+
+		@Override
+		public FastqVisitorMemento createMemento() {
+<span class="nc" id="L408">			throw new UnsupportedOperationException(&quot;can not create mementos&quot;);</span>
+		}
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

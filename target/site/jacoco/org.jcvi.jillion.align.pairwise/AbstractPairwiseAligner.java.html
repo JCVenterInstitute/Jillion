@@ -1,0 +1,633 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AbstractPairwiseAligner.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.align.pairwise</a> &gt; <span class="el_source">AbstractPairwiseAligner.java</span></div><h1>AbstractPairwiseAligner.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.align.pairwise;
+
+import java.nio.ByteBuffer;
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.List;
+
+import org.jcvi.jillion.align.SequenceAlignment;
+import org.jcvi.jillion.align.SubstitutionMatrix;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.residue.ResidueSequence;
+import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
+import org.jcvi.jillion.internal.align.SequenceAlignmentBuilder;
+/**
+ * {@code AbstractPairwiseAligner} is an abstract 
+ * implementation of a dynamic programming
+ * pairwise alignment algorithm for any Residue
+ * type.
+ * 
+ * @author dkatzel
+ *
+ * @param &lt;R&gt; the type of {@link Residue} used in this aligner.
+ * @param &lt;S&gt; the {@link Sequence} type input into this aligner.
+ * @param &lt;A&gt; the {@link SequenceAlignment} type returned by this aligner.
+ * @param &lt;P&gt; the {@link PairwiseSequenceAlignment} type returned by this aligner.
+ */
+abstract class AbstractPairwiseAligner &lt;R extends Residue, S extends ResidueSequence&lt;R, S, B&gt;, B extends ResidueSequenceBuilder&lt;R, S&gt;, A extends SequenceAlignment&lt;R, S&gt;, P extends PairwiseSequenceAlignment&lt;R, S&gt;&gt; {
+	
+	/**
+	 * The matrix which stores all of our traceback
+	 * values. 
+	 */
+	private final TraceBackMatrix traceback;
+	/**
+	 * The match scores of the current row computed so far
+	 * and the full previous row.
+	 */
+	private final float[][] scoreCache;
+	/**
+	 * {@link BitSet} to keep track of if at our
+	 * current position we are in a vertical gap.
+	 * This is used to compute affine gap
+	 * penalties if our scoring changes
+	 * if we are already inside of a gap
+	 * or not.  
+	 * &lt;/p&gt;
+	 * {@link BitSet} is used
+	 * to save memory over a {@literal boolean[]}
+	 * since BitSets actually take up 1 bit
+	 * per element vs 1 byte per element in a {@literal boolean[]}.
+	 */
+	private final BitSet[] inAVerticalGapCache;
+	/**
+	 * The final alignment produced.
+	 */
+	private final P alignment;
+	private final ResiduePairwiseStrategy&lt;R,S,B,A,P&gt; pairwiseStrategy;
+	/**
+	 * The previous row in our cache.
+	 */
+	private static final int PREVIOUS_ROW=0;
+	/**
+	 * The current row in our cache.
+	 */
+	private static final int CURRENT_ROW=1;
+	
+	
+	private Integer subjectShiftAmount;
+	
+	
+	protected AbstractPairwiseAligner(S query, S subject,
+			SubstitutionMatrix&lt;R&gt; matrix, float openGapPenalty, float extendGapPenalty,
+			ResiduePairwiseStrategy&lt;R,S,B,A,P&gt; pairwiseStrategy){
+<span class="fc" id="L95">	    this(query, subject, matrix, openGapPenalty, extendGapPenalty, pairwiseStrategy, null);</span>
+<span class="fc" id="L96">	}</span>
+	protected AbstractPairwiseAligner(S query, S subject,
+                SubstitutionMatrix&lt;R&gt; matrix, float openGapPenalty, float extendGapPenalty,
+                ResiduePairwiseStrategy&lt;R,S,B,A,P&gt; pairwiseStrategy,
+<span class="fc" id="L100">                Integer subjectShiftAmount){</span>
+	    
+<span class="fc" id="L102">		checkNotNull(query,subject,matrix);</span>
+<span class="fc" id="L103">		this.pairwiseStrategy = pairwiseStrategy;</span>
+<span class="fc" id="L104">		this.subjectShiftAmount = subjectShiftAmount;</span>
+		
+<span class="fc" id="L106">		TracebackDirection initialRowDirection = getInitialRowTracebackValue();</span>
+<span class="pc bpc" id="L107" title="1 of 2 branches missed.">		if(initialRowDirection ==null){</span>
+<span class="nc" id="L108">			throw new NullPointerException(&quot;initialRowDirection can not be null&quot;);</span>
+		}
+<span class="fc" id="L110">		TracebackDirection initialColDirection = getInitialColTracebackValue();</span>
+<span class="pc bpc" id="L111" title="1 of 2 branches missed.">		if(initialColDirection ==null){</span>
+<span class="nc" id="L112">			throw new NullPointerException(&quot;initialColDirection can not be null&quot;);</span>
+		}
+<span class="fc" id="L114">		int ungappedSubjectLength = (int)subject.getUngappedLength();</span>
+<span class="fc" id="L115">		int ungappedQueryLength = (int)query.getUngappedLength();</span>
+		
+<span class="fc" id="L117">		traceback = new TraceBackMatrix(ungappedQueryLength+1,ungappedSubjectLength+1, initialRowDirection, initialColDirection);</span>
+		
+<span class="fc" id="L119">		scoreCache = new float[2][ungappedSubjectLength+1];</span>
+<span class="fc" id="L120">		inAVerticalGapCache = new BitSet[2];</span>
+<span class="fc" id="L121">		initializeFields(openGapPenalty, extendGapPenalty);</span>
+<span class="fc" id="L122">		byte[] seq1Bytes = convertToUngappedByteArray(query);</span>
+<span class="fc" id="L123">		byte[] seq2Bytes = convertToUngappedByteArray(subject);</span>
+		
+		
+		
+		
+<span class="fc" id="L128">		StartPoint currentStartPoint = populateTraceback(matrix,</span>
+				openGapPenalty, extendGapPenalty, seq1Bytes, seq2Bytes);
+		//now do trace back
+<span class="fc" id="L131">		alignment = traceBack(seq1Bytes, seq2Bytes, currentStartPoint);</span>
+		
+<span class="fc" id="L133">	}</span>
+	private void checkNotNull(Sequence&lt;R&gt; query, Sequence&lt;R&gt; subject,
+			SubstitutionMatrix&lt;R&gt; matrix) {
+<span class="pc bpc" id="L136" title="1 of 2 branches missed.">		if(query ==null){</span>
+<span class="nc" id="L137">			throw new NullPointerException(&quot;query sequence can not be null&quot;);</span>
+		}
+<span class="pc bpc" id="L139" title="1 of 2 branches missed.">		if(subject ==null){</span>
+<span class="nc" id="L140">			throw new NullPointerException(&quot;subject sequence can not be null&quot;);</span>
+		}
+<span class="pc bpc" id="L142" title="1 of 2 branches missed.">		if(matrix ==null){</span>
+<span class="nc" id="L143">			throw new NullPointerException(&quot;scoring matrix can not be null&quot;);</span>
+		}
+		
+<span class="fc" id="L146">	}</span>
+	private StartPoint populateTraceback(SubstitutionMatrix&lt;R&gt; matrix,
+			float openGapPenalty, float extendGapPenalty, byte[] seq1Bytes,
+			byte[] seq2Bytes) {
+<span class="fc" id="L150">		int lengthOfSeq1 = seq1Bytes.length;</span>
+<span class="fc" id="L151">		int lengthOfSeq2 = seq2Bytes.length;</span>
+		
+		
+		
+		//only need to keep array of vertical accumulated gap
+		//penalties since we are populating horizontally  we can just
+		//keep a float for current horizontal penalty 
+<span class="fc" id="L158">		float[] verticalGapPenaltiesSoFar = new float[lengthOfSeq2+1];		</span>
+<span class="fc" id="L159">		Arrays.fill(verticalGapPenaltiesSoFar, Float.NEGATIVE_INFINITY);</span>
+<span class="fc" id="L160">		List&lt;R&gt; residuesByOrdinal = pairwiseStrategy.getResidueList();</span>
+<span class="fc" id="L161">		StartPoint currentStartPoint = new StartPoint();</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">		for(int i=1; i&lt;=lengthOfSeq1; i++){</span>
+
+			
+<span class="fc" id="L165">			float cumulativeHorizontalGapPenalty=Float.NEGATIVE_INFINITY;</span>
+<span class="fc" id="L166">			BitSet inAHorizontalGap = new BitSet(lengthOfSeq2+1);</span>
+<span class="fc bfc" id="L167" title="All 2 branches covered.">			for(int j=1; j&lt;= lengthOfSeq2; j++){</span>
+<span class="fc" id="L168">				float diagnol = scoreCache[PREVIOUS_ROW][j-1];</span>
+<span class="fc bfc" id="L169" title="All 2 branches covered.">				float verticalGapExtensionScore = inAVerticalGapCache[PREVIOUS_ROW].get(j) </span>
+							? scoreCache[PREVIOUS_ROW][j] + extendGapPenalty 
+							: Float.NEGATIVE_INFINITY	;
+<span class="fc" id="L172">				float verticalOpenGapScore = scoreCache[PREVIOUS_ROW][j] + openGapPenalty;</span>
+<span class="fc bfc" id="L173" title="All 2 branches covered.">				if(verticalGapExtensionScore &gt; verticalOpenGapScore){</span>
+<span class="fc" id="L174">					verticalGapPenaltiesSoFar[j] = verticalGapExtensionScore;</span>
+				}else{
+<span class="fc" id="L176">					verticalGapPenaltiesSoFar[j] = verticalOpenGapScore;</span>
+				}
+				
+<span class="fc bfc" id="L179" title="All 2 branches covered.">				float horizontalGapExtensionScore =  inAHorizontalGap.get(j-1) </span>
+						? scoreCache[CURRENT_ROW][j-1]+ extendGapPenalty
+						: Float.NEGATIVE_INFINITY;
+<span class="fc" id="L182">				float horizontalGapOpenScore = scoreCache[CURRENT_ROW][j-1] + openGapPenalty;</span>
+<span class="fc bfc" id="L183" title="All 2 branches covered.">				if(horizontalGapExtensionScore &gt;= horizontalGapOpenScore){</span>
+<span class="fc" id="L184">					cumulativeHorizontalGapPenalty = horizontalGapExtensionScore;</span>
+					
+				}else{
+<span class="fc" id="L187">					cumulativeHorizontalGapPenalty = horizontalGapOpenScore;</span>
+				}
+				
+				//need to do -1s because 0 offset in matrix is filled with stops
+				//and actual values start at offset 1
+<span class="fc" id="L192">				float alignmentScore = diagnol + matrix.getValue(</span>
+<span class="fc" id="L193">						residuesByOrdinal.get(seq1Bytes[i-1]),</span>
+<span class="fc" id="L194">						residuesByOrdinal.get(seq2Bytes[j-1]));</span>
+				
+				
+<span class="fc" id="L197">				WalkBack bestWalkBack = computeBestWalkBack(alignmentScore, cumulativeHorizontalGapPenalty, verticalGapPenaltiesSoFar[j]);</span>
+<span class="fc" id="L198">				scoreCache[CURRENT_ROW][j] = bestWalkBack.getBestScore();</span>
+				//some implementations might
+				//need to update the currentStartPoint even if it's not
+				//the best path so far
+				//so give subclasses the option to update.
+<span class="fc" id="L203">				currentStartPoint = updateCurrentStartPoint(bestWalkBack.getBestScore(), currentStartPoint, i, j);</span>
+<span class="pc bpc" id="L204" title="1 of 2 branches missed.">				if(currentStartPoint ==null){</span>
+<span class="nc" id="L205">					throw new NullPointerException(&quot;current start point can not be set to null&quot;);</span>
+				}
+<span class="pc bfc" id="L207" title="All 4 branches covered.">				switch(bestWalkBack.getTracebackDirection()){</span>
+<span class="fc" id="L208">					case HORIZONTAL: inAHorizontalGap.set(j,true);</span>
+<span class="fc" id="L209">									break;</span>
+<span class="fc" id="L210">					case VERTICAL : inAVerticalGapCache[CURRENT_ROW].set(j,true);</span>
+<span class="fc" id="L211">									break;</span>
+<span class="fc" id="L212">					case DIAGNOL: 	inAHorizontalGap.set(j,false);</span>
+<span class="fc" id="L213">									inAVerticalGapCache[CURRENT_ROW].set(j,false);</span>
+<span class="fc" id="L214">									break;</span>
+					default:
+								break;
+						
+				}
+<span class="fc" id="L219">				traceback.set(i,j,bestWalkBack.getTracebackDirection());</span>
+<span class="fc" id="L220">				diagnol = traceback.get(i-1,j).ordinal();</span>
+				
+				//printTraceBack();
+			}
+<span class="fc" id="L224">			updateCaches();</span>
+		}
+<span class="fc" id="L226">		return currentStartPoint;</span>
+	}
+	/**
+	 * Initialize the values of the initial scorecache and inVerticalGapCache.
+	 * Some of these values are populated using returned values from
+	 * {@link #getInitialGapScores(int, float, float)}
+	 * @param openGapPenalty
+	 * @param extendGapPenalty
+	 * @throws NullPointerException if any of the returned values from those
+	 * method calls returns null.
+	 * @throws Illegal
+	 */
+	private void initializeFields(float openGapPenalty, float extendGapPenalty) {
+
+<span class="fc" id="L240">		initializeVerticalGapCache();		</span>
+<span class="fc" id="L241">		initializeScoreCache(openGapPenalty, extendGapPenalty);</span>
+<span class="fc" id="L242">	}</span>
+	private void initializeScoreCache(float openGapPenalty,
+			float extendGapPenalty) {
+<span class="fc" id="L245">		scoreCache[PREVIOUS_ROW] = getInitialGapScores(traceback.getYLength(), openGapPenalty, extendGapPenalty );</span>
+<span class="fc" id="L246">		scoreCache[CURRENT_ROW][1] = scoreCache[PREVIOUS_ROW][1];</span>
+<span class="fc" id="L247">	}</span>
+	private void initializeVerticalGapCache() {
+<span class="fc" id="L249">		inAVerticalGapCache[0] = new BitSet(traceback.getYLength());</span>
+<span class="fc" id="L250">		inAVerticalGapCache[1] = new BitSet(traceback.getYLength());</span>
+<span class="fc" id="L251">	}</span>
+	
+	/**
+	 * Get the {@link TracebackDirection}
+	 * that should be used to represent when
+	 * the first base of the query does not align to the subject.
+	 * @return a {@link TracebackDirection}; can not be null.
+	 */
+	protected abstract TracebackDirection getInitialRowTracebackValue();
+	/**
+	 * Get the {@link TracebackDirection}
+	 * that should be used to represent when
+	 * the first base of the subject does not align to the query.
+	 * @return a {@link TracebackDirection}; can not be null.
+	 */
+	protected abstract TracebackDirection getInitialColTracebackValue();
+	/**
+	 * Get the gap scores that represent when 
+	 * the first base of the query does not align to the subject
+	 * and vice versa.
+	 * @param length the length of the gap score array to create
+	 * @param openGapPenalty the penalty value for a new (open) gap.
+	 * @param extendGapPenalty the penalty for extending an already open gap.
+	 * @return a float array of the gap scores.
+	 */
+	protected abstract float[] getInitialGapScores(int length, float openGapPenalty,
+			float extendGapPenalty);
+	/**
+	 * Replace the contents of the previous row
+	 * with the contents of the  current row.  Since 
+	 * we only care about the previous 1 rows
+	 * we can safely forget about anything older than that.
+	 * (and save memory)
+	 */
+	private void updateCaches() {
+<span class="fc bfc" id="L286" title="All 2 branches covered.">		for(int j=0; j&lt; scoreCache[CURRENT_ROW].length; j++){</span>
+<span class="fc" id="L287">			scoreCache[PREVIOUS_ROW][j] = scoreCache[CURRENT_ROW][j];</span>
+			
+<span class="fc" id="L289">			inAVerticalGapCache[PREVIOUS_ROW].set(j,inAVerticalGapCache[CURRENT_ROW].get(j));</span>
+		}
+		
+<span class="fc" id="L292">	}</span>
+/*
+	private void printTraceBack(PrintWriter out){
+		for(int i=0; i&lt;traceback.getXLength(); i++){
+			
+			for(int j=0; j&lt;traceback.getYLength(); j++){
+				
+				out.printf(&quot;%s [?] &quot;,
+							traceback.get(i,j).toString().charAt(0));
+			}
+			out.println(&quot;&quot;);
+		}
+		
+		out.println(Arrays.toString(scoreCache[PREVIOUS_ROW]));
+		out.println(Arrays.toString(scoreCache[CURRENT_ROW]));
+	}
+*/
+	/**
+	 * Return the updated value of CurrentStartPoint
+	 * if your implementation deems it necessary.
+	 * @param newScore the new score in the current cell being computed.
+	 * @param currentStartPoint the CurrentStartPoint which might need 
+	 * to be updated.
+	 * @param i the current cell row being computed.
+	 * @param j the current cell column being computed.
+	 * @return either a new {@link StartPoint} object
+	 * or {@literal currentStartPoint} if it should not
+	 * be updated; should never return null.
+	 */
+	protected abstract StartPoint updateCurrentStartPoint(float newScore,
+			StartPoint currentStartPoint, int i, int j);
+	/**
+	 * Given the 3 possible input scores for the current cell,
+	 * compute the {@link WalkBack} that might
+	 * be used later during the backtracking phase.
+	 * @param alignmentScore the score of this cell if for aligning
+	 * the current two residues together.
+	 * @param horizontalGapPenalty the score of this cell if the horizontal
+	 * gap is used.
+	 * @param verticalGapPenalty the score of this cell if the vertical
+	 * gap is used.
+	 * @return a new {@link WalkBack}; never null.
+	 */
+	protected abstract WalkBack computeBestWalkBack(float alignmentScore,
+			float horizontalGapPenalty, float verticalGapPenalty);
+	
+	private P traceBack(byte[] seq1Bytes, byte[] seq2Bytes,
+			StartPoint currentStartPoint) {
+<span class="fc" id="L340">		boolean done=false;</span>
+<span class="fc" id="L341">		int x=currentStartPoint.getX();</span>
+<span class="fc" id="L342">		int y = currentStartPoint.getY();</span>
+<span class="fc" id="L343">		float score = currentStartPoint.getScore();</span>
+<span class="fc" id="L344">		SequenceAlignmentBuilder&lt;R,S,B,A&gt; alignmentBuilder = pairwiseStrategy.createSequenceAlignmentBuilder(true,subjectShiftAmount);</span>
+<span class="fc" id="L345">		alignmentBuilder.setAlignmentOffsets(x-1, y-1);</span>
+<span class="fc" id="L346">		R gap =  pairwiseStrategy.getGap();</span>
+<span class="fc" id="L347">		List&lt;R&gt; residuesByOrdinal = pairwiseStrategy.getResidueList();</span>
+<span class="fc bfc" id="L348" title="All 2 branches covered.">		while(!done){</span>
+			
+<span class="fc" id="L350">			TracebackDirection tracebackDirection = traceback.get(x,y);</span>
+<span class="pc bpc" id="L351" title="1 of 5 branches missed.">			switch(tracebackDirection){</span>
+				case VERTICAL :
+<span class="fc" id="L353">					alignmentBuilder.addGap(residuesByOrdinal.get(seq1Bytes[x-1]), gap);</span>
+<span class="fc" id="L354">					x--;</span>
+<span class="fc" id="L355">					break;</span>
+					
+				case HORIZONTAL :
+<span class="fc" id="L358">					alignmentBuilder.addGap(gap,residuesByOrdinal.get(seq2Bytes[y-1]));</span>
+<span class="fc" id="L359">					y--;</span>
+<span class="fc" id="L360">					break;</span>
+				case DIAGNOL:
+<span class="fc bfc" id="L362" title="All 2 branches covered.">					boolean isMatch = seq1Bytes[x-1] == seq2Bytes[y-1];</span>
+<span class="fc bfc" id="L363" title="All 2 branches covered.">					if(isMatch){</span>
+<span class="fc" id="L364">						alignmentBuilder.addMatch(residuesByOrdinal.get(seq1Bytes[x-1]));</span>
+					}else{
+<span class="fc" id="L366">						alignmentBuilder.addMismatch(residuesByOrdinal.get(seq1Bytes[x-1]), residuesByOrdinal.get(seq2Bytes[y-1]));</span>
+					}
+					
+<span class="fc" id="L369">					x--;</span>
+<span class="fc" id="L370">					y--;</span>
+<span class="fc" id="L371">					break;</span>
+				case TERMINAL:
+<span class="fc" id="L373">					done = true;</span>
+<span class="fc" id="L374">					break;</span>
+				default:
+					//will never happen 
+<span class="nc" id="L377">					throw new IllegalStateException(&quot;invalid Traceback direction &quot;+ tracebackDirection);</span>
+			}
+<span class="fc" id="L379">		}</span>
+<span class="fc" id="L380">		return  pairwiseStrategy.wrapPairwiseAlignment(PairwiseSequenceAlignmentWrapper.wrap(alignmentBuilder.build(), score));</span>
+	}
+	/**
+	 * Get the completed {@link SequenceAlignment}.
+	 * @return the 
+	 */
+	public P getPairwiseSequenceAlignment(){
+<span class="fc" id="L387">		return alignment;</span>
+	}
+	
+	private byte[] convertToUngappedByteArray(S sequence) {
+		
+<span class="fc" id="L392">		ByteBuffer buf = ByteBuffer.allocate((int)sequence.getUngappedLength());</span>
+<span class="fc bfc" id="L393" title="All 2 branches covered.">		for(R residue : sequence){</span>
+			//only include non-gaps in matrix
+<span class="fc bfc" id="L395" title="All 2 branches covered.">			if(!residue.isGap()){</span>
+<span class="fc" id="L396">				buf.put(residue.getOrdinalAsByte());</span>
+			}
+<span class="fc" id="L398">		}</span>
+<span class="fc" id="L399">		buf.flip();</span>
+<span class="fc" id="L400">		return buf.array();</span>
+	}
+
+	/**
+	 * {@code StartPoint} is a class
+	 * that points to the current location
+	 * in our traceback matrix of where the local
+	 * alignment should start.  This class
+	 * also keeps track of the current best score
+	 * so we know if we should update our pointer
+	 * to point to an even better starting location.
+	 * @author dkatzel
+	 *
+	 */
+	protected static final class StartPoint{
+		private final int x,y;
+		private final float score;
+		public StartPoint(){
+<span class="fc" id="L418">			this(0,0,Float.NEGATIVE_INFINITY);</span>
+<span class="fc" id="L419">		}</span>
+<span class="fc" id="L420">		public StartPoint(int x, int y, float score) {</span>
+<span class="fc" id="L421">			this.x = x;</span>
+<span class="fc" id="L422">			this.y = y;</span>
+<span class="fc" id="L423">			this.score = score;</span>
+<span class="fc" id="L424">		}</span>
+		public int getX() {
+<span class="fc" id="L426">			return x;</span>
+		}
+		public int getY() {
+<span class="fc" id="L429">			return y;</span>
+		}
+		public float getScore() {
+<span class="fc" id="L432">			return score;</span>
+		}
+		
+		public StartPoint updateIfWorseThan(int x, int y, float score){
+<span class="nc bnc" id="L436" title="All 2 branches missed.">			if(score &gt;= this.score){</span>
+<span class="nc" id="L437">				return new StartPoint(x,y,score);</span>
+			}
+<span class="nc" id="L439">			return this;</span>
+		}
+		@Override
+		public String toString() {
+<span class="nc" id="L443">			return &quot;CurrentStartPoint [x=&quot; + x + &quot;, y=&quot; + y + &quot;, score=&quot;</span>
+					+ score + &quot;]&quot;;
+		}
+		
+	}
+	/**
+	 * {@code WalkBack} is a wrapper around
+	 * the a score and the {@link TracebackDirection}
+	 * to use in the traceback for the current cell
+	 * in the traceback matrix.
+	 * This class is used internally by {@link #computeBestWalkBack(float, float, float)}
+	 * to allow subclasses to determine the which score is the best
+	 * in an implementation specific way.
+	 * @author dkatzel
+	 *
+	 */
+	protected static final class WalkBack{
+		private final TracebackDirection tracebackDirection;
+		private final float bestScore;
+		public WalkBack(float bestScore,
+<span class="fc" id="L463">				TracebackDirection tracebackDirection) {</span>
+<span class="pc bpc" id="L464" title="1 of 2 branches missed.">			if(tracebackDirection ==null){</span>
+<span class="nc" id="L465">				throw new NullPointerException(&quot;traceback direction can not be null&quot;);</span>
+			}
+<span class="fc" id="L467">			this.bestScore = bestScore;</span>
+<span class="fc" id="L468">			this.tracebackDirection = tracebackDirection;</span>
+<span class="fc" id="L469">		}</span>
+		public TracebackDirection getTracebackDirection() {
+<span class="fc" id="L471">			return tracebackDirection;</span>
+		}
+		public float getBestScore() {
+<span class="fc" id="L474">			return bestScore;</span>
+		}
+		@Override
+		public int hashCode() {
+<span class="nc" id="L478">			final int prime = 31;</span>
+<span class="nc" id="L479">			int result = 1;</span>
+<span class="nc" id="L480">			result = prime * result + Float.floatToIntBits(bestScore);</span>
+<span class="nc" id="L481">			result = prime</span>
+					* result
+<span class="nc" id="L483">					+ tracebackDirection.hashCode();</span>
+<span class="nc" id="L484">			return result;</span>
+		}
+		@Override
+		public boolean equals(Object obj) {
+<span class="nc bnc" id="L488" title="All 2 branches missed.">			if (this == obj){</span>
+<span class="nc" id="L489">				return true;</span>
+			}
+<span class="nc bnc" id="L491" title="All 2 branches missed.">			if (obj == null){</span>
+<span class="nc" id="L492">				return false;</span>
+			}
+<span class="nc bnc" id="L494" title="All 2 branches missed.">			if (getClass() != obj.getClass()){</span>
+<span class="nc" id="L495">				return false;</span>
+			}
+<span class="nc" id="L497">			WalkBack other = (WalkBack) obj;</span>
+<span class="nc" id="L498">			if (Float.floatToIntBits(bestScore) != Float</span>
+<span class="nc bnc" id="L499" title="All 2 branches missed.">					.floatToIntBits(other.bestScore)){</span>
+<span class="nc" id="L500">				return false;</span>
+			}
+<span class="nc bnc" id="L502" title="All 2 branches missed.">			if (tracebackDirection != other.tracebackDirection){</span>
+<span class="nc" id="L503">				return false;</span>
+			}
+<span class="nc" id="L505">			return true;</span>
+		}
+		
+		
+	}
+	
+	/**
+	 * The direction to traverse to the next
+	 * cell in the traceback matrix.  The traceback
+	 * will start at the last cell in the alignment
+	 * and walk backwards towards the beginning
+	 * of the alignment.
+	 * @author dkatzel
+	 *
+	 */
+<span class="pc" id="L520">	protected enum TracebackDirection{</span>
+		/**
+		 * Stop the traceback. This will end
+		 * the alignment and will always
+		 * be the value of the last cell
+		 * visited in the matrix.
+		 */
+<span class="fc" id="L527">		TERMINAL,</span>
+		/**
+		 * Move to the cell horizontally
+		 * (left).  This will cause
+		 * the alignment to add a horizontal
+		 * gap to the alignment.
+		 */
+<span class="fc" id="L534">		HORIZONTAL,</span>
+		/**
+		 * Move to the cell vertically
+		 * (up).  This will cause
+		 * the alignment to add a vertical
+		 * gap to the alignment.
+		 */
+<span class="fc" id="L541">		VERTICAL,</span>
+		/**
+		 * Move to the cell diagonally
+		 * horizontal AND vertical
+		 * (left and up).  This will cause
+		 * the alignment to a match/mismatch
+		 * to the alignment.
+		 */
+<span class="fc" id="L549">		DIAGNOL;</span>
+	}
+	
+	private static final class TraceBackMatrix{
+		private final byte[][] matrix;
+		private final int xLength;
+		private final int yLength;
+<span class="fc" id="L556">		private static final TracebackDirection[] ORDINALS = TracebackDirection.values();</span>
+<span class="fc" id="L557">		TraceBackMatrix(int x, int y, TracebackDirection initialRowDirection, TracebackDirection initialColDirection){</span>
+<span class="fc" id="L558">			xLength = x;</span>
+<span class="fc" id="L559">			yLength =y;</span>
+<span class="fc" id="L560">			matrix = new byte[(x+1)/2][(y+1)/2];</span>
+			
+<span class="fc" id="L562">			initialize(initialRowDirection, initialColDirection);</span>
+<span class="fc" id="L563">		}</span>
+		
+		private void initialize(TracebackDirection initialRowDirection,
+				TracebackDirection initialColDirection) {
+			
+<span class="fc" id="L568">			int rowOrdinal = initialRowDirection.ordinal();</span>
+<span class="fc" id="L569">			int colOrdinal = initialColDirection.ordinal();</span>
+			
+<span class="fc" id="L571">			byte rowValue = (byte)(rowOrdinal&lt;&lt;6 | rowOrdinal&lt;&lt;4);</span>
+			//top row only
+<span class="fc bfc" id="L573" title="All 2 branches covered.">			for(int i=1; i&lt;matrix[0].length; i++){</span>
+<span class="fc" id="L574">				matrix[0][i] = rowValue;</span>
+			}
+			//first column, must set 2 values since we pack 4 points per cell
+<span class="fc" id="L577">			byte colValue = (byte)(colOrdinal&lt;&lt;6| colOrdinal&lt;&lt;2);</span>
+<span class="fc bfc" id="L578" title="All 2 branches covered.">			for(int i=1; i&lt;matrix.length; i++){</span>
+<span class="fc" id="L579">				matrix[i][0] = colValue;</span>
+			}
+			//special case handle origin of matrix 
+			//which is first (x0,y0)(x0,y1)
+			//               (x1,y0)(x1,y1)
+			
+			//(x0,y0) is always terminal
+<span class="fc" id="L586">			byte origin = (byte)(TracebackDirection.TERMINAL.ordinal()&lt;&lt;6 | rowOrdinal&lt;&lt;4 | colOrdinal&lt;&lt;2);</span>
+<span class="fc" id="L587">			matrix[0][0]= origin;</span>
+<span class="fc" id="L588">		}</span>
+
+		public TracebackDirection get(int x, int y){
+<span class="fc" id="L591">			byte matrixValue = matrix[x/2][y/2];</span>
+<span class="fc bfc" id="L592" title="All 2 branches covered.">			if((x &amp; 0x01)==0){</span>
+<span class="fc bfc" id="L593" title="All 2 branches covered.">				if((y &amp; 0x01)==0){</span>
+<span class="fc" id="L594">					return ORDINALS[(matrixValue &amp;0xC0) &gt;&gt;6];</span>
+				}else{
+<span class="fc" id="L596">					return ORDINALS[(matrixValue &amp;0x30) &gt;&gt;4];</span>
+				}
+			}else{
+<span class="fc bfc" id="L599" title="All 2 branches covered.">				if((y &amp; 0x01)==0){</span>
+<span class="fc" id="L600">					return ORDINALS[(matrixValue &amp;0x0C) &gt;&gt;2];</span>
+				}else{
+<span class="fc" id="L602">					return ORDINALS[(matrixValue &amp;0x3)];</span>
+				}
+			}
+		}
+		
+		public void set(int x, int y, TracebackDirection value){
+<span class="fc" id="L608">			int matrixValue = matrix[x/2][y/2];</span>
+<span class="fc bfc" id="L609" title="All 2 branches covered.">			if((x &amp; 0x01)==0){</span>
+<span class="fc bfc" id="L610" title="All 2 branches covered.">				if((y &amp; 0x01)==0){</span>
+<span class="fc" id="L611">					matrix[x/2][y/2] = (byte)((matrixValue &amp;0x3F) | (value.ordinal()&lt;&lt;6));</span>
+				}else{
+<span class="fc" id="L613">					matrix[x/2][y/2] = (byte)((matrixValue &amp;0xCF) | (value.ordinal()&lt;&lt;4));</span>
+				}
+			}else{
+<span class="fc bfc" id="L616" title="All 2 branches covered.">				if((y &amp; 0x01)==0){</span>
+<span class="fc" id="L617">					matrix[x/2][y/2] = (byte)((matrixValue &amp;0xF3) | (value.ordinal()&lt;&lt;2));</span>
+				}else{
+<span class="fc" id="L619">					matrix[x/2][y/2] = (byte)((matrixValue &amp;0xFC) | value.ordinal());</span>
+				}
+				
+			}
+<span class="fc" id="L623">		}</span>
+		
+		public int getXLength(){
+<span class="nc" id="L626">			return xLength;</span>
+		}
+		public int getYLength(){
+<span class="fc" id="L629">			return yLength;</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

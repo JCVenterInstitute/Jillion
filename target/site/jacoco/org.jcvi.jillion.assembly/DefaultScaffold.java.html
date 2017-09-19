@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DefaultScaffold.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly</a> &gt; <span class="el_source">DefaultScaffold.java</span></div><h1>DefaultScaffold.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Mar 24, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.assembly;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import org.jcvi.jillion.assembly.util.CoverageMap;
+import org.jcvi.jillion.assembly.util.CoverageMapBuilder;
+import org.jcvi.jillion.core.DirectedRange;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Ranges;
+/**
+ * {@code DefaultScaffold} is a {@link Scaffold}
+ * implementation that stores all {@link PlacedContig}s
+ * data internally in various {@link Map}s and {@link Set}s.
+ * @author dkatzel
+ *
+ */
+public final class DefaultScaffold  implements Scaffold{
+	
+	private final String id;
+    private final SortedSet&lt;PlacedContig&gt; placedContigs;
+    private final Map&lt;String, PlacedContig&gt; contigbyId;
+    private final CoverageMap&lt;PlacedContig&gt; contigMap;
+    private final long length;
+    /**
+     * Create a new {@link ScaffoldBuilder} instance.  
+     * This instance will not yet have any contigs.
+     * @param id the id of the Scaffold to be built.
+     * This will be the value returned by {@link Scaffold#getId()}.
+     * @return a new empty {@link ScaffoldBuilder}; never null.
+     */
+    public static ScaffoldBuilder createBuilder(String id){
+<span class="fc" id="L68">		return new Builder(id);</span>
+	}
+<span class="fc" id="L70">    private  DefaultScaffold(String id, SortedSet&lt;PlacedContig&gt; placedContigs){</span>
+<span class="fc" id="L71">        this.id = id;</span>
+<span class="fc" id="L72">        this.placedContigs= placedContigs;</span>
+<span class="fc" id="L73">        contigbyId = new HashMap&lt;String, PlacedContig&gt;();</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">        for(PlacedContig contig : placedContigs){</span>
+<span class="fc" id="L75">            contigbyId.put(contig.getContigId(), contig);</span>
+<span class="fc" id="L76">        }</span>
+<span class="fc" id="L77">        List&lt;Range&gt; ranges = new ArrayList&lt;Range&gt;(placedContigs.size());</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        for(PlacedContig contig : placedContigs){</span>
+<span class="fc" id="L79">            ranges.add(Range.of(contig.getBegin(), contig.getEnd()));</span>
+<span class="fc" id="L80">        }</span>
+<span class="fc" id="L81">        length = Ranges.createInclusiveRange(ranges).getLength();</span>
+<span class="fc" id="L82">        contigMap =new CoverageMapBuilder&lt;PlacedContig&gt;(placedContigs)</span>
+<span class="fc" id="L83">        					.includeOrigin(true)</span>
+<span class="fc" id="L84">        					.build();</span>
+<span class="fc" id="L85">    }</span>
+    @Override
+    public PlacedContig getPlacedContig(String id) {
+<span class="fc" id="L88">        return contigbyId.get(id);</span>
+    }
+
+    @Override
+    public Set&lt;PlacedContig&gt; getPlacedContigs() {
+<span class="fc" id="L93">        return placedContigs;</span>
+    }
+    @Override
+    public String getId() {
+<span class="fc" id="L97">        return id;</span>
+    }
+    
+    @Override
+    public long getLength() {
+<span class="fc" id="L102">        return length;</span>
+    }
+    @Override
+    public int getNumberOfContigs() {
+<span class="fc" id="L106">        return placedContigs.size();</span>
+    }
+    @Override
+    public CoverageMap&lt;PlacedContig&gt; getContigCoverageMap() {
+<span class="fc" id="L110">        return contigMap;</span>
+    }
+    /**
+     * {@inheritDoc}
+     */
+     @Override
+     public boolean hasContig(String contigId) {
+<span class="nc" id="L117">         return contigbyId.containsKey(contigId);</span>
+     }
+    /**
+     * Converts contig range coordinates into scaffold range coordinates
+     * based on contig's scaffold location and orientation
+     * @param placedContigId target scaffold contig
+     * @param placedContigRange contig coordinate range to convert of scaffold coordinates
+     * @return scaffold coordinates corresponding to input contig id/range values
+     * @throws NoSuchElementException if scaffold does not contain target contig
+     * @throws IllegalArgumentException if target contig is not oriented in the forward
+     * or reverse direction or if the range to be converted is not a subrange of the scaffold's
+     * placed contig
+     */
+    @Override
+    public Range convertContigRangeToScaffoldRange(String placedContigId, Range placedContigRange){
+<span class="fc" id="L132">        PlacedContig placedContig = getPlacedContig(placedContigId);</span>
+
+        // make sure the source contig exists in the scaffold
+<span class="fc bfc" id="L135" title="All 2 branches covered.">        if ( placedContig == null ) {</span>
+<span class="fc" id="L136">            throw new NoSuchElementException(&quot;Scaffold &quot; + getId()</span>
+                + &quot; does not contain the placed contig &quot; + placedContigId);
+        }
+
+        // make sure the specified range falls within the placed contig's range
+<span class="fc" id="L141">        Range normalizedPlacedContigRange = Range.of(0,placedContig.getLength()-1);</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">        if ( !placedContigRange.isSubRangeOf(normalizedPlacedContigRange) ) {</span>
+<span class="fc" id="L143">            throw new IllegalArgumentException(&quot;Specified contig range &quot; + placedContigRange</span>
+                + &quot; is not a subrange of its parent placed contig &quot; + placedContig
+                + &quot;(normalized range &quot; + normalizedPlacedContigRange + &quot;)&quot;);
+        }
+        final Range.Builder rangeBuilder; 
+<span class="fc bfc" id="L148" title="All 2 branches covered.">        if ( placedContig.getDirection() == Direction.FORWARD ) {</span>
+<span class="fc" id="L149">        	rangeBuilder= new Range.Builder(placedContigRange);</span>
+        } else{
+        	//contig is reversed
+<span class="fc" id="L152">        	Range reverseComplementRange = AssemblyUtil.reverseComplementValidRange(placedContigRange, placedContig.getLength());</span>
+<span class="fc" id="L153">			rangeBuilder= new Range.Builder(reverseComplementRange);</span>
+        }
+<span class="fc" id="L155">        rangeBuilder.shift(placedContig.getBegin());</span>
+<span class="fc" id="L156">        return rangeBuilder.build();</span>
+    }
+    
+    @Override
+    public int hashCode() {
+<span class="nc" id="L161">        final int prime = 31;</span>
+<span class="nc" id="L162">        int result = 1;</span>
+<span class="nc" id="L163">        result = prime * result</span>
+<span class="nc" id="L164">                + contigbyId.hashCode();</span>
+<span class="nc" id="L165">        result = prime * result + id.hashCode();</span>
+<span class="nc" id="L166">        result = prime * result + (int) (length ^ (length &gt;&gt;&gt; 32));</span>
+<span class="nc" id="L167">        result = prime * result</span>
+<span class="nc" id="L168">                + placedContigs.hashCode();</span>
+<span class="nc" id="L169">        return result;</span>
+    }
+    @Override
+    public boolean equals(Object obj) {
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">        if (this == obj){</span>
+<span class="nc" id="L174">            return true;</span>
+        }
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">        if (obj == null){</span>
+<span class="nc" id="L177">            return false;</span>
+        }
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">        if (!(obj instanceof DefaultScaffold)){</span>
+<span class="nc" id="L180">            return false;</span>
+        }
+<span class="fc" id="L182">        DefaultScaffold other = (DefaultScaffold) obj;</span>
+<span class="pc bpc" id="L183" title="1 of 2 branches missed.">        if(!contigbyId.equals(other.contigbyId)){</span>
+<span class="nc" id="L184">            return false;</span>
+        }
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">        if (!id.equals(other.id)){</span>
+<span class="nc" id="L187">            return false;</span>
+        }
+<span class="pc bpc" id="L189" title="1 of 2 branches missed.">        if (length != other.length){</span>
+<span class="nc" id="L190">            return false;</span>
+        }
+<span class="pc bpc" id="L192" title="1 of 2 branches missed.">        if (!placedContigs.equals(other.placedContigs)){</span>
+<span class="nc" id="L193">            return false;</span>
+        }
+<span class="pc bpc" id="L195" title="1 of 2 branches missed.">        if (!contigMap.equals(other.contigMap)){</span>
+<span class="nc" id="L196">            return false;</span>
+        }
+<span class="fc" id="L198">        return true;</span>
+    }
+<span class="fc" id="L200">    private static final class PlacedContigComparator implements</span>
+		Comparator&lt;PlacedContig&gt; , Serializable{
+
+		private static final long serialVersionUID = 101208868003843457L;
+
+	@Override
+	public int compare(PlacedContig o1, PlacedContig o2) {
+<span class="fc" id="L207">		int rangeCmp = Range.Comparators.ARRIVAL.compare(o1.asRange(), o2.asRange());</span>
+<span class="fc bfc" id="L208" title="All 2 branches covered.">		if(rangeCmp !=0){</span>
+<span class="fc" id="L209">			return rangeCmp;</span>
+		}
+<span class="fc" id="L211">		return o1.getContigId().compareTo(o2.getContigId());</span>
+	}
+}
+
+    private static final class Builder implements ScaffoldBuilder{
+      
+		private final String id;
+        private SortedSet&lt;PlacedContig&gt; contigs;
+<span class="fc" id="L219">        private boolean shiftContigs=false;</span>
+<span class="fc" id="L220">        private boolean built=false;</span>
+        
+<span class="fc" id="L222">        private Builder(String id){</span>
+<span class="fc" id="L223">            this.id =id;</span>
+<span class="fc" id="L224">            contigs = new TreeSet&lt;PlacedContig&gt;( new PlacedContigComparator());</span>
+<span class="fc" id="L225">        }</span>
+        
+        private synchronized void throwErrorIfBuilt(){
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">        	if(built){</span>
+<span class="nc" id="L229">        		throw new IllegalStateException(&quot;already built&quot;);</span>
+        	}
+<span class="fc" id="L231">        }</span>
+        /**
+		 * {@inheritDoc}
+		 */
+        @Override
+		public synchronized Builder add(PlacedContig placedContig){
+<span class="fc" id="L237">        	throwErrorIfBuilt();</span>
+<span class="pc bpc" id="L238" title="1 of 2 branches missed.">        	if(placedContig ==null){</span>
+<span class="nc" id="L239">        		throw new NullPointerException(&quot;placed contig can not be null&quot;);</span>
+        	}
+<span class="fc" id="L241">            contigs.add(placedContig);</span>
+<span class="fc" id="L242">            return this;</span>
+        }
+        /**
+		 * {@inheritDoc}
+		 */
+        @Override
+		public synchronized Builder add(String contigId, Range contigRange, Direction contigDirection){
+<span class="fc" id="L249">           return add(new DefaultPlacedContig(contigId, contigRange,contigDirection));</span>
+        }
+        /**
+		 * {@inheritDoc}
+		 */
+        @Override
+		public synchronized Builder add(String contigId, DirectedRange contigRange){
+<span class="nc" id="L256">           return add(new DefaultPlacedContig(contigId, contigRange.getRange(),contigRange.getDirection()));</span>
+        }
+        
+        /**
+		 * {@inheritDoc}
+		 */
+        @Override
+		public synchronized Builder add(String contigId, Range contigRange){
+<span class="nc" id="L264">            return add(contigId, contigRange, Direction.FORWARD);</span>
+        }
+        /**
+		 * {@inheritDoc}
+		 */
+        @Override
+		public synchronized ScaffoldBuilder shiftContigsToOrigin(boolean shiftContigs){
+<span class="fc" id="L271">        	throwErrorIfBuilt();</span>
+<span class="fc" id="L272">            this.shiftContigs = shiftContigs;</span>
+<span class="fc" id="L273">            return this;</span>
+        }
+        /**
+		 * {@inheritDoc}
+		 */
+        @Override
+		public synchronized DefaultScaffold build(){
+<span class="fc" id="L280">        	throwErrorIfBuilt();</span>
+<span class="pc bpc" id="L281" title="1 of 4 branches missed.">            if(shiftContigs &amp;&amp; !contigs.isEmpty()){</span>
+<span class="fc" id="L282">                SortedSet&lt;PlacedContig&gt; shiftedContigs = new TreeSet&lt;PlacedContig&gt;(new PlacedContigComparator());</span>
+<span class="fc" id="L283">                PlacedContig firstContig = contigs.first();</span>
+<span class="fc" id="L284">                long shiftOffset = -firstContig.getBegin();</span>
+<span class="fc bfc" id="L285" title="All 2 branches covered.">                for(PlacedContig contig : contigs){</span>
+<span class="fc" id="L286">                    shiftedContigs.add(</span>
+<span class="fc" id="L287">                    		new DefaultPlacedContig(contig.getContigId(),</span>
+<span class="fc" id="L288">                    				new Range.Builder(contig.asRange())</span>
+<span class="fc" id="L289">                    							.shift(shiftOffset)</span>
+<span class="fc" id="L290">                    							.build(),</span>
+<span class="fc" id="L291">                    				contig.getDirection()));</span>
+<span class="fc" id="L292">                }</span>
+<span class="fc" id="L293">                contigs = shiftedContigs;</span>
+            }
+<span class="fc" id="L295">            built=true;</span>
+<span class="fc" id="L296">            return new DefaultScaffold(id, contigs);</span>
+        }
+        
+    }
+
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public Iterator&lt;String&gt; getContigIds() {
+<span class="nc" id="L307">        return contigbyId.keySet().iterator();</span>
+    }
+    @Override
+    public String toString() {
+<span class="nc" id="L311">        StringBuilder builder2 = new StringBuilder(75);</span>
+<span class="nc" id="L312">        builder2.append(&quot;DefaultScaffold [id=&quot;).append(id).append(&quot;, length=&quot;)</span>
+<span class="nc" id="L313">                .append(length).append(&quot;, placedContigs=&quot;)</span>
+<span class="nc" id="L314">                .append(placedContigs).append(']');</span>
+<span class="nc" id="L315">        return builder2.toString();</span>
+    }
+
+
+   
+   
+
+   
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

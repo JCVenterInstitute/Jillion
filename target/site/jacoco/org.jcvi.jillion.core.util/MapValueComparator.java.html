@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>MapValueComparator.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.core.util</a> &gt; <span class="el_source">MapValueComparator.java</span></div><h1>MapValueComparator.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.core.util;
+
+import java.util.Comparator;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+import org.jcvi.jillion.internal.core.util.ComparableComparator;
+
+/**
+ * {@code MapValueComparator} is a {@link Comparator}
+ * that allows sorting a Map's keys based on the values mapped
+ * to the keys.
+ * @author dkatzel
+ *
+ *
+ */
+public final class MapValueComparator&lt;K extends Comparable&lt;? super K&gt;,V&gt; implements Comparator&lt;K&gt; {
+
+	private final Map&lt;K, V&gt; map;
+	private final boolean ascending;
+	private final Comparator&lt;V&gt; valueComparator;
+    
+    /**
+     * Create an unmodifiable {@link SortedMap} that is sorted by value in ascending 
+     * order.  If there are duplicate values, then their sort order will be determined
+     * by comparing the keys to each other also in ascending order.
+     * @param &lt;K&gt; The Comparable type of Key contained in the map.
+     * @param &lt;V&gt; The type of the values contained in the map (does not have to be comparable).
+     * @param unsorted the unsorted Map to be sorted.
+     * @param comparator the {@link Comparator} used to sort the values in this map.
+     * @return a sorted map sorted by the values in ascending order; never null.
+     */
+    public static &lt;K extends Comparable&lt;? super K&gt;,V&gt; SortedMap&lt;K,V&gt; sortAscending(Map&lt;K, V&gt; unsorted, Comparator&lt;V&gt; comparator){
+<span class="fc" id="L55">        TreeMap&lt;K,V&gt; sorted= new TreeMap&lt;K,V&gt;(MapValueComparator.create(unsorted,comparator,true));</span>
+<span class="fc" id="L56">        sorted.putAll(unsorted);</span>
+<span class="fc" id="L57">        return sorted;</span>
+    }
+    /**
+     * Create an unmodifiable {@link SortedMap} that is sorted by value in descending 
+     * order.  If there are duplicate values, then their sort order will be determined
+     * by comparing the keys to each other also in ascending order.
+     * @param &lt;K&gt; The Comparable type of Key contained in the map.
+     * @param &lt;V&gt; The type of the values contained in the map (does not have to be comparable).
+     * @param unsorted the unsorted Map to be sorted.
+     * @param comparator the {@link Comparator} used to sort the values in this map.
+     * @return a sorted map sorted by the values in ascending order; never null.
+     */
+    public static &lt;K extends Comparable&lt;? super K&gt;,V&gt; SortedMap&lt;K,V&gt; sortDescending(Map&lt;K, V&gt; unsorted, Comparator&lt;V&gt; comparator){
+<span class="fc" id="L70">        TreeMap&lt;K,V&gt; sorted= new TreeMap&lt;K,V&gt;(MapValueComparator.create(unsorted,comparator,false));</span>
+<span class="fc" id="L71">        sorted.putAll(unsorted);</span>
+<span class="fc" id="L72">        return sorted;</span>
+    }
+    /**
+     * Create an unmodifiable {@link SortedMap} that is sorted by value in ascending 
+     * order.  If there are duplicate values, then their sort order will be determined
+     * by comparing the keys to each other also in ascending order.
+     * @param &lt;K&gt; The Comparable type of Key contained in the map.
+     * @param &lt;V&gt; The Comparable type of the values contained in the map.
+     * @param unsorted the unsorted Map to be sorted.
+     * @return a sorted map sorted by the values in ascending order; never null.
+     */
+    public static &lt;K extends Comparable&lt;? super K&gt;,V extends Comparable&lt;? super V&gt;&gt; SortedMap&lt;K,V&gt; sortAscending(Map&lt;K, V&gt; unsorted){
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">    	if(unsorted==null){</span>
+<span class="nc" id="L85">    		throw new NullPointerException(&quot;map can not be null&quot;);</span>
+    	}
+<span class="fc" id="L87">    	TreeMap&lt;K,V&gt; sorted= new TreeMap&lt;K,V&gt;(MapValueComparator.create(unsorted,ComparableComparator.&lt;V&gt;create(),true));</span>
+<span class="fc" id="L88">        sorted.putAll(unsorted);</span>
+<span class="fc" id="L89">        return sorted;</span>
+    }
+    /**
+     * Create an unmodifiable {@link SortedMap} that is sorted by value in descending 
+     * order.  If there are duplicate values, then their sort order will be determined
+     * by comparing the keys to each other also in descending order.
+     * @param &lt;K&gt; The Comparable type of Key contained in the map.
+     * @param &lt;V&gt; The Comparable type of the values contained in the map.
+     * @param unsorted the unsorted Map to be sorted.
+     * @return a sorted map sorted by the values in descending order; never null.
+     */
+    public static &lt;K extends Comparable&lt;? super K&gt;,V extends Comparable&lt;? super V&gt;&gt; SortedMap&lt;K,V&gt; sortDescending(Map&lt;K, V&gt; unsorted){
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">    	if(unsorted==null){</span>
+<span class="nc" id="L102">    		throw new NullPointerException(&quot;map can not be null&quot;);</span>
+    	}
+<span class="fc" id="L104">        TreeMap&lt;K,V&gt; sorted= new TreeMap&lt;K,V&gt;(MapValueComparator.create(unsorted,ComparableComparator.&lt;V&gt;create(),false));</span>
+<span class="fc" id="L105">        sorted.putAll(unsorted);</span>
+<span class="fc" id="L106">        return sorted;</span>
+    }
+    /**
+     * Helper static method to infer types of keys so we 
+     * don't clutter the instantiation code with generic noise.
+     * @param &lt;K&gt; The Comparable type of Key contained in the map.
+     * @param &lt;V&gt; The Comparable type of the values contained in the map.
+     * @param mao the Map to be get associations of key and values.
+     * @param ascending should the sort be ordered in ascending order.
+     * @return a new MapValueComparator instance.
+     */
+    private static &lt;K extends Comparable&lt;? super K&gt;,V&gt; MapValueComparator&lt;K,V&gt; create(Map&lt;K, V&gt; map, Comparator&lt;V&gt; comparator,boolean ascending){
+<span class="fc" id="L118">        return new MapValueComparator&lt;K, V&gt;(map,comparator,ascending);</span>
+    }
+   
+<span class="fc" id="L121">    private MapValueComparator(Map&lt;K, V&gt; map,Comparator&lt;V&gt; valueComparator,boolean ascending) {</span>
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">        if(map ==null){</span>
+<span class="nc" id="L123">            throw new NullPointerException(&quot;map can not be null&quot;);</span>
+        }
+<span class="fc" id="L125">        this.map = map;</span>
+<span class="fc" id="L126">        this.valueComparator = valueComparator;</span>
+<span class="fc" id="L127">        this.ascending = ascending;</span>
+<span class="fc" id="L128">    }</span>
+
+
+
+    /**
+    * {@inheritDoc}
+    */
+    @Override
+    public int compare(K o1, K o2) {
+<span class="fc bfc" id="L137" title="All 2 branches covered.">        if(ascending){</span>
+<span class="fc" id="L138">            return privateCompare(o1, o2);</span>
+        }
+        //invert if descending
+<span class="fc" id="L141">        return privateCompare(o2, o1);</span>
+    }
+
+    private int privateCompare(K o1, K o2) {
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">        if(!map.containsKey(o1)){</span>
+<span class="nc bnc" id="L146" title="All 2 branches missed.">            if(!map.containsKey(o2)){</span>
+<span class="nc" id="L147">                return 0;</span>
+            }
+<span class="nc" id="L149">             return -1;</span>
+        }
+<span class="pc bpc" id="L151" title="1 of 2 branches missed.">        if(!map.containsKey(o2)){</span>
+<span class="nc" id="L152">            return 1;</span>
+        }
+<span class="fc" id="L154">        int comp= valueComparator.compare(map.get(o1),map.get(o2));</span>
+<span class="fc bfc" id="L155" title="All 2 branches covered.">        if(comp !=0){</span>
+<span class="fc" id="L156">            return comp;</span>
+        }
+<span class="fc" id="L158">        return o1.compareTo(o2);</span>
+    }
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

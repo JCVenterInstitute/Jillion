@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ChunkType.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.trace.chromat.ztr.chunk</a> &gt; <span class="el_source">ChunkType.java</span></div><h1>ChunkType.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.internal.trace.chromat.ztr.chunk;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * {@code ChunkType} describes the type of data that is contained
+ * in a ZTR Chunk.  The Type is determined by the Header which is a 
+ * 4-byte ASCII String.
+ * @author dkatzel
+ *
+ *
+ */
+<span class="pc" id="L34">public enum ChunkType {</span>
+
+    
+   
+    /**
+     * This chunk will encode a series of 16-bit trace samples.
+     */
+<span class="fc" id="L41">   SAMPLES(&quot;SMP4&quot;),</span>
+    /**
+     * This chunk encodes the basecalls.
+     */
+<span class="fc" id="L45">    BASECALLS(&quot;BASE&quot;),</span>
+    /**
+     * This chunk encodes the mappings of the basecall numbers to the sample
+     * numbers.  It defines the position of each basecall in the trace data.
+     */
+<span class="fc" id="L50">    POSITIONS(&quot;BPOS&quot;),</span>
+    /**
+     * This Chunk encodes the confidence values for each called base for each
+     * channel.
+     */
+<span class="fc" id="L55">    CONFIDENCE(&quot;CNF4&quot;),</span>
+    /**
+     * This Chunk encodes comments as key value pairs.
+     */
+<span class="fc" id="L59">    COMMENTS(&quot;TEXT&quot;),</span>
+    /**
+     * This Chunk encodes the suggested quality clip points.
+     */
+<span class="fc" id="L63">    CLIP(&quot;CLIP&quot;);</span>
+    
+   private static final Map&lt;String, ChunkType&gt; MAP;
+   
+   static{
+<span class="fc" id="L68">       MAP = new HashMap&lt;String, ChunkType&gt;();</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">       for(ChunkType type : values()){</span>
+<span class="fc" id="L70">           MAP.put(type.getTypeName(), type);</span>
+       }
+<span class="fc" id="L72">   }</span>
+   
+    private final String typeName;
+    
+<span class="fc" id="L76">    private ChunkType(String typeName){</span>
+<span class="fc" id="L77">        this.typeName = typeName;</span>
+<span class="fc" id="L78">    }</span>
+
+    public String getTypeName() {
+<span class="fc" id="L81">        return typeName;</span>
+    }
+    
+    public static ChunkType getChunkFor(String header) throws ChunkException{
+<span class="fc bfc" id="L85" title="All 2 branches covered.">        if(MAP.containsKey(header)){</span>
+<span class="fc" id="L86">            return MAP.get(header);</span>
+        }
+<span class="fc" id="L88">        throw new ChunkException(String.format(&quot;header '%s' is unknown&quot;,header));</span>
+    }
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

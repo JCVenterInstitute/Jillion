@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>PresortedBamFileWriter.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.sam</a> &gt; <span class="el_source">PresortedBamFileWriter.java</span></div><h1>PresortedBamFileWriter.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.sam;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.internal.sam.SamUtil;
+import org.jcvi.jillion.internal.sam.index.BamIndexer;
+import org.jcvi.jillion.internal.sam.index.IndexUtil;
+import org.jcvi.jillion.sam.attribute.ReservedAttributeValidator;
+import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
+import org.jcvi.jillion.sam.header.SamHeader;
+import org.jcvi.jillion.sam.header.SamReferenceSequence;
+import org.jcvi.jillion.sam.index.BamIndex;
+/**
+ * {@code PresortedBamFileWriter} is a {@link SamWriter}
+ * that writes out BAM files whose {@link SamRecord}s
+ * are written out in the order that they are given.
+ * Only use this class if the records are either not sorted
+ * or if the records are already sorted when they are given to
+ * this writer.  The {@link SamHeader#getSortOrder()}
+ * is also written out to the BAM so make sure it is correct.
+ * @author dkatzel
+ *
+ */
+class PresortedBamFileWriter implements SamWriter{
+
+	
+	private final SamHeader header;
+	
+	private final File bamFile;
+	private final OutputStream out;
+	private final SamAttributeValidator attributeValidator;
+	
+	private final BamIndexer optionalIndexer;
+<span class="fc" id="L64">	private boolean closed =false;</span>
+	private final boolean includeIndexMetaData;
+	
+<span class="fc" id="L67">	private Map&lt;String, Integer&gt; refSeqIndexMap = new HashMap&lt;String, Integer&gt;();</span>
+	
+	public PresortedBamFileWriter(SamHeader header, File outputFile, BamIndexer optionalIndexer, boolean includeIndexMetaData) throws IOException{
+<span class="nc" id="L70">		this(header, outputFile, optionalIndexer, ReservedAttributeValidator.INSTANCE, includeIndexMetaData);</span>
+<span class="nc" id="L71">	}</span>
+	
+    public PresortedBamFileWriter(SamHeader header, File outputFile,
+            BamIndexer optionalIndexer, SamAttributeValidator attributeValidator, boolean includeIndexMetaData)
+<span class="fc" id="L75">            throws IOException {</span>
+<span class="fc" id="L76">        this.header = header;</span>
+<span class="fc" id="L77">        this.bamFile = outputFile;</span>
+<span class="fc" id="L78">        this.attributeValidator = attributeValidator;</span>
+<span class="fc" id="L79">        this.optionalIndexer = optionalIndexer;</span>
+<span class="fc" id="L80">        this.includeIndexMetaData = includeIndexMetaData;</span>
+        
+<span class="fc" id="L82">        out = new BgzfOutputStream(bamFile, optionalIndexer);</span>
+<span class="fc" id="L83">        int i = 0;</span>
+<span class="fc bfc" id="L84" title="All 2 branches covered.">        for (SamReferenceSequence refSeq : header.getReferenceSequences()) {</span>
+<span class="fc" id="L85">            refSeqIndexMap.put(refSeq.getName(), Integer.valueOf(i));</span>
+<span class="fc" id="L86">            i++;</span>
+<span class="fc" id="L87">        }</span>
+<span class="fc" id="L88">        writeHeader();</span>
+<span class="fc" id="L89">    }</span>
+
+	private void writeHeader() throws IOException {
+<span class="fc" id="L92">		StringBuilder headerAsStringBuilder = SamUtil.encodeHeader(header);</span>
+<span class="fc" id="L93">		int bytesOfReferences =4;</span>
+<span class="fc bfc" id="L94" title="All 2 branches covered.">		for(SamReferenceSequence ref: header.getReferenceSequences()){</span>
+<span class="fc" id="L95">			bytesOfReferences += ref.getName().length() +1 +8;</span>
+<span class="fc" id="L96">		}</span>
+<span class="fc" id="L97">		ByteBuffer buf = ByteBuffer.allocate(8 + headerAsStringBuilder.length() + bytesOfReferences );</span>
+<span class="fc" id="L98">		buf.order(ByteOrder.LITTLE_ENDIAN);</span>
+		
+<span class="fc" id="L100">		buf.put(SamUtil.getBamMagicNumber());</span>
+<span class="fc" id="L101">		buf.putInt(headerAsStringBuilder.length());</span>
+<span class="fc" id="L102">		char[] chars = new char[headerAsStringBuilder.length()];</span>
+<span class="fc" id="L103">		headerAsStringBuilder.getChars(0, chars.length, chars, 0);</span>
+		
+<span class="fc bfc" id="L105" title="All 2 branches covered.">		for(int i=0; i&lt; chars.length; i++){</span>
+<span class="fc" id="L106">			buf.put((byte)chars[i]);</span>
+		}
+<span class="fc" id="L108">		Collection&lt;SamReferenceSequence&gt; refs =header.getReferenceSequences();</span>
+<span class="fc" id="L109">		buf.putInt(refs.size());</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">		for(SamReferenceSequence ref : refs){</span>
+			//length of ref name + null terminal
+<span class="fc" id="L112">			buf.putInt(ref.getName().length() +1);</span>
+<span class="fc" id="L113">			buf.put(ref.getName().getBytes(IOUtil.UTF_8));</span>
+<span class="fc" id="L114">			buf.put((byte)0);	//null terminated</span>
+<span class="fc" id="L115">			buf.putInt(ref.getLength());</span>
+<span class="fc" id="L116">		}</span>
+<span class="fc" id="L117">		buf.flip();</span>
+<span class="fc" id="L118">		out.write(buf.array());</span>
+<span class="fc" id="L119">	}</span>
+
+	@Override
+	public void close() throws IOException {
+<span class="fc bfc" id="L123" title="All 2 branches covered.">		if(closed){</span>
+			//no-op so we don't write BAM and index twice
+<span class="fc" id="L125">			return;</span>
+		}
+<span class="fc" id="L127">		closed= true;</span>
+<span class="fc" id="L128">		out.close();</span>
+<span class="fc bfc" id="L129" title="All 2 branches covered.">		if(optionalIndexer !=null){</span>
+<span class="fc" id="L130">			BamIndex bamIndex =optionalIndexer.createBamIndex();</span>
+			
+<span class="fc" id="L132">			File indexFileOutFile = new File(bamFile.getParentFile(), bamFile.getName() + &quot;.bai&quot;);</span>
+<span class="fc" id="L133">			OutputStream indexOutStream =null;</span>
+			try{
+<span class="fc" id="L135">				indexOutStream = new BufferedOutputStream(new FileOutputStream(indexFileOutFile));</span>
+<span class="fc" id="L136">				IndexUtil.writeIndex(indexOutStream, bamIndex, includeIndexMetaData);</span>
+			}finally{
+<span class="pc" id="L138">				IOUtil.closeAndIgnoreErrors(indexOutStream);</span>
+<span class="fc" id="L139">			}</span>
+		}
+<span class="fc" id="L141">	}</span>
+
+	@Override
+	public void writeRecord(SamRecord record) throws IOException {
+		try{
+<span class="fc" id="L146">			header.validateRecord(record, attributeValidator);</span>
+<span class="nc" id="L147">		}catch(SamValidationException e){</span>
+<span class="nc" id="L148">			throw new IOException(&quot;can not write record due to validation error(s)&quot;,e);</span>
+<span class="fc" id="L149">		}</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">		if(optionalIndexer !=null){</span>
+<span class="fc" id="L151">			optionalIndexer.setCurrentRecord(record);</span>
+		}
+		
+<span class="fc" id="L154">		SamUtil.writeAsBamRecord(out, header, record, </span>
+<span class="fc" id="L155">		        getRefIndexFor(record.getReferenceName()),</span>
+<span class="fc" id="L156">		        getRefIndexFor(record.getNextName())</span>
+		        );
+		
+		
+<span class="fc" id="L160">	}</span>
+	
+	private int getRefIndexFor(String refName){
+<span class="fc" id="L163">	    Integer refIndex = refSeqIndexMap.get(refName);</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">	    if(refIndex ==null){</span>
+<span class="fc" id="L165">	        return -1;</span>
+	    }
+<span class="fc" id="L167">	    return refIndex;</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

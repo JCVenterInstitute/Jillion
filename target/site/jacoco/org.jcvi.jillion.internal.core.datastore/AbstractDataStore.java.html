@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AbstractDataStore.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.internal.core.datastore</a> &gt; <span class="el_source">AbstractDataStore.java</span></div><h1>AbstractDataStore.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+/*
+ * Created on Aug 5, 2009
+ *
+ * @author dkatzel
+ */
+package org.jcvi.jillion.internal.core.datastore;
+
+import java.io.IOException;
+
+import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreClosedException;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
+import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
+/**
+ * {@code AbstractDataStore} is an abstract implementation
+ * of {@link DataStore} that manages
+ * the datastore transitions between the open 
+ * and close state via {@link #close()} method.
+ * All DataStore methods will first check to make sure that the datastore 
+ * is not yet closed before delegating to a helper method that is implemented
+ * by subclasses.  All DataStore methods are final so subclasses
+ * can not accidentally or maliciously override them to break the {@link DataStore}
+ * contract of throwing exceptions if already closed.
+ * 
+ * For example, subclasses need to implement getImpl(String)
+ * to perform the actual act of getting a record out of the datastore.
+ * {@link AbstractDataStore#get(String)} method is final and is implemented
+ * with the following pseudocode:
+ * &lt;pre&gt;
+ *  public final T get(String id) throws DataStoreException {
+        throwExceptionIfClosed();
+        return getImpl(id);
+    }
+ * &lt;/pre&gt;
+ * @author dkatzel
+ *
+ * @param &lt;T&gt; the type of element in the DataStore.
+ */
+<span class="fc" id="L60">public abstract class  AbstractDataStore&lt;T&gt; implements DataStore&lt;T&gt;{</span>
+    private volatile boolean isClosed;
+    
+    private final void throwExceptionIfClosed() {
+<span class="fc bfc" id="L64" title="All 2 branches covered.">        if(isClosed){</span>
+<span class="fc" id="L65">            throw new DataStoreClosedException(&quot;DataStore is closed&quot;);</span>
+        }
+<span class="fc" id="L67">    }</span>
+    /**
+     * This method is called
+     * when a datastore is closed
+     * via the {@link #close()}.
+     * Implementations should
+     * use this method to handle
+     * any resource cleanup.
+     */
+    protected abstract void handleClose() throws IOException;
+    @Override
+    public final synchronized void close() throws IOException {
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">    	if(!isClosed){</span>
+<span class="fc" id="L80">    		handleClose();</span>
+    	}
+<span class="fc" id="L82">        isClosed = true;</span>
+<span class="fc" id="L83">    }</span>
+    @Override
+    public final boolean isClosed() {
+<span class="fc" id="L86">        return isClosed;</span>
+    }
+    
+    @Override
+    public final StreamingIterator&lt;T&gt; iterator() throws DataStoreException {
+<span class="fc" id="L91">    	throwExceptionIfClosed();</span>
+<span class="fc" id="L92">        return iteratorImpl();</span>
+    }
+    
+    
+    @Override
+	public final StreamingIterator&lt;DataStoreEntry&lt;T&gt;&gt; entryIterator()
+			throws DataStoreException {
+<span class="nc" id="L99">    	throwExceptionIfClosed();</span>
+<span class="nc" id="L100">		return entryIteratorImpl();</span>
+	}
+	/**
+     * Does this DataStore contain the given id.
+     * This method is delegated to by {@link #contains(String)}
+     * after determining that the DataStore is still open.
+     * @param id the id to look for; 
+     * @return {@code true} if the DataStore does contain
+     * this id; {@code false} otherwise.
+     * @throws DataStoreException if there is a problem
+     * determining if the datastore contains the id.
+     * @see DataStore#contains(String)
+     */
+    protected abstract boolean containsImpl(String id) throws DataStoreException;
+    /**
+     * Get the record in this {@link DataStore} with the given id.
+     * This method is delegated to by {@link #get(String)}
+     * @param id the id of the object to fetch.
+     * @return the object being fetched, will be null if
+     * {@link #contains(String) contains(id)} is false.
+     * @throws DataStoreException if there is a problem fetching the
+     * data from this {@link DataStore}.
+     * @throws IllegalStateException if this {@link DataStore} is closed.
+     * @see DataStore#get(String)
+     */
+    protected abstract T getImpl(String id) throws DataStoreException;
+    /**
+     * Get the total number of objects in this DataStore.
+     * This method is delegated to by {@link #getNumberOfRecords()}.
+     * @return the number of objects in this DataStore; always &gt;=0.
+     * @throws DataStoreException if there is a problem fetching the
+     * data from this {@link DataStore}.
+     * @throws IllegalStateException if this {@link DataStore} is closed.
+     * @see DataStore#getNumberOfRecords()
+     */
+    protected abstract long getNumberOfRecordsImpl() throws DataStoreException;
+    /**
+     * Create a new {@link StreamingIterator}
+     * which will iterate over the ids 
+     * of all the records
+     * in this {@link DataStore} which 
+     * preserves the contract of the Id iterator in
+     * {@link DataStore#idIterator()}. 
+     * This method is delegated to by {@link #idIterator()}.
+     * 
+     * @return a new {@link StreamingIterator}
+     * instance; never null and never contain any null elements,
+     * but could be empty if {@link #getNumberOfRecords()} == 0.
+     * @throws DataStoreException if there is a 
+     * problem creating this iterator.
+     * @throws IllegalStateException if this {@link DataStore} is closed.
+     * @see DataStore#idIterator()
+     */
+    protected abstract StreamingIterator&lt;String&gt; idIteratorImpl() throws DataStoreException;
+    /**
+     * Create a new {@link StreamingIterator}
+     * which will iterate over all the records
+     * in this {@link DataStore} which 
+     * preserves the contract of the iterator in
+     * {@link DataStore#iterator()}. 
+     * This method is delegated to by {@link #iterator()}.
+     * 
+     * @return a new {@link StreamingIterator}
+     * instance; never null and never contain any null elements,
+     * but could be empty if {@link #getNumberOfRecords()} == 0.
+     * @throws DataStoreException if there is a 
+     * problem creating this iterator.
+     * @throws IllegalStateException if this {@link DataStore} is closed.
+     * @see DataStore#iterator()
+     */
+    protected abstract StreamingIterator&lt;T&gt; iteratorImpl() throws DataStoreException;
+    
+    
+    
+    /**
+     * Create a new {@link StreamingIterator}
+     * which will iterate over the {@link DataStoreEntry}s 
+     * of all the records
+     * in this {@link DataStore} which 
+     * preserves the contract of the Id iterator in
+     * {@link DataStore#entryIterator()}. 
+     * This method is delegated to by {@link #idIterator()}.
+     * 
+     * @return a new {@link StreamingIterator}
+     * instance; never null and never contain any null elements,
+     * but could be empty if {@link #getNumberOfRecords()} == 0.
+     * @throws DataStoreException if there is a 
+     * problem creating this iterator.
+     * @throws IllegalStateException if this {@link DataStore} is closed.
+     * @see DataStore#idIterator()
+     */
+    protected abstract StreamingIterator&lt;DataStoreEntry&lt;T&gt;&gt; entryIteratorImpl() throws DataStoreException;
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public final boolean contains(String id) throws DataStoreException {
+<span class="pc bpc" id="L198" title="1 of 2 branches missed.">    	if(id ==null){</span>
+<span class="nc" id="L199">    		throw new NullPointerException(&quot;id can not be null&quot;);</span>
+    	}
+<span class="fc" id="L201">        throwExceptionIfClosed();</span>
+<span class="fc" id="L202">        return containsImpl(id);</span>
+    }
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public final T get(String id) throws DataStoreException {
+<span class="pc bpc" id="L210" title="1 of 2 branches missed.">    	if(id ==null){</span>
+<span class="nc" id="L211">    		throw new NullPointerException(&quot;id can not be null&quot;);</span>
+    	}
+<span class="fc" id="L213">        throwExceptionIfClosed();</span>
+<span class="fc" id="L214">        return getImpl(id);</span>
+    }
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public final StreamingIterator&lt;String&gt; idIterator() throws DataStoreException {
+<span class="fc" id="L222">        throwExceptionIfClosed();</span>
+<span class="fc" id="L223">        return idIteratorImpl();</span>
+    }
+    /**
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    public final long getNumberOfRecords() throws DataStoreException {
+<span class="fc" id="L231">        throwExceptionIfClosed();</span>
+<span class="fc" id="L232">        return getNumberOfRecordsImpl();</span>
+    }
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

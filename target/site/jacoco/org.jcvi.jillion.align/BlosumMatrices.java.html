@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>BlosumMatrices.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.align</a> &gt; <span class="el_source">BlosumMatrices.java</span></div><h1>BlosumMatrices.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.align;
+
+import java.io.IOException;
+
+import org.jcvi.jillion.internal.ResourceHelper;
+
+
+
+/**
+ * {@code BlosumMatrices}
+ * contains common BLOSUM (BLOck SUbstitution Matrix)
+ * substitution matrices used for amino acid alignments.
+ * 
+ * Blosum matrices with high numbers are designed for comparing closely related sequences,
+ * low numbers are designed for comparing distant related sequences.  
+ * Scores within a BLOSUM are log-odds scores that measure, in an alignment,
+ * the logarithm for the ratio of the likelihood of two amino acids appearing
+ * with a biological sense and the likelihood of the same amino acids appearing by chance.
+ * A positive score is given to the more likely substitutions while
+ * a negative score is given to the less likely substitutions.
+ * &lt;p&gt;
+ * 
+ * There are many different BLOSUM matrices which are designated with numbers (BLOSUM62, BLOSUM40 etc)
+ * which represents the clustering percentage level.
+ * The lower the number, the more distantly related the proteins begin aligned are.
+ * The BLOSUM62 matrix with the amino acids in the table grouped according to
+ * the chemistry of the side chain, as in (a). Each value in the
+ * matrix is calculated by dividing the frequency of occurrence of
+ * the amino acid pair in the BLOCKS database, clustered at the 62% level,
+ * divided by the probability that the same two amino acids might align by chance.
+ * The ratio is then converted to a logarithm and expressed as a log odds score.
+ * &lt;p&gt;
+ * BLOSUM matrices are usually scaled in half-bit units.
+ * A score of zero indicates that the frequency with which a
+ * given two amino acids were found aligned in the database was
+ * as expected by chance, while a positive score indicates that the
+ * alignment was found more often than by chance, and negative score
+ * indicates that the alignment was found less often than by chance.
+ * 
+ * @author dkatzel
+ *
+ */
+public final class BlosumMatrices {
+	//matrices are lazy loaded from files.
+	private static AminoAcidSubstitutionMatrix BLOSUM_30,BLOSUM_40, BLOSUM_50, BLOSUM_62, BLOSUM_90;
+	
+<span class="fc" id="L67">	private static ResourceHelper RESOURCE_HELPER = new ResourceHelper(BlosumMatrices.class);</span>
+<span class="nc" id="L68">	private BlosumMatrices(){</span>
+		//can not instantiate
+<span class="nc" id="L70">	}</span>
+	/**
+	 * Get the BLOSUM 30 matrix.
+	 * @return an {@link AminoAcidSubstitutionMatrix} with BLOSUM 30 values;
+	 * will never be null.
+	 * 
+	 * @since 5.1
+	 */
+	public static synchronized AminoAcidSubstitutionMatrix blosum30(){
+<span class="fc bfc" id="L79" title="All 2 branches covered.">		if(BLOSUM_30 ==null){</span>
+<span class="fc" id="L80">			BLOSUM_30 = getBlosumMatrix(30);</span>
+		}
+<span class="fc" id="L82">		return BLOSUM_30;</span>
+	}
+	/**
+	 * Get the BLOSUM 40 matrix.
+	 * @return an {@link AminoAcidSubstitutionMatrix} with BLOSUM 40 values;
+	 * will never be null.
+	 * 
+	 * @since 5.1
+	 */
+	public static synchronized AminoAcidSubstitutionMatrix blosum40(){
+<span class="fc bfc" id="L92" title="All 2 branches covered.">		if(BLOSUM_40 ==null){</span>
+<span class="fc" id="L93">			BLOSUM_40 = getBlosumMatrix(40);</span>
+		}
+<span class="fc" id="L95">		return BLOSUM_40;</span>
+	}
+	/**
+	 * Get the BLOSUM 50 matrix.
+	 * @return an {@link AminoAcidSubstitutionMatrix} with BLOSUM 50 values;
+	 * will never be null.
+	 */
+	public static synchronized AminoAcidSubstitutionMatrix blosum50(){
+<span class="fc bfc" id="L103" title="All 2 branches covered.">		if(BLOSUM_50 ==null){</span>
+<span class="fc" id="L104">			BLOSUM_50 = getBlosumMatrix(50);</span>
+		}
+<span class="fc" id="L106">		return BLOSUM_50;</span>
+	}
+	/**
+	 * Get the BLOSUM 62 matrix which is the default substitution matrix 
+	 * used by BLAST.
+	 * @return an {@link AminoAcidSubstitutionMatrix} with BLOSUM 62 values;
+	 * will never be null.
+	 */
+	public static synchronized AminoAcidSubstitutionMatrix blosum62(){
+<span class="fc bfc" id="L115" title="All 2 branches covered.">		if(BLOSUM_62 ==null){</span>
+<span class="fc" id="L116">			BLOSUM_62 = getBlosumMatrix(62);</span>
+		}
+<span class="fc" id="L118">		return BLOSUM_62;</span>
+	}
+	/**
+	 * Get the BLOSUM 90 matrix.
+	 * @return an {@link AminoAcidSubstitutionMatrix} with BLOSUM 90 values;
+	 * will never be null.
+	 */
+	public static synchronized AminoAcidSubstitutionMatrix blosum90(){
+<span class="fc bfc" id="L126" title="All 2 branches covered.">		if(BLOSUM_90 ==null){</span>
+<span class="fc" id="L127">			BLOSUM_90 = getBlosumMatrix(90);</span>
+		}
+<span class="fc" id="L129">		return BLOSUM_90;</span>
+	}
+	
+	
+	private static final AminoAcidSubstitutionMatrix getBlosumMatrix(int value){
+<span class="fc" id="L134">		String file = String.format(&quot;blosum%d.matrix&quot;,value);</span>
+		try {
+<span class="fc" id="L136">			return AminoAcidSubstitutionMatrixFileParser.parse(</span>
+<span class="fc" id="L137">					RESOURCE_HELPER.getFileAsStream(file));</span>
+<span class="nc" id="L138">		} catch (IOException e) {</span>
+<span class="nc" id="L139">			throw new IllegalStateException(&quot;could not parse substitution matrix file&quot;, e);</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -1,0 +1,472 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SplitFastqWriter.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.trace.fastq</a> &gt; <span class="el_source">SplitFastqWriter.java</span></div><h1>SplitFastqWriter.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.trace.fastq;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+
+import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.internal.core.util.Sneak;
+/**
+ * Utility class that creates {@link FastqWriter} instances
+ * that split the {@link FastqRecord} objects being written out
+ * over several different output files.
+ * &lt;p&gt;
+ * The rules for how the records are split are determined
+ * by the writer implementation chosen in each factory method.
+ * &lt;/p&gt;
+ * &lt;p&gt;
+ * Construction of the individual fastq writers used by the Split Writer
+ * is delegated to a user supplied lambda function must return a non-null {@link FastqWriter} of the correct type.
+ * &lt;/p&gt;
+ * The returned FastqWriter implementations are not thread-safe.
+ * 
+ * @author dkatzel
+ *
+ * @since 5.0
+ */
+public final class SplitFastqWriter{
+	
+	/**
+	 * Functional interface to create new {@link FastqWriter}
+	 * instances.
+	 * @author dkatzel
+	 *
+	 * 
+	 */
+	@FunctionalInterface
+	public interface FastqWriterFactory{
+		/**
+		 * Create a new {@link FastqWriter} for the ith
+		 * fastq file.
+		 * @param i the ith file to create, will start at value 1
+		 * not zero.
+		 * @return a new FastqWriter; can not be null.
+		 * @throws IOException if there is a problem creating the writer.
+		 */
+		FastqWriter create(int i) throws IOException;
+	}
+	
+	/**
+	 * Functional interface to create new {@link FastqWriter}
+	 * instances.
+	 * @author dkatzel
+	 *
+	 * @param &lt;K&gt; the type of object that will be used as a &quot;key&quot;
+	 * to determine which of the output writers to write this record to.
+	 * 
+	 * 
+	 */
+	@FunctionalInterface
+	public interface DeconvolveFastqRecordWriterFactory&lt;K&gt;{
+		/**
+		 * Create a new {@link FastqWriter} for the
+		 * fastq file for the given deconvolution key.
+		 * @param key the deconvolution key for the file to create;should never be null.
+		 * @return a new {@link FastqWriter}; can not be null.
+		 * @throws IOException if there is a problem creating the writer.
+		 */
+		FastqWriter create(K key) throws IOException;
+	}
+	
+	/**
+	 * Creates a new {@link FastqWriter} instance that will spread out
+	 * the {@link FastqRecord}s to be written to create several fastq files.  The
+	 * first fastq record written will be written to the first output fastq, the second
+	 * record written will be written to the second output fastq etc.  After all the output files
+	 * have written a record, the next {@link FastqRecord} to be written will write to the first
+	 * output file again.  This will continue until the writer is closed.
+	 * 
+	 * @param numberOfFiles the number of files to write; must be &gt;=1.
+	 * 
+	 * @param supplier a {@link FastqWriterFactory} instance that will create a new {@link FastqWriter} for the
+	 * ith file to be created.  The passed in value i will be in the range 1..N where N is the number of files
+	 * created (will start at 1 not 0).  If no records are written, then supplier will never be called. Can not be null.
+	 * 
+	 * @return a new {@link FastqWriter} instance; should never be null. 
+	 * The returned writer is not thread-safe.
+	 * 
+	 * @throws NullPointerException if supplier lambda is null.
+	 * @throws IllegalArgumentException if max records per file is &lt; 1.
+	 * 
+	 * @apiNote for example, to make a Split FastqWriter that will write out to 10 different fastq files
+	 *  named &quot;1.fastq&quot; to &quot;10.fastq&quot; in a round robin fashion would look like this:
+	 * &lt;pre&gt;
+	 * 
+	 * File outputDir = ...
+	 * {@code Iterator&lt;FastqRecord&gt;} iter = ...
+	 * 
+	 * try(FastqWriter writer = SplitFastqWriter.roundRobin(
+	 * 					10,
+	 * 					i -&gt; new FastqWriterBuilder(new File(outputDir, i +&quot;.fastq&quot;))
+	 *										.build());
+	*){
+	*	while(iter.hasNext()){
+	*		writer.write(iter.next());
+	*	}
+	*}
+	 * &lt;/pre&gt;
+	 * 
+	 */
+	public static FastqWriter roundRobin(int numberOfFiles, FastqWriterFactory supplier){
+<span class="fc" id="L135">		return new RoundRobinSplitFastqWriter(numberOfFiles, supplier);</span>
+	}
+	
+	
+	/**
+	 * Creates a new {@link FastqWriter} instance that will internally create several fastq files
+	 * that will each contain only the given number of records.  Once the first fastq file written has reached
+	 * the max number of records, a new output fastq file will be created to write out the next max number of records
+	 * (the additional written records will be rolled over to the new writer).
+	 * 
+	 * @param maxRecordsPerFile the max number of {@link FastqRecord}s to be written to a file
+	 * before it should be closed and the next file created. Must be &gt;=1.
+	 * 
+	 * @param supplier a {@link FastqWriterFactory} instance that will create a new FastqWriter for the
+	 * ith file to be created.  The passed in value i will be in the range 1..N where N is the number of files
+	 * created (will start at 1 not 0).  If no records are written, then supplier will never be called.  Can not be null.
+	 * 
+	 * @return a new {@link FastqWriter} instance; will never be null.
+	 * The returned writer is not thread-safe.
+	 * 
+	 * @throws NullPointerException if supplier lambda is null.
+	 * @throws IllegalArgumentException if max records per file is &lt; 1.
+	 * 
+	 *  @apiNote for example, to make a Split Fastq Writer that will write out to a new fastq file
+	 *  every 1000 sequences
+	 *  named &quot;1.fastq&quot;, &quot;2.fastq&quot;, etc where &quot;1.fastq&quot; will contain the first 1000 sequences
+	 *  and &quot;2.fastq&quot; will contain the next 1000 sequences etc would look like this:
+	 *  
+	 * &lt;pre&gt;
+	 * File outputDir = ...
+	 * {@code Iterator&lt;FastqRecord&gt;} iter = ...
+	 * 
+	 * try(FastqWriter writer = SplitFastqWriter.rollover(
+	 * 					1000,
+	 * 					i -&gt; new FastqWriterBuilder(new File(outputDir, i +&quot;.fastq&quot;))
+	 *										.build());
+	*){
+	*	while(iter.hasNext()){
+	*		writer.write(iter.next());
+	*	}
+	*}
+	 * &lt;/pre&gt;
+	 */
+	public static FastqWriter rollover(int maxRecordsPerFile,
+			FastqWriterFactory supplier){
+<span class="fc" id="L180">		return new RolloverSplitFastqWriter(maxRecordsPerFile, supplier);</span>
+	}
+	
+	
+	/**
+	 * Write out many fastq files where a &quot;deconvolution&quot; function determines which file
+	 * each record is written to based on the contents of that record.  Deconvolution functions
+	 * typically use the actual read sequence to find sequencing barcodes or bin by characteristics 
+	 * in specially formatted record ids.  
+	 * 
+	 * @param deconvolutionFunction the lambda function that given a {@link FastqRecord} will
+	 * determine the &quot;key&quot; that will be used to map to the output fastq writer to write the record to.
+	 * The returned key object must correctly implement equals and hashcode.  Think of the key
+	 * as the key in a {@code Map&lt;Key, FastqWriter&gt;}.  If the returned Key can not be null.is {@code null}
+	 * then the record will not be written out to any of the output files.
+	 *  
+	 * @param supplier  a lambda function  that given the key returned
+	 *  by the deconvolutionFunction, create a new {@link FastqWriter} for
+	 *  those records with that key.
+	 *   The supplier will only be called when a key from the deconvolutionFunction is seen for the 
+	 * first time (as determined by the key's equals() and hashcode() implementation).
+	 * 
+	 * @return a new {@link FastqWriter}; will never be null.  The returned writer is not thread-safe.
+	 * 
+	 * @param &lt;K&gt; The deconvolution key type that is returned from the deconvolution function and passed 
+	 * to the supplier function.
+	 * 
+	 * @throws NullPointerException if any parameter is null.
+	 * 
+	 * @apiNote For example to if there exists a method that given the read, figures
+	 * out which &quot;barcode&quot; was used in that read, then to the code to bin the reads
+	 * by barcode will look like this:
+	 * 
+	 * &lt;pre&gt; 
+	 * File outputDir = ...
+	 * {@code Iterator&lt;FastqRecord&gt;} iter = ...
+	 * try(FastqWriter writer = SplitFastqWriter.deconvolve(
+	 * 					record-&gt; findBarocdeFor(record),
+	 * 					barcode -&gt; new FastqWriterBuilder(new File(outputDir, barcode + &quot;.fastq&quot;))
+	 * 								.build()
+	 * 					);
+	 * ){
+	 * 		while(iter.hasNext()){
+	 * 			writer.write(iter.next());
+	 * 		}
+	 * }
+	 * &lt;/pre&gt;
+	 * 
+	 * Will write out all the fastq records to multiples files, named &quot;$barcode.fasta&quot; where each
+	 * file only contains reads from that particular barcode.
+	 */
+	public static &lt;K&gt; FastqWriter deconvolve(Function&lt;FastqRecord, K&gt; deconvolutionFunction,
+			DeconvolveFastqRecordWriterFactory&lt;K&gt; supplier){
+<span class="fc" id="L233">		return  new DeconvolutionFastqWriter&lt;K&gt;(deconvolutionFunction, supplier);</span>
+	}
+	
+<span class="nc" id="L236">	private SplitFastqWriter(){</span>
+		//can not instantiate
+<span class="nc" id="L238">	}</span>
+	
+	
+	
+	
+	
+	private static final class 	DeconvolutionFastqWriter&lt;K&gt; implements FastqWriter {
+
+<span class="fc" id="L246">		private volatile boolean closed = false;</span>
+		
+<span class="fc" id="L248">		private final Map&lt;K, FastqWriter&gt; writers = new ConcurrentHashMap&lt;&gt;();</span>
+		
+		private final Function&lt;FastqRecord, K&gt; deconvolutionFunction;
+		private final DeconvolveFastqRecordWriterFactory&lt;K&gt; supplier;
+		
+		
+<span class="fc" id="L254">		public DeconvolutionFastqWriter(Function&lt;FastqRecord, K&gt; deconvolutionFunction, DeconvolveFastqRecordWriterFactory&lt;K&gt; supplier) {</span>
+<span class="fc" id="L255">			Objects.requireNonNull(deconvolutionFunction);</span>
+<span class="fc" id="L256">			Objects.requireNonNull(supplier);</span>
+			
+<span class="fc" id="L258">			this.deconvolutionFunction = deconvolutionFunction;</span>
+<span class="fc" id="L259">			this.supplier = supplier;</span>
+<span class="fc" id="L260">		}</span>
+
+		@Override
+		public void close() throws IOException {
+<span class="fc bfc" id="L264" title="All 2 branches covered.">			if(closed){</span>
+<span class="fc" id="L265">				return;</span>
+			}
+<span class="fc" id="L267">			closed=true;</span>
+<span class="fc bfc" id="L268" title="All 2 branches covered.">			for(FastqWriter writer : writers.values()){</span>
+<span class="fc" id="L269">				IOUtil.closeAndIgnoreErrors(writer);</span>
+<span class="fc" id="L270">			}</span>
+					
+			
+<span class="fc" id="L273">		}</span>
+		private void checkNotClosed() throws IOException {
+<span class="fc bfc" id="L275" title="All 2 branches covered.">			if (closed) {</span>
+<span class="fc" id="L276">				throw new IOException(&quot;already closed&quot;);</span>
+			}
+<span class="fc" id="L278">		}</span>
+		
+		@Override
+		public void write(FastqRecord record) throws IOException {
+<span class="fc" id="L282">			checkNotClosed();</span>
+<span class="fc" id="L283">			Objects.requireNonNull(record);</span>
+<span class="fc" id="L284">			K key = deconvolutionFunction.apply(record);</span>
+			
+<span class="pc bpc" id="L286" title="1 of 2 branches missed.">			if(key ==null){</span>
+			    //skip
+<span class="nc" id="L288">			    return;</span>
+			}
+			
+			//now threadsafe AND can throw IOException
+<span class="fc" id="L292">			writers.computeIfAbsent(key, k-&gt; {</span>
+			 try{
+<span class="fc" id="L294">			     return supplier.create(k);   </span>
+<span class="nc" id="L295">			 }catch(IOException e){</span>
+<span class="nc" id="L296">			     throw Sneak.sneakyThrow(e);</span>
+			 }
+<span class="fc" id="L298">			}).write(record);</span>
+			
+<span class="fc" id="L300">		}</span>
+		
+	
+
+		@Override
+		public void write(String id, NucleotideSequence sequence, QualitySequence qualities) throws IOException {
+<span class="nc" id="L306">			write(id, sequence, qualities, null);</span>
+			
+<span class="nc" id="L308">		}</span>
+
+		@Override
+		public void write(String id, NucleotideSequence sequence, QualitySequence qualities, String optionalComment)
+				throws IOException {
+<span class="fc" id="L313">			Objects.requireNonNull(id, &quot;id can not be null&quot;);</span>
+<span class="fc" id="L314">			Objects.requireNonNull(sequence, &quot;sequence can not be null&quot;);</span>
+<span class="fc" id="L315">			Objects.requireNonNull(qualities, &quot;qualities can not be null&quot;);</span>
+			
+			
+<span class="nc" id="L318">			write(FastqRecordBuilder.create(id, sequence, qualities, optionalComment).build());</span>
+<span class="nc" id="L319">		}</span>
+		
+	}
+	private static final class RolloverSplitFastqWriter implements FastqWriter {
+
+		private final FastqWriterFactory supplier;
+
+		private final int recordsPerFile;
+		//initialized to 0 because we will increment it to 1
+		//the first time something is written
+<span class="fc" id="L329">		private int splitFileNumber = 0;</span>
+		private int currentRecordCount;
+		private FastqWriter currentWriter;
+
+<span class="fc" id="L333">		private volatile boolean closed = false;</span>
+
+		private RolloverSplitFastqWriter(int recordsPerFile,
+<span class="fc" id="L336">				FastqWriterFactory supplier) {</span>
+
+<span class="fc" id="L338">			Objects.requireNonNull(supplier);</span>
+<span class="fc bfc" id="L339" title="All 2 branches covered.">			if (recordsPerFile &lt; 1) {</span>
+<span class="fc" id="L340">				throw new IllegalArgumentException(</span>
+						&quot;records per File must be &gt;=1&quot;);
+			}
+<span class="fc" id="L343">			this.supplier = supplier;</span>
+<span class="fc" id="L344">			this.recordsPerFile = recordsPerFile;</span>
+			//initialized to max records per file so initial write creates a new writer
+<span class="fc" id="L346">			this.currentRecordCount = recordsPerFile;</span>
+<span class="fc" id="L347">		}</span>
+
+		private void checkNotClosed() throws IOException {
+<span class="pc bpc" id="L350" title="1 of 2 branches missed.">			if (closed) {</span>
+<span class="nc" id="L351">				throw new IOException(&quot;already closed&quot;);</span>
+			}
+<span class="fc" id="L353">		}</span>
+
+		@Override
+		public void close() throws IOException {
+<span class="pc bpc" id="L357" title="2 of 4 branches missed.">			if (!closed &amp;&amp; currentWriter !=null) {</span>
+<span class="fc" id="L358">				currentWriter.close();</span>
+			}
+<span class="fc" id="L360">			closed = true;</span>
+<span class="fc" id="L361">		}</span>
+
+		@Override
+		public synchronized void write(FastqRecord record) throws IOException {
+<span class="fc" id="L365">			updateCurrentWriterIfNeeded();</span>
+<span class="fc" id="L366">			currentWriter.write(record);</span>
+<span class="fc" id="L367">			currentRecordCount++;</span>
+<span class="fc" id="L368">		}</span>
+
+		private synchronized void updateCurrentWriterIfNeeded() throws IOException {
+<span class="fc" id="L371">			checkNotClosed();</span>
+<span class="fc bfc" id="L372" title="All 2 branches covered.">			if (currentRecordCount == recordsPerFile) {</span>
+<span class="fc bfc" id="L373" title="All 2 branches covered.">				if(currentWriter !=null){</span>
+<span class="fc" id="L374">					currentWriter.close();</span>
+				}
+<span class="fc" id="L376">				splitFileNumber++;</span>
+<span class="fc" id="L377">				currentRecordCount = 0;</span>
+<span class="fc" id="L378">				currentWriter = supplier.create(splitFileNumber);</span>
+			}
+<span class="fc" id="L380">		}</span>
+
+		@Override
+		public synchronized void write(String id, NucleotideSequence sequence, QualitySequence qualities) throws IOException {
+<span class="nc" id="L384">			write(id, sequence, qualities, null);</span>
+
+<span class="nc" id="L386">		}</span>
+
+		@Override
+		public synchronized void write(String id, NucleotideSequence sequence, QualitySequence qualities, String optionalComment) throws IOException {
+<span class="nc" id="L390">			updateCurrentWriterIfNeeded();</span>
+<span class="nc" id="L391">			currentWriter.write(id, sequence,qualities, optionalComment);</span>
+<span class="nc" id="L392">			currentRecordCount++;</span>
+
+<span class="nc" id="L394">		}</span>
+	}
+	
+	private static final class RoundRobinSplitFastqWriter implements FastqWriter{
+
+		private final FastqWriterFactory supplier;
+
+<span class="fc" id="L401">		private int currentIndex=0;</span>
+		
+
+<span class="fc" id="L404">		private volatile boolean closed = false;</span>
+
+		
+		private final FastqWriter[] writers;
+		
+		private RoundRobinSplitFastqWriter(int numberOfFiles,
+<span class="fc" id="L410">				FastqWriterFactory supplier) {</span>
+
+<span class="fc" id="L412">			Objects.requireNonNull(supplier);</span>
+<span class="fc bfc" id="L413" title="All 2 branches covered.">			if (numberOfFiles &lt; 1) {</span>
+<span class="fc" id="L414">				throw new IllegalArgumentException(</span>
+						&quot;records per File must be &gt;=1&quot;);
+			}
+<span class="fc" id="L417">			writers = new FastqWriter[numberOfFiles];</span>
+			
+<span class="fc" id="L419">			this.supplier = supplier;</span>
+			
+<span class="fc" id="L421">		}</span>
+
+		private void checkNotClosed() throws IOException {
+<span class="pc bpc" id="L424" title="1 of 2 branches missed.">			if (closed) {</span>
+<span class="nc" id="L425">				throw new IOException(&quot;already closed&quot;);</span>
+			}
+<span class="fc" id="L427">		}</span>
+		
+		private synchronized FastqWriter getCurrentWriter() throws IOException{
+<span class="fc" id="L430">			checkNotClosed();</span>
+<span class="fc" id="L431">			FastqWriter writer=  writers[currentIndex];</span>
+<span class="fc bfc" id="L432" title="All 2 branches covered.">			if(writer ==null){</span>
+				// supplied index always goes from 1..N not 0..n-1
+<span class="fc" id="L434">				writer = supplier.create(currentIndex +1);</span>
+<span class="fc" id="L435">				writers[currentIndex] = writer;</span>
+			}
+<span class="fc" id="L437">			currentIndex = (currentIndex +1) % writers.length;</span>
+<span class="fc" id="L438">			return writer;</span>
+			
+		}
+
+		@Override
+		public synchronized void close() throws IOException {
+<span class="pc bpc" id="L444" title="1 of 2 branches missed.">			if (!closed) {</span>
+<span class="fc bfc" id="L445" title="All 2 branches covered.">				for(FastqWriter writer : writers){</span>
+<span class="fc" id="L446">					IOUtil.closeAndIgnoreErrors(writer);</span>
+				}
+			}
+<span class="fc" id="L449">			closed = true;</span>
+<span class="fc" id="L450">		}</span>
+
+		@Override
+		public void write(FastqRecord record) throws IOException {
+<span class="fc" id="L454">			getCurrentWriter().write(record);</span>
+<span class="fc" id="L455">		}</span>
+
+		
+
+		@Override
+		public void write(String id, NucleotideSequence sequence, QualitySequence qualities) throws IOException {
+<span class="nc" id="L461">			getCurrentWriter().write(id, sequence, qualities);</span>
+
+<span class="nc" id="L463">		}</span>
+
+		@Override
+		public void write(String id, NucleotideSequence sequence, QualitySequence qualities, String optionalComment) throws IOException {
+<span class="nc" id="L467">			getCurrentWriter().write(id, sequence, qualities, optionalComment);</span>
+
+<span class="nc" id="L469">		}</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

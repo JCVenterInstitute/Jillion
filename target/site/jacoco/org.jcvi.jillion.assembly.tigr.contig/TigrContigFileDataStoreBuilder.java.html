@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>TigrContigFileDataStoreBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.tigr.contig</a> &gt; <span class="el_source">TigrContigFileDataStoreBuilder.java</span></div><h1>TigrContigFileDataStoreBuilder.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly.tigr.contig;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.datastore.DataStoreFilter;
+import org.jcvi.jillion.core.datastore.DataStoreFilters;
+import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
+
+public class TigrContigFileDataStoreBuilder {
+	private final File contigFile;
+	
+<span class="fc" id="L37">	private DataStoreFilter filter = DataStoreFilters.alwaysAccept();</span>
+	//by default store everything in memory
+<span class="fc" id="L39">	private DataStoreProviderHint hint = DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_SPEED;</span>
+	
+	private final DataStore&lt;Long&gt; fullSeqLengthDataStore;
+	
+	/**
+	 * Create a new instance of {@code TigrContigFileDataStoreBuilder}
+	 * which will build a {@link TigrContigDataStore} for the given
+	 * contig file.
+	 * @param contigFile the ace file make a {@link TigrContigDataStore} with.
+	 * @param  fullLengthSequenceDataStore a datastore containing the full length sequences
+	 * of all the input reads that are assembled into the contig file.  This datastore
+	 * is used to extract the full ungapped length for each read to correctly populate the 
+	 * {@link AssembledRead#getReadInfo()} instance since not all of that
+	 * information is stored directly in the contig file. Each read id in the contigs 
+	 * must have a corresponding record in this sequence datastore. This sequence datastore
+	 * may contain additional records that did not make it into the contig file.
+	 * @throws IOException if the ace file does not exist, or can not be read.
+	 * @throws NullPointerException if either contigFile or fullLengthSequenceDataStore are null.
+	 */
+<span class="fc" id="L58">	public TigrContigFileDataStoreBuilder(File contigFile, NucleotideFastaDataStore fullLengthSequenceDataStore) throws IOException{</span>
+<span class="pc bpc" id="L59" title="1 of 2 branches missed.">		if(contigFile ==null){</span>
+<span class="nc" id="L60">			throw new NullPointerException(&quot;contig file can not be null&quot;);</span>
+		}
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">		if(!contigFile.exists()){</span>
+<span class="nc" id="L63">			throw new FileNotFoundException(&quot;contig file must exist&quot;);</span>
+		}
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">		if(!contigFile.canRead()){</span>
+<span class="nc" id="L66">			throw new IOException(&quot;contig file is not readable&quot;);</span>
+		}
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">		if(fullLengthSequenceDataStore ==null){</span>
+<span class="nc" id="L69">			throw new NullPointerException(&quot;sequence datastore can not be null&quot;);</span>
+		}
+<span class="fc" id="L71">		this.contigFile = contigFile;</span>
+<span class="fc" id="L72">		this.fullSeqLengthDataStore = adapt(fullLengthSequenceDataStore);</span>
+<span class="fc" id="L73">	}</span>
+	/**
+	 * Create a new instance of {@code TigrContigFileDataStoreBuilder}
+	 * which will build a {@link TigrContigDataStore} for the given
+	 * contig file.
+	 * @param contigFile the ace file make a {@link TigrContigDataStore} with.
+	 * @param  fullLengthSequenceDataStore a datastore containing the full length sequences
+	 * of all the input reads that are assembled into the contig file.  This datastore
+	 * is used to extract the full ungapped length for each read to correctly populate the 
+	 * {@link AssembledRead#getReadInfo()} instance since not all of that
+	 * information is stored directly in the contig file. Each read id in the contigs 
+	 * must have a corresponding record in this sequence datastore. This sequence datastore
+	 * may contain additional records that did not make it into the contig file.
+	 * @throws IOException if the ace file does not exist, or can not be read.
+	 * @throws NullPointerException if either contigFile or fullLengthSequenceDataStore are null.
+	 */
+<span class="fc" id="L89">	public TigrContigFileDataStoreBuilder(File contigFile, NucleotideSequenceDataStore fullLengthSequenceDataStore) throws IOException{</span>
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">		if(contigFile ==null){</span>
+<span class="nc" id="L91">			throw new NullPointerException(&quot;contig file can not be null&quot;);</span>
+		}
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">		if(!contigFile.exists()){</span>
+<span class="nc" id="L94">			throw new FileNotFoundException(&quot;contig file must exist&quot;);</span>
+		}
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">		if(!contigFile.canRead()){</span>
+<span class="nc" id="L97">			throw new IOException(&quot;contig file is not readable&quot;);</span>
+		}
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">		if(fullLengthSequenceDataStore ==null){</span>
+<span class="nc" id="L100">			throw new NullPointerException(&quot;sequence datastore can not be null&quot;);</span>
+		}
+<span class="fc" id="L102">		this.contigFile = contigFile;</span>
+<span class="fc" id="L103">		this.fullSeqLengthDataStore = adapt(fullLengthSequenceDataStore);</span>
+<span class="fc" id="L104">	}</span>
+
+    @SuppressWarnings(&quot;unchecked&quot;)
+	private DataStore&lt;Long&gt; adapt(NucleotideFastaDataStore fullLengthSequenceDataStore){
+<span class="fc" id="L108">    	return (DataStore&lt;Long&gt;)DataStore.adapt(DataStore.class, fullLengthSequenceDataStore, </span>
+<span class="fc" id="L109">    			from -&gt; from.getSequence().getUngappedLength());</span>
+    }
+    
+    @SuppressWarnings(&quot;unchecked&quot;)
+	private DataStore&lt;Long&gt; adapt(NucleotideSequenceDataStore fullLengthSequenceDataStore){
+<span class="fc" id="L114">    	return (DataStore&lt;Long&gt;)DataStore.adapt(DataStore.class, fullLengthSequenceDataStore, </span>
+<span class="fc" id="L115">    			from-&gt; from.getUngappedLength());</span>
+    }
+	
+	/**
+	 * Only include the {@link AceContig}s which pass
+	 * the given {@link DataStoreFilter}.  If a filter
+	 * is not given to this builder, then all records
+	 * in the ace file will be included in the built
+	 * {@link AceFileDataStore}.
+	 * @param filter a {@link DataStoreFilter} instance that can be
+	 * used to filter out specified {@link AceContig}s; can not be null. 
+	 * @return this.
+	 * @throws NullPointerException if filter is null.
+	 */
+	public TigrContigFileDataStoreBuilder filter(DataStoreFilter filter){
+<span class="nc bnc" id="L130" title="All 2 branches missed.">		if(filter==null){</span>
+<span class="nc" id="L131">			throw new NullPointerException(&quot;filter can not be null&quot;);</span>
+		}
+<span class="nc" id="L133">		this.filter = filter;</span>
+<span class="nc" id="L134">		return this;</span>
+	}
+	/**
+	 * Provide a {@link DataStoreProviderHint} to this builder
+	 * to let it know the implementation preferences of the client.
+	 * If no hint is given, then this builder will
+	 * try to store all the {@link AceContig} records in memory
+	 * which may cause an Exception if there isn't enough memory.
+	 * The {@link DataStoreProviderHint}  is just a guideline 
+	 * and may be ignored by this builder when determining
+	 * which {@link AceFileDataStore} implementation to chose
+	 * to build in {@link #build()}.
+	 * @param hint an instance of {@link DataStoreProviderHint};
+	 * can not be null.
+	 * @return this
+	 * @throws NullPointerException if hint is null.
+	 * @see DataStoreProviderHint
+	 */
+	public TigrContigFileDataStoreBuilder hint(DataStoreProviderHint hint){
+<span class="pc bpc" id="L153" title="1 of 2 branches missed.">		if(hint==null){</span>
+<span class="nc" id="L154">			throw new NullPointerException(&quot;hint can not be null&quot;);</span>
+		}
+<span class="fc" id="L156">		this.hint = hint;</span>
+<span class="fc" id="L157">		return this;</span>
+	}
+	
+	
+	/**
+	 * Parse the given ace file and return
+	 * a new instance of a {@link AceFileDataStore}
+	 * using all the input parameters given so far.  
+	 * If not all optional parameters are set then default
+	 * values will be used:
+	 * &lt;ul&gt;
+	 * &lt;li&gt;
+	 * If no {@link DataStoreFilter} has been specified
+	 * by {@link #filter(DataStoreFilter)},
+	 * then all {@link AceContig}s will be included in this {@link AceFileDataStore}.
+	 * &lt;/li&gt;
+	 * &lt;li&gt;
+	 * If no {@link DataStoreProviderHint} has been specified
+	 * by {@link #hint(DataStoreProviderHint)},
+	 * then this builder will try to store all the 
+	 * {@link AceContig}s that meet the {@link DataStoreFilter}
+	 * requirements in memory.  This may cause out of memory errors
+	 * if there is not enough memory available.
+	 * &lt;/li&gt;
+	 * &lt;/ul&gt;
+	 * @return a new {@link AceFileDataStore} instance;
+	 * never null.
+	 * @throws IOException if there is a problem parsing the 
+	 * ace file. 
+	 * @see #hint(DataStoreProviderHint)
+	 */
+	public TigrContigDataStore build() throws IOException {
+<span class="pc bpc" id="L189" title="1 of 4 branches missed.">		switch(hint){</span>
+		case RANDOM_ACCESS_OPTIMIZE_SPEED:
+<span class="fc" id="L191">				return DefaultTigrContigFileDataStore.create(contigFile, fullSeqLengthDataStore, filter);</span>
+<span class="fc" id="L192">		case RANDOM_ACCESS_OPTIMIZE_MEMORY: return IndexedTigrContigFileDataStore.create(contigFile,fullSeqLengthDataStore, filter);</span>
+<span class="fc" id="L193">		case ITERATION_ONLY: return new LargeTigrContigFileDataStore(contigFile, fullSeqLengthDataStore, filter);</span>
+			default:
+				//can not happen
+<span class="nc" id="L196">				throw new IllegalArgumentException(&quot;unknown provider hint : &quot;+ hint);</span>
+		}
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

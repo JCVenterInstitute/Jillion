@@ -1,0 +1,360 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SamRecordImpl.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.sam</a> &gt; <span class="el_source">SamRecordImpl.java</span></div><h1>SamRecordImpl.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.sam;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
+
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.sam.attribute.ReservedSamAttributeKeys;
+import org.jcvi.jillion.sam.attribute.SamAttribute;
+import org.jcvi.jillion.sam.attribute.SamAttributeKey;
+import org.jcvi.jillion.sam.cigar.Cigar;
+import org.jcvi.jillion.sam.header.SamHeader;
+/**
+ * Package-private implementation class of SamRecord.
+ * 
+ * @author dkatzel
+ *
+ */
+class SamRecordImpl implements SamRecord {
+	private final SamHeader header;
+	private final String queryName, referenceName, nextReferenceName;
+	private final SamRecordFlags flags;
+	private final int startPosition, nextOffset;
+	private final byte mappingQuality;
+	private final Cigar cigar;
+	private final NucleotideSequence sequence;
+	private final QualitySequence qualities;
+	
+	private final int observedTemplateLength;
+	private final Map&lt;SamAttributeKey, SamAttribute&gt; attributes;
+	
+<span class="fc" id="L56">	SamRecordImpl(SamRecordBuilder builder) {</span>
+<span class="fc" id="L57">		this.header = builder.header;</span>
+<span class="fc" id="L58">		this.queryName = builder.queryName;</span>
+<span class="fc" id="L59">		this.flags = builder.flags;</span>
+<span class="fc" id="L60">		this.referenceName = builder.referenceName;</span>
+<span class="fc" id="L61">		this.startPosition = builder.startPosition;</span>
+<span class="fc" id="L62">		this.mappingQuality = builder.mappingQuality;</span>
+<span class="fc" id="L63">		this.cigar = builder.cigar;</span>
+		
+<span class="fc" id="L65">		this.nextOffset = builder.nextPosition;</span>
+<span class="fc" id="L66">		this.observedTemplateLength = builder.observedTemplateLength;</span>
+<span class="fc" id="L67">		this.sequence = builder.sequence;</span>
+<span class="fc" id="L68">		this.qualities = builder.qualities;</span>
+<span class="fc" id="L69">		this.attributes = Collections.unmodifiableMap(builder.attributes);</span>
+		
+		
+		//change = to actual ref name
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">		if(IDENTICAL.equals(builder.nextReferenceName)){</span>
+<span class="nc" id="L74">			this.nextReferenceName = referenceName;</span>
+		}else{
+<span class="fc" id="L76">			this.nextReferenceName = builder.nextReferenceName;</span>
+		}
+<span class="fc" id="L78">	}</span>
+	
+	@Override
+	public boolean isPrimary(){
+<span class="fc" id="L82">		return </span>
+				!(
+<span class="fc bfc" id="L84" title="All 2 branches covered.">					flags.contains(SamRecordFlag.SECONDARY_ALIGNMENT)</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">				|| flags.contains(SamRecordFlag.SUPPLEMENTARY_ALIGNMENT )</span>
+					);
+	}
+	
+	@Override
+	public boolean useForAnalysis(){
+<span class="nc bnc" id="L91" title="All 2 branches missed.">		return !flags.contains(SamRecordFlag.SECONDARY_ALIGNMENT);</span>
+	}
+
+	protected SamHeader getHeader() {
+<span class="nc" id="L95">		return header;</span>
+	}
+
+	@Override
+	public String getQueryName() {
+<span class="fc" id="L100">		return queryName;</span>
+	}
+	/**
+	 * Get the reference name that this
+	 * record aligns to.
+	 * @return The name of the reference
+	 * or {@link SamRecord#UNAVAILABLE}
+	 * if the record either didn't
+	 * align or the reference name wasn't provided.
+	 */
+	@Override
+	public String getReferenceName() {
+<span class="fc" id="L112">		return referenceName;</span>
+	}
+
+	@Override
+	public String getNextName() {
+<span class="fc" id="L117">		return nextReferenceName;</span>
+	}
+
+	@Override
+	public SamRecordFlags getFlags() {
+<span class="fc" id="L122">		return flags;</span>
+	}
+
+	@Override
+	public int getStartPosition() {
+<span class="fc" id="L127">		return startPosition;</span>
+	}
+
+	@Override
+	public int getNextOffset() {
+<span class="fc" id="L132">		return nextOffset;</span>
+	}
+
+	@Override
+	public byte getMappingQuality() {
+<span class="fc" id="L137">		return mappingQuality;</span>
+	}
+
+	@Override
+	public Cigar getCigar() {
+<span class="fc" id="L142">		return cigar;</span>
+	}
+
+	@Override
+	public NucleotideSequence getSequence() {
+<span class="fc" id="L147">		return sequence;</span>
+	}
+
+	@Override
+	public QualitySequence getQualities() {
+<span class="fc" id="L152">		return qualities;</span>
+	}
+
+	@Override
+	public int getObservedTemplateLength() {
+<span class="fc" id="L157">		return observedTemplateLength;</span>
+	}
+	
+	@Override
+	public boolean hasAttribute(SamAttributeKey key){
+<span class="nc bnc" id="L162" title="All 2 branches missed.">		if(key==null){</span>
+<span class="nc" id="L163">			throw new NullPointerException(&quot;key can not be null&quot;);</span>
+		}
+<span class="nc" id="L165">		return attributes.containsKey(key);</span>
+	}
+	
+	@Override
+	public SamAttribute getAttribute(SamAttributeKey key){
+<span class="nc" id="L170">		Objects.requireNonNull(key);</span>
+<span class="nc" id="L171">		return attributes.get(key);</span>
+	}
+	
+	@Override
+	public Collection&lt;SamAttribute&gt; getAttributes() {
+<span class="fc" id="L176">		return attributes.values();</span>
+	}
+	
+	@Override
+	public boolean hasAttribute(ReservedSamAttributeKeys key){
+<span class="nc bnc" id="L181" title="All 2 branches missed.">		if(key==null){</span>
+<span class="nc" id="L182">			throw new NullPointerException(&quot;key can not be null&quot;);</span>
+		}
+<span class="nc" id="L184">		return hasAttribute(key.getKey());</span>
+	}
+	
+	@Override
+	public SamAttribute getAttribute(ReservedSamAttributeKeys key){
+<span class="nc" id="L189">		Objects.requireNonNull(key);</span>
+<span class="nc" id="L190">		return getAttribute(key.getKey());</span>
+	}
+	
+
+	@Override
+	public int hashCode() {
+<span class="nc" id="L196">		final int prime = 31;</span>
+<span class="nc" id="L197">		int result = 1;</span>
+<span class="nc bnc" id="L198" title="All 2 branches missed.">		result = prime * result</span>
+<span class="nc" id="L199">				+ ((attributes == null) ? 0 : attributes.hashCode());</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">		result = prime * result + ((cigar == null) ? 0 : cigar.hashCode());</span>
+<span class="nc bnc" id="L201" title="All 2 branches missed.">		result = prime * result + ((flags == null) ? 0 : flags.hashCode());</span>
+<span class="nc" id="L202">		result = prime * result + mappingQuality;</span>
+<span class="nc" id="L203">		result = prime * result + nextOffset;</span>
+<span class="nc bnc" id="L204" title="All 2 branches missed.">		result = prime</span>
+				* result
+				+ ((nextReferenceName == null) ? 0 : nextReferenceName
+<span class="nc" id="L207">						.hashCode());</span>
+<span class="nc" id="L208">		result = prime * result + observedTemplateLength;</span>
+<span class="nc bnc" id="L209" title="All 2 branches missed.">		result = prime * result</span>
+<span class="nc" id="L210">				+ ((qualities == null) ? 0 : qualities.hashCode());</span>
+<span class="nc bnc" id="L211" title="All 2 branches missed.">		result = prime * result</span>
+<span class="nc" id="L212">				+ ((queryName == null) ? 0 : queryName.hashCode());</span>
+<span class="nc" id="L213">		result = prime * result	+ referenceName.hashCode();</span>
+<span class="nc bnc" id="L214" title="All 2 branches missed.">		result = prime * result</span>
+<span class="nc" id="L215">				+ ((sequence == null) ? 0 : sequence.hashCode());</span>
+<span class="nc" id="L216">		result = prime * result + startPosition;</span>
+<span class="nc" id="L217">		return result;</span>
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">		if (this == obj) {</span>
+<span class="nc" id="L223">			return true;</span>
+		}
+<span class="pc bpc" id="L225" title="1 of 2 branches missed.">		if (obj == null) {</span>
+<span class="nc" id="L226">			return false;</span>
+		}
+<span class="pc bpc" id="L228" title="1 of 2 branches missed.">		if (!(obj instanceof SamRecordImpl)) {</span>
+<span class="nc" id="L229">			return false;</span>
+		}
+<span class="fc" id="L231">		SamRecordImpl other = (SamRecordImpl) obj;</span>
+<span class="pc bpc" id="L232" title="1 of 2 branches missed.">		if (attributes == null) {</span>
+<span class="nc bnc" id="L233" title="All 2 branches missed.">			if (other.attributes != null) {</span>
+<span class="nc" id="L234">				return false;</span>
+			}
+<span class="pc bpc" id="L236" title="1 of 2 branches missed.">		} else if (!attributes.equals(other.attributes)) {</span>
+<span class="nc" id="L237">			return false;</span>
+		}
+<span class="pc bpc" id="L239" title="1 of 2 branches missed.">		if (cigar == null) {</span>
+<span class="nc bnc" id="L240" title="All 2 branches missed.">			if (other.cigar != null) {</span>
+<span class="nc" id="L241">				return false;</span>
+			}
+<span class="pc bpc" id="L243" title="1 of 2 branches missed.">		} else if (!cigar.equals(other.cigar)) {</span>
+<span class="nc" id="L244">			return false;</span>
+		}
+<span class="pc bpc" id="L246" title="1 of 2 branches missed.">		if (flags == null) {</span>
+<span class="nc bnc" id="L247" title="All 2 branches missed.">			if (other.flags != null) {</span>
+<span class="nc" id="L248">				return false;</span>
+			}
+<span class="pc bpc" id="L250" title="1 of 2 branches missed.">		} else if (!flags.equals(other.flags)) {</span>
+<span class="nc" id="L251">			return false;</span>
+		}
+<span class="pc bpc" id="L253" title="1 of 2 branches missed.">		if (mappingQuality != other.mappingQuality) {</span>
+<span class="nc" id="L254">			return false;</span>
+		}
+<span class="pc bpc" id="L256" title="1 of 2 branches missed.">		if (nextOffset != other.nextOffset) {</span>
+<span class="nc" id="L257">			return false;</span>
+		}
+<span class="fc bfc" id="L259" title="All 2 branches covered.">		if (nextReferenceName == null) {</span>
+<span class="pc bpc" id="L260" title="1 of 2 branches missed.">			if (other.nextReferenceName != null) {</span>
+<span class="nc" id="L261">				return false;</span>
+			}
+<span class="pc bpc" id="L263" title="1 of 2 branches missed.">		} else if (!nextReferenceName.equals(other.nextReferenceName)) {</span>
+<span class="nc" id="L264">			return false;</span>
+		}
+<span class="pc bpc" id="L266" title="1 of 2 branches missed.">		if (observedTemplateLength != other.observedTemplateLength) {</span>
+<span class="nc" id="L267">			return false;</span>
+		}
+<span class="pc bpc" id="L269" title="1 of 2 branches missed.">		if (qualities == null) {</span>
+<span class="pc bpc" id="L270" title="1 of 2 branches missed.">			if (other.qualities != null) {</span>
+<span class="nc" id="L271">				return false;</span>
+			}
+<span class="nc bnc" id="L273" title="All 2 branches missed.">		} else if (!qualities.equals(other.qualities)) {</span>
+<span class="nc" id="L274">			return false;</span>
+		}
+<span class="pc bpc" id="L276" title="1 of 2 branches missed.">		if (queryName == null) {</span>
+<span class="nc bnc" id="L277" title="All 2 branches missed.">			if (other.queryName != null) {</span>
+<span class="nc" id="L278">				return false;</span>
+			}
+<span class="pc bpc" id="L280" title="1 of 2 branches missed.">		} else if (!queryName.equals(other.queryName)) {</span>
+<span class="nc" id="L281">			return false;</span>
+		}
+<span class="pc bpc" id="L283" title="1 of 2 branches missed.">		if(referenceName ==null){</span>
+<span class="nc bnc" id="L284" title="All 2 branches missed.">			if(other.referenceName !=null){</span>
+<span class="nc" id="L285">				return false;</span>
+			}
+<span class="pc bpc" id="L287" title="1 of 2 branches missed.">		}else if (!referenceName.equals(other.referenceName)) {</span>
+<span class="nc" id="L288">			return false;</span>
+		}
+<span class="pc bpc" id="L290" title="1 of 2 branches missed.">		if (sequence == null) {</span>
+<span class="nc bnc" id="L291" title="All 2 branches missed.">			if (other.sequence != null) {</span>
+<span class="nc" id="L292">				return false;</span>
+			}
+<span class="pc bpc" id="L294" title="1 of 2 branches missed.">		} else if (!sequence.equals(other.sequence)) {</span>
+<span class="nc" id="L295">			return false;</span>
+		}
+<span class="pc bpc" id="L297" title="1 of 2 branches missed.">		if (startPosition != other.startPosition) {</span>
+<span class="nc" id="L298">			return false;</span>
+		}
+<span class="fc" id="L300">		return true;</span>
+	}
+
+
+	@Override
+	public String toString() {
+<span class="nc" id="L306">		return &quot;SamRecord [queryName=&quot; + queryName + &quot;, referenceName=&quot;</span>
+				+ referenceName + &quot;, nextReferenceName=&quot; + nextReferenceName
+				+ &quot;, flags=&quot; + flags + &quot;, startPosition=&quot; + startPosition
+				+ &quot;, nextOffset=&quot; + nextOffset + &quot;, mappingQuality=&quot;
+				+ mappingQuality + &quot;, cigar=&quot; + cigar + &quot;, sequence=&quot;
+				+ sequence + &quot;, qualities=&quot; + qualities
+				+ &quot;, observedTemplateLength=&quot; + observedTemplateLength
+				+ &quot;, attributes=&quot; + attributes + &quot;]&quot;;
+	}
+
+
+	/**
+	 * Did this record map to one of the references.
+	 * 
+	 * @return {@code true} if the record mapped somewhere;
+	 * {@code false} otherwise.
+	 */
+	@Override
+	public boolean mapped() {
+<span class="fc bfc" id="L325" title="All 2 branches covered.">		return !flags.contains(SamRecordFlag.READ_UNMAPPED);</span>
+	}
+	/**
+	 * Get the {@link Direction} that this read mapped in.
+	 * If the read didn't map, then the direction will be {@link Direction#FORWARD}.
+	 * 
+	 * @return {@link Direction#REVERSE} if the read mapped in reverse;
+	 * {@link Direction#FORWARD} otherwise.
+	 */
+	@Override
+	public Direction getDirection(){
+<span class="fc bfc" id="L336" title="All 2 branches covered.">		return flags.contains(SamRecordFlag.REVERSE_COMPLEMENTED) ? Direction.REVERSE : Direction.FORWARD;</span>
+				
+	}
+	/**
+	 * Get the alignment {@link Range} that his record
+	 * mapped to along the reference.  The returned Range
+	 * is the range used to compute the Bin in indexed bai files.
+	 * 
+	 * @return a {@link Range} for this record's alignment,
+	 * or {@code null} if this record didn't map.
+	 */
+	@Override
+	public Range getAlignmentRange() {
+<span class="pc bpc" id="L349" title="1 of 2 branches missed.">		if(mapped()){</span>
+<span class="fc" id="L350">			return new Range.Builder(cigar.getNumberOfReferenceBasesAligned())</span>
+<span class="fc" id="L351">							.shift(startPosition -1)</span>
+<span class="fc" id="L352">							.build();</span>
+		}
+<span class="nc" id="L354">		return null;</span>
+	}
+
+
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

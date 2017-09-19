@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AbstractAlignedReadCasVisitor.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.assembly.clc.cas</a> &gt; <span class="el_source">AbstractAlignedReadCasVisitor.java</span></div><h1>AbstractAlignedReadCasVisitor.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.assembly.clc.cas;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.jcvi.jillion.assembly.clc.cas.ReAlignReads.ReAlignResult;
+import org.jcvi.jillion.assembly.clc.cas.read.CasPlacedRead;
+import org.jcvi.jillion.assembly.clc.cas.read.DefaultCasPlacedRead;
+import org.jcvi.jillion.core.Direction;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
+import org.jcvi.jillion.trace.Trace;
+import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
+import org.jcvi.jillion.trace.sff.SffFlowgram;
+import org.jcvi.jillion.trace.sff.SffUtil;
+/**
+ * {@code AbstractAlignedReadCasVisitor} is a {@link CasFileVisitor}
+ * that handles iterating over the aligned reads in the cas file.
+ * Cas files don't actually store any read information, just pointers
+ * to where the input read files exist on the file system.
+ * This means that all the read alignments in the cas must be matched up 
+ * exactly with the input read files.  This can get very complicated
+ * so this class handles all of that for you.
+ * &lt;p&gt;
+ * This abstract class finds all the read files to be parsed
+ * and maps them to the alignment information inside the cas file.
+ * For each read that aligned (matched), the aligned()
+ * method is called.
+ * 
+ * @author dkatzel
+ *
+ */
+public abstract class AbstractAlignedReadCasVisitor extends AbstractReadCasVisitor{
+
+	private final CasGappedReferenceDataStore gappedReferenceDataStore;
+
+<span class="fc" id="L59">	private FastqQualityCodec qualityCodec=null;</span>
+	
+<span class="fc" id="L61">	private Map&lt;String, ReAlignReads&gt; reAligners = new HashMap&lt;String, ReAlignReads&gt;();</span>
+	/**
+	 * Create a new AbstractAlignedReadCasVisitor instance that will
+	 * modify the Cas Match alignments to add extra insertions into the reads (gaps)
+	 * that will make it correctly align to the gapped reference in the provided
+	 * {@link CasGappedReferenceDataStore}.  The gapped datastore must have
+	 * indexes for all the references in the cas file being visited
+	 * but can only have some gapped reference sequences available by ID.
+	 * If the {@link CasGappedReferenceDataStore#contains(String)} returns {@code false}
+	 * for any cas match, then that match will be skipped.
+	 * 
+	 * @param workingDir the working directory of the cas file;
+	 * may be null (means current directory).
+	 * 
+	 * @param gappedReferenceDataStore {@link CasGappedReferenceDataStore}
+	 * which contains the precomputed gapped referenced by 
+	 * in this cas file for these alignments; can not be null.
+	 * 
+	 * @throws NullPointerException if gappedReferenceDataStore is null.
+	 */
+	public AbstractAlignedReadCasVisitor(File workingDir,
+			CasGappedReferenceDataStore gappedReferenceDataStore) {
+<span class="fc" id="L83">		super(workingDir);</span>
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">		if(gappedReferenceDataStore ==null){</span>
+<span class="nc" id="L85">			throw new NullPointerException(&quot;gapped Reference DataStore can not be null&quot;);</span>
+		}
+<span class="fc" id="L87">		this.gappedReferenceDataStore = gappedReferenceDataStore;</span>
+<span class="fc" id="L88">	}</span>
+
+	
+	
+	public FastqQualityCodec getQualityCodec() {
+<span class="nc" id="L93">		return qualityCodec;</span>
+	}
+
+
+
+	public void setQualityCodec(FastqQualityCodec qualityCodec) {
+<span class="nc" id="L99">		this.qualityCodec = qualityCodec;</span>
+<span class="nc" id="L100">	}</span>
+
+
+
+	public final CasGappedReferenceDataStore getGappedReferenceDataStore() {
+<span class="nc" id="L105">		return gappedReferenceDataStore;</span>
+	}
+
+	
+    /**
+     * The given {@link Trace} aligned to the given reference id
+     * with the given alignment.
+     * @param referenceId the reference id that the read aligned to.
+     * @param read the alignment information of the read to the reference.
+     * @param traceOfRead the complete {@link Trace} that aligned.
+     */
+    protected abstract void  aligned(Trace traceOfRead, String referenceId, CasPlacedRead read);
+   
+    
+	
+	@Override
+	protected void aligned(Trace currentTrace, String referenceId, CasMatch match) {
+<span class="fc" id="L122">		CasAlignment alignment = match.getChosenAlignment();</span>
+<span class="fc" id="L123">		long refIndex = alignment.getReferenceIndex();</span>
+<span class="fc" id="L124">		String refId = gappedReferenceDataStore.getIdByIndex(refIndex);</span>
+<span class="fc" id="L125">		String readId = currentTrace.getId();</span>
+		try {
+			
+<span class="pc bpc" id="L128" title="1 of 2 branches missed.">			if(refId ==null){</span>
+<span class="nc" id="L129">				closeIterator();</span>
+<span class="nc" id="L130">				throw new IllegalStateException(&quot;could not get get gapped reference for index &quot;+ refIndex);</span>
+			
+			}
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">			if(!gappedReferenceDataStore.contains(refId)){</span>
+<span class="nc" id="L134">				return;</span>
+			}
+<span class="fc" id="L136">			ReAlignReads reAligner =reAligners.get(refId);</span>
+<span class="fc bfc" id="L137" title="All 2 branches covered.">			if(reAligner ==null){</span>
+<span class="fc" id="L138">				NucleotideSequence gappedReference = gappedReferenceDataStore.get(refId);</span>
+<span class="fc" id="L139">				reAligner = new ReAlignReads(gappedReference, true);</span>
+<span class="fc" id="L140">				reAligners.put(refId, reAligner);</span>
+			}
+			 
+<span class="fc" id="L143">	        Range trimRange = match.getTrimRange();</span>
+<span class="pc bpc" id="L144" title="2 of 4 branches missed.">	        if(trimRange ==null &amp;&amp; currentTrace instanceof SffFlowgram){</span>
+	        	//CLC uses the trimmed flowgrams when aligning
+	        	//if the trimRange for this match isn't explicitly set
+	        	//and the read is a flowgram, then use it's trim range 
+<span class="nc" id="L148">	        	trimRange = SffUtil.computeTrimRangeFor((SffFlowgram)currentTrace);</span>
+	        }
+<span class="fc bfc" id="L150" title="All 2 branches covered.">	        Direction dir = alignment.readIsReversed()? Direction.REVERSE : Direction.FORWARD;</span>
+<span class="fc" id="L151">	       ReAlignResult reAlignResult= reAligner.realignValidBases(currentTrace.getNucleotideSequence(), </span>
+<span class="fc" id="L152">	    		   alignment.getStartOfMatch(),</span>
+	        		dir,
+<span class="fc" id="L154">	        			alignment.getAlignmentRegions(), trimRange);</span>
+	        
+<span class="fc" id="L156">	       CasPlacedRead read=  new DefaultCasPlacedRead(readId, </span>
+<span class="fc" id="L157">	    		  (ReferenceMappedNucleotideSequence) reAlignResult.getGappedValidBases(),</span>
+<span class="fc" id="L158">	    		   reAlignResult.getGappedStartOffset(), reAlignResult.getValidRange(), </span>
+<span class="fc" id="L159">	    		   dir,(int)currentTrace.getNucleotideSequence().getLength());</span>
+	       
+	      
+	        
+<span class="fc" id="L163">	        AbstractAlignedReadCasVisitor.this.aligned(currentTrace, refId, read);</span>
+<span class="nc" id="L164">		} catch (Throwable e) {</span>
+<span class="nc" id="L165">			closeIterator();</span>
+<span class="nc" id="L166">			throw new IllegalStateException(&quot;processing read &quot; + readId + &quot; for reference &quot;+ refId, e);</span>
+		
+<span class="fc" id="L168">		}</span>
+<span class="fc" id="L169">	}</span>
+
+
+
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

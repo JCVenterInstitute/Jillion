@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>FastaWriter.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.fasta</a> &gt; <span class="el_source">FastaWriter.java</span></div><h1>FastaWriter.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.fasta;
+
+import java.io.Closeable;
+import java.io.IOException;
+
+import org.jcvi.jillion.core.Sequence;
+/**
+ * {@code FastaWriter} is a interface
+ * that handles how {@link FastaRecord}s
+ * are written.
+ * @author dkatzel
+ *
+ */
+public interface FastaWriter&lt;S, T extends Sequence&lt;S&gt;, F extends FastaRecord&lt;S, T&gt;&gt; extends Closeable{
+	/**
+	 * Write the given {@link FastaRecord}
+	 * (including the optionalComment if there is one).
+	 * @param record the {@link FastaRecord}
+	 * to write, can not be null.
+	 * @throws IOException if there is a problem writing out the record.
+	 * @throws NullPointerException if record is null.
+	 */
+	default void write(F record) throws IOException{
+<span class="nc" id="L44">	    write(record.getId(), record.getSequence(), record.getComment());</span>
+<span class="nc" id="L45">	}</span>
+	/**
+	 * Write the given id and {@link Sequence}
+	 * out as a {@link FastaRecord} without a comment.
+	 * @param id the id of the record to be written.
+	 * @param sequence the {@link Sequence} to be written.
+	 * @throws IOException if there is a problem writing out the record.
+	 * @throws NullPointerException if either id or sequence are null.
+	 */
+	default void write(String id, T sequence) throws IOException{
+<span class="nc" id="L55">	    write(id, sequence, null);</span>
+<span class="nc" id="L56">	}</span>
+	/**
+	 * Write the given id and {@link Sequence}
+	 * out as a {@link FastaRecord} without a comment.
+	 * @param id the id of the record to be written.
+	 * @param sequence the {@link Sequence} to be written.
+	 * @param optionalComment comment to write, if this value is null,
+	 * then no comment will be written.
+	 * @throws IOException if there is a problem writing out the record.
+	 * @throws NullPointerException if either id or sequence are null.
+	 */
+	void write(String id, T sequence, String optionalComment) throws IOException;
+	
+	
+	public static &lt;S, T extends Sequence&lt;S&gt;, F extends FastaRecord&lt;S, T&gt;&gt; FastaWriter&lt;S,T,F&gt; adapt(FastaWriter&lt;S,T,F&gt; delegate, FastaRecordAdapter&lt;S,T,F&gt; adapter){
+<span class="nc" id="L71">	    return new FastaWriterAdapterImpl&lt;S,T,F&gt;(delegate, adapter);</span>
+	}
+	@FunctionalInterface
+	public interface FastaRecordAdapter&lt;S, T extends Sequence&lt;S&gt;, F extends FastaRecord&lt;S, T&gt;&gt;{
+	    F adapt(String id, T sequence, String optionalComment);
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

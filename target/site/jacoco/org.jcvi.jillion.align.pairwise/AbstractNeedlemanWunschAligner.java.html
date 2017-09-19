@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AbstractNeedlemanWunschAligner.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Jillion</a> &gt; <a href="index.source.html" class="el_package">org.jcvi.jillion.align.pairwise</a> &gt; <span class="el_source">AbstractNeedlemanWunschAligner.java</span></div><h1>AbstractNeedlemanWunschAligner.java</h1><pre class="source lang-java linenums">/*******************************************************************************
+ * Jillion development code
+ * 
+ * This code may be freely distributed and modified under the
+ * terms of the GNU Lesser General Public License.  This should
+ * be distributed with the code.  If you do not have a copy,
+ *  see:
+ * 
+ *          http://www.gnu.org/copyleft/lesser.html
+ * 
+ * 
+ * Copyright for this code is held jointly by the individual authors.  These should be listed in the @author doc comments.
+ * 
+ * Information about Jillion can be found on its homepage
+ * 
+ *         http://jillion.sourceforge.net
+ * 
+ * Contributors:
+ *     Danny Katzel - initial API and implementation
+ ******************************************************************************/
+package org.jcvi.jillion.align.pairwise;
+
+import java.util.Arrays;
+
+import org.jcvi.jillion.align.SequenceAlignment;
+import org.jcvi.jillion.align.SubstitutionMatrix;
+import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.residue.ResidueSequence;
+import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
+/**
+ * {@code AbstractNeedlemanWunschAligner} 
+ * implements Needleman-Wunsch (with Gotoh improvements) specific implementations.
+ * 
+ * @author dkatzel
+ *
+ * @param &lt;R&gt; the type of {@link Residue} used in this aligner.
+ * @param &lt;S&gt; the {@link Sequence} type input into this aligner.
+ * @param &lt;B&gt; the {@link org.jcvi.jillion.core.SequenceBuilder} for this aligner.
+ * @param &lt;A&gt; the {@link SequenceAlignment} type returned by this aligner.
+ * @param &lt;P&gt; the {@link PairwiseSequenceAlignment} type returned by this aligner.
+ */
+abstract class AbstractNeedlemanWunschAligner &lt;R extends Residue, S extends ResidueSequence&lt;R, S, B&gt;, B extends ResidueSequenceBuilder&lt;R, S&gt;, A extends SequenceAlignment&lt;R, S&gt;, P extends PairwiseSequenceAlignment&lt;R, S&gt;&gt; extends AbstractPairwiseAligner&lt;R, S, B, A, P&gt;{
+
+	protected AbstractNeedlemanWunschAligner(S query,
+			S subject, SubstitutionMatrix&lt;R&gt; matrix, float openGapPenalty,
+			float extendGapPenalty,ResiduePairwiseStrategy&lt;R,S,B,A,P&gt; pairwiseStrategy) {
+<span class="fc" id="L47">		super(query, subject, matrix, openGapPenalty, extendGapPenalty, pairwiseStrategy);</span>
+<span class="fc" id="L48">	}</span>
+	/**
+	 * The initial gap scores of NeedlemanWunsch are the values
+	 * returned by the affine gap penalty.
+	 * &lt;/p&gt;
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected float[] getInitialGapScores(int length, float openGapPenalty,
+			float extendGapPenalty) {
+<span class="fc" id="L58">		float[] array = new float[length];</span>
+		
+<span class="fc" id="L60">		array[0]=0;</span>
+<span class="fc" id="L61">		array[1]=openGapPenalty;</span>
+<span class="fc" id="L62">		float currentScore=openGapPenalty;</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">		for(int i=2; i&lt; length; i++){</span>
+<span class="fc" id="L64">			currentScore +=extendGapPenalty;</span>
+<span class="fc" id="L65">			array[i] = currentScore;</span>
+		}
+<span class="fc" id="L67">		return array;</span>
+	}
+
+	/**
+	 * Since Needleman-Wunsch is a global alignment
+	 * we need to keep gapping until we get to the beginning
+	 * of the sequence so keep tracing horizontally.
+	 * @return TracebackDirection#HORIZONTAL
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected TracebackDirection getInitialRowTracebackValue() {
+<span class="fc" id="L79">		return TracebackDirection.HORIZONTAL;</span>
+	}
+	/**
+	 * Since Needleman-Wunsch is a global alignment
+	 * we need to keep gapping until we get to the beginning
+	 * of the sequence so keep tracing horizontally.
+	 * @return TracebackDirection#VERTICAL
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected TracebackDirection getInitialColTracebackValue() {
+<span class="fc" id="L90">		return TracebackDirection.VERTICAL;</span>
+	}
+	/**
+	 * Returns a {@link org.jcvi.jillion_experimental.align.pairwise.AbstractPairwiseAligner.WalkBack} using the max of the 3 input values.
+	 * &lt;p/&gt;
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected WalkBack computeBestWalkBack(float alignmentScore,
+			float horrizontalGapPenalty, float verticalGapPenalty){
+				
+<span class="fc" id="L101">			double[] array = new double[]{alignmentScore, horrizontalGapPenalty, verticalGapPenalty};</span>
+			
+<span class="fc" id="L103">			float bestScore = (float)Arrays.stream(array)</span>
+<span class="fc" id="L104">										.max().getAsDouble();</span>
+			final TracebackDirection dir;
+			//can't switch on float... so ugly if/else block below
+<span class="fc bfc" id="L107" title="All 2 branches covered.">			if (bestScore == alignmentScore){</span>
+<span class="fc" id="L108">				dir = TracebackDirection.DIAGNOL;</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">			}else if (bestScore == horrizontalGapPenalty){</span>
+<span class="fc" id="L110">				dir = TracebackDirection.HORIZONTAL;</span>
+			}else{
+<span class="fc" id="L112">				dir = TracebackDirection.VERTICAL;</span>
+			}
+<span class="fc" id="L114">			return new WalkBack(bestScore, dir);</span>
+	}
+	/**
+	 * Always update the CurrentStartPointer to the given values.
+	 * &lt;p/&gt;
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected StartPoint updateCurrentStartPoint(float currentBestScore,
+			StartPoint currentStartPoint, int i, int j) {
+<span class="fc" id="L124">		return new StartPoint(i, j, currentBestScore);</span>
+	}
+	
+	
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

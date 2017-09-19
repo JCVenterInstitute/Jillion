@@ -33,6 +33,17 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 public class TestNucleotideSequenceMatches {
 
+	@Test
+    public void nestedMultipleMatches(){
+        NucleotideSequence sut = NucleotideSequence.of("CCCCCAG");
+        
+        assertEquals(Arrays.asList(Range.of(4,6), Range.of(3,6),Range.of(2,6),Range.of(1,6),Range.of(0,6)),  sut.findMatches(Pattern.compile("C+AG"),true).collect(Collectors.toList()));
+    }
+	@Test
+	public void nestedMultipleMatchesInSubRange(){
+		NucleotideSequence sut = NucleotideSequence.of("CCCCCAG");
+	    assertEquals(Arrays.asList(Range.of(4,6),Range.of(3,6)),sut.findMatches(Pattern.compile("C+AG"),Range.of(3,6),true).collect(Collectors.toList()));
+	}
     @Test
     public void noMatchesReturnsEmptyStream(){
         NucleotideSequence sut = NucleotideSequenceTestUtil.create("AAA", 10);
@@ -111,4 +122,6 @@ public class TestNucleotideSequenceMatches {
         
         assertEquals(expected, sut.findMatches("[N]+").collect(Collectors.toList()));
     }
+    
+    
 }
