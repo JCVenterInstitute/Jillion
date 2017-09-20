@@ -201,66 +201,31 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 
 	@Override
 	public Stream<Range> findMatches(Pattern pattern, boolean nested) {
-		Matcher matcher = pattern.matcher(toString());
-		List<Range> nestedOutput = new ArrayList<Range>();
 
-		List<Range> initOutputList = StreamUtil.newGeneratedStream(
-				() -> matcher.find() ? Optional.of(Range.of(matcher.start(),
-						matcher.end() - 1)) : Optional.empty()).collect(
-				Collectors.toList());
-		if (nested && initOutputList != null && initOutputList.size() > 0) {
-
-			for (int i = 0; i < initOutputList.size(); i++) {
-				Range currentRange = initOutputList.get(i);
-				Range nextRange = null;
-				long end = currentRange.getEnd();
-				if (i != initOutputList.size() - 1) {
-					nextRange = initOutputList.get(i + 1);
-				}
-				if (nextRange != null) {
-					end = nextRange.getEnd() - 1;
-				}
-				Range subRange = Range.of(currentRange.getBegin() + 1, end);
-				nestedOutput.addAll(findMatches(pattern, subRange, nested)
-						.collect(Collectors.toList()));
-			}
-		}
-		nestedOutput.addAll(initOutputList);
-		return nestedOutput.stream();
-
+		return findMatches(pattern, Range.of(0, getLength() -1), nested);
 	}
 
 	@Override
 	public Stream<Range> findMatches(Pattern pattern, Range subSequenceRange,
 			boolean nested) {
-		Matcher matcher = pattern.matcher(toString(subSequenceRange));
-		List<Range> nestedOutput = new ArrayList<Range>();
-		List<Range> initOutputList = StreamUtil.newGeneratedStream(
-				() -> matcher.find() ? Optional.of(new Range.Builder(matcher
-						.start(), matcher.end() - 1).shift(
-						subSequenceRange.getBegin()).build()) : Optional
-						.empty()).collect(Collectors.toList());
-
-		if (nested && initOutputList.size() > 0) {
-
-			for (int i = 0; i < initOutputList.size(); i++) {
-				Range currentRange = initOutputList.get(i);
-				Range nextRange = null;
-				long end = currentRange.getEnd();
-				if (i != initOutputList.size() - 1) {
-					nextRange = initOutputList.get(i + 1);
-				}
-				if (nextRange != null) {
-					end = nextRange.getEnd() - 1;
-				}
-				Range subRange = Range.of(currentRange.getBegin() + 1, end);
-				nestedOutput.addAll(findMatches(pattern, subRange, nested)
-						.collect(Collectors.toList()));
-			}
-
+		Stream<Range> initOutput = findMatches(pattern, subSequenceRange);
+		if (! nested) {
+			return initOutput;
 		}
-		nestedOutput.addAll(initOutputList);
-		return nestedOutput.stream();
+		List<Range> initOutputList = initOutput.collect(Collectors.toList());
+		Stream<Range> nestedOutput = initOutputList.stream();
+
+		for (Range range: initOutputList) {
+			if (range.getLength() > 1) {
+				nestedOutput = Stream.concat(nestedOutput,findMatches(pattern,Range.of(range.getBegin() + 1, range.getEnd()) , nested));
+				nestedOutput = Stream.concat(nestedOutput,findMatches(pattern,Range.of(range.getBegin(), range.getEnd() - 1), nested));
+			}
+			if (range.getLength() > 2)
+			{
+				nestedOutput = Stream.concat(nestedOutput,findMatches(pattern,Range.of(range.getBegin()+1, range.getEnd() - 1), nested));
+			}
+		}
+		return nestedOutput;
 	}
 
 	private int computeNumberOfBytesToStore(int numSnps,
