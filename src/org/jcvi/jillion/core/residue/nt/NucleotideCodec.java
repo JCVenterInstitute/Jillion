@@ -226,61 +226,32 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
     }
         
     
-    default Stream<Range> matches(byte[] encodedData, Pattern pattern,boolean nested){
-        //override if something better!
-        Matcher matcher = pattern.matcher(toString(encodedData));
-        List<Range> nestedOutput =new ArrayList<Range>();
-        List<Range> initOutputList =  StreamUtil.newGeneratedStream(() -> matcher.find()
-                ? Optional.of(Range.of(matcher.start(), matcher.end() - 1))
-                : Optional.empty()).collect(Collectors.toList());
-        
-        if(nested && initOutputList != null && initOutputList.size()>0){
-  
-        	for(int i=0;i<initOutputList.size();i++){
-        		Range currentRange = initOutputList.get(i);
-        		Range nextRange = null;
-        		long end=currentRange.getEnd();
-        		if(i!=initOutputList.size()-1){
-            		nextRange = initOutputList.get(i+1);
-            		}
-        		if(nextRange!=null){
-        			end = nextRange.getEnd()-1;}
-        		Range subRange = Range.of(currentRange.getBegin()+1,end);
-        		nestedOutput.addAll(matches(encodedData,pattern,subRange,nested).collect(Collectors.toList()));
-        	}
-          }
-        nestedOutput.addAll(initOutputList);
-        return nestedOutput.stream();
-       
+    default Stream<Range> matches(byte[] encodedData, Pattern pattern, boolean nested){
+
+        return matches(encodedData, pattern, Range.of(0, encodedData.length - 1), nested);
+
     }
     
-    default Stream<Range> matches(byte[] encodedData, Pattern pattern, Range range,boolean nested){
+    default Stream<Range> matches(byte[] encodedData, Pattern pattern, Range range, boolean nested){
         //override if something better!
-        Matcher matcher = pattern.matcher(toString(encodedData, range));
-        List<Range> nestedOutput =new ArrayList<Range>();
-        List<Range> initOutputList = StreamUtil.newGeneratedStream(() -> matcher.find()
-                ? Optional.of(new Range.Builder(matcher.start(), matcher.end() - 1).shift(range.getBegin()).build())
-                : Optional.empty()).collect(Collectors.toList());
-        
-      
-        if(nested && initOutputList.size() > 0){
-        	
-        	for(int i=0;i<initOutputList.size();i++){
-        		Range currentRange = initOutputList.get(i);
-        		Range nextRange = null;
-        		long end=currentRange.getEnd();
-        		if(i!=initOutputList.size()-1){
-            		nextRange = initOutputList.get(i+1);
-            		}
-        		if(nextRange!=null){
-        			end = nextRange.getEnd()-1;}
-        		Range subRange = Range.of(currentRange.getBegin()+1,end);
-        		nestedOutput.addAll(matches(encodedData,pattern,subRange,nested).collect(Collectors.toList()));
-        	}
-          
-         } 
-        nestedOutput.addAll(initOutputList);
-        return nestedOutput.stream();
+        Stream<Range> matches = matches(encodedData, pattern, range);
+        if (! nested) {
+            return matches;
+        }
+        List<Range> matchesList = matches.collect(Collectors.toList());
+        Stream<Range> nestedMatches = matchesList.stream();
+        for (Range matchedRange: matchesList){
+            if (matchedRange.getLength() > 1)
+            {
+                nestedMatches = Stream.concat(nestedMatches, matches(encodedData, pattern, Range.of(matchedRange.getBegin(), matchedRange.getEnd() -1), true));
+                nestedMatches = Stream.concat(nestedMatches, matches(encodedData, pattern, Range.of(matchedRange.getBegin()+1, matchedRange.getEnd()), true));
+            }
+            if (matchedRange.getLength() > 2)
+            {
+                nestedMatches = Stream.concat(nestedMatches, matches(encodedData, pattern, Range.of(matchedRange.getBegin()+1, matchedRange.getEnd()-1), true));
+            }
+        }
+        return nestedMatches;
     }
 
     

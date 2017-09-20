@@ -368,31 +368,24 @@ public enum IupacTranslationTables implements TranslationTable{
 		if(sequence == null){
             throw new NullPointerException("sequence can not be null");
         }
-		long length = sequence.getLength();
-		List<Long> coordinates = new ArrayList<Long>();
 		Map<Frame,List<Long>> stops = new HashMap<Frame,List<Long>>();
-		int x=0;
-		Frame frame = Frame.ONE;
-		while(x<3){
-	    if(x>0){
-	    	frame=frame.shift(1);
-	    	coordinates = new ArrayList<Long>();
-	    }	  
-	    x++;
-		Iterator<Triplet> iter = frame.asTriplets(sequence);
-		long currentOffset=frame.ordinal();
-		 
-		while(iter.hasNext() && currentOffset <length){
-			Triplet triplet =iter.next();
-			currentOffset+=3;
-			if(triplet !=null){
-				Codon codon =translate(triplet);
-				if(codon.isStop()){
-					coordinates.add(currentOffset-3);
-					stops.put(frame,coordinates);	
-					}
-		}
-		}
+		List<Long> stopCoordinates;
+		long frameOffset = 0L;
+		for (Frame frame: Frame.forwardFrames())
+		{
+			stopCoordinates = new ArrayList<Long>();
+			stops.put(frame, stopCoordinates);
+			// index into the original sequence, offset due to frame
+			long index = frameOffset;
+			Iterator<Triplet> tripletIter = frame.asTriplets(sequence);
+			while (tripletIter.hasNext())
+			{
+				if (translate(tripletIter.next()).isStop()){
+					stopCoordinates.add(index);
+				}
+				index += 3;
+			}
+			frameOffset++;
 	    }
 		return stops;
 		
