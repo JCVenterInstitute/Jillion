@@ -85,6 +85,13 @@ public class TestNucleotideSequenceMatches {
         }
         assertEquals(expected,sut.findMatches(Pattern.compile("C*A+G*"),Range.of(3,8),true).collect(Collectors.toSet()));
 
+        // look for overlapping matches
+        sut = NucleotideSequence.of("CAGCAGC");
+        expected.clear();
+        expected.add(Range.of(0,3));
+        expected.add(Range.of(3,6));
+        assertEquals(expected, sut.findMatches(Pattern.compile("CAGC"), true).collect(Collectors.toSet()));
+
 	}
     @Test
     public void noMatchesReturnsEmptyStream(){
