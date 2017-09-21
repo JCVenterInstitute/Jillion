@@ -208,21 +208,31 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 	@Override
 	public Stream<Range> findMatches(Pattern pattern, Range subSequenceRange,
 			boolean nested) {
-		Stream<Range> initOutput = findMatches(pattern, subSequenceRange);
+		Stream<Range> matches = findMatches(pattern, subSequenceRange);
 		if (! nested) {
-			return initOutput;
+			return matches;
 		}
-		List<Range> initOutputList = initOutput.collect(Collectors.toList());
-		Stream<Range> nestedOutput = initOutputList.stream();
+		List<Range> matchList = matches.collect(Collectors.toList());
+		Stream<Range> nestedOutput = matchList.stream();
 
-		for (Range range: initOutputList) {
-			if (range.getLength() > 1) {
-				nestedOutput = Stream.concat(nestedOutput,findMatches(pattern,Range.of(range.getBegin() + 1, range.getEnd()) , nested));
-				nestedOutput = Stream.concat(nestedOutput,findMatches(pattern,Range.of(range.getBegin(), range.getEnd() - 1), nested));
+		long start;
+		long end;
+		long matchCount = matchList.size();
+		long sequenceLength = getLength();
+		for (int i=0,j=0; i < matchCount; i++,j++) {
+			start = matchList.get(i).getBegin();
+			end = sequenceLength;
+			if (j < matchCount) {
+				// skip last to avoid getting next match again
+				end = matchList.get(j).getEnd() -1;
 			}
-			if (range.getLength() > 2)
+			if (end - start > 0) {
+				nestedOutput = Stream.concat(nestedOutput,findMatches(pattern,Range.of(start + 1, end) , nested));
+				nestedOutput = Stream.concat(nestedOutput,findMatches(pattern,Range.of(start, end -1 ), nested));
+			}
+			if (end - start  > 1)
 			{
-				nestedOutput = Stream.concat(nestedOutput,findMatches(pattern,Range.of(range.getBegin()+1, range.getEnd() - 1), nested));
+				nestedOutput = Stream.concat(nestedOutput,findMatches(pattern,Range.of(start + 1, end -1), nested));
 			}
 		}
 		return nestedOutput;

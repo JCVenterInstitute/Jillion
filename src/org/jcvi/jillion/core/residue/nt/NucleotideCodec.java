@@ -228,7 +228,7 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
     
     default Stream<Range> matches(byte[] encodedData, Pattern pattern, boolean nested){
 
-        return matches(encodedData, pattern, Range.of(0, encodedData.length - 1), nested);
+        return matches(encodedData, pattern, Range.of(0, toString(encodedData).length() - 1), nested);
 
     }
     
@@ -240,15 +240,28 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
         }
         List<Range> matchesList = matches.collect(Collectors.toList());
         Stream<Range> nestedMatches = matchesList.stream();
-        for (Range matchedRange: matchesList){
-            if (matchedRange.getLength() > 1)
-            {
-                nestedMatches = Stream.concat(nestedMatches, matches(encodedData, pattern, Range.of(matchedRange.getBegin(), matchedRange.getEnd() -1), true));
-                nestedMatches = Stream.concat(nestedMatches, matches(encodedData, pattern, Range.of(matchedRange.getBegin()+1, matchedRange.getEnd()), true));
+        int matchCount = matchesList.size();
+        if (matchCount == 0) {
+            return nestedMatches;
+        }
+        long end;
+        long start;
+
+        for (int i=0, j=1; i < matchCount; i++,j++){
+            start = matchesList.get(i).getBegin();
+            end = range.getEnd();
+            if (j < matchCount) {
+                // skip last to avoid returning next match again
+                end = matchesList.get(j).getEnd() -1;
             }
-            if (matchedRange.getLength() > 2)
+            if (end - start > 0)
             {
-                nestedMatches = Stream.concat(nestedMatches, matches(encodedData, pattern, Range.of(matchedRange.getBegin()+1, matchedRange.getEnd()-1), true));
+                nestedMatches = Stream.concat(nestedMatches, matches(encodedData, pattern, Range.of(start, end-1), true));
+                nestedMatches = Stream.concat(nestedMatches, matches(encodedData, pattern, Range.of(start+1, end), true));
+            }
+            if (end - start > 1)
+            {
+                nestedMatches = Stream.concat(nestedMatches, matches(encodedData, pattern, Range.of(start+1, end-1), true));
             }
         }
         return nestedMatches;
