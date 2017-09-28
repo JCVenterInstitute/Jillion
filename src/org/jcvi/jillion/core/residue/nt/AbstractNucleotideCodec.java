@@ -190,7 +190,15 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
 	        int numGaps= sentinelStrategy.getNext(buf);
 	        return length-numGaps;
 	    }
-       /**
+
+	@Override
+	public long getLength(byte[] encodedData) {
+		ByteBuffer buf = getBufferToComputeNumberOfGapsOnly(encodedData);
+		ValueSizeStrategy offsetStrategy = ValueSizeStrategy.values()[buf.get()];
+		return offsetStrategy.getNext(buf);
+	}
+
+	/**
 	    * {@inheritDoc}
 	    */
 	    @Override

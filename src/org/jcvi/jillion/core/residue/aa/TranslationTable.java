@@ -20,6 +20,9 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.aa;
 
+import java.util.List;
+import java.util.Map;
+
 import org.jcvi.jillion.core.residue.Frame;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
@@ -31,7 +34,6 @@ public interface TranslationTable {
 	 * using {@link Frame#ONE}.
 	 * 
 	 * @param sequence the sequence to translate; can not be null and can not contain gaps.
-	 * @param substituteStarts should the start codons be substituted with the translated amino acid.
 	 * 
 	 * @return a new ProteinSequence, will never be null,
 	 * but may be empty if the sequence is empty or less than 3 bp.
@@ -43,7 +45,7 @@ public interface TranslationTable {
 	 * using {@link Frame#ONE}.
 	 * 
 	 * @param sequence the sequence to translate; can not be null and can not contain gaps.
-	 * @param substituteStarts should the start codons be substituted with the translated amino acid.
+	 * @param substituteStart should the start codons be substituted with the translated amino acid.
 	 * 
 	 * @return a new ProteinSequence, will never be null,
 	 * but may be empty if the sequence is empty or less than 3 bp.
@@ -57,7 +59,7 @@ public interface TranslationTable {
 	 * 
 	 * @param sequence the sequence to translate; can not be null and can not contain gaps.
 	 * @param frame the Frame to use; can not be null.
-	 * @param substituteStarts should the start codons be substituted with the translated amino acid.
+	 * @param substituteStart should the start codons be substituted with the translated amino acid.
 	 * 
 	 * @return a new ProteinSequence, will never be null,
 	 * but may be empty if the sequence is empty or less than 3 bp after
@@ -75,7 +77,6 @@ public interface TranslationTable {
 	 * 
 	 * @param sequence the sequence to translate; can not be null and can not contain gaps.
 	 * @param frame the Frame to use; can not be null.
-	 * @param substituteStarts should the start codons be substituted with the translated amino acid.
 	 * 
 	 * @return a new ProteinSequence, will never be null,
 	 * but may be empty if the sequence is empty or less than 3 bp after
@@ -94,7 +95,6 @@ public interface TranslationTable {
 	 * @param sequence the sequence to translate; can not be null and can not contain gaps.
 	 * @param frame the Frame to use; can not be null.
 	 * @param length the number of elements in the given sequence.
-	 * @param substituteStarts should the start codons be substituted with the translated amino acid.
 	 * 
 	 * @return a new ProteinSequence, will never be null,
 	 * but may be empty if the sequence is empty or less than 3 bp after
@@ -127,4 +127,6 @@ public interface TranslationTable {
 	 * @throws IllegalArgumentException if the sequence contains gaps.
 	 */
 	ProteinSequence translate(NucleotideSequence sequence, Frame frame, int length, boolean substituteStarts);
+	
+	Map<Frame,List<Long>> findStops(NucleotideSequence sequence);
 }

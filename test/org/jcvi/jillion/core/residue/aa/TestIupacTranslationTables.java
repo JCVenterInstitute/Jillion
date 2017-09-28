@@ -23,8 +23,11 @@ package org.jcvi.jillion.core.residue.aa;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jcvi.jillion.core.residue.Frame;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -197,4 +200,19 @@ public class TestIupacTranslationTables {
 		
 		assertEquals(expectedAa, table.translate(seq, Frame.THREE));
 	}
+	@Test
+	public void TestFindStops(){
+		IupacTranslationTables table1 = IupacTranslationTables.STANDARD;
+		NucleotideSequence seq = new NucleotideSequenceBuilder("AGAATTAGGTCAGAGCCTCTCTGCAACAACGTAAAACCCGCACCCGCCGCAGTATGTTATTCGT" +
+							"ACCGGGCGCCAACGCGGCGATGGTGAGCAATTCGTTTATCTACCCGGCCGACGCGCTGA" +
+							"TGTTCGACCTGGAAGACTCCGTTGCATTACGCGAAAAAGACGCGGCGCGCCGTCTGGTACAGR").build();
+		
+		Map<Frame,List<Long>> expected = new HashMap<Frame,List<Long>>();
+		expected.put(Frame.THREE, Arrays.asList(5L));
+		expected.put(Frame.TWO, Arrays.asList(31L));
+		expected.put(Frame.ONE,Arrays.asList(87L,120L));
+		Map<Frame,List<Long>> actual = table1.findStops(seq);
+		assertEquals(expected,actual);	    
+	}
+	
 }
