@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.nt;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -70,6 +69,14 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
      * @return the number of non gaps as a long.
      */
     long getUngappedLength(byte[] encodedData);
+
+    /**
+     * Get the number of {@link Nucleotide}s in this {@link NucleotideSequence}.
+     * @return the number of  bases as a long.
+     * @since 5.3
+     */
+    long getLength(byte[] encodedData);
+
     /**
      * Compute the number of gaps in the valid range until AND INCLUDING the given
      * gapped index.
@@ -132,7 +139,7 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
      * ungapped {@link Range}.
      * @param encodedData the encoded bytes which contain
      * all the nucleotides.
-     * @param ungappedRegion the Range of ungapped coordinates; can not be null.
+     * @param ungappedRange the Range of ungapped coordinates; can not be null.
      * @return a new Range never null.
      * @throws NullPointerException if the gappedRange is null.
      * 
@@ -150,7 +157,8 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
     
     /**
      * Convenience method to encode a single nucleotide.
-     * @param nucleotide
+     * @param nucleotide The single base to encode.
+     *
      * @return the byte array which encodes the single given nucleotide.
      */
     byte[] encode(Nucleotide nucleotide);
@@ -228,7 +236,7 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
     
     default Stream<Range> matches(byte[] encodedData, Pattern pattern, boolean nested){
 
-        return matches(encodedData, pattern, Range.of(0, toString(encodedData).length() - 1), nested);
+        return matches(encodedData, pattern, Range.ofLength(getLength(encodedData)), nested);
 
     }
     
@@ -240,13 +248,13 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
         }
         List<Range> matchesList = matches.collect(Collectors.toList());
         Stream<Range> nestedMatches = matchesList.stream();
-        int matchCount = matchesList.size();
-        if (matchCount == 0) {
-            return nestedMatches;
+
+        if (matchesList.isEmpty()) {
+            return Stream.empty();
         }
         long end;
         long start;
-
+        int matchCount = matchesList.size();
         for (int i=0, j=1; i < matchCount; i++,j++){
             start = matchesList.get(i).getBegin();
             end = range.getEnd();

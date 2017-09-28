@@ -43,7 +43,16 @@ public class TestNucleotideSequenceMatches {
         assertEquals(expected,
                      sut.findMatches(Pattern.compile("C+AG"),true).collect(Collectors.toSet()));
 
-        expected.clear();
+    }
+    @Test
+    public void nestedMultipleMatchesMultipleWildcards(){
+        NucleotideSequence sut = NucleotideSequence.of("CCCCCAGG");
+
+        Set<Range> actual = sut.findMatches(Pattern.compile("C+AG*"), true)
+                                    .collect(Collectors.toSet());
+
+        Set<Range> expected = new HashSet<>();
+
         // could start at any C and end at A or AG or AGG
         for (int i =0; i <5; i++)
         {
@@ -51,46 +60,64 @@ public class TestNucleotideSequenceMatches {
             expected.add(Range.of(i,6));
             expected.add(Range.of(i,5));
         }
-        assertEquals(expected,
-                     sut.findMatches(Pattern.compile("C+AG*"),true).collect(Collectors.toSet()));
+        assertEquals(expected, actual);
 
     }
 
-	@Test
-	public void nestedMultipleMatchesInSubRange(){
-		NucleotideSequence sut = NucleotideSequence.of("CCCCCAGG");
-		Set<Range> expected = new HashSet<>();
-		expected.addAll(Arrays.asList(Range.of(4,6),Range.of(3,6)));
-	    assertEquals(expected,sut.findMatches(Pattern.compile("C+AG"),Range.of(3,6),true).collect(Collectors.toSet()));
+    @Test
+    public void nestedMultipleMatchesMultipleWildcardsSubRange(){
+        NucleotideSequence sut = NucleotideSequence.of("CCCCCAGG");
 
-	    expected.clear();
-	    for (int i = 3; i < 5; i++)
+        Set<Range> actual = sut.findMatches(Pattern.compile("C+AG*"), Range.of(3,7), true)
+                .collect(Collectors.toSet());
+
+        Set<Range> expected = new HashSet<>();
+
+        // could start at any C and end at A or AG or AGG
+        for (int i =3; i <5; i++)
         {
             expected.add(Range.of(i,7));
             expected.add(Range.of(i,6));
             expected.add(Range.of(i,5));
         }
-        assertEquals(expected,sut.findMatches(Pattern.compile("C+AG*"),Range.of(3,7),true).collect(Collectors.toSet()));
+        assertEquals(expected, actual);
 
-	    // check for internal runs
-	    expected.clear();
-	    sut = NucleotideSequence.of("CCCCCAAGG");
-        for (int i = 3; i < 7; i++)
-        {
+    }
+
+    @Test
+    public void nestedInternalRunsWithSubRange() {
+        NucleotideSequence sut = NucleotideSequence.of("CCCCCAAGG");
+        Set<Range> expected = new HashSet<>();
+
+        for (int i = 3; i < 7; i++) {
             for (int j = 5; j < 9; j++) {
                 if (i <= j) {
-                    expected.add(Range.of(i,j));
+                    expected.add(Range.of(i, j));
                 }
             }
         }
-        assertEquals(expected,sut.findMatches(Pattern.compile("C*A+G*"),Range.of(3,8),true).collect(Collectors.toSet()));
+        assertEquals(expected, sut.findMatches(Pattern.compile("C*A+G*"), Range.of(3, 8), true).collect(Collectors.toSet()));
+    }
 
-        // look for overlapping matches
-        sut = NucleotideSequence.of("CAGCAGC");
-        expected.clear();
+
+    @Test
+    public void nestedOverlapping() {
+        NucleotideSequence sut = NucleotideSequence.of("CAGCAGC");
+        Set<Range> expected = new HashSet<>();
+
         expected.add(Range.of(0,3));
         expected.add(Range.of(3,6));
-        assertEquals(expected, sut.findMatches(Pattern.compile("CAGC"), true).collect(Collectors.toSet()));
+        assertEquals(expected, sut.findMatches(Pattern.compile("CAGC"), true)
+                                    .collect(Collectors.toSet()));
+
+
+    }
+        @Test
+	public void nestedMultipleMatchesInSubRange(){
+		NucleotideSequence sut = NucleotideSequence.of("CCCCCAGG");
+		Set<Range> expected = new HashSet<>();
+		expected.addAll(Arrays.asList(Range.of(4,6),Range.of(3,6)));
+	    assertEquals(expected,sut.findMatches(Pattern.compile("C+AG"),Range.of(3,6),true).collect(Collectors.toSet()));
 
 	}
     @Test

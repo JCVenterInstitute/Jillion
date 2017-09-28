@@ -29,6 +29,7 @@ package org.jcvi.jillion.core.residue.nt;
 import java.io.Serializable;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.Range;
@@ -147,7 +148,6 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
      * @since 5.3
      */
     Stream<Range> findMatches(Pattern pattern);
-    Stream<Range> findMatches(Pattern pattern,boolean nested);
     /**
      * Find the Ranges in this sequence within the specified sub sequence range
      *  that match the given regular expression {@link Pattern}.  
@@ -168,8 +168,42 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
      * @since 5.3
      */
     Stream<Range> findMatches(Pattern pattern, Range subSequenceRange);
-    Stream<Range> findMatches(Pattern pattern, Range subSequenceRange,boolean nested);
-   
+
+    default Stream<Range> findMatches(Pattern pattern, boolean nested) {
+
+        return findMatches(pattern, Range.ofLength(getLength()), nested);
+    }
+
+    default Stream<Range> findMatches(Pattern pattern, Range subSequenceRange, boolean nested) {
+        Stream<Range> matches = findMatches(pattern, subSequenceRange);
+        if (! nested) {
+            return matches;
+        }
+        List<Range> matchList = matches.collect(Collectors.toList());
+        Stream<Range> nestedOutput = matchList.stream();
+
+        long start;
+        long end;
+        long matchCount = matchList.size();
+        long sequenceLength = getLength();
+        for (int i=0,j=0; i < matchCount; i++,j++) {
+            start = matchList.get(i).getBegin();
+            end = sequenceLength;
+            if (j < matchCount) {
+                // skip last to avoid getting next match again
+                end = matchList.get(j).getEnd() -1;
+            }
+            if (end - start > 0) {
+                nestedOutput = Stream.concat(nestedOutput,findMatches(pattern,Range.of(start + 1, end) , nested));
+                nestedOutput = Stream.concat(nestedOutput,findMatches(pattern,Range.of(start, end -1 ), nested));
+            }
+            if (end - start  > 1)
+            {
+                nestedOutput = Stream.concat(nestedOutput,findMatches(pattern,Range.of(start + 1, end -1), nested));
+            }
+        }
+        return nestedOutput;
+    }
     /**
      * Get the list of contiguous spans of Ns; the returned list
      * will be in sorted order.

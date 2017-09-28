@@ -208,9 +208,9 @@ public class TestIupacTranslationTables {
 							"TGTTCGACCTGGAAGACTCCGTTGCATTACGCGAAAAAGACGCGGCGCGCCGTCTGGTACAGR").build();
 		
 		Map<Frame,List<Long>> expected = new HashMap<Frame,List<Long>>();
-		expected.put(Frame.THREE, Arrays.asList(5l));
-		expected.put(Frame.TWO, Arrays.asList(31l));
-		expected.put(Frame.ONE,Arrays.asList(87l,120l));
+		expected.put(Frame.THREE, Arrays.asList(5L));
+		expected.put(Frame.TWO, Arrays.asList(31L));
+		expected.put(Frame.ONE,Arrays.asList(87L,120L));
 		Map<Frame,List<Long>> actual = table1.findStops(seq);
 		assertEquals(expected,actual);	    
 	}
