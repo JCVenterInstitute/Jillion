@@ -33,7 +33,7 @@ import org.jcvi.jillion.internal.core.util.iter.PrimitiveArrayIterators;
  * that wraps a byte array that will dynamically
  * grow as needed when data is
  * appended, inserted, replaced and removed etc.
- * This is similar to an {@link ArrayList}
+ * This is similar to an {@link java.util.ArrayList}
  * or {@link StringBuilder}
  * for primitive bytes.
  * This class is not Thread-safe.

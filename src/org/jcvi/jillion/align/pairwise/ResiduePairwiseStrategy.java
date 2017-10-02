@@ -45,7 +45,7 @@ import org.jcvi.jillion.internal.align.SequenceAlignmentBuilder;
  * @author dkatzel
  *
  * * @param <R> the type of {@link Residue} used in this aligner.
- * @param <S> the {@link Sequence} type input into this aligner.
+ * @param <S> the {@link ResidueSequence} type input into this aligner.
  * @param <A> the {@link SequenceAlignment} type returned by this aligner.
  * @param <P> the {@link PairwiseSequenceAlignment} type returned by this aligner.
  */
