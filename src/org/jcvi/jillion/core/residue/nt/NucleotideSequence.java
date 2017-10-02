@@ -27,6 +27,7 @@ package org.jcvi.jillion.core.residue.nt;
 
 
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -36,7 +37,7 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.ResidueSequence;
 /**
  * {@code NucleotideSequence} an interface to abstract
- * how a {@link Sequence} of {@link Nucleotide}s are encoded in memory.  Nucleotide data
+ * how a {@link org.jcvi.jillion.core.Sequence} of {@link Nucleotide}s are encoded in memory.  Nucleotide data
  * can be stored in many different ways depending
  * on the use case and size and composition of the sequence.
  * Different encoding implementations can take up more or less memory or require
@@ -223,7 +224,7 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
      * 
      * @since 5.3
      */
-    public static NucleotideSequence of(Iterable<Nucleotide> sequence) {
+    static NucleotideSequence of(Iterable<Nucleotide> sequence) {
         return new NucleotideSequenceBuilder(sequence)
                 .turnOffDataCompression(true)
                 .build();
@@ -240,9 +241,30 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
      * 
      * @since 5.3
      */
-    public static NucleotideSequence of(String sequence) {
+    static NucleotideSequence of(String sequence) {
         return new NucleotideSequenceBuilder(sequence)
                 .turnOffDataCompression(true)
                 .build();
     }
+
+    /**
+     * Is this sequence RNA.
+     * @return {@code true} if DNA, otherwise false.
+     *
+     * @since 5.3
+     * @see #isRna()
+     */
+    boolean isDna();
+
+    /**
+     * Is this sequence RNA.
+     * @return {@code true} if RNA, otherwise false.
+     *
+     * @since 5.3
+     * @see #isDna()
+     */
+    default boolean isRna(){
+        return !isDna();
+    }
+
 }

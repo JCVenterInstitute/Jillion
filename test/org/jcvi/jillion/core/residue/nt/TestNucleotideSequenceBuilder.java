@@ -50,22 +50,40 @@ public class TestNucleotideSequenceBuilder {
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder(20)
                                         .append(createSequence("GGTGCA"))
                                         .prepend("ACGT");
-        assertBuiltSequenceEquals("ACGTGGTGCA",sut);
+        assertBuiltDnaSequenceEquals("ACGTGGTGCA",sut);
     }
     @Test
     public void nothingBuiltShouldReturnEmptySequence(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder();
-        assertBuiltSequenceEquals("",sut);
+        assertBuiltDnaSequenceEquals("",sut);
     }
     @Test
     public void singleSequence(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder();
         sut.append("ACGT");
-        assertBuiltSequenceEquals("ACGT",sut);
+        assertBuiltDnaSequenceEquals("ACGT",sut);
     }
-    private void assertBuiltSequenceEquals(String expected,NucleotideSequenceBuilder builder){
+
+    @Test
+    public void rnaSequence(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder();
+        sut.append("ACGU");
+        assertBuiltRnaSequenceEquals("ACGU",sut);
+    }
+
+    private void assertBuiltDnaSequenceEquals(String expected, NucleotideSequenceBuilder builder){
         assertEquals(expected.length(), builder.getLength());
-        assertEquals(expected, builder.build().toString());
+        NucleotideSequence sequence = builder.build();
+        assertEquals(expected, sequence.toString());
+        assertTrue(sequence.isDna());
+        assertFalse(sequence.isRna());
+    }
+    private void assertBuiltRnaSequenceEquals(String expected, NucleotideSequenceBuilder builder){
+        assertEquals(expected.length(), builder.getLength());
+        NucleotideSequence sequence = builder.build();
+        assertEquals(expected, sequence.toString());
+        assertFalse(sequence.isDna());
+        assertTrue(sequence.isRna());
     }
     private NucleotideSequence createSequence(String seq){
        return  new NucleotideSequenceBuilder(seq).build();
@@ -74,31 +92,31 @@ public class TestNucleotideSequenceBuilder {
     @Test
     public void singleSequenceInConstructor(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
-        assertBuiltSequenceEquals("ACGT",sut);
+        assertBuiltDnaSequenceEquals("ACGT",sut);
     } 
     @Test
     public void singleNucleotideSequenceInConstructor(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder(createSequence("ACGT"));
-        assertBuiltSequenceEquals("ACGT",sut);
+        assertBuiltDnaSequenceEquals("ACGT",sut);
     } 
     @Test
     public void appendString(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.append("GGTGCA");
-        assertBuiltSequenceEquals("ACGTGGTGCA",sut);
+        assertBuiltDnaSequenceEquals("ACGTGGTGCA",sut);
     } 
     
     @Test
     public void appendCharArray(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.append("GGTGCA".toCharArray());
-        assertBuiltSequenceEquals("ACGTGGTGCA",sut);
+        assertBuiltDnaSequenceEquals("ACGTGGTGCA",sut);
     } 
     @Test
     public void appendCharArrayWithWhitespace(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.append("\nG\tGT GCA".toCharArray());
-        assertBuiltSequenceEquals("ACGTGGTGCA",sut);
+        assertBuiltDnaSequenceEquals("ACGTGGTGCA",sut);
     } 
     @Test
     public void appendCharArrayWithNullsShouldIgnoreNull(){
@@ -113,13 +131,13 @@ public class TestNucleotideSequenceBuilder {
         array[6] = 'A';
         
         sut.append(array);
-        assertBuiltSequenceEquals("ACGTGGTGCA",sut);
+        assertBuiltDnaSequenceEquals("ACGTGGTGCA",sut);
     } 
     @Test
     public void appendNucleotide(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.append(Nucleotide.Guanine);
-        assertBuiltSequenceEquals("ACGTG",sut);
+        assertBuiltDnaSequenceEquals("ACGTG",sut);
     } 
     @Test(expected = NullPointerException.class)
     public void appendNullNucleotideShouldThrowException(){
@@ -130,76 +148,76 @@ public class TestNucleotideSequenceBuilder {
     public void appendNucleotideSequence(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.append(createSequence("GGTGCA"));
-        assertBuiltSequenceEquals("ACGTGGTGCA",sut);
+        assertBuiltDnaSequenceEquals("ACGTGGTGCA",sut);
     } 
     @Test
     public void appendNucleotideList(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.append(Nucleotides.parse("GGTGCA"));
-        assertBuiltSequenceEquals("ACGTGGTGCA",sut);
+        assertBuiltDnaSequenceEquals("ACGTGGTGCA",sut);
     } 
     
     @Test
     public void appendContentsOfOtherBuilder(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.append(new NucleotideSequenceBuilder("GGTGCA"));
-        assertBuiltSequenceEquals("ACGTGGTGCA",sut);
+        assertBuiltDnaSequenceEquals("ACGTGGTGCA",sut);
     } 
     @Test
     public void appendContentsOfOtherBuilderWithGaps(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.append(new NucleotideSequenceBuilder("GGTG-CA"));
-        assertBuiltSequenceEquals("ACGTGGTG-CA",sut);
+        assertBuiltDnaSequenceEquals("ACGTGGTG-CA",sut);
         assertEquals(1, sut.getNumGaps());
     } 
     @Test
     public void prependString(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.prepend("GGTGCA");
-        assertBuiltSequenceEquals("GGTGCAACGT",sut);
+        assertBuiltDnaSequenceEquals("GGTGCAACGT",sut);
     }
     @Test
     public void prependArray(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.prepend("GGTGCA".toCharArray());
-        assertBuiltSequenceEquals("GGTGCAACGT",sut);
+        assertBuiltDnaSequenceEquals("GGTGCAACGT",sut);
     }
     @Test
     public void prependSequence(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.prepend(createSequence("GGTGCA"));
-        assertBuiltSequenceEquals("GGTGCAACGT",sut);
+        assertBuiltDnaSequenceEquals("GGTGCAACGT",sut);
     }
     @Test
     public void prependList(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.prepend(Nucleotides.parse("GGTGCA"));
-        assertBuiltSequenceEquals("GGTGCAACGT",sut);
+        assertBuiltDnaSequenceEquals("GGTGCAACGT",sut);
     }
     @Test
     public void prependContentsOfOtherBuilder(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.prepend(new NucleotideSequenceBuilder("G-TGCA"));
-        assertBuiltSequenceEquals("G-TGCAACGT",sut);
+        assertBuiltDnaSequenceEquals("G-TGCAACGT",sut);
         assertEquals(1, sut.getNumGaps());
     }
     @Test
     public void insertString(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.insert(2, "-");
-        assertBuiltSequenceEquals("AC-GT",sut);
+        assertBuiltDnaSequenceEquals("AC-GT",sut);
     }
     @Test
     public void insertArray(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.insert(2, "-".toCharArray());
-        assertBuiltSequenceEquals("AC-GT",sut);
+        assertBuiltDnaSequenceEquals("AC-GT",sut);
     }
     @Test
     public void insertNucleotide(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.insert(2, Nucleotide.Gap);
-        assertBuiltSequenceEquals("AC-GT",sut);
+        assertBuiltDnaSequenceEquals("AC-GT",sut);
     }
     
     @Test(expected = IllegalArgumentException.class)
@@ -215,7 +233,7 @@ public class TestNucleotideSequenceBuilder {
     public void insertNucleotideAtLengthShouldAppend(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.insert(5, Nucleotide.Gap);
-        assertBuiltSequenceEquals("ACGT-",sut);
+        assertBuiltDnaSequenceEquals("ACGT-",sut);
     }
     @Test(expected = NullPointerException.class)
     public void insertNullNucleotideShouldThrowException(){
@@ -241,31 +259,31 @@ public class TestNucleotideSequenceBuilder {
     public void insertSequence(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.insert(2, createSequence("-"));
-        assertBuiltSequenceEquals("AC-GT",sut);
+        assertBuiltDnaSequenceEquals("AC-GT",sut);
     }
     @Test
     public void insertMultipleBases(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.insert(2, "-N-");
-        assertBuiltSequenceEquals("AC-N-GT",sut);
+        assertBuiltDnaSequenceEquals("AC-N-GT",sut);
     }
     @Test
     public void insertMultipleBaseSequence(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.insert(2, createSequence("-N-"));
-        assertBuiltSequenceEquals("AC-N-GT",sut);
+        assertBuiltDnaSequenceEquals("AC-N-GT",sut);
     }
     @Test
     public void insertNucleotideList(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.insert(2, Nucleotides.parse("-N-"));
-        assertBuiltSequenceEquals("AC-N-GT",sut);
+        assertBuiltDnaSequenceEquals("AC-N-GT",sut);
     }
     @Test
     public void insertContentsOfOtherBuilder(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.insert(2, new NucleotideSequenceBuilder("-N-"));
-        assertBuiltSequenceEquals("AC-N-GT",sut);
+        assertBuiltDnaSequenceEquals("AC-N-GT",sut);
         assertEquals(2, sut.getNumGaps());
     }
     @Test(expected = NullPointerException.class)
@@ -282,7 +300,7 @@ public class TestNucleotideSequenceBuilder {
     public void insertContentsOfOtherBuilderBeyondLastOffsetShouldActLikeAppend(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.insert(4, new NucleotideSequenceBuilder("-N-"));
-        assertBuiltSequenceEquals("ACGT-N-",sut);
+        assertBuiltDnaSequenceEquals("ACGT-N-",sut);
     }
     @Test(expected = IllegalArgumentException.class)
     public void insertContentsOfOtherBuilderAtNegativeOffsetShouldThrowException(){
@@ -293,25 +311,25 @@ public class TestNucleotideSequenceBuilder {
     public void deleteEmptyShouldDoNothing(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.delete(new Range.Builder().build());
-        assertBuiltSequenceEquals("ACGT",sut);
+        assertBuiltDnaSequenceEquals("ACGT",sut);
     }
     @Test
     public void deleteEmptyButBeyondLengthShouldDoNothing(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.delete(new Range.Builder().shift(500000).build());
-        assertBuiltSequenceEquals("ACGT",sut);
+        assertBuiltDnaSequenceEquals("ACGT",sut);
     }
     @Test
     public void deleteEmptyButBeyondNegativeShouldDoNothing(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.delete(new Range.Builder().shift(-3).build());
-        assertBuiltSequenceEquals("ACGT",sut);
+        assertBuiltDnaSequenceEquals("ACGT",sut);
     }
     @Test
     public void deleteSingleBase(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.delete(Range.of(2));
-        assertBuiltSequenceEquals("ACT",sut);
+        assertBuiltDnaSequenceEquals("ACT",sut);
     }
     @Test(expected = IllegalArgumentException.class)
     public void deleteStartingAfterLengthShouldThrowIllegalArgumentException(){
@@ -333,19 +351,19 @@ public class TestNucleotideSequenceBuilder {
     public void deleteRangeGoesBeyondLengthShouldDeleteAsMuchAsPossible(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.delete(Range.of(2,10));
-        assertBuiltSequenceEquals("AC",sut);
+        assertBuiltDnaSequenceEquals("AC",sut);
     }
     @Test
     public void deleteMultipleBases(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("AC-N-GT");
         sut.delete(Range.of(2,4));
-        assertBuiltSequenceEquals("ACGT",sut);
+        assertBuiltDnaSequenceEquals("ACGT",sut);
     }
     @Test
     public void deleteAllBasesShouldReturnEmptySequence(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.delete(Range.of(0,3));
-        assertBuiltSequenceEquals("",sut);
+        assertBuiltDnaSequenceEquals("",sut);
     }
     @Test
     public void mixOfAllOperations(){
@@ -357,7 +375,7 @@ public class TestNucleotideSequenceBuilder {
             .append("GGGGG") //TCA-ACGTTCGAGGGGG
             .ungap() //TCAACGTTCGAGGGGG
             .reverseComplement(); //CCCCCTCGAACGTTGA
-        assertBuiltSequenceEquals("CCCCCTCGAACGTTGA",sut);
+        assertBuiltDnaSequenceEquals("CCCCCTCGAACGTTGA",sut);
     }
     
     @Test
@@ -379,40 +397,40 @@ public class TestNucleotideSequenceBuilder {
     public void reverseComplementOddNumberOfBases(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT-");
         sut.reverseComplement();
-        assertBuiltSequenceEquals("-ACGT",sut);
+        assertBuiltDnaSequenceEquals("-ACGT",sut);
     }
     @Test
     public void reverseComplementPalindromicSequence(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("GAATTC");
         sut.reverseComplement();
-        assertBuiltSequenceEquals("GAATTC",sut);
+        assertBuiltDnaSequenceEquals("GAATTC",sut);
     }
     @Test
     public void reverseComplementEvenNumberOfBases(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("TGGA");
         sut.reverseComplement();
-        assertBuiltSequenceEquals("TCCA",sut);
+        assertBuiltDnaSequenceEquals("TCCA",sut);
     }
     
     @Test
     public void ungapNoGapsShouldNotAffectSequence(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("TGGA")
                     .ungap();
-        assertBuiltSequenceEquals("TGGA",sut); 
+        assertBuiltDnaSequenceEquals("TGGA",sut);
         assertEquals(0, sut.getNumGaps());
     }
     @Test
     public void ungapHasOneGapShouldRemoveGap(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("TG-GA")
                     .ungap();
-        assertBuiltSequenceEquals("TGGA",sut);    
+        assertBuiltDnaSequenceEquals("TGGA",sut);
         assertEquals(0, sut.getNumGaps());
     }
     @Test
     public void ungapHasMultipleGapsShouldRemoveAllGaps(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("T-G-G--A")
                     .ungap();
-        assertBuiltSequenceEquals("TGGA",sut);   
+        assertBuiltDnaSequenceEquals("TGGA",sut);
         assertEquals(0, sut.getNumGaps());
     }
     
@@ -450,35 +468,35 @@ public class TestNucleotideSequenceBuilder {
     public void replace(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT")
                         .replace(2, Nucleotide.Cytosine);
-        assertBuiltSequenceEquals("ACCT",sut);   
+        assertBuiltDnaSequenceEquals("ACCT",sut);
     }
     @Test
     public void replaceWithGap(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT")
                         .replace(2, Nucleotide.Gap);
         assertEquals(1,sut.getNumGaps());
-        assertBuiltSequenceEquals("AC-T",sut);   
+        assertBuiltDnaSequenceEquals("AC-T",sut);
     }
     @Test
     public void replaceGapWithNonGap(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("AC-T")
                         .replace(2, Nucleotide.Cytosine);
         assertEquals(0,sut.getNumGaps());
-        assertBuiltSequenceEquals("ACCT",sut);   
+        assertBuiltDnaSequenceEquals("ACCT",sut);
     }
     @Test
     public void replaceWithN(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT")
                         .replace(2, Nucleotide.Unknown);
         assertEquals(1,sut.getNumNs());
-        assertBuiltSequenceEquals("ACNT",sut);   
+        assertBuiltDnaSequenceEquals("ACNT",sut);
     }
     @Test
     public void replaceNWithNonN(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACNT")
                         .replace(2, Nucleotide.Cytosine);
         assertEquals(0,sut.getNumNs());
-        assertBuiltSequenceEquals("ACCT",sut);   
+        assertBuiltDnaSequenceEquals("ACCT",sut);
     }
     
     @Test
@@ -486,14 +504,14 @@ public class TestNucleotideSequenceBuilder {
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT")
                         .replace(2, Nucleotide.Strong);
         assertEquals(1,sut.getNumAmbiguities());
-        assertBuiltSequenceEquals("ACST",sut);   
+        assertBuiltDnaSequenceEquals("ACST",sut);
     }
     @Test
     public void replaceAmbiguityWithNonAmbiguity(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACST")
                         .replace(2, Nucleotide.Cytosine);
         assertEquals(0,sut.getNumAmbiguities());
-        assertBuiltSequenceEquals("ACCT",sut);   
+        assertBuiltDnaSequenceEquals("ACCT",sut);
     }
     
     @Test(expected = NullPointerException.class)
@@ -582,8 +600,42 @@ public class TestNucleotideSequenceBuilder {
                     .toString());
     }
     
-    
-   
+    @Test
+    public void referenceRna(){
+        NucleotideSequence ref = NucleotideSequence.of("ACGUACGU");
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("GUAC")
+                                            .setReferenceHint(ref,2);
+
+        assertBuiltRnaSequenceEquals("GUAC", sut);
+
+    }
+    @Test
+    public void referenceDnaRnaSeq(){
+        //the snp is T -> U
+        NucleotideSequence ref = NucleotideSequence.of("ACGTACGT");
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("GUAC")
+                .setReferenceHint(ref,2);
+
+        assertBuiltRnaSequenceEquals("GUAC", sut);
+
+    }
+    @Test
+    public void referenceRnaDnaSeq(){
+        //the snp is T -> U
+        NucleotideSequence ref = NucleotideSequence.of("ACGUACGU");
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("GTAC")
+                .setReferenceHint(ref,2);
+
+        assertBuiltDnaSequenceEquals("GTAC", sut);
+
+    }
+    @Test
+    public void seqWithBothUsAndTs(){
+        NucleotideSequence seq =  new NucleotideSequenceBuilder("ACGUACGT").build();
+        assertEquals("ACGUACGT", seq.toString());
+
+
+    }
     
     @Test
     public void reverseEvenNumberOfBases(){
@@ -1005,7 +1057,35 @@ public class TestNucleotideSequenceBuilder {
         assertEquals(Range.of(2,6), sut.toUngappedRange(r));
     }
     
-    
-    
+    @Test
+    public void convertDnaToRna(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT-TTG---GT")
+                                            .convertToRna();
+
+        assertBuiltRnaSequenceEquals("ACGU-UUG---GU", sut);
+    }
+
+    @Test
+    public void convertDnaToDna(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT-TTG---GT")
+                .convertToDna();
+
+        assertBuiltDnaSequenceEquals("ACGT-TTG---GT", sut);
+    }
+
+    @Test
+    public void convertRnaToDna(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGU-UUG---GU")
+                .convertToDna();
+
+        assertBuiltDnaSequenceEquals("ACGT-TTG---GT", sut);
+    }
+    @Test
+    public void convertRnaToRna(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGU-UUG---GU")
+                .convertToRna();
+
+        assertBuiltRnaSequenceEquals("ACGU-UUG---GU", sut);
+    }
     
 }

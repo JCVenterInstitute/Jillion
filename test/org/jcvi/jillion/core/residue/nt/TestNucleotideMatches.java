@@ -36,7 +36,7 @@ public class TestNucleotideMatches {
 	
 	@Test
 	public void equalNucleotidesAlsoMatch(){
-		for(Nucleotide n : Nucleotide.VALUES){
+		for(Nucleotide n : Nucleotide.getDnaValues()){
 			assertTrue(n.matches(n));
 		}
 	}
@@ -289,7 +289,7 @@ public class TestNucleotideMatches {
 	
 	@Test
 	public void nMatchesAllNonGap(){
-		for(Nucleotide nt : EnumSet.complementOf(EnumSet.of(Nucleotide.Gap))){
+		for(Nucleotide nt : EnumSet.complementOf(EnumSet.of(Nucleotide.Gap, Nucleotide.Uracil))){
 			Nucleotide n = Nucleotide.Unknown;
 			assertTrue(nt.toString(), nt.matches(n));
 			assertTrue(nt.toString(), n.matches(nt));

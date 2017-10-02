@@ -34,7 +34,10 @@ New Features
   
 5. FastqWriterBuilders and FastaWriterBuilders constructors that take File will now parse the output file's 
    extension and if it's "gz" or "zip" will automatically compress the output accordingly.  Currently does not handle nested 
-   compressions or tar but those may be supported in future versions.    
+   compressions or tar but those may be supported in future versions.
+
+6. NucleotideSequence now supports Uracil.  It is possible to also have sequences with both Ts and Us since some
+   therapeutics cataloged by the FDA have such sequences.
 
 API Changes
 -----------
@@ -111,6 +114,10 @@ implementation best for that record.
 
 23.  Added new SamParserOptions class to specify how to parse the sam/bam file including which
     reference, alignment range and if to add memento support or not.
+
+24. Nucleotide enum now has Uracil
+
+25. NucleotideSequence now has new methods isDna() and isRna() if the sequence has exclusively Ts and Us.
     
 Performance Improvements
 

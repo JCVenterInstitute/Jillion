@@ -64,6 +64,23 @@ public class TestNucleotideSmithWatermanAligner extends AbstractTestNucleotideAl
 		assertEquals(expected, actual);
 		
 	}
+
+	@Test
+	public void exactMatchRNA(){
+		NucleotideSequence seq = new NucleotideSequenceBuilder("ACGUACGU").build();
+
+
+		NucleotidePairwiseSequenceAlignment actual = PairwiseAlignmentBuilder.createNucleotideAlignmentBuilder(seq, seq, matrix)
+				.gapPenalty(-2, 0)
+				.useLocalAlignment()
+				.build();
+		NucleotidePairwiseSequenceAlignment expected =
+				new NucleotidePairwiseSequenceAlignmentImpl(PairwiseSequenceAlignmentWrapper.wrap(new NucleotideSequenceAlignmentBuilder()
+						.addMatches(seq)
+						.build(), 16));
+		assertEquals(expected, actual);
+
+	}
 	
 	@Test
 	public void withAmbiguityCodes(){
@@ -119,8 +136,28 @@ public class TestNucleotideSmithWatermanAligner extends AbstractTestNucleotideAl
 		assertEquals(expected, actual);
 		
 	}
-	
-	@Test
+    @Test
+    public void oneIndelRna(){
+        NucleotideSequence seq1 = new NucleotideSequenceBuilder("ACGUACGU").build();
+        NucleotideSequence seq2 = new NucleotideSequenceBuilder("ACG"+"ACGU").build();
+
+        NucleotidePairwiseSequenceAlignment actual = PairwiseAlignmentBuilder.createNucleotideAlignmentBuilder(seq1, seq2, matrix)
+                .gapPenalty(-2, 0)
+                .build();
+
+        NucleotidePairwiseSequenceAlignment expected =
+                new NucleotidePairwiseSequenceAlignmentImpl( PairwiseSequenceAlignmentWrapper.wrap(new NucleotideSequenceAlignmentBuilder()
+                                .addMatches("ACG")
+                                .addGap(Nucleotide.Uracil, Nucleotide.Gap)
+                                .addMatches("ACGU")
+                                .build(),
+                        12));
+
+        assertEquals(expected, actual);
+
+    }
+
+    @Test
 	public void twoSeparateIndels(){
 		NucleotideSequence seq1 = new NucleotideSequenceBuilder("ACGTACGTAA").build();
 		NucleotideSequence seq2 = new NucleotideSequenceBuilder("ACGACGAA").build();

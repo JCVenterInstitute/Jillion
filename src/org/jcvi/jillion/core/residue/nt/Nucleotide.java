@@ -25,15 +25,8 @@
  */
 package org.jcvi.jillion.core.residue.nt;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.jcvi.jillion.core.residue.Residue;
 /**
@@ -61,7 +54,7 @@ public enum Nucleotide implements Residue {
     Cytosine(Character.valueOf('C')),
     Guanine(Character.valueOf('G')),
     Thymine(Character.valueOf('T')),
-    
+    Uracil(Character.valueOf('U'))
     ;
 
     private static final Map<Nucleotide,Set<Nucleotide>> AMBIGUITY_TO_CONSTIUENT;
@@ -71,62 +64,85 @@ public enum Nucleotide implements Residue {
     private static Nucleotide[] CACHE = new Nucleotide[80];
     
     private static final Nucleotide[] VALUES_ARRAY = values();
-    public static final List<Nucleotide> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
-    static{
-        
-       
+    private static final Nucleotide[] DNA_VALUES_ARRAY, RNA_VALUES_ARRAY;
+
+    private static final Set<Nucleotide> GAP_BASES_FOR = EnumSet.of(Gap);
+
+    static {
+
+
         AMBIGUITY_TO_CONSTIUENT = new EnumMap<Nucleotide, Set<Nucleotide>>(Nucleotide.class);
-       
-        AMBIGUITY_TO_CONSTIUENT.put(Unknown, EnumSet.of(Adenine,Cytosine,Guanine,Thymine));
-        AMBIGUITY_TO_CONSTIUENT.put(NotThymine, EnumSet.of(Adenine,Cytosine,Guanine));
-        AMBIGUITY_TO_CONSTIUENT.put(NotGuanine, EnumSet.of(Adenine,Cytosine,Thymine));
-        AMBIGUITY_TO_CONSTIUENT.put(NotCytosine, EnumSet.of(Adenine,Guanine,Thymine));
-        AMBIGUITY_TO_CONSTIUENT.put(NotAdenine, EnumSet.of(Cytosine,Guanine,Thymine));
-        
-        AMBIGUITY_TO_CONSTIUENT.put(Weak, EnumSet.of(Adenine,Thymine));
-        AMBIGUITY_TO_CONSTIUENT.put(Amino, EnumSet.of(Adenine,Cytosine));
-        
-        AMBIGUITY_TO_CONSTIUENT.put(Purine, EnumSet.of(Adenine,Guanine));
-        AMBIGUITY_TO_CONSTIUENT.put(Strong, EnumSet.of(Cytosine,Guanine));
-        
-        AMBIGUITY_TO_CONSTIUENT.put(Pyrimidine, EnumSet.of(Cytosine,Thymine));
-        AMBIGUITY_TO_CONSTIUENT.put(Keto, EnumSet.of(Guanine,Thymine));
-        
+
+        AMBIGUITY_TO_CONSTIUENT.put(Unknown, EnumSet.of(Adenine, Cytosine, Guanine, Thymine));
+        AMBIGUITY_TO_CONSTIUENT.put(NotThymine, EnumSet.of(Adenine, Cytosine, Guanine));
+        AMBIGUITY_TO_CONSTIUENT.put(NotGuanine, EnumSet.of(Adenine, Cytosine, Thymine));
+        AMBIGUITY_TO_CONSTIUENT.put(NotCytosine, EnumSet.of(Adenine, Guanine, Thymine));
+        AMBIGUITY_TO_CONSTIUENT.put(NotAdenine, EnumSet.of(Cytosine, Guanine, Thymine));
+
+        AMBIGUITY_TO_CONSTIUENT.put(Weak, EnumSet.of(Adenine, Thymine));
+        AMBIGUITY_TO_CONSTIUENT.put(Amino, EnumSet.of(Adenine, Cytosine));
+
+        AMBIGUITY_TO_CONSTIUENT.put(Purine, EnumSet.of(Adenine, Guanine));
+        AMBIGUITY_TO_CONSTIUENT.put(Strong, EnumSet.of(Cytosine, Guanine));
+
+        AMBIGUITY_TO_CONSTIUENT.put(Pyrimidine, EnumSet.of(Cytosine, Thymine));
+        AMBIGUITY_TO_CONSTIUENT.put(Keto, EnumSet.of(Guanine, Thymine));
+
         AMBIGUITY_TO_CONSTIUENT.put(Adenine, EnumSet.of(Adenine));
         AMBIGUITY_TO_CONSTIUENT.put(Cytosine, EnumSet.of(Cytosine));
         AMBIGUITY_TO_CONSTIUENT.put(Guanine, EnumSet.of(Guanine));
         AMBIGUITY_TO_CONSTIUENT.put(Thymine, EnumSet.of(Thymine));
 
-        
+        AMBIGUITY_TO_CONSTIUENT.put(Uracil, EnumSet.of(Uracil));
+
+
         CONSTIUENT_TO_AMBIGUITY = new EnumMap<Nucleotide, Set<Nucleotide>>(Nucleotide.class);
-        for(Nucleotide n : EnumSet.of(Adenine,Cytosine,Guanine,Thymine)){
+        for (Nucleotide n : EnumSet.of(Adenine, Cytosine, Guanine, Thymine, Uracil)) {
             CONSTIUENT_TO_AMBIGUITY.put(n, EnumSet.noneOf(Nucleotide.class));
         }
-        for(Entry<Nucleotide, Set<Nucleotide>> entry : AMBIGUITY_TO_CONSTIUENT.entrySet()){
-            for(Nucleotide n : entry.getValue()){
+        for (Entry<Nucleotide, Set<Nucleotide>> entry : AMBIGUITY_TO_CONSTIUENT.entrySet()) {
+            for (Nucleotide n : entry.getValue()) {
                 final Nucleotide toAdd = entry.getKey();
-                if(toAdd != n){
+                if (toAdd != n) {
                     CONSTIUENT_TO_AMBIGUITY.get(n).add(toAdd);
                 }
             }
         }
-        for(Nucleotide value : VALUES_ARRAY){
-        	char uppercase = value.c.charValue();
-        	
-        	char lowercase = Character.toLowerCase(uppercase);
-        	
-        	CACHE[computeOffsetFor(uppercase)] = value;
-        	CACHE[computeOffsetFor(lowercase)] = value;
+        //add U explicitly
+        CONSTIUENT_TO_AMBIGUITY.put(Nucleotide.Uracil, CONSTIUENT_TO_AMBIGUITY.get(Nucleotide.Thymine));
+
+        for (Nucleotide value : VALUES_ARRAY) {
+            char uppercase = value.c.charValue();
+
+            char lowercase = Character.toLowerCase(uppercase);
+
+            CACHE[computeOffsetFor(uppercase)] = value;
+            CACHE[computeOffsetFor(lowercase)] = value;
         }
         //add consed gap
         CACHE[computeOffsetFor('*')] = Gap;
         //treat X's as Ns
         CACHE[computeOffsetFor('x')] = Unknown;
         CACHE[computeOffsetFor('X')] = Unknown;
-        
+
+
+        DNA_VALUES_ARRAY = new Nucleotide[16];
+        RNA_VALUES_ARRAY = new Nucleotide[16];
+try{
+        System.arraycopy(VALUES_ARRAY, 0, DNA_VALUES_ARRAY, 0, 16);
+        System.arraycopy(VALUES_ARRAY, 0, RNA_VALUES_ARRAY, 0, 15);
+        RNA_VALUES_ARRAY[15] = Uracil;
+    }catch(Throwable t){
+    t.printStackTrace();
     }
-    
-  
+    }
+
+    public static final List<Nucleotide> DNA_VALUES = Collections.unmodifiableList(Arrays.asList(DNA_VALUES_ARRAY));
+
+    public static final List<Nucleotide> RNA_VALUES = Collections.unmodifiableList(Arrays.asList(RNA_VALUES_ARRAY));
+    public static final List<Nucleotide> ALL_VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
+
+
     private static int computeOffsetFor(char c){
     	return c-42;
     }
@@ -134,7 +150,7 @@ public enum Nucleotide implements Residue {
     
     private final Character c;
     
-    private Nucleotide(Character c){
+    Nucleotide(Character c){
         this.c = c;
     }
     /**
@@ -186,14 +202,27 @@ public enum Nucleotide implements Residue {
 								break;
     		case Guanine : ret = Cytosine;
 								break;
-    		case Thymine : ret = Adenine;
+    		case Thymine :
+            case Uracil: ret = Adenine;
     						break;
 			default : //can't happen 
 				throw new IllegalStateException("a new nucleotide ordinal has been added" + this);
     	}
        return ret;
     }
-    
+
+
+    public static List<Nucleotide> getDnaValues(){
+        return DNA_VALUES;
+    }
+    public static List<Nucleotide> getAllValues(){
+        return ALL_VALUES;
+    }
+
+
+    public static List<Nucleotide> getRnaValues(){
+        return RNA_VALUES;
+    }
     /**
      * Get the {@link Nucleotide} for the given
      * String  representation.  If the given String is more than
@@ -316,9 +345,23 @@ public enum Nucleotide implements Residue {
         if(unambiguiousBases ==null){
             throw new NullPointerException("unambiguousBases can not be null");
         }
+        Collection<Nucleotide> bases = unambiguiousBases;
+        //check for Us, for simplicity replace with T
+        boolean hadU=false;
+        if(unambiguiousBases.contains(Nucleotide.Uracil)){
+            bases = EnumSet.copyOf(unambiguiousBases);
+            bases.remove(Nucleotide.Uracil);
+            bases.add(Nucleotide.Thymine);
+            hadU=true;
+        }
         for(Entry<Nucleotide, Set<Nucleotide>> entry : AMBIGUITY_TO_CONSTIUENT.entrySet()){
-            if(unambiguiousBases.containsAll(entry.getValue())){
-                return entry.getKey();
+            if(bases.containsAll(entry.getValue())){
+                Nucleotide ret= entry.getKey();
+                //switch back to U if needed
+                if(hadU && ret == Nucleotide.Thymine){
+                    return Nucleotide.Uracil;
+                }
+                return ret;
             }
         }
         return Gap;        
@@ -353,7 +396,7 @@ public enum Nucleotide implements Residue {
      */
     public Set<Nucleotide> getBasesFor(){
     	if(this== Gap){
-    		return EnumSet.of(Gap);
+    		return GAP_BASES_FOR;
     	}
     	return AMBIGUITY_TO_CONSTIUENT.get(this);
     }

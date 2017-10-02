@@ -210,7 +210,7 @@ public final class SamUtil {
 			    }
 			}
 			
-			Nucleotide[] ordinals = Nucleotide.values();
+			Nucleotide[] ordinals = Nucleotide.getDnaValues().stream().toArray(size -> new Nucleotide[size]);
                         PAIR_OF_BASES_TO_BAM_ENCODE = new byte[ordinals.length][ordinals.length];
                         
                         for(Nucleotide a : ordinals){

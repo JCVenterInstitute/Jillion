@@ -90,7 +90,7 @@ public class TestChannelGroup {
     
     @Test
     public void passingAmbiguousBaseShouldReturnTChannel(){
-    	for(Nucleotide n : Nucleotide.VALUES){
+    	for(Nucleotide n : Nucleotide.getDnaValues()){
     		if(n.isAmbiguity()){
     			assertEquals(n.name(),tChannel, sut.getChannel(n));
     		}

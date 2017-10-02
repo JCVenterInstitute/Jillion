@@ -35,7 +35,7 @@ public class ConsensusCompactedSlice extends NoConsensusCompactedSlice {
 
 	@Override
 	public Nucleotide getConsensusCall() {
-		return Nucleotide.VALUES.get(consensusOrdinal);
+		return Nucleotide.getDnaValues().get(consensusOrdinal);
 	}
 
 	@Override

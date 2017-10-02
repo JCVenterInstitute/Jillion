@@ -20,14 +20,11 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.core.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.util.streams.ThrowingIntIndexedIntConsumer;
 import org.jcvi.jillion.internal.core.util.iter.PrimitiveArrayIterators;
 /**
  * A {@code GrowableIntArray} is a utility class
@@ -494,5 +491,39 @@ public final class GrowableIntArray implements Iterable<Integer>{
 			return new ArrayList<>();
 		}
 		return ArrayUtil.asList(toArray());
+	}
+
+	/**
+	 * Iterate over each element in the list and call the given consumer
+	 * which captures the offset and the value.
+	 * @param consumer the consumer of each element; can not be null.
+	 * @param <E> the Throwable that might be thrown by the consumer.
+	 * @throws E the Throwable from the consumer.
+	 *
+	 * @since 5.3
+	 *
+	 * @throws NullPointerException if consumer is null.
+	 */
+	public <E extends Throwable> void forEachIndexed(ThrowingIntIndexedIntConsumer<E> consumer) throws E{
+		Objects.requireNonNull(consumer);
+		for(int i=0; i< currentLength; i++){
+			consumer.accept(i, data[i]);
+		}
+	}
+
+	/**
+	 * Iterate over the elements in the given range of this array and call the given consumer
+	 * which captures the offset and the value.
+	 * @param consumer the consumer of each element; can not be null.
+	 * @param <E> the Throwable that might be thrown by the consumer.
+	 * @throws E the Throwable from the consumer.
+	 *
+	 * @since 5.3
+	 */
+	public <E extends Throwable> void forEachIndexed(Range range, ThrowingIntIndexedIntConsumer<E> consumer) throws E{
+		int end = (int) Math.min(currentLength, range.getEnd()+1);
+		for(int i=(int) range.getBegin(); i< end; i++){
+			consumer.accept(i, data[i]);
+		}
 	}
 }

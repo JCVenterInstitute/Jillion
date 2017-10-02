@@ -27,7 +27,7 @@ public class TestNucleotideGetBasesFor {
 
 	@Test
 	public void mirrorsGetAmbiguityFor(){
-		for(Nucleotide n : Nucleotide.VALUES){
+		for(Nucleotide n :Nucleotide.getDnaValues()){
 			assertSame(n, Nucleotide.getAmbiguityFor(n.getBasesFor()));
 		}
 	}

@@ -145,6 +145,14 @@ public class TestNucleotideGlyphGetAmbiguity {
                 t.getAllPossibleAmbiguities());
     }
     @Test
+    public void U(){
+        final Nucleotide u = Nucleotide.parse('U');
+        assertEquals(u,
+                Nucleotide.getAmbiguityFor(Arrays.asList(Uracil)));
+        assertEquals(EnumSet.of(Unknown,NotCytosine,NotGuanine,NotAdenine,Keto, Pyrimidine,Weak),
+                u.getAllPossibleAmbiguities());
+    }
+    @Test
     public void gap(){
         assertEquals(Nucleotide.parse('-'), 
                 Nucleotide.getAmbiguityFor(Arrays.asList(Gap)));

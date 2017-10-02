@@ -102,7 +102,7 @@ public class TestBasicNucleotideCodec {
      */
     @Test
     public void testOddNumberOfBasesEveryPossibleFinalBase(){
-        for(Nucleotide nuc : Nucleotide.VALUES){
+        for(Nucleotide nuc : Nucleotide.getDnaValues()){
             assertFinalBaseInOddLengthSequenceCorrectlyDecoded(nuc.toString());
         }
     }

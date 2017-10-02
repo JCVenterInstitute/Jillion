@@ -175,9 +175,12 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
 			return delegate.getUngappedLength();
 		}
 
-		
+        @Override
+        public boolean isDna() {
+            return delegate.isDna();
+        }
 
-		@Override
+        @Override
 		public int getNumberOfGapsUntil(int gappedOffset) {
 			return delegate.getNumberOfGapsUntil(gappedOffset);
 		}

@@ -108,20 +108,20 @@ public final class Triplet {
 	@Override
 	public String toString(){
 		return new StringBuilder(3)
-					.append(Nucleotide.VALUES.get(first))
-					.append(Nucleotide.VALUES.get(second))
-					.append(Nucleotide.VALUES.get(third))
+					.append(Nucleotide.getDnaValues().get(first))
+					.append(Nucleotide.getDnaValues().get(second))
+					.append(Nucleotide.getDnaValues().get(third))
 					.toString();
 					
 	}
 	
 	public Nucleotide getFirst(){
-		return Nucleotide.VALUES.get(first);
+		return Nucleotide.getDnaValues().get(first);
 	}
 	public Nucleotide getSecond(){
-		return Nucleotide.VALUES.get(second);
+		return Nucleotide.getDnaValues().get(second);
 	}
 	public Nucleotide getThrid(){
-		return Nucleotide.VALUES.get(third);
+		return Nucleotide.getDnaValues().get(third);
 	}
 }

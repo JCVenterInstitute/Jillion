@@ -71,13 +71,14 @@ public final class NucleotideSequencePermuter {
 			//no reason to permute
 			return Collections.singleton(seq);
 		}
-		
+		boolean convertTsToUs = seq.isRna();
+
 		List<NucleotideSequenceBuilder> permutations = new ArrayList<>();
 		
 		permutations.add(seqBuilder);
 		for(int i=0; i<seqBuilder.getLength(); i++){
 			if(seqBuilder.get(i).isAmbiguity()){
-				permutations = permute(permutations, i);
+				permutations = permute(permutations, i,convertTsToUs);
 			}
 		}
 		
@@ -90,11 +91,14 @@ public final class NucleotideSequencePermuter {
 		return set;
 	}
 
-	private static List<NucleotideSequenceBuilder> permute(List<NucleotideSequenceBuilder> permutations, int offset) {
+	private static List<NucleotideSequenceBuilder> permute(List<NucleotideSequenceBuilder> permutations, int offset, boolean convertTsToUs) {
 		List<NucleotideSequenceBuilder> newPermutations = new ArrayList<>(permutations.size() *4);
 		for(NucleotideSequenceBuilder builder : permutations){
 			Nucleotide ambiguity =builder.get(offset);
-			for(Nucleotide n :ambiguity.getBasesFor()){
+			for(Nucleotide n : ambiguity.getBasesFor()){
+				if(convertTsToUs && n==Nucleotide.Thymine){
+					n = Nucleotide.Uracil;
+				}
 				newPermutations.add(builder.copy()
 									.replace(offset, n));
 			}

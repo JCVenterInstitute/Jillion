@@ -492,4 +492,47 @@ public class TestGrowableByteArray {
 		GrowableByteArray sut = new GrowableByteArray(new byte[]{10, 20,30,30,35, 40,50});
 		assertEquals(0, sut.getCount((byte)-1));
 	}
+
+	@Test
+	public void forEachIndexed(){
+		GrowableByteArray sut = new GrowableByteArray(new byte[]{10, 20,30,30,35, 40,50});
+		List<Byte> expected = new ArrayList<>();
+		for(Byte b : sut){
+			expected.add(b);
+		}
+
+		List<Byte> actual = new ArrayList<>();
+		for(int i=0; i< expected.size(); i++){
+			actual.add(null);
+		}
+
+		sut.forEachIndexed((i, b)-> actual.set(i, b));
+
+		assertEquals(expected, actual);
+	}
+
+	@Test
+	public void forEachIndexedRange(){
+		GrowableByteArray sut = new GrowableByteArray(new byte[]{10, 20,30,30,35, 40,50});
+		List<Byte> expected = new ArrayList<>();
+		Range r = Range.of(2,5);
+		for(int i=0; i<sut.getCurrentLength(); i++){
+			if(r.intersects(Range.of(i))){
+				expected.add(sut.get(i));
+			}else{
+				expected.add(null);
+			}
+
+		}
+
+
+		List<Byte> actual = new ArrayList<>();
+		for(int i=0; i< expected.size(); i++){
+			actual.add(null);
+		}
+
+		sut.forEachIndexed(r, (i, b)-> actual.set(i, b));
+
+		assertEquals(expected, actual);
+	}
 }

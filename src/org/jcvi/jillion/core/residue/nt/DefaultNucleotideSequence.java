@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
 
 /**
@@ -78,16 +79,23 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
      */
     private transient int hash;
 
-   
+    private transient boolean isDna;
+
+    private transient boolean changeTs;
     
-    DefaultNucleotideSequence(NucleotideCodec codec, byte[] data) {
+    DefaultNucleotideSequence(NucleotideCodec codec, byte[] data, boolean hasUracil, boolean changeTs) {
 		this.codec = codec;
 		this.data = data;
+		this.isDna = !hasUracil;
+		this.changeTs = changeTs;
 	}
 
 
+    @Override
+    public boolean isDna() {
+        return isDna;
+    }
 
-    
     @Override
 	public int getNumberOfGapsUntil(int gappedValidRangeIndex) {
 		return codec.getNumberOfGapsUntil(data, gappedValidRangeIndex);
@@ -209,10 +217,7 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
        }
        return true;
     }
-    @Override
-    public String toString() {
-        return codec.toString(data);
-    }
+
     
    
     /**
@@ -224,12 +229,20 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
     }
 	@Override
 	public Iterator<Nucleotide> iterator() {
-		return codec.iterator(data);
+		return iteratorWrapper(codec.iterator(data));
 	}
 	@Override
 	public Iterator<Nucleotide> iterator(Range range) {
-		return codec.iterator(data,range);
+		return iteratorWrapper(codec.iterator(data,range));
 	}
+
+	private Iterator<Nucleotide> iteratorWrapper(Iterator<Nucleotide> iter){
+        //the codec will always have Ts and no Us
+        if(isDna || !changeTs){
+            return iter;
+        }
+        return IteratorUtil.map(iter, n -> n==Nucleotide.Thymine? Nucleotide.Uracil : n);
+    }
 
 	private Object writeReplace(){
 		return new DefaultNucleotideSequenceProxy(this);
@@ -249,10 +262,10 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
 		}
 		
 		private Object readResolve(){
-			DefaultNucleotideSequence seq = (DefaultNucleotideSequence) new NucleotideSequenceBuilder(bases)
+			return new NucleotideSequenceBuilder(bases)
 																				.build();
-			
-			return new DefaultNucleotideSequence(seq.codec, seq.data);
+//
+//			return new DefaultNucleotideSequence(seq.codec, seq.data, seq.isRna());
 		}
 	}
 
@@ -279,5 +292,13 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
 		return codec.getNRanges(data);
 	}
 	
-	
+	@Override
+    public String toString(){
+        StringBuilder builder = new StringBuilder((int)getLength());
+        Iterator<Nucleotide> iter = iterator();
+        while(iter.hasNext()){
+            builder.append(iter.next());
+        }
+        return builder.toString();
+    }
 }
