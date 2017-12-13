@@ -33,7 +33,14 @@ import org.jcvi.jillion.core.util.streams.ThrowingBiConsumer;
  * Helper class to simplify the process of reading Fastq encoded files
  * to just get the Stream of {@link FastqRecord} objects.
  * <p>
- * For example, 
+ * For example,
+ *
+ * <pre>
+ * FastqFileReader.forEach(fastqFile,
+ *                       (id, record) -> ... );
+ *
+ * </pre>
+ * Can be used instead of the more verbose
  * </p>
  * <pre>
  * try(
@@ -45,15 +52,7 @@ import org.jcvi.jillion.core.util.streams.ThrowingBiConsumer;
  * ){
  *     stream.forEach( ... );
  * }
- * </pre>
- * <p>
- * Can now be rewritten as:
- * </p>
- * <pre>
- * FastqFileReader.forEach(fastqFile,
- *                       (id, record) ->{ ... });
- * 
- * </pre>
+ *
  * @author dkatzel
  * @since 5.3
  */

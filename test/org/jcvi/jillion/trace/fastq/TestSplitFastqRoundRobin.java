@@ -157,11 +157,8 @@ public class TestSplitFastqRoundRobin {
             Set<String> expectedIds = datastore.ids().collect(Collectors.toSet());
             
             for(File f : sortedFiles){
-                try(ThrowingStream<FastqRecord> results = FastqFileReader.read(f).records()){
-                    results.forEach(fastq ->{
-                        assertTrue(fastq.getId(), expectedIds.remove(fastq.getId()));
-                    });
-                }
+
+				FastqFileReader.forEach(f, (id, fastq)-> assertTrue(id, expectedIds.remove(fastq.getId())));
             }
             
             assertEquals(Collections.emptySet(), expectedIds);
