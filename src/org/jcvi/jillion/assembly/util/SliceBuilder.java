@@ -272,8 +272,8 @@ public final class SliceBuilder implements Builder<Slice>{
     	}else{    		
           //overwrite
     		bytes.replace(index, (short)value);
-    		ids.remove(index);
-    		ids.add(index, id);
+//    		ids.remove(index);
+//    		ids.add(index, id);
     	}
     	
         
