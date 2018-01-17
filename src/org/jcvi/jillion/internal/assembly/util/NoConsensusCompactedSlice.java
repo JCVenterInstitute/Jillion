@@ -22,6 +22,7 @@ package org.jcvi.jillion.internal.assembly.util;
 
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -108,16 +109,23 @@ public class NoConsensusCompactedSlice implements Slice{
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + Arrays.hashCode(elements);
-		result = prime * result + Arrays.hashCode(ids);
-		Nucleotide consensusCall = getConsensusCall();
-		if(consensusCall !=null){
-			result = prime * result + consensusCall.hashCode();
-		}
+		//this is so 2 Slices that have the same ids but in different order still have same hashcode
+		result = prime * result + sum(elements);
+		
+		result = prime * result + new HashSet<>(Arrays.asList(ids)).hashCode();
+		
+		
 		
 		return result;
 	}
 
+	private static int sum(short[] s){
+	    int sum=0;
+	    for(int i=0; i< s.length; i++){
+	        sum +=s[i];
+	    }
+	    return sum;
+	}
 	@Override
 	public boolean equals(Object obj) {
         if (this == obj){

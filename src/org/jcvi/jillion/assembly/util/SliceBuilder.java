@@ -239,6 +239,11 @@ public final class SliceBuilder implements Builder<Slice>{
         }
         
     }
+    
+    protected void mergeNew(SliceBuilder other){
+        this.ids.addAll(other.ids);
+        this.bytes.append(other.bytes);
+    }
     /**
      * Add a new SliceElement with the following values
      * to this builder.
@@ -277,6 +282,43 @@ public final class SliceBuilder implements Builder<Slice>{
     	}
     	
         
+        return this;
+    }
+    
+    /**
+     * Add a new SliceElement with the following values
+     * to this builder.  This method is the same as {@link #add(String, Nucleotide, PhredQuality, Direction)}
+     * except it does not do any checks to see if this Slice already has this id 
+     * so this method should only be called when it is guaranteed that the id is unique in this slice.
+     * Adding a SliceElement with the same id
+     * as a pre-existing element already
+     * present in this builder will cause the new
+     * value to overwrite the existing value.
+     * 
+     * @param id the id of the SliceElement to add;
+     * can not be null.
+     * @param base the {@link Nucleotide} basecall of the SliceElement to add;
+     * can not be null.
+     * @param quality the {@link PhredQuality} of the SliceElement to add;
+     * can not be null.
+     * @param dir the {@link Direction} of the SliceElement to add;
+     * can not be null.
+     * @return this
+     * @throws NullPointerException if any parameter is null.
+     * 
+     * @since 5.3
+     */
+    SliceBuilder addNew(String id, Nucleotide base, PhredQuality quality, Direction dir){
+
+        CompactedSliceElement compacted = new CompactedSliceElement(id, base,
+                quality, dir);
+        int value = compacted.getEncodedDirAndNucleotide() << 8;
+        value |= (compacted.getEncodedQuality() & 0xFF);
+
+        // append
+        bytes.append((short) value);
+        ids.add(id);
+
         return this;
     }
 
@@ -340,6 +382,9 @@ public final class SliceBuilder implements Builder<Slice>{
 		return "SliceBuilder [bytes=" + bytes + ", ids=" + ids + ", consensus="
 				+ consensus + "]";
 	}
+    public boolean isEmpty() {
+        return ids.isEmpty();
+    }
 
 
 }
