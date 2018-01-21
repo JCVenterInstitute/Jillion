@@ -37,6 +37,7 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.ThrowingStream;
 import org.jcvi.jillion.core.util.iter.ArrayIterator;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
@@ -75,17 +76,24 @@ public final class CompactedSliceMap implements SliceMap {
 			GapQualityValueStrategy qualityValueStrategy, PhredQuality defaultQuality)
 			throws DataStoreException {
 		SliceBuilder builders[] = initializeSliceBuilders(consensusSequence);
-		
-    	try{
-    		while(readIter.hasNext()){
-    			PR read = readIter.next();
+		Iterator<PhredQuality> defaultIterator;
+		if(qualityDataStore==null){
+		    defaultIterator = createNewDefaultQualityIterator(defaultQuality);
+		}else{
+		    defaultIterator = null;
+		}
+    	try(ThrowingStream<PR> readStream = readIter.toThrowingStream()){
+    	    
+    	    readStream
+    	            .parallel()
+    	            .throwingForEach(read ->{
     			int start = (int)read.getGappedStartOffset();
     			int i=0;
     			String id =read.getId();
     			Direction dir = read.getDirection();
     			Iterator<PhredQuality> validRangeGappedQualitiesIterator =null;
     			if(qualityDataStore==null){
-    				validRangeGappedQualitiesIterator = createNewDefaultQualityIterator(defaultQuality);
+    				validRangeGappedQualitiesIterator = defaultIterator;
 
     			}else{
     				QualitySequence fullQualities = qualityDataStore.get(id);
@@ -101,10 +109,13 @@ public final class CompactedSliceMap implements SliceMap {
     			while(baseIterator.hasNext()){
     				Nucleotide base = baseIterator.next();
     				PhredQuality quality = validRangeGappedQualitiesIterator.next();
-    				builders[start+i].add(id, base, quality, dir);
+    				SliceBuilder builder = builders[start+i];
+    				synchronized(builder){
+    				    builder.add(id, base, quality, dir);
+    				}
     				i++;
     			}
-    		}
+    		});
     		//done building
     		this.slices = new Slice[builders.length];
     		for(int i=0; i<slices.length; i++){

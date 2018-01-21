@@ -46,6 +46,9 @@ import org.junit.runners.Suite.SuiteClasses;
         TestSliceMapBuilderUsingQualityDataStore.class,
         TestSliceMapBuilderUsingDefaultQualities.class,
         
+        TestParallelSliceCollector.class,
+        TestSliceCollector.class,
+        
         TestSliceMapBuilderReadFilter.class,
         
         AllConsensusUnitTests.class
