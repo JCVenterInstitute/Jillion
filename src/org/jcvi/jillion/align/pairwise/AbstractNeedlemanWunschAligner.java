@@ -105,7 +105,7 @@ abstract class AbstractNeedlemanWunschAligner <R extends Residue, S extends Resi
 			final TracebackDirection dir;
 			//can't switch on float... so ugly if/else block below
 			if (bestScore == alignmentScore){
-				dir = TracebackDirection.DIAGNOL;
+				dir = TracebackDirection.DIAGONAL;
 			}else if (bestScore == horrizontalGapPenalty){
 				dir = TracebackDirection.HORIZONTAL;
 			}else{

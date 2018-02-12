@@ -209,7 +209,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends ResidueSequ
 									break;
 					case VERTICAL : inAVerticalGapCache[CURRENT_ROW].set(j,true);
 									break;
-					case DIAGNOL: 	inAHorizontalGap.set(j,false);
+					case DIAGONAL: 	inAHorizontalGap.set(j, false);
 									inAVerticalGapCache[CURRENT_ROW].set(j,false);
 									break;
 					default:
@@ -358,7 +358,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends ResidueSequ
 					alignmentBuilder.addGap(gap,residuesByOrdinal.get(seq2Bytes[y-1]));
 					y--;
 					break;
-				case DIAGNOL:
+				case DIAGONAL:
 					boolean isMatch = seq1Bytes[x-1] == seq2Bytes[y-1];
 					if(isMatch){
 						alignmentBuilder.addMatch(residuesByOrdinal.get(seq1Bytes[x-1]));
@@ -546,7 +546,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends ResidueSequ
 		 * the alignment to a match/mismatch
 		 * to the alignment.
 		 */
-		DIAGNOL;
+		DIAGONAL;
 	}
 	
 	private static final class TraceBackMatrix{
