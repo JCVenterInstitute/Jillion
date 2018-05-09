@@ -96,16 +96,8 @@ public final class Triplet {
 			return false;
 		}
 		Triplet other = (Triplet) obj;
-		if (first != other.first) {
-			return false;
-		}
-		if (second != other.second) {
-			return false;
-		}
-		if (third != other.third) {
-			return false;
-		}
-		return true;
+
+		return first == other.first && second == other.second && third == other.third;
 	}
 	
 	
