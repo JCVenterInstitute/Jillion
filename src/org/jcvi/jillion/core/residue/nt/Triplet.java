@@ -37,15 +37,18 @@ public final class Triplet {
 	 * NOTE: We don't synchronize the cache because it is 
 	 * too expensive
 	 */
-	private static final Triplet[][][] CACHE = new Triplet[16][16][16];
-	
+	private static final int cacheSize = Nucleotide.values().length;
+	private static final Triplet[][][] CACHE = new Triplet[cacheSize][cacheSize][cacheSize];
+
 	public static Triplet create(char first, char second, char third){
 		return create(Nucleotide.parse(first), Nucleotide.parse(second), Nucleotide.parse(third));
 	}
+
 	public static Triplet create(Nucleotide first, Nucleotide second, Nucleotide third){
 		int o1 = first.ordinal();
 		int o2 = second.ordinal();
 		int o3 = third.ordinal();
+
 		Triplet fromCache = CACHE[o1][o2][o3];
 		if(fromCache !=null){
 			return fromCache;
@@ -56,9 +59,10 @@ public final class Triplet {
 	}
 	
 	static void clearCache(){
-		for(int i=0; i<CACHE.length; i++){
-			for(int j=0; j<CACHE[i].length; j++){
-				for(int k=0; k<CACHE[i][j].length; k++){
+
+		for(int i=0; i<cacheSize; i++){
+			for(int j=0; j<cacheSize; j++){
+				for(int k=0; k<cacheSize; k++){
 					CACHE[i][j][k]= null;
 				}
 			}
