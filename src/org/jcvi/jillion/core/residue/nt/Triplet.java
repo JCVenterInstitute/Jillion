@@ -117,7 +117,7 @@ public final class Triplet {
 	public Nucleotide getSecond(){
 		return Nucleotide.getDnaValues().get(second);
 	}
-	public Nucleotide getThrid(){
+	public Nucleotide getThird(){
 		return Nucleotide.getDnaValues().get(third);
 	}
 }
