@@ -69,6 +69,7 @@ public class VulgarProtein2Genome2 {
         private final Range proteinSeqRange;
         private final Range nucleotideSeqRange;
         private final Frame frame;
+
         protected AlignmentFragment(Direction direction, Range proteinSeqRange,
                 Range nucleotideSeqRange, Frame frame) {
             this.direction = direction;
@@ -106,8 +107,6 @@ public class VulgarProtein2Genome2 {
             public Builder add(long nucleotideLength, long queryLength){
                 nucleotideRangeBuilder.expandEnd(nucleotideLength);
                 proteinRangeBuilder.expandEnd(queryLength);
-                
-                
                 return this;
             }
             
@@ -135,13 +134,7 @@ public class VulgarProtein2Genome2 {
         queryRanges = new ArrayList<>();
         queryGaps = new ArrayList<>();
         
-//        BiConsumer<Long, VulgarElement> insertionConsumer = (offset, e) -> queryGaps.add(new Range.Builder(e.getTargetLength() /3).shift(offset - queryRange.getBegin()).build());
-//        BiConsumer<Long, VulgarElement> deletionConsumer = (offset, e) -> targetGaps.add(new Range.Builder(e.getQueryLength() *3).shift(offset - targetRange.getBegin() + queryRange.getBegin()).build());
-//        
-//        
-//        computeRanges(queryRange.getBegin(), VulgarElement::getQueryLength, queryRanges, insertionConsumer);
-//        computeRanges(targetRange.getBegin(), VulgarElement::getTargetLength, targetExons, deletionConsumer);
-//        
+
         long queryOffset = 0;
         long targetOffset = 0;
         this.queryStrand = parseStrand(queryStrand);
@@ -230,43 +223,25 @@ public class VulgarProtein2Genome2 {
         return score;
     }
 
-
-
-
     public String getQueryId() {
         return queryId;
     }
-
-
-
 
     public String getTargetId() {
         return targetId;
     }
 
-
-
-
     public List<VulgarElement> getElements() {
         return elements;
     }
-
-
-
 
     public List<Range> getTargetExons() {
         return targetExons;
     }
 
-
-
-
     public List<Range> getQueryRanges() {
         return queryRanges;
     }
-
-
-
 
     private void computeRanges(long startOffset, ToIntFunction<VulgarElement> function,
             List<Range> exons, BiConsumer<Long, VulgarElement> gapConsumer) {
@@ -302,7 +277,7 @@ public class VulgarProtein2Genome2 {
     public interface ToSequenceFunction<T extends Sequence<?>, E extends Exception>{
 
          T apply(String t) throws E;
-        
+
     }
     
     
@@ -310,8 +285,8 @@ public class VulgarProtein2Genome2 {
                                  ToSequenceFunction<ProteinSequence, E2> queryFunction) throws E, E2{
         return align(targetFunction.apply(targetId), queryFunction.apply(queryId));
     }
+
     public AlignmentResult align(NucleotideSequence target, ProteinSequence query){
-        
        
         NucleotideSequence cds =getExonSequence(target, targetExons, targetGaps);
         ProteinSequence translated = IupacTranslationTables.STANDARD.translate(cds);
@@ -490,7 +465,6 @@ public class VulgarProtein2Genome2 {
         NucleotideSequenceBuilder builder = t.toBuilder(targetRange.asRange());
         ListIterator<Range> iter = gaps.listIterator(gaps.size());
         while(iter.hasPrevious()){
-//        for(Range g : gaps){
             Range g = iter.previous();
             int offset = (int) g.getBegin();
             Nucleotide[] array = new Nucleotide[(int) g.getLength()];
@@ -512,30 +486,6 @@ public class VulgarProtein2Genome2 {
                 }
             }
         }
-//       
-//        List<Range> allRangesToKeep = gappedRangesToKeep.stream().map(Range.Builder::build).collect(Collectors.toList());
-//        allRangesToKeep.addAll(gaps);
-//        
-//        mergeInPlace(allRangesToKeep);
-//        
-//        NucleotideSequenceBuilder builder = t.toBuilder();
-//        ListIterator<Range> iter = gaps.listIterator(gaps.size());
-//        while(iter.hasPrevious()){
-//            Range r = iter.previous();
-//            int offset = (int) r.getBegin();
-//            Nucleotide[] array = new Nucleotide[(int) r.getLength()];
-//            
-//            Arrays.fill(array, Nucleotide.Gap);
-//            
-//            builder.insert(offset, array);
-//        }
-        
-//        
-//        List<Range> complement = Range.ofLength(builder.getLength()).complement(allRangesToKeep);
-////        List<Range> complement = Range.ofLength(builder.getLength()).complement(rangesToKeep);
-//        for(int i = complement.size()-1; i >=0; i--){
-//            builder.delete(complement.get(i));
-//        }
        
         return builder.build();
     }
