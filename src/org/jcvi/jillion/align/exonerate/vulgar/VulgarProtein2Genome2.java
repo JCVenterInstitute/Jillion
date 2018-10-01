@@ -66,12 +66,14 @@ public class VulgarProtein2Genome2 {
 
     public static class AlignmentFragment{
         private final Direction direction;
-        private final Range proteinSeqRange;
-        private final Range nucleotideSeqRange;
+        private final DirectedRange proteinSeqRange;
+        private final DirectedRange nucleotideSeqRange;
         private final Frame frame;
 
-        protected AlignmentFragment(Direction direction, Range proteinSeqRange,
-                Range nucleotideSeqRange, Frame frame) {
+        protected AlignmentFragment(Direction direction,
+                                    DirectedRange proteinSeqRange,
+                                    DirectedRange nucleotideSeqRange,
+                                    Frame frame) {
             this.direction = direction;
             this.proteinSeqRange = proteinSeqRange;
             this.nucleotideSeqRange = nucleotideSeqRange;
@@ -80,10 +82,10 @@ public class VulgarProtein2Genome2 {
         public Direction getDirection() {
             return direction;
         }
-        public Range getProteinSeqRange() {
+        public DirectedRange getProteinSeqRange() {
             return proteinSeqRange;
         }
-        public Range getNucleotideSeqRange() {
+        public DirectedRange getNucleotideSeqRange() {
             return nucleotideSeqRange;
         }
         public Frame getFrame() {
@@ -105,13 +107,25 @@ public class VulgarProtein2Genome2 {
             }
             
             public Builder add(long nucleotideLength, long queryLength){
-                nucleotideRangeBuilder.expandEnd(nucleotideLength);
-                proteinRangeBuilder.expandEnd(queryLength);
+                if (nucleotideLength < 0) {
+                    nucleotideRangeBuilder.expandBegin(-1 * nucleotideLength);
+                } else {
+                    nucleotideRangeBuilder.expandEnd(nucleotideLength);
+                }
+                if (queryLength < 0) {
+                    proteinRangeBuilder.expandBegin(-1 * queryLength);
+                } else {
+                    proteinRangeBuilder.expandEnd(queryLength);
+                }
                 return this;
             }
             
             public AlignmentFragment build(){
-                return new AlignmentFragment(direction, proteinRangeBuilder.build(), nucleotideRangeBuilder.build(), frame);
+                return new AlignmentFragment(direction,
+                                             // TODO proteinRange might be REVERSE
+                                             DirectedRange.create(proteinRangeBuilder.build(), Direction.FORWARD),
+                                             DirectedRange.create(nucleotideRangeBuilder.build(), direction),
+                                             frame);
             }
         }
         
@@ -135,45 +149,47 @@ public class VulgarProtein2Genome2 {
         queryGaps = new ArrayList<>();
         
 
-        long queryOffset = 0;
-        long targetOffset = 0;
         this.queryStrand = parseStrand(queryStrand);
         this.targetStrand = parseStrand(targetStrand);
+        long targetDirectionFactor = targetRange.getDirection() == Direction.FORWARD ? 1 : -1;
+        long queryDirectionFactor = queryRange.getDirection() == Direction.FORWARD ? 1 : -1;
         Frame currentFrame= Frame.ONE;
+        // +1 because the results should be space based rather than zero based
+        long targetIndex = targetRange.getDirection() == Direction.FORWARD ? targetRange.getBegin() : targetRange.getEnd() +1;
+        long queryIndex = queryRange.getDirection() == Direction.FORWARD ? queryRange.getBegin() : queryRange.getEnd() +1;
         
         fragments = new ArrayList<>();
         //query = aa
         //target = nuc
         AlignmentFragment.Builder currentBuilder = new AlignmentFragment.Builder(Frame.ONE,
-                this.targetStrand , targetRange.getBegin(), queryRange.getBegin());
+                this.targetStrand , targetIndex, queryIndex);
         boolean spliced=false;
         for(VulgarElement e : elements) {
-            queryOffset+=e.getQueryLength();
-            targetOffset+=e.getTargetLength();
 
             switch (e.getOp()) {
                 case Match:
                 case Split_Codon:
                     if(spliced){
-                        currentFrame = currentFrame.shift(e.getTargetLength());
+                        currentFrame = currentFrame.shift((int) (e.getTargetLength() * targetDirectionFactor));
                         spliced=false;
                     }
                     if(currentBuilder ==null){
                         currentBuilder = new AlignmentFragment.Builder(currentFrame,
                                                                        this.targetStrand ,
-                                                                       targetRange.getBegin()+ targetOffset - e.getTargetLength(),
-                                                                       queryRange.getBegin()+ queryOffset - e.getQueryLength());
+                                                                       targetIndex,
+                                                                       queryIndex );
                     }
 
-                    currentBuilder.add(e.getTargetLength(), e.getQueryLength());
+                    currentBuilder.add(e.getTargetLength() * targetDirectionFactor,
+                                       e.getQueryLength() * queryDirectionFactor);
                     break;
                 case Gap:
-                    fragments.add(currentBuilder.build());
-
-                    currentBuilder = new AlignmentFragment.Builder(currentFrame,
-                                                                   this.targetStrand ,
-                                                                   targetRange.getBegin()+ targetOffset,
-                                                                   queryRange.getBegin()+queryOffset);
+                case Frameshift:
+                case Intron:
+                    if(currentBuilder !=null){
+                        fragments.add(currentBuilder.build());
+                    }
+                    currentBuilder = null;
                     break;
                 case Splice_3:
                 case Splice_5:
@@ -187,18 +203,15 @@ public class VulgarProtein2Genome2 {
                         currentFrame = Frame.ONE;
                     }
                     break;
-                case Frameshift:
-                    if(currentBuilder !=null){
-                        fragments.add(currentBuilder.build());
-                    }
-                    currentBuilder = new AlignmentFragment.Builder(currentFrame,
-                                                                   this.targetStrand , targetRange.getBegin()+ targetOffset, queryRange.getBegin()+queryOffset);
-                    break;
                 default:
                     throw new RuntimeException("Unhandled vulgar operation " + e.getOp());
             }
+            targetIndex += (e.getTargetLength() * targetDirectionFactor);
+            queryIndex += (e.getQueryLength() * queryDirectionFactor);
         }
-        fragments.add(currentBuilder.build());
+        if (currentBuilder != null) {
+            fragments.add(currentBuilder.build());
+        }
              
     }
     
