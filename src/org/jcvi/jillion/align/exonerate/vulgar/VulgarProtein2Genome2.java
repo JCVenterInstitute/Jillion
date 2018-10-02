@@ -170,7 +170,7 @@ public class VulgarProtein2Genome2 {
                 case Match:
                 case Split_Codon:
                     if(spliced){
-                        currentFrame = currentFrame.shift((int) (e.getTargetLength() * targetDirectionFactor));
+                        currentFrame = currentFrame.shift(e.getTargetLength());
                         spliced=false;
                     }
                     if(currentBuilder ==null){
