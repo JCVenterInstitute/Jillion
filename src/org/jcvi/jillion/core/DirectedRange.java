@@ -108,6 +108,11 @@ public final class DirectedRange implements Rangeable, Serializable{
     public static DirectedRange create(Range range, Direction direction){
         return new DirectedRange(range,direction);
     }
+
+    public static DirectedRange of(long start, long end, Direction direction){
+        return create(Range.of(start,end), direction);
+    }
+
     private static DirectedRange convertIntoRange(Matcher dashMatcher, CoordinateSystem coordinateSystem) {
         long first = Long.parseLong(dashMatcher.group(1));
         long second = Long.parseLong(dashMatcher.group(2));
