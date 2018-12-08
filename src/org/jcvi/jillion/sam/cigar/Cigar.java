@@ -26,7 +26,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.jcvi.jillion.align.pairwise.PairwiseSequenceAlignment;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.residue.ResidueSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.ArrayIterator;
@@ -51,7 +55,7 @@ public final class Cigar implements Iterable<CigarElement>{
 	 * @author dkatzel
 	 *
 	 */
-	public static enum ClipType {
+	public enum ClipType {
 		/**
 		 * The raw sequence including
 		 * all bases provided that are clipped.
@@ -125,7 +129,58 @@ public final class Cigar implements Iterable<CigarElement>{
 		
 	}
 	
-	
+	public static <R extends Residue, S extends ResidueSequence<R,S,?>> Cigar createFrom(PairwiseSequenceAlignment<R, S> alignment){
+		S query =alignment.getGappedQueryAlignment();
+		S subject = alignment.getGappedSubjectAlignment();
+
+		//let's consider the query to be the read and the subject is the ref?
+		Builder builder = new Builder();
+		Iterator<R> queryIter = query.iterator();
+		Iterator<R> subjectIter = subject.iterator();
+
+		int softClipLength = (int) alignment.getQueryRange().getBegin();
+		if(softClipLength > 0) {
+			builder.addElement(CigarOperation.SOFT_CLIP, softClipLength);
+		}
+		//aligned so should be same length
+		int currentLength=0;
+		CigarOperation currentOp=null;
+		while(queryIter.hasNext()){
+			R q = queryIter.next();
+			R s = subjectIter.next();
+
+			CigarOperation thisOp;
+			if(q.isGap()){
+				if(s.isGap()){
+					thisOp = CigarOperation.PADDING;
+				}else{
+					//query (read) has a gap but ref doesn't
+					thisOp = CigarOperation.DELETION;
+				}
+			}else if(s.isGap()){
+				//the subject ( ref ?) has a gap but query doesn't
+				thisOp = CigarOperation.INSERTION;
+			}else {
+				thisOp = CigarOperation.ALIGNMENT_MATCH;
+			}
+
+			if(thisOp !=currentOp){
+				if(currentOp !=null){
+					builder.addElement(new CigarElement(currentOp, currentLength));
+				}
+				currentOp = thisOp;
+				currentLength=1;
+			}else{
+				currentLength++;
+			}
+		}
+		if(currentOp !=null){
+			builder.addElement(new CigarElement(currentOp, currentLength));
+		}
+
+		return builder.build();
+
+	}
 	
 	private static boolean isDigit(char c){
 		return c >='0' && c<= '9';
