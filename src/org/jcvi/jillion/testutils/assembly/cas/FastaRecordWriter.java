@@ -63,7 +63,7 @@ public final class FastaRecordWriter implements RecordWriter{
 	@Override
 	public void write(String id, NucleotideSequence seq) throws IOException {
 		if(!canWriteAnotherRecord()){
-			throw new IllegalStateException("too many records to write");
+			throw new IllegalStateException("too many records to write. max records " + maxNumberOfRecordsToWrite);
 		}
 		counter++;
 		writer.write(id, seq);

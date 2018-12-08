@@ -40,24 +40,6 @@ import org.jcvi.jillion.core.residue.Frame;
 
 public class Exonerate2 {
 
-    public enum FragmentType {
-
-        EXON,
-        INTRON,
-        SPLICE_SITE_5,
-        SPLICE_SITE_3
-    }
-
-    private static class FragmentInfo{
-        private DirectedRange directedRange;
-        private FragmentType type;
-        private Frame frame;
-    }
-    
-    private static class AlignmentFragment{
-        private FragmentInfo queryInfo, targetInfo;
-    }
-    
     public static List<VulgarProtein2Genome2> parseVulgarOutput(File vulgarOutput) throws IOException{
         return parseVulgarOutput(InputStreamSupplier.forFile(vulgarOutput));
     }
@@ -70,10 +52,7 @@ public class Exonerate2 {
             
             String currentBlock = readNextBlock(reader);
             while(currentBlock !=null){
-                System.out.println("===================BLOCK BEGIN===========");
-                System.out.println(currentBlock);
-                System.out.println("===================BLOCK END===========");
-                
+
                 VulgarProtein2Genome2 v = handleBlock(currentBlock);
                 if(v!=null){
                     list.add(v);
@@ -135,20 +114,9 @@ public class Exonerate2 {
                                 Integer.parseInt(fields[i+2])));
                     }
                     
-                    System.out.println("query = " + queryId + "  " + queryRange + "  strand = " + queryStrand);
-                    
-                    System.out.println("target = " + targetId + "  " + targetRange + "  strand = " + targetStrand);
-                    
-                    System.out.println(score);
-                    
-                    System.out.println(vulgarElements);
-                    
-                    VulgarProtein2Genome2 v = new VulgarProtein2Genome2(queryId, targetId, vulgarElements, score,
+
+                    return new VulgarProtein2Genome2(queryId, targetId, vulgarElements, score,
                             queryStrand, queryRange, targetStrand, targetRange);
-                    
-                  
-                    
-                    return v;
                 }
             }
         }
