@@ -29,16 +29,7 @@ import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
@@ -112,14 +103,18 @@ public abstract class AbiChromatogramParser {
 	 * order the original version
 	 * of the tag when both are present.
 	 */
-	private static final int ORIGINAL_VERSION = 0;
+	private static final int ORIGINAL_VERSION_INDEX = 0;
 	/**
 	 * ABI files store both the original and current
 	 * (possibly edited) data.  This is the index
 	 * order the current version
 	 * of the tag when both are present.
 	 */
-	private static final int CURRENT_VERSION =1;
+	private static final int CURRENT_VERSION_INDEX =1;
+
+	private static final int CURRENT_VERSION_TAGNUMBER = 1;
+
+	private static final int ORIGINAL_VERSION_TAGNUMBER = 2;
 	
 	
 	public static AbiChromatogramParser create(File abiFile){
@@ -209,19 +204,26 @@ public abstract class AbiChromatogramParser {
 			GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
 			List<NucleotideSequence> basecallsList,
 			ChromatogramFileVisitor visitor) {
-		
-		List<ByteArrayTaggedDataRecord> qualityRecords =groupedDataRecordMap.byteArrayRecords.get(TaggedDataName.QUALITY_VALUES);
+
+		TaggedDataRecords<ByteArrayTaggedDataRecord> qualityRecords =groupedDataRecordMap.byteArrayRecords.get(TaggedDataName.QUALITY_VALUES);
 		for(int i=0; i<qualityRecords.size(); i++){
 		    ByteArrayTaggedDataRecord qualityRecord = qualityRecords.get(i);
 		    NucleotideSequence basecalls = basecallsList.get(i);
 			byte[][] qualities = splitQualityDataByChannel(basecalls, qualityRecord.parseDataRecordFrom(traceData));
-			if(i == ORIGINAL_VERSION && visitor instanceof AbiChromatogramFileVisitor){
+			long tagNumber = qualityRecord.getTagNumber();
+			if(tagNumber == ORIGINAL_VERSION_TAGNUMBER && visitor instanceof AbiChromatogramFileVisitor){
 				AbiChromatogramFileVisitor ab1Visitor = (AbiChromatogramFileVisitor)visitor;
 				handleOriginalConfidenceValues(qualities, ab1Visitor);
-			}
-			if(i == CURRENT_VERSION){
+			}else if(tagNumber == CURRENT_VERSION_INDEX){
 				handleCurrentConfidenceValues(visitor, qualities);
 			}
+//			if(i == ORIGINAL_VERSION_INDEX && visitor instanceof AbiChromatogramFileVisitor){
+//				AbiChromatogramFileVisitor ab1Visitor = (AbiChromatogramFileVisitor)visitor;
+//				handleOriginalConfidenceValues(qualities, ab1Visitor);
+//			}
+//			if(i == CURRENT_VERSION_INDEX){
+//				handleCurrentConfidenceValues(visitor, qualities);
+//			}
 		}
 	}
     private static void handleCurrentConfidenceValues(
@@ -324,15 +326,21 @@ public abstract class AbiChromatogramParser {
 	private static void parsePeakData(
 			GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
 			ChromatogramFileVisitor visitor) {
-		List<ShortArrayTaggedDataRecord> peakRecords =groupedDataRecordMap.shortArrayDataRecords.get(TaggedDataName.PEAK_LOCATIONS);
-		
+		TaggedDataRecords<ShortArrayTaggedDataRecord> peakRecords =groupedDataRecordMap.shortArrayDataRecords.get(TaggedDataName.PEAK_LOCATIONS);
+
+		peakRecords.getCurrentVersion().ifPresent(peaks -> visitor.visitPeaks(peaks.parseDataRecordFrom(traceData)));
 		if(visitor instanceof AbiChromatogramFileVisitor){
-			short[] originalPeakData =peakRecords.get(ORIGINAL_VERSION).parseDataRecordFrom(traceData);
-			
-			((AbiChromatogramFileVisitor) visitor).visitOriginalPeaks(originalPeakData);
+			peakRecords.getOriginalVersion().ifPresent(peaks -> ((AbiChromatogramFileVisitor) visitor).visitOriginalPeaks(peaks.parseDataRecordFrom(traceData)));
+
 		}
-		short[] peakData =peakRecords.get(CURRENT_VERSION).parseDataRecordFrom(traceData);
-		visitor.visitPeaks(peakData);
+
+//		if(visitor instanceof AbiChromatogramFileVisitor){
+//			short[] originalPeakData =peakRecords.get(ORIGINAL_VERSION_INDEX).parseDataRecordFrom(traceData);
+//
+//			((AbiChromatogramFileVisitor) visitor).visitOriginalPeaks(originalPeakData);
+//		}
+//		short[] peakData =peakRecords.get(CURRENT_VERSION_INDEX).parseDataRecordFrom(traceData);
+//		visitor.visitPeaks(peakData);
 	}
 
 	private static Map<String,String> parseDataChannels(
@@ -340,7 +348,7 @@ public abstract class AbiChromatogramParser {
 			List<Nucleotide> channelOrder,
 			byte[] traceData,
 			ChromatogramFileVisitor visitor) {
-		List<ShortArrayTaggedDataRecord> dataRecords =groupedDataRecordMap.shortArrayDataRecords.get(TaggedDataName.DATA);
+		TaggedDataRecords<ShortArrayTaggedDataRecord> dataRecords =groupedDataRecordMap.shortArrayDataRecords.get(TaggedDataName.DATA);
 		if(visitor instanceof AbiChromatogramFileVisitor){
 			AbiChromatogramFileVisitor ab1Visitor = (AbiChromatogramFileVisitor) visitor;
 			//parse extra ab1 data
@@ -375,7 +383,7 @@ public abstract class AbiChromatogramParser {
         }
     }
     private static void visitAb1ExtraChannels(byte[] traceData,
-            List<ShortArrayTaggedDataRecord> dataRecords,
+											  TaggedDataRecords<ShortArrayTaggedDataRecord> dataRecords,
             AbiChromatogramFileVisitor ab1Visitor) {
         for(int i=0; i< 4; i++){
         	short[] rawTraceData =dataRecords.get(i).parseDataRecordFrom(traceData);
@@ -426,11 +434,19 @@ public abstract class AbiChromatogramParser {
     private static void parseSamplingRateFrom(
             GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
             Map<String,String> props) {
-        Map<TaggedDataName, List<UserDefinedTaggedDataRecord<?,?>>>map= groupedDataRecordMap.userDefinedDataRecords;
-        if(map.containsKey(TaggedDataName.Rate)){
-            ScanRateTaggedDataType scanRate = (ScanRateTaggedDataType)map.get(TaggedDataName.Rate).get(0);
-            props.put("SamplingRate", String.format("%.3f",
-                    ScanRateUtils.getSamplingRateFor(scanRate.parseDataRecordFrom(traceData))));
+        Map<TaggedDataName, TaggedDataRecords<UserDefinedTaggedDataRecord<?,?>>>map= groupedDataRecordMap.userDefinedDataRecords;
+		TaggedDataRecords<UserDefinedTaggedDataRecord<?, ?>> userDefinedTaggedDataRecords = map.get(TaggedDataName.Rate);
+		if(userDefinedTaggedDataRecords !=null && userDefinedTaggedDataRecords.size() >0){
+			Optional<UserDefinedTaggedDataRecord<?, ?>> originalVersion = userDefinedTaggedDataRecords.getOriginalVersion();
+			if(originalVersion.isPresent()) {
+					props.put("SamplingRate", String.format("%.3f",
+							ScanRateUtils.getSamplingRateFor(((ScanRateTaggedDataType) originalVersion.get()).parseDataRecordFrom(traceData))));
+
+			}else{
+				props.put("SamplingRate", String.format("%.3f",
+						ScanRateUtils.getSamplingRateFor(((ScanRateTaggedDataType) userDefinedTaggedDataRecords.get(0)).parseDataRecordFrom(traceData))));
+
+			}
         }
     }
 
@@ -438,7 +454,8 @@ public abstract class AbiChromatogramParser {
     private static void addNumberOfBases(
             List<NucleotideSequence> basecalls,
             Map<String,String> props) {
-        props.put("NBAS", ""+basecalls.get(ORIGINAL_VERSION).getLength());
+
+        props.put("NBAS", ""+basecalls.get(ORIGINAL_VERSION_INDEX).getLength());
     }
 
    
@@ -447,12 +464,22 @@ public abstract class AbiChromatogramParser {
             List<Nucleotide> channelOrder,
             byte[] traceData,
             Map<String,String> props) {
-        Map<TaggedDataName, List<FloatArrayTaggedDataRecord>> map= groupedDataRecordMap.floatDataRecords;
-        if(map.containsKey(TaggedDataName.NOISE)){
-            float[] noiseData = map.get(TaggedDataName.NOISE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData);
-            Noise noise = Noise.create(channelOrder, noiseData);
-            
-            props.put("NOIS",noise.toString()); 
+        Map<TaggedDataName, TaggedDataRecords<FloatArrayTaggedDataRecord>> map= groupedDataRecordMap.floatDataRecords;
+		TaggedDataRecords<FloatArrayTaggedDataRecord> floatArrayTaggedDataRecords = map.get(TaggedDataName.NOISE);
+
+		if(floatArrayTaggedDataRecords !=null && floatArrayTaggedDataRecords.size() > 0){
+
+			Optional<FloatArrayTaggedDataRecord> originalVersion = floatArrayTaggedDataRecords.getOriginalVersion();
+			float[] noiseData;
+			if(originalVersion.isPresent()) {
+					noiseData = originalVersion.get().parseDataRecordFrom(traceData);
+			}else{
+				noiseData = floatArrayTaggedDataRecords.get(0).parseDataRecordFrom(traceData);
+			}
+			Noise noise = Noise.create(channelOrder, noiseData);
+
+			props.put("NOIS", noise.toString());
+
         }
     }
 
@@ -460,8 +487,8 @@ public abstract class AbiChromatogramParser {
     private static void addTimeStampComment(
             GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
             Map<String,String> props) {
-        Map<TaggedDataName, List<DateTaggedDataRecord>> dates= groupedDataRecordMap.dateDataRecords;
-        Map<TaggedDataName, List<TimeTaggedDataRecord>> times= groupedDataRecordMap.timeDataRecords;
+        Map<TaggedDataName, TaggedDataRecords<DateTaggedDataRecord>> dates= groupedDataRecordMap.dateDataRecords;
+        Map<TaggedDataName, TaggedDataRecords<TimeTaggedDataRecord>> times= groupedDataRecordMap.timeDataRecords;
         if(dates.containsKey(TaggedDataName.RUN_DATE) && times.containsKey(TaggedDataName.RUN_TIME)){
         	Ab1LocalDate startDate =dates.get(TaggedDataName.RUN_DATE).get(0).parseDataRecordFrom(traceData);
         	Ab1LocalDate endDate =dates.get(TaggedDataName.RUN_DATE).get(1).parseDataRecordFrom(traceData);
@@ -491,10 +518,20 @@ public abstract class AbiChromatogramParser {
     private static void addSpacingComment(
             GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
             Map<String,String> props) {
-        Map<TaggedDataName, List<FloatArrayTaggedDataRecord>> map= groupedDataRecordMap.floatDataRecords;
-        if(map.containsKey(TaggedDataName.SPACING)){
-            props.put("SPAC", String.format("%-6.2f",map.get(TaggedDataName.SPACING).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]));
-        }
+        Map<TaggedDataName, TaggedDataRecords<FloatArrayTaggedDataRecord>> map= groupedDataRecordMap.floatDataRecords;
+
+		TaggedDataRecords<FloatArrayTaggedDataRecord> spacing = map.get(TaggedDataName.SPACING);
+		if(spacing !=null && spacing.size() > 0) {
+
+			Optional<FloatArrayTaggedDataRecord> originalVersion = spacing.getOriginalVersion();
+			if (originalVersion.isPresent()) {
+				props.put("SPAC", String.format("%-6.2f", originalVersion.get().parseDataRecordFrom(traceData)[0]));
+			}else{
+				props.put("SPAC", String.format("%-6.2f", spacing.get(0).parseDataRecordFrom(traceData)[0]));
+
+			}
+		}
+
 
     }
 
@@ -510,19 +547,19 @@ public abstract class AbiChromatogramParser {
     private static Properties extractSingleIntValueComments(
             GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
             Properties props) {
-        Map<TaggedDataName, List<IntArrayTaggedDataRecord>> map= groupedDataRecordMap.intArrayDataRecords;
+        Map<TaggedDataName, TaggedDataRecords<IntArrayTaggedDataRecord>> map= groupedDataRecordMap.intArrayDataRecords;
         if(map.containsKey(TaggedDataName.OVEN_TEMPERATURE)){
-            props.put("Tmpr", map.get(TaggedDataName.OVEN_TEMPERATURE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]);
+           map.get(TaggedDataName.OVEN_TEMPERATURE).getOriginalVersion().ifPresent( d-> props.put("Tmpr", d.parseDataRecordFrom(traceData)[0]));
         }
         if(map.containsKey(TaggedDataName.ELECTROPHERSIS_VOLTAGE)){
-            props.put("EPVt", map.get(TaggedDataName.ELECTROPHERSIS_VOLTAGE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]);
+            map.get(TaggedDataName.ELECTROPHERSIS_VOLTAGE).getOriginalVersion().ifPresent(d-> props.put("EPVt", d.parseDataRecordFrom(traceData)[0]));
         }
         return props;
     }
     private static void addSingleShortValueComments(
             GroupedTaggedRecords groupedDataRecordMap, byte[] traceData,
             Map<String,String> props) {
-        Map<TaggedDataName, List<ShortArrayTaggedDataRecord>> map= groupedDataRecordMap.shortArrayDataRecords;
+        Map<TaggedDataName, TaggedDataRecords<ShortArrayTaggedDataRecord>> map= groupedDataRecordMap.shortArrayDataRecords;
         
         for(ShortTaggedDataRecordPropertyHandler handler : ShortTaggedDataRecordPropertyHandler.values()){
             handler.handle(map, traceData, props);
@@ -531,63 +568,54 @@ public abstract class AbiChromatogramParser {
 
     private static void addStringComments(
             GroupedTaggedRecords groupedDataRecordMap,byte[] traceData, Map<String,String> props) {
-        Map<TaggedDataName, List<PascalStringTaggedDataRecord>> pascalStrings= groupedDataRecordMap.pascalStringDataRecords;
+        Map<TaggedDataName, TaggedDataRecords<PascalStringTaggedDataRecord>> pascalStrings= groupedDataRecordMap.pascalStringDataRecords;
 		//asciiStrings
-        Map<TaggedDataName, List<AsciiTaggedDataRecord>> asciiStrings= groupedDataRecordMap.asciiDataRecords;
+        Map<TaggedDataName, TaggedDataRecords<AsciiTaggedDataRecord>> asciiStrings= groupedDataRecordMap.asciiDataRecords;
         
-        
-        if(pascalStrings.containsKey(TaggedDataName.COMMENT)){
-		    props.put("COMM", pascalStrings.get(TaggedDataName.COMMENT).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
-		}
-		if(pascalStrings.containsKey(TaggedDataName.SAMPLE_NAME)){
-            props.put("NAME", pascalStrings.get(TaggedDataName.SAMPLE_NAME).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
-        }
-		if(pascalStrings.containsKey(TaggedDataName.DYE_PRIMER_CORRECTION_FILE)){
-            props.put("DYEP", pascalStrings.get(TaggedDataName.DYE_PRIMER_CORRECTION_FILE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
-        }
-		if(pascalStrings.containsKey(TaggedDataName.MACHINE_NAME)){
-            props.put("MCHN", pascalStrings.get(TaggedDataName.MACHINE_NAME).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
-        }
-		if(asciiStrings.containsKey(TaggedDataName.MODEL)){
-            props.put("MODL", asciiStrings.get(TaggedDataName.MODEL).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
-        }
-		if(pascalStrings.containsKey(TaggedDataName.RUN_MODULE_FILENAME)){
-            props.put("MODF", pascalStrings.get(TaggedDataName.RUN_MODULE_FILENAME).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
-        }
-		if(pascalStrings.containsKey(TaggedDataName.MATRIX_FILE_NAME)){
-            props.put("MTFX", pascalStrings.get(TaggedDataName.MATRIX_FILE_NAME).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
-        }
-		if(pascalStrings.containsKey(TaggedDataName.SPACING)){
-            props.put("BCAL", pascalStrings.get(TaggedDataName.SPACING).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
-        }
-		if(pascalStrings.containsKey(TaggedDataName.SEPARATION_MEDIUM_LOT_NUMBER)){
-            props.put("SMLt", pascalStrings.get(TaggedDataName.SEPARATION_MEDIUM_LOT_NUMBER).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
-        }
-		if(pascalStrings.containsKey(TaggedDataName.SEPARATION_MEDIUM_EXPIRATION_DATE)){
-            props.put("SMED", pascalStrings.get(TaggedDataName.SEPARATION_MEDIUM_EXPIRATION_DATE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
-        }
+
+		addProperty("COMM", TaggedDataName.COMMENT, props, pascalStrings, traceData);
+		addProperty("NAME", TaggedDataName.SAMPLE_NAME, props, pascalStrings, traceData);
+		addProperty("DYEP", TaggedDataName.DYE_PRIMER_CORRECTION_FILE, props, pascalStrings, traceData);
+		addProperty("MCHN", TaggedDataName.MACHINE_NAME, props, pascalStrings, traceData);
+		addProperty("MODL", TaggedDataName.MODEL, props, asciiStrings, traceData);
+		addProperty("MODF", TaggedDataName.RUN_MODULE_FILENAME, props, pascalStrings, traceData);
+		addProperty("MTFX", TaggedDataName.MATRIX_FILE_NAME, props, pascalStrings, traceData);
+		addProperty("BCAL", TaggedDataName.SPACING, props, pascalStrings, traceData);
+		addProperty("SMLt", TaggedDataName.SEPARATION_MEDIUM_LOT_NUMBER, props, pascalStrings, traceData);
+
+		addProperty("SMED", TaggedDataName.SEPARATION_MEDIUM_EXPIRATION_DATE, props, pascalStrings, traceData);
+
 		if(pascalStrings.containsKey(TaggedDataName.SOFTWARE_VERSION)){
-            final List<PascalStringTaggedDataRecord> versions = pascalStrings.get(TaggedDataName.SOFTWARE_VERSION);
+            final TaggedDataRecords<PascalStringTaggedDataRecord> versions = pascalStrings.get(TaggedDataName.SOFTWARE_VERSION);
             //match IO_Lib and only get the first 2 software version records...
             for(int i=0; i<versions.size() && i<2;i++){
                 props.put("VER"+(i+1), versions.get(i).parseDataRecordFrom(traceData).trim());
              }
         }
-		if(pascalStrings.containsKey(TaggedDataName.ANALYSIS_PARAMETERS_FILE_NAME)){
-            props.put("PRON", pascalStrings.get(TaggedDataName.ANALYSIS_PARAMETERS_FILE_NAME).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
-        }
-		
-		
-		if(pascalStrings.containsKey(TaggedDataName.TUBE)){
-            props.put("TUBE", pascalStrings.get(TaggedDataName.TUBE).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
-        }
-		if(asciiStrings.containsKey(TaggedDataName.JTC_RUN_NAME)){
-            props.put("RUNN", asciiStrings.get(TaggedDataName.JTC_RUN_NAME).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
-        }
-		if(asciiStrings.containsKey(TaggedDataName.ANALYSIS_PROTOCOL_XML_SCHEMA_VERSION)){
-            props.put("PROV", asciiStrings.get(TaggedDataName.ANALYSIS_PROTOCOL_XML_SCHEMA_VERSION).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData).trim());
-        }
+
+		addProperty("PRON", TaggedDataName.ANALYSIS_PARAMETERS_FILE_NAME, props, pascalStrings, traceData);
+		addProperty("TUBE", TaggedDataName.TUBE, props, pascalStrings, traceData);
+		addProperty("RUNN", TaggedDataName.JTC_RUN_NAME, props, asciiStrings, traceData);
+
+		addProperty("PROV", TaggedDataName.ANALYSIS_PROTOCOL_XML_SCHEMA_VERSION, props, asciiStrings, traceData);
     }
+
+    private  static <T extends StringTaggedDataRecord>  void addProperty(String propertyName, TaggedDataName taggedDataName,
+									Map<String,String> properties,
+									Map<TaggedDataName, TaggedDataRecords<T>> asciiStrings,
+									byte[] traceData){
+		TaggedDataRecords<? extends StringTaggedDataRecord> dataRecords =asciiStrings.get(taggedDataName);
+		if(dataRecords !=null && dataRecords.size() > 0){
+			Optional<? extends StringTaggedDataRecord> originalVersion = dataRecords.getOriginalVersion();
+			if(originalVersion.isPresent()){
+				 properties.put(propertyName, originalVersion.get().parseDataRecordFrom(traceData).trim());
+
+			}else{
+				properties.put(propertyName, dataRecords.get(0).parseDataRecordFrom(traceData).trim());
+
+			}
+			}
+	}
 
 	
 	private static List<NucleotideSequence> parseBasecallsFrom(
@@ -598,7 +626,7 @@ public abstract class AbiChromatogramParser {
 			NucleotideSequence basecalls = new NucleotideSequenceBuilder( basecallRecord.parseDataRecordFrom(ab1DataBlock))
 											.build();
 			basecallsList.add(basecalls);
-			if(basecallRecord.getTagNumber()==CURRENT_VERSION){
+			if(basecallRecord.getTagNumber()== CURRENT_VERSION_INDEX){
 				visitor.visitBasecalls(basecalls);
 			}else if(visitor instanceof AbiChromatogramFileVisitor){
 				((AbiChromatogramFileVisitor) visitor).visitOriginalBasecalls(basecalls);
@@ -705,6 +733,51 @@ public abstract class AbiChromatogramParser {
 		
 		
 	}
+
+	public static class TaggedDataRecords<T extends TaggedDataRecord> implements Iterable<T>{
+		private final List<T> data;
+
+		public TaggedDataRecords(){
+			this( new ArrayList<>());
+		}
+		public TaggedDataRecords(List<T> data) {
+			this.data = Objects.requireNonNull(data);
+		}
+
+		public int size(){
+			return data.size();
+		}
+
+		public T get( int i){
+			return data.get(i);
+		}
+
+		public void add(T record){
+			data.add(record);
+		}
+		public Optional<T> getCurrentVersion(){
+			for(T t : data){
+				if(t.getTagNumber() == CURRENT_VERSION_TAGNUMBER){
+					return Optional.of(t);
+				}
+			}
+			return Optional.empty();
+		}
+
+		public Optional<T> getOriginalVersion(){
+			for(T t : data){
+				if(t.getTagNumber() == ORIGINAL_VERSION_TAGNUMBER){
+					return Optional.of(t);
+				}
+			}
+			return Optional.empty();
+		}
+
+		@Override
+		public Iterator<T> iterator() {
+			return data.iterator();
+		}
+	}
 	/**
 	 * {@code GroupedTaggedRecords} groups all the different types
 	 * of {@link TaggedDataRecord}s by class and provides mappings
@@ -716,21 +789,21 @@ public abstract class AbiChromatogramParser {
 	 *
 	 */
 	private static class GroupedTaggedRecords{
-		private final Map<TaggedDataName,List<AsciiTaggedDataRecord>> asciiDataRecords = new EnumMap<TaggedDataName, List<AsciiTaggedDataRecord>>(TaggedDataName.class);
+		private final Map<TaggedDataName,TaggedDataRecords<AsciiTaggedDataRecord>> asciiDataRecords = new EnumMap<>(TaggedDataName.class);
 	
-		private final Map<TaggedDataName,List<FloatArrayTaggedDataRecord>> floatDataRecords = new EnumMap<TaggedDataName, List<FloatArrayTaggedDataRecord>>(TaggedDataName.class);
-		private final Map<TaggedDataName,List<ByteArrayTaggedDataRecord>> byteArrayRecords = new EnumMap<TaggedDataName, List<ByteArrayTaggedDataRecord>>(TaggedDataName.class);
+		private final Map<TaggedDataName,TaggedDataRecords<FloatArrayTaggedDataRecord>> floatDataRecords = new EnumMap<>(TaggedDataName.class);
+		private final Map<TaggedDataName,TaggedDataRecords<ByteArrayTaggedDataRecord>> byteArrayRecords = new EnumMap<>(TaggedDataName.class);
 	    
-		private final Map<TaggedDataName,List<ShortArrayTaggedDataRecord>> shortArrayDataRecords = new EnumMap<TaggedDataName, List<ShortArrayTaggedDataRecord>>(TaggedDataName.class);
+		private final Map<TaggedDataName,TaggedDataRecords<ShortArrayTaggedDataRecord>> shortArrayDataRecords = new EnumMap<>(TaggedDataName.class);
 		
-		private final Map<TaggedDataName,List<IntArrayTaggedDataRecord>> intArrayDataRecords = new EnumMap<TaggedDataName, List<IntArrayTaggedDataRecord>>(TaggedDataName.class);
+		private final Map<TaggedDataName,TaggedDataRecords<IntArrayTaggedDataRecord>> intArrayDataRecords = new EnumMap<>(TaggedDataName.class);
 		
-		private final Map<TaggedDataName,List<PascalStringTaggedDataRecord>> pascalStringDataRecords = new EnumMap<TaggedDataName, List<PascalStringTaggedDataRecord>>(TaggedDataName.class);
+		private final Map<TaggedDataName,TaggedDataRecords<PascalStringTaggedDataRecord>> pascalStringDataRecords = new EnumMap<>(TaggedDataName.class);
 
-		private final Map<TaggedDataName,List<DateTaggedDataRecord>> dateDataRecords = new EnumMap<TaggedDataName, List<DateTaggedDataRecord>>(TaggedDataName.class);
+		private final Map<TaggedDataName,TaggedDataRecords<DateTaggedDataRecord>> dateDataRecords = new EnumMap<>(TaggedDataName.class);
 		
-		private final Map<TaggedDataName,List<TimeTaggedDataRecord>> timeDataRecords = new EnumMap<TaggedDataName, List<TimeTaggedDataRecord>>(TaggedDataName.class);
-		private final Map<TaggedDataName,List<UserDefinedTaggedDataRecord<?,?>>> userDefinedDataRecords = new EnumMap<TaggedDataName, List<UserDefinedTaggedDataRecord<?,?>>>(TaggedDataName.class);
+		private final Map<TaggedDataName,TaggedDataRecords<TimeTaggedDataRecord>> timeDataRecords = new EnumMap<>(TaggedDataName.class);
+		private final Map<TaggedDataName,TaggedDataRecords<UserDefinedTaggedDataRecord<?,?>>> userDefinedDataRecords = new EnumMap<>(TaggedDataName.class);
         
 		public void add(TaggedDataRecord<?,?> record){
 			switch(record.getDataType()){
@@ -768,10 +841,10 @@ public abstract class AbiChromatogramParser {
 		}
 		
 		@SuppressWarnings("unchecked")
-		private <T extends TaggedDataRecord<?,?>> void add(TaggedDataRecord<?,?> record, Map<TaggedDataName,List<T>> map){
+		private <T extends TaggedDataRecord<?,?>> void add(TaggedDataRecord<?,?> record, Map<TaggedDataName,TaggedDataRecords<T>> map){
 			TaggedDataName name = record.getTagName();
 			if(!map.containsKey(name)){
-				map.put(name, new ArrayList<T>());
+				map.put(name, new TaggedDataRecords<T>());
 			}
 			map.get(name).add((T)record);
 		}
@@ -888,10 +961,17 @@ public abstract class AbiChromatogramParser {
          * @param traceData the ab1 trace data which may need to be parsed to generate the comment.
          * @param props the key value pair map of comments which is to be modified.
          */
-        void handle(Map<TaggedDataName, List<ShortArrayTaggedDataRecord>> map,byte[] traceData, Map<String,String> props){
-	        if(map.containsKey(dataName)){
-	           props.put(propertyKey, ""+map.get(dataName).get(ORIGINAL_VERSION).parseDataRecordFrom(traceData)[0]);
-	        }
+        void handle(Map<TaggedDataName, TaggedDataRecords<ShortArrayTaggedDataRecord>> map,byte[] traceData, Map<String,String> props){
+			TaggedDataRecords<ShortArrayTaggedDataRecord> records = map.get(dataName);
+        	if(records !=null && records.size() >0) {
+				Optional<ShortArrayTaggedDataRecord> originalVersion = records.getOriginalVersion();
+				if (originalVersion.isPresent()) {
+					props.put(propertyKey, Short.toString(originalVersion.get().parseDataRecordFrom(traceData)[0]));
+				} else {
+					props.put(propertyKey, Short.toString(records.get(0).parseDataRecordFrom(traceData)[0]));
+
+				}
+			}
 	    }
 	}
 	

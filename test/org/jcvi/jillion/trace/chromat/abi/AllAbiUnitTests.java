@@ -32,7 +32,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-     TestAbiChromatogramTraceParserMatchesZTR.class   
+     TestAbiChromatogramTraceParserMatchesZTR.class   ,
+            TestReprocessedTrace.class
     }
     )
 public class AllAbiUnitTests {

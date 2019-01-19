@@ -36,4 +36,6 @@ public interface TaggedDataRecord<T,D> {
 	Class<T> getType();
 	
 	D parseDataRecordFrom(byte[] ab1DataBlock);
+
+
 }
