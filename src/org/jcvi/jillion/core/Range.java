@@ -1140,7 +1140,7 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
      * @see #toString(RangeAndCoordinateSystemToStringFunction, CoordinateSystem)
      */
     @FunctionalInterface
-    interface RangeAndCoordinateSystemToStringFunction{
+    public interface RangeAndCoordinateSystemToStringFunction{
         /**
          * Generate a toString() String for a Range
          * with the given begin and end coordinates
