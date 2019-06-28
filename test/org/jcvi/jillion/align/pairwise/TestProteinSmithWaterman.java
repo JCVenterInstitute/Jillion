@@ -24,10 +24,6 @@ import static org.junit.Assert.assertEquals;
 
 import org.jcvi.jillion.align.AminoAcidSubstitutionMatrix;
 import org.jcvi.jillion.align.BlosumMatrices;
-import org.jcvi.jillion.align.pairwise.ProteinPairwiseSequenceAlignment;
-import org.jcvi.jillion.align.pairwise.ProteinPairwiseSequenceAlignmentImpl;
-import org.jcvi.jillion.align.pairwise.PairwiseAlignmentBuilder;
-import org.jcvi.jillion.align.pairwise.PairwiseSequenceAlignmentWrapper;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 import org.jcvi.jillion.core.residue.aa.ProteinSequenceBuilder;
 import org.jcvi.jillion.internal.align.ProteinSequenceAlignmentBuilder;
@@ -50,7 +46,7 @@ public class TestProteinSmithWaterman {
 												.build(),
 												28));
 		
-		ProteinPairwiseSequenceAlignment actual = PairwiseAlignmentBuilder.createProtienAlignmentBuilder(query, subject, blosom50)
+		ProteinPairwiseSequenceAlignment actual = PairwiseAlignmentBuilder.createProteinAlignmentBuilder(query, subject, blosom50)
 														.gapPenalty(-8, -6)														
 														.build();
 				

@@ -82,7 +82,7 @@ public final class PairwiseAlignmentBuilder<R extends Residue, S extends Residue
 	 * will never be null.
 	 * @throws NullPointerException if any parameters are null.
 	 */
-	public static PairwiseAlignmentBuilder<AminoAcid, ProteinSequence, ProteinPairwiseSequenceAlignment> createProtienAlignmentBuilder(ProteinSequence query, ProteinSequence subject, AminoAcidSubstitutionMatrix matrix){
+	public static PairwiseAlignmentBuilder<AminoAcid, ProteinSequence, ProteinPairwiseSequenceAlignment> createProteinAlignmentBuilder(ProteinSequence query, ProteinSequence subject, AminoAcidSubstitutionMatrix matrix){
 		return new PairwiseAlignmentBuilder<AminoAcid, ProteinSequence, ProteinPairwiseSequenceAlignment>(query, subject, matrix);
 	}
 	

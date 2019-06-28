@@ -61,7 +61,7 @@ public class TestMultipleLocalAlignment {
         
         ProteinSequence query = ProteinSequence.of("FVSPREEKRQLKKGLKSQEQCASLPTKVSRRTSPALKILEPM");
         
-        List<ProteinPairwiseSequenceAlignment> actual = PairwiseAlignmentBuilder.createProtienAlignmentBuilder(query, subject, blosom50)
+        List<ProteinPairwiseSequenceAlignment> actual = PairwiseAlignmentBuilder.createProteinAlignmentBuilder(query, subject, blosom50)
                                                             .gapPenalty(-8, -8)
                                                             .findMultiple()
                                                             .filter(a-> a.getScore() > 100)

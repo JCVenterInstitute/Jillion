@@ -26,10 +26,6 @@ import java.util.Iterator;
 
 import org.jcvi.jillion.align.AminoAcidSubstitutionMatrix;
 import org.jcvi.jillion.align.BlosumMatrices;
-import org.jcvi.jillion.align.pairwise.ProteinPairwiseSequenceAlignment;
-import org.jcvi.jillion.align.pairwise.ProteinPairwiseSequenceAlignmentImpl;
-import org.jcvi.jillion.align.pairwise.PairwiseAlignmentBuilder;
-import org.jcvi.jillion.align.pairwise.PairwiseSequenceAlignmentWrapper;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 import org.jcvi.jillion.core.residue.aa.ProteinSequenceBuilder;
@@ -48,7 +44,7 @@ public class TestProteinNeedlemanWunschAligner {
 		ProteinPairwiseSequenceAlignment expected = createExpectedAlignment("--P-AW-HEAE","HEAGAWGHE-E", 1F);
 		
 		
-		ProteinPairwiseSequenceAlignment actual = PairwiseAlignmentBuilder.createProtienAlignmentBuilder(query, subject, blosom50)
+		ProteinPairwiseSequenceAlignment actual = PairwiseAlignmentBuilder.createProteinAlignmentBuilder(query, subject, blosom50)
 															.gapPenalty(-8, -8)	
 															.useGlobalAlignment()
 															.build();
