@@ -13,9 +13,11 @@
   <url>http://jillion.sourceforge.net</url>
   <groupId>org.jcvi.jillion</groupId>
   <artifactId>jillion</artifactId>
-  <version>5.3.1-SNAPSHOT</version>
+  <version>5.3.1</version>
   <!-- OSGI compliant jar -->
   <packaging>jar</packaging>
+
+
 
   <properties>
     <powermock.version>1.7.0</powermock.version>
@@ -23,6 +25,43 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
+
+  <developers>
+    <developer>
+    <id>katzelda</id>
+    <name>Daniel Katzel</name>
+    <email>dkatzel@gmail.com</email>
+    <roles>
+      <role>architect</role>
+      <role>developer</role>
+    </roles>
+    <timezone>America/New_York</timezone>
+  </developer>
+
+
+  </developers>
+
+  <scm>
+    <url>https://github.com/JCVenterInstitute/Jillion</url>
+  </scm>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+  <licenses>
+    <license>
+      <name>GNU LGPL 2.1 or later</name>
+      <url>http://www.gnu.org/licenses/lgpl.html</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
 
   <!-- Jillion is an old project that used ant for 8 years so we have to configure
        maven to use non-conventional folder structures -->
@@ -203,19 +242,7 @@
         <configuration/>
       </plugin>
 
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-source-plugin</artifactId>
-        <version>2.4</version>
-        <executions>
-          <execution>
-            <id>attach-sources</id>
-            <goals>
-              <goal>jar</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -279,13 +306,68 @@
                  Turn off Java 8's strict checking  which will fail the build if any javadoc problems
                  http://blog.joda.org/2014/02/turning-off-doclint-in-jdk-8-javadoc.html
            -->
-          <properties>
-            <additionalparam>-Xdoclint:none</additionalparam>
-          </properties>
+
+
         </configuration>
       </plugin>
-    </plugins>
-  </build>
+    <plugin>
+      <groupId>org.sonatype.plugins</groupId>
+      <artifactId>nexus-staging-maven-plugin</artifactId>
+      <version>1.6.7</version>
+      <extensions>true</extensions>
+      <configuration>
+        <serverId>ossrh</serverId>
+        <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+        <autoReleaseAfterClose>true</autoReleaseAfterClose>
+      </configuration>
+    </plugin>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-source-plugin</artifactId>
+      <version>2.4</version>
+      <executions>
+        <execution>
+          <id>attach-sources</id>
+          <goals>
+            <goal>jar-no-fork</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-javadoc-plugin</artifactId>
+      <version>2.9.1</version>
+      <executions>
+        <execution>
+          <id>attach-javadocs</id>
+          <goals>
+            <goal>jar</goal>
+          </goals>
+          <configuration>
+            <additionalparam>-Xdoclint:none</additionalparam>
+          </configuration>
+
+        </execution>
+      </executions>
+    </plugin>
+    <plugin>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-gpg-plugin</artifactId>
+      <version>1.5</version>
+      <executions>
+        <execution>
+          <id>sign-artifacts</id>
+          <phase>verify</phase>
+          <goals>
+            <goal>sign</goal>
+          </goals>
+
+        </execution>
+      </executions>
+    </plugin>
+  </plugins>
+</build>
 
   <reporting>
     <plugins>
@@ -293,7 +375,7 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>findbugs-maven-plugin</artifactId>
-        <version>3.0.4</version>
+        <version>3.0.5</version>
       </plugin>
 
       <plugin>
@@ -369,26 +451,9 @@
 
   </dependencies>
 
-  <developers>
-    <developer>
-      <name>Dan Katzel</name>
-      <organization>J. Craig Venter Institute</organization>
-      <organizationUrl>http://jcvi.org</organizationUrl>
-    </developer>
-  </developers>
 
-  <licenses>
-    <license>
-      <name>GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1, February 1999</name>
-      <url>http://www.gnu.org/licenses/lgpl-2.1.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
 
-  <scm>
-    <connection>scm:git:file:///home/jchriste/git/jillion</connection>
-    <url>file:///home/jchriste/git/jillion</url>
-  </scm>
+
 
   <organization>
     <name>J. Craig Venter Institute</name>
