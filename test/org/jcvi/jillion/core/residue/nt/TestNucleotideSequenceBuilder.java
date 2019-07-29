@@ -1087,5 +1087,17 @@ public class TestNucleotideSequenceBuilder {
 
         assertBuiltRnaSequenceEquals("ACGU-UUG---GU", sut);
     }
+
+    @Test
+    public void cleanSequence(){
+        assertEquals("ACGT", Nucleotide.cleanSequence("ACGT"));
+        assertEquals("\tAC  GT\t", Nucleotide.cleanSequence("\tAC  GT\t"));
+
+        assertEquals("acgt", Nucleotide.cleanSequence("acgt"));
+        assertEquals("\taC  Gt\t", Nucleotide.cleanSequence("\taC  Gt\t"));
+
+        assertEquals("ACGT", Nucleotide.cleanSequence("ACXXGT"));
+        assertEquals("ACNNGT", Nucleotide.cleanSequence("ACXXGT", "N"));
+    }
     
 }

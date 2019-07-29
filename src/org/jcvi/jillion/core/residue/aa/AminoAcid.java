@@ -20,10 +20,8 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.aa;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Pattern;
 
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.util.MapUtil;
@@ -68,7 +66,7 @@ public enum AminoAcid implements Residue{
     Selenocysteine("Selenocysteine", "Sec", 'U'),
     
     Pyrrolysine("Pyrrolysine", "Ply",'O'),
-    Gap("Gap", "---", '-'){
+    Gap("Gap", "---", '-', false){
 
 		@Override
 		public boolean isGap() {
@@ -77,28 +75,81 @@ public enum AminoAcid implements Residue{
     	
     },
     
-    STOP("Stop", "Stop", '*')
+    STOP("Stop", "Stop", '*', false)
     ;
     
     private final Character abbreviation;
     private final String threeLetterAbbreviation;
     private final String name;
-    
+
+    private final boolean includeInPattern;
+
+    private static final Pattern CLEAN_PATTERN;
     private static final Map<String, AminoAcid> NAME_MAP;
     static{
     	int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(AminoAcid.values().length *3);
-        NAME_MAP = new HashMap<String, AminoAcid>(mapSize);
-        
+        NAME_MAP = new HashMap<>(mapSize);
+        StringBuilder validBuilder = new StringBuilder();
+        validBuilder.append("[^");
         for(AminoAcid aa : AminoAcid.values()){
             NAME_MAP.put(aa.getName().toUpperCase(), aa);
             NAME_MAP.put(aa.get3LetterAbbreviation().toUpperCase(), aa);
-            NAME_MAP.put(aa.getCharacter().toString().toUpperCase(), aa);
+
+            String charAsString = aa.getCharacter().toString();
+            String upperCase = charAsString.toUpperCase();
+
+            NAME_MAP.put(upperCase, aa);
+            if(aa.includeInPattern) {
+                validBuilder.append(upperCase);
+                validBuilder.append(charAsString.toLowerCase());
+            }
+
         }
+        validBuilder.append("\\-\\s]");
+        CLEAN_PATTERN = Pattern.compile(validBuilder.toString());
+    }
+
+    /**
+     * Remove all non-valid, non-whitespace characters in the given input sequence.
+     * This is the same as {@link #cleanSequence(String, String) cleanSequence(seq, ""}
+     * @param seq the input sequence to clean; can not be null.
+     * @return a new String that is the same as the input sequence
+     * except each invalid character has been removed.
+     *
+     * @throws NullPointerException if either parameter is null.
+     *
+     * @since 5.3.1
+     * @see #cleanSequence(String, String)
+     */
+    public static String cleanSequence(String seq){
+        return cleanSequence(seq,"");
+    }
+
+    /**
+     * Replace all non-valid, non-whitespace characters in the given input sequence
+     * with the given replacement string.
+     * @param seq the input sequence to clean; can not be null.
+     * @param replacementString the String to use for EACH invalid character;
+     *                          can not be null.
+     * @return a new String that is the same as the input sequence
+     * except each invalid character gets replaced by the replacement String.
+     *
+     * @throws NullPointerException if either parameter is null.
+     *
+     * @since 5.3.1
+     */
+    public static String cleanSequence(String seq, String replacementString){
+        return CLEAN_PATTERN.matcher(seq).replaceAll(Objects.requireNonNull(replacementString));
     }
     private AminoAcid(String name, String threeLetterAbbreviation, Character abbreviation){
+        this(name, threeLetterAbbreviation,abbreviation, true);
+    }
+    private AminoAcid(String name, String threeLetterAbbreviation, Character abbreviation,
+                      boolean includeInClean){
         this.name = name;
         this.threeLetterAbbreviation = threeLetterAbbreviation;
         this.abbreviation = abbreviation;
+        includeInPattern = includeInClean;
     }
     /**
      * Get the AminoAcid which is represented by the given single character

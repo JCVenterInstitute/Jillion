@@ -27,6 +27,7 @@ package org.jcvi.jillion.core.residue.nt;
 
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import org.jcvi.jillion.core.residue.Residue;
 /**
@@ -68,6 +69,7 @@ public enum Nucleotide implements Residue {
 
     private static final Set<Nucleotide> GAP_BASES_FOR = EnumSet.of(Gap);
 
+    private static final Pattern CLEAN_PATTERN;
     static {
 
 
@@ -128,13 +130,24 @@ public enum Nucleotide implements Residue {
 
         DNA_VALUES_ARRAY = new Nucleotide[16];
         RNA_VALUES_ARRAY = new Nucleotide[16];
-try{
-        System.arraycopy(VALUES_ARRAY, 0, DNA_VALUES_ARRAY, 0, 16);
-        System.arraycopy(VALUES_ARRAY, 0, RNA_VALUES_ARRAY, 0, 15);
-        RNA_VALUES_ARRAY[15] = Uracil;
-    }catch(Throwable t){
-    t.printStackTrace();
-    }
+        try{
+            System.arraycopy(VALUES_ARRAY, 0, DNA_VALUES_ARRAY, 0, 16);
+            System.arraycopy(VALUES_ARRAY, 0, RNA_VALUES_ARRAY, 0, 15);
+            RNA_VALUES_ARRAY[15] = Uracil;
+        }catch(Throwable t){
+            t.printStackTrace();
+        }
+
+        StringBuilder pattern = new StringBuilder();
+        pattern.append("[^");
+        for(Nucleotide n : values()){
+            if(!n.isGap()){
+                pattern.append(n.toString());
+                pattern.append(n.toString().toLowerCase());
+            }
+        }
+        pattern.append("\\s\\-]");
+        CLEAN_PATTERN = Pattern.compile(pattern.toString());
     }
 
     public static final List<Nucleotide> DNA_VALUES = Collections.unmodifiableList(Arrays.asList(DNA_VALUES_ARRAY));
@@ -282,6 +295,37 @@ try{
         }
 		return ret;
 	}
+    /**
+     * Remove all non-valid, non-whitespace characters in the given input sequence.
+     * This is the same as {@link #cleanSequence(String, String) cleanSequence(seq, ""}
+     * @param seq the input sequence to clean; can not be null.
+     * @return a new String that is the same as the input sequence
+     * except each invalid character has been removed.
+     *
+     * @throws NullPointerException if either parameter is null.
+     *
+     * @since 5.3.1
+     * @see #cleanSequence(String, String)
+     */
+    public static String cleanSequence(String seq){
+        return CLEAN_PATTERN.matcher(seq).replaceAll("");
+    }
+    /**
+     * Replace all non-valid, non-whitespace characters in the given input sequence
+     * with the given replacement string.
+     * @param seq the input sequence to clean; can not be null.
+     * @param replacementString the String to use for EACH invalid character;
+     *                          can not be null.
+     * @return a new String that is the same as the input sequence
+     * except each invalid character gets replaced by the replacement String.
+     *
+     * @throws NullPointerException if either parameter is null.
+     *
+     * @since 5.3.1
+     */
+    public static String cleanSequence(String seq, String replacementString){
+        return CLEAN_PATTERN.matcher(seq).replaceAll(replacementString);
+    }
     /**
      * Returns this Nucleotide as a single character String.  For example {@link #Adenine} 
      * will return "A".
