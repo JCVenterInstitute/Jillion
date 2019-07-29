@@ -50,7 +50,7 @@ public abstract class AbstractBlosumTest {
 									.build();
 		
 		
-		ProteinPairwiseSequenceAlignment alignment = PairwiseAlignmentBuilder.createProtienAlignmentBuilder(seq1, seq1, matrix)
+		ProteinPairwiseSequenceAlignment alignment = PairwiseAlignmentBuilder.createProteinAlignmentBuilder(seq1, seq1, matrix)
 															.gapPenalty(-1, -2)	
 															.useGlobalAlignment()
 															.build();
@@ -65,7 +65,7 @@ public abstract class AbstractBlosumTest {
 		ProteinSequence seq2 = new ProteinSequenceBuilder("LSGVREE*")
 									.build();
 		
-		ProteinPairwiseSequenceAlignment alignment = PairwiseAlignmentBuilder.createProtienAlignmentBuilder(seq1, seq2, matrix)
+		ProteinPairwiseSequenceAlignment alignment = PairwiseAlignmentBuilder.createProteinAlignmentBuilder(seq1, seq2, matrix)
 																	.gapPenalty(-1, -2)	
 																	.useGlobalAlignment()
 																	.build();

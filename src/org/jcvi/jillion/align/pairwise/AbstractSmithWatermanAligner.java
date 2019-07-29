@@ -114,7 +114,7 @@ abstract class AbstractSmithWatermanAligner<R extends Residue, S extends Residue
 		if (bestScore == 0) {
 			dir = TracebackDirection.TERMINAL;
 		} else if (bestScore == alignmentScore) {
-			dir = TracebackDirection.DIAGNOL;
+			dir = TracebackDirection.DIAGONAL;
 		} else if (bestScore == horrizontalGapPenalty) {
 			dir = TracebackDirection.HORIZONTAL;
 		} else {

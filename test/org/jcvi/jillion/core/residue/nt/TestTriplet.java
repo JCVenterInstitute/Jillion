@@ -34,7 +34,7 @@ public class TestTriplet {
 	public void constructor(){
 		assertEquals(Nucleotide.Adenine,sut.getFirst());
 		assertEquals(Nucleotide.Thymine,sut.getSecond());
-		assertEquals(Nucleotide.Guanine,sut.getThrid());
+		assertEquals(Nucleotide.Guanine,sut.getThird());
 	}
 	@Test
 	public void notEqualToNull(){
