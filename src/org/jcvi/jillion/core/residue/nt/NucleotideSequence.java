@@ -176,20 +176,21 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
     }
 
     default Stream<Range> findMatches(Pattern pattern, Range subSequenceRange, boolean nested) {
+//       System.out.println("here!!!");
         Stream<Range> matches = findMatches(pattern, subSequenceRange);
         if (! nested) {
             return matches;
         }
         List<Range> matchList = matches.collect(Collectors.toList());
+//        System.out.println("matchList = " + matchList);
         Stream<Range> nestedOutput = matchList.stream();
 
         long start;
         long end;
         long matchCount = matchList.size();
-        long sequenceLength = getLength();
-        for (int i=0,j=0; i < matchCount; i++,j++) {
+        for (int i=0,j=1; i < matchCount; i++,j++) {
             start = matchList.get(i).getBegin();
-            end = sequenceLength;
+            end = subSequenceRange.getEnd();
             if (j < matchCount) {
                 // skip last to avoid getting next match again
                 end = matchList.get(j).getEnd() -1;

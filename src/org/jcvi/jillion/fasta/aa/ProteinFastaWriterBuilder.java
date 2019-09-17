@@ -25,6 +25,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.Comparator;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
@@ -111,6 +115,42 @@ public final class ProteinFastaWriterBuilder extends AbstractResidueFastaWriter.
 			super(out, numberOfResiduesPerLine, charSet,eol);
 		}
 	}
+
+    private static final class MultiThreadedProteinFastaWriterImpl extends AbstractResidueFastaWriter<AminoAcid, ProteinSequence, ProteinSequenceBuilder, ProteinFastaRecord> implements ProteinFastaWriter{
+
+	    private final ArrayBlockingQueue<Object> queue = new ArrayBlockingQueue<>(1000);
+	    private Object POISON_PILL = new Object();
+	    ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+        private MultiThreadedProteinFastaWriterImpl(OutputStream out,
+                                       int numberOfResiduesPerLine, Charset charSet, String eol) {
+            super(out, numberOfResiduesPerLine, charSet,eol);
+            executorService.submit(new Callable<Void>() {
+                @Override
+                public Void call() throws Exception {
+                    try {
+                        Object current;
+                        while ((current = queue.take()) != POISON_PILL) {
+                            MultiThreadedProteinFastaWriterImpl.super.writeFormatedData((String) current);
+                        }
+                    }finally {
+                        MultiThreadedProteinFastaWriterImpl.super.close();
+                    }
+                    return null;
+                }
+            });
+        }
+
+        @Override
+        protected void writeFormatedData(String formattedString) throws IOException {
+            queue.offer(formattedString);
+        }
+
+        @Override
+        public void close(){
+            queue.offer(POISON_PILL);
+        }
+    }
 	
 	
 	private static final class InMemorySortedProteinFastaWriter extends InMemorySortedFastaWriter<AminoAcid, ProteinSequence, ProteinFastaRecord> implements ProteinFastaWriter{

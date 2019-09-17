@@ -23,6 +23,7 @@ package org.jcvi.jillion.internal.core.util;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.stream.IntStream;
 
 import org.jcvi.jillion.core.Range;
@@ -505,6 +506,25 @@ public final class GrowableByteArray implements Iterable<Byte>{
 	}
 
 	/**
+	 * Create a sequential {@link IntStream}
+	 * of the current array.
+	 * @param range the subrange
+	 * @return a new {@link IntStream}
+	 * will never be null but may be empty.
+	 *
+	 * @since 5.3.2
+	 */
+	public IntStream stream(Range range) {
+		//there isn't a method to convert a byte[]
+		//into an IntStream so we have to do it ourselves
+		int[] copy = new int[(int) range.getLength()];
+		int end = (int) range.getEnd() +1;
+		for(int i=(int) range.getBegin(), j=0; i<end; i++, j++){
+			copy[j] = data[i];
+		}
+		return Arrays.stream(copy, 0, (int) range.getLength()) ;
+	}
+	/**
 	 * Iterate over each element in the array and call the given consumer
 	 * which captures the offset and the value.
 	 * @param consumer the consumer of each element; can not be null.
@@ -533,5 +553,31 @@ public final class GrowableByteArray implements Iterable<Byte>{
 		for(int i=(int) range.getBegin(); i< end; i++){
 			consumer.accept(i, data[i]);
 		}
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof GrowableByteArray)){
+			return false;
+		}
+		GrowableByteArray bytes = (GrowableByteArray) o;
+		if(currentLength != bytes.currentLength){
+			return false;
+		}
+		for (int i=0; i<currentLength; i++) {
+			if (data[i] != bytes.data[i]) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = Objects.hash(currentLength);
+		result = 31 * result + Arrays.hashCode(data);
+		return result;
 	}
 }

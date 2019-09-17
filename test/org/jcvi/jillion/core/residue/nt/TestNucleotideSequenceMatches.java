@@ -37,7 +37,8 @@ public class TestNucleotideSequenceMatches {
 
 	@Test
     public void nestedMultipleMatches(){
-        NucleotideSequence sut = NucleotideSequence.of("CCCCCAGG");
+        NucleotideSequence sut = new NucleotideSequenceBuilder("CCCCCAGG").turnOffDataCompression(true).build()
+                ;
         Set<Range> expected = new HashSet<>();
         expected.addAll(Arrays.asList(Range.of(4,6), Range.of(3,6),Range.of(2,6),Range.of(1,6),Range.of(0,6)));
         assertEquals(expected,

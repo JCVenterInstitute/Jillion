@@ -99,7 +99,7 @@ public final class QualityFastaWriterBuilder extends AbstractBuilder<PhredQualit
 			FastaWriter<PhredQuality, QualitySequence, QualityFastaRecord> delegate,
 			Comparator<QualityFastaRecord> comparator, int cacheSize,
 			File tmpDir) {
-		return new TmpDirSortedPositionFastaWriter(delegate, comparator, cacheSize, tmpDir);
+		return new TmpDirSortedQualityFastaWriter(delegate, comparator, cacheSize, tmpDir);
 	}
 	@Override
 	protected QualityFastaWriter createInMemorySortedWriterWriter(
@@ -149,11 +149,11 @@ public final class QualityFastaWriterBuilder extends AbstractBuilder<PhredQualit
 		
 	}
 	
-	private static final class TmpDirSortedPositionFastaWriter extends TmpDirSortedFastaWriter<PhredQuality, QualitySequence, QualityFastaRecord> implements QualityFastaWriter{
+	private static final class TmpDirSortedQualityFastaWriter extends TmpDirSortedFastaWriter<PhredQuality, QualitySequence, QualityFastaRecord> implements QualityFastaWriter{
 
 		
 
-		public TmpDirSortedPositionFastaWriter(
+		public TmpDirSortedQualityFastaWriter(
 				FastaWriter<PhredQuality, QualitySequence, QualityFastaRecord> finalWriter,
 				Comparator<QualityFastaRecord> comparator, int cacheSize,
 				File tmpDir) {

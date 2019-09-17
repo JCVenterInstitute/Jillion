@@ -293,7 +293,8 @@ public class TestNucleotideFastaRecordWriter {
 	    //the same time as possible but you never know... couldn't hurt.
 	    for(int i=0; i< 200; i++){
     	        ByteArrayOutputStream out = new ByteArrayOutputStream();
-                try(NucleotideFastaWriter sut = new NucleotideFastaWriterBuilder(out).build()){
+                try(NucleotideFastaWriter sut = new NucleotideFastaWriterBuilder(out)
+						.multiThreaded(true).build()){
                     
                     CountDownLatch latch = new CountDownLatch(2);
                     CountDownLatch doneLatch = new CountDownLatch(2);

@@ -28,7 +28,7 @@ import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
 
 /**
- * {@code NoAmbiguitiesNucleotideCodec} is a {@link GlyphCodec}
+ * {@code NoAmbiguitiesNucleotideCodec} is a {@link NucleotideCodec}
  * of {@link Nucleotide}s that can encode a list of {@link Nucleotide}s
  * that only contain A,C,G,T and gaps (no ambiguities) in as little as 2 bits per base
  * plus some extra bytes for storing the gaps. This should 

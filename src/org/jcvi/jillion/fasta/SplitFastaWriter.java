@@ -109,7 +109,7 @@ public final class SplitFastaWriter{
 	 * 
 	 * @param numberOfFiles the number of files to write to in a round robin fashion. Must be >=1.
 	 * 
-	 * @param supplier a {@link FastqWriterFactory} instance that will create a new FastaWriter of type W for the
+	 * @param supplier a {@link FastaRecordWriterFactory} instance that will create a new FastaWriter of type W for the
 	 * ith file to be created.  The passed in value i will be in the range 1..N where N is the number of files
 	 * created (will start at 1 not 0).  If no records are written, then supplier will never be called. Can not be null.
 	 * 
@@ -160,7 +160,7 @@ public final class SplitFastaWriter{
 	 * @param maxRecordsPerFile the max number of {@link FastaRecord}s to be written to a file
 	 * before it should be closed and the next file created. Must be >=1.
 	 * 
-	 * @param supplier a {@link FastqWriterFactory} instance that will create a new FastaWriter of type W for the
+	 * @param supplier a {@link FastaRecordWriterFactory} instance that will create a new FastaWriter of type W for the
 	 * ith file to be created.  The passed in value i will be in the range 1..N where N is the number of files
 	 * created (will start at 1 not 0).  If no records are written, then supplier will never be called.  Can not be null.
 	 * 

@@ -22,8 +22,13 @@ package org.jcvi.jillion.fasta;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Map;
 
 import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
+
 /**
  * {@code FastaWriter} is a interface
  * that handles how {@link FastaRecord}s
@@ -74,5 +79,53 @@ public interface FastaWriter<S, T extends Sequence<S>, F extends FastaRecord<S, 
 	public interface FastaRecordAdapter<S, T extends Sequence<S>, F extends FastaRecord<S, T>>{
 	    F adapt(String id, T sequence, String optionalComment);
 	}
-	
+
+
+
+	/**
+	 * Write all the records in the given Map
+	 * @param sequences the map to write; can not be {@code null}.
+	 * @throws IOException if there is a problem writing any records.
+	 * @throws NullPointerException if map is null or any element in the map is null.
+	 *
+	 * @since 5.3.2
+	 */
+	default void write(Map<String, T> sequences) throws IOException {
+
+		for(Map.Entry<String, T> entry : sequences.entrySet()){
+			write(entry.getKey(), entry.getValue());
+		}
+	}
+	/**
+	 * Write all the records in the given Collection
+	 * @param fastas the fastas to write; can not be {@code null}.
+	 * @throws IOException if there is a problem writing any records.
+	 * @throws NullPointerException if collection is null or any element in the map is null.
+	 *
+	 * @since 5.3.2
+	 */
+	default void write(Collection<F> fastas) throws IOException {
+
+		for(F fasta : fastas){
+			write(fasta);
+		}
+	}
+	/**
+	 * Write all the records in the given dataStore
+	 * @param dataStore the dataStore to write; can not be {@code null}.
+	 * @throws IOException if there is a problem writing any records.
+	 * @throws NullPointerException if dataStore is null.
+	 *
+	 * @since 5.3.2
+	 */
+	default void write(FastaDataStore<S, T, F, ?> dataStore) throws IOException {
+		try(StreamingIterator<DataStoreEntry<F>> iter = dataStore.entryIterator()) {
+			while(iter.hasNext()) {
+				DataStoreEntry<F> entry = iter.next();
+
+				write(entry.getKey(), entry.getValue().getSequence());
+
+			}
+		}
+	}
 }

@@ -476,6 +476,18 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		return Arrays.stream(data, 0, currentLength);		
 	}
 	/**
+	 * Create a sequential {@link IntStream}
+	 * of the current array.
+	 * @param range the subrange
+	 * @return a new {@link IntStream}
+	 * will never be null but may be empty.
+	 *
+	 * @since 5.3.2
+	 */
+	public IntStream stream(Range range) {
+		return Arrays.stream(data, (int) range.getBegin(), (int) range.getEnd() +1);
+	}
+	/**
 	 * Create a new List of Integers with the same data
 	 * as the current array values. The returned list
 	 * IS A COPY so any modifications to the returned list 

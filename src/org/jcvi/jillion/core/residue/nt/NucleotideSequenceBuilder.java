@@ -839,10 +839,12 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     */
     @Override
     public NucleotideSequence build() {
-        if(codecDecider.numUs >0 && codecDecider.numTs >0){
-            byte[] encodedBytes= UandTNucleotideCodec.INSTANCE.encode(codecDecider.currentLength,
-                    codecDecider.gapOffsets.toArray(), iterator(false));
-            return new DefaultNucleotideSequence(UandTNucleotideCodec.INSTANCE, encodedBytes, true, false);
+        if((codecDecider.numUs >0 && codecDecider.numTs >0) ||codecDecider.forceBasicCodec){
+            return new SimpleNucleotideSequence(data.copy());
+//            byte[] encodedBytes= UandTNucleotideCodec.INSTANCE.encode(codecDecider.currentLength,
+//                    codecDecider.gapOffsets.toArray(), iterator(false));
+//            return new DefaultNucleotideSequence(UandTNucleotideCodec.INSTANCE, encodedBytes, true, false);
+
         }
 
         	if(codecDecider.hasAlignedReference()){
@@ -850,7 +852,8 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         				codecDecider.alignedReference.reference, this, codecDecider.alignedReference.offset);
         	
         	}
-        	boolean convertUs2Ts;
+
+            boolean convertUs2Ts;
         	if(codecDecider.numUs >0 && codecDecider.numTs >0){
                 convertUs2Ts=false;
             }else{

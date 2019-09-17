@@ -45,6 +45,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	private static final int DEFAULT_CAPACITY = 20;
 	private GrowableByteArray builder;
 	private int numberOfGaps=0;
+	private boolean turnOffCompression=false;
 	 /**
      * Creates a new ProteinSequenceBuilder instance
      * which currently contains no amino acids.
@@ -312,12 +313,19 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	}
 	private ProteinSequence build(byte[] seqToBuild){
 		AminoAcid[] asList = convertFromBytes(seqToBuild);
-		if(numberOfGaps>0 && hasGaps(asList)){
-			return new CompactProteinSequence(asList);
-		}
-		//no gaps
-		
-		return new UngappedProteinSequence(asList);
+		if(turnOffCompression) {
+            if (numberOfGaps > 0 && hasGaps(asList)) {
+                return new UnCompressedGappedProteinSequence(asList);
+            }
+            return new UnCompressedUngappedProteinSequence(asList);
+        }else {
+            if (numberOfGaps > 0 && hasGaps(asList)) {
+                return new CompactProteinSequence(asList);
+            }
+            //no gaps
+
+            return new UngappedProteinSequence(asList);
+        }
 	}
 	private boolean hasGaps(AminoAcid[] asArray) {
 		for(AminoAcid aa : asArray){
@@ -418,8 +426,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 
     @Override
     public ProteinSequenceBuilder turnOffDataCompression(boolean turnOffDataCompression) {
-        // TODO implement me!
-        //no-op for now since we only have 1 implementation
-        return this;
+	    turnOffCompression = true;
+	    return this;
     }
 }

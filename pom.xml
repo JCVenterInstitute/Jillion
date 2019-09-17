@@ -13,7 +13,7 @@
   <url>http://jillion.sourceforge.net</url>
   <groupId>org.jcvi.jillion</groupId>
   <artifactId>jillion</artifactId>
-  <version>5.3.1</version>
+  <version>5.3.2</version>
   <!-- OSGI compliant jar -->
   <packaging>jar</packaging>
 

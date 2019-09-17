@@ -319,8 +319,8 @@ public class TestProteinSequenceBuilder {
 		assertEquals("   IKF  TW   ", AminoAcid.cleanSequence("   IKF  TW   ", "N"));
 
 		assertEquals("\tIKF\tTW   ", AminoAcid.cleanSequence("\tIKF\tTW   ", "N"));
-		assertEquals("\tIKF\tTW   ", AminoAcid.cleanSequence("\tIKFJ\tTW   "));
-		assertEquals("\tIKFX\tTW   ", AminoAcid.cleanSequence("\tIKFJ\tTW   ", "X"));
+		assertEquals("\tIKF\tTW   ", AminoAcid.cleanSequence("\tIKF3\tTW   "));
+		assertEquals("\tIKFX\tTW   ", AminoAcid.cleanSequence("\tIKF3\tTW   ", "X"));
 
 		assertEquals("ikftw", AminoAcid.cleanSequence("ikftw", "N"));
 
@@ -328,12 +328,12 @@ public class TestProteinSequenceBuilder {
 		assertEquals("   ikf  TW   ", AminoAcid.cleanSequence("   ikf  TW   ", "N"));
 
 		assertEquals("\tIKF\ttw   ", AminoAcid.cleanSequence("\tIKF\ttw   ", "N"));
-		assertEquals("\tIKF\ttw   ", AminoAcid.cleanSequence("\tIKFJ\ttw   "));
-		assertEquals("\tIKFX\tTW   ", AminoAcid.cleanSequence("\tIKFj\tTW   ", "X"));
+		assertEquals("\tIKF\ttw   ", AminoAcid.cleanSequence("\tIKF3\ttw   "));
+		assertEquals("\tIKFX\tTW   ", AminoAcid.cleanSequence("\tIKF3\tTW   ", "X"));
 
 
-		assertEquals("\tIKF\ttw   ", AminoAcid.cleanSequence("\tIKFJJ\ttw   "));
-		assertEquals("\tIKFXX\tTW   ", AminoAcid.cleanSequence("\tIKFjj\tTW   ", "X"));
+		assertEquals("\tIKF\ttw   ", AminoAcid.cleanSequence("\tIKF33\ttw   "));
+		assertEquals("\tIKFXX\tTW   ", AminoAcid.cleanSequence("\tIKF33\tTW   ", "X"));
 
 	}
 }

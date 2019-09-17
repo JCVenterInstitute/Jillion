@@ -22,19 +22,15 @@ package org.jcvi.jillion.internal.fasta;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.fasta.FastaDataStore;
 import org.jcvi.jillion.fasta.FastaRecord;
 import org.jcvi.jillion.fasta.FastaWriter;
 import org.jcvi.jillion.internal.core.util.iter.MergedSortedRecordIterator;

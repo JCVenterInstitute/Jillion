@@ -247,6 +247,7 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
             return matches;
         }
         List<Range> matchesList = matches.collect(Collectors.toList());
+        System.out.println("matchesList = " + matchesList);
         Stream<Range> nestedMatches = matchesList.stream();
 
         if (matchesList.isEmpty()) {

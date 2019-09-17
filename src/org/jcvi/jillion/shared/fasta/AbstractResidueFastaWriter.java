@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequence;
 import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
@@ -76,7 +77,7 @@ public abstract class AbstractResidueFastaWriter<R extends Residue, S extends Re
 	 */
 	public abstract static class Builder<R extends Residue, S extends ResidueSequence<R, S,B>, B extends ResidueSequenceBuilder<R, S>,F extends FastaRecord<R,S>, W extends FastaWriter<R, S, F>, T extends AbstractResidueFastaWriter.Builder<R, S, B, F,W,T>> extends AbstractBuilder<R,S,F,W,T>{
 		protected static final int DEFAULT_RESIDUES_PER_LINE = 60;
-		   
+
 		public Builder(File outputFile)
 				throws IOException {
 			super(outputFile);
@@ -90,8 +91,9 @@ public abstract class AbstractResidueFastaWriter<R extends Residue, S extends Re
 		protected int getDefaultNumberOfSymbolsPerLine() {
 			return DEFAULT_RESIDUES_PER_LINE;
 		}
-		
-		
+
+
+
 	}
 
 	

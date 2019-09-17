@@ -73,6 +73,9 @@ public class Kmer<T extends ResidueSequence<?, ?, ?>> {
             return false;
         }
         if (!value.equals(other.value)) {
+            System.out.println("value = " + value + " + getClass() =" + value.getClass() + "  toString=" + value.toString());
+            System.out.println("other value = " + other.value + " + getClass() " + other.value.getClass() + "  toString=" + other.value.toString());
+
             return false;
         }
         return true;

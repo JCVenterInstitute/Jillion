@@ -22,6 +22,10 @@ package org.jcvi.jillion.align.pairwise;
 
 import static org.junit.Assert.assertEquals;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
+import java.util.IntSummaryStatistics;
 import java.util.Iterator;
 
 import org.jcvi.jillion.align.AminoAcidSubstitutionMatrix;
@@ -30,13 +34,15 @@ import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 import org.jcvi.jillion.core.residue.aa.ProteinSequenceBuilder;
 import org.jcvi.jillion.internal.align.ProteinSequenceAlignmentBuilder;
+import org.jcvi.jillion.testutils.ProteinSequenceTestUtil;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestProteinNeedlemanWunschAligner {
-
+	AminoAcidSubstitutionMatrix blosom50 = BlosumMatrices.blosum50();
 	@Test
 	public void exampleFromBook(){
-		AminoAcidSubstitutionMatrix blosom50 = BlosumMatrices.blosum50();
+
 		ProteinSequence subject = new ProteinSequenceBuilder("HEAGAWGHEE")
 									.build();
 		ProteinSequence query = new ProteinSequenceBuilder("PAWHEAE")
@@ -76,5 +82,33 @@ public class TestProteinNeedlemanWunschAligner {
 		return new ProteinPairwiseSequenceAlignmentImpl(
 				PairwiseSequenceAlignmentWrapper.wrap(builder.build(), score));
 		
+	}
+
+	@Test
+	@Ignore
+	public void veryLargeSequence(){
+
+		IntSummaryStatistics stats = new IntSummaryStatistics();
+		for(int i=0; i< 100; i++) {
+			ProteinSequence a = ProteinSequenceTestUtil.randomSequence(7000);
+
+			ProteinSequence b = ProteinSequenceTestUtil.randomSequence(7000);
+
+			long start = System.currentTimeMillis();
+			ProteinPairwiseSequenceAlignment actual = PairwiseAlignmentBuilder.createProteinAlignmentBuilder(a, a, blosom50)
+					.gapPenalty(-8, -8)
+					.useGlobalAlignment()
+					.build();
+
+			long end = System.currentTimeMillis();
+			int length = (int) (end-start);
+			stats.accept(length);
+			System.out.println("took " + Duration.of(length, ChronoUnit.MILLIS));
+		}
+
+		System.out.println(stats);
+		System.out.println("min" + stats.getMin());
+		System.out.println("max" + stats.getMax());
+		System.out.println("avg" + stats.getAverage());
 	}
 }

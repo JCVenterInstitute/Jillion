@@ -1,0 +1,193 @@
+package org.jcvi.jillion.core.residue.nt;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Ranges;
+import org.jcvi.jillion.core.util.MemoizedSupplier;
+import org.jcvi.jillion.internal.core.io.StreamUtil;
+import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
+import org.jcvi.jillion.internal.core.util.GrowableByteArray;
+import org.jcvi.jillion.internal.core.util.GrowableIntArray;
+
+import java.util.*;
+import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
+public class SimpleNucleotideSequence extends AbstractResidueSequence<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder> implements NucleotideSequence{
+
+    private final Nucleotide[] data;
+
+    private final Supplier<String> stringSupplier;
+    private final Supplier<List<Range>> nRangeSupplier;
+    private final Supplier<GrowableIntArray> gapSupplier;
+    private final Supplier<Boolean> isDnaSupplier, isRnaSupplier;
+
+
+    public SimpleNucleotideSequence(GrowableByteArray data) {
+        this.data = data.stream().mapToObj(i-> Nucleotide.getByOrdinal(i)).toArray(i-> new Nucleotide[i]);
+        stringSupplier = MemoizedSupplier.memoize(()->{
+            int length = data.getCurrentLength();
+            StringBuilder builder = new StringBuilder(length);
+            Arrays.stream(this.data).map(Nucleotide::getCharacter)
+                        .forEach(builder::append);
+
+            return builder.toString();
+        });
+
+        nRangeSupplier = MemoizedSupplier.memoize(()->{
+            GrowableIntArray ns = new GrowableIntArray();
+            int i=0;
+            for(Nucleotide n : this.data){
+
+                if(n == Nucleotide.Unknown){
+                    ns.append(i);
+                }
+                i++;
+            }
+            return Ranges.asRanges(ns.toArray());
+        });
+
+        gapSupplier = MemoizedSupplier.memoize(()->{
+            GrowableIntArray gaps = new GrowableIntArray();
+            byte valueOfGap = Nucleotide.Gap.getOrdinalAsByte();
+            data.forEachIndexed((i,v)->{
+                if(v == valueOfGap){
+                    gaps.append(i);
+                }
+            });
+            return gaps;
+        });
+        isDnaSupplier = MemoizedSupplier.memoize(()->{
+            GrowableIntArray gaps = new GrowableIntArray();
+            byte valueOfU = Nucleotide.Uracil.getOrdinalAsByte();
+            //can't find any U's
+            return !data.stream().filter(v-> v==valueOfU).findAny().isPresent();
+
+        });
+
+        isRnaSupplier = MemoizedSupplier.memoize(()->{
+            GrowableIntArray gaps = new GrowableIntArray();
+            byte valueOfT = Nucleotide.Thymine.getOrdinalAsByte();
+            //can't find any T's
+            return !data.stream().filter(v-> v==valueOfT).findAny().isPresent();
+
+        });
+    }
+
+    @Override
+    public Stream<Range> findMatches(Pattern pattern) {
+        Matcher matcher = pattern.matcher(toString());
+
+        return StreamUtil.newGeneratedStream(() -> matcher.find()
+                ? Optional.of(Range.of(matcher.start(), matcher.end() - 1))
+                : Optional.empty());
+    }
+
+    @Override
+    public Stream<Range> findMatches(Pattern pattern, Range subSequenceRange) {
+
+        StringBuilder builder = new StringBuilder((int) subSequenceRange.getLength());
+        Arrays.stream(data, (int)subSequenceRange.getBegin(), (int) subSequenceRange.getEnd()+1)
+                .map(Nucleotide::getCharacter)
+                .forEach(builder::append);
+
+        String subSeq= builder.toString();
+        Matcher matcher = pattern.matcher(subSeq);
+        int shift = (int) subSequenceRange.getBegin();
+        return StreamUtil.newGeneratedStream(() -> matcher.find()
+                ? Optional.of(Range.of(shift+ matcher.start(), shift+ matcher.end() - 1))
+                : Optional.empty());
+    }
+
+    @Override
+    public List<Range> getRangesOfNs() {
+        return new ArrayList<>(nRangeSupplier.get());
+    }
+
+    @Override
+    public boolean isDna() {
+        return isDnaSupplier.get();
+    }
+
+    @Override
+    public boolean isRna() {
+        return isRnaSupplier.get();
+    }
+
+    @Override
+    public List<Integer> getGapOffsets() {
+        return gapSupplier.get().toBoxedList();
+    }
+
+    @Override
+    public int getNumberOfGaps() {
+        return gapSupplier.get().getCurrentLength();
+    }
+
+    @Override
+    public boolean isGap(int gappedOffset) {
+        return get(gappedOffset) == Nucleotide.Gap;
+    }
+
+    @Override
+    public Nucleotide get(long offset) {
+        return data[(int)offset];
+    }
+
+    @Override
+    public long getLength() {
+        return data.length;
+    }
+
+    @Override
+    public Iterator<Nucleotide> iterator(Range range) {
+        return Arrays.stream(data, (int) range.getBegin(), (int) range.getEnd()+1)
+                    .iterator();
+
+    }
+
+    @Override
+    public NucleotideSequenceBuilder toBuilder() {
+        return new NucleotideSequenceBuilder(this::iterator);
+    }
+
+    @Override
+    public NucleotideSequenceBuilder toBuilder(Range range) {
+        return new NucleotideSequenceBuilder(() ->this.iterator(range));
+    }
+
+    @Override
+    public NucleotideSequence asSubtype() {
+        return this;
+    }
+
+    @Override
+    public Iterator<Nucleotide> iterator() {
+        return Arrays.stream(data).iterator();
+    }
+
+    @Override
+    public String toString() {
+        return stringSupplier.get();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof NucleotideSequence)){
+            return false;
+        }
+        if( o instanceof SimpleNucleotideSequence){
+            return Arrays.equals(data, ((SimpleNucleotideSequence)o).data);
+        }
+
+            return toString().equals( o.toString());
+
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(data);
+    }
+}

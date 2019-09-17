@@ -27,12 +27,13 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.Objects;
+import java.util.*;
 
 import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.fasta.FastaDataStore;
 import org.jcvi.jillion.fasta.FastaRecord;
 import org.jcvi.jillion.fasta.FastaWriter;
 import org.jcvi.jillion.internal.core.io.OutputStreamFactory;
@@ -41,6 +42,9 @@ import org.jcvi.jillion.internal.fasta.FastaUtil;
 
 public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F extends FastaRecord<S,T>> implements FastaWriter<S, T, F>{
 
+	private static int BUFFER_RECORD_SIZE =2000;
+
+	private static int BULK_BUFFER_RECORD_SIZE =20_000;
 	private final Writer writer;
 	private final int numberOfResiduesPerLine;
 	private final boolean hasSymbolSeparator;
@@ -51,8 +55,15 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 	 * StringBuilder as a buffer for every record we write.
 	 */
 	private final Object lock = new Object();
-	
-	private final StringBuilder recordBuffer = new StringBuilder(2000);
+	/**
+	 * StringBuilders aren't synchronized and since 5.3.2
+	 * we delay locking until we actually write
+	 * to the output stream so use a threadlocal Stringbuilder
+	 * to keep it threadsafe.  We are re-using the StringBuilder
+	 * which has shown to be a performance boost
+	 */
+	private final ThreadLocal<StringBuilder> threadLocalBuffers = ThreadLocal.withInitial(()->new StringBuilder(BUFFER_RECORD_SIZE));
+
 	
 	protected AbstractFastaRecordWriter(OutputStream out,
 			int numberOfResiduesPerLine, Charset charSet, String eol) {
@@ -70,12 +81,14 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 	}
 	
 	@Override
-	public final void close() throws IOException {
+	public void close() throws IOException {
 		//just incase the implementation of
 		//OutputStream is buffering we need to explicitly
 		//call flush
-		writer.flush();
-		writer.close();		
+		synchronized (lock) {
+			writer.flush();
+			writer.close();
+		}
 	}
 
 	@Override
@@ -93,22 +106,106 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 	@Override
 	public final void write(String id, T sequence,
 			String optionalComment) throws IOException {
+
 		String formattedString = toFormattedString(id, sequence, optionalComment);
-		writer.write(formattedString);
-		
+		writeFormatedData(formattedString);
 	}
 
-    private String toFormattedString(String id, T sequence, String comment) {
-       // int bufferSize = computeFormattedBufferSize(id, sequence, comment);
-        String ret;
-        synchronized(lock){
-            recordBuffer.setLength(0);
-            appendDefline(id, comment, recordBuffer);
-            appendRecordBody(sequence, recordBuffer);
-            ret = recordBuffer.toString();
-        
-        }
-        return ret;
+	protected void writeFormatedData(String formattedString) throws IOException {
+		synchronized (lock) {
+			writer.write(formattedString);
+		}
+	}
+
+
+	@Override
+	public void write(FastaDataStore<S, T, F, ?> dataStore) throws IOException {
+
+		try(StreamingIterator<DataStoreEntry<F>> iter = dataStore.entryIterator()){
+			//don't lock here the writeFormattedData method will handle locking
+			//the downside is we will make many more synchronized calls
+			//but different implementations may handle locking more efficiently
+//			synchronized (lock){
+				StringBuilder builder = new StringBuilder(BULK_BUFFER_RECORD_SIZE);
+
+				int count=0;
+				while(iter.hasNext()){
+					count++;
+					DataStoreEntry<F> entry = iter.next();
+					appendDefline(entry.getKey(), null, builder);
+					appendRecordBody(entry.getValue().getSequence(), builder);
+
+					if(count %10 ==10){
+						writeFormatedData(builder.toString());
+						builder.setLength(0);
+					}
+				}
+				if(builder.length() >0){
+					writeFormatedData(builder.toString());
+				}
+//			}
+		}
+	}
+
+	@Override
+	public void write(Map<String, T> sequences) throws IOException {
+
+		writeFromIterator(sequences.entrySet().iterator());
+	}
+
+	@Override
+	public void write(Collection<F> fastas) throws IOException {
+
+		synchronized (lock){
+			StringBuilder builder = new StringBuilder(BULK_BUFFER_RECORD_SIZE);
+
+			int count=0;
+			for(F fasta: fastas){
+				count++;
+
+				appendDefline(fasta.getId(), fasta.getComment(), builder);
+				appendRecordBody(fasta.getSequence(), builder);
+
+				if(count %10 ==10){
+					writer.write(builder.toString());
+					builder.setLength(0);
+				}
+			}
+			if(builder.length() >0){
+				writer.write(builder.toString());
+			}
+		}
+	}
+
+	private void writeFromIterator(Iterator<Map.Entry<String, T>> iter) throws IOException {
+		synchronized (lock){
+			StringBuilder builder = new StringBuilder(BULK_BUFFER_RECORD_SIZE);
+
+			int count=0;
+			while(iter.hasNext()){
+				count++;
+				Map.Entry<String, T> entry = iter.next();
+				appendDefline(entry.getKey(), null, builder);
+				appendRecordBody(entry.getValue(), builder);
+
+				if(count %10 ==10){
+					writer.write(builder.toString());
+					builder.setLength(0);
+				}
+			}
+			if(builder.length() >0){
+				writer.write(builder.toString());
+			}
+		}
+	}
+
+	private String toFormattedString(String id, T sequence, String comment) {
+		StringBuilder recordBuffer = threadLocalBuffers.get();
+		recordBuffer.setLength(0);
+		appendDefline(id, comment, recordBuffer);
+		appendRecordBody(sequence, recordBuffer);
+		return recordBuffer.toString();
+
     }
 
     private void appendRecordBody(T sequence, final StringBuilder record) {
@@ -166,7 +263,8 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		private File tmpDir;
 		
 		private Charset charSet = DEFAULT_CHARSET;
-		
+
+		private boolean supportMultithreaded = false;
 		
 		/**
 		 * Create a new Builder that will use
@@ -306,11 +404,27 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 			}
 			if(inMemoryCacheSize ==null){
 				//use in memory cache only
+				//the in memory map is also synchronized so should be threadsafe
 				return createInMemorySortedWriterWriter(writer, comparator);
 			}
+			//I think the tmp dir sorted writers are synchronized so should
+			//be threadsafe
 			return createTmpDirSortedWriterWriter(writer, comparator, inMemoryCacheSize, tmpDir);
 		}
-		
+
+		/**
+		 * Make writer threadsafe and support multithreads
+		 * writing at the same time.  If not set, defaults to {@code false}.
+		 * @param supportMultithreaded
+		 * @return this
+		 *
+		 * @since 5.3.2
+		 */
+		public B multiThreaded(boolean supportMultithreaded) {
+			this.supportMultithreaded= supportMultithreaded;
+			return getThis();
+		}
+
 		protected abstract W createTmpDirSortedWriterWriter(FastaWriter<S,T,F> delegate, Comparator<F> comparator, int cacheSize, File tmpDir);
 		protected abstract W createInMemorySortedWriterWriter(FastaWriter<S,T,F> delegate, Comparator<F> comparator);
 		/**

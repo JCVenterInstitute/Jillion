@@ -291,7 +291,7 @@ public enum Nucleotide implements Residue {
 		}
 		//if we're still null then it's invalid character
     	if(ret==null){
-            throw new IllegalArgumentException("invalid character " + base + " ascii value " + (int)base);
+            throw new IllegalArgumentException("invalid character '" + base + "' ascii value " + (int)base);
         }
 		return ret;
 	}
