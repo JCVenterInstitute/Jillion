@@ -75,7 +75,9 @@ public enum AminoAcid implements Residue{
     	
     },
     
-    STOP("Stop", "Stop", '*', false)
+    STOP("Stop", "Stop", '*', false),
+
+    Leucine_or_Isoleucine("Leucine or Isoleucine", "Xle", 'J')
     ;
     
     private final Character abbreviation;
