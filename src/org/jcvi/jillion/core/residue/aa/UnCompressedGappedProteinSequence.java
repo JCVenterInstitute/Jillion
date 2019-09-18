@@ -6,6 +6,8 @@ import org.jcvi.jillion.core.util.iter.ArrayIterator;
 import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -13,6 +15,9 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 public class UnCompressedGappedProteinSequence extends AbstractResidueSequence<AminoAcid, ProteinSequence, ProteinSequenceBuilder> implements ProteinSequence{
+    //This class uses the Serialization Proxy Pattern
+    //described in Effective Java 2nd Ed
+    //to substitute a proxy class to be serialized.
 
     private final AminoAcid[] array;
 
@@ -118,5 +123,41 @@ public class UnCompressedGappedProteinSequence extends AbstractResidueSequence<A
     @Override
     public int hashCode() {
         return Arrays.hashCode(array);
+    }
+
+    private Object writeReplace(){
+        return new ProteinSequenceProxy(this);
+    }
+
+
+
+    private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+        throw new java.io.InvalidObjectException("Proxy required");
+    }
+
+    /**
+     * Serialization Proxy Pattern object to handle
+     * serialization of ProteinSequence objects.  This allows us
+     * to change ProteinSequence fields and subclasses without
+     * breaking serialization.
+     *
+     * @author dkatzel
+     *
+     */
+    private static final class ProteinSequenceProxy implements Serializable {
+
+        private static final long serialVersionUID = -8473861196950222580L;
+
+        private final String seq;
+
+        ProteinSequenceProxy(ProteinSequence s){
+            seq = s.toString();
+        }
+
+        private Object readResolve(){
+            return new ProteinSequenceBuilder(seq)
+                    .turnOffDataCompression(true)
+                    .build();
+        }
     }
 }

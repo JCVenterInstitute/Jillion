@@ -22,6 +22,7 @@ package org.jcvi.jillion.core.residue.aa;
 
 import java.io.ObjectInputStream;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 /**
  * {@code UngappedProteinSequence} is a {@link ProteinSequence}
@@ -80,5 +81,10 @@ class UngappedProteinSequence extends CompactProteinSequence{
 
 	private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
 		throw new java.io.InvalidObjectException("Proxy required");
+	}
+
+	@Override
+	public Iterator<AminoAcid> ungappedIterator() {
+		return iterator();
 	}
 }

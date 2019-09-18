@@ -22,6 +22,7 @@ package org.jcvi.jillion.core.residue;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -130,7 +131,7 @@ public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R,
      * Get the corresponding gapped Range (where the start and end values
      * of the range are in gapped coordinate space) for the given
      * ungapped {@link Range}.
-     * @param ungappedRegion the Range of ungapped coordinates; can not be null.
+     * @param ungappedRange the Range of ungapped coordinates; can not be null.
      * @return a new Range never null.
      * @throws NullPointerException if the gappedRange is null.
      * 
@@ -310,4 +311,63 @@ public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R,
        return StreamSupport.stream(new KmerSpliterator<R, T, B>(k, asSubtype(), range), false);
     }
 
+    /**
+     * Iterate over all the ungapped residues in this sequence.
+     * @return a new Iterator that only returns ungapped {@link Residue}s;
+     * will never be {@code null} but could be empty.
+     *
+     * @implNote By default, this method wraps the normal {@link Iterator}
+     * and filters out the gaps.  Implementations should override this method
+     * to provide more efficient implementations.
+     *
+     * @since 5.3.2
+     */
+    default Iterator<R> ungappedIterator(){
+        return new Iterator<R>(){
+
+            private Iterator<R> iter = iterator();
+            private R nextUngapped;
+            {
+                getNext();
+            }
+
+            private void getNext(){
+                while(iter.hasNext()){
+                    R n = iter.next();
+                    nextUngapped=null;
+                    if(!n.isGap()){
+                        nextUngapped = n;
+                        break;
+                    }
+                }
+            }
+            @Override
+            public boolean hasNext() {
+                return nextUngapped!=null;
+            }
+
+            @Override
+            public R next() {
+                if(!hasNext()){
+                    throw new NoSuchElementException();
+                }
+                R ret = nextUngapped;
+                getNext();
+                return ret;
+            }
+
+
+        };
+    }
+
+    /**
+     * Iterate over all the ungapped residues in this sequence.
+     * @return a new Iterator that only returns ungapped {@link Residue}s;
+     * will never be {@code null} but could be empty.
+     *
+     * @since 5.3.2
+     */
+    default Iterable<R> ungappedIterable(){
+        return this::ungappedIterator;
+    }
 }

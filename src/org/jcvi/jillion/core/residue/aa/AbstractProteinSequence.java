@@ -34,7 +34,7 @@ abstract class AbstractProteinSequence extends AbstractResidueSequence<AminoAcid
 
 	//This class uses the Serialization Proxy Pattern
 	//described in Effective Java 2nd Ed
-	//to substitute a proxy class to be serialized instead of Range.
+	//to substitute a proxy class to be serialized.
 		
 	private static final long serialVersionUID = -8506764895478268009L;
 	private final Sequence<AminoAcid> encodedAminoAcids;

@@ -23,6 +23,7 @@ package org.jcvi.jillion.align.pairwise;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.jillion.align.SequenceAlignment;
@@ -217,7 +218,7 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends ResidueSequ
 						
 				}
 				traceback.set(i,j,bestWalkBack.getTracebackDirection());
-				diagnol = traceback.get(i-1,j).ordinal();
+//				diagnol = traceback.get(i-1,j).ordinal();
 				
 				//printTraceBack();
 			}
@@ -233,7 +234,6 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends ResidueSequ
 	 * @param extendGapPenalty
 	 * @throws NullPointerException if any of the returned values from those
 	 * method calls returns null.
-	 * @throws Illegal
 	 */
 	private void initializeFields(float openGapPenalty, float extendGapPenalty) {
 
@@ -350,24 +350,28 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends ResidueSequ
 			TracebackDirection tracebackDirection = traceback.get(x,y);
 			switch(tracebackDirection){
 				case VERTICAL :
-					alignmentBuilder.addGap(residuesByOrdinal.get(seq1Bytes[x-1]), gap);
 					x--;
+					alignmentBuilder.addGap(residuesByOrdinal.get(seq1Bytes[x]), gap);
+
 					break;
 					
 				case HORIZONTAL :
-					alignmentBuilder.addGap(gap,residuesByOrdinal.get(seq2Bytes[y-1]));
 					y--;
+					alignmentBuilder.addGap(gap,residuesByOrdinal.get(seq2Bytes[y]));
+
 					break;
 				case DIAGONAL:
-					boolean isMatch = seq1Bytes[x-1] == seq2Bytes[y-1];
-					if(isMatch){
-						alignmentBuilder.addMatch(residuesByOrdinal.get(seq1Bytes[x-1]));
-					}else{
-						alignmentBuilder.addMismatch(residuesByOrdinal.get(seq1Bytes[x-1]), residuesByOrdinal.get(seq2Bytes[y-1]));
-					}
-					
 					x--;
 					y--;
+					int seq1Value = seq1Bytes[x];
+					int seq2Value = seq2Bytes[y];
+					boolean isMatch = seq1Value ==seq2Value;
+					if(isMatch){
+						alignmentBuilder.addMatch(residuesByOrdinal.get(seq1Value));
+					}else{
+						alignmentBuilder.addMismatch(residuesByOrdinal.get(seq1Value), residuesByOrdinal.get(seq2Value));
+					}
+
 					break;
 				case TERMINAL:
 					done = true;
@@ -390,11 +394,10 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends ResidueSequ
 	private byte[] convertToUngappedByteArray(S sequence) {
 		
 		ByteBuffer buf = ByteBuffer.allocate((int)sequence.getUngappedLength());
-		for(R residue : sequence){
-			//only include non-gaps in matrix
-			if(!residue.isGap()){
-				buf.put(residue.getOrdinalAsByte());
-			}
+		//only include non-gaps in matrix
+		for(R residue : sequence.ungappedIterable()){
+			buf.put(residue.getOrdinalAsByte());
+
 		}
 		buf.flip();
 		return buf.array();
@@ -605,18 +608,21 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends ResidueSequ
 		}
 		
 		public void set(int x, int y, TracebackDirection value){
-			int matrixValue = matrix[x/2][y/2];
+			int mX = x/2;
+			int mY = y/2;
+
+			int matrixValue = matrix[mX][mY];
 			if((x & 0x01)==0){
 				if((y & 0x01)==0){
-					matrix[x/2][y/2] = (byte)((matrixValue &0x3F) | (value.ordinal()<<6));
+					matrix[mX][mY] = (byte)((matrixValue &0x3F) | (value.ordinal()<<6));
 				}else{
-					matrix[x/2][y/2] = (byte)((matrixValue &0xCF) | (value.ordinal()<<4));
+					matrix[mX][mY] = (byte)((matrixValue &0xCF) | (value.ordinal()<<4));
 				}
 			}else{
 				if((y & 0x01)==0){
-					matrix[x/2][y/2] = (byte)((matrixValue &0xF3) | (value.ordinal()<<2));
+					matrix[mX][mY] = (byte)((matrixValue &0xF3) | (value.ordinal()<<2));
 				}else{
-					matrix[x/2][y/2] = (byte)((matrixValue &0xFC) | value.ordinal());
+					matrix[mX][mY] = (byte)((matrixValue &0xFC) | value.ordinal());
 				}
 				
 			}

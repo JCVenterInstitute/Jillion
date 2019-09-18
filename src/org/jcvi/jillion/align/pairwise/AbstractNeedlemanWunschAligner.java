@@ -34,7 +34,7 @@ import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
  * @author dkatzel
  *
  * @param <R> the type of {@link Residue} used in this aligner.
- * @param <S> the {@link Sequence} type input into this aligner.
+ * @param <S> the {@link ResidueSequence} type input into this aligner.
  * @param <B> the {@link org.jcvi.jillion.core.SequenceBuilder} for this aligner.
  * @param <A> the {@link SequenceAlignment} type returned by this aligner.
  * @param <P> the {@link PairwiseSequenceAlignment} type returned by this aligner.
@@ -90,7 +90,7 @@ abstract class AbstractNeedlemanWunschAligner <R extends Residue, S extends Resi
 		return TracebackDirection.VERTICAL;
 	}
 	/**
-	 * Returns a {@link org.jcvi.jillion_experimental.align.pairwise.AbstractPairwiseAligner.WalkBack} using the max of the 3 input values.
+	 * Returns a {@link WalkBack} using the max of the 3 input values.
 	 * <p/>
 	 * {@inheritDoc}
 	 */

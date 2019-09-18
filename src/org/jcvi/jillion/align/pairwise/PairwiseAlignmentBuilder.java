@@ -68,7 +68,7 @@ public final class PairwiseAlignmentBuilder<R extends Residue, S extends Residue
 	 * @throws NullPointerException if any parameters are null.
 	 */
 	public static PairwiseAlignmentBuilder<Nucleotide, NucleotideSequence, NucleotidePairwiseSequenceAlignment> createNucleotideAlignmentBuilder(NucleotideSequence query, NucleotideSequence subject, NucleotideSubstitutionMatrix matrix){
-		return new PairwiseAlignmentBuilder<Nucleotide, NucleotideSequence,NucleotidePairwiseSequenceAlignment>(query, subject, matrix);
+		return new PairwiseAlignmentBuilder<>(query, subject, matrix);
 	}
 	/**
 	 * Create a new PairwiseAlignmentBuilder to align
@@ -83,7 +83,7 @@ public final class PairwiseAlignmentBuilder<R extends Residue, S extends Residue
 	 * @throws NullPointerException if any parameters are null.
 	 */
 	public static PairwiseAlignmentBuilder<AminoAcid, ProteinSequence, ProteinPairwiseSequenceAlignment> createProteinAlignmentBuilder(ProteinSequence query, ProteinSequence subject, AminoAcidSubstitutionMatrix matrix){
-		return new PairwiseAlignmentBuilder<AminoAcid, ProteinSequence, ProteinPairwiseSequenceAlignment>(query, subject, matrix);
+		return new PairwiseAlignmentBuilder<>(query, subject, matrix);
 	}
 	
 	private PairwiseAlignmentBuilder(S query, S subject, SubstitutionMatrix<R> matrix){
@@ -252,7 +252,7 @@ public final class PairwiseAlignmentBuilder<R extends Residue, S extends Residue
     /**
      * Helper method to programmatically use Local or Global Alignment.
      * 
-     * @param useLocal
+     * @param useGlobal
      *            flag to say which kind of alignment to use. If set to
      *            {@code true}, this is the same as
      *            {@link #useGlobalAlignment()}, If set to {@code false}, this is

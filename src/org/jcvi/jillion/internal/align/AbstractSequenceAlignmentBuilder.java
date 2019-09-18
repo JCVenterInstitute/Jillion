@@ -184,6 +184,10 @@ public abstract class AbstractSequenceAlignmentBuilder
 			subjectRange = new Range.Builder(subjectSequenceBuilder.getUngappedLength()).shift(shiftedSubjectStart).build();
 		
 		}
+		subjectSequenceBuilder.turnOffDataCompression(true);
+		querySequenceBuilder.turnOffDataCompression(true);
+
+
 		return createAlignment(percentIdentity, alignmentLength, numMisMatches, numGaps, 
 				querySequenceBuilder.build(), subjectSequenceBuilder.build(),
 				queryRange, subjectRange);
