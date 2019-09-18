@@ -97,11 +97,27 @@ abstract class AbstractNeedlemanWunschAligner <R extends Residue, S extends Resi
 	@Override
 	protected WalkBack computeBestWalkBack(float alignmentScore,
 			float horrizontalGapPenalty, float verticalGapPenalty){
-				
-			double[] array = new double[]{alignmentScore, horrizontalGapPenalty, verticalGapPenalty};
-			
-			float bestScore = (float)Arrays.stream(array)
-										.max().getAsDouble();
+//
+//			double[] array = new double[]{alignmentScore, horrizontalGapPenalty, verticalGapPenalty};
+//
+//			float bestScore = (float)Arrays.stream(array)
+//										.max().getAsDouble();
+
+			float bestScore;
+			if(alignmentScore >= horrizontalGapPenalty){
+				if(alignmentScore >= verticalGapPenalty){
+					bestScore = alignmentScore;
+				}else{
+					bestScore = verticalGapPenalty;
+				}
+			}else{
+				if(horrizontalGapPenalty >= verticalGapPenalty){
+					bestScore = horrizontalGapPenalty;
+				}else{
+					bestScore = verticalGapPenalty;
+				}
+			}
+
 			final TracebackDirection dir;
 			//can't switch on float... so ugly if/else block below
 			if (bestScore == alignmentScore){

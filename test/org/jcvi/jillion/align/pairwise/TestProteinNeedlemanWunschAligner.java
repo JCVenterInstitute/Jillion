@@ -84,8 +84,8 @@ public class TestProteinNeedlemanWunschAligner {
 		
 	}
 
-	@Test
 	@Ignore
+	@Test
 	public void veryLargeSequence(){
 
 		IntSummaryStatistics stats = new IntSummaryStatistics();

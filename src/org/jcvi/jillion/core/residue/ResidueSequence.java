@@ -332,9 +332,10 @@ public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R,
             }
 
             private void getNext(){
+                nextUngapped=null;
                 while(iter.hasNext()){
                     R n = iter.next();
-                    nextUngapped=null;
+
                     if(!n.isGap()){
                         nextUngapped = n;
                         break;
