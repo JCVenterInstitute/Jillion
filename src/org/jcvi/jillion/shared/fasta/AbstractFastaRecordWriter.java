@@ -412,19 +412,6 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 			return createTmpDirSortedWriterWriter(writer, comparator, inMemoryCacheSize, tmpDir);
 		}
 
-		/**
-		 * Make writer threadsafe and support multithreads
-		 * writing at the same time.  If not set, defaults to {@code false}.
-		 * @param supportMultithreaded
-		 * @return this
-		 *
-		 * @since 5.3.2
-		 */
-		public B multiThreaded(boolean supportMultithreaded) {
-			this.supportMultithreaded= supportMultithreaded;
-			return getThis();
-		}
-
 		protected abstract W createTmpDirSortedWriterWriter(FastaWriter<S,T,F> delegate, Comparator<F> comparator, int cacheSize, File tmpDir);
 		protected abstract W createInMemorySortedWriterWriter(FastaWriter<S,T,F> delegate, Comparator<F> comparator);
 		/**
