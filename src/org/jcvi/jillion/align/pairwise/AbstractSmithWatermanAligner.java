@@ -36,7 +36,7 @@ import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
  * @author dkatzel
  *
  * @param <R> the type of {@link Residue} used in this aligner.
- * @param <S> the {@link Sequence} type input into this aligner.
+ * @param <S> the {@link ResidueSequence} type input into this aligner.
  * @param <A> the {@link SequenceAlignment} type returned by this aligner.
  * @param <P> the {@link PairwiseSequenceAlignment} type returned by this aligner.
  */
@@ -96,7 +96,7 @@ abstract class AbstractSmithWatermanAligner<R extends Residue, S extends Residue
 		return TracebackDirection.TERMINAL;
 	}
 	/**
-	 * Returns a {@link org.jcvi.jillion_experimental.align.pairwise.AbstractPairwiseAligner.WalkBack} using the max of the 3 input values and 
+	 * Returns a {@link WalkBack} using the max of the 3 input values and
 	 * zero.  The value Zero denotes a terminal traceback so 
 	 * no chosen score can ever be less than that.
 	 * <p/>
@@ -106,24 +106,40 @@ abstract class AbstractSmithWatermanAligner<R extends Residue, S extends Residue
 	protected WalkBack computeBestWalkBack(float alignmentScore,
 			float horrizontalGapPenalty, float verticalGapPenalty){
 		
-		double[] array = new double[] {0D, alignmentScore,	horrizontalGapPenalty, verticalGapPenalty};
-
-		float bestScore = (float) Arrays.stream(array).max().getAsDouble();
-		final TracebackDirection dir;
-		// can't switch on float... so ugly if/else block below
-		if (bestScore == 0) {
-			dir = TracebackDirection.TERMINAL;
-		} else if (bestScore == alignmentScore) {
-			dir = TracebackDirection.DIAGONAL;
-		} else if (bestScore == horrizontalGapPenalty) {
-			dir = TracebackDirection.HORIZONTAL;
-		} else {
-			dir = TracebackDirection.VERTICAL;
+//		double[] array = new double[] {0D, alignmentScore,	horrizontalGapPenalty, verticalGapPenalty};
+//
+//		float bestScore = (float) Arrays.stream(array).max().getAsDouble();
+		float bestScore;
+		TracebackDirection dir;
+		if(alignmentScore >= horrizontalGapPenalty){
+			if(alignmentScore >= verticalGapPenalty){
+				bestScore = alignmentScore;
+				dir=TracebackDirection.DIAGONAL;
+			}else{
+				bestScore = verticalGapPenalty;
+				dir = TracebackDirection.VERTICAL;
+			}
+		}else{
+			if(horrizontalGapPenalty >= verticalGapPenalty){
+				bestScore = horrizontalGapPenalty;
+				dir = TracebackDirection.HORIZONTAL;
+			}else{
+				bestScore = verticalGapPenalty;
+				dir = TracebackDirection.VERTICAL;
+			}
 		}
+
+
+		if(bestScore <= 0D){
+			dir = TracebackDirection.TERMINAL;
+			bestScore=0;
+		}
+
+
 		return new WalkBack(bestScore, dir);
 	}
 	/**
-	 * Only update the current {@link org.jcvi.jillion_experimental.align.pairwise.AbstractPairwiseAligner.StartPoint}
+	 * Only update the current {@link StartPoint}
 	 * if the given score is greater than the 
 	 * current starting point's score.
 	 * <p/>
