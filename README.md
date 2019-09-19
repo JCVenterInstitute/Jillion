@@ -1,8 +1,17 @@
 Jillion 5 requires Java 8 and uses new Java 8 language features such as default methods, lambda expressions and the new `Stream` and `Collector` API.
 
 # How to install
-## Using downloadable jar
-Just include the downloadable jar on your classpath.  Jillion does not require any other dependencies (other than the JVM)
+
+##Maven Central
+The easiest way to use Jillion is including it as a dependency 
+in your package manager.  Jillion is available on Maven Central
+```
+<dependency>
+  <groupId>org.jcvi.jillion</groupId>
+  <artifactId>jillion</artifactId>
+  <version>5.3.1</version>
+</dependency>
+```
 
 ## Building from source
 Jillion 5+ uses Maven to build and package a jar file.  From the root folder where the `pom.xml` file is type on the command line
