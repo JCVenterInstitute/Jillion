@@ -85,7 +85,7 @@ public class TestProteinNeedlemanWunschAligner {
 	}
 
 	@Test
-	@Ignore
+//	@Ignore
 	public void veryLargeSequence(){
 
 		IntSummaryStatistics stats = new IntSummaryStatistics();
@@ -95,7 +95,7 @@ public class TestProteinNeedlemanWunschAligner {
 			ProteinSequence b = ProteinSequenceTestUtil.randomSequence(7000);
 
 			long start = System.currentTimeMillis();
-			ProteinPairwiseSequenceAlignment actual = PairwiseAlignmentBuilder.createProteinAlignmentBuilder(a, a, blosom50)
+			ProteinPairwiseSequenceAlignment actual = PairwiseAlignmentBuilder.createProteinAlignmentBuilder(a, b, blosom50)
 					.gapPenalty(-8, -8)
 					.useGlobalAlignment()
 					.build();
