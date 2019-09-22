@@ -20,7 +20,10 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.aa;
 
+import org.jcvi.jillion.core.Range;
+
 import java.io.ObjectInputStream;
+import java.util.Arrays;
 
 /**
  * {@code CompactProteinSequence} is 
@@ -56,6 +59,6 @@ class CompactProteinSequence extends AbstractProteinSequence {
             int initialCapacity) {
         return new ProteinSequenceBuilder(initialCapacity);
     }
-	
-	
+
+
 }

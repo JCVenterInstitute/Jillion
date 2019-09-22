@@ -20,7 +20,10 @@
  ******************************************************************************/
 package org.jcvi.jillion.fasta.qual;
 
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.fasta.FastaRecord;
 
 class UncommentedQualityFastaRecord implements QualityFastaRecord{
 	private final String id;
@@ -80,6 +83,12 @@ class UncommentedQualityFastaRecord implements QualityFastaRecord{
 				+ qualities.hashCode();
 		return result;
 	}
+
+	@Override
+	public QualityFastaRecord trim(Range trimRange) {
+		return new UncommentedQualityFastaRecord(id, qualities.trim(trimRange));
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {

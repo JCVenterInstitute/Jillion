@@ -46,7 +46,12 @@ abstract class AbstractProteinSequence extends AbstractResidueSequence<AminoAcid
 			public ProteinSequenceBuilder toBuilder() {
 				return new ProteinSequenceBuilder(AbstractProteinSequence.this);
 			}
-			
+
+			@Override
+			public ProteinSequenceBuilder toBuilder(Range trimRange) {
+				return new ProteinSequenceBuilder(AbstractProteinSequence.this, trimRange);
+			}
+
 		};
 	}
 	

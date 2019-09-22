@@ -76,7 +76,17 @@ class ParsedQualitySequence implements QualitySequence{
 
     @Override
     public Iterator<PhredQuality> iterator(Range range) {
-        return new QualitySequenceBuilder(toArray(range)).iterator();
+        return toBuilder(range).iterator();
+    }
+
+    @Override
+    public QualitySequenceBuilder toBuilder(Range trimRange) {
+        return new QualitySequenceBuilder(toArray(trimRange));
+    }
+
+    @Override
+    public QualitySequence trim(Range trimRange) {
+        return new ParsedQualitySequence(codec, encodedQualities.substring((int)trimRange.getBegin(), (int) trimRange.getEnd()+1));
     }
 
     @Override

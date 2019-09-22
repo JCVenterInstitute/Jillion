@@ -23,6 +23,8 @@ package org.jcvi.jillion.core.residue.aa;
 import java.io.Serializable;
 import java.util.function.Function;
 
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.ResidueSequence;
 
 /**
@@ -42,6 +44,9 @@ public interface ProteinSequence extends ResidueSequence<AminoAcid, ProteinSeque
 
 	@Override
 	ProteinSequenceBuilder toBuilder();
+
+	@Override
+	ProteinSequenceBuilder toBuilder(Range trimRange);
 	/**
 	 * Convert this sequence into a String using the user defined function 
 	 * to write out each AminoAcid.
@@ -65,7 +70,12 @@ public interface ProteinSequence extends ResidueSequence<AminoAcid, ProteinSeque
 	default String toString(Function<AminoAcid, String> toStringFunction){
 	    return ResidueSequence.super.toString(toStringFunction);
 	}
-    public static ProteinSequence of(String seq) {
-        return new ProteinSequenceBuilder(seq).build();
+     static ProteinSequence of(String seq) {
+        return new ProteinSequenceBuilder(seq).turnOffDataCompression(true).build();
     }
+
+	@Override
+	default ProteinSequence trim(Range trimRange){
+		return toBuilder(trimRange).build();
+	}
 }

@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-public class SimpleNucleotideSequence extends AbstractResidueSequence<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder> implements NucleotideSequence{
+class SimpleNucleotideSequence extends AbstractResidueSequence<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder> implements NucleotideSequence{
 
     private final Nucleotide[] data;
 
@@ -23,11 +23,13 @@ public class SimpleNucleotideSequence extends AbstractResidueSequence<Nucleotide
     private final Supplier<GrowableIntArray> gapSupplier;
     private final Supplier<Boolean> isDnaSupplier, isRnaSupplier;
 
-
     public SimpleNucleotideSequence(GrowableByteArray data) {
-        this.data = data.stream().mapToObj(i-> Nucleotide.getByOrdinal(i)).toArray(i-> new Nucleotide[i]);
+        this(data.stream().mapToObj(i -> Nucleotide.getByOrdinal(i)).toArray(i -> new Nucleotide[i]));
+    }
+    public SimpleNucleotideSequence(Nucleotide[] data) {
+        this.data = data;
         stringSupplier = MemoizedSupplier.memoize(()->{
-            int length = data.getCurrentLength();
+            int length = data.length;
             StringBuilder builder = new StringBuilder(length);
             Arrays.stream(this.data).map(Nucleotide::getCharacter)
                         .forEach(builder::append);
@@ -50,27 +52,23 @@ public class SimpleNucleotideSequence extends AbstractResidueSequence<Nucleotide
 
         gapSupplier = MemoizedSupplier.memoize(()->{
             GrowableIntArray gaps = new GrowableIntArray();
-            byte valueOfGap = Nucleotide.Gap.getOrdinalAsByte();
-            data.forEachIndexed((i,v)->{
-                if(v == valueOfGap){
+            int length = data.length;
+            for(int i=0; i< length; i++){
+                if(data[i] == Nucleotide.Gap){
                     gaps.append(i);
                 }
-            });
+            }
             return gaps;
         });
         isDnaSupplier = MemoizedSupplier.memoize(()->{
-            GrowableIntArray gaps = new GrowableIntArray();
-            byte valueOfU = Nucleotide.Uracil.getOrdinalAsByte();
             //can't find any U's
-            return !data.stream().filter(v-> v==valueOfU).findAny().isPresent();
+            return !Arrays.stream(data).filter(v-> v==Nucleotide.Uracil).findAny().isPresent();
 
         });
 
         isRnaSupplier = MemoizedSupplier.memoize(()->{
-            GrowableIntArray gaps = new GrowableIntArray();
-            byte valueOfT = Nucleotide.Thymine.getOrdinalAsByte();
             //can't find any T's
-            return !data.stream().filter(v-> v==valueOfT).findAny().isPresent();
+            return !Arrays.stream(data).filter(v-> v==Nucleotide.Thymine).findAny().isPresent();
 
         });
     }
@@ -189,5 +187,11 @@ public class SimpleNucleotideSequence extends AbstractResidueSequence<Nucleotide
     @Override
     public int hashCode() {
         return Objects.hash(data);
+    }
+
+    @Override
+    public NucleotideSequence trim(Range trimRange) {
+        return new SimpleNucleotideSequence(Arrays.copyOfRange(data,
+                (int)trimRange.getBegin(), (int) trimRange.getEnd()+1));
     }
 }

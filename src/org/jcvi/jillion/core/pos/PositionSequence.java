@@ -20,9 +20,13 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.pos;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
 
 public interface PositionSequence extends Sequence<Position>{
 
 	short[] toArray();
+
+	@Override
+	PositionSequence trim(Range trimRange);
 }

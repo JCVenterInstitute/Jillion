@@ -294,7 +294,7 @@ public class TestNucleotideFastaRecordWriter {
 	    for(int i=0; i< 200; i++){
     	        ByteArrayOutputStream out = new ByteArrayOutputStream();
                 try(NucleotideFastaWriter sut = new NucleotideFastaWriterBuilder(out)
-						.multiThreaded(true).build()){
+						.build()){
                     
                     CountDownLatch latch = new CountDownLatch(2);
                     CountDownLatch doneLatch = new CountDownLatch(2);

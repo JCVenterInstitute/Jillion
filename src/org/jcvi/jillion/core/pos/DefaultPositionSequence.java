@@ -138,6 +138,14 @@ class DefaultPositionSequence implements PositionSequence{
 	public PositionSequenceBuilder toBuilder() {
 		return new PositionSequenceBuilder(this);
 	}
-	
-	
+
+	@Override
+	public PositionSequenceBuilder toBuilder(Range range) {
+		return new PositionSequenceBuilder(Arrays.copyOfRange(data, (int) range.getBegin(), (int) range.getEnd()+1));
+	}
+
+	@Override
+	public PositionSequence trim(Range range) {
+		return new DefaultPositionSequence(Arrays.copyOfRange(data, (int) range.getBegin(), (int) range.getEnd()+1));
+	}
 }

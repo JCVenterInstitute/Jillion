@@ -27,6 +27,7 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.util.streams.ThrowingConsumer;
+import org.jcvi.jillion.core.util.streams.ThrowingFunction;
 import org.jcvi.jillion.internal.core.util.Sneak;
 /**
  * An extension of {@link Stream} but with additional methods
@@ -59,6 +60,23 @@ public interface ThrowingStream<T> extends Stream<T>{
         forEach(t-> {
             try {
                 action.accept(t);
+            } catch (Throwable ex) {
+                throw Sneak.sneakyThrow(ex);
+            }
+        });
+    }
+    /**
+     * Iterate over each element remaining in the stream and call the given
+     * ThrowingConsumer, which may throw an Exception E.
+     * @param mapper the function to map the input type into the output for each element.
+     * @throws E the Exception the throwing consumer might throw.
+     *
+     * @since 5.3.2
+     */
+    default <R, E extends Exception> ThrowingStream<R> throwingMap(ThrowingFunction<? super T,R, E> mapper) throws E {
+        return map(t-> {
+            try {
+                return mapper.apply(t);
             } catch (Throwable ex) {
                 throw Sneak.sneakyThrow(ex);
             }

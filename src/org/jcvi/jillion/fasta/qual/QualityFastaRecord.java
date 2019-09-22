@@ -25,10 +25,13 @@
  */
 package org.jcvi.jillion.fasta.qual;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.fasta.FastaRecord;
 
 public interface QualityFastaRecord extends FastaRecord<PhredQuality,QualitySequence> {
 
+    @Override
+    QualityFastaRecord trim(Range trimRange);
 }

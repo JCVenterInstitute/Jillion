@@ -22,9 +22,11 @@ package org.jcvi.jillion.internal.fasta.aa;
 
 import java.util.regex.Pattern;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 import org.jcvi.jillion.core.util.ObjectsUtil;
 import org.jcvi.jillion.fasta.aa.ProteinFastaRecord;
+import org.jcvi.jillion.fasta.aa.ProteinFastaRecordBuilder;
 import org.jcvi.jillion.internal.fasta.FastaUtil;
 /**
  * {@code UnCommentedProteinFastaRecord} is an implementation
@@ -53,8 +55,13 @@ public class UnCommentedProteinFastaRecord implements ProteinFastaRecord{
          this.id = id;
          this.sequence = sequence;
     }
-   
-    
+
+    @Override
+    public ProteinFastaRecord trim(Range trimRange) {
+        return new ProteinFastaRecordBuilder(id, sequence.trim(trimRange))
+                    .comment(getComment())
+                .build();
+    }
 
     /**
      * @return A <code>String</code>.
@@ -86,8 +93,7 @@ public class UnCommentedProteinFastaRecord implements ProteinFastaRecord{
         	record.append(' ').append(this.getComment());
         }
         record.append(FastaUtil.getLineSeparator())
-		        .append(this.getRecordBody())
-		        .append(FastaUtil.getLineSeparator());
+		        .append(this.getRecordBody());
         
         return record.toString();
     }
@@ -125,7 +131,7 @@ public class UnCommentedProteinFastaRecord implements ProteinFastaRecord{
         if(length >0 && length%NUMBER_OF_BASES_PER_LINE==0){
             return result.substring(0, result.length()-1);
         }
-        return result;
+        return result.trim();
     }
     
     @Override
@@ -148,9 +154,18 @@ public class UnCommentedProteinFastaRecord implements ProteinFastaRecord{
             return false;
         }
         ProteinFastaRecord other = (ProteinFastaRecord)obj;
-		return 
-        ObjectsUtil.nullSafeEquals(getSequence(), other.getSequence()) 
-        && ObjectsUtil.nullSafeEquals(getId(), other.getId());
+
+        if(!(getId().equals(other.getId()))){
+            System.out.println("id doesn't match");
+    }
+        if(!(getSequence().equals(other.getSequence()))){
+            System.out.println("seq doesn't match : " + getSequence().getClass() + " vs  " + other.getSequence().getClass());
+        }
+		return
+
+                ObjectsUtil.nullSafeEquals(getId(), other.getId()) &&
+        ObjectsUtil.nullSafeEquals(getSequence(), other.getSequence()) ;
+
     }   
    
 }

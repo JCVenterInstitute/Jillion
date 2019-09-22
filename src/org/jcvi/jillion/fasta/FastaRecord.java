@@ -24,6 +24,7 @@
 package org.jcvi.jillion.fasta;
 
 import org.jcvi.jillion.core.Defline;
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
 
 
@@ -68,4 +69,15 @@ public interface FastaRecord<S,T extends Sequence<S>> extends Defline{
     
     @Override
     int hashCode();
+
+    /**
+     * Create a new Fasta Record with the same id and comment
+     * but only have the sequence be the subsequence given
+     * by the passed in Range.
+     * @param trimRange the range to trim the sequence to; can not be null.
+     * @return a new FastaRecord.
+     *
+     * @since 5.3.2
+     */
+    FastaRecord<S,T> trim(Range trimRange);
 }

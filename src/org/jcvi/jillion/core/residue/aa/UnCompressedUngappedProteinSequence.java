@@ -12,7 +12,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class UnCompressedUngappedProteinSequence implements ProteinSequence{
+/**
+ * ProteinSequence implementation that
+ * stores the amino acids as a simple Array
+ * this takes up more memory but is much
+ * faster than compacting it down to bits.
+ * Only sequences without gaps should use this implementation
+ * as it assumes there are no gaps when doing gap calculations.
+ *
+ * @since 5.3.2
+ */
+class UnCompressedUngappedProteinSequence implements ProteinSequence{
     //This class uses the Serialization Proxy Pattern
     //described in Effective Java 2nd Ed
     //to substitute a proxy class to be serialized.
@@ -120,9 +130,15 @@ public class UnCompressedUngappedProteinSequence implements ProteinSequence{
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof UnCompressedUngappedProteinSequence)) return false;
-        UnCompressedUngappedProteinSequence that = (UnCompressedUngappedProteinSequence) o;
-        return Arrays.equals(array, that.array);
+        if (!(o instanceof ProteinSequence)){
+            return false;
+        }
+        if( o instanceof UnCompressedUngappedProteinSequence){
+            UnCompressedUngappedProteinSequence that = (UnCompressedUngappedProteinSequence) o;
+            return Arrays.equals(array, that.array);
+        }else {
+            return toString().equals(o.toString());
+        }
     }
 
     @Override
@@ -169,5 +185,10 @@ public class UnCompressedUngappedProteinSequence implements ProteinSequence{
                                 .turnOffDataCompression(true)
                                 .build();
         }
+    }
+
+    @Override
+    public ProteinSequence trim(Range trimRange) {
+        return new UnCompressedUngappedProteinSequence(Arrays.copyOfRange(array, (int)trimRange.getBegin(), (int) trimRange.getEnd()+1));
     }
 }

@@ -160,7 +160,19 @@ public interface Sequence<T> extends Iterable<T>{
      * @since 5.1
      */
     SequenceBuilder<T, ? extends Sequence<T>> toBuilder();
-    
+
+    /**
+     * Create a new SequenceBuilder object that is initialized
+     * to only the part sequence in the given range.  Any changes made to the returned Builder
+     * will <strong>NOT</strong> affect this immutable Sequence.
+     * @param trimRange the subRange to use; can not be null.
+     * @return a new Builder instance, will never be null.
+     * @since 5.3.2
+     * @throws NullPointerException if trimRange is null.
+     * @throws IndexOutOfBoundsException if Range contains
+     *      values outside of the possible sequence offsets.
+     */
+    SequenceBuilder<T, ? extends Sequence<T>> toBuilder(Range trimRange);
     
     /**
      * Convert this sequence into a String using the user defined function 
@@ -197,5 +209,26 @@ public interface Sequence<T> extends Iterable<T>{
      */
     default boolean isEmpty(){
         return getLength() ==0;
+    }
+
+    /**
+     * Create a new Sequence that is only the part of this
+     * sequence within the given trim range.
+     *
+     * @param trimRange the subRange to use; can not be null.
+     * @return a new Builder instance, will never be null.
+     *
+     * @since 5.3.2
+     *
+     * @throws NullPointerException if trimRange is null.
+     * @throws IndexOutOfBoundsException if Range contains
+     *          values outside of the possible sequence offsets.
+     *
+     * @implNote By default this is the same as
+     *   {@code return toBuilder(trimRange).build()}
+     *   but implementations should override if they have a more efficient mechanism.
+     */
+    default Sequence<T> trim(Range trimRange){
+        return toBuilder(trimRange).build();
     }
 }

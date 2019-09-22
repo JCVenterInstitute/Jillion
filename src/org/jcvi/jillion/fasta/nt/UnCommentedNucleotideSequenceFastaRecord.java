@@ -21,11 +21,15 @@
 package org.jcvi.jillion.fasta.nt;
 
 
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.ObjectsUtil;
+import org.jcvi.jillion.fasta.FastaRecord;
+
 /**
  * {@code UnCommentedNucleotideSequenceFastaRecord} is an implementation
- * of {@link NucleotideSequenceFastaRecord} that saves
+ * of {@link NucleotideFastaRecord} that saves
  * memory by not having a reference to a comment.
  * All calls to {@link NucleotideFastaRecord#getComment()} will return null.
  * @author dkatzel
@@ -46,8 +50,11 @@ class UnCommentedNucleotideSequenceFastaRecord implements NucleotideFastaRecord{
          this.id = id;
          this.sequence = sequence;
     }
-   
-    
+
+    @Override
+    public NucleotideFastaRecord trim(Range trimRange) {
+        return new UnCommentedNucleotideSequenceFastaRecord(id, sequence.trim(trimRange));
+    }
 
     /**
      * @return A <code>String</code>.

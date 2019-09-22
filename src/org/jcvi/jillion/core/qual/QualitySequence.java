@@ -119,7 +119,11 @@ public interface QualitySequence extends Sequence<PhredQuality>{
     default QualitySequenceBuilder toBuilder(){
         return new QualitySequenceBuilder(this);
     }
-    
+
+    @Override
+    default QualitySequenceBuilder toBuilder(Range trimRange) {
+        return new QualitySequenceBuilder(this,trimRange);
+    }
     /**
      * Get the Java 8 {@link DoubleSummaryStatistics} of all the
      * quality values in this sequence.
@@ -160,5 +164,10 @@ public interface QualitySequence extends Sequence<PhredQuality>{
         return Optional.of(StreamSupport.stream(Spliterators.spliteratorUnknownSize(iter, Spliterator.ORDERED), false)
                     .collect(Collectors.summarizingDouble(PhredQuality::getQualityScore)));
                     
+    }
+
+    @Override
+    default QualitySequence trim(Range trimRange) {
+        return toBuilder(trimRange).build();
     }
 }

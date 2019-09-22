@@ -263,8 +263,6 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		private File tmpDir;
 		
 		private Charset charSet = DEFAULT_CHARSET;
-
-		private boolean supportMultithreaded = false;
 		
 		/**
 		 * Create a new Builder that will use

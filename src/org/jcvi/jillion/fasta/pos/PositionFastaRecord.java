@@ -21,6 +21,7 @@
 package org.jcvi.jillion.fasta.pos;
 
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.pos.Position;
 import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.util.ObjectsUtil;
@@ -105,7 +106,9 @@ public final class PositionFastaRecord implements FastaRecord<Position, Position
     public PositionSequence getSequence() {
         return positions;
     }
-    
-    
 
+    @Override
+    public PositionFastaRecord trim(Range trimRange) {
+        return new PositionFastaRecord(identifier, comments, positions.trim(trimRange));
+    }
 }

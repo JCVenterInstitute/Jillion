@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.fasta.nt;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.fasta.FastaRecord;
@@ -30,5 +31,6 @@ import org.jcvi.jillion.fasta.FastaRecord;
  *
  */
 public interface NucleotideFastaRecord extends FastaRecord<Nucleotide,NucleotideSequence>{
-
+    @Override
+    NucleotideFastaRecord trim(Range trimRange);
 }

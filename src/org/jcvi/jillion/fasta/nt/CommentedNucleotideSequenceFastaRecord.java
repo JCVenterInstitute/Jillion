@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.fasta.nt;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 class CommentedNucleotideSequenceFastaRecord extends UnCommentedNucleotideSequenceFastaRecord{
@@ -46,7 +47,11 @@ class CommentedNucleotideSequenceFastaRecord extends UnCommentedNucleotideSequen
 		//equality checks
 		return super.equals(obj);
 	}
-	
+
+	@Override
+	public NucleotideFastaRecord trim(Range trimRange) {
+		return new CommentedNucleotideSequenceFastaRecord(getId(), getSequence().trim(trimRange), comment);
+	}
 	
 
 }

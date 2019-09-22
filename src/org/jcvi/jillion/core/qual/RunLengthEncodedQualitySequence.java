@@ -26,6 +26,8 @@ import java.util.Optional;
 import java.util.OptionalDouble;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.SequenceBuilder;
 
 class RunLengthEncodedQualitySequence implements QualitySequence{
 	private final byte[] encodedData;
@@ -118,4 +120,6 @@ class RunLengthEncodedQualitySequence implements QualitySequence{
 	public Optional<PhredQuality> getMaxQuality() {
 		return RunLengthEncodedQualityCodec.INSTANCE.getMaxQuality(encodedData);
 	}
+
+
 }

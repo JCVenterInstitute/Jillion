@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
@@ -96,12 +97,38 @@ public interface FastaWriter<S, T extends Sequence<S>, F extends FastaRecord<S, 
 			write(entry.getKey(), entry.getValue());
 		}
 	}
+
+    /**
+     * Write the only the given range of the fasta record.
+     * @param fasta the fasta to write.
+     * @param range the sub range to include; if {@code null} then the whole range
+     *              is written out.
+     * @throws IOException if there's a problem writing the record.
+     *
+     * @since 5.3.2
+     */
+	default void write(F fasta, Range range) throws IOException{
+	    if(range ==null){
+	        write(fasta);
+        }else{
+            write( fasta.getId(), (T) fasta.getSequence().trim(range), fasta.getComment());
+        }
+    }
 	/**
 	 * Write all the records in the given Collection
 	 * @param fastas the fastas to write; can not be {@code null}.
 	 * @throws IOException if there is a problem writing any records.
 	 * @throws NullPointerException if collection is null or any element in the map is null.
 	 *
+	 * @implNote by default this just does
+	 * <pre>
+	 * {@code
+	 * for(F fasta : fastas){
+	 *     write(fasta);
+	 * }
+	 * }
+	 * </pre>
+	 * implementations should override this to provide a more efficient version.
 	 * @since 5.3.2
 	 */
 	default void write(Collection<F> fastas) throws IOException {
@@ -117,6 +144,19 @@ public interface FastaWriter<S, T extends Sequence<S>, F extends FastaRecord<S, 
 	 * @throws NullPointerException if dataStore is null.
 	 *
 	 * @since 5.3.2
+	 * @implNote by default this just does
+	 * 	 * <pre>
+	 * 	     {@Code
+	 * try(StreamingIterator<DataStoreEntry<F>> iter = dataStore.entryIterator()) {
+	 *     while(iter.hasNext()) {
+	 * 	        DataStoreEntry<F> entry = iter.next();
+	 *          write(entry.getKey(), entry.getValue().getSequence());
+	 *
+	 *    }
+	 * }
+	 * }
+	 * </pre>
+	 * implementations should override this to provide a more efficient version.
 	 */
 	default void write(FastaDataStore<S, T, F, ?> dataStore) throws IOException {
 		try(StreamingIterator<DataStoreEntry<F>> iter = dataStore.entryIterator()) {

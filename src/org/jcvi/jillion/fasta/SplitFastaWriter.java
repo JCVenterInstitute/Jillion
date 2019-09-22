@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.io.IOUtil;
 /**
@@ -293,7 +294,11 @@ public final class SplitFastaWriter{
 		public T getSequence() {
 			return sequence;
 		}
-		
+
+		@Override
+		public FastaRecord<S, T> trim(Range trimRange) {
+			return new FastaRecordImpl(id, comment, sequence.trim(trimRange));
+		}
 	}
 	
 	

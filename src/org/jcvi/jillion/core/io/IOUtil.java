@@ -1002,18 +1002,36 @@ public final class IOUtil {
      * @throws NullPointerException if either stream is null.
      */
     public static long copy(InputStream in, OutputStream out) throws IOException{
-    	byte[] buf = new byte[2048];
-    	long numBytesCopied=0;
-    	while(true){
-    		int numBytesRead =in.read(buf);
-    		if(numBytesRead ==EOF){
-    			break;
-    		}
-    		numBytesCopied+=numBytesRead;
-    		out.write(buf, 0, numBytesRead);
-    		out.flush();
-    	}
-    	return numBytesCopied;
+    	return copy(in, out, 2048);
+    }
+
+    /**
+     * Copy the contents of the given inputStream to the given
+     * outputStream.  This method buffers internally so there is no
+     * need to use a {@link BufferedInputStream}.  This method
+     * <strong>does not</strong> close either stream
+     * after processing.
+     * @param in the inputStream to read.
+     * @param out the outputStream to write to.
+     * @param bufferSize the size of the buffer to use.
+     * @return the number of bytes that were copied.
+     * @throws IOException if there is a problem reading or writing
+     * the streams.
+     * @throws NullPointerException if either stream is null.
+     */
+    public static long copy(InputStream in, OutputStream out, int bufferSize) throws IOException{
+        byte[] buf = new byte[bufferSize];
+        long numBytesCopied=0;
+        while(true){
+            int numBytesRead =in.read(buf);
+            if(numBytesRead ==EOF){
+                break;
+            }
+            numBytesCopied+=numBytesRead;
+            out.write(buf, 0, numBytesRead);
+//            out.flush();
+        }
+        return numBytesCopied;
     }
     /**
      * Read the contents of the given {@link InputStream}

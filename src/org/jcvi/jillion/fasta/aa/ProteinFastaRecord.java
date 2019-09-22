@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.fasta.aa;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 import org.jcvi.jillion.fasta.FastaRecord;
@@ -34,5 +35,7 @@ import org.jcvi.jillion.fasta.FastaRecord;
 public interface ProteinFastaRecord extends FastaRecord<AminoAcid,ProteinSequence> {
 
 	ProteinSequence getSequence();
-	
+
+	@Override
+	ProteinFastaRecord trim(Range trimRange);
 }

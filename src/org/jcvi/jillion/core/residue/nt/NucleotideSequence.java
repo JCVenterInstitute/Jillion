@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.ResidueSequence;
 /**
  * {@code NucleotideSequence} an interface to abstract
@@ -268,4 +269,9 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
         return !isDna();
     }
 
+
+    @Override
+    default NucleotideSequence trim(Range trimRange) {
+        return toBuilder(trimRange).build();
+    }
 }

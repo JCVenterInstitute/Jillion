@@ -1,6 +1,7 @@
 package org.jcvi.jillion.core.residue.aa;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.util.MemoizedSupplier;
 import org.jcvi.jillion.core.util.iter.ArrayIterator;
 import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
@@ -13,8 +14,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
-
-public class UnCompressedGappedProteinSequence extends AbstractResidueSequence<AminoAcid, ProteinSequence, ProteinSequenceBuilder> implements ProteinSequence{
+/**
+ * ProteinSequence implementation that
+ * stores the amino acids as a simple Array
+ * this takes up more memory but is much
+ * faster than compacting it down to bits.
+ *
+ * @since 5.3.2
+ */
+class UnCompressedGappedProteinSequence extends AbstractResidueSequence<AminoAcid, ProteinSequence, ProteinSequenceBuilder> implements ProteinSequence{
     //This class uses the Serialization Proxy Pattern
     //described in Effective Java 2nd Ed
     //to substitute a proxy class to be serialized.
@@ -115,9 +123,15 @@ public class UnCompressedGappedProteinSequence extends AbstractResidueSequence<A
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof UnCompressedGappedProteinSequence)) return false;
-        UnCompressedGappedProteinSequence that = (UnCompressedGappedProteinSequence) o;
-        return Arrays.equals(array, that.array);
+        if( !(o instanceof ProteinSequence)){
+            return false;
+        }
+        if (o instanceof UnCompressedGappedProteinSequence) {
+            UnCompressedGappedProteinSequence that = (UnCompressedGappedProteinSequence) o;
+            return Arrays.equals(array, that.array);
+        }else{
+            return toString().equals(  o.toString());
+        }
     }
 
     @Override
@@ -129,7 +143,10 @@ public class UnCompressedGappedProteinSequence extends AbstractResidueSequence<A
         return new ProteinSequenceProxy(this);
     }
 
-
+    @Override
+    public ProteinSequence trim(Range trimRange) {
+        return new UnCompressedUngappedProteinSequence(Arrays.copyOfRange(array, (int)trimRange.getBegin(), (int) trimRange.getEnd()+1));
+    }
 
     private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
         throw new java.io.InvalidObjectException("Proxy required");
