@@ -37,7 +37,8 @@ import org.junit.runners.Suite.SuiteClasses;
     	TestProteinFastaFileDataStoreBuilder.class,
     	TestProteinFastaDataStoreBuilderWithLambdaRecordFilter.class,
     	
-    	TestDefaultProteinFastaRecordWriter.class
+    	TestDefaultProteinFastaRecordWriter.class,
+			TestMultithreadProteinFastaWriter.class
     }
     )
 public class AllProteinFastaRecordUnitTests {

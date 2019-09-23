@@ -154,16 +154,7 @@ public class UnCommentedProteinFastaRecord implements ProteinFastaRecord{
             return false;
         }
         ProteinFastaRecord other = (ProteinFastaRecord)obj;
-
-        if(!(getId().equals(other.getId()))){
-            System.out.println("id doesn't match");
-    }
-        if(!(getSequence().equals(other.getSequence()))){
-            System.out.println("seq doesn't match : " + getSequence().getClass() + " vs  " + other.getSequence().getClass());
-        }
-		return
-
-                ObjectsUtil.nullSafeEquals(getId(), other.getId()) &&
+		return ObjectsUtil.nullSafeEquals(getId(), other.getId()) &&
         ObjectsUtil.nullSafeEquals(getSequence(), other.getSequence()) ;
 
     }   

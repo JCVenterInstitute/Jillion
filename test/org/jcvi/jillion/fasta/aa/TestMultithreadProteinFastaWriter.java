@@ -39,7 +39,7 @@ public class TestMultithreadProteinFastaWriter {
     @BeforeClass
     public static void createDataSet(){
         map = new ConcurrentHashMap<>(MapUtil.computeMinHashMapSizeWithoutRehashing(100_000));
-        for(int i=0; i<5_000; i++){
+        for(int i=0; i<2_000; i++){
             String id = "seq_" +i;
             map.put(id, new ProteinFastaRecordBuilder(id, ProteinSequenceTestUtil.randomSequence(100)).build());
         }

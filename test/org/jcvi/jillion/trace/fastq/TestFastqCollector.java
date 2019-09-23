@@ -44,7 +44,7 @@ public class TestFastqCollector {
         @BeforeClass
         public static void createDataSet(){
             map = new ConcurrentHashMap<>(MapUtil.computeMinHashMapSizeWithoutRehashing(100_000));
-            for(int i=0; i<10_000; i++){
+            for(int i=0; i<2_000; i++){
                 String id = "seq_" +i;
                 map.put(id, FastqRecordBuilder.create(id,
                         NucleotideSequenceTestUtil.createRandom(100),
