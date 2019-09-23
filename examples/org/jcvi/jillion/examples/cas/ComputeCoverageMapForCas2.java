@@ -22,6 +22,7 @@ package org.jcvi.jillion.examples.cas;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.List;
 
 import org.jcvi.jillion.assembly.clc.cas.AbstractCasFileVisitor;
@@ -40,7 +41,6 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
-import org.joda.time.Period;
 
 public class ComputeCoverageMapForCas2 {
 
@@ -54,7 +54,7 @@ public class ComputeCoverageMapForCas2 {
 		parser.parse(visitor);
 		long end = System.currentTimeMillis();
 		
-		System.out.println(new Period(end- start));
+		System.out.println(Duration.ofMillis(end- start));
 	}
 	
 	

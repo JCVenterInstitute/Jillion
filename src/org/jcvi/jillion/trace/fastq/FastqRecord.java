@@ -28,6 +28,7 @@ package org.jcvi.jillion.trace.fastq;
 import java.util.OptionalDouble;
 
 import org.jcvi.jillion.core.Defline;
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.trace.Trace;
@@ -149,5 +150,25 @@ public interface FastqRecord extends Trace, Defline{
      */
     default FastqRecordBuilder toBuilder(){
         return new FastqRecordBuilderImpl(this);
+    }
+
+    /**
+     * Create a new FastqRecord that only contains the part of the sequence
+     * and qualities within the given trimRange.
+     * @param trimRange the subSequence to include; can not be null.
+     * @return a new FastqRecord.
+     *
+     * @throws NullPointerException if trimRange is null.
+     * @throws IndexOutOfBoundsException  if Range contains values outside of
+     *              the possible sequence offsets.
+     *
+     * @5.3.2
+     */
+    default FastqRecord trim(Range trimRange){
+        return new FastqRecordBuilderImpl(getId(),
+                getNucleotideSequence().trim(trimRange),
+                getQualitySequence().trim(trimRange))
+                .comment(getComment())
+                .build();
     }
 }

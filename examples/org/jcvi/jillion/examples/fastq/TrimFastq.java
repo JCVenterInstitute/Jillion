@@ -23,6 +23,7 @@ package org.jcvi.jillion.examples.fastq;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -31,32 +32,60 @@ import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.trace.fastq.FastqFileDataStore;
-import org.jcvi.jillion.trace.fastq.FastqFileDataStoreBuilder;
-import org.jcvi.jillion.trace.fastq.FastqFileReader;
+import org.jcvi.jillion.fasta.FastaCollectors;
+import org.jcvi.jillion.trace.fastq.*;
 import org.jcvi.jillion.trace.fastq.FastqFileReader.Results;
-import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
-import org.jcvi.jillion.trace.fastq.FastqRecord;
-import org.jcvi.jillion.trace.fastq.FastqWriter;
-import org.jcvi.jillion.trace.fastq.FastqWriterBuilder;
 import org.jcvi.jillion.trim.BwaQualityTrimmer;
 import org.jcvi.jillion.trim.Trimmer;
 
 public class TrimFastq {
 
 	public static void main(String[] args) throws IOException, DataStoreException {
-		File fastqFile = new File("/path/to/input.fasta");
-		File outputFile = new File("/path/to/output.fasta");
+		File fastqFile = new File("/path/to/input.fastq");
+		File outputFile = new File("/path/to/output.fastq");
 		
 		long minLength = 30; // or whatever size you want
 		
 		
 		//trim_4_0(fastqFile, outputFile, minLength);
 		//trim_5_2(fastqFile, outputFile, minLength);
-		trim_5_3(fastqFile, outputFile, minLength);
+//		trim_5_3(fastqFile, outputFile, minLength);
 		
 	}
+	private static void trim_5_3_2(File fastqFile, File outputFile,
+								 long minLength)
+			throws IOException, DataStoreException {
+		Set<String> ids = new HashSet<>();
+		//populate ids Set for ids to include
 
+		Trimmer<FastqRecord> bwaTrimmer = BwaQualityTrimmer.createFor(PhredQuality.valueOf(20));
+
+		try(   Results parsedFastqs = FastqFileReader.read(fastqFile);
+
+			   FastqWriter writer = new FastqWriterBuilder(outputFile)
+					   // use same codec as input which was autoDetected
+					   .qualityCodec(parsedFastqs.getCodec()).build();
+		){
+
+
+			parsedFastqs.records()
+					.filter(fastq -> fastq.getLength() >= minLength)
+					.filter(fastq -> ids.contains(fastq.getId()))
+
+					.map(fastq-> {
+						Range trimRange = bwaTrimmer.trim(fastq);
+
+						if (trimRange.getLength() >= minLength) {
+							return fastq.trim(trimRange);
+						}
+						return null;
+					})
+					.filter(Objects::nonNull)
+					.collect(FastqCollectors.write(writer));
+
+		}//streams, writer and datastores will autoclose when end of scope reached.
+
+	}
 	 private static void trim_5_3(File fastqFile, File outputFile,
 	            long minLength)
 	            throws IOException, DataStoreException {

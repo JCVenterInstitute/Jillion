@@ -1,0 +1,287 @@
+package org.jcvi.jillion.trace.fastq;
+
+import org.jcvi.jillion.core.qual.PhredQuality;
+import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.testUtil.SlowTests;
+import org.jcvi.jillion.core.util.MapUtil;
+
+import org.jcvi.jillion.internal.core.util.Sneak;
+import org.jcvi.jillion.testutils.NucleotideSequenceTestUtil;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.rules.TemporaryFolder;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.IntSummaryStatistics;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import static org.junit.Assert.assertEquals;
+
+@Category(SlowTests.class)
+public class TestFastqCollector {
+
+        @Rule
+        public TemporaryFolder tmpDir = new TemporaryFolder();
+
+        private static Map<String, FastqRecord> map;
+
+        private static Random random = new Random();
+
+        @BeforeClass
+        public static void createDataSet(){
+            map = new ConcurrentHashMap<>(MapUtil.computeMinHashMapSizeWithoutRehashing(100_000));
+            for(int i=0; i<10_000; i++){
+                String id = "seq_" +i;
+                map.put(id, FastqRecordBuilder.create(id,
+                        NucleotideSequenceTestUtil.createRandom(100),
+
+                        createRandom(100)).build());
+            }
+        }
+
+        private static QualitySequence createRandom(int length){
+            byte[] quals = new byte[length];
+            for(int i=0; i< length; i++){
+                quals[i] = (byte)(random.nextInt(50) + 10);
+            }
+            return  new QualitySequenceBuilder(quals).build();
+        }
+
+    private <T> T fakeCPUIntensiveOp(T in){
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return in;
+    }
+    private FastqDataStore assertFileWrittenContainsAllRecordsInMap(File fastaFile) throws IOException {
+        return assertFileWrittenContainsAllRecordsInMap(fastaFile, 0);
+    }
+
+        private FastqDataStore assertFileWrittenContainsAllRecordsInMap(File fastaFile, int numExtra) throws IOException{
+        FastqDataStore datastore = FastqFileDataStore.fromFile(fastaFile);
+
+        assertEquals(map.size() + numExtra, datastore.getNumberOfRecords());
+        for(FastqRecord f : map.values()){
+            FastqRecord actual = datastore.get(f.getId());
+//            System.out.println(f);
+//            System.out.println(actual);
+            assertEquals(f, actual);
+        }
+        return datastore;
+    }
+
+        @Test
+        public void writeSerially() throws IOException {
+
+            File fastaFile = tmpDir.newFile();
+
+            try(FastqWriter writer = new FastqWriterBuilder(fastaFile)
+                    .build()){
+                for(FastqRecord f: map.values()){
+                    writer.write(fakeCPUIntensiveOp(f));
+                }
+            }
+
+            assertFileWrittenContainsAllRecordsInMap(fastaFile);
+        }
+
+        @Test
+        public void summary(){
+            FastqCollectors.FastqSummaryStatistics stats = map.values().parallelStream().collect(FastqCollectors.summarizing());
+            assertEquals(100, stats.getAvgLength().getAsDouble(), 0D);
+            assertEquals(100, stats.getMinLength().getAsInt());
+
+            assertEquals(100, stats.getMaxLength().getAsInt());
+
+            assertEquals(map.size(), stats.getCount());
+
+            IntSummaryStatistics expectedStats = map.values().stream().flatMap(r-> StreamSupport.stream(r.getQualitySequence().spliterator(), false))
+                                .collect(Collectors.summarizingInt(PhredQuality::getQualityScore));
+
+            assertEquals(expectedStats.getAverage(), stats.getAvgQuality().getAsDouble(), 0D);
+            assertEquals(expectedStats.getMin(), stats.getMinQuality().get().getQualityScore());
+            assertEquals(expectedStats.getMax(), stats.getMaxQuality().get().getQualityScore());
+        }
+        @Test
+        public void collectToDataStore() throws IOException{
+            FastqDataStore datastore = map.values().parallelStream().collect(FastqCollectors.toDataStore());
+
+            File fastaFile = tmpDir.newFile();
+            datastore.records()
+                    .peek(f-> {
+                        assertEquals(100, f.getQualitySequence().getLength());
+                        assertEquals(100, f.getNucleotideSequence().getLength());
+
+                    }).collect(FastqCollectors.writeAndClose(new FastqWriterBuilder(fastaFile)
+                    .build()));
+
+            assertFileWrittenContainsAllRecordsInMap(fastaFile);
+        }
+
+    @Test
+    public void writeSeriallyWithoutDelay() throws IOException {
+
+        File fastaFile = tmpDir.newFile();
+
+        try(FastqWriter writer = new FastqWriterBuilder(fastaFile)
+                .build()){
+            for(FastqRecord f: map.values()){
+                writer.write(f);
+            }
+        }
+
+        assertFileWrittenContainsAllRecordsInMap(fastaFile);
+    }
+        @Test
+        public void writeCollectionWithoutDelay() throws IOException {
+
+            File fastaFile = tmpDir.newFile();
+
+            try(FastqWriter writer = new FastqWriterBuilder(fastaFile)
+                    .build()){
+                writer.write(map.values());
+            }
+
+            assertFileWrittenContainsAllRecordsInMap(fastaFile);
+        }
+
+        @Test
+        public void executorService() throws Throwable {
+
+            File fastaFile = tmpDir.newFile();
+
+            ExecutorService service = Executors.newFixedThreadPool(5);
+            try(FastqWriter writer = new FastqWriterBuilder(fastaFile)
+                    .build()){
+                for(FastqRecord r : map.values()){
+                    service.submit(()-> write(r, writer));
+                }
+                service.shutdown();
+                service.awaitTermination(1, TimeUnit.HOURS);
+
+            }
+
+            assertFileWrittenContainsAllRecordsInMap(fastaFile);
+        }
+
+    @Test
+    public void writeAndKeepOpen() throws Throwable {
+
+        File fastaFile = tmpDir.newFile();
+
+        FastqRecord extra =  FastqRecordBuilder.create("extra",
+                                                        NucleotideSequenceTestUtil.createRandom(200),
+                                                        createRandom(200))
+                                                        .build();
+        try(FastqWriter writer = new FastqWriterBuilder(fastaFile).build()) {
+            map.values().parallelStream().map(this::fakeCPUIntensiveOp)
+                    .collect(FastqCollectors.write(writer));
+
+            writer.write(extra);
+        }
+
+
+
+        FastqDataStore datastore = assertFileWrittenContainsAllRecordsInMap(fastaFile, 1);
+        assertEquals(extra, datastore.get(extra.getId()));
+    }
+
+    @Test
+    public void writeFile() throws Throwable {
+
+        File fastaFile = tmpDir.newFile();
+
+
+        map.values().parallelStream().map(this::fakeCPUIntensiveOp)
+                .collect(FastqCollectors.write(fastaFile));
+
+
+
+        assertFileWrittenContainsAllRecordsInMap(fastaFile);
+    }
+    @Test
+    public void writeAndClose() throws Throwable {
+
+        File fastaFile = tmpDir.newFile();
+
+
+        map.values().parallelStream().map(this::fakeCPUIntensiveOp)
+                .collect(FastqCollectors.writeAndClose(new FastqWriterBuilder(fastaFile).build()));
+
+
+
+        assertFileWrittenContainsAllRecordsInMap(fastaFile);
+    }
+    private void write(FastqRecord r, FastqWriter writer){
+        try {
+            writer.write(fakeCPUIntensiveOp(r));
+        }catch(Throwable e){
+            Sneak.sneakyThrow(e);
+        };
+    }
+
+    //FIXME removing blocking queue implementations don't seem to make any improvment and complicates API
+/*
+    @Test
+    public void blockingQueueDefault() throws Throwable {
+
+        File fastaFile = tmpDir.newFile();
+
+
+        map.values().parallelStream().map(this::fakeCPUIntensiveOp)
+                .collect(FastqCollectors.writeUsingBlockingQueue(new FastqWriterBuilder(fastaFile)
+                        .build()));
+
+
+
+        assertFileWrittenContainsAllRecordsInMap(fastaFile);
+    }
+
+
+    @Test
+    public void blockingQueueLarge() throws Throwable {
+
+        File fastaFile = tmpDir.newFile();
+
+
+        map.values().parallelStream().map(this::fakeCPUIntensiveOp)
+                .collect(FastqCollectors.writeUsingBlockingQueue(new FastqWriterBuilder(fastaFile)
+                                .build(),
+                        1_000));
+
+
+
+        assertFileWrittenContainsAllRecordsInMap(fastaFile);
+    }
+    @Test
+    public void blockingQueueSmall() throws Throwable {
+
+        File fastaFile = tmpDir.newFile();
+
+
+        map.values().parallelStream().map(this::fakeCPUIntensiveOp)
+                .collect(FastqCollectors.writeUsingBlockingQueue(new FastqWriterBuilder(fastaFile)
+                                .build(),
+                        5));
+
+
+
+        assertFileWrittenContainsAllRecordsInMap(fastaFile);
+    }
+
+ */
+}

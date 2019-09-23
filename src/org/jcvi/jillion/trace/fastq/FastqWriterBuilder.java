@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.function.Function;
@@ -388,70 +389,85 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
 			
 		}
 		@Override
-                public void write(FastqRecord record) throws IOException{
+        public void write(FastqRecord record) throws IOException{
 		    write(record, null);
 		}
 		
 		@Override
 		public void write(FastqRecord record, Range trimRange) throws IOException {
-		    //performance improvement:
-		    //ParsedFastqRecord is a special implementation of FastqRecord
-		    //that delays converting the encoded sequence and qualities
-		    //from Strings into Jillion Sequence objects.
-		    //
-		    //This is actually the implementation returned by FastqParser
-		    //visit methods since Jillion 5.0.
-		    //
-		    //Profiling code to find performance bottlenecks
-		    //revealed all the CPU cycles wasted from
-		    //parsing a fastq file, and then rewriting
-		    //those records practically unaltered
-		    //back out (possibly filtering out records).
-		    //
-		    //It seemed silly to decode the encoded strings
-		    //into Jillion objects only to re-encode them
-		    //back into the same strings again right away during writing.
-		    //
-		    //This code is much uglier, but improves performance by 25%
-		    if(record instanceof ParsedFastqRecord){
-		        ParsedFastqRecord parsedRecord = (ParsedFastqRecord) record;
-		        FastqQualityCodec recordCodec = parsedRecord.getQualityCodec();
-		        String formattedString;
-		        if(codec == recordCodec){
-		            //same quality encoding can use encoded qualities as is
-		            formattedString=  toFormattedString(parsedRecord.getId(),
-		                    encodeNucleotides(parsedRecord.getNucleotideString(), trimRange),
-		                    formatEncodedQualities(parsedRecord.getEncodedQualities(), trimRange), parsedRecord.getComment());
-		        }else{
-		            //not same quality encoding		            
-		            String reEncodedQualities = reEncodeTrimmedQualities(parsedRecord, recordCodec, trimRange);
-		            
-		            formattedString = toFormattedString(parsedRecord.getId(), encodeNucleotides(parsedRecord.getNucleotideString(), trimRange),
-		                    //trimRange is null here because we already trimmed it during reencoding.
-		                    formatEncodedQualities(reEncodedQualities, null), parsedRecord.getComment());
-		        }
-		        
-		        writer.write(formattedString);
-		    }else{
-		        if(trimRange ==null){
-		            write(record.getId(), record.getNucleotideSequence(), record.getQualitySequence(), record.getComment());
-		        }else{
-		            write(record.getId(), 
-		                    record.getNucleotideSequence()
-		                            .toBuilder()
-		                            .trim(trimRange)
-		                            .turnOffDataCompression(true)
-		                            .build(), 
-		                    record.getQualitySequence()
-		                            .toBuilder()
-		                            .trim(trimRange)
-		                            .turnOffDataCompression(true)
-		                            .build(),
-		                 record.getComment());
-		        }
-		    }
+            String formattedString = formatRecordAsString(record, trimRange);
+            writer.write(formattedString);
 			
 		}
+
+        @Override
+        public void write(Collection<FastqRecord> fastqs) throws IOException {
+
+		    StringBuilder builder = new StringBuilder(50_000);
+		    int i=0;
+		    for(FastqRecord r : fastqs){
+                builder.append(formatRecordAsString(r,null));
+                i++;
+                if(i %20==0){
+                    writer.write(builder.toString());
+                    builder.setLength(0);
+                }
+            }
+		    if(builder.length() ==0){
+                writer.write(builder.toString());
+            }
+        }
+
+        protected String formatRecordAsString(FastqRecord record, Range trimRange) {
+            //performance improvement:
+            //ParsedFastqRecord is a special implementation of FastqRecord
+            //that delays converting the encoded sequence and qualities
+            //from Strings into Jillion Sequence objects.
+            //
+            //This is actually the implementation returned by FastqParser
+            //visit methods since Jillion 5.0.
+            //
+            //Profiling code to find performance bottlenecks
+            //revealed all the CPU cycles wasted from
+            //parsing a fastq file, and then rewriting
+            //those records practically unaltered
+            //back out (possibly filtering out records).
+            //
+            //It seemed silly to decode the encoded strings
+            //into Jillion objects only to re-encode them
+            //back into the same strings again right away during writing.
+            //
+            //This code is much uglier, but improves performance by 25%
+            String formattedString;
+            if(record instanceof ParsedFastqRecord){
+                ParsedFastqRecord parsedRecord = (ParsedFastqRecord) record;
+                FastqQualityCodec recordCodec = parsedRecord.getQualityCodec();
+
+                if(codec == recordCodec){
+                    //same quality encoding can use encoded qualities as is
+                    formattedString=  toFormattedString(parsedRecord.getId(),
+                            encodeNucleotides(parsedRecord.getNucleotideString(), trimRange),
+                            formatEncodedQualities(parsedRecord.getEncodedQualities(), trimRange), parsedRecord.getComment());
+                }else{
+                    //not same quality encoding
+                    String reEncodedQualities = reEncodeTrimmedQualities(parsedRecord, recordCodec, trimRange);
+
+                    formattedString = toFormattedString(parsedRecord.getId(), encodeNucleotides(parsedRecord.getNucleotideString(), trimRange),
+                            //trimRange is null here because we already trimmed it during reencoding.
+                            formatEncodedQualities(reEncodedQualities, null), parsedRecord.getComment());
+                }
+
+
+            }else{
+formattedString =toFormattedString(record.getId(),
+encodeNucleotides(record.getNucleotideSequence().toString(), trimRange),
+encodeQualities(trimRange == null ? record.getQualitySequence() : record.getQualitySequence().trim(trimRange)),
+record.getComment());
+
+
+            }
+            return formattedString;
+        }
 
 
         private String reEncodeTrimmedQualities(ParsedFastqRecord parsedRecord,

@@ -38,6 +38,54 @@ Jillion is now ready to use.
  Danny Katzel
  
 
+# 5.3.2 Release Notes (Work in Progress)
+## Performance improvements
+1. New ProteinSequence implementation when the Builder's `turnOffCompression()` method is set to true.
+this version takes up more memory per sequence but will be much faster to iterate over
+or randomly access.
+1. Some computations in Sequences are now lazily executed and cached which should improve performance
+for certain sequence operations especially things like computations involving gaps.
+
+1. Pairwise alignments runtime have been greatly improved.  Combined with the sequence improvements mentioned above
+Protein sequence alignments are now 4x faster than in 5.3.1.
+
+1. Fasta Writers implementations have been modified to be threadsafe so that writers
+can be written to by multiple threads at the same time. (FastqWriters should already be threadsafe)
+
+#API Changes
+1. AminoAcid ambiguity code 'J' (Leucine or Isoleucine) is now supported.
+1. added `ResidueSequence#ungappedIterator()` and `ResidueSequence#ungappedIteratable`
+to more easily iterate over all the bases that aren't gaps.
+1. added `Sequence#trim(Range)` which returns a new Sequence object that 
+contains only the subsequence of the range.
+1. added `FastaWriter#trim(FastaRecord, Range)` which only writes out the part of the fasta 
+within the given Range.
+1. Added new `FastaCollectors` and `FastqCollectors` classes that have several Java 8 Collector
+factory methods to do things like write from stream of records to formatted `Writers` or collect
+the records to `DataStore`s.
+1. added `trim(Range)` methods to `FastqRecord` and `FastaRecord`.
+
+#5.3.1 Release Notes
+Jillion is now in Maven Central.  The first version to be deployed is 5.3.1.
+## API Changes
+1. Internal API method names have had some typos fixed.
+1. Added `Nucleotide#cleanSequence()` and `AminoAcid#cleanSequence()` methods that remove
+whitespace and invalid  characters.  There are multiple overloads with different parameters to specify
+what to put in the place of the removed characters (ex: N).
+
+#5.3 Release Notes
+##Bug Fixes
+1. Fix for differently ordered original vs current data records in Ab1 Sanger traces files. ([#7][i7])
+
+## API Changes 
+1. made `Range#RangeAndCoordinateSystemToStringFunction` interface public so it can be used
+as a lambda expression in client code. (was mistakenly package private before)
+
+1. Added Support for Uracil. 
+1. `NucleotideSequence` now has new method `isDna()`
+1. Added new `SliceMapCollector` class 
+1. Added new methods `NucleotideSequence#findMatches(regex)` that return the ranges
+of regions in the sequence that match the given regular expression.
 # 5.2 Release Notes
 
 ## New Features
@@ -353,3 +401,5 @@ Bug Fixes
 6. AceFileParser - more lenient Consensus Tag timestamp parsers to support CLC Workbench ace output
     which doesn't follow the ace file spec regarding timestamp resolution.
  
+ 
+ [i7]: https://github.com/JCVenterInstitute/Jillion/issues/7

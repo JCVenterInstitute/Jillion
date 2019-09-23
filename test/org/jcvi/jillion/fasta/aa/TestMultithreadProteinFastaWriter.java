@@ -14,6 +14,9 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -181,6 +184,22 @@ public class TestMultithreadProteinFastaWriter {
 
         assertFileWrittenCorrectly(fastaFile);
     }
+
+    @Test
+    public void toDataStore() throws IOException{
+        File fastaFile = tmpDir.newFile();
+
+        ProteinFastaDataStore datastore =  map.values()
+                                                .parallelStream()
+                                        .collect(FastaCollectors.toDataStore(ProteinFastaDataStore.class));
+
+        datastore.records().collect(FastaCollectors.write(new ProteinFastaWriterBuilder(fastaFile)
+                .build()));
+
+        assertFileWrittenCorrectly(fastaFile);
+    }
+
+
     @Test
     public void multiThreadedCollectorUnordered() throws Throwable {
 

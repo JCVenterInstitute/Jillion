@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -52,6 +53,29 @@ public interface FastqWriter extends Closeable{
 	 * @throws NullPointerException if record is null.
 	 */
 	void write(FastqRecord record) throws IOException;
+
+    /**
+     * Write all the records in the given Collection
+     * @param fastqs the fastqs to write; can not be {@code null}.
+     * @throws IOException if there is a problem writing any records.
+     * @throws NullPointerException if collection is null or any element in the map is null.
+     *
+     * @implNote by default this just does
+     * <pre>
+     * {@code
+     * for(FastqRecord r : fastqs){
+     *     write(r);
+     * }
+     * }
+     * </pre>
+     * implementations should override this to provide a more efficient version.
+     * @since 5.3.2
+     */
+    default void write(Collection<FastqRecord> fastqs) throws IOException{
+        for(FastqRecord r : fastqs){
+            write(r);
+        }
+    }
 	
 	/**
          * Write the given {@link FastqRecord} out.
