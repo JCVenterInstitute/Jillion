@@ -305,7 +305,7 @@ public class TestFastqCollector {
  */
 
     private void assertFileWrittenAndTrimmedCorrectly(File fastqFile, Range trimRange) throws IOException{
-        FastqDataStore datastore = FastqDataStore.fromFile(fastqFile);
+        FastqDataStore datastore = FastqFileDataStore.fromFile(fastqFile);
 
         assertEquals(map.size(), datastore.getNumberOfRecords());
         for(FastqRecord f : map.values()){
