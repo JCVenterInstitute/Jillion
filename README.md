@@ -52,7 +52,7 @@ Protein sequence alignments are now 4x faster than in 5.3.1.
 1. Fasta Writers implementations have been modified to be threadsafe so that writers
 can be written to by multiple threads at the same time. (FastqWriters should already be threadsafe)
 
-#API Changes
+## API Changes
 1. AminoAcid ambiguity code 'J' (Leucine or Isoleucine) is now supported.
 1. added `ResidueSequence#ungappedIterator()` and `ResidueSequence#ungappedIteratable`
 to more easily iterate over all the bases that aren't gaps.
@@ -64,8 +64,9 @@ within the given Range.
 factory methods to do things like write from stream of records to formatted `Writers` or collect
 the records to `DataStore`s.
 1. added `trim(Range)` methods to `FastqRecord` and `FastaRecord`.
+1. Exonerate and Vulgar packages have been deprecated and will be removed in the next version.
 
-#5.3.1 Release Notes
+## 5.3.1 Release Notes
 Jillion is now in Maven Central.  The first version to be deployed is 5.3.1.
 ## API Changes
 1. Internal API method names have had some typos fixed.
@@ -73,8 +74,8 @@ Jillion is now in Maven Central.  The first version to be deployed is 5.3.1.
 whitespace and invalid  characters.  There are multiple overloads with different parameters to specify
 what to put in the place of the removed characters (ex: N).
 
-#5.3 Release Notes
-##Bug Fixes
+# 5.3 Release Notes
+## Bug Fixes
 1. Fix for differently ordered original vs current data records in Ab1 Sanger traces files. ([#7][i7])
 
 ## API Changes 
