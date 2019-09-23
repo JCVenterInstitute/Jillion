@@ -135,17 +135,14 @@ public class FastaCollectors {
      * Write all the {@link FastaRecord}s in the Stream to a the given {@link FastaWriter}
      * AND CLOSE the WRITER WHEN COMPLETE.
      * @param writer the {@link FastaWriter} to write to.  Can not be {@code null}.
-     * @param fastaFunction function to convert the elements of the Stream to FastaRecords to write.
+     * @param consumer function to convert the elements of the Stream to FastaRecords to write.
      * @return a new Collector that will write the accumulated records to the fasta writer.
      */
-    public static <T, R, S extends Sequence<R>, F extends FastaRecord<R,S>, W extends FastaWriter<R, S,F>> Collector<T, ?, Void> writeAndClose(W writer, Function<T, F> fastaFunction){
+    public static <T, R, S extends Sequence<R>, F extends FastaRecord<R,S>, W extends FastaWriter<R, S,F>, E extends Throwable> Collector<T, ?, Void> writeAndClose(W writer, ThrowingBiConsumer<W, T, E> consumer){
         return Collector.of(() -> writer,
                 (w, t) -> {
                     try{
-                        F fasta = fastaFunction.apply(t);
-                        if(fasta !=null) {
-                            w.write(fasta);
-                        }
+                    consumer.accept(w,t);
                     }catch(Throwable e){
                         Sneak.sneakyThrow(e);
                     }

@@ -124,66 +124,67 @@ public class TestMultithreadProteinFastaWriter {
     }
 
     @Test
-    public void blockingQueueTrimmed() throws Throwable {
+    public void writeTrimmed() throws Throwable {
 
         File fastaFile = tmpDir.newFile();
 
 
         Range trimRange = Range.of(25,75);
         map.values().parallelStream().map(this::fakeCPUIntensiveOp)
-                .collect(FastaCollectors.writeUsingBlockingQueue(new ProteinFastaWriterBuilder(fastaFile).build(),
-                                               100,
-                        (w,r)-> w.write(r.trim(trimRange))));
+                .collect(FastaCollectors.writeAndClose(new ProteinFastaWriterBuilder(fastaFile).build(),
+
+                        (w,r)-> w.write(r.trim(trimRange))
+                        ));
 
 
 
         assertFileWrittenAndTrimmedCorrectly(fastaFile, trimRange);
     }
 
-    @Test
-    public void blockingQueueDefault() throws Throwable {
-
-        File fastaFile = tmpDir.newFile();
-
-
-            map.values().parallelStream().map(this::fakeCPUIntensiveOp)
-                    .collect(FastaCollectors.writeUsingBlockingQueue(new ProteinFastaWriterBuilder(fastaFile)
-                            .build()));
-
-
-
-        assertFileWrittenCorrectly(fastaFile);
-    }
-    @Test
-    public void blockingQueueLarge() throws Throwable {
-
-        File fastaFile = tmpDir.newFile();
-
-
-        map.values().parallelStream().map(this::fakeCPUIntensiveOp)
-                .collect(FastaCollectors.writeUsingBlockingQueue(new ProteinFastaWriterBuilder(fastaFile)
-                        .build(),
-                        1_000));
-
-
-
-        assertFileWrittenCorrectly(fastaFile);
-    }
-    @Test
-    public void blockingQueueSmall() throws Throwable {
-
-        File fastaFile = tmpDir.newFile();
-
-
-        map.values().parallelStream().map(this::fakeCPUIntensiveOp)
-                .collect(FastaCollectors.writeUsingBlockingQueue(new ProteinFastaWriterBuilder(fastaFile)
-                                .build(),
-                        5));
-
-
-
-        assertFileWrittenCorrectly(fastaFile);
-    }
+//    @Test
+//    public void blockingQueueDefault() throws Throwable {
+//
+//        File fastaFile = tmpDir.newFile();
+//
+//
+//            map.values().parallelStream().map(this::fakeCPUIntensiveOp)
+//                    .collect(FastaCollectors.writeUsingBlockingQueue(new ProteinFastaWriterBuilder(fastaFile)
+//                            .build()));
+//
+//
+//
+//        assertFileWrittenCorrectly(fastaFile);
+//    }
+//    @Test
+//    public void blockingQueueLarge() throws Throwable {
+//
+//        File fastaFile = tmpDir.newFile();
+//
+//
+//        map.values().parallelStream().map(this::fakeCPUIntensiveOp)
+//                .collect(FastaCollectors.writeUsingBlockingQueue(new ProteinFastaWriterBuilder(fastaFile)
+//                        .build(),
+//                        1_000));
+//
+//
+//
+//        assertFileWrittenCorrectly(fastaFile);
+//    }
+//    @Test
+//    public void blockingQueueSmall() throws Throwable {
+//
+//        File fastaFile = tmpDir.newFile();
+//
+//
+//        map.values().parallelStream().map(this::fakeCPUIntensiveOp)
+//                .collect(FastaCollectors.writeUsingBlockingQueue(new ProteinFastaWriterBuilder(fastaFile)
+//                                .build(),
+//                        5));
+//
+//
+//
+//        assertFileWrittenCorrectly(fastaFile);
+//    }
 
     @Test
     public void toDataStore() throws IOException{
@@ -193,27 +194,27 @@ public class TestMultithreadProteinFastaWriter {
                                                 .parallelStream()
                                         .collect(FastaCollectors.toDataStore(ProteinFastaDataStore.class));
 
-        datastore.records().collect(FastaCollectors.write(new ProteinFastaWriterBuilder(fastaFile)
+        datastore.records().collect(FastaCollectors.writeAndClose(new ProteinFastaWriterBuilder(fastaFile)
                 .build()));
 
         assertFileWrittenCorrectly(fastaFile);
     }
 
 
-    @Test
-    public void multiThreadedCollectorUnordered() throws Throwable {
-
-        File fastaFile = tmpDir.newFile();
-
-        try(ProteinFastaWriter writer = new ProteinFastaWriterBuilder(fastaFile)
-                .build()){
-            map.values().parallelStream().map(this::fakeCPUIntensiveOp)
-                    .collect(FastaCollectors.writeUnordered(writer));
-
-        }
-
-        assertFileWrittenCorrectly(fastaFile);
-    }
+//    @Test
+//    public void multiThreadedCollectorUnordered() throws Throwable {
+//
+//        File fastaFile = tmpDir.newFile();
+//
+//        try(ProteinFastaWriter writer = new ProteinFastaWriterBuilder(fastaFile)
+//                .build()){
+//            map.values().parallelStream().map(this::fakeCPUIntensiveOp)
+//                    .collect(FastaCollectors.writeUnordered(writer));
+//
+//        }
+//
+//        assertFileWrittenCorrectly(fastaFile);
+//    }
 
 
 

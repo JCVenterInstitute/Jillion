@@ -43,6 +43,10 @@ import java.util.stream.Collectors;
  *  //write to the given file
  *  fastqs.parallelStream().collect(FastqCollectors.writeAndClose(new FastqWriterBuilder(...).build());
  *
+ * //stream through elements and perform operation to modify fastqrecord to write
+ * fastqs.parallelStream().collect(FastqCollectors.write(fastaFile,
+ *                         (w, record)-> w.write(record.trim(trimRange))));
+ *
  *   //write records to given FastqWriter keeping writer open
  *   try(FastqWriter writer = ...){
  *      fastqs.parallelStream().collect(FastqCollectors.write(writer));
@@ -74,6 +78,22 @@ public final class FastqCollectors {
     public static  Collector<FastqRecord, ?, Void> write(File fastqFileToWriteTo) throws IOException{
         return writeAndClose(new FastqWriterBuilder(fastqFileToWriteTo).build());
     }
+
+    /**
+     * Write all the {@link FastqRecord}s in the Stream to a new File (overwriting if already exists)
+     * using the default FastqWriter implementation.
+     * @param fastqFileToWriteTo the file to write to.  Can not be {@code null},
+     *                           if the file does not exist then the file and any parent directories
+     *                           will be created.
+     *
+     * @param writeFunction the function to take the input record and (possiblly)
+     *                     write it to the given writer.
+     * @return a new Collector that will write the accumulated records to the fastq writer.
+     * @throws IOException if there is a problem creating a writer to write to the given file.
+     */
+    public static <T, E extends Throwable> Collector<T, ?, Void> write(File fastqFileToWriteTo, ThrowingBiConsumer<FastqWriter, T, E> writeFunction) throws IOException, E{
+        return writeAndClose(new FastqWriterBuilder(fastqFileToWriteTo).build(), writeFunction);
+    }
     /**
      * Write all the {@link FastqRecord}s in the Stream to a the given {@link FastqWriter}
      * AND CLOSE the WRITER WHEN COMPLETE.
@@ -96,6 +116,40 @@ public final class FastqCollectors {
                             w.close();
                         } catch (IOException e) {
                            throw new UncheckedIOException(e);
+                        }
+                        return null;
+                    }
+                } ,
+                Collector.Characteristics.CONCURRENT,
+                Collector.Characteristics.UNORDERED
+        );
+    }
+
+    /**
+     * Write all the {@link FastqRecord}s in the Stream to a the given {@link FastqWriter}
+     * AND CLOSE the WRITER WHEN COMPLETE.
+     * @param writer the {@link FastqWriter} to write to.  Can not be {@code null}.
+     * @param writeFunction the function to take the input record and (possiblly)
+     *                     write it to the given writer.
+     * @return a new Collector that will write the accumulated records to the fastq writer.
+     */
+    public static  <T, E extends Throwable> Collector<T, ?, Void> writeAndClose(FastqWriter writer, ThrowingBiConsumer<FastqWriter, T, E> writeFunction) throws E{
+        Objects.requireNonNull(writeFunction);
+        return Collector.of(() -> writer,
+                (w, record) -> {
+                    try{
+                        writeFunction.accept(w, record);
+                    }catch(Throwable t){
+                        Sneak.sneakyThrow(t);
+                    }
+                },
+                (w1, w2) -> w1,
+                w->{
+                    {
+                        try {
+                            w.close();
+                        } catch (IOException e) {
+                            throw new UncheckedIOException(e);
                         }
                         return null;
                     }
