@@ -9,7 +9,7 @@ in your package manager.  Jillion is available on Maven Central
 <dependency>
   <groupId>org.jcvi.jillion</groupId>
   <artifactId>jillion</artifactId>
-  <version>5.3.1</version>
+  <version>5.3.2</version>
 </dependency>
 ```
 
@@ -38,7 +38,7 @@ Jillion is now ready to use.
  Danny Katzel
  
 
-# 5.3.2 Release Notes (Work in Progress)
+# 5.3.2 Release Notes
 ## Performance improvements
 1. New ProteinSequence implementation when the Builder's `turnOffCompression()` method is set to true.
 this version takes up more memory per sequence but will be much faster to iterate over
