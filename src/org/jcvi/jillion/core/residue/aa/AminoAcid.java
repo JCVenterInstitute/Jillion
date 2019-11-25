@@ -169,14 +169,28 @@ public enum AminoAcid implements Residue{
     /**
      * Get the single AminoAcid which is represented by the given String.
      * the String can be the full name (with spaces if multiple words),
-     * the 3 letter abbreviation or the 1 letter abbreviation, case is 
+     * the 3 letter abbreviation or the 1 letter abbreviation, case is
      * insensitive.
-     * @param aminoAcid a single AminoAcid represented by a String.
+     * @param aminoAcid a single AminoAcid represented by a String or {@code null} if not a valid amino acid.
      * @return an {@link AminoAcid} (not null).
      * @throws NullPointerException if aminoAcid is null.
-     * @throws IllegalArgumentException if the given String is not
-     * an AminoAcid.
+     *
+     * @since 5.3.3
      */
+    public static AminoAcid safeParse(String aminoAcid) {
+        return NAME_MAP.get(aminoAcid.toUpperCase(Locale.US));
+    }
+        /**
+         * Get the single AminoAcid which is represented by the given String.
+         * the String can be the full name (with spaces if multiple words),
+         * the 3 letter abbreviation or the 1 letter abbreviation, case is
+         * insensitive.
+         * @param aminoAcid a single AminoAcid represented by a String.
+         * @return an {@link AminoAcid} (not null).
+         * @throws NullPointerException if aminoAcid is null.
+         * @throws IllegalArgumentException if the given String is not
+         * an AminoAcid.
+         */
     public static AminoAcid parse(String aminoAcid){
         AminoAcid result = NAME_MAP.get(aminoAcid.toUpperCase(Locale.US));
         if(result ==null){

@@ -262,11 +262,35 @@ public enum Nucleotide implements Residue {
      * @return a {@link Nucleotide} equivalent.
      * @throws IllegalArgumentException if the given
      * character can not be mapped to a {@link Nucleotide}.
+     * 
+     * @see #parseOrNull(char)
      */
     public static Nucleotide parse(char base){
         final Nucleotide ret = parseOrNull(base);
         if(ret==null){
             throw new IllegalArgumentException("invalid character " + base + " ascii value " + (int)base);
+        }
+        return ret;
+    }
+
+    /**
+     *Same as {@link #parse(char)}
+     * except if the character is ASCII whitespace
+     *  or not a valid nucleotide then return null instead of throw an exception.
+     * @param base
+     * @return
+     *
+     * @since 5.3.3
+     */
+    public static Nucleotide safeParse(char base){
+        //if it's a whitespace character return null.
+        if(base == 32 || (base >=0 && base <=13)){
+            return null;
+        }
+        int offset =computeOffsetFor(base);
+        Nucleotide ret=null;
+        if(offset >=0 && offset < CACHE.length){
+            ret = CACHE[offset];
         }
         return ret;
     }
@@ -278,17 +302,10 @@ public enum Nucleotide implements Residue {
      * 
      * @return the {@link Nucleotide} of {@code null}
      * if the char does not represent a valid nucleotide.
+     *
      */
 	protected static Nucleotide parseOrNull(char base) {
-		//if it's a whitespace character return null.
-		if(base == 32 || (base >=0 && base <=13)){
-			return null;
-		}
-		int offset =computeOffsetFor(base);
-		Nucleotide ret=null;
-		if(offset >=0 && offset < CACHE.length){
-			ret = CACHE[offset];
-		}
+        Nucleotide ret = safeParse(base);
 		//if we're still null then it's invalid character
     	if(ret==null){
             throw new IllegalArgumentException("invalid character '" + base + "' ascii value " + (int)base);

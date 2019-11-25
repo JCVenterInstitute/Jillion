@@ -136,6 +136,23 @@ public interface DataStore<T> extends Closeable{
      * @throws DataStoreClosedException if this {@link DataStore} is closed.
      */
     long getNumberOfRecords() throws DataStoreException;
+
+    /**
+     * Does this Datastore have any records in it.
+     * @return the {@code true} if the number of records is 0; otherwise {@code false}.
+     * @throws DataStoreException if there is a problem fetching the
+     * data from this {@link DataStore}.
+     * @throws DataStoreClosedException if this {@link DataStore} is closed.
+     * @since 5.3.3
+     *
+     * @implSpec by default this method is implemented by:
+     * <pre>
+     *{@code return getNumberOfRecords() ==0L;}
+     * </pre>
+     */
+    default boolean isEmpty() throws DataStoreException{
+        return getNumberOfRecords() ==0L;
+    }
     /**
      * Checks to see if this {@link DataStore} been closed by the {@link #close()}
      * method.

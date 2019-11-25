@@ -37,6 +37,11 @@ Jillion is now ready to use.
  
  Danny Katzel
  
+# 5.3.3 Release Notes
+
+## API Changes
+1. `AbstractNucleotideFastaRecordVisitor` and `AbstractProteinFastaRecordVisitor` now have 
+   an new constructor with a boolean to turn off sequence compression for runtime performance improvements.
 
 # 5.3.2 Release Notes
 ## Performance improvements

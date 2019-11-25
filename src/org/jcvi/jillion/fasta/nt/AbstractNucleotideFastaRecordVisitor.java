@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.fasta.nt;
 
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.fasta.AbstractFastaRecordVisitor;
 /**
  * Abstract
@@ -39,17 +40,35 @@ import org.jcvi.jillion.fasta.AbstractFastaRecordVisitor;
  */
 public abstract class AbstractNucleotideFastaRecordVisitor extends  AbstractFastaRecordVisitor{
 
+	private final boolean turnOffCompression;
+
 	public AbstractNucleotideFastaRecordVisitor(String id, String comment) {
-		super(id,comment);
+		this(id,comment, false);
 	}
 
-	
+	/**
+	 *  Create new visitor instance for a single fasta record with the given id and comment.
+	 * @param id the id of the record.
+	 * @param comment the optional comment (may be null).
+	 * @param turnOffCompression turn off sequence compression for a runtime
+	 *                           performance improvement but at the cost of taking up more memory.
+	 *
+	 * @since 5.3.3
+	 */
+	public AbstractNucleotideFastaRecordVisitor(String id, String comment, boolean turnOffCompression) {
+		super(id,comment);
+		this.turnOffCompression = turnOffCompression;
+	}
+
+
 	protected abstract void visitRecord(NucleotideFastaRecord fastaRecord);
 
 	@Override
 	protected final  void visitRecord(String id, String optionalComment,
 			String fullBody) {
-		NucleotideFastaRecord record = new NucleotideFastaRecordBuilder(id, fullBody)
+		NucleotideFastaRecord record = new NucleotideFastaRecordBuilder(id,
+																new NucleotideSequenceBuilder(fullBody)
+																	.turnOffDataCompression(turnOffCompression).build())
 													.comment(optionalComment)
 													.build();
 		visitRecord(record);

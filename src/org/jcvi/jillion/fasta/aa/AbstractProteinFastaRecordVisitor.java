@@ -42,11 +42,30 @@ public abstract class AbstractProteinFastaRecordVisitor implements FastaRecordVi
 	private final String id;
 	private final String comment;
 	private final ProteinSequenceBuilder sequenceBuilder = new ProteinSequenceBuilder();
-	
-	
-	public AbstractProteinFastaRecordVisitor(String id, String comment) {
+
+	/**
+	 * Create a new object with the given id and comment.
+	 * @param id the id of this fasta record.
+	 * @param comment the comment of this fasta reocrd (or null).
+	 */
+    public AbstractProteinFastaRecordVisitor(String id, String comment) {
+        this(id, comment, false);
+    }
+
+	/**
+	 * Create a new object with the given id and comment.
+	 * @param id the id of this fasta record.
+	 * @param comment the comment of this fasta reocrd (or null).
+	 * @param turnOffSequenceCompression turn off the compression uses
+	 *                                   when building the protien sequence for a performance improvement
+	 *                                   at the cost of more memory.
+	 *
+	 * @since 5.3.3
+	 */
+	public AbstractProteinFastaRecordVisitor(String id, String comment, boolean turnOffSequenceCompression) {
 		this.id = id;
 		this.comment = comment;
+		sequenceBuilder.turnOffDataCompression(turnOffSequenceCompression);
 	}
 
 	@Override
