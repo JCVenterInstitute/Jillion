@@ -42,6 +42,7 @@ Jillion is now ready to use.
 ## API Changes
 1. `AbstractNucleotideFastaRecordVisitor` and `AbstractProteinFastaRecordVisitor` now have 
    an new constructor with a boolean to turn off sequence compression for runtime performance improvements.
+2. added default method `DataStore#isEmpty()`
 
 # 5.3.2 Release Notes
 ## Performance improvements
