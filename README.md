@@ -9,7 +9,7 @@ in your package manager.  Jillion is available on Maven Central
 <dependency>
   <groupId>org.jcvi.jillion</groupId>
   <artifactId>jillion</artifactId>
-  <version>5.3.2</version>
+  <version>5.3.3</version>
 </dependency>
 ```
 
@@ -43,6 +43,8 @@ Jillion is now ready to use.
 1. `AbstractNucleotideFastaRecordVisitor` and `AbstractProteinFastaRecordVisitor` now have 
    an new constructor with a boolean to turn off sequence compression for runtime performance improvements.
 2. added default method `DataStore#isEmpty()`
+3. `Residue#isAmbiguity()` has been added. previously this method was only on `Nucleotide` 
+    it has been added to `AminoAcid` also.
 
 # 5.3.2 Release Notes
 ## Performance improvements

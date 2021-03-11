@@ -305,7 +305,14 @@ public enum Nucleotide implements Residue {
      *
      */
 	protected static Nucleotide parseOrNull(char base) {
-        Nucleotide ret = safeParse(base);
+        if(base == 32 || (base >=0 && base <=13)){
+            return null;
+        }
+        int offset =computeOffsetFor(base);
+        Nucleotide ret=null;
+        if(offset >=0 && offset < CACHE.length){
+            ret = CACHE[offset];
+        }
 		//if we're still null then it's invalid character
     	if(ret==null){
             throw new IllegalArgumentException("invalid character '" + base + "' ascii value " + (int)base);
@@ -359,13 +366,13 @@ public enum Nucleotide implements Residue {
     /**
      * Is This Nucleotide an ambiguity?
      * An ambiguity is any Nucleotide that is not an 
-     * A , C, G or T or gap.
+     * A , C, G or T (or U) or gap.
      * @return {@code true} if it is am ambiguity;
      * {@code false} otherwise.
      */
     public boolean isAmbiguity(){
         return !isGap() && this !=Adenine  
-         && this !=Cytosine && this != Guanine && this != Thymine;
+         && this !=Cytosine && this != Guanine && this != Thymine && this != Uracil;
     }
     
     @Override

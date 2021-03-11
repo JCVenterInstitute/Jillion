@@ -8,8 +8,11 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
 
-public class ResidueTypeGuesser {
+public final class ResidueTypeGuesser {
 
+    private ResidueTypeGuesser(){
+        //can not instantiate
+    }
     public enum ResidueTypeGuessedResult{
         DNA,
         RNA,

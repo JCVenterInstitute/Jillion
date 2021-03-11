@@ -35,11 +35,19 @@ public interface Residue{
      * {@link Residue}.  
      * @return the Character equivalent of this.
      */
-    public Character getCharacter();
+	 Character getCharacter();
     /**
      * Is this Residue a gap?
      * @return {@code true} if it is a gap;
      * {@code false} otherwise.
      */
     boolean isGap();
+
+    /**
+     * Is this residue ambigiuous (a representation of multiple residues)
+     * @return {@code true} if it's ambgious; {@code false} if not.
+     *
+     * @since 5.3.3
+     */
+    boolean isAmbiguity();
 }

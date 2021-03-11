@@ -112,6 +112,17 @@ public enum AminoAcid implements Residue{
     }
 
     /**
+     * Is This AminoAcid an ambiguity?
+     * An ambiguity is X, B, Z, and J.
+     * @return {@code true} if it is am ambiguity;
+     * {@code false} otherwise.
+     */
+    @Override
+    public boolean isAmbiguity(){
+        return this == Unknown_Amino_Acid || this == Aspartate_or_Asparagine
+                || this == Leucine_or_Isoleucine || this == Glutamate_or_Glutamine;
+    }
+    /**
      * Remove all non-valid, non-whitespace characters in the given input sequence.
      * This is the same as {@link #cleanSequence(String, String) cleanSequence(seq, ""}
      * @param seq the input sequence to clean; can not be null.
