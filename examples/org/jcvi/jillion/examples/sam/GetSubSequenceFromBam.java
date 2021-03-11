@@ -55,6 +55,8 @@ public class GetSubSequenceFromBam {
             //get the query names of those reads that mapped
             Set<String> names = aligned.map(SamRecord::getQueryName)
                                         .collect(Collectors.toCollection(TreeSet::new));
+
+            System.out.println(names);
             
         }
     }

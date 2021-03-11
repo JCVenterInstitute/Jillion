@@ -75,7 +75,7 @@ public class SortSamToIndexedBam {
             ThrowingStream<SamRecord> stream = datastore.records();
           ){
 
-                stream.throwingForEach(record -> writer.writeRecord(record));
+                stream.throwingForEach(writer::writeRecord);
                 
             }
     }

@@ -29,18 +29,23 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaWriter;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaWriterBuilder;
+import org.jcvi.jillion.fasta.FastaParser;
+import org.jcvi.jillion.fasta.nt.*;
 
 public class ReverseComplementFasta {
 
 	public static void main(String[] args) throws DataStoreException, IOException {
 		File inputFasta = new File("path/to/input/fasta");
 		File reverseComplimentOutputFasta = new File("/path/to/output.sorted.fasta");
-		
+
+//		jillion4Way(inputFasta, reverseComplimentOutputFasta);
+
+		 jillion5Way(inputFasta, reverseComplimentOutputFasta);
+
+
+	}
+
+	protected static void jillion4Way(File inputFasta, File reverseComplimentOutputFasta) throws IOException {
 		NucleotideFastaDataStore dataStore = new NucleotideFastaFileDataStoreBuilder(inputFasta)
 														.hint(DataStoreProviderHint.ITERATION_ONLY)
 														.build();
@@ -59,6 +64,24 @@ public class ReverseComplementFasta {
 			}
 		} finally{
 			IOUtil.closeAndIgnoreErrors(iter,out);
-		}		
+		}
+	}
+
+	protected static void jillion5Way(File inputFasta, File reverseComplimentOutputFasta) throws IOException {
+
+
+		try(NucleotideFastaWriter writer = new NucleotideFastaWriterBuilder(reverseComplimentOutputFasta)
+										.createIndex(true)
+										.build()
+		){
+			NucleotideFastaFileReader.records(inputFasta)
+					.throwingForEach(record ->
+
+							writer.write(record.getId(),
+									record.getSequence().toBuilder().reverseComplement().build(),
+									record.getComment())
+			);
+
+		}
 	}
 }
