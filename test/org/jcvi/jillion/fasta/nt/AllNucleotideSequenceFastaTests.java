@@ -63,7 +63,8 @@ import org.junit.runners.Suite.SuiteClasses;
      TestNonRedundantNucleotideFastaWriter.class,
      
      TestFaiWriter.class,
-     TestFaiWriterBuilder.class
+     TestFaiWriterBuilder.class,
+    TestWhiteSpaceInDefline.class
     }
     )
 public class AllNucleotideSequenceFastaTests {
