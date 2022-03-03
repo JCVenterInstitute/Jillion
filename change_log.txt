@@ -8,6 +8,12 @@ chronological so the most important changes may not always be ordered first.
 
 
 ================
+Jillion 6.0
+================
+
+1. Moved to Java 11
+
+================
 Jillion 5.3
 ================
 New Features

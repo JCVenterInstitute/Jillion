@@ -21,8 +21,12 @@
 package org.jcvi.jillion.assembly.consed;
 
 import java.io.File;
+import java.io.FileFilter;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
-import org.jcvi.jillion.assembly.consed.ConsedUtil;
+import org.easymock.EasyMock;
+import org.easymock.IAnswer;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -41,17 +45,20 @@ public class TestConsedUtilGetLatestAce {
         //creates a mock File (directory) object which thinks its located at root
         //and allows us to mock the list() method so we can
         //change which files are under it.
-        mockEditDir = createMockBuilder(File.class)
+        mockEditDir = EasyMock.<File>createMockBuilder(File.class)
         .withConstructor(String.class)
         .withArgs("/")
-        .addMockedMethod(File.class.getMethod("list"))
+        .addMockedMethod(File.class.getMethod("listFiles", FileFilter.class))
+        .addMockedMethod(File.class.getMethod("exists"))
                 .createMock();
     }
     
     @Test
     public void noAceFilesShouldReturnNull(){
-        expect(mockEditDir.list())
-        .andReturn(new String[]{});
+    	expect(mockEditDir.exists()).andReturn(true);
+        expect(mockEditDir.listFiles(isA(FileFilter.class)))
+        
+        .andReturn(new File[]{});
         replay(mockEditDir);
         assertNull(ConsedUtil.getLatestAceFile(mockEditDir, "prefix"));
         verify(mockEditDir);
@@ -59,9 +66,10 @@ public class TestConsedUtilGetLatestAce {
     
     @Test
     public void oneAceShouldReturnIt(){
-        expect(mockEditDir.list())
-        .andReturn(new String[]{
-            "prefix.ace.1",});
+    	expect(mockEditDir.exists()).andReturn(true);
+        expect(mockEditDir.listFiles(isA(FileFilter.class)))
+        .andAnswer(filterInputList(
+            "prefix.ace.1"));
         
         replay(mockEditDir);
         assertEquals("prefix.ace.1",
@@ -71,11 +79,12 @@ public class TestConsedUtilGetLatestAce {
     @Test
     public void multipleAcesShouldReturnHighestVersion(){
 
-        expect(mockEditDir.list())
-        .andReturn(new String[]{
+    	expect(mockEditDir.exists()).andReturn(true);
+        expect(mockEditDir.listFiles(isA(FileFilter.class)))
+        .andAnswer(filterInputList(
             "prefix.ace.1",
-            "prefix.ace.2",
-            "prefix.ace.3"});
+           "prefix.ace.2",
+            "prefix.ace.3"));
         
         replay(mockEditDir);
         assertEquals("prefix.ace.3",ConsedUtil.getLatestAceFile(mockEditDir, "prefix").getName());
@@ -84,24 +93,36 @@ public class TestConsedUtilGetLatestAce {
    
     @Test
     public void otherPrefixedAceFilesShouldBeIgnored(){
-        expect(mockEditDir.list())
-                        .andReturn(new String[]{
+    	expect(mockEditDir.exists()).andReturn(true);
+        expect(mockEditDir.listFiles(isA(FileFilter.class)))
+        .andAnswer(filterInputList(
                             "prefix.ace.1",
                             "prefix.ace.2",
-                            "otherPrefix.ace.3"});
+                            "otherPrefix.ace.3"));
         
         replay(mockEditDir);
         assertEquals("prefix.ace.2",ConsedUtil.getLatestAceFile(mockEditDir, "prefix").getName());
         verify(mockEditDir);
     }
-    
+    private static IAnswer<File[]> filterInputList(String...filenames){
+    	return ()->{
+        	FileFilter filter = EasyMock.getCurrentArgument(0);
+        	
+        	return Arrays.stream(filenames).map(s-> new File(s))
+        			.filter(p-> filter.accept(p))
+        			.toArray(size -> new File[size]);
+    	};
+    }
     @Test
     public void otherSuffixedFilesButWhichContainAceVersionPrefixInNameShouldBeIgnored(){
-        expect(mockEditDir.list())
-        .andReturn(new String[]{
-            "prefix.ace.1",
-            "prefix.ace.2",
-            "prefix.ace.2.consensus.fasta"});
+    	expect(mockEditDir.exists()).andReturn(true);
+        expect(mockEditDir.listFiles(isA(FileFilter.class)))
+        .andAnswer(filterInputList(
+     	           "prefix.ace.1",
+     	            "prefix.ace.2",
+     	            "prefix.ace.2.consensus.fasta"));
+        
+       
         
         replay(mockEditDir);
         assertEquals("prefix.ace.2",ConsedUtil.getLatestAceFile(mockEditDir, "prefix").getName());

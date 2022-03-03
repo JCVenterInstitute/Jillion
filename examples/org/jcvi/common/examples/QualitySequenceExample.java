@@ -20,17 +20,28 @@
  ******************************************************************************/
 package org.jcvi.common.examples;
 
-import static org.junit.Assert.assertEquals;
 
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.junit.Test;
+
 public class QualitySequenceExample {
 
-	@Test
+	private static void assertEquals(Object expected, Object actual) {
+		if(!expected.equals(actual)) {
+			throw new AssertionError("not equal");
+		}
+	}
+	
+	private static void assertEquals(double expected, double actual, double delta) {
+		double d = expected-actual;
+		if(Math.abs(d)> delta) {
+			throw new AssertionError("not equal");
+		}
+	}
+	
 	public void test(){
 		QualitySequence quals = new QualitySequenceBuilder(new byte[]{20,30,40,40,50,60})
 								.build();
@@ -46,7 +57,6 @@ public class QualitySequenceExample {
 		assertEquals(0.00001D, quality.getErrorProbability() , 0.00001D);
 	}
 
-	@Test
 	public void reverseQualityValues(){
 		
 		NucleotideSequenceBuilder seqBuilder = new NucleotideSequenceBuilder();

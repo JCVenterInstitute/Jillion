@@ -31,7 +31,7 @@ public class TestAsmFileContigDataStoreBuilder {
 
 	@Test(expected = NullPointerException.class)
 	public void nullFileShouldThrowNPE(){
-		new AsmFileContigDataStoreBuilder(null, createMock(FragmentDataStore.class));
+		new AsmFileContigDataStoreBuilder(null, (FragmentDataStore) createMock(FragmentDataStore.class));
 	}
 	@Test(expected = NullPointerException.class)
 	public void nullFrgDataStoreShouldThrowNPE(){
