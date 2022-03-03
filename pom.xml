@@ -13,14 +13,14 @@
   <url>http://jillion.sourceforge.net</url>
   <groupId>org.jcvi.jillion</groupId>
   <artifactId>jillion</artifactId>
-  <version>5.3.3</version>
+  <version>6.0-SNAPSHOT</version>
   <!-- OSGI compliant jar -->
   <packaging>jar</packaging>
 
 
 
   <properties>
-    <powermock.version>1.7.0</powermock.version>
+    <powermock.version>2.0.9</powermock.version>
     <additionalparam>-Xdoclint:none</additionalparam>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -100,8 +100,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.3</version>
         <configuration>
-          <source>1.8</source>
-          <target>1.8</target>
+          <source>11</source>
+          <target>11</target>
         </configuration>
       </plugin>
 
@@ -140,7 +140,8 @@
             <phase>prepare-package</phase>
             <!--  only run these during before building jar since they take so long-->
             <configuration>
-              <argLine>-Xmx2g</argLine>
+              <argLine>-Xmx2g  --illegal-access=permit</argLine>
+               
               <includes>
                 <include>org/jcvi/jillion/SlowUnitTests.java</include>
               </includes>
@@ -224,23 +225,7 @@
         </executions>
       </plugin>
 
-      <!-- Used to make OSGI compatible bundles (jar modules) -->
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <version>2.5.4</version>
-        <extensions>true</extensions>
-        <executions>
-          <execution>
-            <id>bundle-manifest</id>
-            <phase>process-classes</phase>
-            <goals>
-              <goal>manifest</goal>
-            </goals>
-          </execution>
-        </executions>
-        <configuration/>
-      </plugin>
+      
 
 
 
@@ -388,7 +373,7 @@
     <dependency>
       <groupId>org.easymock</groupId>
       <artifactId>easymock</artifactId>
-      <version>3.4</version>
+      <version>4.3</version>
       <scope>test</scope>
     </dependency>
 

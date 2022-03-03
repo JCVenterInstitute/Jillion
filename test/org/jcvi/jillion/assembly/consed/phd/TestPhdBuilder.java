@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.easymock.EasyMock;
 import org.jcvi.jillion.assembly.consed.phd.Phd;
 import org.jcvi.jillion.assembly.consed.phd.PhdBuilder;
 import org.jcvi.jillion.assembly.consed.phd.PhdReadTag;
@@ -208,7 +209,7 @@ public class TestPhdBuilder {
 	@Test
 	public void settingReadTags(){
 		List<PhdReadTag> tags = Arrays.asList(
-				createMock(PhdReadTag.class)
+				EasyMock.<PhdReadTag>createMock(PhdReadTag.class)
 				);
 		
 		PhdBuilder sut = new PhdBuilder(id, seq,quals);
@@ -242,7 +243,7 @@ public class TestPhdBuilder {
 	@Test
 	public void settingWholeReadItems(){
 		List<PhdWholeReadItem> items = Arrays.asList(
-				createMock(PhdWholeReadItem.class)
+				EasyMock.<PhdWholeReadItem>createMock(PhdWholeReadItem.class)
 				);
 		
 		PhdBuilder sut = new PhdBuilder(id, seq,quals);
