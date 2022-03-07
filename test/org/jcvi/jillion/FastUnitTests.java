@@ -25,6 +25,7 @@
  */
 package org.jcvi.jillion;
 
+import org.jcvi.jilion.vcf.AllVcfTests;
 import org.jcvi.jillion.assembly.AllAssemblyUnitTests;
 import org.jcvi.jillion.core.AllCoreUnitTests;
 import org.jcvi.jillion.core.testUtil.SlowTests;
@@ -53,7 +54,7 @@ import org.junit.runners.Suite.SuiteClasses;
     {
         
         
-    	 AllCoreUnitTests.class,         
+    	AllCoreUnitTests.class,         
         AllFastaUnitTests.class,
         AllTraceUnitTests.class,
         AllAssemblyUnitTests.class,
@@ -64,6 +65,7 @@ import org.junit.runners.Suite.SuiteClasses;
         AllTrimmerUnitTests.class,
         AllOrfTests.class,
         
+        AllVcfTests.class,
         AllExperimentalTests.class
    
     }

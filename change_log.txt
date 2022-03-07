@@ -12,6 +12,8 @@ Jillion 6.0
 ================
 
 1. Moved to Java 11
+2. Added lombok support
+3. Added Vcf support
 
 ================
 Jillion 5.3
