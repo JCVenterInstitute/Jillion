@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.util.Optional;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.util.streams.ThrowingSupplier;
 import org.jcvi.jillion.internal.core.io.MagicNumberInputStream;
 
 /**
@@ -40,7 +41,7 @@ import org.jcvi.jillion.internal.core.io.MagicNumberInputStream;
  *
  */
 @FunctionalInterface
-public interface InputStreamSupplier {
+public interface InputStreamSupplier extends ThrowingSupplier<InputStream, IOException>{
     /**
      * Create a new {@link InputStream} that starts
      * at the beginning of the file.
@@ -96,6 +97,21 @@ public interface InputStreamSupplier {
         InputStream in = get(range.getBegin());
        
         return new SubLengthInputStream(in, range.getLength());
+    }
+    /**
+     * Can we reread this inputStream by
+     * calling get() multiple times.
+     * 
+     * @return {@code true} if this is re-readable;
+     * {@code false} otherwise.
+     * 
+     * @since 6.0
+     * 
+     * @implNote the default implementation does a check
+     * to see if this supplier is backed by a file or not.
+     */
+    default boolean isReReadable() {
+    	return getFile().isPresent();
     }
     
     /**

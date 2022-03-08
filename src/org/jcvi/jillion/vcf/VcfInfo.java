@@ -2,9 +2,6 @@ package org.jcvi.jillion.vcf;
 
 import java.util.Map;
 
-import org.jcvi.jillion.vcf.VcfVisitor.InfoNumberTypeAndValue;
-import org.jcvi.jillion.vcf.VcfVisitor.InfoType;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,8 +16,8 @@ public class VcfInfo {
 
 	private String id;
 	private String description;
-	private InfoNumberTypeAndValue numberTypeAndValue;
-	private InfoType type;
+	private VcfNumber numberTypeAndValue;
+	private VcfValueType type;
 	@Singular
 	private Map<String, String> parameters;
 	

@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -21,10 +21,10 @@ import org.jcvi.jillion.vcf.VcfFilter;
 import org.jcvi.jillion.vcf.VcfFormat;
 import org.jcvi.jillion.vcf.VcfHeader;
 import org.jcvi.jillion.vcf.VcfInfo;
+import org.jcvi.jillion.vcf.VcfNumber;
 import org.jcvi.jillion.vcf.VcfParser;
+import org.jcvi.jillion.vcf.VcfValueType;
 import org.jcvi.jillion.vcf.VcfVisitor;
-import org.jcvi.jillion.vcf.VcfVisitor.InfoNumberTypeAndValue;
-import org.jcvi.jillion.vcf.VcfVisitor.InfoType;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -95,8 +95,8 @@ public class VcfFileParserTest {
 				
 				.info(VcfInfo.builder()
 						.id("NS")
-						.numberTypeAndValue(InfoNumberTypeAndValue.valueOf(1))
-						.type( InfoType.Integer)
+						.numberTypeAndValue(VcfNumber.valueOf(1))
+						.type( VcfValueType.Integer)
 						.description("Number of Samples With Data")
 						.parameter("ID", "NS")
 						.parameter("Number", "1")
@@ -106,8 +106,8 @@ public class VcfFileParserTest {
 				
 				.info(VcfInfo.builder()
 						.id("DP")
-						.numberTypeAndValue(InfoNumberTypeAndValue.valueOf(1))
-						.type( InfoType.Integer)
+						.numberTypeAndValue(VcfNumber.valueOf(1))
+						.type( VcfValueType.Integer)
 						.description("Total Depth")
 						.parameter("ID", "DP")
 						.parameter("Number", "1")
@@ -117,8 +117,8 @@ public class VcfFileParserTest {
 				
 				.info(VcfInfo.builder()
 						.id("AF")
-						.numberTypeAndValue(InfoNumberTypeAndValue.DOT)
-						.type( InfoType.Float)
+						.numberTypeAndValue(VcfNumber.DOT)
+						.type( VcfValueType.Float)
 						.description("Allele Frequency")
 						.parameter("ID", "AF")
 						.parameter("Number", ".")
@@ -128,8 +128,8 @@ public class VcfFileParserTest {
 				
 				.info(VcfInfo.builder()
 						.id("AA")
-						.numberTypeAndValue(InfoNumberTypeAndValue.valueOf(1))
-						.type( InfoType.String)
+						.numberTypeAndValue(VcfNumber.valueOf(1))
+						.type( VcfValueType.String)
 						.description("Ancestral Allele")
 						.parameter("ID", "AA")
 						.parameter("Number", "1")
@@ -139,8 +139,8 @@ public class VcfFileParserTest {
 				
 				.info(VcfInfo.builder()
 						.id("DB")
-						.numberTypeAndValue(InfoNumberTypeAndValue.valueOf(0))
-						.type( InfoType.Flag)
+						.numberTypeAndValue(VcfNumber.valueOf(0))
+						.type( VcfValueType.Flag)
 						.description("dbSNP membership, build 129")
 						.parameter("ID", "DB")
 						.parameter("Number", "0")
@@ -151,8 +151,8 @@ public class VcfFileParserTest {
 				
 				.info(VcfInfo.builder()
 						.id("H2")
-						.numberTypeAndValue(InfoNumberTypeAndValue.valueOf(0))
-						.type( InfoType.Flag)
+						.numberTypeAndValue(VcfNumber.valueOf(0))
+						.type( VcfValueType.Flag)
 						.description("HapMap2 membership")
 						.parameter("ID", "H2")
 						.parameter("Number", "0")
@@ -162,8 +162,8 @@ public class VcfFileParserTest {
 				
 				.format( VcfFormat.builder()
 						.id("GT")
-						.numberTypeAndValue(InfoNumberTypeAndValue.valueOf(1))
-						.type(InfoType.String)
+						.numberTypeAndValue(VcfNumber.valueOf(1))
+						.type(VcfValueType.String)
 						.description("Genotype")
 						
 						.parameter("ID", "GT")
@@ -173,8 +173,8 @@ public class VcfFileParserTest {
 						.build())
 				.format( VcfFormat.builder()
 						.id("GQ")
-						.numberTypeAndValue(InfoNumberTypeAndValue.valueOf(1))
-						.type(InfoType.Integer)
+						.numberTypeAndValue(VcfNumber.valueOf(1))
+						.type(VcfValueType.Integer)
 						.description("Genotype Quality")
 						.parameter("ID", "GQ")
 						.parameter("Number", "1")
@@ -184,8 +184,8 @@ public class VcfFileParserTest {
 				
 				.format( VcfFormat.builder()
 						.id("DP")
-						.numberTypeAndValue(InfoNumberTypeAndValue.valueOf(1))
-						.type(InfoType.Integer)
+						.numberTypeAndValue(VcfNumber.valueOf(1))
+						.type(VcfValueType.Integer)
 						.description("Read Depth")
 						.parameter("ID", "DP")
 						.parameter("Number", "1")
@@ -194,8 +194,8 @@ public class VcfFileParserTest {
 						.build())
 				.format( VcfFormat.builder()
 						.id("HQ")
-						.numberTypeAndValue(InfoNumberTypeAndValue.valueOf(2))
-						.type(InfoType.Integer)
+						.numberTypeAndValue(VcfNumber.valueOf(2))
+						.type(VcfValueType.Integer)
 						.description("Haplotype Quality")
 						.parameter("ID", "HQ")
 						.parameter("Number", "2")
@@ -291,21 +291,21 @@ public class VcfFileParserTest {
 		expectVisitMetaInfo(visitor, "reference", "1000GenomesPilot-NCBI36");
 		expectVisitMetaInfo(visitor, "phasing", "partial");
 		
-		expectVisitInfo(visitor, "NS",InfoNumberTypeAndValue.valueOf(1), InfoType.Integer, "Number of Samples With Data");
-		expectVisitInfo(visitor, "DP",InfoNumberTypeAndValue.valueOf(1), InfoType.Integer, "Total Depth");
-		expectVisitInfo(visitor, "AF",InfoNumberTypeAndValue.DOT, InfoType.Float, "Allele Frequency");
-		expectVisitInfo(visitor, "AA",InfoNumberTypeAndValue.valueOf(1), InfoType.String, "Ancestral Allele");
-		expectVisitInfo(visitor, "DB",InfoNumberTypeAndValue.valueOf(0), InfoType.Flag, "dbSNP membership, build 129");
-		expectVisitInfo(visitor, "H2",InfoNumberTypeAndValue.valueOf(0), InfoType.Flag, "HapMap2 membership");
+		expectVisitInfo(visitor, "NS",VcfNumber.valueOf(1), VcfValueType.Integer, "Number of Samples With Data");
+		expectVisitInfo(visitor, "DP",VcfNumber.valueOf(1), VcfValueType.Integer, "Total Depth");
+		expectVisitInfo(visitor, "AF",VcfNumber.DOT, VcfValueType.Float, "Allele Frequency");
+		expectVisitInfo(visitor, "AA",VcfNumber.valueOf(1), VcfValueType.String, "Ancestral Allele");
+		expectVisitInfo(visitor, "DB",VcfNumber.valueOf(0), VcfValueType.Flag, "dbSNP membership, build 129");
+		expectVisitInfo(visitor, "H2",VcfNumber.valueOf(0), VcfValueType.Flag, "HapMap2 membership");
 		
 	
 		expectFilter(visitor, "q10", "Quality below 10");
 		expectFilter(visitor, "s50", "Less than 50% of samples have data");
 		
-		expectVisitFormat(visitor, "GT", InfoNumberTypeAndValue.valueOf(1), InfoType.String, "Genotype");
-		expectVisitFormat(visitor, "GQ", InfoNumberTypeAndValue.valueOf(1), InfoType.Integer, "Genotype Quality");
-		expectVisitFormat(visitor, "DP", InfoNumberTypeAndValue.valueOf(1), InfoType.Integer, "Read Depth");
-		expectVisitFormat(visitor, "HQ", InfoNumberTypeAndValue.valueOf(2), InfoType.Integer, "Haplotype Quality");
+		expectVisitFormat(visitor, "GT", VcfNumber.valueOf(1), VcfValueType.String, "Genotype");
+		expectVisitFormat(visitor, "GQ", VcfNumber.valueOf(1), VcfValueType.Integer, "Genotype Quality");
+		expectVisitFormat(visitor, "DP", VcfNumber.valueOf(1), VcfValueType.Integer, "Read Depth");
+		expectVisitFormat(visitor, "HQ", VcfNumber.valueOf(2), VcfValueType.Integer, "Haplotype Quality");
 		
 		expectVisitHeader(visitor, "NA00001","NA00002","NA00003");
 		
@@ -331,7 +331,6 @@ public class VcfFileParserTest {
 		replay(visitor);
 		return visitor;
 	}
-	@SuppressWarnings("unchecked")
 	private void expectVisitData(VcfVisitor mock, String chomId, int pos, String id, String ref, String alt, int qual, 
 			String filter, String info, String format, String...extraFields) {
 		/*
@@ -353,28 +352,165 @@ public class VcfFileParserTest {
 	}
 	//ID=NS,Number=1,Type=Integer,Description="Number of Samples With Data"
 	@SuppressWarnings("unchecked")
-	private void expectVisitInfo(VcfVisitor mock, String id, InfoNumberTypeAndValue numberAndType, 
-			VcfVisitor.InfoType type,  String description) {
+	private void expectVisitInfo(VcfVisitor mock, String id, VcfNumber numberAndType, 
+			VcfValueType type,  String description) {
 		mock.visitInfo(isA(VcfVisitor.VcfVisitorCallback.class), eq(id), eq(type), eq(numberAndType), eq(description), (Map<String, String>) isA(Map.class));
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void expectVisitFormat(VcfVisitor mock, String id, InfoNumberTypeAndValue numberAndType, 
-			VcfVisitor.InfoType type,  String description) {
+	private void expectVisitFormat(VcfVisitor mock, String id, VcfNumber numberAndType, 
+			VcfValueType type,  String description) {
 		mock.visitFormat(isA(VcfVisitor.VcfVisitorCallback.class), eq(id), eq(type), eq(numberAndType), eq(description), (Map<String, String>) isA(Map.class));
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void expectFilter(VcfVisitor mock, String id, String description) {
 		mock.visitFilter(isA(VcfVisitor.VcfVisitorCallback.class), eq(id), eq(description));
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void expectVisitHeader(VcfVisitor mock, String...extraFields) {
 		if(extraFields ==null) {
 			mock.visitHeader(isA(VcfVisitor.VcfVisitorCallback.class), eq(Collections.emptyList()));
 		}else {
 			mock.visitHeader(isA(VcfVisitor.VcfVisitorCallback.class), eq(List.of(extraFields)));
 		}
+	}
+	@Test
+	public void getmementoAtHeaderLineAndReparseFromThere() throws IOException{
+
+		File f = RESOURCES.getFile("files/example.vcf");
+		
+		VcfParser parser = VcfFileParser.createParserFor(f);
+		VcfVisitor.VcfMemento[] memento = new  VcfVisitor.VcfMemento[1];
+		List<String> expectedExtraFields = new ArrayList<>();
+		parser.parse(new AbtractVcfVisitor() {
+
+			@Override
+			public void visitData(VcfVisitorCallback callback, String chromId, int position, String id, String refBase,
+					String altBase, int quality, String filter, String info, String format, List<String> extraFields) {
+				fail("should not get a data line");
+				
+			}
+
+			@Override
+			protected void visitHeader(VcfVisitorCallback callback, VcfHeader header) {
+				memento[0] = callback.createMemento();
+				callback.haltParsing();
+				expectedExtraFields.addAll(header.getExtraColumns());
+				
+			}
+		
+		});
+		
+		parser.parse(new VcfVisitor() {
+
+			@Override
+			public void visitEnd() {
+
+				
+			}
+
+			@Override
+			public void halted() {
+				
+			}
+
+			@Override
+			public void visitMetaInfo(VcfVisitorCallback callback, String key, String value) {
+				
+			}
+
+			@Override
+			public void visitFilter(VcfVisitorCallback callback, String key, String description) {
+				
+			}
+
+			@Override
+			public void visitInfo(VcfVisitorCallback callback, String id, VcfValueType type,
+					VcfNumber numberTypeAndValue, String description, Map<String, String> parameters) {
+				
+			}
+
+			@Override
+			public void visitFormat(VcfVisitorCallback callback, String id, VcfValueType infoType,
+					VcfNumber numberTypeAndValue, String description, Map<String, String> parameters) {
+				
+			}
+
+			@Override
+			public void visitContigInfo(VcfVisitorCallback callback, String contigId, Long length,
+					Map<String, String> parameters) {
+				
+			}
+
+			@Override
+			public void visitHeader(VcfVisitorCallback callback, List<String> extraColumns) {
+				assertEquals(expectedExtraFields, extraColumns);
+				callback.haltParsing();
+				
+			}
+
+			@Override
+			public void visitData(VcfVisitorCallback callback, String chromId, int position, String id, String refBase,
+					String altBase, int quality, String filter, String info, String format, List<String> extraFields) {
+				
+			}
+			
+		}, memento[0]);
+		
+	}
+	
+	
+	@Test
+	public void getmementoAtFirstDataLineAndReparseFromThere() throws IOException{
+
+		File f = RESOURCES.getFile("files/example.vcf");
+		
+		VcfParser parser = VcfFileParser.createParserFor(f);
+		
+		
+		
+		VcfHeader expectedHeader = createExpectedHeader();
+		
+		VcfVisitor.VcfMemento[] memento = new  VcfVisitor.VcfMemento[1];
+		
+		VcfVisitor mockVisitor = createMock(VcfVisitor.class);
+		
+		parser.parse(new AbtractVcfVisitor() {
+			boolean firstTime=true;
+			@Override
+			public void visitData(VcfVisitorCallback callback, String chromId, int position, String id, String refBase,
+					String altBase, int quality, String filter, String info, String format, List<String> extraFields) {
+				if(firstTime) {
+					memento[0] = callback.createMemento();
+					firstTime=false;
+				}
+				//our first pass through the data lines we record all visit calls 
+				//so we can make sure when we use memento we get them all back
+				mockVisitor.visitData(isA(VcfVisitorCallback.class), eq(chromId), eq(position), eq(id), 
+						eq(refBase), eq(altBase), eq(quality), eq(filter), eq(info), eq(format), eq(extraFields));
+				
+			}
+
+			@Override
+			protected void visitHeader(VcfVisitorCallback callback, VcfHeader actual) {
+				
+				assertEquals(expectedHeader, actual);
+				
+				
+			}
+
+			
+			
+			@Override
+			public void visitEnd() {
+				mockVisitor.visitEnd();
+				replay(mockVisitor);
+			}
+			
+			
+		});
+		
+		parser.parse(mockVisitor, memento[0]);
+		verify(mockVisitor);
 	}
 }

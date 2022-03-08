@@ -32,15 +32,15 @@ public abstract class AbtractVcfVisitor implements VcfVisitor {
 	}
 
 	@Override
-	public void visitInfo(VcfVisitorCallback callback, String id, InfoType type,
-			InfoNumberTypeAndValue numberTypeAndValue, String description, Map<String, String> parameters) {
+	public void visitInfo(VcfVisitorCallback callback, String id, VcfValueType type,
+			VcfNumber numberTypeAndValue, String description, Map<String, String> parameters) {
 		headerBuilder.info(new VcfInfo(id, description, numberTypeAndValue, type, parameters));
 
 	}
 
 	@Override
-	public void visitFormat(VcfVisitorCallback callback, String id, InfoType infoType,
-			InfoNumberTypeAndValue numberTypeAndValue, String description, Map<String, String> parameters) {
+	public void visitFormat(VcfVisitorCallback callback, String id, VcfValueType infoType,
+			VcfNumber numberTypeAndValue, String description, Map<String, String> parameters) {
 		headerBuilder.format(new VcfFormat(id, infoType, numberTypeAndValue, description, parameters));
 
 	}
