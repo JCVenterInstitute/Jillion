@@ -95,7 +95,7 @@ public class VcfFileParserTest {
 				
 				.info(VcfInfo.builder()
 						.id("NS")
-						.numberTypeAndValue(VcfNumber.valueOf(1))
+						.number(VcfNumber.valueOf(1))
 						.type( VcfValueType.Integer)
 						.description("Number of Samples With Data")
 						.parameter("ID", "NS")
@@ -106,7 +106,7 @@ public class VcfFileParserTest {
 				
 				.info(VcfInfo.builder()
 						.id("DP")
-						.numberTypeAndValue(VcfNumber.valueOf(1))
+						.number(VcfNumber.valueOf(1))
 						.type( VcfValueType.Integer)
 						.description("Total Depth")
 						.parameter("ID", "DP")
@@ -117,7 +117,7 @@ public class VcfFileParserTest {
 				
 				.info(VcfInfo.builder()
 						.id("AF")
-						.numberTypeAndValue(VcfNumber.DOT)
+						.number(VcfNumber.DOT)
 						.type( VcfValueType.Float)
 						.description("Allele Frequency")
 						.parameter("ID", "AF")
@@ -128,7 +128,7 @@ public class VcfFileParserTest {
 				
 				.info(VcfInfo.builder()
 						.id("AA")
-						.numberTypeAndValue(VcfNumber.valueOf(1))
+						.number(VcfNumber.valueOf(1))
 						.type( VcfValueType.String)
 						.description("Ancestral Allele")
 						.parameter("ID", "AA")
@@ -139,7 +139,7 @@ public class VcfFileParserTest {
 				
 				.info(VcfInfo.builder()
 						.id("DB")
-						.numberTypeAndValue(VcfNumber.valueOf(0))
+						.number(VcfNumber.valueOf(0))
 						.type( VcfValueType.Flag)
 						.description("dbSNP membership, build 129")
 						.parameter("ID", "DB")
@@ -151,7 +151,7 @@ public class VcfFileParserTest {
 				
 				.info(VcfInfo.builder()
 						.id("H2")
-						.numberTypeAndValue(VcfNumber.valueOf(0))
+						.number(VcfNumber.valueOf(0))
 						.type( VcfValueType.Flag)
 						.description("HapMap2 membership")
 						.parameter("ID", "H2")
@@ -162,7 +162,7 @@ public class VcfFileParserTest {
 				
 				.format( VcfFormat.builder()
 						.id("GT")
-						.numberTypeAndValue(VcfNumber.valueOf(1))
+						.number(VcfNumber.valueOf(1))
 						.type(VcfValueType.String)
 						.description("Genotype")
 						
@@ -173,7 +173,7 @@ public class VcfFileParserTest {
 						.build())
 				.format( VcfFormat.builder()
 						.id("GQ")
-						.numberTypeAndValue(VcfNumber.valueOf(1))
+						.number(VcfNumber.valueOf(1))
 						.type(VcfValueType.Integer)
 						.description("Genotype Quality")
 						.parameter("ID", "GQ")
@@ -184,7 +184,7 @@ public class VcfFileParserTest {
 				
 				.format( VcfFormat.builder()
 						.id("DP")
-						.numberTypeAndValue(VcfNumber.valueOf(1))
+						.number(VcfNumber.valueOf(1))
 						.type(VcfValueType.Integer)
 						.description("Read Depth")
 						.parameter("ID", "DP")
@@ -194,7 +194,7 @@ public class VcfFileParserTest {
 						.build())
 				.format( VcfFormat.builder()
 						.id("HQ")
-						.numberTypeAndValue(VcfNumber.valueOf(2))
+						.number(VcfNumber.valueOf(2))
 						.type(VcfValueType.Integer)
 						.description("Haplotype Quality")
 						.parameter("ID", "HQ")
@@ -426,13 +426,13 @@ public class VcfFileParserTest {
 
 			@Override
 			public void visitInfo(VcfVisitorCallback callback, String id, VcfValueType type,
-					VcfNumber numberTypeAndValue, String description, Map<String, String> parameters) {
+					VcfNumber number, String description, Map<String, String> parameters) {
 				
 			}
 
 			@Override
 			public void visitFormat(VcfVisitorCallback callback, String id, VcfValueType infoType,
-					VcfNumber numberTypeAndValue, String description, Map<String, String> parameters) {
+					VcfNumber number, String description, Map<String, String> parameters) {
 				
 			}
 

@@ -1,6 +1,7 @@
 package org.jcvi.jillion.vcf;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class VcfNumber{
 	private final VcfNumberType type;
@@ -89,6 +90,29 @@ public class VcfNumber{
 			return ".";
 		}
 		return type.name();
+	}
+	
+	public Optional<VcfNumber> merge(VcfNumber other) {
+		Objects.requireNonNull(other);
+		
+		if(type == other.type) {
+			return Optional.of(mergeSameType(other));
+		}
+		//type is different... is that OK?
+		return Optional.empty();
+	}
+
+	private VcfNumber mergeSameType(VcfNumber other) {
+		if(type!=VcfNumberType.NUMBER) {
+			return this;
+		}
+		//both are numbers now need to check which number it is
+		if(value.intValue() == other.getValue().intValue()) {
+			//same value
+			return this;
+		}
+		//if we're here it's a different value
+		return VcfNumber.DOT;
 	}
 	
 	

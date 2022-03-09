@@ -2,14 +2,12 @@ package org.jcvi.jillion.vcf;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.jcvi.jillion.vcf.VcfVisitor.VcfVisitorCallback;
 
 public class VcfFileWriter implements Closeable{
 	
@@ -44,7 +42,7 @@ public class VcfFileWriter implements Closeable{
 		}
 		for(VcfInfo info : header.getInfos()) {
 			builder.append("##INFO=<ID=").append(info.getId())
-								.append(",Number=").append(info.getNumberTypeAndValue().toEncodedString())
+								.append(",Number=").append(info.getNumber().toEncodedString())
 								.append(",Type=").append(info.getType())
 								.append(",Description=\"").append(info.getDescription()).append("\">")
 								.append(newLine);
@@ -58,7 +56,7 @@ public class VcfFileWriter implements Closeable{
 		
 		for(VcfFormat format : header.getFormats()) {
 			builder.append("##FORMAT=<ID=").append(format.getId())
-			.append(",Number=").append(format.getNumberTypeAndValue().toEncodedString())
+			.append(",Number=").append(format.getNumber().toEncodedString())
 			.append(",Type=").append(format.getType())
 			.append(",Description=\"").append(format.getDescription()).append("\">")
 			.append(newLine);
@@ -86,7 +84,6 @@ public class VcfFileWriter implements Closeable{
 			int quality, String filter, String info, String format, List<String> extraFields) throws IOException {
 		//TODO should we do any validation on info and format?
 		
-		//TODO should we check for blank fields and replace with "." ?
 		StringBuilder builder = new StringBuilder(2000);
 		builder.append(handleBlank(chromId)).append('\t')
 				.append(position).append('\t')

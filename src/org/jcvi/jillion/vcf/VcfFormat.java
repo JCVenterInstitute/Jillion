@@ -20,10 +20,10 @@ public class VcfFormat {
 	@NonNull
 	private VcfValueType type;
 	@NonNull
-	private VcfNumber numberTypeAndValue;
+	private VcfNumber number;
 	private String description;
 	@Singular
-	private Map<String, String> parameters;
+	private Map<@NonNull String, @NonNull String> parameters;
 	
 	public static VcfFormatBuilder builder() {
 		//this makes parameters default to an empty list

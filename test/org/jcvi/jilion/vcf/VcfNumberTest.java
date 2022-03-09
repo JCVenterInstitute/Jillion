@@ -69,4 +69,6 @@ public class VcfNumberTest {
 	private void assertEncodedStringParsesCorrectly(VcfNumber num) {
 		assertEquals(num, VcfNumber.parse(num.toEncodedString()));
 	}
+	
+	
 }

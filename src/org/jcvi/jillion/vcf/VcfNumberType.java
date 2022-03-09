@@ -13,7 +13,7 @@ reference allele first, then the alternate alleles as listed in the ALT column.
 		 */
 		R,
 		/**
-		 * he field has one value for each possible genotype. The values must be in the same order as prescribed in
+		 * The field has one value for each possible genotype. The values must be in the same order as prescribed in
 section 1.6.2 (see Genotype Ordering).
 		 */
 		G,
@@ -22,5 +22,7 @@ section 1.6.2 (see Genotype Ordering).
 		 */
 		DOT;
 		
+	
+	
 		
 	}
