@@ -1,5 +1,7 @@
 package org.jcvi.jillion.vcf;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,4 +31,20 @@ public class VcfHeader {
 	private List<VcfContigInfo> contigInfos;
 	
 	private List<String> extraColumns;
+	
+	public static VcfHeaderBuilder builder() {
+		//this is a terrible way to do this but is the cleanest
+		//way I can think of to set all fields in builder to default to empty
+		//instead of nulls.
+		//Note: version still null
+		return new VcfHeaderBuilder()
+					.properties(new LinkedHashMap<>())
+					.filters(new ArrayList<>())
+					.formats(new ArrayList<>())
+					.infos(new ArrayList<>())
+					.contigInfos(new ArrayList<>())
+					.extraColumns(new ArrayList<>())
+					;
+					
+	}
 }

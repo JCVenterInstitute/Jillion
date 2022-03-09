@@ -7,6 +7,9 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
+    	VcfHeaderTest.class,
+    	VcfNumberTest.class,
+    	VcfFilterTest.class,
     	VcfFileParserTest.class,
     })
 public class AllVcfTests {

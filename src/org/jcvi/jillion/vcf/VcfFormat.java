@@ -1,11 +1,13 @@
 package org.jcvi.jillion.vcf;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Singular;
 
 @Data
@@ -13,11 +15,20 @@ import lombok.Singular;
 @NoArgsConstructor
 @Builder
 public class VcfFormat {
-
+	@NonNull
 	private String id;
+	@NonNull
 	private VcfValueType type;
+	@NonNull
 	private VcfNumber numberTypeAndValue;
 	private String description;
 	@Singular
 	private Map<String, String> parameters;
+	
+	public static VcfFormatBuilder builder() {
+		//this makes parameters default to an empty list
+		return new VcfFormatBuilder()
+				.parameters(new LinkedHashMap<>())
+				;
+	}
 }
