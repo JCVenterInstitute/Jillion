@@ -13,6 +13,7 @@ import org.junit.runners.Suite.SuiteClasses;
     	VcfFormatTest.class,
     	VcfInfoTest.class,
     	VcfNumberMergeTest.class,
+    	VcfContigInfoTest.class,
     	
     	VcfHeaderTest.class,
     	VcfFileParserTest.class,
