@@ -114,11 +114,55 @@ public interface ReferenceMappedNucleotideSequence extends NucleotideSequence{
     	}
     }
     
-    default Stream<Polymorphism> computePolymorphisms(){
+    public enum PolymorphismComputationOptions implements PolymorphismComputationOption{
+    	IGNORE_MAPPED_RUN_NS{
+
+			@Override
+			public boolean include(NucleotideSequence ref, NucleotideSequence mapped) {
+				return !mapped.isAllNs();
+			}
+    		
+    	},
+    	IGNORE_MAPPED_RUN_GAPS{
+
+			@Override
+			public boolean include(NucleotideSequence ref, NucleotideSequence mapped) {
+				return !mapped.isAllGapsOrBlank();
+			}
+    		
+    	},
+    	IGNORE_MAPPED_AMBIGUITIES{
+
+			@Override
+			public boolean include(Nucleotide ref, Nucleotide mapped) {
+				return !mapped.isAmbiguity();
+			}
+    		
+    	},
+    	INCLUDE_ALL
+    	;
+    	
+    	public boolean include(NucleotideSequence ref, NucleotideSequence mapped) {
+    		return true;
+    	}
+    	
+    	public boolean include(Nucleotide ref, Nucleotide mapped) {
+    		return true;
+    	}
+    }
+    
+    default Stream<Polymorphism> computePolymorphisms(PolymorphismComputationOption...computationOptions){
+    	
     	//this is sorted so we can check for when we get a break in the offset
     	Iterator<Entry<Integer, Nucleotide>> iter = getDifferenceMap().entrySet().iterator();
     	if(!iter.hasNext()) {
     		return Stream.empty();
+    	}
+    	PolymorphismComputationOption polyCompOptions;
+    	if(computationOptions.length ==0) {
+    		polyCompOptions = PolymorphismComputationOptions.INCLUDE_ALL;
+    	}else {
+    		polyCompOptions = PolymorphismComputationOptions.INCLUDE_ALL.combine(computationOptions);
     	}
     	List<Polymorphism> ret = new ArrayList<>();
     	
@@ -138,18 +182,30 @@ public interface ReferenceMappedNucleotideSequence extends NucleotideSequence{
     		Entry<Integer, Nucleotide> entry = iter.next();
     		int currentOffset = entry.getKey().intValue();
     		if(previousOffset +1 < currentOffset) {
-    			ret.add(Polymorphism.create(polymorphOffset, refSeq.build(), mapSeq.build()));
+    			NucleotideSequence r = refSeq.build();
+    			NucleotideSequence m = mapSeq.build();
+    			if(polyCompOptions.include(r, m)) {
+    				ret.add(Polymorphism.create(polymorphOffset, r, m));
+    			}
     			refSeq.clear();
     			mapSeq.clear();
     			polymorphOffset= currentOffset;
     		}
-    		refSeq.append(getReferenceSequence().get(currentOffset));
-    		mapSeq.append(entry.getValue());
-    		previousOffset = currentOffset;
+    		Nucleotide r = getReferenceSequence().get(currentOffset);
+    		Nucleotide m = entry.getValue();
+    		if(polyCompOptions.include(r, m)) {
+	    		refSeq.append(r);
+	    		mapSeq.append(m);
+	    		previousOffset = currentOffset;
+    		}
     	}
     	//if we were here we are done
-    	ret.add(Polymorphism.create(polymorphOffset, refSeq.build(), mapSeq.build()));
+    	NucleotideSequence r = refSeq.build();
+		NucleotideSequence m = mapSeq.build();
 		
+    	if(polyCompOptions.include(r, m)) {
+    		ret.add(Polymorphism.create(polymorphOffset,r, m));
+    	}
     	return ret.stream();
     }
 }
