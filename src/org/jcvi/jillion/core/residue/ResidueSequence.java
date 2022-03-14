@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue;
 
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -38,7 +39,7 @@ import org.jcvi.jillion.core.Sequence;
  * @param <R> the Type of {@link Residue} in this {@link Sequence}.
  * @param <T> the ResidueSequence implementation, needed for some of the return types to make sure it returns "this" type.
  */
-public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R, T, B>, B extends ResidueSequenceBuilder<R, T>> extends Sequence<R> {
+public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R, T, B>, B extends ResidueSequenceBuilder<R, T>> extends Sequence<R>, Comparable<T> {
 
 	 /**
      * Get a List of all the offsets into this
@@ -380,5 +381,19 @@ public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R,
      */
     default Iterable<R> ungappedIterable(){
         return this::ungappedIterator;
+    }
+    /**
+     * Compare another residue sequences to another of the same type.
+     * 
+     * @apiNote this implementation compares the results of toString().
+     * 
+     * @implNote This is the same as {@code return this.toString().compareTo(other.toString())}.
+     * 
+     * @returns the comparison int value to determine sort order.
+     * 
+     * @since 6.0
+     */
+    default int compareTo(T other) {
+    	return this.toString().compareTo(other.toString());
     }
 }

@@ -289,4 +289,36 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
     default NucleotideSequence trim(Range trimRange) {
         return toBuilder(trimRange).build();
     }
+    /**
+     * Is this sequence only contain Ns.
+     * 
+     * @since 6.0
+     * @return {@code true} if this sequence only contains Ns;
+     * {@code false} otherwise.
+     * 
+     * @implNote the default implementation is
+     * <pre>
+     * {@code 
+     * if(isEmpty()) {
+     *    return false;
+     * }
+     * for(Nucleotide n : this) {
+     *   if(n != Nucleotide.Unknown) {
+     *     return false;
+     *   }
+     * }
+     * return true;
+     * </pre>
+     */
+	default boolean isAllNs() {
+		if(isEmpty()) {
+			return false;
+		}
+		for(Nucleotide n : this) {
+			if(n != Nucleotide.Unknown) {
+				return false;
+			}
+		}
+		return true;
+	}
 }

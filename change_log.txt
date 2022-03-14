@@ -10,12 +10,28 @@ chronological so the most important changes may not always be ordered first.
 ================
 Jillion 6.0
 ================
+New Features
+------------
 
 1. Moved to Java 11
 2. Added lombok support
 3. Added Vcf support
 4. Added ThrowingSupplier
 
+API Changes
+-----------
+
+1. ResidueSequence is now Comparable and the default implementation compares toString() values.
+
+2. new NucleotideSequence creation methods that take single Nucleotide objects.
+
+3. ReferenceMappedNucleotideSequence now has a new method computePolymorphisms() which is similar to
+   the already existing method getDifferenceMap() except it goes further and denotes insertions vs deletions 
+   and supports consecutive differences grouped together.
+
+4. new method on NucleotideSequence  isAllGapsOrBlank()
+
+5. new method on NucleotideSequence  isAllNs()
 ================
 Jillion 5.3
 ================
