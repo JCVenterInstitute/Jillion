@@ -25,7 +25,15 @@
  */
 package org.jcvi.jillion.core.residue.nt;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Map.Entry;
 import java.util.SortedMap;
+import java.util.stream.Stream;
+
+import lombok.Data;
 /**
  * {@code ReferenceMappedNucleotideSequence} is
  * a NucleotideSequence that has been mapped
@@ -67,4 +75,81 @@ public interface ReferenceMappedNucleotideSequence extends NucleotideSequence{
      * @return the {@link NucleotideSequence} of the reference.
      */
     NucleotideSequence getReferenceSequence();
+    
+    
+    enum PolymorphismType{
+    	INSERTION,
+    	DELETION,
+    	POLYMORPHISM
+    	;
+    }
+    
+    @Data
+    public static class Polymorphism{
+    	private final int offset;
+    	private final PolymorphismType type;
+    	private final NucleotideSequence referenceSequence;
+    	private final NucleotideSequence mappedSequence;
+    	
+    	public static Polymorphism create(int offset, Nucleotide reference, Nucleotide mapped) {
+        	return create(offset, NucleotideSequence.of(reference), NucleotideSequence.of(mapped));
+    	}
+    	public static Polymorphism create(int offset, NucleotideSequence reference, NucleotideSequence mapped) {
+    		if(offset < 0) {
+    			throw new IllegalArgumentException("offset must be >=0");
+    		}
+    		Objects.requireNonNull(reference);
+    		Objects.requireNonNull(mapped);
+    		
+    		
+    		if(reference.isAllGapsOrBlank()) {
+    			return new Polymorphism(offset, PolymorphismType.INSERTION, reference, mapped);
+    		}
+    		if(mapped.isAllGapsOrBlank()) {
+    			return new Polymorphism(offset, PolymorphismType.DELETION, reference, mapped);
+        		
+    		}
+    		return new Polymorphism(offset, PolymorphismType.POLYMORPHISM, reference, mapped);
+    		
+    	}
+    }
+    
+    default Stream<Polymorphism> computePolymorphisms(){
+    	//this is sorted so we can check for when we get a break in the offset
+    	Iterator<Entry<Integer, Nucleotide>> iter = getDifferenceMap().entrySet().iterator();
+    	if(!iter.hasNext()) {
+    		return Stream.empty();
+    	}
+    	List<Polymorphism> ret = new ArrayList<>();
+    	
+    	//first entry
+    	Entry<Integer, Nucleotide> firstEntry = iter.next();
+    	int previousOffset=firstEntry.getKey().intValue();
+    	NucleotideSequenceBuilder refSeq= new NucleotideSequenceBuilder(3)
+    											.turnOffDataCompression(true);
+    	NucleotideSequenceBuilder mapSeq=new NucleotideSequenceBuilder(3)
+    											.turnOffDataCompression(true);
+    	
+    	refSeq.append(getReferenceSequence().get(previousOffset));
+    	mapSeq.append(firstEntry.getValue());
+    	int polymorphOffset=previousOffset;
+    	while(iter.hasNext()) {
+    		
+    		Entry<Integer, Nucleotide> entry = iter.next();
+    		int currentOffset = entry.getKey().intValue();
+    		if(previousOffset +1 < currentOffset) {
+    			ret.add(Polymorphism.create(polymorphOffset, refSeq.build(), mapSeq.build()));
+    			refSeq.clear();
+    			mapSeq.clear();
+    			polymorphOffset= currentOffset;
+    		}
+    		refSeq.append(getReferenceSequence().get(currentOffset));
+    		mapSeq.append(entry.getValue());
+    		previousOffset = currentOffset;
+    	}
+    	//if we were here we are done
+    	ret.add(Polymorphism.create(polymorphOffset, refSeq.build(), mapSeq.build()));
+		
+    	return ret.stream();
+    }
 }

@@ -1,4 +1,4 @@
-package org.jcvi.jilion.vcf;
+package org.jcvi.jillion.vcf;
 
 import java.io.File;
 import java.io.FileNotFoundException;

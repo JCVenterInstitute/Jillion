@@ -25,7 +25,7 @@
  */
 package org.jcvi.jillion;
 
-import org.jcvi.jilion.vcf.AllVcfTests;
+import org.jcvi.jillion.vcf.AllVcfTests;
 import org.jcvi.jillion.assembly.AllAssemblyUnitTests;
 import org.jcvi.jillion.core.AllCoreUnitTests;
 import org.jcvi.jillion.core.testUtil.SlowTests;

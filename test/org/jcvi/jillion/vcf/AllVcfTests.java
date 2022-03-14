@@ -1,4 +1,4 @@
-package org.jcvi.jilion.vcf;
+package org.jcvi.jillion.vcf;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

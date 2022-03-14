@@ -1,4 +1,4 @@
-package org.jcvi.jilion.vcf;
+package org.jcvi.jillion.vcf;
 
 import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.jcvi.jillion.vcf.VcfFilter;

@@ -1,4 +1,4 @@
-package org.jcvi.jilion.vcf;
+package org.jcvi.jillion.vcf;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

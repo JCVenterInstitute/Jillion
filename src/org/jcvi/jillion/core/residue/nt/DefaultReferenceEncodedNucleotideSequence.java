@@ -38,7 +38,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.Range;
@@ -50,7 +49,18 @@ import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
 import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
 import org.jcvi.jillion.internal.core.util.ArrayUtil;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
-
+/**
+ * Default way to encode a sequence compared to a reference.
+ * This implementation is computationally intensive as it 
+ * assumes this is going to be one of perhaps many hundreds of thousands of reads
+ * aligned to a consensus sequence as part of an assembly that is all to be stored
+ * in memory.  So extra processing time is needed to compactly pack the differences
+ * between this read and its reference or consensus sequence which should hopefully
+ * have few if any differences.  
+ * 
+ * @author dkatzel
+ *
+ */
 final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSequence<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder> implements ReferenceMappedNucleotideSequence{
 
 	/**

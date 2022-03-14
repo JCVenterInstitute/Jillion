@@ -1,4 +1,4 @@
-package org.jcvi.jilion.vcf;
+package org.jcvi.jillion.vcf;
 
 import org.junit.Test;
 import static org.junit.Assert.*;

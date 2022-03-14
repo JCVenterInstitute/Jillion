@@ -1,4 +1,4 @@
-package org.jcvi.jilion.vcf;
+package org.jcvi.jillion.vcf;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -6,9 +6,6 @@ import static org.junit.Assert.*;
 import java.util.Map;
 
 import org.jcvi.jillion.core.testUtil.TestUtil;
-import org.jcvi.jillion.vcf.VcfFormat;
-import org.jcvi.jillion.vcf.VcfNumber;
-import org.jcvi.jillion.vcf.VcfValueType;
 
 public class VcfFormatTest {
 

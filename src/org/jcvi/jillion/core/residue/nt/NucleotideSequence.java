@@ -27,14 +27,12 @@ package org.jcvi.jillion.core.residue.nt;
 
 
 import java.io.Serializable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.ResidueSequence;
 /**
  * {@code NucleotideSequence} an interface to abstract
@@ -176,14 +174,15 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
         return findMatches(pattern, Range.ofLength(getLength()), nested);
     }
 
-    default Stream<Range> findMatches(Pattern pattern, Range subSequenceRange, boolean nested) {
-//       System.out.println("here!!!");
+    @SuppressWarnings("resource")
+	default Stream<Range> findMatches(Pattern pattern, Range subSequenceRange, boolean nested) {
+
         Stream<Range> matches = findMatches(pattern, subSequenceRange);
         if (! nested) {
             return matches;
         }
         List<Range> matchList = matches.collect(Collectors.toList());
-//        System.out.println("matchList = " + matchList);
+
         Stream<Range> nestedOutput = matchList.stream();
 
         long start;
@@ -245,6 +244,22 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
      */
     static NucleotideSequence of(String sequence) {
         return new NucleotideSequenceBuilder(sequence)
+                .turnOffDataCompression(true)
+                .build();
+    }
+    /**
+     * Create a new NucleotideSequence of a single nucleotide.
+     * 
+     * @param n the Nucleotide to turn into a NucleotideSequence object;
+     * can not be null.
+     * @return a new NucleotideSequence object.
+     * 
+     * @throws NullPointerException if n is null.
+     * 
+     * @since 6.0
+     */
+    static NucleotideSequence of(Nucleotide n) {
+    	return new NucleotideSequenceBuilder(n)
                 .turnOffDataCompression(true)
                 .build();
     }

@@ -148,6 +148,16 @@ public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R,
                 );
     }
     /**
+     * Is this Sequence only gaps or blank.
+     * @return {@code true} if the sequence is only gaps (or blank);
+     * {@code false} otherwise.
+     * 
+     * @since 6.0
+     */
+    default boolean isAllGapsOrBlank() {
+    	return getNumberOfGaps()== getLength();
+    }
+    /**
      * Get this sequence as a single long string
      * of characters with no whitespace.
      * @return the full sequence as a long string.
