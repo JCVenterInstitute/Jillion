@@ -29,7 +29,6 @@ import static org.junit.Assert.assertTrue;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.junit.Test;
-import org.powermock.reflect.Whitebox;
 /**
  * @author dkatzel
  *
@@ -614,6 +613,17 @@ public class TestNucleotideSequenceBuilder {
         //the snp is T -> U
         NucleotideSequence ref = NucleotideSequence.of("ACGTACGT");
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("GUAC")
+                .setReferenceHint(ref,2);
+
+        assertBuiltRnaSequenceEquals("GUAC", sut);
+
+    }
+    @Test
+    public void referenceWithturnOffCompression(){
+        //the snp is T -> U
+        NucleotideSequence ref = NucleotideSequence.of("ACGTACGT");
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("GUAC")
+        		.turnOffDataCompression(true)
                 .setReferenceHint(ref,2);
 
         assertBuiltRnaSequenceEquals("GUAC", sut);

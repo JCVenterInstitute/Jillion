@@ -76,6 +76,13 @@ public interface ReferenceMappedNucleotideSequence extends NucleotideSequence{
      */
     NucleotideSequence getReferenceSequence();
     
+    public static Stream<Polymorphism> computePolymorphisms(NucleotideSequence reference, NucleotideSequence query, PolymorphismComputationOption...computationOptions){
+    	return new NucleotideSequenceBuilder(query)
+    			.setReferenceHint(reference, 0)
+    			.turnOffDataCompression(true)
+    			.buildReferenceEncodedNucleotideSequence()
+    			.computePolymorphisms(computationOptions);
+    }
     
     enum PolymorphismType{
     	INSERTION,
@@ -91,6 +98,9 @@ public interface ReferenceMappedNucleotideSequence extends NucleotideSequence{
     	private final NucleotideSequence referenceSequence;
     	private final NucleotideSequence mappedSequence;
     	
+    	public int getLength() {
+    		return (int) referenceSequence.getLength();
+    	}
     	public static Polymorphism create(int offset, Nucleotide reference, Nucleotide mapped) {
         	return create(offset, NucleotideSequence.of(reference), NucleotideSequence.of(mapped));
     	}
@@ -131,6 +141,14 @@ public interface ReferenceMappedNucleotideSequence extends NucleotideSequence{
 			}
     		
     	},
+    	IGNORE_REFERENCE_RUN_GAPS{
+
+			@Override
+			public boolean include(NucleotideSequence ref, NucleotideSequence mapped) {
+				return !ref.isAllGapsOrBlank();
+			}
+    		
+    	},
     	IGNORE_MAPPED_AMBIGUITIES{
 
 			@Override
@@ -138,6 +156,18 @@ public interface ReferenceMappedNucleotideSequence extends NucleotideSequence{
 				return !mapped.isAmbiguity();
 			}
     		
+    	},
+    	IGNORE_INSERTION{
+    		@Override
+			public boolean include(Nucleotide ref, Nucleotide mapped) {
+				return !ref.isGap();
+			}
+    	},
+    	IGNORE_DELETION{
+    		@Override
+			public boolean include(Nucleotide ref, Nucleotide mapped) {
+				return !mapped.isGap();
+			}
     	},
     	INCLUDE_ALL
     	;
@@ -167,43 +197,56 @@ public interface ReferenceMappedNucleotideSequence extends NucleotideSequence{
     	List<Polymorphism> ret = new ArrayList<>();
     	
     	//first entry
-    	Entry<Integer, Nucleotide> firstEntry = iter.next();
-    	int previousOffset=firstEntry.getKey().intValue();
+//    	Entry<Integer, Nucleotide> firstEntry = iter.next();
+    	
+//    	int previousOffset=firstEntry.getKey().intValue();
     	NucleotideSequenceBuilder refSeq= new NucleotideSequenceBuilder(3)
     											.turnOffDataCompression(true);
     	NucleotideSequenceBuilder mapSeq=new NucleotideSequenceBuilder(3)
     											.turnOffDataCompression(true);
     	
-    	refSeq.append(getReferenceSequence().get(previousOffset));
-    	mapSeq.append(firstEntry.getValue());
-    	int polymorphOffset=previousOffset;
+    	int previousOffset= Integer.MIN_VALUE;
+    	int polymorphOffset=Integer.MIN_VALUE;
+    	boolean inside=false;
     	while(iter.hasNext()) {
     		
     		Entry<Integer, Nucleotide> entry = iter.next();
     		int currentOffset = entry.getKey().intValue();
-    		if(previousOffset +1 < currentOffset) {
-    			NucleotideSequence r = refSeq.build();
-    			NucleotideSequence m = mapSeq.build();
-    			if(polyCompOptions.include(r, m)) {
-    				ret.add(Polymorphism.create(polymorphOffset, r, m));
+    		if(inside) {
+    			//we are inside one check to see if it's connected to this new SNP
+    			if(previousOffset +1 < currentOffset) {
+    				//it is not connected - add old one if it passes tests
+    				NucleotideSequence r = refSeq.build();
+        			NucleotideSequence m = mapSeq.build();
+    				if(polyCompOptions.include(r, m)) {
+        				ret.add(Polymorphism.create(polymorphOffset, r, m));
+        			}
+        			refSeq.clear();
+        			mapSeq.clear();
+        			inside=false;
     			}
-    			refSeq.clear();
-    			mapSeq.clear();
-    			polymorphOffset= currentOffset;
+    			
+    			
     		}
+    		//now check if current offset should be added
     		Nucleotide r = getReferenceSequence().get(currentOffset);
     		Nucleotide m = entry.getValue();
     		if(polyCompOptions.include(r, m)) {
 	    		refSeq.append(r);
 	    		mapSeq.append(m);
+	    		if(!inside) {
+	    			polymorphOffset= currentOffset;
+	    		}
+	    		inside=true;
 	    		previousOffset = currentOffset;
     		}
+    		
     	}
     	//if we were here we are done
     	NucleotideSequence r = refSeq.build();
 		NucleotideSequence m = mapSeq.build();
 		
-    	if(polyCompOptions.include(r, m)) {
+    	if(!r.isEmpty() &&  polyCompOptions.include(r, m)) {
     		ret.add(Polymorphism.create(polymorphOffset,r, m));
     	}
     	return ret.stream();

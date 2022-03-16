@@ -302,7 +302,7 @@ public enum IupacTranslationTables implements TranslationTable{
                 //don't correctly handle the 'not first starts'
                 //so if translation table says codon is a start
                 //and we've already seen a start, then make it not the start?
-                Iterator<Triplet> iter = frame.asTriplets(sequence);
+                Iterator<Triplet> iter = frame.asTriplets(sequence, true);
                 boolean seenStart=false;
                 long currentOffset=frame.ordinal();
                
@@ -317,16 +317,15 @@ public enum IupacTranslationTables implements TranslationTable{
                                         break;
                                     }
                                     seenStart = result != FoundStartResult.FIND_ADDITIONAL_STARTS;
-                                }else if(seenStart){
-                                    if(codon.isStop()){
+                                }else if(codon.isStop()){
                                         FoundStopResult result = visitor.foundStop(currentOffset, codon);
                                         if(result == FoundStopResult.STOP){
                                             break;
                                         }
                                         
-                                    }else{
+                                }else{
                                         visitor.visitCodon(currentOffset, codon);
-                                    }
+                                    
                                 }
                         }
                         currentOffset+=3;

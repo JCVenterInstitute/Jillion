@@ -20,12 +20,17 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.nt;
 
+
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
 import org.jcvi.jillion.core.util.SingleThreadAdder;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
@@ -839,20 +844,20 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     */
     @Override
     public NucleotideSequence build() {
-        if((codecDecider.numUs >0 && codecDecider.numTs >0) ||codecDecider.forceBasicCodec){
-            return new SimpleNucleotideSequence(data.copy());
-//            byte[] encodedBytes= UandTNucleotideCodec.INSTANCE.encode(codecDecider.currentLength,
-//                    codecDecider.gapOffsets.toArray(), iterator(false));
-//            return new DefaultNucleotideSequence(UandTNucleotideCodec.INSTANCE, encodedBytes, true, false);
-
-        }
+        
 
         	if(codecDecider.hasAlignedReference()){
         		return new DefaultReferenceEncodedNucleotideSequence(
         				codecDecider.alignedReference.reference, this, codecDecider.alignedReference.offset);
         	
         	}
+        	if((codecDecider.numUs >0 && codecDecider.numTs >0) ||codecDecider.forceBasicCodec){
+                return new SimpleNucleotideSequence(data.copy());
+//                byte[] encodedBytes= UandTNucleotideCodec.INSTANCE.encode(codecDecider.currentLength,
+//                        codecDecider.gapOffsets.toArray(), iterator(false));
+//                return new DefaultNucleotideSequence(UandTNucleotideCodec.INSTANCE, encodedBytes, true, false);
 
+            }
             boolean convertUs2Ts;
         	if(codecDecider.numUs >0 && codecDecider.numTs >0){
                 convertUs2Ts=false;
@@ -1292,6 +1297,58 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         codecDecider.reverse();
 		return this;
 	}
+    
+    /**
+     * Remove "islands" of gaps that are currently present that match the given filter function.  
+     * 
+     *
+     * @param gapFilter a {@link Predicate} that takes in a Range whose start is the <strong>gapped</strong> start of a region of consecutive gaps and whose length
+     * is the number of consecutive gaps.  If the Function returns {@code true} then that gap range should be removed from this sequence;
+     * if the function returns {@code false}, then the gaps should remain in the sequence. 
+     * Note that single gaps are still passed to the function as ranges of length 1.
+     * 
+     * @return this.
+     * @since 6.0
+     * @throws NullPointerException if gapFilter is null.
+     * 
+     * @implNote To reduce complexity and improve efficiency, gaps are only removed
+     * after the entire sequence has been analyzed to avoid having to adjust coordinates
+     * given to the predicate. 
+     * 
+     * @apiNote For example, to remove all gaps but keep gaps that stay in frame use a gapFilter 
+     * of {@code r-> r.getLength()% 3 !=0} which will make this test below pass:
+     * <pre>
+     *{@code assertEquals("ACGTACGTGTT---GTGTG------GT",
+     *   new NucleotideSequenceBuilder("ACGT-ACGT--GTT---GTGTG------G-T")
+		.ungap(r-> r.getLength()% 3 !=0)
+		.toString());
+     *  </pre>
+     */
+    public NucleotideSequenceBuilder ungap(Predicate<Range> gapFilter){
+    	Objects.requireNonNull(gapFilter);
+    	
+    	final int numGaps = codecDecider.getNumberOfGaps();
+		// if we have no gaps then we can short circuit
+		// and do nothing
+		if (numGaps == 0) {
+			return this;
+		}
+		
+		
+		List<Range> deleteList = new ArrayList<>(); 
+		for(Range r : Ranges.asRanges(codecDecider.gapOffsets.toArray())){
+			if(gapFilter.test(r)) {
+				deleteList.add(r);
+			}
+		}
+		//now we have found all the ranges of gaps to delete
+		//easier to remove each range starting at the end so we don't have to adjust any coords
+		Collections.reverse(deleteList);
+		for(Range r: deleteList) {
+			this.delete(r);
+		}
+		return this;
+    }
 	/**
      * Remove all gaps currently present in this builder.
      * @return this.

@@ -68,7 +68,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestNucleotideSequenceMatches.class,
         TestNucleotideForEach.class,
         
-        PolymorphismTest.class
+        PolymorphismTest.class,
+        NucleotideUngapFilterTest.class,
     }
 )
 public class AllNucleotideUnitTests {

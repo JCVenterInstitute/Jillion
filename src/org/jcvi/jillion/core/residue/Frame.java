@@ -130,14 +130,13 @@ public enum Frame{
     public Frame getOppositeFrame(){
         return VALUES[ (this.ordinal() +3)%VALUES.length];
     }
-    
-    public Iterator<Triplet> asTriplets(NucleotideSequence sequence){
-        Iterator<Nucleotide> iter = handleFrame(sequence, this);
+    public Iterator<Triplet> asTriplets(NucleotideSequence sequence, boolean ignoreGaps){
+    	Iterator<Nucleotide> iter = handleFrame(sequence, this);
         return new Iterator<Triplet>() {
 
             Triplet next;
             {
-                next = getNextTriplet(iter);
+                next = getNextTriplet(iter, ignoreGaps);
             }
             @Override
             public boolean hasNext() {
@@ -150,17 +149,20 @@ public enum Frame{
                     throw new NullPointerException();
                 }
                 Triplet ret = next;
-                next = getNextTriplet(iter);
+                next = getNextTriplet(iter, ignoreGaps);
                 return ret;
             }
         };
     }
+    public Iterator<Triplet> asTriplets(NucleotideSequence sequence){
+        return asTriplets(sequence, false);
+    }
 
-    private Triplet getNextTriplet(Iterator<Nucleotide> iter) {
+    private Triplet getNextTriplet(Iterator<Nucleotide> iter, boolean ignoreGaps) {
 
-        Nucleotide first = getNextNucleotide(iter);
-        Nucleotide second = getNextNucleotide(iter);
-        Nucleotide third = getNextNucleotide(iter);
+        Nucleotide first = getNextNucleotide(iter, ignoreGaps);
+        Nucleotide second = getNextNucleotide(iter, ignoreGaps);
+        Nucleotide third = getNextNucleotide(iter, ignoreGaps);
         if (first == null || second == null || third == null) {
             // no more bases
             return null;
@@ -168,14 +170,17 @@ public enum Frame{
         return Triplet.create(first, second, third);
     }
 
-    private Nucleotide getNextNucleotide(Iterator<Nucleotide> iter) {
+    private Nucleotide getNextNucleotide(Iterator<Nucleotide> iter, boolean ignoreGaps) {
         if (!iter.hasNext()) {
             return null;
         }
+        
         Nucleotide n = iter.next();
-        // if(n.isGap()){
-        // throw new IllegalArgumentException("sequence can not contain gaps");
-        // }
+        if(ignoreGaps) {
+        	while( n==Nucleotide.Gap) {
+        		n = iter.hasNext()? iter.next(): null;
+        	}
+        }
         return n;
     }
     

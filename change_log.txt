@@ -29,9 +29,30 @@ API Changes
    the already existing method getDifferenceMap() except it goes further and denotes insertions vs deletions 
    and supports consecutive differences grouped together.
 
-4. new method on NucleotideSequence  isAllGapsOrBlank()
+4. new method NucleotideSequence#isAllGapsOrBlank()
 
-5. new method on NucleotideSequence  isAllNs()
+5. new method NucleotideSequence#isAllNs()
+
+6. new method NucleotideSequenceBuilder#ungap(Predicate<Range>) which will only ungap the 
+   passed in gap ranges if they pass the predicate.
+   
+7. new factory method NucleotideFastaRecord.of(File) will parse the given fasta file and return the first
+   record.
+
+API BREAKING CHANGES
+--------------------
+
+1. Requires Java 11
+
+2.  TranslationVisitor will now visit all Codons not just the ones found between start and stop.  This 
+    is to support translating partial sequences where the start codon is missing.
+
+Bug Fixes
+---------
+
+1. Building a ReferenceMappedNucleotideSequence from a NucleotideSequenceBuilder 
+   with compression turned off no longer throws a ClassCastException. 
+
 ================
 Jillion 5.3
 ================
