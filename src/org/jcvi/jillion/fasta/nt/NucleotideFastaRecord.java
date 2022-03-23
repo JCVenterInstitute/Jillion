@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -43,16 +44,16 @@ public interface NucleotideFastaRecord extends FastaRecord<Nucleotide,Nucleotide
     /**
      * Create a NucleotideFastaRecord of the FIRST record in the given
      * fasta file (which may be compressed).
-     * @param refFile the file to parse; can not be null.
+     * @param fastaFile the file to parse; can not be null.
      * @return an Optional wrapped NucleotideFastaRecord object; or empty
      * if the fasta file does not contain any sequences.
      * @throws IOException if there is a problem parsing the file.
      * 
-     * @sinece 6.0
+     * @since 6.0
      * 
      * @implNote this is the same as
      * <pre>
-     * {@code try( NucleotideFastaFileDataStore datastore = new NucleotideFastaFileDataStoreBuilder(refFile)
+     * {@code try( NucleotideFastaFileDataStore datastore = new NucleotideFastaFileDataStoreBuilder(fastaFile)
 						.hint(DataStoreProviderHint.ITERATION_ONLY)
 						.build();
 				StreamingIterator<NucleotideFastaRecord> iter = datastore.iterator();
@@ -65,9 +66,9 @@ public interface NucleotideFastaRecord extends FastaRecord<Nucleotide,Nucleotide
 		}
      * </pre>
      */
-	static Optional<NucleotideFastaRecord> of(File refFile) throws IOException {
+	static Optional<NucleotideFastaRecord> of(File fastaFile) throws IOException {
 		
-		try( NucleotideFastaFileDataStore datastore = new NucleotideFastaFileDataStoreBuilder(refFile)
+		try( NucleotideFastaFileDataStore datastore = new NucleotideFastaFileDataStoreBuilder(fastaFile)
 						.hint(DataStoreProviderHint.ITERATION_ONLY)
 						.build();
 				StreamingIterator<NucleotideFastaRecord> iter = datastore.iterator();
@@ -77,5 +78,31 @@ public interface NucleotideFastaRecord extends FastaRecord<Nucleotide,Nucleotide
 			 }
 			 return Optional.of(iter.next());
 		}
+	}
+	 /**
+     * Create a new {@link StreamingIterator} of  NucleotideFastaRecord for each of the records in the given
+     * fasta file (which may be compressed).
+     * @param fastaFile the file to parse; can not be null.
+     * @return an Optional wrapped NucleotideFastaRecord object; or empty
+     * if the fasta file does not contain any sequences.
+     * @throws IOException if there is a problem parsing the file.
+     * 
+     * @since 6.0
+     * 
+     * @implNote this is the same as
+     * <pre>
+     * {@code return new NucleotideFastaFileDataStoreBuilder(fastaFile)
+						.hint(DataStoreProviderHint.ITERATION_ONLY)
+						.build()
+						.iterator();
+				
+		}
+     * </pre>
+     */
+	static StreamingIterator<NucleotideFastaRecord> createNewIteratorFor(File fastaFile) throws DataStoreException, IOException{
+		return new NucleotideFastaFileDataStoreBuilder(fastaFile)
+		.hint(DataStoreProviderHint.ITERATION_ONLY)
+		.build()
+		.iterator();
 	}
 }

@@ -40,6 +40,9 @@ API Changes
    
 7. new factory method NucleotideFastaRecord.of(File) will parse the given fasta file and return the first
    record.
+   
+8. New factory method NucleotideFastaRecord.createNewIteratorFor( File) will parse the given fasta file and return 
+   a StreamingIterator to iterate over each record.
 
 API BREAKING CHANGES
 --------------------
