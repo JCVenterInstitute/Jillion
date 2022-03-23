@@ -17,6 +17,8 @@ New Features
 2. Added lombok support
 3. Added Vcf support
 4. Added ThrowingSupplier
+5. Added Support for XZ compressed files in InputStreamSupplier
+6. Performance improvements to parsing and iterating over large Fasta files
 
 API Changes
 -----------

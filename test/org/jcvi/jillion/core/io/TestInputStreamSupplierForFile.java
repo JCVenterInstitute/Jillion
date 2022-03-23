@@ -38,6 +38,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.tukaani.xz.XZInputStream;
 
 @RunWith(Parameterized.class)
 public class TestInputStreamSupplierForFile {
@@ -71,6 +72,11 @@ public class TestInputStreamSupplierForFile {
         list.add(new Object[]{InputStreamSupplier.forFile(gzipFile),
                               new GZIPInputStream(new FileInputStream(gzipFile)),
                               "gzip"});
+        //xzip
+        File xzFile = helper.getFile("files/lorem_ipsum.txt.xz");
+        list.add(new Object[]{InputStreamSupplier.forFile(xzFile),
+                              new XZInputStream(new FileInputStream(xzFile)),
+                              "xz"});
         
         return list;
     }

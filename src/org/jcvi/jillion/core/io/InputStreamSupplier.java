@@ -164,13 +164,13 @@ public interface InputStreamSupplier extends ThrowingSupplier<InputStream, IOExc
        IOUtil.verifyIsReadable(f);
        
        //check that file isn't empty
-       //if the file is emtpy then there's no magic number
+       //if the file is empty then there's no magic number
        if(f.length() ==0){
     	   return new RawFileInputStreamSupplier(f);
        }
        
        byte[] magicNumber;
-       try(MagicNumberInputStream magicNumInputStream = new MagicNumberInputStream(f)){
+       try(MagicNumberInputStream magicNumInputStream = new MagicNumberInputStream(f, 6)){
            magicNumber= magicNumInputStream.peekMagicNumber();
        }
        
@@ -181,6 +181,10 @@ public interface InputStreamSupplier extends ThrowingSupplier<InputStream, IOExc
        if( magicNumber[0] == (byte) 0x1F && magicNumber[1] == (byte)0x8B){
            //gzip
            return new GZipInputStreamSupplier(f);
+       }
+       //XZ 0xFD, '7', 'z', 'X', 'Z', 0x00
+       if(magicNumber[0]== (byte)0xFD && magicNumber[1] == '7' && magicNumber[2] == 'z' && magicNumber[3]== 'X' && magicNumber[4]=='Z' && magicNumber[5]==0) {
+    	   return new XZInputStreamSupplier(f);
        }
        
         return new RawFileInputStreamSupplier(f);
