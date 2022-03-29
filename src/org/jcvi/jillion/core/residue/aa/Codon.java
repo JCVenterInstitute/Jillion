@@ -20,6 +20,11 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.aa;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.Triplet;
 
 public final class Codon {
@@ -86,6 +91,36 @@ public final class Codon {
 		public Codon build(){
 			return new Codon(triplet, aminoAcid,isStart, isStop);
 		}
+	}
+
+	public static Codon merge(Iterable<Codon> codons) {
+	
+		List<Nucleotide> a = new ArrayList<>();
+		List<Nucleotide> b = new ArrayList<>();
+		List<Nucleotide> c = new ArrayList<>();
+		List<AminoAcid> aas = new ArrayList<AminoAcid>();
+		Codon first=null;
+		boolean isStart=false;
+		boolean isStop=false;
+		for(Codon codon: codons) {
+			if(first==null) {
+				first= codon;
+			}
+			aas.add(codon.aminoAcid);
+			a.add(codon.triplet.getFirst());
+			b.add(codon.triplet.getSecond());
+			c.add(codon.triplet.getThird());
+			isStart |=codon.isStart;
+			isStop &= codon.isStop;
+		}
+		if(aas.size()==1) {
+			return first;
+		}
+		return new Codon(Triplet.create(Nucleotide.getAmbiguityFor(a), Nucleotide.getAmbiguityFor(b), Nucleotide.getAmbiguityFor(c)),
+				AminoAcid.merge(aas),
+				isStart, isStop
+				);
+		
 	}
 	
 }

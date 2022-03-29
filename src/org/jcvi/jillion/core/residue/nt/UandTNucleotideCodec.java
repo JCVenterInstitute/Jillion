@@ -7,6 +7,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * Special codec to handle the weird sequences used in some therapeutics that
@@ -93,5 +94,12 @@ final class UandTNucleotideCodec  extends AbstractNucleotideCodec{
         GrowableIntArray array = this.getSentinelOffsets(encodedData);
 
         return array.toBoxedList();
+    }
+    
+    @Override
+    public IntStream getGapOffsetsAsStream(byte[] encodedData) {
+        GrowableIntArray array = this.getSentinelOffsets(encodedData);
+
+        return array.stream();
     }
 }

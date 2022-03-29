@@ -26,9 +26,11 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.internal.core.GlyphCodec;
 import org.jcvi.jillion.internal.core.io.StreamUtil;
 
@@ -50,8 +52,20 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
      * 
      * @return a List of gap offsets as Integers.
      */
-    List<Integer> getGapOffsets(byte[] encodedData);    
+    List<Integer> getGapOffsets(byte[] encodedData);
     /**
+     * Get a List of all the offsets into this
+     * sequence which are gaps.  This list SHOULD be
+     * sorted by offset in ascending order.  The size of the returned list should be
+     * the same as the value returned by getNumberOfGaps(byte[]).
+     * 
+     * @return an {@link java.util.stream.IntStream} gap offsets.
+     * 
+     * @since 6.0
+     */
+   IntStream getGapOffsetsAsStream(byte[] encodedData); 
+    /**
+     * 
      * Get the number of gaps in this sequence.
      * @return the number of gaps; will always be {@code >=0}.
      */
@@ -202,6 +216,10 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
     
     List<Range> getNRanges(byte[] encodedData);
     
+    default List<Range> getGapRanges(byte[] encodedData){
+    	return Ranges.asRanges(getGapOffsetsAsStream(encodedData).toArray());
+    }
+    
     default Stream<Range> matches(byte[] encodedData, String regex){
       //override if something better!
         return matches(encodedData, Pattern.compile(regex));
@@ -247,7 +265,7 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
             return matches;
         }
         List<Range> matchesList = matches.collect(Collectors.toList());
-        System.out.println("matchesList = " + matchesList);
+ 
         Stream<Range> nestedMatches = matchesList.stream();
 
         if (matchesList.isEmpty()) {

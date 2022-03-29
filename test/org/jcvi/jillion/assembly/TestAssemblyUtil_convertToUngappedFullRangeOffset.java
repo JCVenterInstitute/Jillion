@@ -251,14 +251,17 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
 
 		@Override
 		public NucleotideSequenceBuilder newEmptyBuilder() {
-			// TODO Auto-generated method stub
-			return null;
+			return delegate.newEmptyBuilder();
 		}
 
 		@Override
 		public NucleotideSequenceBuilder newEmptyBuilder(int initialCapacity) {
-			// TODO Auto-generated method stub
-			return null;
+			return delegate.newEmptyBuilder(initialCapacity);
+		}
+
+		@Override
+		public List<Range> getRangesOfGaps() {
+			return delegate.getRangesOfGaps();
 		}
 		
 		

@@ -120,4 +120,5 @@ public final class Triplet {
 	public Nucleotide getThird(){
 		return Nucleotide.getDnaValues().get(third);
 	}
+
 }

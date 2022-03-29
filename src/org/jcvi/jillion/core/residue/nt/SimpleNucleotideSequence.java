@@ -117,6 +117,11 @@ class SimpleNucleotideSequence extends AbstractResidueSequence<Nucleotide, Nucle
     public List<Integer> getGapOffsets() {
         return gapSupplier.get().toBoxedList();
     }
+    
+    @Override
+    public List<Range> getRangesOfGaps() {
+        return Ranges.asRanges(gapSupplier.get().toArray());
+    }
 
     @Override
     public int getNumberOfGaps() {

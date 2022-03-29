@@ -207,6 +207,14 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
         return nestedOutput;
     }
     /**
+     * Get the list of contiguous spans of gapss; the returned list
+     * will be in sorted order.
+     * @return a List which may be empty.
+     * 
+     * @since 6.0
+     */
+    List<Range> getRangesOfGaps();
+    /**
      * Get the list of contiguous spans of Ns; the returned list
      * will be in sorted order.
      * @return a List which may be empty.

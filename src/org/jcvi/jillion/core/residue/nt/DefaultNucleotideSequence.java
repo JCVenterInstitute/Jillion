@@ -285,7 +285,10 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
 	    }
 
 
-
+	 @Override
+	public List<Range> getRangesOfGaps() {
+		return codec.getGapRanges(data);
+	}
 
 	@Override
 	public List<Range> getRangesOfNs() {

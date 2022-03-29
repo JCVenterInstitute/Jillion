@@ -24,6 +24,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
@@ -130,6 +131,13 @@ final class BasicNucleotideCodec extends AbstractNucleotideCodec{
 		GrowableIntArray array = this.getSentinelOffsets(encodedData);
 		
 		return array.toBoxedList();
+	}
+	
+	@Override
+	public IntStream getGapOffsetsAsStream(byte[] encodedData) {
+		GrowableIntArray array = this.getSentinelOffsets(encodedData);
+		
+		return array.stream();
 	}
     
 }

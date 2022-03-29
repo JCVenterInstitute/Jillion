@@ -433,12 +433,22 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 	public List<Integer> getGapOffsets() {
 		GrowableIntArray referenceGapOffsets = shiftReferenceGaps();
 		if(encodedSnpsInfo !=null){
-			return modifyForSnps(referenceGapOffsets);
+			 modifyForSnps(referenceGapOffsets);
 		}
-		return ArrayUtil.asList(referenceGapOffsets.toArray());
+		return referenceGapOffsets.toBoxedList();
+	}
+	
+	@Override
+	public List<Range> getRangesOfGaps() {
+		GrowableIntArray referenceGapOffsets = shiftReferenceGaps();
+		if(encodedSnpsInfo !=null){
+			 modifyForSnps(referenceGapOffsets);
+			 
+		}
+		return Ranges.asRanges(referenceGapOffsets.toArray());
 	}
 
-	private List<Integer> modifyForSnps(GrowableIntArray gaps) {
+	private void modifyForSnps(GrowableIntArray gaps) {
 		//now check our snps to see
 		//1. if we have snp where the ref has a gap
 		//2. if we have gap
@@ -480,7 +490,6 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 		//sorted ref gaps
 		//followed by sorted snps which happen to be gaps
 		gaps.sort();
-		return ArrayUtil.asList(gaps.toArray());
 	}
 	//first, get gaps from our aligned section of the reference
 	//we may have a snp in the gap location
@@ -596,7 +605,7 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 	@Override
 	public List<Range> getRangesOfNs() {
 		// TODO speed this up using reference info?
-		//for now just do the good not optimal way of looping through eveything.
+		//for now just do the good not optimal way of looping through everything.
 
 		//reference based probably is a read so it shouldn't be too long
 		BitSet bits = new BitSet();

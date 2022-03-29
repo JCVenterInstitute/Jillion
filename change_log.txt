@@ -43,6 +43,11 @@ API Changes
    
 8. New factory method NucleotideFastaRecord.createNewIteratorFor( File) will parse the given fasta file and return 
    a StreamingIterator to iterate over each record.
+   
+9. New methods on TranslationTable to take more options a new TranslationOptions object was created to help reduce
+   the explosion of new methods to handle every combination of flags.
+   
+10. New methods on NucleotideSequence to get ranges of Gaps 
 
 API BREAKING CHANGES
 --------------------

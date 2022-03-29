@@ -43,7 +43,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestIterationOnlyProteinFastaFileDataStore.class,
         
         TestIupacTranslationTables.class,
-        TestIupacTranslationTableDoNotSubstituteStart.class
+        TestIupacTranslationTableDoNotSubstituteStart.class,
+        TestIupacTranslationTableAmbiguity.class
     }
     )
 public class AllAminoAcidUnitTests {

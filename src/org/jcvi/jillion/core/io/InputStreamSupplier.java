@@ -139,6 +139,7 @@ public interface InputStreamSupplier extends ThrowingSupplier<InputStream, IOExc
      * <li>uncompressed</li>
      * <li>zip - single entry only</li>
      * <li>gzip</li>
+     * <li>xc</li>
      * </ul>
      * 
      * If the file is not one of these types, then it is assumed

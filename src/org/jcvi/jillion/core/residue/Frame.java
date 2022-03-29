@@ -23,7 +23,9 @@ package org.jcvi.jillion.core.residue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -102,7 +104,7 @@ public enum Frame{
      * @param frame the frame number as an int (1, 2, 3, -1, -2, -3).
      * 
      * @return a {@link Frame}
-     * @throws IllegalArgumentException if <code> frame &lt; 0 || frame &gt; 2</code>
+     * @throws IllegalArgumentException if <code> frame &lt; 1 || frame &gt; 2</code>
      */
     public static Frame parseFrame(int frame){
         for(Frame f : Frame.values()){
@@ -130,11 +132,11 @@ public enum Frame{
     public Frame getOppositeFrame(){
         return VALUES[ (this.ordinal() +3)%VALUES.length];
     }
-    public Iterator<Triplet> asTriplets(NucleotideSequence sequence, boolean ignoreGaps){
+    public Iterator<Set<Triplet>> asTriplets(NucleotideSequence sequence, boolean ignoreGaps){
     	Iterator<Nucleotide> iter = handleFrame(sequence, this);
-        return new Iterator<Triplet>() {
+        return new Iterator<Set<Triplet>>() {
 
-            Triplet next;
+            Set<Triplet> next;
             {
                 next = getNextTriplet(iter, ignoreGaps);
             }
@@ -144,21 +146,21 @@ public enum Frame{
             }
 
             @Override
-            public Triplet next() {
+            public Set<Triplet> next() {
                 if(!hasNext()){
                     throw new NullPointerException();
                 }
-                Triplet ret = next;
+                Set<Triplet> ret = next;
                 next = getNextTriplet(iter, ignoreGaps);
                 return ret;
             }
         };
     }
-    public Iterator<Triplet> asTriplets(NucleotideSequence sequence){
+    public Iterator<Set<Triplet>> asTriplets(NucleotideSequence sequence){
         return asTriplets(sequence, false);
     }
 
-    private Triplet getNextTriplet(Iterator<Nucleotide> iter, boolean ignoreGaps) {
+    private Set<Triplet> getNextTriplet(Iterator<Nucleotide> iter, boolean ignoreGaps) {
 
         Nucleotide first = getNextNucleotide(iter, ignoreGaps);
         Nucleotide second = getNextNucleotide(iter, ignoreGaps);
@@ -167,7 +169,22 @@ public enum Frame{
             // no more bases
             return null;
         }
-        return Triplet.create(first, second, third);
+        //check for ambiguities
+        if(first.isAmbiguity() || second.isAmbiguity() || third.isAmbiguity()) {
+        	//handle ambiguities
+        	Set<Triplet> triplets = new LinkedHashSet<Triplet>();
+        	for(Nucleotide f : first.getBasesFor()) {
+        		for(Nucleotide s : second.getBasesFor()) {
+        			for(Nucleotide t: third.getBasesFor()) {
+        				triplets.add(Triplet.create(f, s, t));
+        			}
+        		}
+        	}
+        	return triplets;
+        }else {
+        	//simple path no ambiguities
+        	return Set.of(Triplet.create(first, second, third));
+        }
     }
 
     private Nucleotide getNextNucleotide(Iterator<Nucleotide> iter, boolean ignoreGaps) {

@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jcvi.jillion.core.residue.Frame;
 import org.jcvi.jillion.core.residue.aa.TranslationVisitor.FoundStartResult;
@@ -32,6 +33,9 @@ import org.jcvi.jillion.core.residue.aa.TranslationVisitor.FoundStopResult;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.Triplet;
 import org.jcvi.jillion.core.util.MapUtil;
+
+import lombok.Builder;
+import lombok.Data;
 
 public enum IupacTranslationTables implements TranslationTable{
 	
@@ -173,7 +177,8 @@ public enum IupacTranslationTables implements TranslationTable{
 		this.tableNumber = (byte)tableNumber;
 		
 	}
-	
+
+
 	protected void removeFromTable(char base1, char base2, char base3){
 		Triplet triplet = Triplet.create(base1, base2, base3);
 		map.remove(triplet);
@@ -228,6 +233,7 @@ public enum IupacTranslationTables implements TranslationTable{
 		insertIntoTable('-','-','-', AminoAcid.Gap, false);
 	}
 	
+	
 
 	@Override
 	public ProteinSequence translate(NucleotideSequence sequence) {
@@ -248,10 +254,15 @@ public enum IupacTranslationTables implements TranslationTable{
 	}
 	@Override
 	public ProteinSequence translate(NucleotideSequence sequence, Frame frame, int length, boolean substituteStart) {
+		return translate(sequence, length, TranslationOptions.builder().frame(frame).substituteStart(substituteStart).build());
+	}
+	
+	@Override
+	public ProteinSequence translate(NucleotideSequence sequence, int length, TranslationOptions options) {
 		if(sequence ==null){
 			throw new NullPointerException("sequence can not be null");
 		}
-		if(frame ==null){
+		if(options ==null){
 			throw new NullPointerException("frame can not be null");
 		}
 		//Brian says legacy PFGRC and (BioJava and BioPerl?)
@@ -261,13 +272,13 @@ public enum IupacTranslationTables implements TranslationTable{
 
 		ProteinSequenceBuilder builder = new ProteinSequenceBuilder(length/3);
 		
-		Iterator<Triplet> iter = frame.asTriplets(sequence);
+		Iterator<Set<Triplet>> iter = options.getFrame().asTriplets(sequence, options.isIgnoreGaps());
 		
-		boolean seenStart=!substituteStart;
+		boolean seenStart=!options.isSubstituteStart();
 		long currentOffset=0;
 		
 		while(iter.hasNext() && currentOffset <length){
-			Triplet triplet =iter.next();
+			Set<Triplet> triplet =iter.next();
 			currentOffset+=3;
 			if(triplet !=null){
 				Codon codon =translate(triplet);
@@ -302,12 +313,12 @@ public enum IupacTranslationTables implements TranslationTable{
                 //don't correctly handle the 'not first starts'
                 //so if translation table says codon is a start
                 //and we've already seen a start, then make it not the start?
-                Iterator<Triplet> iter = frame.asTriplets(sequence, true);
+                Iterator<Set<Triplet>> iter = frame.asTriplets(sequence, true);
                 boolean seenStart=false;
                 long currentOffset=frame.ordinal();
                
                 while(iter.hasNext()){
-                        Triplet triplet =iter.next();
+                        Set<Triplet> triplet =iter.next();
                         
                         if(triplet !=null){
                                 Codon codon =translate(triplet);
@@ -344,9 +355,18 @@ public enum IupacTranslationTables implements TranslationTable{
 	protected void updateTable(Map<Triplet, Codon> map){
 		//no-op
 	}
-	private Codon translate(Triplet triplet){
-	    return  map.computeIfAbsent(triplet, 
-		        t -> new Codon.Builder(t, AminoAcid.Unknown_Amino_Acid).build());
+	private Codon translate(Set<Triplet> triplets){
+		List<Codon> codons = new ArrayList<>(3);
+		for(Triplet triplet : triplets) {
+			codons.add( map.computeIfAbsent(triplet, 
+		        t -> new Codon.Builder(t, AminoAcid.Unknown_Amino_Acid).build()));
+		}
+		
+		if(codons.size()==1) {
+			return codons.get(0);
+		}
+		//ambiguities
+		return Codon.merge(codons);
 		
 	}
 
@@ -376,7 +396,7 @@ public enum IupacTranslationTables implements TranslationTable{
 			stops.put(frame, stopCoordinates);
 			// index into the original sequence, offset due to frame
 			long index = frameOffset;
-			Iterator<Triplet> tripletIter = frame.asTriplets(sequence);
+			Iterator<Set<Triplet>> tripletIter = frame.asTriplets(sequence);
 			while (tripletIter.hasNext())
 			{
 				if (translate(tripletIter.next()).isStop()){
