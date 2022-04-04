@@ -27,8 +27,6 @@ package org.jcvi.jillion.trace.fastq;
 
 import org.jcvi.jillion.trace.TraceDataStore;
 
-import java.io.File;
-import java.io.IOException;
 
 /**
  * {@code FastqDataStore} is a

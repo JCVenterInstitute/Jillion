@@ -293,7 +293,7 @@ public final class SplitFastqWriter{
 			 try{
 			     return supplier.create(k);   
 			 }catch(IOException e){
-			     throw Sneak.sneakyThrow(e);
+			     return Sneak.sneakyThrow(e);
 			 }
 			}).write(record);
 			

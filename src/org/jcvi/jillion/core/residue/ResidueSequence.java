@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue;
 
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -49,6 +48,14 @@ public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R,
      * @return a List of gap offsets as Integers.
      */
     List<Integer> getGapOffsets();    
+    /**
+     * Get the list of contiguous spans of gapss; the returned list
+     * will be in sorted order.
+     * @return a List which may be empty.
+     * 
+     * @since 6.0
+     */
+    List<Range> getRangesOfGaps();
     /**
      * Get the number of gaps in this sequence.
      * @return the number of gaps; will always be {@code >=0}.

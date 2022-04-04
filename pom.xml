@@ -20,6 +20,7 @@
 
 
   <properties>
+  	<lombok.version>1.18.22</lombok.version>
     <powermock.version>2.0.9</powermock.version>
     <additionalparam>-Xdoclint:none</additionalparam>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -76,6 +77,9 @@
           <exclude>**/*.java</exclude>
         </excludes>
       </resource>
+      <resource>
+       <directory>resources</directory>
+      </resource>
     </resources>
 
     <testResources>
@@ -99,11 +103,19 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.3</version>
+        <version>3.10.1</version>
         <configuration>
           <source>11</source>
           <target>11</target>
+          	<annotationProcessorPaths>
+			    <path>
+			        <groupId>org.projectlombok</groupId>
+			        <artifactId>lombok</artifactId>
+			        <version>${lombok.version}</version>
+			    </path>
+			</annotationProcessorPaths>
         </configuration>
+        
       </plugin>
 
       <plugin>
@@ -113,9 +125,7 @@
         <configuration>
           <!-- include revision number in output jar name -->
           <finalName>${project.artifactId}-${project.version}</finalName>
-          <archive>
-            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-          </archive>
+          
         </configuration>
       </plugin>
 
@@ -154,12 +164,12 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
-        <version>2.17</version>
+        <version>3.1.2</version>
         <dependencies>
             <dependency>
               <groupId>com.puppycrawl.tools</groupId>
               <artifactId>checkstyle</artifactId>
-              <version>8.29</version>
+              <version>10.1</version>
             </dependency>
         </dependencies>
         <executions>
@@ -352,7 +362,7 @@
 	<dependency>
 		<groupId>org.projectlombok</groupId>
 		<artifactId>lombok</artifactId>
-		<version>1.18.22</version>
+		<version>${lombok.version}</version>
 		<scope>provided</scope>
 	</dependency>
 	
@@ -466,19 +476,7 @@
               </execution>
             </executions>
           </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-source-plugin</artifactId>
-            <version>2.2.1</version>
-            <executions>
-              <execution>
-                <id>attach-sources</id>
-                <goals>
-                  <goal>jar-no-fork</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
+          
 
         </plugins>
       </build>

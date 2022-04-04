@@ -322,6 +322,7 @@ public enum IupacTranslationTables implements TranslationTable{
                         
                         if(triplet !=null){
                                 Codon codon =translate(triplet);
+//                                System.out.println(codon.getTriplet() + " " + codon.getAminoAcid());
                                 if(codon.isStart()){
                                     FoundStartResult result = visitor.foundStart(currentOffset, codon);
                                     if(result ==FoundStartResult.STOP){

@@ -26,29 +26,9 @@ import java.util.Map;
 import org.jcvi.jillion.core.residue.Frame;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.NonNull;
-
 public interface TranslationTable {
 
-	@Data
-	@Builder
-	public static class TranslationOptions{
-		private boolean ignoreGaps;
-		@NonNull
-		private Frame frame= Frame.ONE;
-		private boolean substituteStart=true;
-		
-		public static TranslationOptionsBuilder builder() {
-			return new TranslationOptionsBuilder()
-							.frame(Frame.ONE)
-							.substituteStart(true)
-							;
-		}
-	}
-	
-    void translate(NucleotideSequence sequence, Frame frame, TranslationVisitor visitor);
+	void translate(NucleotideSequence sequence, Frame frame, TranslationVisitor visitor);
 	/**
 	 * Convenience method for {@link #translate(NucleotideSequence, Frame)}
 	 * using {@link Frame#ONE}.

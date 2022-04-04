@@ -1,6 +1,7 @@
 package org.jcvi.jillion.core.residue.aa;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.util.MemoizedSupplier;
 import org.jcvi.jillion.core.util.iter.ArrayIterator;
 
@@ -41,6 +42,10 @@ class UnCompressedUngappedProteinSequence implements ProteinSequence{
             return builder.toString();
         });
     }
+    @Override
+	public List<Range> getRangesOfGaps(){
+		return Collections.emptyList();
+	}
 
     @Override
     public List<Integer> getGapOffsets() {
