@@ -296,6 +296,11 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
 	}
 	
 	@Override
+	public double getPercentN() {
+		return codec.getPercentN(data);
+	}
+	
+	@Override
     public String toString(){
         StringBuilder builder = new StringBuilder((int)getLength());
         Iterator<Nucleotide> iter = iterator();

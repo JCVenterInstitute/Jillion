@@ -31,6 +31,7 @@ import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.internal.core.util.iter.AbstractBlockingStreamingIterator;
 
 /**
+ * 
  * @author dkatzel
  *
  *
@@ -59,7 +60,7 @@ public final class LargeFastaIdIterator extends AbstractBlockingStreamingIterato
      * @param fastaFile
      */
     private LargeFastaIdIterator(FastaParser parser, Predicate<String> filter) {
-    	
+    	super(10_000);// these are just ids so we can buffer a lot of them
         this.parser = parser;
         this.filter = filter;
     }

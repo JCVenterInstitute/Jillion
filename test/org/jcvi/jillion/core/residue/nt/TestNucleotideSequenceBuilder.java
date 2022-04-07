@@ -846,7 +846,7 @@ public class TestNucleotideSequenceBuilder {
     	NucleotideSequence uncompressed =new NucleotideSequenceBuilder("ACGTACGTTACG")
     													.turnOffDataCompression(true)
     													.build();
-    	assertTrue(uncompressed instanceof SimpleNucleotideSequence);
+    	assertTrue(uncompressed instanceof AbstractSimpleNucleotideSequence);
 //    	NucleotideCodec codec = (NucleotideCodec) Whitebox.getInternalState(uncompressed, "codec");
 //    	assertTrue(codec instanceof BasicNucleotideCodec);
     	

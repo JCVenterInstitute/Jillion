@@ -53,6 +53,13 @@ final class AcgtGapNucleotideCodec extends AbstractTwoBitEncodedNucleotideCodec{
 
 
 	@Override
+	public double getPercentN(byte[] encodedData) {
+		//no Ns
+		return 0D;
+	}
+
+
+	@Override
 	public List<Integer> getGapOffsets(byte[] encodedData) {
 		GrowableIntArray array = this.getSentinelOffsets(encodedData);
 		

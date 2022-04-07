@@ -70,6 +70,9 @@ import org.junit.runners.Suite.SuiteClasses;
         
         PolymorphismTest.class,
         NucleotideUngapFilterTest.class,
+        
+        CompressedNucleotidePercentNTest.class,
+        UnCompressedNucleotidePercentNTest.class
     }
 )
 public class AllNucleotideUnitTests {

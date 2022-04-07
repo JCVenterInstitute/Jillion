@@ -216,6 +216,15 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
     
     List<Range> getNRanges(byte[] encodedData);
     
+    default double getPercentN(byte[] encodedData) {
+    	long ungappedLength = getUngappedLength(encodedData);
+    	if(ungappedLength ==0L) {
+    		return 0D;
+    	}
+    	long numN = getNRanges(encodedData).stream().mapToLong(r-> r.getLength()).sum();
+    	return numN / (double)ungappedLength;
+    }
+    
     default List<Range> getGapRanges(byte[] encodedData){
     	return Ranges.asRanges(getGapOffsetsAsStream(encodedData).toArray());
     }

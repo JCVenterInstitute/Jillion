@@ -73,6 +73,16 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
         }
     }
 
+    protected Predicate<String> getIdFilter(){
+    	return filter==null? (s)->true: filter;
+    }
+    protected Predicate<F> getRecordFilter(){
+    	return recordFilter==null? (f)->true: recordFilter;
+    }
+    
+    protected FastaParser getFastaParser() {
+    	return parser;
+    }
 
 	@Override
     public  void close() throws IOException {

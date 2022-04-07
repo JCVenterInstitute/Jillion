@@ -108,11 +108,18 @@ import org.jcvi.jillion.core.util.iter.StreamingIterator;
 public abstract class AbstractBlockingStreamingIterator<T> implements StreamingIterator<T>{
 
 	private final Object endOfFileToken = new Object();
-    private final BlockingQueue<Object> queue = new LinkedBlockingQueue<Object>(1);
+    private final BlockingQueue<Object> queue;
     private volatile Object nextRecord=null;
     private volatile boolean isClosed=false;
     
     private volatile RuntimeException uncaughtException;
+    
+    public AbstractBlockingStreamingIterator() {
+    	this(1);
+    }
+    public AbstractBlockingStreamingIterator(int cacheSize) {
+    	queue = new LinkedBlockingQueue<Object>(cacheSize);
+    }
 
     /**
      * @throws InterruptedException 

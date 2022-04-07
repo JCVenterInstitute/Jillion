@@ -845,26 +845,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     @Override
     public NucleotideSequence build() {
         
-
-        	if(codecDecider.hasAlignedReference()){
-        		return new DefaultReferenceEncodedNucleotideSequence(
-        				codecDecider.alignedReference.reference, this, codecDecider.alignedReference.offset);
-        	
-        	}
-        	if((codecDecider.numUs >0 && codecDecider.numTs >0) ||codecDecider.forceBasicCodec){
-                return new SimpleNucleotideSequence(data.copy());
-//                byte[] encodedBytes= UandTNucleotideCodec.INSTANCE.encode(codecDecider.currentLength,
-//                        codecDecider.gapOffsets.toArray(), iterator(false));
-//                return new DefaultNucleotideSequence(UandTNucleotideCodec.INSTANCE, encodedBytes, true, false);
-
-            }
-            boolean convertUs2Ts;
-        	if(codecDecider.numUs >0 && codecDecider.numTs >0){
-                convertUs2Ts=false;
-            }else{
-                convertUs2Ts=true;
-            }
-        	return codecDecider.encode(iterator(convertUs2Ts));
+    		return codecDecider.decide(this);
 
     }
 
@@ -1493,7 +1474,45 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         	gapOffsets = new GrowableIntArray(12);
         	nOffsets = new GrowableIntArray(12);
         }
-        public NucleotideSequence encode(Iterator<Nucleotide> iterator) {
+        /**
+         * Based on the current counts and metadata associated with the sequence
+         * decide the best implementation to use.
+         * @param nucleotideSequenceBuilder
+         * @return
+         */
+        public NucleotideSequence decide(NucleotideSequenceBuilder nucleotideSequenceBuilder) {
+        	if(hasAlignedReference()){
+        		return new DefaultReferenceEncodedNucleotideSequence(
+        				alignedReference.reference, nucleotideSequenceBuilder, alignedReference.offset);
+        	
+        	}
+        	if((numUs >0 && numTs >0)){ 
+                return new SimpleNucleotideSequence(nucleotideSequenceBuilder.data.copy());
+
+        	}
+        	if( forceBasicCodec) {
+        		int numberOfGaps = gapOffsets.getCurrentLength();
+                
+                if(numberOfGaps==0) {
+                	int numberOfNs = nOffsets.getCurrentLength();
+                	if(numberOfNs==0) {
+                		return new ACGTOnlySimpleNucleotideSequence(nucleotideSequenceBuilder.data.copy());
+                            	
+                	}
+                	return new ACGTNOnlySimpleNucleotideSequence(nucleotideSequenceBuilder.data.copy());
+                        	
+                }
+                return new SimpleNucleotideSequence(nucleotideSequenceBuilder.data.copy());
+        	}
+            boolean convertUs2Ts;
+        	if(numUs >0 && numTs >0){
+                convertUs2Ts=false;
+            }else{
+                convertUs2Ts=true;
+            }
+        	return encode(nucleotideSequenceBuilder.iterator(convertUs2Ts));
+		}
+		public NucleotideSequence encode(Iterator<Nucleotide> iterator) {
         	
         	int numberOfGaps = gapOffsets.getCurrentLength();
             int numberOfNs = nOffsets.getCurrentLength();

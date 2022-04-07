@@ -55,6 +55,8 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 	    }
 	 
 	 private LargeNucleotideSequenceFastaIterator(FastaParser parser, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter){
+		 super(5_000); // fasta records shouldn't be that big...
+		 
 		 if(!parser.canParse()){
 			 throw new IllegalStateException("parser must still be able to parse fasta");
 		 }

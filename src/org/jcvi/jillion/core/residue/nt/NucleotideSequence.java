@@ -300,26 +300,27 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
      * @implNote the default implementation is
      * <pre>
      * {@code 
-     * if(isEmpty()) {
-     *    return false;
-     * }
-     * for(Nucleotide n : this) {
-     *   if(n != Nucleotide.Unknown) {
-     *     return false;
-     *   }
-     * }
-     * return true;
+     * getPercentN()==1D;
      * </pre>
      */
 	default boolean isAllNs() {
-		if(isEmpty()) {
-			return false;
+		return getPercentN()==1D;
+	}
+	/**
+	 * Get the percentage of Ns compared to other non-gapped bases in the sequence.
+	 * @return a double in the range of [0 .. 1] inclusive.  If the sequence is empty it returns 0.
+	 * 
+	 * @since 6.0
+	 * 
+	 * @implNote the default implementation sums up the lengths of ranges returned by {@link #getRangesOfNs()}
+	 * to compute the percentage so it doesn't need to iterate over the whole sequence counting Ns assuming getRangesOfNs is faster.
+	 */
+	default double getPercentN() {
+		long ungappedLength = getUngappedLength();
+		if(ungappedLength ==0L) {
+			return 0D;
 		}
-		for(Nucleotide n : this) {
-			if(n != Nucleotide.Unknown) {
-				return false;
-			}
-		}
-		return true;
+		long numNs = getRangesOfNs().stream().mapToInt(r-> (int) r.getLength()).sum();
+		return numNs/(double) ungappedLength;
 	}
 }

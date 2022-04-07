@@ -10,6 +10,12 @@ chronological so the most important changes may not always be ordered first.
 ================
 Jillion 6.0
 ================
+
+Performance Improvements
+------------------------
+1. Performance improvements on uncompressed NucleotideSequences
+2. Performance improvements to parsing and iterating over large Fasta files
+
 New Features
 ------------
 
@@ -18,7 +24,8 @@ New Features
 3. Added Vcf support
 4. Added ThrowingSupplier
 5. Added Support for XZ compressed files in InputStreamSupplier
-6. Performance improvements to parsing and iterating over large Fasta files
+6. New methods on NucleotideSequence to get ranges of Ns and Percent Ns.
+
 
 API Changes
 -----------
