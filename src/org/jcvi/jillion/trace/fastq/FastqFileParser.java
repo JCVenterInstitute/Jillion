@@ -517,7 +517,9 @@ public abstract class FastqFileParser implements FastqParser{
 				throw new NullPointerException("visitor can not be null");
 			}
 			
-			try(InputStream in = supplier.get()){
+			try(InputStream in = supplier.get(InputStreamSupplier.InputStreamReadOptions.builder()
+					.nestedDecompress(true)
+					.build())){
 				LineParser parser = trackPosition? new TextLineParser(in) :new PositionlessLineParser(in);
 				parseFastqFile(visitor, parser);			
 			}
@@ -535,7 +537,10 @@ public abstract class FastqFileParser implements FastqParser{
 			}
 			long startOffset = ((OffsetMemento)memento).getValue();
 			
-                        try (InputStream in = supplier.get(startOffset)) {
+                        try (InputStream in = supplier.get(InputStreamSupplier.InputStreamReadOptions.builder()
+            					.nestedDecompress(true)
+            					.start(startOffset)
+            					.build())) {
                            
                             TextLineParser parser = new TextLineParser(in, startOffset);
                             parseFastqFile(visitor, parser);

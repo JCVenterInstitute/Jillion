@@ -158,6 +158,7 @@ public abstract class AbstractTestSequenceFastaDataStore {
     public ExpectedException expectedException = ExpectedException.none();
     
     ResourceHelper RESOURCES = new ResourceHelper(AbstractTestSequenceFastaDataStore.class);
+    
     protected File getFile() throws IOException {
         return RESOURCES.getFile(FASTA_FILE_PATH);
     }

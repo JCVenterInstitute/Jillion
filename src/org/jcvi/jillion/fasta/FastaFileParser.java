@@ -439,7 +439,10 @@ public abstract class FastaFileParser implements FastaParser{
 			
 			long startOffset = ((OffsetMemento)memento).getOffset();
 			
-                    try (InputStream inputStream = fileSupplier.get(startOffset)) {
+                    try (InputStream inputStream = fileSupplier.get(InputStreamSupplier.InputStreamReadOptions.builder()
+                    													.start(startOffset)
+                    													.nestedDecompress(true)
+                    													.build())) {
         
                         TextLineParser parser = new TextLineParser(inputStream,
                                 startOffset);
@@ -455,7 +458,9 @@ public abstract class FastaFileParser implements FastaParser{
 		@Override
 		protected InputStream getInputStream() throws IOException {
 			//start parsing from beginning of file.
-			return fileSupplier.get();
+			return fileSupplier.get(InputStreamSupplier.InputStreamReadOptions.builder()
+					.nestedDecompress(true)
+					.build());
 		}
 		@Override
 		public boolean canParse() {

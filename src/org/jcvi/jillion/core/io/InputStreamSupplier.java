@@ -27,7 +27,9 @@ import java.util.Optional;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.util.streams.ThrowingSupplier;
-import org.jcvi.jillion.internal.core.io.MagicNumberInputStream;
+
+import lombok.Builder;
+import lombok.Data;
 
 /**
  * A Supplier function that can create multiple
@@ -42,6 +44,44 @@ import org.jcvi.jillion.internal.core.io.MagicNumberInputStream;
  */
 @FunctionalInterface
 public interface InputStreamSupplier extends ThrowingSupplier<InputStream, IOException>{
+	@Data
+	@Builder
+	public static class InputStreamReadOptions{
+		private Long start;
+		private Long length;
+		private boolean nestedDecompress;
+		
+		public static class InputStreamReadOptionsBuilder{
+			
+			public InputStreamReadOptionsBuilder start(Long start) {
+				this.start = start;
+				
+				return this;
+			}
+			public InputStreamReadOptionsBuilder start(long start) {
+				this.start = start;
+				
+				return this;
+			}
+			
+			public InputStreamReadOptionsBuilder length(Long length) {
+				this.length = length;
+				
+				return this;
+			}
+			public InputStreamReadOptionsBuilder length(long length) {
+				this.length = length;
+				
+				return this;
+			}
+		
+			public InputStreamReadOptionsBuilder range(Range r) {
+				start(r.getBegin());
+				length(r.getLength());
+				return this;
+			}
+		}
+	}
     /**
      * Create a new {@link InputStream} that starts
      * at the beginning of the file.
@@ -52,6 +92,45 @@ public interface InputStreamSupplier extends ThrowingSupplier<InputStream, IOExc
      * @throws IOException if there is a problem creating the {@link InputStream}.
      */
     InputStream get() throws IOException;
+    
+    /**
+     * Create a new {@link InputStream} that starts
+     * at the beginning of the file.
+     * 
+     * @return a new {@link InputStream}; should
+     *          never be null but might not have any bytes to read.
+     *          
+     * @throws IOException if there is a problem creating the {@link InputStream}.
+     */
+    default InputStream get(InputStreamReadOptions readOptions) throws IOException{
+    	InputStream in = get(readOptions.nestedDecompress);
+    	
+    	if(readOptions.getStart() !=null && readOptions.getStart().longValue() >0L) {
+    		IOUtil.blockingSkip(in, readOptions.getStart());
+    	}
+    	if(readOptions.getLength() !=null) {
+    		return new SubLengthInputStream(in,readOptions.getLength());
+    	}
+    	return in;
+    }
+    /**
+     * Create a new {@link InputStream} that starts at the beginning
+     * of the file and returns the uncompressed bytes of perhaps nested compressed data.
+     * For example, if the file was {@code tar.gz} then it would ungunzip and then untar
+     * that result and send you the untarred resulting stream.
+     * 
+     * @param uncompressNestedStream
+     * @return
+     * @throws IOException
+     */
+    default InputStream get(boolean uncompressNestedStream) throws IOException{
+    	InputStream in = get();
+    	if(uncompressNestedStream) {
+    		return InputStreamSupplierRegistery.getInstance().decodeInputStream(in);
+    	}
+    	return in;
+    	
+    }
     /**
      * Create a new {@link InputStream} that starts 
      * at the specified byte start offset.
@@ -70,9 +149,8 @@ public interface InputStreamSupplier extends ThrowingSupplier<InputStream, IOExc
      *                 if they are able to more efficiently start in the middle of an {@link InputStream}.
      */
     default InputStream get(long startOffset) throws IOException{
-        InputStream in = get();
-        IOUtil.blockingSkip(in, startOffset);
-        return in;
+        
+        return get(InputStreamReadOptions.builder().start(startOffset).build());
     }
     
     /**
@@ -94,9 +172,7 @@ public interface InputStreamSupplier extends ThrowingSupplier<InputStream, IOExc
      *                 if they are able to more efficiently start in the middle of an {@link InputStream}.
      */
     default InputStream get(Range range) throws IOException{
-        InputStream in = get(range.getBegin());
-       
-        return new SubLengthInputStream(in, range.getLength());
+    	 return get(InputStreamReadOptions.builder().range(range).build());
     }
     /**
      * Can we reread this inputStream by
@@ -140,6 +216,7 @@ public interface InputStreamSupplier extends ThrowingSupplier<InputStream, IOExc
      * <li>zip - single entry only</li>
      * <li>gzip</li>
      * <li>xc</li>
+     * <li>tar - single entry only</li>
      * </ul>
      * 
      * If the file is not one of these types, then it is assumed
@@ -162,32 +239,6 @@ public interface InputStreamSupplier extends ThrowingSupplier<InputStream, IOExc
      * @throws NullPointerException if f is null.
      */
     public static InputStreamSupplier forFile(File f) throws IOException{
-       IOUtil.verifyIsReadable(f);
-       
-       //check that file isn't empty
-       //if the file is empty then there's no magic number
-       if(f.length() ==0){
-    	   return new RawFileInputStreamSupplier(f);
-       }
-       
-       byte[] magicNumber;
-       try(MagicNumberInputStream magicNumInputStream = new MagicNumberInputStream(f, 6)){
-           magicNumber= magicNumInputStream.peekMagicNumber();
-       }
-       
-       if (magicNumber[0] == (byte)0x50 && magicNumber[1] == (byte)0x4B && magicNumber[2] == (byte)0x03 && magicNumber[3]== (byte) 0x04){
-           //zipped
-           return new BasicZipInputStreamSupplier(f);
-       }
-       if( magicNumber[0] == (byte) 0x1F && magicNumber[1] == (byte)0x8B){
-           //gzip
-           return new GZipInputStreamSupplier(f);
-       }
-       //XZ 0xFD, '7', 'z', 'X', 'Z', 0x00
-       if(magicNumber[0]== (byte)0xFD && magicNumber[1] == '7' && magicNumber[2] == 'z' && magicNumber[3]== 'X' && magicNumber[4]=='Z' && magicNumber[5]==0) {
-    	   return new XZInputStreamSupplier(f);
-       }
-       
-        return new RawFileInputStreamSupplier(f);
+    	return InputStreamSupplierRegistery.getInstance().createInputStreamSupplierFor(f);
     }
 }

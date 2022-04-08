@@ -64,7 +64,8 @@ import org.junit.runners.Suite.SuiteClasses;
      
      TestFaiWriter.class,
      TestFaiWriterBuilder.class,
-    TestWhiteSpaceInDefline.class
+    TestWhiteSpaceInDefline.class,
+    TestTarGzNucleotideFastaDataStore.class
     }
     )
 public class AllNucleotideSequenceFastaTests {

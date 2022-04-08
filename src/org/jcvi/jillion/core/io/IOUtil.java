@@ -325,6 +325,26 @@ public final class IOUtil {
     }
     
     /**
+     * Reads UP TO {@code buf.length} bytes of the given inputStream and
+     * puts them into the given byte array starting at the given offset.
+     * Will keep reading until length number of bytes have been read (possibly blocking). 
+     * This is the same as {@link #tryBlockingRead(InputStream, byte[], int, int) tryBlockingRead(in,buf,0, buf.length)}
+     * @param in the inputStream to read; can not be null.
+     * @param buf the byte array to write the data from the stream to; can not be null.
+     * @throws EOFException if EOF is unexpectedly reached.
+     * @throws IOException if there is a problem reading the stream.
+     * @throws NullPointerException if either inputStream  or buf are null.
+     * @throws IllegalArgumentException if either offset  or length are negative.
+     * @see #tryBlockingRead(InputStream, byte[], int, int)
+     * 
+     * @return the number of bytes actually read.
+     * @since 6.0
+     */
+    public static int tryBlockingRead(InputStream in, byte[] buf) throws IOException{
+    	return tryBlockingRead(in, buf, 0, buf.length);
+    }
+    
+    /**
      * Reads {@code buf.length} bytes of the given {@link RandomAccessFile}
      * starting at the current file pointer and
      * puts them into the given byte array starting at the given offset.
@@ -370,6 +390,38 @@ public final class IOUtil {
         if(currentBytesRead ==EOF){
             throw new EOFException(String.format("end of file after only %d bytes read (expected %d)",totalBytesRead,length));
         }
+    }
+    
+    /**
+     * Reads up to length number of bytes of the given inputStream and
+     * puts them into the given byte array starting at the given offset.
+     * Will keep reading until length number of bytes have been read (possibly blocking). 
+     * @param in the inputStream to read; can not be null.
+     * @param buf the byte array to write the data from the stream to; can not be null.
+     * @param offset the offset into the byte array to begin writing 
+     * bytes to must be {@code >= 0}.
+     * @param length the maximum number of bytes to read, must be {@code >= 0}.
+     * This number of bytes will be read unless the inputStream ends prematurely
+     * (which will throw an IOException). 
+     * @throws EOFException if EOF is unexpectedly reached.
+     * @throws IOException if there is a problem reading the stream.
+     * @throws NullPointerException if either inputStream  or buf are null.
+     * @throws IllegalArgumentException if either offset  or length are negative.
+     * 
+     * @return the number of bytes that were actually read; which might be 0.
+     * @since 6.0
+     */
+    public static int tryBlockingRead(InputStream in, byte[] buf, int offset, int length) throws IOException{
+        checkBlockingReadInputsAreOK(in, buf, offset, length);
+    	int currentBytesRead=0;
+        int totalBytesRead=0;
+        while((currentBytesRead =in.read(buf, offset+totalBytesRead, length-totalBytesRead))>0){
+            totalBytesRead+=currentBytesRead;
+            if(totalBytesRead == length){
+                break;
+            }
+        }
+        return totalBytesRead;
     }
     
 
