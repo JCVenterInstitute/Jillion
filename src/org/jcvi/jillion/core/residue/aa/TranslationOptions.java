@@ -20,4 +20,6 @@ public class TranslationOptions{
 						.substituteStart(true)
 						;
 	}
+	//this is to make maven javadoc work... lombok will populate class for us
+	public static class TranslationOptionsBuilder{}
 }

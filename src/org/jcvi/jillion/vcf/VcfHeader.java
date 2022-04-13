@@ -47,4 +47,6 @@ public class VcfHeader {
 					;
 					
 	}
+	//this is to make maven javadoc work... lombok will populate class for us
+	public static class VcfHeaderBuilder{}
 }
