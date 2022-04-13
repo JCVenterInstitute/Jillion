@@ -38,7 +38,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.Range;
@@ -50,7 +49,18 @@ import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
 import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
 import org.jcvi.jillion.internal.core.util.ArrayUtil;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
-
+/**
+ * Default way to encode a sequence compared to a reference.
+ * This implementation is computationally intensive as it 
+ * assumes this is going to be one of perhaps many hundreds of thousands of reads
+ * aligned to a consensus sequence as part of an assembly that is all to be stored
+ * in memory.  So extra processing time is needed to compactly pack the differences
+ * between this read and its reference or consensus sequence which should hopefully
+ * have few if any differences.  
+ * 
+ * @author dkatzel
+ *
+ */
 final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSequence<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder> implements ReferenceMappedNucleotideSequence{
 
 	/**
@@ -423,12 +433,22 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 	public List<Integer> getGapOffsets() {
 		GrowableIntArray referenceGapOffsets = shiftReferenceGaps();
 		if(encodedSnpsInfo !=null){
-			return modifyForSnps(referenceGapOffsets);
+			 modifyForSnps(referenceGapOffsets);
 		}
-		return ArrayUtil.asList(referenceGapOffsets.toArray());
+		return referenceGapOffsets.toBoxedList();
+	}
+	
+	@Override
+	public List<Range> getRangesOfGaps() {
+		GrowableIntArray referenceGapOffsets = shiftReferenceGaps();
+		if(encodedSnpsInfo !=null){
+			 modifyForSnps(referenceGapOffsets);
+			 
+		}
+		return Ranges.asRanges(referenceGapOffsets.toArray());
 	}
 
-	private List<Integer> modifyForSnps(GrowableIntArray gaps) {
+	private void modifyForSnps(GrowableIntArray gaps) {
 		//now check our snps to see
 		//1. if we have snp where the ref has a gap
 		//2. if we have gap
@@ -470,7 +490,6 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 		//sorted ref gaps
 		//followed by sorted snps which happen to be gaps
 		gaps.sort();
-		return ArrayUtil.asList(gaps.toArray());
 	}
 	//first, get gaps from our aligned section of the reference
 	//we may have a snp in the gap location
@@ -586,7 +605,7 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 	@Override
 	public List<Range> getRangesOfNs() {
 		// TODO speed this up using reference info?
-		//for now just do the good not optimal way of looping through eveything.
+		//for now just do the good not optimal way of looping through everything.
 
 		//reference based probably is a read so it shouldn't be too long
 		BitSet bits = new BitSet();

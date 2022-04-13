@@ -3,6 +3,7 @@ package org.jcvi.jillion.fasta.aa;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.testUtil.SlowTests;
 import org.jcvi.jillion.core.util.MapUtil;
+import org.jcvi.jillion.core.util.streams.ThrowingBiConsumer;
 import org.jcvi.jillion.fasta.FastaCollectors;
 import org.jcvi.jillion.internal.core.util.Sneak;
 import org.jcvi.jillion.testutils.ProteinSequenceTestUtil;
@@ -133,7 +134,7 @@ public class TestMultithreadProteinFastaWriter {
         map.values().parallelStream().map(this::fakeCPUIntensiveOp)
                 .collect(FastaCollectors.writeAndClose(new ProteinFastaWriterBuilder(fastaFile).build(),
 
-                        (w,r)-> w.write(r.trim(trimRange))
+                        (ThrowingBiConsumer<ProteinFastaWriter, ProteinFastaRecord, Throwable>) (w,r)-> w.write(r.trim(trimRange))
                         ));
 
 

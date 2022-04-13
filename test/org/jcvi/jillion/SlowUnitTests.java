@@ -25,6 +25,7 @@
  */
 package org.jcvi.jillion;
 
+import org.jcvi.jillion.align.AllAlignmentTests;
 import org.jcvi.jillion.assembly.AllAssemblyUnitTests;
 import org.jcvi.jillion.core.AllCoreUnitTests;
 import org.jcvi.jillion.core.testUtil.SlowTests;
@@ -61,7 +62,7 @@ import org.junit.runners.Suite.SuiteClasses;
         AllProfileUnitTests.class,
         AllTestUtilsTests.class,
         AllTrimmerUnitTests.class,
-        
+        AllAlignmentTests.class,
         AllExperimentalTests.class
    
     }

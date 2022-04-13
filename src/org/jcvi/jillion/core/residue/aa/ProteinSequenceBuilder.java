@@ -21,6 +21,7 @@
 package org.jcvi.jillion.core.residue.aa;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -46,6 +47,8 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	private GrowableByteArray builder;
 	private int numberOfGaps=0;
 	private boolean turnOffCompression=false;
+	
+	private boolean includeStopCodon = true;
 	 /**
      * Creates a new ProteinSequenceBuilder instance
      * which currently contains no amino acids.
@@ -305,11 +308,23 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 
 	
 	private AminoAcid[] convertFromBytes(byte[] array){
-		AminoAcid[] aas = new AminoAcid[array.length];
-		for(int i=0; i<array.length; i++){
-			aas[i]=AMINO_ACID_VALUES[array[i]];
+		if(includeStopCodon) {
+			AminoAcid[] aas = new AminoAcid[array.length];
+			for(int i=0; i<array.length; i++){
+				aas[i]=AMINO_ACID_VALUES[array[i]];
+			}
+			return aas;
 		}
-		return aas;
+		//trim off stop
+		AminoAcid[] aas = new AminoAcid[array.length];
+		int j=0;
+		for(int i=0; i<array.length; i++){
+			AminoAcid aa = AMINO_ACID_VALUES[array[i]];
+			if(aa != AminoAcid.STOP) {
+				aas[j++] = aa;
+			}
+		}
+		return Arrays.copyOf(aas, j);
 	}
 	private ProteinSequence build(byte[] seqToBuild){
 		AminoAcid[] asList = convertFromBytes(seqToBuild);
@@ -429,4 +444,8 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	    turnOffCompression = true;
 	    return this;
     }
+	public ProteinSequenceBuilder trimOffStopCodon(boolean trimOffStopCodon) {
+		this.includeStopCodon = !trimOffStopCodon;
+		return this;
+	}
 }

@@ -24,12 +24,17 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.testUtil.TestUtil;
+import org.jcvi.jillion.testutils.NucleotideSequenceTestUtil;
 import org.junit.Test;
-import org.powermock.reflect.Whitebox;
 /**
  * @author dkatzel
  *
@@ -155,6 +160,13 @@ public class TestNucleotideSequenceBuilder {
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.append(Nucleotides.parse("GGTGCA"));
         assertBuiltDnaSequenceEquals("ACGTGGTGCA",sut);
+    } 
+    
+    @Test
+    public void appendNucleotideSequenceRange(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
+        sut.append(createSequence("GGTGCA"), Range.of(2, 5));
+        assertBuiltDnaSequenceEquals("ACGTTGCA",sut);
     } 
     
     @Test
@@ -620,6 +632,17 @@ public class TestNucleotideSequenceBuilder {
 
     }
     @Test
+    public void referenceWithturnOffCompression(){
+        //the snp is T -> U
+        NucleotideSequence ref = NucleotideSequence.of("ACGTACGT");
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("GUAC")
+        		.turnOffDataCompression(true)
+                .setReferenceHint(ref,2);
+
+        assertBuiltRnaSequenceEquals("GUAC", sut);
+
+    }
+    @Test
     public void referenceRnaDnaSeq(){
         //the snp is T -> U
         NucleotideSequence ref = NucleotideSequence.of("ACGUACGU");
@@ -836,7 +859,7 @@ public class TestNucleotideSequenceBuilder {
     	NucleotideSequence uncompressed =new NucleotideSequenceBuilder("ACGTACGTTACG")
     													.turnOffDataCompression(true)
     													.build();
-    	assertTrue(uncompressed instanceof SimpleNucleotideSequence);
+    	assertTrue(uncompressed instanceof AbstractSimpleNucleotideSequence);
 //    	NucleotideCodec codec = (NucleotideCodec) Whitebox.getInternalState(uncompressed, "codec");
 //    	assertTrue(codec instanceof BasicNucleotideCodec);
     	
@@ -1101,4 +1124,84 @@ public class TestNucleotideSequenceBuilder {
         assertEquals("ACNNGT", Nucleotide.cleanSequence("ACXXGT", "N"));
     }
     
+    @Test
+    public void multipleRangeCreation() {
+    	NucleotideSequence seq = NucleotideSequenceTestUtil.createRandom(100);
+    	List<Range> ranges = List.of(Range.of(0,10),
+    								Range.of(20,30),
+    								Range.of(50,80)
+    			);
+    	
+    	NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder();
+    	for(Range r : ranges) {
+    		builder.append(seq.trim(r));
+    	}
+    	
+    	NucleotideSequence expected = builder.build();
+    	
+    	assertEquals(expected, new NucleotideSequenceBuilder(seq, ranges).build());
+    }
+    
+    @Test
+    public void multipleRangeCreationArray() {
+    	NucleotideSequence seq = NucleotideSequenceTestUtil.createRandom(100);
+    	List<Range> ranges = List.of(Range.of(0,10),
+    								Range.of(20,30),
+    								Range.of(50,80)
+    			);
+    	
+    	NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder();
+    	for(Range r : ranges) {
+    		builder.append(seq.trim(r));
+    	}
+    	
+    	NucleotideSequence expected = builder.build();
+    	
+    	assertEquals(expected, new NucleotideSequenceBuilder(seq, ranges.toArray(i-> new Range[i])).build());
+    }
+    
+    @Test
+    public void multipleRangeCreationNullInArrayShouldThrowNPE() {
+    	NucleotideSequence seq = NucleotideSequenceTestUtil.createRandom(100);
+    	List<Range> ranges = Arrays.asList(Range.of(0,10),
+    								Range.of(20,30),
+    								null,
+    								Range.of(50,80)
+    			);
+    	
+    	
+    	assertThrows(NullPointerException.class, ()-> new NucleotideSequenceBuilder(seq, ranges.toArray(i-> new Range[i])));
+    }
+    
+    @Test
+    public void multipleRangeCreationNullInListShouldThrowNPE() {
+    	NucleotideSequence seq = NucleotideSequenceTestUtil.createRandom(100);
+    	List<Range> ranges = Arrays.asList(Range.of(0,10),
+    								Range.of(20,30),
+    								null,
+    								Range.of(50,80)
+    			);
+    	
+    	
+    	assertThrows(NullPointerException.class, ()-> new NucleotideSequenceBuilder(seq, ranges));
+    }
+    
+    @Test
+    public void emptyRangeListShouldMakeEmptySequence() {
+    	NucleotideSequence seq = NucleotideSequenceTestUtil.createRandom(100);
+    	assertTrue(new NucleotideSequenceBuilder(seq, Collections.emptyList()).build().isEmpty());
+    }
+    
+    @Test
+    public void multipleRangeCreationNullSeqShouldThrowNPE() {
+    	assertThrows(NullPointerException.class, ()->new NucleotideSequenceBuilder(null, Collections.emptyList()));
+    }
+    @Test
+    public void multipleRangeCreationNullRangesArrayShouldThrowNPE() {
+    	assertThrows(NullPointerException.class, ()->new NucleotideSequenceBuilder(NucleotideSequence.of("ACGT"), (Range[])null));
+    }
+    @Test
+    public void multipleRangeCreationNullRangesListShouldThrowNPE() {
+    	assertThrows(NullPointerException.class, ()->new NucleotideSequenceBuilder(NucleotideSequence.of("ACGT"), (List<Range>)null));
+    }
 }

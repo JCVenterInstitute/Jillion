@@ -25,11 +25,15 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
+import org.jcvi.jillion.internal.core.util.GrowableLongArray;
 /**
  * {@code Ranges} is a helper class
  * for operating on a collection
@@ -390,4 +394,30 @@ public final class Ranges {
         }
         return false;
     }
+    /**
+     * Return a list of ranges that intersect both lists of input ranges;
+     * 
+     * @param subjectRanges
+     * @param queryRanges
+     * @return
+     */
+	public static List<Range> union(List<Range> subjectRanges, List<Range> queryRanges) {
+		Objects.requireNonNull(subjectRanges);
+		Objects.requireNonNull(queryRanges);
+		
+		Set<Integer> set = new HashSet<>();
+		for(Range s : subjectRanges) {
+			for(Range q : queryRanges) {
+				Range intersection = s.intersection(q);
+				for(long l : intersection) {
+					set.add(Integer.valueOf((int)l));
+				}
+			}
+		}
+		if(set.isEmpty()) {
+			return Collections.emptyList();
+		}
+		return Ranges.asRanges(set.stream().mapToInt(Integer::intValue).sorted().toArray());
+	
+	}
 }

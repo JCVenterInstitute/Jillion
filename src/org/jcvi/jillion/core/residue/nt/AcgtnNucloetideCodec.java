@@ -22,6 +22,7 @@ package org.jcvi.jillion.core.residue.nt;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
@@ -53,6 +54,8 @@ final class AcgtnNucloetideCodec extends AbstractTwoBitEncodedNucleotideCodec{
     public List<Integer> getGapOffsets(byte[] encodedGlyphs) {
         return Collections.emptyList();
     }
+    
+    
 
 
 	@Override
@@ -128,5 +131,17 @@ final class AcgtnNucloetideCodec extends AbstractTwoBitEncodedNucleotideCodec{
 		return Ranges.asRanges(getSentinelOffsets(encodedData).toArray());
 		
 	}
+
+	@Override
+	public List<Range> getGapRanges(byte[] encodedData) {
+		//no gaps
+		return Collections.emptyList();
+	}
+
+	@Override
+	public IntStream getGapOffsetsAsStream(byte[] encodedData) {
+		return IntStream.empty();
+	}
+	
 
 }

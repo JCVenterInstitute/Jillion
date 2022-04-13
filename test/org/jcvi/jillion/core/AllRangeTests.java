@@ -50,9 +50,9 @@ import org.junit.runners.Suite.SuiteClasses;
          TestRangeComparatorShortestToLongest.class,
          TestRangeComparatorLongestToShortest.class,
          TestBitSetAsRanges.class,
-         TestIntArrayAsRanges.class
-        
-         
+         TestIntArrayAsRanges.class,
+         TestRangeUnionParameterCheck.class,
+         TestRangeUnion.class
     }
     )
 public class AllRangeTests {

@@ -55,6 +55,8 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 	    }
 	 
 	 private LargeNucleotideSequenceFastaIterator(FastaParser parser, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter){
+		 super(5_000); // fasta records shouldn't be that big...
+		 
 		 if(!parser.canParse()){
 			 throw new IllegalStateException("parser must still be able to parse fasta");
 		 }
@@ -101,9 +103,12 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 	    private class NucleotideFastaRecordVisitor implements FastaRecordVisitor{
 			private String currentId;
 			private String currentComment;
-			private NucleotideSequenceBuilder builder;
+			//since we are iterating only we probably don't care about compressing the data
+			//and initialize the size of the builder to a reasonable size for sequencing reads, it will grow if needed.
+			private NucleotideSequenceBuilder builder=  new NucleotideSequenceBuilder(2_000).turnOffDataCompression(true);
 			private FastaVisitorCallback callback;
 			private final Predicate<NucleotideFastaRecord> recordFilter;
+			
 			
 			public NucleotideFastaRecordVisitor(Predicate<NucleotideFastaRecord> recordFilter){
 			    this.recordFilter = recordFilter;
@@ -112,7 +117,8 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 				this.currentId = id;
 				this.currentComment = optionalComment;
 				this.callback = callback;
-				builder = new NucleotideSequenceBuilder();
+				//clear the length instead of new object for each visit
+				builder.clear();
 			}
 			@Override
 			public void visitBodyLine(String line) {

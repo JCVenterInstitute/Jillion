@@ -27,14 +27,12 @@ package org.jcvi.jillion.core.residue.nt;
 
 
 import java.io.Serializable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.ResidueSequence;
 /**
  * {@code NucleotideSequence} an interface to abstract
@@ -176,14 +174,15 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
         return findMatches(pattern, Range.ofLength(getLength()), nested);
     }
 
-    default Stream<Range> findMatches(Pattern pattern, Range subSequenceRange, boolean nested) {
-//       System.out.println("here!!!");
+    @SuppressWarnings("resource")
+	default Stream<Range> findMatches(Pattern pattern, Range subSequenceRange, boolean nested) {
+
         Stream<Range> matches = findMatches(pattern, subSequenceRange);
         if (! nested) {
             return matches;
         }
         List<Range> matchList = matches.collect(Collectors.toList());
-//        System.out.println("matchList = " + matchList);
+
         Stream<Range> nestedOutput = matchList.stream();
 
         long start;
@@ -207,6 +206,7 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
         }
         return nestedOutput;
     }
+    
     /**
      * Get the list of contiguous spans of Ns; the returned list
      * will be in sorted order.
@@ -248,6 +248,22 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
                 .turnOffDataCompression(true)
                 .build();
     }
+    /**
+     * Create a new NucleotideSequence of a single nucleotide.
+     * 
+     * @param n the Nucleotide to turn into a NucleotideSequence object;
+     * can not be null.
+     * @return a new NucleotideSequence object.
+     * 
+     * @throws NullPointerException if n is null.
+     * 
+     * @since 6.0
+     */
+    static NucleotideSequence of(Nucleotide n) {
+    	return new NucleotideSequenceBuilder(n)
+                .turnOffDataCompression(true)
+                .build();
+    }
 
     /**
      * Is this sequence RNA.
@@ -274,4 +290,37 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
     default NucleotideSequence trim(Range trimRange) {
         return toBuilder(trimRange).build();
     }
+    /**
+     * Is this sequence only contain Ns.
+     * 
+     * @since 6.0
+     * @return {@code true} if this sequence only contains Ns;
+     * {@code false} otherwise.
+     * 
+     * @implNote the default implementation is
+     * <pre>
+     * {@code 
+     * getPercentN()==1D;
+     * </pre>
+     */
+	default boolean isAllNs() {
+		return getPercentN()==1D;
+	}
+	/**
+	 * Get the percentage of Ns compared to other non-gapped bases in the sequence.
+	 * @return a double in the range of {@code [0 .. 1]} inclusive.  If the sequence is empty it returns 0.
+	 * 
+	 * @since 6.0
+	 * 
+	 * @implNote the default implementation sums up the lengths of ranges returned by {@link #getRangesOfNs()}
+	 * to compute the percentage so it doesn't need to iterate over the whole sequence counting Ns assuming getRangesOfNs is faster.
+	 */
+	default double getPercentN() {
+		long ungappedLength = getUngappedLength();
+		if(ungappedLength ==0L) {
+			return 0D;
+		}
+		long numNs = getRangesOfNs().stream().mapToInt(r-> (int) r.getLength()).sum();
+		return numNs/(double) ungappedLength;
+	}
 }

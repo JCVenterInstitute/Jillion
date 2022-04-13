@@ -86,7 +86,6 @@ public final class ResidueTypeGuesser {
             }
 
         }
-        System.out.println("counts = " + counts);
         return ResidueTypeGuessedResult.combine(counts);
 
 

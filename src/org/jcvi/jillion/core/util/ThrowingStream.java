@@ -61,7 +61,7 @@ public interface ThrowingStream<T> extends Stream<T>{
             try {
                 action.accept(t);
             } catch (Throwable ex) {
-                throw Sneak.sneakyThrow(ex);
+                Sneak.sneakyThrow(ex);
             }
         });
     }
@@ -78,7 +78,7 @@ public interface ThrowingStream<T> extends Stream<T>{
             try {
                 return mapper.apply(t);
             } catch (Throwable ex) {
-                throw Sneak.sneakyThrow(ex);
+                return Sneak.sneakyThrow(ex);
             }
         });
     }
@@ -93,7 +93,7 @@ public interface ThrowingStream<T> extends Stream<T>{
             try {
                 action.accept(t);
             } catch (Throwable ex) {
-                throw Sneak.sneakyThrow(ex);
+                 Sneak.sneakyThrow(ex);
             }
         });
         

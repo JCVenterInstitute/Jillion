@@ -20,6 +20,10 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.core.residue;
 
+import java.util.List;
+
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequence;
 import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
@@ -36,6 +40,10 @@ import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
  */
 public abstract class AbstractResidueSequence<R extends Residue, T extends ResidueSequence<R, T, B>, B extends ResidueSequenceBuilder<R, T>> implements ResidueSequence<R, T, B>{
 
+	@Override
+	public List<Range> getRangesOfGaps(){
+		return Ranges.asRanges(getGapOffsets().stream().mapToInt(Integer::intValue).toArray());
+	}
 	@Override
     public long getUngappedLength(){
         return getLength() - getNumberOfGaps();

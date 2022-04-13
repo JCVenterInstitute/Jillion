@@ -59,6 +59,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestDefaultFastqFileDataStoreMultilineGuessCodec.class,
         TestIndexedFastqFileDataStoreGuessCodec.class,
         TestIndexedMultilineFastqDataStore.class,
+        TestTarGzDefaultFastQFileDataStore.class,
         
         TestLargeFastQFileDataStore.class,
         TestLargeMultilineFastqDataStore.class,

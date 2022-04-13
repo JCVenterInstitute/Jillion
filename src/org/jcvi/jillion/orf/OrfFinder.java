@@ -89,8 +89,9 @@ public class OrfFinder {
         Orf orf=null;
         @Override
         public void visitCodon(long nucleotideCoordinate, Codon codon) {
-            builder.append(codon.getAminoAcid());
-            
+        	if(hasStart) {
+        		builder.append(codon.getAminoAcid());
+        	}
         }
 
         @Override

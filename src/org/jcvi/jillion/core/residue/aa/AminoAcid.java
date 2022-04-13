@@ -88,6 +88,8 @@ public enum AminoAcid implements Residue{
 
     private static final Pattern CLEAN_PATTERN;
     private static final Map<String, AminoAcid> NAME_MAP;
+    
+    private static final Map<Set<AminoAcid>, AminoAcid> AMBIGIOUS_MAP;
     static{
     	int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(AminoAcid.values().length *3);
         NAME_MAP = new HashMap<>(mapSize);
@@ -109,8 +111,47 @@ public enum AminoAcid implements Residue{
         }
         validBuilder.append("\\-\\s]");
         CLEAN_PATTERN = Pattern.compile(validBuilder.toString());
+        
+        AMBIGIOUS_MAP = new HashMap<>();
+        
+        AMBIGIOUS_MAP.put(EnumSet.of(Isoleucine, Leucine), AminoAcid.Leucine_or_Isoleucine);
+        AMBIGIOUS_MAP.put(EnumSet.of(Leucine_or_Isoleucine, Leucine), AminoAcid.Leucine_or_Isoleucine);
+        AMBIGIOUS_MAP.put(EnumSet.of(Leucine_or_Isoleucine, Isoleucine), AminoAcid.Leucine_or_Isoleucine);
+        
+        AMBIGIOUS_MAP.put(EnumSet.of(Aspartic_Acid, Asparagine), AminoAcid.Aspartate_or_Asparagine);
+        AMBIGIOUS_MAP.put(EnumSet.of(Aspartate_or_Asparagine, Asparagine), AminoAcid.Aspartate_or_Asparagine);
+        AMBIGIOUS_MAP.put(EnumSet.of(Aspartate_or_Asparagine, Aspartic_Acid), AminoAcid.Aspartate_or_Asparagine);
+        
+        AMBIGIOUS_MAP.put(EnumSet.of(Glutamic_Acid, Glutamine), AminoAcid.Glutamate_or_Glutamine);
+        AMBIGIOUS_MAP.put(EnumSet.of(Glutamate_or_Glutamine, Glutamine), AminoAcid.Glutamate_or_Glutamine);
+        AMBIGIOUS_MAP.put(EnumSet.of(Glutamate_or_Glutamine, Glutamic_Acid), AminoAcid.Glutamate_or_Glutamine);
+        
+    
+    
     }
-
+    /**
+     * Get the AminoAcid that best represents the given group of amino acids.
+     * @param aas the amino acids to consider; can not be null or contain any null elements;
+     * @return
+     */
+    public static AminoAcid merge(Iterable<AminoAcid> aas) {
+    	Set<AminoAcid> set =  EnumSet.noneOf(AminoAcid.class);
+    	AminoAcid first=null;
+    	for(AminoAcid aa : aas) {
+    		if(aa==null) {
+    			throw new NullPointerException("amino acid can not be null");
+    		}
+    		if(first==null) {
+    			first=aa;
+    		}
+    		set.add(aa);
+    	}
+    	
+    	if(set.size()==1) {
+    		return first;
+    	}
+    	return AMBIGIOUS_MAP.getOrDefault(set, AminoAcid.Unknown_Amino_Acid);
+    }
     /**
      * Is This AminoAcid an ambiguity?
      * An ambiguity is X, B, Z, and J.
@@ -257,9 +298,13 @@ public enum AminoAcid implements Residue{
     public String get3LetterAbbreviation() {
         return threeLetterAbbreviation;
     }
-    
+    /**
+     * Append the list of amino acids into one long string.
+     * @param glyphs the amino acids to convert into a string.
+     * @return a new String.
+     */
     public static String convertToString(List<AminoAcid> glyphs){
-    	StringBuilder result = new StringBuilder();
+    	StringBuilder result = new StringBuilder(glyphs.size());
     	for(AminoAcid g: glyphs){
      		result.append(g.getCharacter());
     	}

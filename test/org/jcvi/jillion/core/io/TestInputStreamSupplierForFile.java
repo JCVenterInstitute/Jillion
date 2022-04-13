@@ -32,12 +32,15 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipInputStream;
 
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.io.InputStreamSupplier.InputStreamReadOptions;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.tukaani.xz.XZInputStream;
 
 @RunWith(Parameterized.class)
 public class TestInputStreamSupplierForFile {
@@ -71,12 +74,40 @@ public class TestInputStreamSupplierForFile {
         list.add(new Object[]{InputStreamSupplier.forFile(gzipFile),
                               new GZIPInputStream(new FileInputStream(gzipFile)),
                               "gzip"});
+        //xzip
+        File xzFile = helper.getFile("files/lorem_ipsum.txt.xz");
+        list.add(new Object[]{InputStreamSupplier.forFile(xzFile),
+                              new XZInputStream(new FileInputStream(xzFile)),
+                              "xz"});
+        //tar
+        File tarFile = helper.getFile("files/lorem_ipsum.txt.tar");
+        list.add(new Object[]{InputStreamSupplier.forFile(tarFile),
+                               getTarredInputStream(tarFile),
+                              "tar"});
+        //nested!!
+        File tarGzFile = helper.getFile("files/lorem_ipsum.txt.tar.gz");
+        list.add(new Object[]{InputStreamSupplier.forFile(tarGzFile),
+                               getTarredInputStream( new GZIPInputStream(new FileInputStream(tarGzFile))),
+                              "tar.gz"});
         
+        File tarXzFile = helper.getFile("files/lorem_ipsum.txt.tar.xz");
+        list.add(new Object[]{InputStreamSupplier.forFile(tarXzFile),
+                               getTarredInputStream( new XZInputStream(new FileInputStream(tarXzFile))),
+                              "tar.xz"});
         return list;
     }
     
     private static InputStream getZippedInputStream(File zipFile) throws IOException{
         ZipInputStream zipIn = new ZipInputStream(new FileInputStream(zipFile));
+        zipIn.getNextEntry();
+        return zipIn;
+    }
+    private static InputStream getTarredInputStream(File tarFile) throws IOException{
+    	return getTarredInputStream(new FileInputStream(tarFile));
+       
+    }
+    private static InputStream getTarredInputStream(InputStream in) throws IOException{
+    	TarArchiveInputStream zipIn = new TarArchiveInputStream(in);
         zipIn.getNextEntry();
         return zipIn;
     }
@@ -94,7 +125,7 @@ public class TestInputStreamSupplierForFile {
     }
     @Test
     public void matchesRaw() throws IOException{
-       byte[] actual = getBytes(sut.get()); 
+       byte[] actual = getBytes(sut.get(InputStreamReadOptions.builder().nestedDecompress(true).build())); 
        assertArrayEquals(originalBytes, actual);
     }
     
@@ -116,7 +147,7 @@ public class TestInputStreamSupplierForFile {
         int offset = originalBytes.length/2;
         byte[] expected = Arrays.copyOfRange(originalBytes, offset, originalBytes.length);
         
-        byte[] actual = getBytes(sut.get(offset)); 
+        byte[] actual = getBytes(sut.get(InputStreamReadOptions.builder().nestedDecompress(true).start(offset).build())); 
         assertArrayEquals(expected, actual);
     }
     
@@ -128,7 +159,7 @@ public class TestInputStreamSupplierForFile {
         //copyOfRange has exclusive end which is why we +1
         byte[] expected = Arrays.copyOfRange(originalBytes, start, end+1);
         
-        byte[] actual = getBytes(sut.get(Range.of(start, end))); 
+        byte[] actual = getBytes(sut.get(InputStreamReadOptions.builder().nestedDecompress(true).range(Range.of(start, end)).build())); 
         assertArrayEquals(expected, actual);
     }
 

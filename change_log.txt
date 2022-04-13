@@ -11,7 +11,85 @@ chronological so the most important changes may not always be ordered first.
 Jillion 6.0
 ================
 
+Performance Improvements
+------------------------
+1. Performance improvements on uncompressed NucleotideSequences if they are only ACGT or ACGTN
+2. Performance improvements to parsing and iterating over large Fasta files
+
+New Features
+------------
+
 1. Moved to Java 11
+2. Added lombok support
+3. Added Vcf support
+4. Added ThrowingSupplier
+5. Added Support for XZ compressed files in InputStreamSupplier
+6. New methods on NucleotideSequence to get ranges of Ns and Percent Ns.
+7. Added Tar Support for InputStreamSupplier
+8. FastaFileParser and FastqFileParser can now correctly parse compressed archive formats such as "tar.gz". 
+   Assuming we only want the first file entry to be parsed.
+   This means that fasta and fastq visitors and datastores will now seamlessly works on tar.gz files.
+
+API Changes
+-----------
+
+1. ResidueSequence is now Comparable and the default implementation compares toString() values.
+
+2. new NucleotideSequence creation methods that take single Nucleotide objects.
+
+3. ReferenceMappedNucleotideSequence now has a new method computePolymorphisms() which is similar to
+   the already existing method getDifferenceMap() except it goes further and denotes insertions vs deletions 
+   and supports consecutive differences grouped together.
+
+4. new method NucleotideSequence#isAllGapsOrBlank()
+
+5. new method NucleotideSequence#isAllNs()
+
+6. new method NucleotideSequenceBuilder#ungap(Predicate<Range>) which will only ungap the 
+   passed in gap ranges if they pass the predicate.
+   
+7. new factory method NucleotideFastaRecord.of(File) will parse the given fasta file and return the first
+   record.
+   
+8. New factory method NucleotideFastaRecord.createNewIteratorFor( File) will parse the given fasta file and return 
+   a StreamingIterator to iterate over each record.
+   
+9. New methods on TranslationTable to take more options a new TranslationOptions object was created to help reduce
+   the explosion of new methods to handle every combination of flags.
+   
+10. New methods on NucleotideSequence to get ranges of Gaps 
+
+11. New feature to InputStreamSupplier allowing nested decompression to support getting the uncompressed stream
+    from an tar.gz record for example.
+    
+12. new method InputStreamSupplier#get(InputStreamSupplierOptions)  which allows for more easily setting
+    the different possible options to fetching an inputStream now including start/length and nested decompression
+    without having the number of methods explode.  All previous get() methods with the the different parameters
+    are still present for backwards compatibility.
+
+13. New InputStreamSupplierRegistry to add custom InputStreamSupplier implementations at runtime.  Implementations
+    must implement the new org.jcvi.jillion.spi.io.InputStreamSupplierFactory interface.
+    
+14. New constructors NucleotideSequenceBuilder( NucleotideSequence, Range),  NucleotideSequenceBuilder( NucleotideSequence, Range...) and NucleotideSequenceBuilder( NucleotideSequence, Iterable<Range>)
+    to support more efficient creation of builders that only contain partial ranges of a sequence
+    in a more efficient manner than performing multiple trim operations.
+    
+15. New method NucleotideSequenceBuilder#append(NucleotideSequence, Range) to append sequence in 
+    a more efficient manner than performing trim operation.
+
+API BREAKING CHANGES
+--------------------
+
+1. Requires Java 11
+
+2.  TranslationVisitor will now visit all Codons not just the ones found between start and stop.  This 
+    is to support translating partial sequences where the start codon is missing.
+
+Bug Fixes
+---------
+
+1. Building a ReferenceMappedNucleotideSequence from a NucleotideSequenceBuilder 
+   with compression turned off no longer throws a ClassCastException. 
 
 ================
 Jillion 5.3

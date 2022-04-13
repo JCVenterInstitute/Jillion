@@ -22,6 +22,7 @@ package org.jcvi.jillion.core.residue.nt;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
@@ -52,13 +53,25 @@ final class AcgtGapNucleotideCodec extends AbstractTwoBitEncodedNucleotideCodec{
 
 
 	@Override
+	public double getPercentN(byte[] encodedData) {
+		//no Ns
+		return 0D;
+	}
+
+
+	@Override
 	public List<Integer> getGapOffsets(byte[] encodedData) {
 		GrowableIntArray array = this.getSentinelOffsets(encodedData);
 		
 		return array.toBoxedList();
 	}
     
-   
+	@Override
+	public IntStream getGapOffsetsAsStream(byte[] encodedData) {
+		GrowableIntArray array = this.getSentinelOffsets(encodedData);
+		
+		return array.stream();
+	}
     
     
     

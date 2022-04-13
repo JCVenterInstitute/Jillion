@@ -27,16 +27,21 @@ package org.jcvi.jillion.fasta.nt;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Spliterators;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
+import org.jcvi.jillion.core.util.ThrowingStream;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.util.streams.ThrowingBiConsumer;
 import org.jcvi.jillion.fasta.FastaFileParser;
 import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
@@ -118,4 +123,33 @@ final class LargeNucleotideSequenceFastaFileDataStore extends AbstractLargeFasta
 			throw new DataStoreException("error iterating over fasta file", e);
 		}
 	}
+    
+    
+	@Override
+	public <E extends Throwable> void forEach(ThrowingBiConsumer<String, NucleotideFastaRecord, E> consumer)
+			throws IOException, E {
+		Objects.requireNonNull(consumer);
+		LargeNucleotideFastaVisitor visitor = new LargeNucleotideFastaVisitor(getIdFilter(), getRecordFilter(), consumer);
+		
+		getFastaParser().parse(visitor);
+		
+	}
+	@Override
+	public ThrowingStream<NucleotideFastaRecord> records() throws DataStoreException {
+		if(getNumberOfRecords()< 10_000) {
+				//do it all in memory
+			Stream.Builder<NucleotideFastaRecord> stream = Stream.builder();
+			try {
+				forEach((i,r)-> stream.accept(r));
+				return ThrowingStream.asThrowingStream(stream.build());
+			} catch (IOException e) {
+				throw new DataStoreException(e.getMessage(), e);
+			}
+	    	
+		}
+		return super.records();
+		
+	}
+    
+    
 }

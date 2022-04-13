@@ -27,7 +27,7 @@ package org.jcvi.jillion.internal.core.util;
  * @since 5.3
  */
 public class Sneak {
-    public static RuntimeException sneakyThrow(Throwable t) {
+    public static <T> T sneakyThrow(Throwable t) {
         if (t == null)
             throw new NullPointerException("t");
         Sneak.<RuntimeException> sneakyThrow0(t);

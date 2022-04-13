@@ -38,7 +38,7 @@ import org.jcvi.jillion.core.Sequence;
  * @param <R> the Type of {@link Residue} in this {@link Sequence}.
  * @param <T> the ResidueSequence implementation, needed for some of the return types to make sure it returns "this" type.
  */
-public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R, T, B>, B extends ResidueSequenceBuilder<R, T>> extends Sequence<R> {
+public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R, T, B>, B extends ResidueSequenceBuilder<R, T>> extends Sequence<R>, Comparable<T> {
 
 	 /**
      * Get a List of all the offsets into this
@@ -48,6 +48,14 @@ public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R,
      * @return a List of gap offsets as Integers.
      */
     List<Integer> getGapOffsets();    
+    /**
+     * Get the list of contiguous spans of gapss; the returned list
+     * will be in sorted order.
+     * @return a List which may be empty.
+     * 
+     * @since 6.0
+     */
+    List<Range> getRangesOfGaps();
     /**
      * Get the number of gaps in this sequence.
      * @return the number of gaps; will always be {@code >=0}.
@@ -146,6 +154,16 @@ public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R,
                 getGappedOffsetFor((int)ungappedRange.getBegin()),
                 getGappedOffsetFor((int)ungappedRange.getEnd())
                 );
+    }
+    /**
+     * Is this Sequence only gaps or blank.
+     * @return {@code true} if the sequence is only gaps (or blank);
+     * {@code false} otherwise.
+     * 
+     * @since 6.0
+     */
+    default boolean isAllGapsOrBlank() {
+    	return getNumberOfGaps()== getLength();
     }
     /**
      * Get this sequence as a single long string
@@ -370,5 +388,19 @@ public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R,
      */
     default Iterable<R> ungappedIterable(){
         return this::ungappedIterator;
+    }
+    /**
+     * Compare another residue sequences to another of the same type.
+     * 
+     * @apiNote this implementation compares the results of toString().
+     * 
+     * @implNote This is the same as {@code return this.toString().compareTo(other.toString())}.
+     * 
+     * @returns the comparison int value to determine sort order.
+     * 
+     * @since 6.0
+     */
+    default int compareTo(T other) {
+    	return this.toString().compareTo(other.toString());
     }
 }

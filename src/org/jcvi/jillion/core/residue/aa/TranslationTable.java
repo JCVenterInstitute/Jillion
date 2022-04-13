@@ -28,7 +28,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 public interface TranslationTable {
 
-        void translate(NucleotideSequence sequence, Frame frame, TranslationVisitor visitor);
+	void translate(NucleotideSequence sequence, Frame frame, TranslationVisitor visitor);
 	/**
 	 * Convenience method for {@link #translate(NucleotideSequence, Frame)}
 	 * using {@link Frame#ONE}.
@@ -127,6 +127,29 @@ public interface TranslationTable {
 	 * @throws IllegalArgumentException if the sequence contains gaps.
 	 */
 	ProteinSequence translate(NucleotideSequence sequence, Frame frame, int length, boolean substituteStarts);
+	
+	/**
+	 * Translate the given <strong>ungapped</strong> {@link NucleotideSequence} into
+	 * an {@link ProteinSequence} using the given {@link Frame}.  If the sequence
+	 * in the given frame is not a multiple of 3, then this method will
+	 * translate as many bases as possible, any "left over" bases will not be translated.
+	 * 
+	 * 
+	 * @param sequence the sequence to translate; can not be null.
+	 * 
+	 * @param length the number of elements in the given sequence.
+	 * 
+	 * @param options the {@link TranslationOptions} to use; can not be {@code null}.
+	 * 
+	 * 
+	 * @return a new ProteinSequence, will never be null,
+	 * but may be empty if the sequence is empty or less than 3 bp after
+	 * frame is taken into account.
+	 * @throws NullPointerException if either parameter is null.
+	 * @throws IllegalArgumentException if the sequence contains gaps.
+	 * @since 6.0
+	 */
+	ProteinSequence translate(NucleotideSequence sequence, int length, TranslationOptions options);
 	
 	Map<Frame,List<Long>> findStops(NucleotideSequence sequence);
 }

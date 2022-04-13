@@ -25,6 +25,7 @@
  */
 package org.jcvi.jillion;
 
+import org.jcvi.jillion.align.AllAlignmentTests;
 import org.jcvi.jillion.assembly.AllAssemblyUnitTests;
 import org.jcvi.jillion.core.AllCoreUnitTests;
 import org.jcvi.jillion.experimental.AllExperimentalTests;
@@ -62,6 +63,7 @@ import org.junit.runners.Suite.SuiteClasses;
         AllTestUtilsTests.class,
         AllTrimmerUnitTests.class,
         AllOrfTests.class,
+        AllAlignmentTests.class,
         AllExperimentalTests.class
    
     }
