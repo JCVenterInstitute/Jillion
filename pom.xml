@@ -184,6 +184,7 @@
               <failsOnError>false</failsOnError>
               <failOnViolation>false</failOnViolation>
               <linkXRef>false</linkXRef>
+              <violationSeverity>warning</violationSeverity>
             </configuration>
             <goals>
               <goal>check</goal>
