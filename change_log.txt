@@ -69,6 +69,13 @@ API Changes
 
 13. New InputStreamSupplierRegistry to add custom InputStreamSupplier implementations at runtime.  Implementations
     must implement the new org.jcvi.jillion.spi.io.InputStreamSupplierFactory interface.
+    
+14. New constructors NucleotideSequenceBuilder( NucleotideSequence, Range),  NucleotideSequenceBuilder( NucleotideSequence, Range...) and NucleotideSequenceBuilder( NucleotideSequence, Iterable<Range>)
+    to support more efficient creation of builders that only contain partial ranges of a sequence
+    in a more efficient manner than performing multiple trim operations.
+    
+15. New method NucleotideSequenceBuilder#append(NucleotideSequence, Range) to append sequence in 
+    a more efficient manner than performing trim operation.
 
 API BREAKING CHANGES
 --------------------

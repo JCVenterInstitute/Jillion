@@ -168,4 +168,6 @@ public interface NucleotideFastaRecord extends FastaRecord<Nucleotide,Nucleotide
 		.iterator();
 	}
 	
+	
+	
 }

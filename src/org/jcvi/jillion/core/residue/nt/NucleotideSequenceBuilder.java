@@ -55,7 +55,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 	 * be enough for most next-gen reads that are seen.
 	 * This should greatly reduce the number of resizes we need to do.
 	 */
-	private static final int INTITAL_BUFFER_SIZE =200;
+	private static final int INITITAL_BUFFER_SIZE =200;
 	
     private static final String NULL_SEQUENCE_ERROR_MSG = "sequence can not be null";
 	private static final byte GAP_VALUE = Nucleotide.Gap.getOrdinalAsByte();
@@ -81,7 +81,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * which currently contains no nucleotides.
      */
     public NucleotideSequenceBuilder(){
-        this(INTITAL_BUFFER_SIZE);
+        this(INITITAL_BUFFER_SIZE);
     }
     
     
@@ -218,11 +218,82 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @throws IndexOutOfBoundsException if Range contains values outside of the possible sequence offsets.
      */
 	public NucleotideSequenceBuilder(NucleotideSequence seq, Range range) {
-		NewValues newValues = new NewValues(seq.iterator(range));
+		NewValues newValues = new NewValues(seq.iterator(range), (int) range.getLength());
 		this.data = newValues.getData();
 		codecDecider = new CodecDecider(newValues);
 	}
 
+	/**
+     * Creates a new NucleotideSequenceBuilder instance
+     * which currently contains the only the portion(s)
+     * of the given sequence within the specified {@link Range}s.
+     * 
+     * @apiNote This should produce the same result as but more efficient than: 
+     *  <pre>
+     *  {@code NucleotideSequenceBuilder builder= new NucleotideSequenceBuilder();
+     *  for(Range r : ranges){
+     *      builder.append(seq.trim(r));
+     *  }}
+     *  </pre>
+     * 
+     * @param seq the initial nucleotide sequence.
+     * @param ranges the ranges of the sequence to use; can not be null or contain any nulls.
+     * @throws NullPointerException if sequence or ranges are null.
+     * @throws IndexOutOfBoundsException if Range contains values outside of the possible sequence offsets.
+     * 
+     * @since 6.0
+     */
+	public NucleotideSequenceBuilder(NucleotideSequence seq, Range... ranges) {
+		Range firstRange = ranges[0];
+		NewValues newValues = new NewValues(seq.iterator(firstRange), (int) firstRange.getLength());
+		this.data = newValues.getData();
+		codecDecider = new CodecDecider(newValues);
+		for(int i=1; i< ranges.length; i++) {
+			Range r = ranges[i];
+			append(new NewValues(seq.iterator(r), (int) r.getLength()));
+		}
+		
+	}
+	/**
+     * Creates a new NucleotideSequenceBuilder instance
+     * which currently contains the only the portion(s)
+     * of the given sequence within the specified {@link Range}s.
+     * 
+     * @apiNote This should produce the same result as but more efficient than: 
+     *  <pre>
+     *  {@code NucleotideSequenceBuilder builder= new NucleotideSequenceBuilder();
+     *  for(Range r : ranges){
+     *      builder.append(seq.trim(r));
+     *  }}
+     *  </pre>
+     * 
+     * @param seq the initial nucleotide sequence.
+     * @param ranges the ranges of the sequence to use; can not be null or contain any nulls.
+     * @throws NullPointerException if sequence or ranges are null.
+     * @throws IndexOutOfBoundsException if Range contains values outside of the possible sequence offsets.
+     * 
+     * @since 6.0
+     */
+	public NucleotideSequenceBuilder(NucleotideSequence seq, Iterable<Range> ranges) {
+		Objects.requireNonNull(seq);
+		
+		Iterator<Range> iter = ranges.iterator();
+		if(!iter.hasNext()) {
+			//empty ?
+			this.data = new GrowableByteArray(INITITAL_BUFFER_SIZE);
+			codecDecider = new CodecDecider();
+			return; 
+		}
+		Range firstRange = iter.next();
+		NewValues newValues = new NewValues(seq.iterator(firstRange), (int) firstRange.getLength());
+		this.data = newValues.getData();
+		codecDecider = new CodecDecider(newValues);
+		while(iter.hasNext()) {
+			Range r = iter.next();
+			append(new NewValues(seq.iterator(r), (int) r.getLength()));
+		}
+		
+	}
 
 	/**
      * Appends the given base to the end
@@ -269,8 +340,30 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         NewValues newValues = new NewValues(sequence);
         return append(newValues);
     }
+    
+    /**
+     * Appends the given sequence to the end
+     * of the builder's mutable sequence.
+     * @param sequence the nucleotide sequence to be appended
+     * to the end our builder.
+     * @param range the Range of the sequence to append.
+     * @throws NullPointerException if sequence is null.
+     * 
+     * @return this.
+     * 
+     * @since 6.0
+     * 
+     * @implNote This should be the same but more efficient as {@link #append(NucleotideSequence) append(sequence.trim(range))}.
+     * 
+     */
+    public NucleotideSequenceBuilder append(NucleotideSequence sequence, Range range){
+        assertNotNull(sequence);
+        assertNotNull(range);
+        NewValues newValues = new NewValues(sequence.iterator(range), (int) range.getLength());
+        return append(newValues);
+    }
 	private NucleotideSequenceBuilder append(NewValues newValues) {
-		//this will force the bitset to 
+		//this will force the array to 
 		//grow to the max new size so we don't keep growing each time
 		data.append(newValues.data);		
         this.codecDecider.append(newValues);
@@ -1944,6 +2037,17 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     		nOffsets = new GrowableIntArray(12);
 			gapOffsets = new GrowableIntArray(12);
     		data = new GrowableByteArray(100);
+            int offset=0;
+            while(iter.hasNext()){
+            	Nucleotide n = iter.next();
+            	handle(n, offset);
+            	offset++;            	
+            }
+    	}
+    	public NewValues(Iterator<Nucleotide> iter, int length){
+    		nOffsets = new GrowableIntArray(12);
+			gapOffsets = new GrowableIntArray(12);
+    		data = new GrowableByteArray(length);
             int offset=0;
             while(iter.hasNext()){
             	Nucleotide n = iter.next();

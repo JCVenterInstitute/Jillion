@@ -1,11 +1,9 @@
 package org.jcvi.jillion.align;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.RangeCollectors;
 import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequence;

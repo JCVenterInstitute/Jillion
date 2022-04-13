@@ -308,7 +308,7 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
 	}
 	/**
 	 * Get the percentage of Ns compared to other non-gapped bases in the sequence.
-	 * @return a double in the range of [0 .. 1] inclusive.  If the sequence is empty it returns 0.
+	 * @return a double in the range of {@code [0 .. 1]} inclusive.  If the sequence is empty it returns 0.
 	 * 
 	 * @since 6.0
 	 * 
