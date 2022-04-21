@@ -20,8 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.aa;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -100,5 +99,19 @@ public abstract class AbstractTestProteinSequence {
 		assertEquals(AminoAcid.Pyrrolysine, seq.get(2));
 	}
 	
+	@Test
+	public void hasNoAmbiguities() {
+		ProteinSequence seq = encode(
+				AminoAcidUtil.parse("ILKMFDE").toArray(new AminoAcid[0])
+				);
+		assertFalse(seq.hasAmbiguities());
+	}
+	
+	@Test
+	public void hasAmbiguities() {
+		
+		//last base is X
+		assertTrue(sut.hasAmbiguities());
+	}
 	
 }

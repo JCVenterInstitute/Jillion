@@ -323,4 +323,30 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
 		long numNs = getRangesOfNs().stream().mapToInt(r-> (int) r.getLength()).sum();
 		return numNs/(double) ungappedLength;
 	}
+	/**
+	 * Construct a {@link NucleotideSequence} with the same sequence as this sequence,
+	 * but without any gaps.
+	 * 
+	 * @return a NucleotideSequence which may be this or a new NucleotideSequence,
+	 * will never be null but may be empty.
+	 * 
+	 * @implNote by default this is implemented as:
+	 * 
+	 * <pre>
+	 * {@code 
+	 * if(getNumberOfGaps()==0) {
+	 *   return this;
+	 * }
+	 * return toBuilder().ungap().build();
+	 * }
+	 * </pre>
+	 * 
+	 * @since 6.0
+	 */
+	default NucleotideSequence computeUngappedSequence() {
+		if(getNumberOfGaps()==0) {
+			return this;
+		}
+		return toBuilder().ungap().build();
+	}
 }

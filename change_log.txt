@@ -76,6 +76,8 @@ API Changes
     
 15. New method NucleotideSequenceBuilder#append(NucleotideSequence, Range) to append sequence in 
     a more efficient manner than performing trim operation.
+    
+16. New method ResidueSequence#hasAmbiguities()
 
 API BREAKING CHANGES
 --------------------

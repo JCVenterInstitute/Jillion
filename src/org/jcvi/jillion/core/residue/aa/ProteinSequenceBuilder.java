@@ -28,6 +28,7 @@ import java.util.List;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
 import org.jcvi.jillion.internal.core.util.GrowableByteArray;
+import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 /**
  * {@code ProteinSequenceBuilder}  is a way to
  * construct a {@link ProteinSequence}
@@ -43,9 +44,21 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	private static final AminoAcid[] AMINO_ACID_VALUES = AminoAcid.values();
 	private static final byte GAP_ORDINAL = AminoAcid.Gap.getOrdinalAsByte();
 	
+	private static final GrowableByteArray AMBIGUOUS_AMINO_ACIDS;
+	static {
+		AMBIGUOUS_AMINO_ACIDS = new GrowableByteArray();
+		for(int i=0; i< AMINO_ACID_VALUES.length; i++) {
+			AminoAcid aa = AMINO_ACID_VALUES[i];
+			if(aa.isAmbiguity()) {
+				AMBIGUOUS_AMINO_ACIDS.append(aa.getOrdinalAsByte());
+			}
+		}
+	}
 	private static final int DEFAULT_CAPACITY = 20;
 	private GrowableByteArray builder;
 	private int numberOfGaps=0;
+	
+	private int numberOfAmbiguities=0;
 	private boolean turnOffCompression=false;
 	
 	private boolean includeStopCodon = true;
@@ -137,6 +150,8 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	public ProteinSequenceBuilder append(AminoAcid residue) {
 		if(residue==AminoAcid.Gap){
 			numberOfGaps++;
+		}else if(residue.isAmbiguity()) {
+			numberOfAmbiguities++;
 		}
 		builder.append(residue.getOrdinalAsByte());
 		return this;
@@ -146,6 +161,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	@Override
 	public ProteinSequenceBuilder clear() {
 		numberOfGaps=0;
+		numberOfAmbiguities=0;
 		builder.clear();
 		return this;
 	}
@@ -198,6 +214,8 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 		for(AminoAcid aa :list){
 			if(aa == AminoAcid.Gap){
 				numberOfGaps++;
+			}else if(aa.isAmbiguity()) {
+				numberOfAmbiguities++;
 			}
 			array[i]=(aa.getOrdinalAsByte());
 			i++;
@@ -229,6 +247,8 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 		}
 		if(replacement == AminoAcid.Gap){
 			numberOfGaps++;
+		}else if(replacement.isAmbiguity()) {
+			numberOfAmbiguities++;
 		}
 		builder.replace(offset, replacement.getOrdinalAsByte());
 		return this;
@@ -240,6 +260,8 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 		for(AminoAcid aa : asList(range)){
 			if(aa == AminoAcid.Gap){
 				numberOfGaps --;
+			}else if(aa.isAmbiguity()) {
+				numberOfAmbiguities--;
 			}
 		}
 		builder.remove(range);
@@ -264,6 +286,8 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 		for(AminoAcid aa :sequence){
 			if(aa == AminoAcid.Gap){
 				numberOfGaps++;
+			}else if(aa.isAmbiguity()) {
+				numberOfAmbiguities++;
 			}
 			temp.append(aa.getOrdinalAsByte());
 		}		
@@ -283,6 +307,8 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 			int offset, AminoAcid base) {
 		if(base == AminoAcid.Gap){
 			numberOfGaps++;
+		}else if(base.isAmbiguity()) {
+			numberOfAmbiguities++;
 		}
 		builder.insert(offset, base.getOrdinalAsByte());
 		return this;
@@ -302,7 +328,8 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 
 	@Override
 	public ProteinSequence build() {
-		return build(builder.toArray());
+		return new CodecDecider(numberOfGaps, numberOfAmbiguities>0, turnOffCompression)
+				.build(convertFromBytes(builder.toArray()), false);
 	}
 
 
@@ -326,30 +353,70 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 		}
 		return Arrays.copyOf(aas, j);
 	}
-	private ProteinSequence build(byte[] seqToBuild){
-		AminoAcid[] asList = convertFromBytes(seqToBuild);
-		if(turnOffCompression) {
-            if (numberOfGaps > 0 && hasGaps(asList)) {
-                return new UnCompressedGappedProteinSequence(asList);
-            }
-            return new UnCompressedUngappedProteinSequence(asList);
-        }else {
-            if (numberOfGaps > 0 && hasGaps(asList)) {
-                return new CompactProteinSequence(asList);
-            }
-            //no gaps
-
-            return new UngappedProteinSequence(asList);
-        }
-	}
-	private boolean hasGaps(AminoAcid[] asArray) {
-		for(AminoAcid aa : asArray){
-			if(aa == AminoAcid.Gap){
-				return true;
-			}
+	
+	
+	private static class CodecDecider{
+		int numberOfGaps;
+		boolean hasAmbiguities;
+		boolean turnOffCompression;
+		
+		
+		
+		public CodecDecider(int numberOfGaps, boolean hasAmbiguities, boolean turnOffCompression) {
+			super();
+			this.numberOfGaps = numberOfGaps;
+			this.hasAmbiguities = hasAmbiguities;
+			this.turnOffCompression = turnOffCompression;
 		}
-		return false;
+		public ProteinSequence build(AminoAcid[] asList, boolean doubleCheck) {
+			if(turnOffCompression) {
+	            if (numberOfGaps > 0 && (!doubleCheck || (doubleCheck && hasGaps(asList)))) {
+	            	if(hasAmbiguities && (!doubleCheck || (doubleCheck && hasAmbiguities(asList)))) {
+	            		return new UnCompressedGappedProteinSequence(asList);
+	            	}
+	                return new UnCompressedGappedNoAmbiguityProteinSequence(asList);
+	            }
+	            if(hasAmbiguities && (!doubleCheck || (doubleCheck && hasAmbiguities(asList)))) {
+	            	return new UnCompressedUngappedProteinSequence(asList);
+	            }
+	            
+	            return new UnCompressedUnGappedNoAmbiguityProteinSequence(asList);
+	        }else {
+	            if (numberOfGaps > 0 && (!doubleCheck || (doubleCheck && hasGaps(asList)))) {
+	            	if(hasAmbiguities && (!doubleCheck || (doubleCheck && hasAmbiguities(asList)))) {
+	            		return new CompactProteinSequence(asList);
+	            	}
+	                return new GappedNoAmbiguityProteinSequence(asList);
+	            }
+	            //no gaps
+	            if(hasAmbiguities && (!doubleCheck || (doubleCheck && hasAmbiguities(asList)))) {
+
+		            return new UngappedProteinSequence(asList);
+            	}
+	          //no ambiguities
+        		return new UngappedNoAmbiguityProteinSequence(asList);
+
+	        }
+		}
+		private static boolean hasGaps(AminoAcid[] asArray) {
+			for(AminoAcid aa : asArray){
+				if(aa.isGap()){
+					return true;
+				}
+			}
+			return false;
+		}
+		private static boolean hasAmbiguities(AminoAcid[] asArray) {
+			for(AminoAcid aa : asArray){
+				if(aa.isAmbiguity()){
+					return true;
+				}
+			}
+			return false;
+		}
+		
 	}
+	
 
 	private List<AminoAcid> asList(Range range) {
 		ProteinSequence s = build();
@@ -367,6 +434,12 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 		Range intersection = range.intersection(Range.ofLength(getLength()));
 		builder =builder.subArray(intersection);		
 		this.numberOfGaps =builder.getCount(GAP_ORDINAL);
+		this.numberOfAmbiguities =0;
+		builder.forEachIndexed((i, ordinal)->{
+			if(AMBIGUOUS_AMINO_ACIDS.binarySearch(ordinal)>=0) {
+				numberOfAmbiguities++;
+			}
+		});
 		return this;
 		
 		
@@ -388,13 +461,21 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	@Override
 	public ProteinSequenceBuilder ungap() {
 
-		ProteinSequence list = build(builder.toArray());
-		if(list.getNumberOfGaps() !=0){
-			List<Integer> gapOffsets =list.getGapOffsets();
-			for(int i=gapOffsets.size()-1; i>=0; i--){
-				builder.remove(gapOffsets.get(i));
-			}
+		if(numberOfGaps==0) {
+			return this;
 		}
+		GrowableIntArray gaps = new GrowableIntArray();
+		builder.forEachIndexed((i, b)->{
+//			if(AMBIGUOUS_AMINO_ACIDS.binarySearch(b) >=0) {
+//				//is ambiguous
+//			}
+			if(b == GAP_ORDINAL) {
+				gaps.append(i);
+			}
+		});
+		gaps.reverse();
+		gaps.forEachIndexed((i, offset)-> builder.remove(offset));
+		
 		numberOfGaps=0;
 		return this;
 	}

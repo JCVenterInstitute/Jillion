@@ -403,4 +403,21 @@ public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R,
     default int compareTo(T other) {
     	return this.toString().compareTo(other.toString());
     }
+    /**
+     * Does this Sequence contain any ambiguous residues.
+     * @return {@code true} if it does; {@code false} otherwise.
+     * 
+     * @since 6.0
+     * 
+     * @implNote by default this method iterates over each residue until it finds
+     * an ambiguous residue but some implementations may override this for a more efficient method.
+     */
+    default boolean hasAmbiguities() {
+    	for(R r: this) {
+    		if(r.isAmbiguity()) {
+    			return true;
+    		}
+    	}
+    	return false;
+    }
 }
