@@ -53,6 +53,7 @@ public abstract class AbstractSequenceAlignmentBuilder
 	private final boolean builtFromTraceback;
 	
 	private Integer subjectShiftAmount;
+	private Integer queryShiftAmount;
 	/**
 	 * Constructs a new instance of a {@link SequenceAlignmentBuilder}.
 	 * @param builtFromTraceback this alignment
@@ -63,7 +64,7 @@ public abstract class AbstractSequenceAlignmentBuilder
 	 * 
 	 */
 	public AbstractSequenceAlignmentBuilder(boolean builtFromTraceback){
-		this(builtFromTraceback, null);
+		this(builtFromTraceback, null, null);
 	}
 	/**
          * Constructs a new instance of a {@link SequenceAlignmentBuilder}.
@@ -74,12 +75,12 @@ public abstract class AbstractSequenceAlignmentBuilder
          * @see #setAlignmentOffsets(int, int)
          * 
          */
-        public AbstractSequenceAlignmentBuilder(boolean builtFromTraceback, Integer subjectShiftAmount){
+        public AbstractSequenceAlignmentBuilder(boolean builtFromTraceback, Integer subjectShiftAmount, Integer queryShiftAmount){
                 querySequenceBuilder = createSequenceBuilder();
                 subjectSequenceBuilder = createSequenceBuilder();
                 this.builtFromTraceback = builtFromTraceback;
-                this.subjectShiftAmount = null;
                 this.subjectShiftAmount = subjectShiftAmount;
+                this.queryShiftAmount = queryShiftAmount;
         }
 	public AbstractSequenceAlignmentBuilder(){
 		this(false);		 
@@ -170,8 +171,13 @@ public abstract class AbstractSequenceAlignmentBuilder
 		if(subjectShiftAmount !=null){
 		    shiftedSubjectStart += subjectShiftAmount;
 		}
+		long shiftedQueryStart = queryStart;
+		if(queryShiftAmount !=null){
+			shiftedQueryStart += queryShiftAmount;
+		}
+		
 		if(builtFromTraceback){
-			queryRange = Range.of(queryStart-querySequenceBuilder.getUngappedLength()+1, queryStart);
+			queryRange = Range.of(shiftedQueryStart-querySequenceBuilder.getUngappedLength()+1, shiftedQueryStart);
 			subjectRange = Range.of(shiftedSubjectStart-subjectSequenceBuilder.getUngappedLength()+1, shiftedSubjectStart);
 			//we built these sequence backwards
 			//since they were built from a traceback
@@ -180,7 +186,8 @@ public abstract class AbstractSequenceAlignmentBuilder
 			querySequenceBuilder.reverse();
 			subjectSequenceBuilder.reverse();
 		}else{
-			queryRange = new Range.Builder(querySequenceBuilder.getUngappedLength()).shift(queryStart).build();
+			
+			queryRange = new Range.Builder(querySequenceBuilder.getUngappedLength()).shift(shiftedQueryStart).build();
 			subjectRange = new Range.Builder(subjectSequenceBuilder.getUngappedLength()).shift(shiftedSubjectStart).build();
 		
 		}

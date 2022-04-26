@@ -78,4 +78,15 @@ public interface ProteinSequence extends ResidueSequence<AminoAcid, ProteinSeque
 	default ProteinSequence trim(Range trimRange){
 		return toBuilder(trimRange).build();
 	}
+	
+	default double computePercentX() {
+		long length = getUngappedLength();
+		double count=0D;
+		for(AminoAcid aa : this) {
+			if(aa == AminoAcid.Unknown_Amino_Acid) {
+				count++;
+			}
+		}
+		return count/length;
+	}
 }

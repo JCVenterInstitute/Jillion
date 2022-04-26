@@ -54,6 +54,9 @@ public final class PairwiseAlignmentBuilder<R extends Residue, S extends Residue
 	private float gapOpen=0;
 	private float gapExtension =0;
 	
+	private Long queryShift;
+	private Long subjectShift;
+	
 	private boolean local=true;
 	/**
 	 * Create a new PairwiseAlignmentBuilder to align
@@ -109,6 +112,16 @@ public final class PairwiseAlignmentBuilder<R extends Residue, S extends Residue
 	 */
 	public PairwiseAlignmentBuilder<R,S,A> gapPenalty(float open){
 		return gapPenalty(open, 0F);
+	}
+	
+	public PairwiseAlignmentBuilder<R,S,A> queryShift(long shiftAmount){
+		this.queryShift = shiftAmount;
+		return this;
+	}
+	
+	public PairwiseAlignmentBuilder<R,S,A> subjectShift(long shiftAmount){
+		this.subjectShift = shiftAmount;
+		return this;
 	}
 			
 	/**

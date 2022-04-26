@@ -66,20 +66,26 @@ final class NucleotideSmithWatermanAligner extends AbstractSmithWatermanAligner<
 	public static NucleotidePairwiseSequenceAlignment align(NucleotideSequence query,
 			NucleotideSequence subject, SubstitutionMatrix<Nucleotide> matrix,
 			float openGapPenalty, float extendGapPenalty, Integer subjectShiftAmount){
-		NucleotideSmithWatermanAligner aligner = new NucleotideSmithWatermanAligner(query, subject, matrix, openGapPenalty, extendGapPenalty, subjectShiftAmount);
+		NucleotideSmithWatermanAligner aligner = new NucleotideSmithWatermanAligner(query, subject, matrix, openGapPenalty, extendGapPenalty, subjectShiftAmount,null);
 		return aligner.getPairwiseSequenceAlignment();
 				
 		}
 	
-	
+	public static NucleotidePairwiseSequenceAlignment align(NucleotideSequence query,
+			NucleotideSequence subject, SubstitutionMatrix<Nucleotide> matrix,
+			float openGapPenalty, float extendGapPenalty, Integer subjectShiftAmount, Integer queryShiftAmount){
+		NucleotideSmithWatermanAligner aligner = new NucleotideSmithWatermanAligner(query, subject, matrix, openGapPenalty, extendGapPenalty, subjectShiftAmount, queryShiftAmount);
+		return aligner.getPairwiseSequenceAlignment();
+				
+		}
 
 
 
     private NucleotideSmithWatermanAligner(NucleotideSequence seq1,
 			NucleotideSequence seq2, SubstitutionMatrix<Nucleotide> matrix,
-			float openGapPenalty, float extendGapPenalty, Integer subjectShiftAmount) {
+			float openGapPenalty, float extendGapPenalty, Integer subjectShiftAmount, Integer queryShiftAmount) {
 		super(seq1, seq2, matrix, openGapPenalty, extendGapPenalty,
-				ResiduePairwiseStrategy.getNucleotideStrategy(), subjectShiftAmount);
+				ResiduePairwiseStrategy.getNucleotideStrategy(), subjectShiftAmount, queryShiftAmount);
 	}
 	
 

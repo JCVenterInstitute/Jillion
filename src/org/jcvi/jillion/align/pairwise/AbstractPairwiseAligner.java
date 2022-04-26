@@ -21,11 +21,9 @@
 package org.jcvi.jillion.align.pairwise;
 
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.BitSet;
-import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.jillion.align.SequenceAlignment;
@@ -90,21 +88,22 @@ abstract class AbstractPairwiseAligner <R extends Residue, S extends ResidueSequ
 	
 	
 	private Integer subjectShiftAmount;
-	
+	private Integer queryShiftAmount;
 	
 	protected AbstractPairwiseAligner(S query, S subject,
 			SubstitutionMatrix<R> matrix, float openGapPenalty, float extendGapPenalty,
 			ResiduePairwiseStrategy<R,S,B,A,P> pairwiseStrategy){
-	    this(query, subject, matrix, openGapPenalty, extendGapPenalty, pairwiseStrategy, null);
+	    this(query, subject, matrix, openGapPenalty, extendGapPenalty, pairwiseStrategy, null, null);
 	}
 	protected AbstractPairwiseAligner(S query, S subject,
                 SubstitutionMatrix<R> matrix, float openGapPenalty, float extendGapPenalty,
                 ResiduePairwiseStrategy<R,S,B,A,P> pairwiseStrategy,
-                Integer subjectShiftAmount){
+                Integer subjectShiftAmount, Integer queryShiftAmount){
 	    
 		checkNotNull(query,subject,matrix);
 		this.pairwiseStrategy = pairwiseStrategy;
 		this.subjectShiftAmount = subjectShiftAmount;
+		this.queryShiftAmount = queryShiftAmount;
 		
 		TracebackDirection initialRowDirection = getInitialRowTracebackValue();
 		if(initialRowDirection ==null){

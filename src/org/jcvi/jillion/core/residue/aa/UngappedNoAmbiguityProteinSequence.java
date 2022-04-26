@@ -16,6 +16,9 @@ class UngappedNoAmbiguityProteinSequence extends UngappedProteinSequence{
 		return false;
 	}
 	
-	
+	@Override
+	public double computePercentX() {
+		return 0D;
+	}
 
 }

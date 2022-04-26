@@ -67,14 +67,21 @@ final class ProteinSmithWatermanAligner  extends AbstractSmithWatermanAligner<Am
 	public static ProteinPairwiseSequenceAlignment align(ProteinSequence query,
 			ProteinSequence subject, SubstitutionMatrix<AminoAcid> matrix,
 			float openGapPenalty, float extendGapPenalty , Integer subjectShiftAmount){
-		ProteinSmithWatermanAligner aligner = new ProteinSmithWatermanAligner(query, subject, matrix, openGapPenalty, extendGapPenalty,subjectShiftAmount);
+		ProteinSmithWatermanAligner aligner = new ProteinSmithWatermanAligner(query, subject, matrix, openGapPenalty, extendGapPenalty,subjectShiftAmount, null);
+		return aligner.getPairwiseSequenceAlignment();
+	}
+	
+	public static ProteinPairwiseSequenceAlignment align(ProteinSequence query,
+			ProteinSequence subject, SubstitutionMatrix<AminoAcid> matrix,
+			float openGapPenalty, float extendGapPenalty , Integer subjectShiftAmount, Integer queryShiftAmount){
+		ProteinSmithWatermanAligner aligner = new ProteinSmithWatermanAligner(query, subject, matrix, openGapPenalty, extendGapPenalty,subjectShiftAmount, queryShiftAmount);
 		return aligner.getPairwiseSequenceAlignment();
 	}
 	private ProteinSmithWatermanAligner(ProteinSequence query,
 			ProteinSequence subject, SubstitutionMatrix<AminoAcid> matrix,
-			float openGapPenalty, float extendGapPenalty, Integer subjectShiftAmount) {
+			float openGapPenalty, float extendGapPenalty, Integer subjectShiftAmount, Integer queryShiftAmount) {
 		super(query, subject, matrix, openGapPenalty, extendGapPenalty,
-				ResiduePairwiseStrategy.getAminoAcidStrategy(), subjectShiftAmount);
+				ResiduePairwiseStrategy.getAminoAcidStrategy(), subjectShiftAmount, queryShiftAmount);
 	}
 
 }

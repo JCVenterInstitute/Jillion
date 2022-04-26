@@ -15,5 +15,10 @@ class UnCompressedUnGappedNoAmbiguityProteinSequence extends UnCompressedUngappe
 	public boolean hasAmbiguities() {
 		return false;
 	}
+	
+	@Override
+	public double computePercentX() {
+		return 0D;
+	}
 
 }

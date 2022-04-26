@@ -38,7 +38,7 @@ public class NucleotideSequenceAlignmentBuilder extends AbstractSequenceAlignmen
 
     public NucleotideSequenceAlignmentBuilder(boolean builtFromTraceback,
             Integer subjectShiftAmount) {
-        super(builtFromTraceback, subjectShiftAmount);
+        super(builtFromTraceback, subjectShiftAmount, null);
     }
 
     @Override

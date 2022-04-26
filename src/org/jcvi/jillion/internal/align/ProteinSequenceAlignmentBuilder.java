@@ -38,7 +38,7 @@ public class ProteinSequenceAlignmentBuilder extends AbstractSequenceAlignmentBu
 
     public ProteinSequenceAlignmentBuilder(boolean builtFromTraceback,
             Integer subjectShiftAmount) {
-        super(builtFromTraceback, subjectShiftAmount);
+        super(builtFromTraceback, subjectShiftAmount,null);
     }
 
     @Override

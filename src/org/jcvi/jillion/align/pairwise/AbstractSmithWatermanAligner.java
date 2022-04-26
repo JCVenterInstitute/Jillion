@@ -53,9 +53,9 @@ abstract class AbstractSmithWatermanAligner<R extends Residue, S extends Residue
             SubstitutionMatrix<R> matrix, float openGapPenalty,
             float extendGapPenalty,
             ResiduePairwiseStrategy<R, S, B, A, P> pairwiseStrategy,
-            Integer subjectShiftAmount) {
+            Integer subjectShiftAmount, Integer queryShiftAmount) {
         super(query, subject, matrix, openGapPenalty, extendGapPenalty,
-                pairwiseStrategy, subjectShiftAmount);
+                pairwiseStrategy, subjectShiftAmount, queryShiftAmount);
     }
 
 
