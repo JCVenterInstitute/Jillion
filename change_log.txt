@@ -79,6 +79,12 @@ API Changes
     
 16. New method ResidueSequence#hasAmbiguities()
 
+17. New method ProteinSequence#computePercentX()
+
+18. added query shift amount to pairwise alignment builders.
+
+19. added new helper method DataStoreUtil#asDataStoreEntryIterator( StreamingIterator<T>, Function<T, String>)
+to wrap a StreamingIterator into a DataStoreIterator
 API BREAKING CHANGES
 --------------------
 

@@ -31,6 +31,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Map.Entry;
 import java.util.function.Function;
 
@@ -42,6 +43,7 @@ import org.jcvi.jillion.core.util.streams.ThrowingBiConsumer;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.internal.core.util.Caches;
 import org.jcvi.jillion.internal.core.util.Sneak;
+import org.jcvi.jillion.sam.SamRecord;
 /**
  * Utility class containing static
  * factory methods to  adapt {@link DataStore}s
@@ -785,5 +787,41 @@ public final class DataStoreUtil {
          * closing the datastore.
          */
         void clearCache();
+    }
+    
+    /**
+     * Adapter method to convert a StreamingIterator of Ts into a StreamingIterator
+     * of {@code DataStoreEntry<T>}.
+     * 
+     * @param iterator the StreamingIterator to adapt.
+     * @param keyFunction the function to get the datstore id of T.
+     * @since 6.0
+     */
+    public static <T> StreamingIterator<DataStoreEntry<T>> asDataStoreEntryIterator(StreamingIterator<T> iterator, Function<T, String> keyFunction){
+    	Objects.requireNonNull(keyFunction);
+    	return new StreamingIterator<DataStoreEntry<T>>(){
+            
+            @Override
+            public boolean hasNext() {
+                    return iterator.hasNext();
+            }
+
+            @Override
+            public void close() {
+            	iterator.close();
+            }
+
+            @Override
+            public DataStoreEntry<T> next() {
+                T next = iterator.next();
+                return new DataStoreEntry<>(keyFunction.apply(next), next);
+            }
+
+            @Override
+            public void remove() {
+                    iterator.remove();
+            }
+            
+    };
     }
 }
