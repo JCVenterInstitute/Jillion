@@ -45,7 +45,7 @@ import org.jcvi.jillion.core.io.IOUtil;
  * is delegated to a user supplied lambda function that is given the int i
  * for the ith file to be created and must return a non-null FastaWriter of the correct type.
  * </p>
- * The returned FastaWriter implementations are not thread-safe.
+ * Since {@code 6.0}, the returned writers synchronize all their methods.
  * 
  * 
  * @author dkatzel
@@ -308,7 +308,7 @@ public final class SplitFastaWriter{
 		
 		
 		@Override
-		public Object invoke(Object proxy, Method method, Object[] args)
+		public synchronized Object invoke(Object proxy, Method method, Object[] args)
 				throws Throwable {
 			
 			String name = method.getName();

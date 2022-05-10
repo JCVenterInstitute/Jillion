@@ -85,6 +85,9 @@ API Changes
 
 19. added new helper method DataStoreUtil#asDataStoreEntryIterator( StreamingIterator<T>, Function<T, String>)
 to wrap a StreamingIterator into a DataStoreIterator
+
+20. SplitFastaWriter objects are now synchronized by default.
+
 API BREAKING CHANGES
 --------------------
 
