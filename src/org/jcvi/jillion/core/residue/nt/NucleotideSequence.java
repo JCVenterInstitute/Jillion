@@ -27,6 +27,7 @@ package org.jcvi.jillion.core.residue.nt;
 
 
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -304,10 +305,10 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
      * </pre>
      */
 	default boolean isAllNs() {
-		return getPercentN()==1D;
+		return computePercentN()==1D;
 	}
 	/**
-	 * Get the percentage of Ns compared to other non-gapped bases in the sequence.
+	 * Compute the percentage of Ns compared to other non-gapped bases in the sequence.
 	 * @return a double in the range of {@code [0 .. 1]} inclusive.  If the sequence is empty it returns 0.
 	 * 
 	 * @since 6.0
@@ -315,7 +316,7 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
 	 * @implNote the default implementation sums up the lengths of ranges returned by {@link #getRangesOfNs()}
 	 * to compute the percentage so it doesn't need to iterate over the whole sequence counting Ns assuming getRangesOfNs is faster.
 	 */
-	default double getPercentN() {
+	default double computePercentN() {
 		long ungappedLength = getUngappedLength();
 		if(ungappedLength ==0L) {
 			return 0D;
@@ -348,5 +349,30 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
 			return this;
 		}
 		return toBuilder().ungap().build();
+	}
+	/**
+	 * Compute the GC content.
+	 * @return a double in the range of {@code [0 .. 1]} inclusive.  
+	 * If the sequence is empty it returns 0.
+	 * 
+	 * @since 6.0
+	 * 
+	 * @implNote the default implementation iterates
+	 * over the sequence summing up the count of G, C and S bases. 
+	 */
+	default double computePercentGC() {
+		long ungappedLength = getUngappedLength();
+		if(ungappedLength ==0) {
+			return 0F;
+		}
+		Iterator<Nucleotide> iter = iterator();
+		long gc=0;
+		while(iter.hasNext()) {
+			Nucleotide n = iter.next();
+			if( n== Nucleotide.Guanine || n==Nucleotide.Cytosine || n == Nucleotide.Strong) {
+				gc++;
+			}
+		}
+		return ((double)gc)/ungappedLength;
 	}
 }

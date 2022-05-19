@@ -23,6 +23,7 @@ package org.jcvi.jillion.fasta.qual;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.OptionalLong;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
@@ -106,7 +107,9 @@ public final class QualityFastaFileDataStoreBuilder extends AbstractFastaFileDat
 	
 	@Override
 	protected QualityFastaDataStore createNewInstance(FastaParser parser,
-			DataStoreProviderHint hint,Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter)
+			DataStoreProviderHint hint,Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter,
+			OptionalLong maxNumberOfRecords
+			)
 			throws IOException {
 		if(parser.isReadOnceOnly()){
 			return DefaultQualityFastaFileDataStore.create(parser,filter, recordFilter); 
@@ -118,7 +121,7 @@ public final class QualityFastaFileDataStoreBuilder extends AbstractFastaFileDat
 						IndexedQualityFastaFileDataStore.create(parser,filter, recordFilter)
 						: DefaultQualityFastaFileDataStore.create(parser,filter, recordFilter);
 						
-			case ITERATION_ONLY: return LargeQualityFastaFileDataStore.create(parser,filter, recordFilter);
+			case ITERATION_ONLY: return LargeQualityFastaFileDataStore.create(parser,filter, recordFilter, maxNumberOfRecords);
 			default:
 				throw new IllegalArgumentException("unknown hint : "+ hint);
 		}

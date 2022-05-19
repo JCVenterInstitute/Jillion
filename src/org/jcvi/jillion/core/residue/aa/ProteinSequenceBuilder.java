@@ -127,6 +127,24 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
     }
 	private ProteinSequenceBuilder(ProteinSequenceBuilder copy){
 		builder = copy.builder.copy();
+		updateMetaData();
+	}
+	
+	private ProteinSequenceBuilder(GrowableByteArray growableArray) {
+		this.builder = growableArray;
+		updateMetaData();
+	}
+	/**
+	 * Update the metadata of number of gaps and ambiguities.
+	 */
+	private void updateMetaData() {
+		this.numberOfGaps =builder.getCount(GAP_ORDINAL);
+		this.numberOfAmbiguities =0;
+		builder.forEachIndexed((i, ordinal)->{
+			if(AMBIGUOUS_AMINO_ACIDS.binarySearch(ordinal)>=0) {
+				numberOfAmbiguities++;
+			}
+		});
 	}
 	
 	private static List<AminoAcid> parse(String aminoAcids){
@@ -445,10 +463,29 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 		
 	}
 
+	/**
+     * Create a copy of only the {@link Range}
+     * to use. If the range extends beyond this builder's
+     * sequence, then only the intersecting portion is used.
+     * 
+     * @param gappedRange the range in gapped coordinates; can not be null.
+     * 
+     * @return a new ProteinSequenceBuilder; will never be null.
+     * 
+     * @since 6.0
+     */
+	public ProteinSequenceBuilder copy(Range gappedRange) {
+		Range intersection = gappedRange.intersection(Range.ofLength(getLength()));
+		ProteinSequenceBuilder copy= new ProteinSequenceBuilder(builder.subArray(intersection));
+		copy.turnOffCompression = this.turnOffCompression;
+		return copy;
+	}
 
 	@Override
 	public ProteinSequenceBuilder copy() {
-		return new ProteinSequenceBuilder(this);
+		ProteinSequenceBuilder copy= new ProteinSequenceBuilder(this);
+		copy.turnOffCompression = this.turnOffCompression;
+		return copy;
 		
 	}
 

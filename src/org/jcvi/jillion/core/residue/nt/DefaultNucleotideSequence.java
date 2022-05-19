@@ -296,7 +296,7 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
 	}
 	
 	@Override
-	public double getPercentN() {
+	public double computePercentN() {
 		return codec.getPercentN(data);
 	}
 	

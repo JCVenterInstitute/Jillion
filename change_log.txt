@@ -88,6 +88,13 @@ to wrap a StreamingIterator into a DataStoreIterator
 
 20. SplitFastaWriter objects are now synchronized by default.
 
+21. FastaFileDataStoreBuilders now have onlyIncludeIds(Set<String>) which similar to filter( Predicate<String> ) 
+    except we know how many ids there should be so we can use this information in ITERATION_ONLY datastore implementations
+    to exit the parsing early if we've already found all the ids we care about but have not yet parsed the file.
+    
+22. New method ProtienSequenceBuilder#copy(Range) to match similar method in NucleotideSequenceBuilder
+
+23. New method NucleotideSequence#computePercentGC()
 API BREAKING CHANGES
 --------------------
 
@@ -101,6 +108,8 @@ Bug Fixes
 
 1. Building a ReferenceMappedNucleotideSequence from a NucleotideSequenceBuilder 
    with compression turned off no longer throws a ClassCastException. 
+   
+2. ProteinSequenceBuilder#copy() and #copy(Range) now correctly account for gaps and ambiguities.
 
 ================
 Jillion 5.3

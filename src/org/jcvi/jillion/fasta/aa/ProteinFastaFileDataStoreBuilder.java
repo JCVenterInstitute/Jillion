@@ -23,6 +23,8 @@ package org.jcvi.jillion.fasta.aa;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.OptionalLong;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
@@ -108,7 +110,8 @@ public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDat
 	 * @throws IOException if there is a problem creating the datastore from the file.
 	 */
 	@Override
-	protected ProteinFastaFileDataStore createNewInstance(FastaParser parser, DataStoreProviderHint hint, Predicate<String> filter,  Predicate<ProteinFastaRecord> recordFilter)
+	protected ProteinFastaFileDataStore createNewInstance(FastaParser parser, DataStoreProviderHint hint, Predicate<String> filter, 
+			Predicate<ProteinFastaRecord> recordFilter, OptionalLong maxNumberofRecords)
 			throws IOException {
 		if(parser.isReadOnceOnly()){
 			return DefaultProteinFastaDataStore.create(parser,filter, recordFilter);
@@ -119,7 +122,7 @@ public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDat
 				return parser.canCreateMemento() ?						
 						IndexedProteinFastaFileDataStore.create(parser,filter, recordFilter)
 					:	DefaultProteinFastaDataStore.create(parser,filter, recordFilter);
-			case ITERATION_ONLY: return LargeProteinFastaFileDataStore.create(parser,filter, recordFilter);
+			case ITERATION_ONLY: return LargeProteinFastaFileDataStore.create(parser,filter, recordFilter, maxNumberofRecords);
 			default:
 				throw new IllegalArgumentException("unknown provider hint :"+ hint);
 		}
@@ -158,6 +161,16 @@ public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDat
 	@Override
 	public ProteinFastaFileDataStore build() throws IOException {
 		return super.build();
+	}
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ProteinFastaFileDataStoreBuilder onlyIncludeIds(
+			Set<String> ids) {
+		super.onlyIncludeIds(ids);
+		return this;
 	}
 	
 	

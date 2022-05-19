@@ -23,6 +23,8 @@ package org.jcvi.jillion.fasta.nt;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.OptionalLong;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
@@ -139,7 +141,8 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	}
 	@Override
 	protected NucleotideFastaFileDataStore createNewInstance(
-			FastaParser parser, DataStoreProviderHint providerHint, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter)
+			FastaParser parser, DataStoreProviderHint providerHint, Predicate<String> filter,
+			Predicate<NucleotideFastaRecord> recordFilter, OptionalLong maxNumberOfRecords)
 			throws IOException {
 		if(parser.isReadOnceOnly()){
 			return DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter);	
@@ -155,7 +158,7 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 										:
 										DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter);
 							break;
-				case ITERATION_ONLY: delegate= LargeNucleotideSequenceFastaFileDataStore.create(parser,filter, recordFilter);
+				case ITERATION_ONLY: delegate= LargeNucleotideSequenceFastaFileDataStore.create(parser,filter, recordFilter, maxNumberOfRecords);
 								break;
 				default:
 					throw new IllegalArgumentException("unknown provider hint : "+ providerHint);
@@ -210,6 +213,16 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	@Override
 	public NucleotideFastaFileDataStore build() throws IOException {
 		return super.build();
+	}
+	/**
+	 * 
+	 * {@inheritDoc}
+	 */
+	@Override
+	public NucleotideFastaFileDataStoreBuilder onlyIncludeIds(
+			Set<String> ids) {
+		super.onlyIncludeIds(ids);
+		return this;
 	}
 	
 	

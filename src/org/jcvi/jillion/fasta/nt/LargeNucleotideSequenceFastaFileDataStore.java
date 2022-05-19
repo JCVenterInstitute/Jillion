@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.OptionalLong;
 import java.util.Spliterators;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -45,8 +46,10 @@ import org.jcvi.jillion.core.util.streams.ThrowingBiConsumer;
 import org.jcvi.jillion.fasta.FastaFileParser;
 import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
+import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.internal.core.datastore.DataStoreStreamingIterator;
 import org.jcvi.jillion.internal.fasta.AbstractLargeFastaFileDataStore;
+import org.jcvi.jillion.internal.fasta.MaxNumberOfRecordsFastaVisitor;
 /**
  * {@code LargeNucleotideSequenceFastaFileDataStore} is an implementation
  * of {@link NucleotideSequenceFastaDataStore} which does not
@@ -65,8 +68,8 @@ final class LargeNucleotideSequenceFastaFileDataStore extends AbstractLargeFasta
      * @param parser the FastaParser to use, can not be null.
      * @throws NullPointerException if fastaFile is null.
      */
-	public static NucleotideFastaFileDataStore create(FastaParser parser){
-		return create(parser, DataStoreFilters.alwaysAccept(), null);
+	static NucleotideFastaFileDataStore create(FastaParser parser){
+		return create(parser, DataStoreFilters.alwaysAccept(), null, OptionalLong.empty());
 	}
 	 /**
      * Construct a {@link NucleotideFastaDataStore}
@@ -74,16 +77,20 @@ final class LargeNucleotideSequenceFastaFileDataStore extends AbstractLargeFasta
      * @param parser the FastaParser to use, can not be null.
      * @throws NullPointerException if fastaFile is null.
      */
-	public static NucleotideFastaFileDataStore create(FastaParser parser, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter){
-		return new LargeNucleotideSequenceFastaFileDataStore(parser, filter, recordFilter);
+	static NucleotideFastaFileDataStore create(FastaParser parser, Predicate<String> filter,
+			Predicate<NucleotideFastaRecord> recordFilter, OptionalLong maxNumberOfRecords){
+		return new LargeNucleotideSequenceFastaFileDataStore(parser, filter, recordFilter, maxNumberOfRecords);
 	}
    
 	private final File fastaFile;
+    private final OptionalLong maxNumberOfRecords;
     
     public LargeNucleotideSequenceFastaFileDataStore(FastaParser parser,
-            Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter) {
-		super(parser, filter, recordFilter);
+            Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter,
+            OptionalLong maxNumberOfRecords) {
+		super(parser, filter, recordFilter, maxNumberOfRecords);
 		File tmpFile = null;
+		this.maxNumberOfRecords = maxNumberOfRecords;
 		if( parser instanceof FastaFileParser){
 		    Optional<File> optFile =((FastaFileParser)parser).getFile();
 		    
@@ -129,8 +136,10 @@ final class LargeNucleotideSequenceFastaFileDataStore extends AbstractLargeFasta
 	public <E extends Throwable> void forEach(ThrowingBiConsumer<String, NucleotideFastaRecord, E> consumer)
 			throws IOException, E {
 		Objects.requireNonNull(consumer);
-		LargeNucleotideFastaVisitor visitor = new LargeNucleotideFastaVisitor(getIdFilter(), getRecordFilter(), consumer);
-		
+		FastaVisitor visitor = new LargeNucleotideFastaVisitor(getIdFilter(), getRecordFilter(), consumer);
+		if(maxNumberOfRecords.isPresent()) {
+			visitor = new MaxNumberOfRecordsFastaVisitor(maxNumberOfRecords.getAsLong(), visitor);
+		}
 		getFastaParser().parse(visitor);
 		
 	}

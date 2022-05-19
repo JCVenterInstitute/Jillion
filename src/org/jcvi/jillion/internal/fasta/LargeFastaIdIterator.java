@@ -40,29 +40,34 @@ public final class LargeFastaIdIterator extends AbstractBlockingStreamingIterato
 
     private final FastaParser parser;
     private final Predicate<String> filter;
-    public static LargeFastaIdIterator createNewIteratorFor(FastaParser parser, Predicate<String> filter){
+    private final Long maxNumberOfIds;
+    
+   
+    public static LargeFastaIdIterator createNewIteratorFor(FastaParser parser, Predicate<String> filter, Long maxNumberofIds){
     	if(parser ==null){
     		throw new NullPointerException("fasta file can not be null");
     	}
     	if(filter ==null){
     		throw new NullPointerException("filter can not be null");
     	}
-    	LargeFastaIdIterator iter= new LargeFastaIdIterator(parser,filter);
+    	LargeFastaIdIterator iter= new LargeFastaIdIterator(parser,filter, maxNumberofIds);
 		iter.start();
     	
     	return iter;
     }
+    
     public static LargeFastaIdIterator createNewIteratorFor(FastaParser parser){
-    	return createNewIteratorFor(parser, DataStoreFilters.alwaysAccept());
+    	return createNewIteratorFor(parser, DataStoreFilters.alwaysAccept(), null);
     }
 	
     /**
      * @param fastaFile
      */
-    private LargeFastaIdIterator(FastaParser parser, Predicate<String> filter) {
+    private LargeFastaIdIterator(FastaParser parser, Predicate<String> filter, Long maxNumberOfIds) {
     	super(10_000);// these are just ids so we can buffer a lot of them
         this.parser = parser;
         this.filter = filter;
+        this.maxNumberOfIds = maxNumberOfIds;
     }
 
 
@@ -92,6 +97,9 @@ public final class LargeFastaIdIterator extends AbstractBlockingStreamingIterato
 				//no-op					
 			}
         };
+        if(maxNumberOfIds !=null) {
+        	visitor = new MaxNumberOfRecordsFastaVisitor(maxNumberOfIds, visitor);
+        }
         try {
         	parser.parse(visitor);
         } catch (IOException e) {

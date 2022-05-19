@@ -21,6 +21,7 @@
 package org.jcvi.jillion.internal.fasta;
 
 import java.io.IOException;
+import java.util.OptionalLong;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -48,14 +49,20 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
     private final Predicate<F> recordFilter;
     private Long size;
     private volatile boolean closed=false;
+    private final Long maxNumberOfRecords;
     
     /**
      * Construct a {@link AbstractLargeFastaFileDataStore} using
      * the given fasta file and filter.
-     * @param fastaFile the Fasta File to use, can not be null.
+     * @param parser the FastaParser to use, can not be null.
+     * @param filter an id filter; can not be null.
+     * @param recordFilter filter out records some other way; may be null to mean don't filter anything.
+     * @param maxNumberOfRecords an {@link OptionalLong} of the maximum number of IDs will be included by the id filter.
+     * 
      * @throws NullPointerException if fastaFile is null.
      */
-    protected AbstractLargeFastaFileDataStore(FastaParser parser, Predicate<String> filter, Predicate<F> recordFilter) {
+    protected AbstractLargeFastaFileDataStore(FastaParser parser, Predicate<String> filter, 
+    		Predicate<F> recordFilter, OptionalLong maxNumberOfRecords) {
         if(parser ==null){
             throw new NullPointerException("fasta parser can not be null");
         }
@@ -65,6 +72,7 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
         this.filter =filter;
         this.parser = parser;
         this.recordFilter = recordFilter;
+        this.maxNumberOfRecords = maxNumberOfRecords.isEmpty()? null: maxNumberOfRecords.getAsLong();
     }
     
     private void checkNotYetClosed(){
@@ -124,8 +132,9 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
     @Override
     public <E extends Throwable> void forEach(ThrowingBiConsumer<String, F, E> consumer) throws IOException, E {
         checkNotYetClosed();
+        FastaVisitor visitor;
         if(recordFilter ==null){
-            parser.parse(new FastaVisitor() {
+            visitor = new FastaVisitor() {
                 
                 @Override
                 public void visitEnd() {
@@ -154,10 +163,10 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
                    
                     
                 }
-            });
+            };
         }
         else{
-            parser.parse(new FastaVisitor() {
+            visitor = new FastaVisitor() {
                 
                 @Override
                 public void visitEnd() {
@@ -190,8 +199,12 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
                    
                     
                 }
-            });
+            };
         }
+        if(maxNumberOfRecords !=null) {
+        	visitor = new MaxNumberOfRecordsFastaVisitor(maxNumberOfRecords, visitor);
+        }
+        parser.parse(visitor);
 
     }
 
@@ -199,7 +212,7 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
     public StreamingIterator<String> idIterator() throws DataStoreException {
         checkNotYetClosed();
         if(recordFilter==null){
-            return DataStoreStreamingIterator.create(this,LargeFastaIdIterator.createNewIteratorFor(parser,filter));
+            return DataStoreStreamingIterator.create(this,LargeFastaIdIterator.createNewIteratorFor(parser,filter, maxNumberOfRecords));
         }
         
         return new AdditionalRecordFilteringIdIterator(iterator());

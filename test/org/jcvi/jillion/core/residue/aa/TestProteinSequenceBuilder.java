@@ -277,6 +277,36 @@ public class TestProteinSequenceBuilder {
 	}
 	
 	@Test
+	public void copyIncludesGapsNoGaps() {
+		ProteinSequenceBuilder builder1 =new ProteinSequenceBuilder("IKFTW").copy();
+		assertEquals(0, builder1.getNumGaps());
+		assertEquals(5, builder1.getLength());
+		assertEquals(5, builder1.getUngappedLength());
+	}
+	@Test
+	public void copyIncludesGapsWithGaps() {
+		ProteinSequenceBuilder builder1 =new ProteinSequenceBuilder("IKFT-W").copy();
+		assertEquals(1, builder1.getNumGaps());
+		assertEquals(6, builder1.getLength());
+		assertEquals(5, builder1.getUngappedLength());
+	}
+	
+	@Test
+	public void copyTrimIncludesGapsNoGaps() {
+		ProteinSequenceBuilder builder1 =new ProteinSequenceBuilder("IKFTW").copy(Range.of(2, 3));
+		assertEquals(0, builder1.getNumGaps());
+		assertEquals(2, builder1.getLength());
+		assertEquals(2, builder1.getUngappedLength());
+	}
+	@Test
+	public void copyTrimIncludesGapsWithGaps() {
+		ProteinSequenceBuilder builder1 =new ProteinSequenceBuilder("IKFT-W").copy(Range.of(2, 4));
+		assertEquals(1, builder1.getNumGaps());
+		assertEquals(3, builder1.getLength());
+		assertEquals(2, builder1.getUngappedLength());
+	}
+	
+	@Test
 	public void ModificationsToOriginalDoNotAffectCopy(){
 		ProteinSequenceBuilder builder1 =new ProteinSequenceBuilder("IKFTW");
 		ProteinSequenceBuilder builder2 = builder1.copy();

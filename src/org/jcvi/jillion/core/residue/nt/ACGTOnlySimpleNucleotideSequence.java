@@ -91,7 +91,7 @@ class ACGTOnlySimpleNucleotideSequence extends AbstractSimpleNucleotideSequence{
 		return false;
 	}
 	@Override
-	public double getPercentN() {
+	public double computePercentN() {
 		return 0D;
 	}
 	@Override

@@ -23,6 +23,7 @@ package org.jcvi.jillion.internal.fasta.aa;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.OptionalLong;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -73,7 +74,7 @@ public final class LargeProteinFastaFileDataStore extends AbstractLargeFastaFile
      */
 	public static ProteinFastaDataStore create(File fastaFile, Predicate<String> filter,  Predicate<ProteinFastaRecord> recordFilter) throws IOException{
 		FastaParser parser = FastaFileParser.create(fastaFile);
-		return new LargeProteinFastaFileDataStore(parser,filter, recordFilter);
+		return new LargeProteinFastaFileDataStore(parser,filter, recordFilter, OptionalLong.empty());
 	}
 	/**
      * Construct a {@link LargeProteinFastaFileDataStore}
@@ -82,7 +83,7 @@ public final class LargeProteinFastaFileDataStore extends AbstractLargeFastaFile
      * @throws NullPointerException if fastaFile is null.
      */
 	public static ProteinFastaFileDataStore create(FastaParser parser){
-		return create(parser, DataStoreFilters.alwaysAccept(),null);
+		return create(parser, DataStoreFilters.alwaysAccept(),null, OptionalLong.empty());
 	}
 	/**
      * Construct a {@link LargeProteinFastaFileDataStore}
@@ -90,12 +91,12 @@ public final class LargeProteinFastaFileDataStore extends AbstractLargeFastaFile
      * @param parser the {@link FastaParser} instance to use, can not be null.
      * @throws NullPointerException if fastaFile is null.
      */
-	public static ProteinFastaFileDataStore create(FastaParser parser, Predicate<String> filter,  Predicate<ProteinFastaRecord> recordFilter){
-		return new LargeProteinFastaFileDataStore(parser,filter, recordFilter);
+	public static ProteinFastaFileDataStore create(FastaParser parser, Predicate<String> filter,  Predicate<ProteinFastaRecord> recordFilter, OptionalLong maxNumberOfRecords){
+		return new LargeProteinFastaFileDataStore(parser,filter, recordFilter, maxNumberOfRecords);
 	}
    
-    protected LargeProteinFastaFileDataStore(FastaParser parser, Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter) {
-		super(parser, filter, recordFilter);
+    protected LargeProteinFastaFileDataStore(FastaParser parser, Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter, OptionalLong maxNumberOfRecords) {
+		super(parser, filter, recordFilter, maxNumberOfRecords);
 	}
 
 

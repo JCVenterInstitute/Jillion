@@ -21,6 +21,7 @@
 package org.jcvi.jillion.fasta.pos;
 
 import java.io.IOException;
+import java.util.OptionalLong;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
@@ -71,7 +72,7 @@ final class LargePositionFastaFileDataStore extends AbstractLargeFastaFileDataSt
     
     public LargePositionFastaFileDataStore(FastaParser parser,
             Predicate<String> filter, Predicate<PositionFastaRecord> recordFilter) {
-		super(parser, filter, recordFilter);
+		super(parser, filter, recordFilter, OptionalLong.empty());
 	}
 	
 	@Override

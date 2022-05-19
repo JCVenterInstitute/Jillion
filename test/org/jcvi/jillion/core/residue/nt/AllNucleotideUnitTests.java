@@ -72,7 +72,8 @@ import org.junit.runners.Suite.SuiteClasses;
         NucleotideUngapFilterTest.class,
         
         CompressedNucleotidePercentNTest.class,
-        UnCompressedNucleotidePercentNTest.class
+        UnCompressedNucleotidePercentNTest.class,
+        TestNucleotideSequenceComputeGC.class
     }
 )
 public class AllNucleotideUnitTests {
