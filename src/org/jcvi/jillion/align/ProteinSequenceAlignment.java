@@ -37,7 +37,13 @@ public interface ProteinSequenceAlignment extends SequenceAlignment<AminoAcid, P
 	static ProteinSequenceAlignment create(ProteinSequence query, ProteinSequence subject) {
 		return create(query, null, subject, null);
 	}
+	static ProteinSequenceAlignmentBuilder createBuilder(ProteinSequence query, ProteinSequence subject) {
+		return createBuilder(query, null, subject, null);
+	}
 	static ProteinSequenceAlignment create(ProteinSequence query, Range queryRange, ProteinSequence subject, Range subjectRange) {
+		return createBuilder(query, null, subject, null).build();
+	}
+	static ProteinSequenceAlignmentBuilder createBuilder(ProteinSequence query, Range queryRange, ProteinSequence subject, Range subjectRange) {
 		if(query.getLength() != subject.getLength()) {
 			throw new IllegalArgumentException("query and subject lengths must match");
 		}
@@ -61,6 +67,6 @@ public interface ProteinSequenceAlignment extends SequenceAlignment<AminoAcid, P
 		builder.setAlignmentOffsets(queryRange ==null? 0: (int) queryRange.getBegin(), 
 				subjectRange==null? 0 : (int) subjectRange.getBegin());
 		
-		return builder.build();
+		return builder;
 	}
 }

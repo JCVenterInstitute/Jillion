@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.align.pairwise;
 
+import org.jcvi.jillion.align.NucleotideSequenceAlignment;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
@@ -29,6 +30,6 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
  * @author dkatzel
  *
  */
-public interface NucleotidePairwiseSequenceAlignment extends PairwiseSequenceAlignment<Nucleotide, NucleotideSequence>{
+public interface NucleotidePairwiseSequenceAlignment extends PairwiseSequenceAlignment<Nucleotide, NucleotideSequence>, NucleotideSequenceAlignment{
 
 }

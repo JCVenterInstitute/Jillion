@@ -54,6 +54,11 @@ class UngappedProteinSequence extends CompactProteinSequence{
 	}
 
 	@Override
+	public boolean hasGaps() {
+		return false;
+	}
+
+	@Override
 	public boolean isGap(int gappedOffset) {
 		return false;
 	}

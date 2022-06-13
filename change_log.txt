@@ -95,6 +95,15 @@ to wrap a StreamingIterator into a DataStoreIterator
 22. New method ProtienSequenceBuilder#copy(Range) to match similar method in NucleotideSequenceBuilder
 
 23. New method NucleotideSequence#computePercentGC()
+
+24. Added Range#startsAfter( Range) and Range#endsAfter
+
+25. Added method NucleotideSequence#hasGaps() and ProteinSequence#hasGaps()
+
+26. ProteinPairwiseSequenceAlignment now extends ProtienSequenceAlignment
+
+27. NucleotidePairwiseSequenceAlignment now extends NucleotideSequenceAlignment
+
 API BREAKING CHANGES
 --------------------
 

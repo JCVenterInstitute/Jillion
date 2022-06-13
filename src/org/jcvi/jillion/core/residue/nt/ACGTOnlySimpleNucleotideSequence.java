@@ -86,6 +86,11 @@ class ACGTOnlySimpleNucleotideSequence extends AbstractSimpleNucleotideSequence{
 		return false;
 	}
 	
+	
+	@Override
+	public boolean hasGaps() {
+		return false;
+	}
 	@Override
 	public boolean isAllNs() {
 		return false;

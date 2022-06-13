@@ -408,12 +408,7 @@ public class TestRange{
     @Test public void testInstersects_emptyRange_shouldReturnFalse(){
         assertFalse(this.range.intersects(emptyRange));
     }
-    @Test public void testEndsBefore_emptyRange_shouldReturnFalse(){
-        assertFalse(this.range.endsBefore(emptyRange));
-    }
-    @Test public void testStartsBefore_emptyRange_shouldReturnFalse(){
-        assertFalse(this.range.startsBefore(emptyRange));
-    }
+   
 
     @Test(expected= NullPointerException.class)
     public void testIntersectsWithNullShouldThrowNPE(){
@@ -507,6 +502,40 @@ public class TestRange{
     {
        this.range.startsBefore(null);
     }
+    
+    @Test public void testStartsAfter()
+    {
+        Range target = Range.of(15,25);
+        assertTrue(target.startsAfter(range));
+    }
+
+    @Test public void testStartsAfter_false()
+    {
+        Range target = Range.of(-5, 10);
+        assertFalse(target.startsAfter(range));
+    }
+
+    @Test public void testStartsAfter_sameStart()
+    {
+        Range target = Range.of(1, 15);
+        assertFalse(this.range.startsAfter(target));
+    }
+    @Test public void testStartsAfter_overlappingCoord()
+    {
+        Range target = Range.of(-10, 1);
+        assertFalse(this.range.startsAfter(target));
+    }
+
+    @Test public void testStartsAfter_sameRange()
+    {
+        assertFalse(this.range.startsAfter(this.range));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testStartsAfter_null()
+    {
+       this.range.startsBefore(null);
+    }
 
     @Test public void testEndsBefore()
     {
@@ -535,6 +564,35 @@ public class TestRange{
     public void testEndsBefore_null()
     {
       this.range.endsBefore(null);           
+    }
+
+    @Test public void testEndsAfter()
+    {
+        Range target = Range.of(12,20);
+        assertTrue(target.endsAfter(range));
+    }
+
+    @Test public void testEndsAfter_false()
+    {
+        Range target = Range.of(-5, 8);
+        assertFalse(target.endsBefore(range));
+    }
+
+    @Test public void testEndsAfter_sameEnd()
+    {
+        Range target = Range.of(5, 10);
+        assertFalse(this.range.endsAfter(target));
+    }
+
+    @Test public void testEndsAfter_sameRange()
+    {
+        assertFalse(this.range.endsAfter(this.range));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testEndsAfter_null()
+    {
+      this.range.endsAfter(null);           
     }
 
    

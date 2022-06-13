@@ -357,7 +357,7 @@ public final class Ranges {
      * </pre>
      * @since 5.3
      * 
-     * @throws NullPointerException if any paramter is null or any Range in the given list is null.
+     * @throws NullPointerException if any parameter is null or any Range in the given list is null.
      */
     public static boolean intersects(Collection<Range> ranges, Range target) {
         for(Range r : ranges){
@@ -367,6 +367,7 @@ public final class Ranges {
         }
         return false;
     }
+  
     
     /**
      * Check if the target Range intersects any range in the given list.
@@ -380,7 +381,7 @@ public final class Ranges {
      * 
      * @since 5.3
      * 
-     * @throws NullPointerException if any paramter is null or any Range in the given list is null.
+     * @throws NullPointerException if any parameter is null or any Range in the given list is null.
      */
     public static <T> boolean intersects(Collection<T> ts, Function<T, Range> mapper, Range target) {
         for(T t : ts){

@@ -229,6 +229,10 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
     	return Ranges.asRanges(getGapOffsetsAsStream(encodedData).toArray());
     }
     
+    default boolean hasGaps(byte[] encodedData) {
+    	return getNumberOfGaps(encodedData) >0;
+    }
+    
     default Stream<Range> matches(byte[] encodedData, String regex){
       //override if something better!
         return matches(encodedData, Pattern.compile(regex));

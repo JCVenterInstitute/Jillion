@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.align.pairwise;
 
-import java.util.Iterator;
 
 import org.jcvi.jillion.align.SequenceAlignment;
 import org.jcvi.jillion.core.residue.Residue;

@@ -418,6 +418,11 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
          CACHE = Caches.createSoftReferencedValueCache(INITIAL_CACHE_SIZE);
     }
     /**
+     * Static Range of length 0 and start offset of 0.
+     * @since 6.0
+     */
+    public static Range EMPTY_RANGE = Range.ofLength(0);
+    /**
      * Factory method to get a {@link Range} object in
      * the {@link CoordinateSystem#ZERO_BASED} coordinate system.
      * If end == start -1 then this method will return an empty range.
@@ -975,6 +980,26 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 
         return this.getBegin() < other.getBegin();
     }
+    
+    /**
+     * Checks to see if this <code>Range</code> starts after the given
+     * comparison <code>Range</code>.
+     *
+     * @param other The other <code>Range</code> to compare to.
+     * @return <code>true</code> if the begin coordinate of this
+     * <code>Range</code> is greater than the  end coordinate of the
+     * other <code>Range</code>.
+     * @throws NullPointerException if other is null.
+     * @since 6.0
+     */
+    public boolean startsAfter(Range other)
+    {
+        if (other == null){
+            throw new NullPointerException("Null Range used in range comparison operation.");
+        }
+
+        return this.getBegin() > other.getEnd();
+    }
 
     /**
      * Checks to see if this <code>Range</code> ends before the given target.
@@ -992,6 +1017,24 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
         }
         
         return this.getEnd() < other.getBegin();
+    } 
+    /**
+     * Checks to see if this <code>Range</code> ends after the given target.
+     *
+     * @param other The target <code>Range</code> to check against.
+     * @return <code>true</code> if this <code>Range</code> has an end value
+     * which occurs after (and not at the same point as) the target
+     * <code>Range</code>.
+     * @throws NullPointerException if other is null.
+     * @since 6.0
+     */
+    public boolean endsAfter(Range other)
+    {
+        if (other == null){
+            throw new NullPointerException("Null Range used in range comparison operation.");
+        }
+        
+        return this.getEnd() > other.getEnd();
     } 
    
     /**

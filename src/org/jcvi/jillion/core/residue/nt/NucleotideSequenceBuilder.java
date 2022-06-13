@@ -583,6 +583,26 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 		return this;
 	}
     
+	/**
+     * Replace the sequence currently located at the given
+     * {@link Range} with the given replacementSequence.
+     * 
+     * @apiNote This is the same as calling:
+     * <pre>
+     * 	delete(gappedRangeToBeReplaced);
+     * 	insert((int)gappedRangeToBeReplaced.getBegin(), replacementSeq);
+     * </pre>
+     * @param gappedRangeToBeReplaced the range of this sequence to be replaced.
+     * @param replacementSeq the array of Nucleotides use in this range; any nulls are ignored.
+     * 
+     * @return this.
+     * @since 6.0
+     */
+	public NucleotideSequenceBuilder replace(Range gappedRangeToBeReplaced, Nucleotide[] replacementSeq) {
+		delete(gappedRangeToBeReplaced);
+		insert((int)gappedRangeToBeReplaced.getBegin(), replacementSeq);	
+		return this;
+	}
     private void assertNotNull(Object sequence) {
         if(sequence ==null){
             throw new NullPointerException(NULL_SEQUENCE_ERROR_MSG);
@@ -714,6 +734,22 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      */
     public NucleotideSequenceBuilder prepend(String sequence){
         return insert(0, sequence);
+    }
+    
+    /**
+     * Inserts the given sequence the beginning
+     * of the builder's mutable sequence.
+     * This is the same as calling 
+     * {@link #insert(int, Nucleotide) insert(0,n)}
+     * @param n the nucleotide to be 
+     * inserted at the beginning.
+     * @return this.
+     * @throws NullPointerException if n is null.
+     * @see #insert(int, Nucleotide)
+     * @since 6.0
+     */
+    public NucleotideSequenceBuilder prepend(Nucleotide n){
+        return insert(0, n);
     }
     
     /**

@@ -113,6 +113,29 @@ abstract class AbstractProteinSequence extends AbstractResidueSequence<AminoAcid
 		}		
 		return count;		
 	}
+	
+	
+	@Override
+	public ProteinSequenceBuilder newEmptyBuilder(int initialCapacity) {
+		return new ProteinSequenceBuilder(initialCapacity);
+	}
+
+
+
+	@Override
+	public boolean hasGaps() {
+		Iterator<AminoAcid> iter = iterator();
+		
+		while(iter.hasNext()){
+			if(iter.next() ==AminoAcid.Gap){
+				return true;
+			}			
+		}		
+		return false;
+	}
+
+
+
 	@Override
 	public boolean isGap(int gappedOffset) {
 		return encodedAminoAcids.get(gappedOffset) == AminoAcid.Gap;		
@@ -136,9 +159,9 @@ abstract class AbstractProteinSequence extends AbstractResidueSequence<AminoAcid
 	}
 	
 	@Override
-        public ProteinSequenceBuilder toBuilder(Range range) {
-                return new ProteinSequenceBuilder(this, range);
-        }
+    public ProteinSequenceBuilder toBuilder(Range range) {
+		return new ProteinSequenceBuilder(this, range);
+    }
 
 
 

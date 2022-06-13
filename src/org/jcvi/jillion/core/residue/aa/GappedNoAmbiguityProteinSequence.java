@@ -2,6 +2,8 @@ package org.jcvi.jillion.core.residue.aa;
 
 public class GappedNoAmbiguityProteinSequence extends CompactProteinSequence{
 
+	private static final long serialVersionUID = 7286188304603823944L;
+
 	public GappedNoAmbiguityProteinSequence(AminoAcid[] aas) {
 		super(aas);
 	}
@@ -15,5 +17,7 @@ public class GappedNoAmbiguityProteinSequence extends CompactProteinSequence{
 	public double computePercentX() {
 		return 0D;
 	}
+	
+	
 
 }

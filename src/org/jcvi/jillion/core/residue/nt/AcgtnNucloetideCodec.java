@@ -93,7 +93,13 @@ final class AcgtnNucloetideCodec extends AbstractTwoBitEncodedNucleotideCodec{
         return false;
     }
 
-    /**
+    
+    @Override
+	public boolean hasGaps(byte[] encodedData) {
+		return false;
+	}
+
+	/**
     * {@inheritDoc}
     */
     @Override

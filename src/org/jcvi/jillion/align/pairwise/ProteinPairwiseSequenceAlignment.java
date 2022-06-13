@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.align.pairwise;
 
+import org.jcvi.jillion.align.ProteinSequenceAlignment;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 /**
@@ -29,5 +30,5 @@ import org.jcvi.jillion.core.residue.aa.ProteinSequence;
  * @author dkatzel
  *
  */
-public interface ProteinPairwiseSequenceAlignment extends PairwiseSequenceAlignment<AminoAcid, ProteinSequence>{
+public interface ProteinPairwiseSequenceAlignment extends PairwiseSequenceAlignment<AminoAcid, ProteinSequence>, ProteinSequenceAlignment{
 }

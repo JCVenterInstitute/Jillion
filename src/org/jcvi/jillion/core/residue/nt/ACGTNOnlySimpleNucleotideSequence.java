@@ -42,6 +42,11 @@ class ACGTNOnlySimpleNucleotideSequence extends AbstractSimpleNucleotideSequence
 		return getLength()==0L;
 	}
 	@Override
+	public boolean hasGaps() {
+		return false;
+	}
+	
+	@Override
 	public long getUngappedLength() {
 		return getLength();
 	}

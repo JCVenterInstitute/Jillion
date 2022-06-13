@@ -420,4 +420,16 @@ public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R,
     	}
     	return false;
     }
+    
+    /**
+     * Does this Sequence contain any gaps.
+     * @return {@code true} if it does; {@code false} otherwise.
+     * 
+     * @since 6.0
+     * 
+     * @implNote by default this returns {@code getNumberOfGaps()>0} but some implementations may override this for a more efficient method.
+     */
+    default boolean hasGaps() {
+    	return getNumberOfGaps()>0;
+    }
 }
