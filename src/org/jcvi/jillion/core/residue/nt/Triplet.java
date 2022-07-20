@@ -29,6 +29,7 @@ package org.jcvi.jillion.core.residue.nt;
 public final class Triplet {
 
 	private final byte first,second,third;
+	private static final byte GAP_VALUE = Nucleotide.Gap.getOrdinalAsByte();
 	/**
 	 * Our cache of all unique triplets.  Uses the fly-weight
 	 * design pattern to not create more instances
@@ -119,6 +120,10 @@ public final class Triplet {
 	}
 	public Nucleotide getThird(){
 		return Nucleotide.getDnaValues().get(third);
+	}
+
+	public boolean hasGaps() {
+		return first==GAP_VALUE || second == GAP_VALUE || third == GAP_VALUE;
 	}
 
 }
