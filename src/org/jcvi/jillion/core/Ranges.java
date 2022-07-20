@@ -400,25 +400,42 @@ public final class Ranges {
      * 
      * @param subjectRanges
      * @param queryRanges
-     * @return
+     * @return a List of Ranges that are the intersections of both lists.
      */
 	public static List<Range> union(List<Range> subjectRanges, List<Range> queryRanges) {
 		Objects.requireNonNull(subjectRanges);
 		Objects.requireNonNull(queryRanges);
 		
-		Set<Integer> set = new HashSet<>();
+		List<Range> intersections = new ArrayList<Range>();
 		for(Range s : subjectRanges) {
 			for(Range q : queryRanges) {
 				Range intersection = s.intersection(q);
-				for(long l : intersection) {
-					set.add(Integer.valueOf((int)l));
+				if(!intersection.isEmpty()) {
+					intersections.add(intersection);
 				}
 			}
 		}
-		if(set.isEmpty()) {
+		if(intersections.isEmpty()) {
 			return Collections.emptyList();
 		}
-		return Ranges.asRanges(set.stream().mapToInt(Integer::intValue).sorted().toArray());
+		return Ranges.merge(intersections);
 	
+	}
+	/**
+	 * Return the list of Ranges of everything that is in A but not in B.
+	 * 
+	 * @param a the list of ranges in A.
+	 * @param b the list of ranges in B.
+	 * @return
+	 * @since 6.0
+	 * @throws NullPointerException if a or b are {@code null}.
+	 */
+	public static List<Range> complement(List<Range> a, List<Range> b){
+		List<Range> union = Ranges.union(a, b);
+		List<Range> complement = new ArrayList<>();
+		for(Range s : a) {
+			complement.addAll( s.complement(union));
+		}
+		return Ranges.merge(complement);
 	}
 }
