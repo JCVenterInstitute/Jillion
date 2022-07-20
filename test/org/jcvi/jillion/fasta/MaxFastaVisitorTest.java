@@ -59,20 +59,18 @@ public class MaxFastaVisitorTest {
 	public void whenReachMaxShouldCallHalt() {
 		FastaVisitor visitor = createMock(FastaVisitor.class);
 		
-		int numOfRecords=10;
-		int max = 5;
-		int numToVisitBeforeHalt = max > numOfRecords? numOfRecords: max;
-		for(int i=0; i< numToVisitBeforeHalt; i++) {
-			expectVisit(visitor, Integer.toString(i));
-		}
-		if(max < numOfRecords) {
-			expectFinalVisit(visitor, Integer.toString(max));
-		}else {
-			visitor.visitEnd();
-		}
+		
+		expectVisit(visitor, "0");
+		expectVisit(visitor, "1");
+		expectVisit(visitor, "2");
+		expectVisit(visitor, "3");
+//		expectVisit(visitor, "4");
+
+		expectFinalVisit(visitor, "4");
+	
 		replay(visitor);
 		
-		MaxNumberOfRecordsFastaVisitor sut = new MaxNumberOfRecordsFastaVisitor(max, visitor);
+		MaxNumberOfRecordsFastaVisitor sut = new MaxNumberOfRecordsFastaVisitor(5, visitor);
 		int id=0;
 		
 		
@@ -80,43 +78,41 @@ public class MaxFastaVisitorTest {
 		do {
 			FastaVisitorCallback callback = createMock(FastaVisitorCallback.class);
 			replay(callback);
+
 			rv = sut.visitDefline(callback, Integer.toString(id), null);
 			
 			verify(callback);
 			id++;
-		}while(rv !=null && id< numToVisitBeforeHalt);
+		}while(rv !=null && id< 4);
 		
-		if(max < numOfRecords) {
+		
 			FastaVisitorCallback callback = createMock(FastaVisitorCallback.class);
-			
 			
 			callback.haltParsing();
 			replay(callback);
-			assertNull(sut.visitDefline(callback, Integer.toString(max), null));
+			rv = sut.visitDefline(callback, Integer.toString(id), null);
+			assertNotNull(rv);
 			verify(callback);
 			sut.halted();
 			
-		}else {
 		
-			sut.visitEnd();
-			
-		}
 		
 		verify(visitor);
 		
 	}
-	
-	private void expectVisit(FastaVisitor visitor, String id) {
-		expect(visitor.visitDefline(isA(FastaVisitorCallback.class),eq(id), isNull() )).andReturn(mockRecordVisitor);
-	}
-	
 	private void expectFinalVisit(FastaVisitor visitor, String id) {
 		expect(visitor.visitDefline(isA(FastaVisitorCallback.class),eq(id), isNull() ))
 		.andAnswer(()->{
 			FastaVisitorCallback callback = getCurrentArgument(0);
 			callback.haltParsing();
-			return null;
+			return mockRecordVisitor;
 		});
 		visitor.halted();
 	}
+
+	private void expectVisit(FastaVisitor visitor, String id) {
+		expect(visitor.visitDefline(isA(FastaVisitorCallback.class),eq(id), isNull() )).andReturn(mockRecordVisitor);
+	}
+	
+	
 }

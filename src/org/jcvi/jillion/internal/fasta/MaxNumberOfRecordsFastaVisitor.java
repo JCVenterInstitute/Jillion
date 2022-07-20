@@ -33,13 +33,14 @@ public class MaxNumberOfRecordsFastaVisitor implements FastaVisitor{
 
 	@Override
 	public FastaRecordVisitor visitDefline(FastaVisitorCallback callback, String id, String optionalComment) {
-		if(numberSeen > total) {
-			callback.haltParsing();
-			return null;
-		}
+		
 		FastaRecordVisitor recordVisitor = delegate.visitDefline(callback, id, optionalComment);
 		if(recordVisitor !=null) {
 			numberSeen++;
+			if(numberSeen == total) {
+				//last record
+				return new LastRecordVisitor(recordVisitor, callback);
+			}
 		}
 		return recordVisitor;
 	}
@@ -53,6 +54,34 @@ public class MaxNumberOfRecordsFastaVisitor implements FastaVisitor{
 	@Override
 	public void halted() {
 		delegate.halted();
+		
+	}
+	
+	private static class LastRecordVisitor implements FastaRecordVisitor{
+		private final FastaRecordVisitor delegate;
+
+		private final FastaVisitorCallback callback;
+		
+		public LastRecordVisitor(FastaRecordVisitor delegate, FastaVisitorCallback callback) {
+			this.delegate = delegate;
+			this.callback = callback;
+		}
+
+		public void visitBodyLine(String line) {
+			delegate.visitBodyLine(line);
+		}
+
+		public void visitEnd() {
+			delegate.visitEnd();
+			callback.haltParsing();
+			
+		}
+
+		public void halted() {
+			delegate.halted();
+		}
+
+	
 		
 	}
 
