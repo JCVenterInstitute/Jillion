@@ -27,6 +27,7 @@ public abstract class AbstractIndelDetector<R extends Residue,  T extends Residu
 			for(Range r : queryRanges) {
 				list.add(new Indel(IndelType.DELETION, r));
 			}
+			list.sort(null);
 			return list;
 		}
 		// complex case
@@ -42,6 +43,7 @@ public abstract class AbstractIndelDetector<R extends Residue,  T extends Residu
 		for(Range r : queryRangesWithoutCommonGaps) {
 			list.add(new Indel(IndelType.DELETION, r));
 		}
+		list.sort(null);
 		return list;
 	}
 
