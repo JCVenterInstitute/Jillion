@@ -357,7 +357,7 @@ public class TestNucleotideSequenceBuilder {
     @Test(expected = NullPointerException.class)
     public void deleteNullRangeShouldThrowNPE(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
-        sut.delete(null);
+        sut.delete((Range)null);
     }
     @Test
     public void deleteRangeGoesBeyondLengthShouldDeleteAsMuchAsPossible(){
@@ -458,6 +458,41 @@ public class TestNucleotideSequenceBuilder {
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("T-G-N--A");
         assertEquals(1, sut.getNumNs());
         sut.delete(Range.of(2,5));
+        assertEquals(2,sut.getNumGaps());
+        assertEquals(0, sut.getNumNs());
+    }
+    @Test
+    public void deleteVarArgsButOnlyOneItemRemovesNumNsCorrectly(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("T-G-N--A");
+        assertEquals(1, sut.getNumNs());
+        sut.delete(new Range[] {Range.of(2,5)});
+        assertEquals(2,sut.getNumGaps());
+        assertEquals(0, sut.getNumNs());
+    }
+    
+    @Test
+    public void deletMultipleDeletesSortsCorrectOrder(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("T-G-N--AGGGGTTT");
+        assertEquals(1, sut.getNumNs());
+        //makes sure the sort order handled correctly
+        sut.delete(Range.of(10,12), Range.of(2,5));
+        assertEquals(2,sut.getNumGaps());
+        assertEquals(0, sut.getNumNs());
+    }
+    @Test(expected = NullPointerException.class)
+    public void deletMultipleDeletesNullShouldThrowNPE(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("T-G-N--AGGGGTTT");
+        assertEquals(1, sut.getNumNs());
+        //makes sure the sort order handled correctly
+        sut.delete((Range[])null);
+    }
+    
+    @Test
+    public void deletMultipleDeletes(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("T-G-N--AGGGGTTT");
+        assertEquals(1, sut.getNumNs());
+        //makes sure the sort order handled correctly
+        sut.delete(Range.of(2,5), Range.of(10,12));
         assertEquals(2,sut.getNumGaps());
         assertEquals(0, sut.getNumNs());
     }

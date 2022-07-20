@@ -21,7 +21,10 @@
 package org.jcvi.jillion.core;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import org.jcvi.jillion.core.util.Builder;
 /**
@@ -75,7 +78,7 @@ public interface SequenceBuilder <T, S extends Sequence<T>> extends Builder<S> ,
     long getLength();
 
     /**
-     * Replace the residue at the given offset with a different nucleotide.
+     * Replace the element at the given offset with a different nucleotide.
      * @param offset the gapped offset to modify.
      * @param replacement the new {@link org.jcvi.jillion.core.residue.Residue} to replace the old
      * {@link org.jcvi.jillion.core.residue.Residue} at that location.
@@ -85,7 +88,7 @@ public interface SequenceBuilder <T, S extends Sequence<T>> extends Builder<S> ,
      */
     SequenceBuilder<T,S> replace(int offset, T replacement);
     /**
-     * Deletes the nucleotides from the given range of this 
+     * Deletes the elements from the given range of this 
      * partially constructed residue sequence.  If the given
      * range is empty, then the residue sequence will not
      * be modified. If the range extends beyond the currently
@@ -99,7 +102,39 @@ public interface SequenceBuilder <T, S extends Sequence<T>> extends Builder<S> ,
      */
     SequenceBuilder<T,S> delete(Range range);
 
-    
+    /**
+     * Deletes the elements specified in the given Ranges.  If multiple Ranges are given,
+     * then the Ranges are sorted from end offset and then removed.  This prevents 
+     * having to deal with correcting for downstream offsets.  If there are overlapping
+     * ranges, then those positions will be deleted multiple times.
+     * @param ranges the list of ranges, can not be null or empty.
+     * @return this
+     * 
+     * @throws NullPointerException if ranges are null or any range is null.
+     * @throws IllegalArgumentException if no ranges are provided.
+     * @since 6.0
+     */
+    default SequenceBuilder<T,S> delete(Range...ranges){
+    	if(ranges.length ==0) {
+    		throw new IllegalArgumentException("must have at least one range to delete");
+    	}
+    	if(ranges.length ==1) {
+    		return delete(ranges[0]);
+    	}
+    	List<Range> rangeList = Arrays.asList(ranges);
+    	rangeList.sort(Range.Comparators.DEPARTURE.reversed());
+    	Iterator<Range> iter = rangeList.iterator();
+    	do {
+    		Range r = iter.next();
+    		if(iter.hasNext()) {
+    			delete(r);
+    		}else {
+    			return delete(r);
+    		}
+    	}while(iter.hasNext());
+    	//can't happen but makes compiler happy
+    	return this;
+    }
    
     /**
      * Inserts the given {@link org.jcvi.jillion.core.residue.Residue} to the builder's mutable sequence

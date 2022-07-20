@@ -673,6 +673,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @throws IllegalArgumentException if range's start is negative
      * or greater than this nucleotide sequence's current length.
      */
+	@Override
     public NucleotideSequenceBuilder delete(Range range){
         if(range ==null){
             throw new NullPointerException("range can not be null");
@@ -688,6 +689,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
         }
         return this;
     }
+	
 	
 	
 	
