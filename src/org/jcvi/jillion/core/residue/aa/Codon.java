@@ -23,6 +23,7 @@ package org.jcvi.jillion.core.residue.aa;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.Triplet;
@@ -59,6 +60,34 @@ public final class Codon {
 		return isStop;
 	}
 	
+	
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(aminoAcid, isStart, isStop, triplet);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Codon other = (Codon) obj;
+		return aminoAcid == other.aminoAcid && isStart == other.isStart && isStop == other.isStop
+				&& Objects.equals(triplet, other.triplet);
+	}
+
+	@Override
+	public String toString() {
+		return "Codon [triplet=" + triplet + ", aminoAcid=" + aminoAcid + ", isStart=" + isStart + ", isStop=" + isStop
+				+ "]";
+	}
+
+
+
 	public static final class Builder{
 		private final Triplet triplet;
 		

@@ -21,10 +21,15 @@
 package org.jcvi.jillion.core.residue.aa;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.jcvi.jillion.core.residue.Frame;
@@ -168,14 +173,19 @@ public enum IupacTranslationTables implements TranslationTable{
 		}
 	}
 	
-	private final Map<Triplet, Codon> map = new HashMap<Triplet, Codon>(MapUtil.computeMinHashMapSizeWithoutRehashing(200));
+	private final Map<Triplet, Codon> map = new HashMap<>(MapUtil.computeMinHashMapSizeWithoutRehashing(200));
 	private final byte tableNumber;
+	
+	private final Map<AminoAcid, Set<Triplet>> aaToTripletMap;
 	
 	private IupacTranslationTables(int tableNumber){
 		initialzeTable();
 		updateTable(map);
 		this.tableNumber = (byte)tableNumber;
-		
+		aaToTripletMap = new EnumMap<>(AminoAcid.class);
+		for(Entry<Triplet, Codon> entry : map.entrySet()) {
+			aaToTripletMap.computeIfAbsent(entry.getValue().getAminoAcid(), aa -> new HashSet<>()).add(entry.getKey());
+		}
 	}
 
 
@@ -256,7 +266,60 @@ public enum IupacTranslationTables implements TranslationTable{
 	public ProteinSequence translate(NucleotideSequence sequence, Frame frame, int length, boolean substituteStart) {
 		return translate(sequence, length, TranslationOptions.builder().frame(frame).substituteStart(substituteStart).build());
 	}
-	
+	@Override
+	public void translate(NucleotideSequence sequence, TranslationOptions options, TranslationVisitor visitor) {
+		translate(sequence, (int) sequence.getLength(), options, visitor);
+	}
+	@Override
+	public void translate(NucleotideSequence sequence, int length, TranslationOptions options, TranslationVisitor visitor) {
+		if(sequence ==null){
+             throw new NullPointerException("sequence can not be null");
+     }
+		 
+	Frame frame = options.getFrame();
+     if(frame ==null){
+             throw new NullPointerException("frame can not be null");
+     }
+     if(visitor ==null){
+         throw new NullPointerException("frame can not be null");
+     }
+     //Brian says legacy PFGRC and (BioJava and BioPerl?)
+     //don't correctly handle the 'not first starts'
+     //so if translation table says codon is a start
+     //and we've already seen a start, then make it not the start?
+     Iterator<Set<Triplet>> iter = frame.asTriplets(sequence, options.isIgnoreGaps());
+     
+     boolean seenStart=false;
+     long currentOffset=frame.ordinal();
+    
+     while(iter.hasNext()){
+             Set<Triplet> triplet =iter.next();
+             
+             if(triplet !=null){
+                     Codon codon =translate(triplet);
+//                     System.out.println(codon.getTriplet() + " " + codon.getAminoAcid());
+                     if(codon.isStart()){
+                         FoundStartResult result = visitor.foundStart(currentOffset, codon);
+                         if(result ==FoundStartResult.STOP){
+                             break;
+                         }
+                         seenStart = result != FoundStartResult.FIND_ADDITIONAL_STARTS;
+                     }else if(codon.isStop()){
+                             FoundStopResult result = visitor.foundStop(currentOffset, codon);
+                             if(result == FoundStopResult.STOP){
+                                 break;
+                             }
+                             
+                     }else{
+                             visitor.visitCodon(currentOffset, codon);
+                         
+                     }
+             }
+             currentOffset+=3;
+     }
+     visitor.end();
+
+	}
 	@Override
 	public ProteinSequence translate(NucleotideSequence sequence, int length, TranslationOptions options) {
 		if(sequence ==null){
@@ -299,51 +362,9 @@ public enum IupacTranslationTables implements TranslationTable{
 	
 	
 	@Override
-        public void translate(NucleotideSequence sequence, Frame frame, TranslationVisitor visitor) {
-                if(sequence ==null){
-                        throw new NullPointerException("sequence can not be null");
-                }
-                if(frame ==null){
-                        throw new NullPointerException("frame can not be null");
-                }
-                if(visitor ==null){
-                    throw new NullPointerException("frame can not be null");
-                }
-                //Brian says legacy PFGRC and (BioJava and BioPerl?)
-                //don't correctly handle the 'not first starts'
-                //so if translation table says codon is a start
-                //and we've already seen a start, then make it not the start?
-                Iterator<Set<Triplet>> iter = frame.asTriplets(sequence, true);
-                boolean seenStart=false;
-                long currentOffset=frame.ordinal();
-               
-                while(iter.hasNext()){
-                        Set<Triplet> triplet =iter.next();
-                        
-                        if(triplet !=null){
-                                Codon codon =translate(triplet);
-//                                System.out.println(codon.getTriplet() + " " + codon.getAminoAcid());
-                                if(codon.isStart()){
-                                    FoundStartResult result = visitor.foundStart(currentOffset, codon);
-                                    if(result ==FoundStartResult.STOP){
-                                        break;
-                                    }
-                                    seenStart = result != FoundStartResult.FIND_ADDITIONAL_STARTS;
-                                }else if(codon.isStop()){
-                                        FoundStopResult result = visitor.foundStop(currentOffset, codon);
-                                        if(result == FoundStopResult.STOP){
-                                            break;
-                                        }
-                                        
-                                }else{
-                                        visitor.visitCodon(currentOffset, codon);
-                                    
-                                }
-                        }
-                        currentOffset+=3;
-                }
-                visitor.end();
-        }
+    public void translate(NucleotideSequence sequence, Frame frame, TranslationVisitor visitor) {
+		translate(sequence, (int) sequence.getLength(), TranslationOptions.builder().ignoreGaps(true).frame(frame).build(), visitor);
+	}
 	@Override
 	public ProteinSequence translate(NucleotideSequence sequence, Frame frame, int length) {
 		return translate(sequence, frame, length,true);
@@ -409,5 +430,11 @@ public enum IupacTranslationTables implements TranslationTable{
 	    }
 		return stops;
 		
+	}
+	
+	@Override
+	public Set<Triplet> getTripletsFor(AminoAcid aa){
+		Objects.requireNonNull(aa);
+		return aaToTripletMap.getOrDefault(aa, Collections.emptySet());
 	}
 }
