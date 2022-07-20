@@ -3,6 +3,7 @@ package org.jcvi.jillion.align;
 import java.util.List;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Rangeable;
 import org.jcvi.jillion.core.residue.ResidueSequence;
 
 import lombok.Data;
@@ -15,7 +16,7 @@ public interface IndelDetector<R extends ResidueSequence> {
 		DELETION
 	}
 	@Data
-	public static class Indel implements Comparable<Indel>{
+	public static class Indel implements Comparable<Indel>, Rangeable{
 		@NonNull
 		private final IndelType type;
 		@NonNull
@@ -23,6 +24,10 @@ public interface IndelDetector<R extends ResidueSequence> {
 		@Override
 		public int compareTo(Indel o) {
 			return Range.Comparators.ARRIVAL.compare(location, o.location);
+		}
+		@Override
+		public Range asRange() {
+			return location;
 		} 
 	}
 	
