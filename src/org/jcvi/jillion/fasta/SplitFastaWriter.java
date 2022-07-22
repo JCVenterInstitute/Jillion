@@ -381,7 +381,7 @@ public final class SplitFastaWriter{
 			privateWrite(record);
 		}
 
-		private void privateWrite(FastaRecord<S,T> record) throws IOException {
+		private synchronized void privateWrite(FastaRecord<S,T> record) throws IOException {
 			checkNotClosed();
 			Objects.requireNonNull(record);
 			K key = deconvolutionFunction.apply(record);
@@ -466,7 +466,7 @@ public final class SplitFastaWriter{
 		}
 
 		@Override
-		public void close() throws IOException {
+		public synchronized void close() throws IOException {
 			if (!closed && currentWriter !=null) {
 				currentWriter.close();
 			}
@@ -474,7 +474,7 @@ public final class SplitFastaWriter{
 		}
 
 		@Override
-		public void write(F record) throws IOException {
+		public synchronized void write(F record) throws IOException {
 			updateCurrentWriterIfNeeded();
 			currentWriter.write(record);
 			currentRecordCount++;
@@ -493,7 +493,7 @@ public final class SplitFastaWriter{
 		}
 
 		@Override
-		public void write(String id, T sequence) throws IOException {
+		public synchronized void write(String id, T sequence) throws IOException {
 			updateCurrentWriterIfNeeded();
 			currentWriter.write(id, sequence);
 			currentRecordCount++;
@@ -501,7 +501,7 @@ public final class SplitFastaWriter{
 		}
 
 		@Override
-		public void write(String id, T sequence, String optionalComment)
+		public synchronized  void write(String id, T sequence, String optionalComment)
 				throws IOException {
 			updateCurrentWriterIfNeeded();
 			currentWriter.write(id, sequence, optionalComment);
@@ -558,7 +558,7 @@ public final class SplitFastaWriter{
 		}
 
 		@Override
-		public void close() throws IOException {
+		public synchronized  void close() throws IOException {
 			if (!closed) {
 				for(FastaWriter<S, T, F> writer : writers){
 					IOUtil.closeAndIgnoreErrors(writer);
@@ -568,20 +568,20 @@ public final class SplitFastaWriter{
 		}
 
 		@Override
-		public void write(F record) throws IOException {
+		public synchronized  void write(F record) throws IOException {
 			getCurrentWriter().write(record);
 		}
 
 		
 
 		@Override
-		public void write(String id, T sequence) throws IOException {
+		public synchronized  void write(String id, T sequence) throws IOException {
 			getCurrentWriter().write(id, sequence);
 
 		}
 
 		@Override
-		public void write(String id, T sequence, String optionalComment)
+		public synchronized  void write(String id, T sequence, String optionalComment)
 				throws IOException {
 			getCurrentWriter().write(id, sequence, optionalComment);
 		}
