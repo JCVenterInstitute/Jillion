@@ -28,7 +28,7 @@ package org.jcvi.jillion.core.util;
  * @author dkatzel
  *
  */
-public class SingleThreadAdder {
+public class SingleThreadAdder implements Comparable<SingleThreadAdder>{
 
 	private long value;
 	
@@ -72,6 +72,11 @@ public class SingleThreadAdder {
 	@Override
 	public String toString() {
 		return "SingleThreadAdder [value=" + value + "]";
+	}
+
+	@Override
+	public int compareTo(SingleThreadAdder o) {
+		return Long.compare(value, o.value);
 	}
 	
 	

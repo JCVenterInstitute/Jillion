@@ -106,6 +106,8 @@ to wrap a StreamingIterator into a DataStoreIterator
 
 28. SequenceBuilder now has a delete(Range...ranges) with a varargs of Ranges that will handle deleting
     multiple Ranges at once correctly.  The method is implemented with a default.
+    
+29.  SingleThreadAdder is now comparable
 
 API BREAKING CHANGES
 --------------------
