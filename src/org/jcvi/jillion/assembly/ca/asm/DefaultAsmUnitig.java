@@ -29,8 +29,8 @@ import org.jcvi.jillion.assembly.util.consensus.ConsensusCaller;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.QualitySequenceDataStore;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 
 /**

@@ -42,7 +42,7 @@ class ReAlignReads {
 	}
 	public ReAlignReads(NucleotideSequence gappedReference, boolean referenceEncode){
 		this.gappedReference = gappedReference;
-		this.referenceGaps = new GrowableIntArray(gappedReference.getGapOffsets());
+		this.referenceGaps = new GrowableIntArray(gappedReference.gaps().toArray());
 		this.referenceEncode = referenceEncode;
 	}
 	

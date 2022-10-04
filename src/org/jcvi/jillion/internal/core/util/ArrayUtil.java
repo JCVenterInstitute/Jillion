@@ -25,7 +25,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.RandomAccess;
-
+/**
+ * Utility class to work on arrays.
+ * @author dkatzel
+ *
+ */
 public final class ArrayUtil {
 	/**
 	 * Create a new List instance that has
@@ -133,6 +137,20 @@ public final class ArrayUtil {
             public int hashCode() {
             	return Arrays.hashCode(array);
             }
+		
+	}
+	/**
+	 * In-place reverse the given array.
+	 * @param array
+	 * @since 6.0
+	 */
+	public static void reverse(int[] array) {
+		int mid = array.length/2;
+		for(int i = 0, j=array.length-1; i < mid; i++, j--){
+		    int tmp = array[i];
+		    array[i] = array[j];
+		    array[j] = tmp;
+		}
 		
 	}
 	

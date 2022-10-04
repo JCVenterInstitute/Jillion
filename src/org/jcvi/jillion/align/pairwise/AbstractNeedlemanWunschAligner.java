@@ -39,7 +39,7 @@ import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
  * @param <A> the {@link SequenceAlignment} type returned by this aligner.
  * @param <P> the {@link PairwiseSequenceAlignment} type returned by this aligner.
  */
-abstract class AbstractNeedlemanWunschAligner <R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S>, A extends SequenceAlignment<R, S>, P extends PairwiseSequenceAlignment<R, S>> extends AbstractPairwiseAligner<R, S, B, A, P>{
+abstract class AbstractNeedlemanWunschAligner <R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S, B>, A extends SequenceAlignment<R, S>, P extends PairwiseSequenceAlignment<R, S>> extends AbstractPairwiseAligner<R, S, B, A, P>{
 
 	protected AbstractNeedlemanWunschAligner(S query,
 			S subject, SubstitutionMatrix<R> matrix, float openGapPenalty,

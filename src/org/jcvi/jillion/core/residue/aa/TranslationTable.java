@@ -27,6 +27,7 @@ import java.util.Set;
 import org.jcvi.jillion.core.residue.Frame;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.Triplet;
+import org.jcvi.jillion.core.residue.nt.VariantNucleotideSequence;
 
 public interface TranslationTable {
 
@@ -129,30 +130,7 @@ public interface TranslationTable {
 	 * @throws IllegalArgumentException if the sequence contains gaps.
 	 */
 	ProteinSequence translate(NucleotideSequence sequence, Frame frame, int length, boolean substituteStarts);
-	/**
-	 * Translate the given <strong>ungapped</strong> {@link NucleotideSequence} into
-	 * an {@link ProteinSequence} using the given {@link Frame}.  If the sequence
-	 * in the given frame is not a multiple of 3, then this method will
-	 * translate as many bases as possible, any "left over" bases will not be translated.
-	 * 
-	 * 
-	 * @param sequence the sequence to translate; can not be null.
-	 * 
-	 * @param length the number of elements in the given sequence.
-	 * 
-	 * @param options the {@link TranslationOptions} to use; can not be {@code null}.
-	 * 
-	 * 
-	 * @return a new ProteinSequence, will never be null,
-	 * but may be empty if the sequence is empty or less than 3 bp after
-	 * frame is taken into account.
-	 * @throws NullPointerException if either parameter is null.
-	 * @throws IllegalArgumentException if the sequence contains gaps.
-	 * @since 6.0
-	 */
-	default ProteinSequence translate(NucleotideSequence sequence, TranslationOptions options) {
-		return translate(sequence, (int) sequence.getLength(), options);
-	}
+
 	
 	/**
 	 * Translate the given <strong>ungapped</strong> {@link NucleotideSequence} into
@@ -163,7 +141,6 @@ public interface TranslationTable {
 	 * 
 	 * @param sequence the sequence to translate; can not be null.
 	 * 
-	 * @param length the number of elements in the given sequence.
 	 * 
 	 * @param options the {@link TranslationOptions} to use; can not be {@code null}.
 	 * 
@@ -175,30 +152,8 @@ public interface TranslationTable {
 	 * @throws IllegalArgumentException if the sequence contains gaps.
 	 * @since 6.0
 	 */
-	ProteinSequence translate(NucleotideSequence sequence, int length, TranslationOptions options);
-	/**
-	 * Translate the given <strong>ungapped</strong> {@link NucleotideSequence} into
-	 * an {@link ProteinSequence} using the given {@link Frame}.  If the sequence
-	 * in the given frame is not a multiple of 3, then this method will
-	 * translate as many bases as possible, any "left over" bases will not be translated.
-	 * 
-	 * 
-	 * @param sequence the sequence to translate; can not be null.
-	 * 
-	 * @param length the number of elements in the given sequence.
-	 * 
-	 * @param options the {@link TranslationOptions} to use; can not be {@code null}.
-	 * 
-	 * @param visitor the TranslationVisitor to use; can not be {@code null}.
-	 * 
-	 * @return a new ProteinSequence, will never be null,
-	 * but may be empty if the sequence is empty or less than 3 bp after
-	 * frame is taken into account.
-	 * @throws NullPointerException if either parameter is null.
-	 * @throws IllegalArgumentException if the sequence contains gaps.
-	 * @since 6.0
-	 */
-	void translate(NucleotideSequence sequence, int length, TranslationOptions options, TranslationVisitor visitor);
+	ProteinSequence translate(NucleotideSequence sequence, TranslationOptions options);
+	
 	/**
 	 * Translate the given {@link NucleotideSequence} into
 	 * an {@link ProteinSequence} using the given {@link Frame}.  If the sequence
@@ -218,9 +173,35 @@ public interface TranslationTable {
 	 * frame is taken into account.
 	 * @throws NullPointerException if either parameter is null.
 	 * @throws IllegalArgumentException if the sequence contains gaps.
+	 * 
+	 * @implNote default implementation is {@code translate(sequence, (int)sequence.getLength(), options, visitor)}.
 	 * @since 6.0
 	 */
 	void translate(NucleotideSequence sequence, TranslationOptions options, TranslationVisitor visitor);
+	
+	/**
+	 * Translate the given <strong>ungapped</strong> {@link VariantNucleotideSequence} 
+	 * using the given TranslationOptions and call the appropriate methods
+	 * on the given TranslationVisitor.
+	 * 
+	 * 
+	 * @param sequence the sequence to translate; can not be null.
+	 * 
+	 * @param options the {@link TranslationOptions} to use; can not be {@code null}.
+	 * 
+	 * @param visitor the TranslationVisitor to use; can not be {@code null}.
+	 * 
+	 * @return a new ProteinSequence, will never be null,
+	 * but may be empty if the sequence is empty or less than 3 bp after
+	 * frame is taken into account.
+	 * @throws NullPointerException if either parameter is null.
+	 * @throws IllegalArgumentException if the sequence contains gaps.
+	 * @implNote default implementation is {@code translate(sequence, (int)sequence.getLength(), options, visitor)}.
+	 * 
+	 * @since 6.0
+	 */
+	void translate(VariantNucleotideSequence sequence,TranslationOptions options, TranslationVisitor visitor);
+	
 	Map<Frame,List<Long>> findStops(NucleotideSequence sequence);
 	/**
 	 * Get the set of all {@link Triplet}s that translate to the given AminoAcid

@@ -40,7 +40,7 @@ import org.jcvi.jillion.internal.core.util.GrowableIntArray;
  *
  *
  */
-public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<AminoAcid,ProteinSequence>{
+public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<AminoAcid,ProteinSequence, ProteinSequenceBuilder>{
 	private static final AminoAcid[] AMINO_ACID_VALUES = AminoAcid.values();
 	private static final byte GAP_ORDINAL = AminoAcid.Gap.getOrdinalAsByte();
 	
@@ -316,7 +316,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	@Override
 	public ProteinSequenceBuilder insert(
 			int offset,
-			ResidueSequenceBuilder<AminoAcid, ProteinSequence> otherBuilder) {
+			ProteinSequenceBuilder otherBuilder) {
 		return insert(offset,otherBuilder.toString());
 	}
 
@@ -340,7 +340,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 
 	@Override
 	public ProteinSequenceBuilder prepend(
-			ResidueSequenceBuilder<AminoAcid, ProteinSequence> otherBuilder) {
+			ProteinSequenceBuilder otherBuilder) {
 		return prepend(otherBuilder.toString());
 	}
 
@@ -564,6 +564,10 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
     }
 	public ProteinSequenceBuilder trimOffStopCodon(boolean trimOffStopCodon) {
 		this.includeStopCodon = !trimOffStopCodon;
+		return this;
+	}
+	@Override
+	public ProteinSequenceBuilder getSelf() {
 		return this;
 	}
 }

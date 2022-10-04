@@ -46,8 +46,9 @@ import org.jcvi.jillion.core.util.Builder;
  *
  * @param <T> the Type of element in the sequence
  * @param <S> the Type of Sequence to be built.
+ * @param <I> the Type to iterate over, usually the same as <T> but not always.
  */
-public interface SequenceBuilder <T, S extends Sequence<T>> extends Builder<S> , Iterable<T> {
+public interface SequenceBuilder <T, S extends Sequence<T>, B extends SequenceBuilder<T, S, B>> extends Builder<S> , Iterable<T> {
 	/**
      * Appends the given symbol to the end
      * of the builder's mutable sequence.
@@ -57,7 +58,7 @@ public interface SequenceBuilder <T, S extends Sequence<T>> extends Builder<S> ,
      * 
      * @return this
      */
-	SequenceBuilder<T,S> append(T symbol);
+	B append(T symbol);
 	/**
 	 * Get the element at the given offset.
 	 * @param offset the offset-th element of the sequence to get.
@@ -86,7 +87,7 @@ public interface SequenceBuilder <T, S extends Sequence<T>> extends Builder<S> ,
      * @throws NullPointerException if replacement is null.
      * @throws IllegalArgumentException if offset is invalid.
      */
-    SequenceBuilder<T,S> replace(int offset, T replacement);
+    B replace(int offset, T replacement);
     /**
      * Deletes the elements from the given range of this 
      * partially constructed residue sequence.  If the given
@@ -100,7 +101,13 @@ public interface SequenceBuilder <T, S extends Sequence<T>> extends Builder<S> ,
      * @throws IllegalArgumentException if range's start is negative
      * or greater than this residue sequence's current length.
      */
-    SequenceBuilder<T,S> delete(Range range);
+    B delete(Range range);
+    /**
+     * Helper method to return "this" of the correct type,
+     * should not be directly called outside the implementation.
+     * @return this
+     */
+    B getSelf();
 
     /**
      * Deletes the elements specified in the given Ranges.  If multiple Ranges are given,
@@ -114,7 +121,7 @@ public interface SequenceBuilder <T, S extends Sequence<T>> extends Builder<S> ,
      * @throws IllegalArgumentException if no ranges are provided.
      * @since 6.0
      */
-    default SequenceBuilder<T,S> delete(Range...ranges){
+    default B delete(Range...ranges){
     	if(ranges.length ==0) {
     		throw new IllegalArgumentException("must have at least one range to delete");
     	}
@@ -133,7 +140,7 @@ public interface SequenceBuilder <T, S extends Sequence<T>> extends Builder<S> ,
     		}
     	}while(iter.hasNext());
     	//can't happen but makes compiler happy
-    	return this;
+    	return getSelf();
     }
    
     /**
@@ -150,7 +157,7 @@ public interface SequenceBuilder <T, S extends Sequence<T>> extends Builder<S> ,
      * @throws NullPointerException if base is null.
      * @throws IllegalArgumentException if offset &lt; 0 or &gt; current sequence length.
      */
-    SequenceBuilder<T,S> insert(int offset, T base);
+    B insert(int offset, T base);
 
     /**
     * {@inheritDoc}
@@ -180,7 +187,7 @@ public interface SequenceBuilder <T, S extends Sequence<T>> extends Builder<S> ,
      * @param range the range of residues to keep (gapped).
      * @return this.
      */
-    SequenceBuilder<T,S> trim(Range range);
+    B trim(Range range);
 	/**
 	 * Create a new deep copy instance of the Builder.
 	 * Any downstream modifications to either this Builder or the returned one
@@ -189,7 +196,7 @@ public interface SequenceBuilder <T, S extends Sequence<T>> extends Builder<S> ,
      * @return a new {@link SequenceBuilder} that contains the same state
      * as this builder; will never be null.
 	 */
-    SequenceBuilder<T,S> copy();
+    B copy();
     
     /**
      * Get the current symbols as a String.
@@ -205,7 +212,7 @@ public interface SequenceBuilder <T, S extends Sequence<T>> extends Builder<S> ,
      * to insert symbols will not be affected.
      * @return this.
      */
-    SequenceBuilder<T,S> reverse();
+    B reverse();
     /**
      * Creates an {@link Iterator}
      * which iterates over the current sequence.
@@ -223,5 +230,5 @@ public interface SequenceBuilder <T, S extends Sequence<T>> extends Builder<S> ,
      * to 0.
      * @return this.
      */
-    SequenceBuilder<T,S> clear();
+    B clear();
 }

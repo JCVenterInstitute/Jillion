@@ -36,7 +36,7 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
  * <code>AnnotationConsensusCaller</code> is the Consensus
  * caller used by the TIGR Annotation Group.  It is much
  * more sensitive to conflicting basecalls in a slice
- * than the Conic model.  Any high quality conflict
+ * than the {@link ConicConsensusCaller}.  Any high quality conflict
  * will contribute towards the consensus call.
  * @author dkatzel
  *
@@ -76,8 +76,9 @@ public class TigrAnnotationConsensusCaller extends AbstractChurchillWatermanCons
 
     private Set<Nucleotide> findAllHighQualityBases(Slice slice) {
         Set<Nucleotide> highQualityDiffs = EnumSet.noneOf(Nucleotide.class);
+        byte threshold = getHighQualityThreshold().getQualityScore();
         for(SliceElement sliceElement : slice){
-            if(sliceElement.getQuality().compareTo(getHighQualityThreshold()) >=0){
+            if(sliceElement.getQualityScore() >= threshold){
                 highQualityDiffs.add(sliceElement.getBase());
             }
         }

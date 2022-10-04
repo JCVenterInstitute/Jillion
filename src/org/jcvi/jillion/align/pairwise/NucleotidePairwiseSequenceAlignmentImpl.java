@@ -25,7 +25,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 final class NucleotidePairwiseSequenceAlignmentImpl extends AbstractPairwiseSequenceAlignment<Nucleotide, NucleotideSequence> implements NucleotidePairwiseSequenceAlignment{
 	/**
-	 * Initial size of String buffer for String created y {@link #toString()}.
+	 * Initial size of String buffer for String created by {@link #toString()}.
 	 */
 	private static final int TO_STRING_BUFFER_SIZE = 300;
 

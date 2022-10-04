@@ -44,7 +44,8 @@ import org.junit.runners.Suite.SuiteClasses;
         
         TestIupacTranslationTables.class,
         TestIupacTranslationTableDoNotSubstituteStart.class,
-        TestIupacTranslationTableAmbiguity.class
+        TestIupacTranslationTableAmbiguity.class,
+        TestVariantProteinSequence.class
     }
     )
 public class AllAminoAcidUnitTests {

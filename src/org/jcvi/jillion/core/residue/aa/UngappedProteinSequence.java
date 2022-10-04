@@ -24,6 +24,7 @@ import java.io.ObjectInputStream;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.IntStream;
 /**
  * {@code UngappedProteinSequence} is a {@link ProteinSequence}
  * which contains no gaps.  This allows us to short circuit many 
@@ -46,6 +47,10 @@ class UngappedProteinSequence extends CompactProteinSequence{
 	@Override
 	public List<Integer> getGapOffsets() {
 		return Collections.emptyList();
+	}
+	@Override
+	public IntStream gaps() {
+		return IntStream.empty();
 	}
 
 	@Override

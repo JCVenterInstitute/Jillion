@@ -41,6 +41,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.PrimitiveIterator.OfInt;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -313,7 +314,7 @@ public class AssemblyArchiveWriterBuilder {
 				long readStart = read.getGappedStartOffset();
 				long readEnd = read.getGappedEndOffset();
 				ReferenceMappedNucleotideSequence readSequence = read.getNucleotideSequence();
-				List<Integer> readGapOffsets =readSequence.getGapOffsets();
+				OfInt readGapOffsets =readSequence.gaps().iterator();
 				
 				readRecord.append("<trace>").append(EOL)
 						
@@ -334,8 +335,8 @@ public class AssemblyArchiveWriterBuilder {
 								.append(createTag("stop", consensusSequence.getUngappedOffsetFor((int)readEnd)+1, 2))
 							.append("\t</traceconsensus>").append(EOL);
 							//only print gap offsets if we have any
-							if(!readGapOffsets.isEmpty()){
-								readRecord.append(createTag("ntracegaps", readGapOffsets.size(), 1))
+							if(readGapOffsets.hasNext()){
+								readRecord.append(createTag("ntracegaps", readSequence.getNumberOfGaps(), 1))
 											.append(String.format("\t<tracegaps source=\"INLINE\">%s</tracegaps>%n",
 														createDeltaGapString(readGapOffsets)));
 							}
@@ -385,14 +386,15 @@ public class AssemblyArchiveWriterBuilder {
 			long numberOfReadBases=getNumberOfReadBases(superContig);
 			numberOfTotalReadBases += numberOfReadBases;
 			tempOut.write(createTag("nbasecalls",numberOfReadBases));
-			List<Integer> gapOffsets = consensusSequence.getGapOffsets();
-			if(!gapOffsets.isEmpty()){
-				tempOut.write(createTag("ncongaps", gapOffsets.size()));
+			OfInt gapIter = consensusSequence.gaps().iterator();
+			boolean hasGaps = gapIter.hasNext();
+			if(hasGaps){
+				tempOut.write(createTag("ncongaps", consensusSequence.getNumberOfGaps()));
 			}
-			String deltaGapString = createDeltaGapString(gapOffsets);
+			String deltaGapString = createDeltaGapString(gapIter);
 			String consensusQualities = computeConsensusQualities(superContig);
 			if(writeContigDataToSeparateFiles()){
-				if(!gapOffsets.isEmpty()){
+				if(hasGaps){
 					String consensusGapFilename = filenamefactory.createConsensusGapFileNameFor(superContig);
 					File consensusGapFile = new File(outputDirectory, consensusGapFilename);
 					extraFilesCreated.add(consensusGapFile);
@@ -420,7 +422,7 @@ public class AssemblyArchiveWriterBuilder {
 				
 			}else{
 				//inline everything
-				if(!gapOffsets.isEmpty()){
+				if(hasGaps){
 					tempOut.write(String.format("<congaps source=\"INLINE\">%s</congaps>%n",deltaGapString));
 				}
 				if(crossLinkContigSubmission){
@@ -453,7 +455,7 @@ public class AssemblyArchiveWriterBuilder {
 			SliceMap sliceMap = new SliceMapBuilder<>(superContig, qualityDataStore)
 									.build();
 			NucleotideSequence consensusSequence = superContig.getConsensusSequence();
-			GrowableIntArray gapOffsets =new GrowableIntArray(consensusSequence.getGapOffsets());
+			GrowableIntArray gapOffsets =new GrowableIntArray(consensusSequence.gaps().toArray());
 			
 			StringBuilder builder = new StringBuilder((int)consensusSequence.getLength()*5);
 			ConsensusCaller consensusCaller = new ConicConsensusCaller(PhredQuality.valueOf(30));
@@ -500,15 +502,23 @@ public class AssemblyArchiveWriterBuilder {
 			return numberOfReadBases;
 		}
 
-		private String createDeltaGapString(List<Integer> gapOffsets) {
+		private String createDeltaGapString(OfInt gapOffsetsIter) {
 	        int previous=0;
 	        StringBuilder sb = new StringBuilder();
-	        for(Integer index : gapOffsets){
-	            sb.append(index - previous);
-	            sb.append(' ');
+	        //write first index without leading space
+	        if(gapOffsetsIter.hasNext()) {
+	        	int index = gapOffsetsIter.nextInt();
+	            sb.append(index);
+	            
 	            previous = index+1;
 	        }
-	        return sb.toString().trim();
+	        while(gapOffsetsIter.hasNext()) {
+	        	int index = gapOffsetsIter.nextInt();
+	            sb.append(' ').append(index - previous);
+	            
+	            previous = index+1;
+	        }
+	        return sb.toString();
 	    }
 
 		private void writeContigHeader(String submitterReference,

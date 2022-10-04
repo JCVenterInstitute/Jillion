@@ -34,6 +34,7 @@ import org.jcvi.jillion.assembly.AssemblyUtil;
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;

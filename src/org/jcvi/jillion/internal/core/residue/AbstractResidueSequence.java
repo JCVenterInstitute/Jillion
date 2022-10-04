@@ -21,12 +21,14 @@
 package org.jcvi.jillion.internal.core.residue;
 
 import java.util.List;
+import java.util.PrimitiveIterator.OfInt;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequence;
 import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
+import org.jcvi.jillion.core.util.SingleThreadAdder;
 
 /**
  * {@code AbstractResidueSequence} is an abstract implementation of 
@@ -38,11 +40,11 @@ import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
  *
  * @param <R> the type of {@link Residue} in this sequence.
  */
-public abstract class AbstractResidueSequence<R extends Residue, T extends ResidueSequence<R, T, B>, B extends ResidueSequenceBuilder<R, T>> implements ResidueSequence<R, T, B>{
+public abstract class AbstractResidueSequence<R extends Residue, T extends ResidueSequence<R, T, B>, B extends ResidueSequenceBuilder<R, T, B>> implements ResidueSequence<R, T, B>{
 
 	@Override
 	public List<Range> getRangesOfGaps(){
-		return Ranges.asRanges(getGapOffsets().stream().mapToInt(Integer::intValue).toArray());
+		return Ranges.asRanges(gaps().toArray());
 	}
 	@Override
     public long getUngappedLength(){
@@ -51,8 +53,9 @@ public abstract class AbstractResidueSequence<R extends Residue, T extends Resid
     @Override
     public int getNumberOfGapsUntil(int gappedValidRangeIndex) {
         int numberOfGaps=0;
-        for(Integer gapIndex :getGapOffsets()){
-            if(gapIndex.intValue() <=gappedValidRangeIndex){
+        OfInt iter = this.gaps().iterator();
+        while(iter.hasNext()) {
+        	if(iter.nextInt() <=gappedValidRangeIndex){
                 numberOfGaps++;
             }else{
             	//we've gone past our valid range index
@@ -60,22 +63,26 @@ public abstract class AbstractResidueSequence<R extends Residue, T extends Resid
             	break;
             }
         }
+        
         return numberOfGaps;
     }
     private int computeNumberOfInclusiveGapsInUngappedValidRangeUntil(int ungappedValidRangeIndex) {
-        int numberOfGaps=0;
-        for(Integer gapIndex :getGapOffsets()){
-            //need to account for extra length
-        	//due to gaps being added to ungapped index
-            if(gapIndex.intValue() <=ungappedValidRangeIndex + numberOfGaps){
-                numberOfGaps++;
-            }else{
+    	//need to account for extra length
+    	//due to gaps being added to ungapped index
+    	SingleThreadAdder count = new SingleThreadAdder(ungappedValidRangeIndex);
+    	OfInt iter = this.gaps().iterator();
+    	while(iter.hasNext()) {
+    		int i= iter.nextInt();
+    		if( i <= count.intValue()) {
+    			count.increment();
+    		}else{
             	//we've gone past our valid range index
             	//so we can break out of the loop.
             	break;
             }
-        }
-        return numberOfGaps;
+    	}
+    	return count.intValue() - ungappedValidRangeIndex;
+        
     }
 
    

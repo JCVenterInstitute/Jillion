@@ -27,6 +27,8 @@ package org.jcvi.jillion.core.residue.nt;
 
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -52,7 +54,7 @@ import org.jcvi.jillion.core.residue.ResidueSequence;
  * to the sequence that was serialized.
  * @author dkatzel
  */
-public interface NucleotideSequence extends ResidueSequence<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder>, Serializable{
+public interface NucleotideSequence extends INucleotideSequence<NucleotideSequence, NucleotideSequenceBuilder>, Serializable{
 	/**
      * Two {@link NucleotideSequence}s are equal
      * if they contain the same {@link Nucleotide}s 
@@ -98,7 +100,10 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
     default NucleotideSequenceBuilder newEmptyBuilder(){
         return new NucleotideSequenceBuilder();
     }
-    
+    @Override
+	default NucleotideSequence toNucleotideSequence() {
+		return this;
+	}
     @Override
     default NucleotideSequenceBuilder newEmptyBuilder(int initialCapacity){
         return new NucleotideSequenceBuilder(initialCapacity);
@@ -324,32 +329,7 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
 		long numNs = getRangesOfNs().stream().mapToInt(r-> (int) r.getLength()).sum();
 		return numNs/(double) ungappedLength;
 	}
-	/**
-	 * Construct a {@link NucleotideSequence} with the same sequence as this sequence,
-	 * but without any gaps.
-	 * 
-	 * @return a NucleotideSequence which may be this or a new NucleotideSequence,
-	 * will never be null but may be empty.
-	 * 
-	 * @implNote by default this is implemented as:
-	 * 
-	 * <pre>
-	 * {@code 
-	 * if(getNumberOfGaps()==0) {
-	 *   return this;
-	 * }
-	 * return toBuilder().ungap().build();
-	 * }
-	 * </pre>
-	 * 
-	 * @since 6.0
-	 */
-	default NucleotideSequence computeUngappedSequence() {
-		if(getNumberOfGaps()==0) {
-			return this;
-		}
-		return toBuilder().ungap().build();
-	}
+	
 	/**
 	 * Compute the GC content.
 	 * @return a double in the range of {@code [0 .. 1]} inclusive.  
@@ -375,4 +355,5 @@ public interface NucleotideSequence extends ResidueSequence<Nucleotide, Nucleoti
 		}
 		return ((double)gc)/ungappedLength;
 	}
+
 }

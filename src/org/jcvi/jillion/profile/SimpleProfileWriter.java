@@ -87,7 +87,7 @@ class SimpleProfileWriter implements ProfileWriter {
 		int start = getStartOffset();
 		int end = getEndOffset();
 		if(ignoreGappedConsensusPositions){
-			int[] gapOffsets = reference.getGapOffsets().stream().mapToInt(i -> i.intValue()).toArray();
+			int[] gapOffsets = reference.gaps().toArray();
 			for(int i=start; i<= end; i++){
 				if(Arrays.binarySearch(gapOffsets, i)>=0){
 					//i is a gap skip it

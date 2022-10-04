@@ -34,7 +34,7 @@ import org.jcvi.jillion.core.util.Builder;
  * @param <S> the {@link ResidueSequence} type used.
  * @param <A> the {@link SequenceAlignment} used
  */
-public interface SequenceAlignmentBuilder<R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S>, A extends SequenceAlignment<R, S>> extends Builder<A> {
+public interface SequenceAlignmentBuilder<R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S, B>, A extends SequenceAlignment<R, S>> extends Builder<A> {
 	/**
 	 * 
 	 * @param match the Residue to add to both the query and subject alignments

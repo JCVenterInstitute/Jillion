@@ -37,8 +37,8 @@ import org.jcvi.jillion.core.Range;
  * 
  * @since 5.3
  */
-class KmerSpliterator<R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S>> extends Spliterators.AbstractSpliterator<Kmer<S>> {
-    private LinkedList<ResidueSequenceBuilder<R, S>> builders = new LinkedList<>();
+class KmerSpliterator<R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S, B>> extends Spliterators.AbstractSpliterator<Kmer<S>> {
+    private LinkedList<B> builders = new LinkedList<>();
     private long counter;
     private final Iterator<R> iter;
     
@@ -71,7 +71,7 @@ class KmerSpliterator<R extends Residue, S extends ResidueSequence<R, S, B>, B e
                 builders.forEach( b-> b.append(n));
             }else if(!builders.isEmpty()){
                 //no more left remove all except the first if it's long enough
-                ResidueSequenceBuilder<R, S> head = builders.pop();
+                B head = builders.pop();
                 builders.clear();
                 if(head.getLength() == k){
                     builders.add(head);

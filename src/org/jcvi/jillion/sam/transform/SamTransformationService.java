@@ -35,6 +35,7 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
@@ -137,7 +138,7 @@ public final class SamTransformationService implements AssemblyTransformationSer
 					if(ref ==null){
 						throw new IllegalStateException("error could not find reference sequence in fasta file with id " + id);
 					}
-					gapOffsetMap.put(id,  new GrowableIntArray(ref.getGapOffsets()));
+					gapOffsetMap.put(id,  new GrowableIntArray(ref.gaps().toArray()));
 					
 					transformer.referenceOrConsensus(id, ref);
 				} catch (DataStoreException e) {

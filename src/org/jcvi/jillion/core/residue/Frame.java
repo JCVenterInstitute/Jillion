@@ -25,11 +25,16 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.Triplet;
+import org.jcvi.jillion.core.residue.nt.VariantNucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.VariantNucleotideSequence.Variant;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 
 public enum Frame{
@@ -133,7 +138,10 @@ public enum Frame{
         return VALUES[ (this.ordinal() +3)%VALUES.length];
     }
     public Iterator<Set<Triplet>> asTriplets(NucleotideSequence sequence, boolean ignoreGaps){
-    	Iterator<Nucleotide> iter = handleFrame(sequence, this);
+    	return asTriplets(sequence, ignoreGaps, null);
+    }
+    public Iterator<Set<Triplet>> asTriplets(NucleotideSequence sequence, boolean ignoreGaps, Integer length){
+    	Iterator<Nucleotide> iter = handleFrame(sequence, this, length);
         return new Iterator<Set<Triplet>>() {
 
             Set<Triplet> next;
@@ -152,6 +160,33 @@ public enum Frame{
                 }
                 Set<Triplet> ret = next;
                 next = getNextTriplet(iter, ignoreGaps);
+                return ret;
+            }
+        };
+    }
+    public Iterator<Set<Triplet>> asTriplets(VariantNucleotideSequence sequence, boolean ignoreGaps){
+    	return asTriplets(sequence, ignoreGaps, null);
+    }
+    public Iterator<Set<Triplet>> asTriplets(VariantNucleotideSequence sequence, boolean ignoreGaps, Integer limit){
+    	Iterator<List<Nucleotide>> iter = handleFrame(sequence, this, limit);
+        return new Iterator<Set<Triplet>>() {
+
+            Set<Triplet> next;
+            {
+                next = getNextVariantTriplet(iter, ignoreGaps);
+            }
+            @Override
+            public boolean hasNext() {
+                return next !=null;
+            }
+
+            @Override
+            public Set<Triplet> next() {
+                if(!hasNext()){
+                    throw new NullPointerException();
+                }
+                Set<Triplet> ret = next;
+                next = getNextVariantTriplet(iter, ignoreGaps);
                 return ret;
             }
         };
@@ -186,7 +221,41 @@ public enum Frame{
         	return Set.of(Triplet.create(first, second, third));
         }
     }
+    private Set<Triplet> getNextVariantTriplet(Iterator<List<Nucleotide>> iter, boolean ignoreGaps) {
 
+        List<Nucleotide> first = getNextVariantNucleotide(iter, ignoreGaps);
+        List<Nucleotide> second = getNextVariantNucleotide(iter, ignoreGaps);
+        List<Nucleotide> third = getNextVariantNucleotide(iter, ignoreGaps);
+        if (first == null || second == null || third == null) {
+            // no more bases
+            return null;
+        }
+        
+    	//handle ambiguities and variants
+    	Set<Triplet> triplets = new LinkedHashSet<Triplet>();
+    	for(Nucleotide f : first.stream().flatMap( n-> n.getBasesFor().stream()).collect(Collectors.toCollection(LinkedHashSet::new))) {
+    		for(Nucleotide s : second.stream().flatMap( n-> n.getBasesFor().stream()).collect(Collectors.toCollection(LinkedHashSet::new))) {
+    			for(Nucleotide t: third.stream().flatMap( n-> n.getBasesFor().stream()).collect(Collectors.toCollection(LinkedHashSet::new))) {
+    				triplets.add(Triplet.create(f, s, t));
+    			}
+    		}
+    	}
+    	return triplets;
+       
+    }
+    private List<Nucleotide> getNextVariantNucleotide(Iterator<List<Nucleotide>> iter, boolean ignoreGaps) {
+        if (!iter.hasNext()) {
+            return null;
+        }
+        
+        List<Nucleotide> n = iter.next();
+        if(ignoreGaps) {
+        	while(n !=null &&  n.get(0)==Nucleotide.Gap) {
+        		n = iter.hasNext()? iter.next(): null;
+        	}
+        }
+        return n;
+    }
     private Nucleotide getNextNucleotide(Iterator<Nucleotide> iter, boolean ignoreGaps) {
         if (!iter.hasNext()) {
             return null;
@@ -200,14 +269,12 @@ public enum Frame{
         }
         return n;
     }
-    
-    
     @SuppressWarnings("fallthrough")
     @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SF_SWITCH_FALLTHROUGH")
-    private Iterator<Nucleotide> handleFrame(NucleotideSequence sequence, Frame frame) {
+    private Iterator<Nucleotide> handleFrame(NucleotideSequence sequence, Frame frame, Integer limit) {
         Iterator<Nucleotide> iter;
         if(frame.onReverseStrand()){
-            iter = sequence.toBuilder().reverseComplement().iterator();
+            iter = sequence.reverseComplementIterator();
           //switch uses fall through
             //so frame 2 skips first 2 bp           
             switch(frame){
@@ -243,6 +310,99 @@ public enum Frame{
                             break;
             }
         }
-        return iter;
+        if(limit ==null) {
+        	return iter;
+        }
+        return CountingIterator.of(iter, limit);
+    }
+    
+    @SuppressWarnings("fallthrough")
+    @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SF_SWITCH_FALLTHROUGH")
+    private Iterator<List<Nucleotide>> handleFrame(VariantNucleotideSequence sequence, Frame frame, Integer limit) {
+        Iterator<List<Nucleotide>> iter;
+        if(frame.onReverseStrand()){
+            iter = IteratorUtil.map(sequence.reverseComplementVariantIterator(),
+            		Variant::getOrderedAlleles);
+          //switch uses fall through
+            //so frame 2 skips first 2 bp           
+            switch(frame){
+                    case NEGATIVE_THREE:
+                                    if(iter.hasNext()){
+                                            iter.next();
+                                    }
+                    case NEGATIVE_TWO:
+                                    if(iter.hasNext()){
+                                            iter.next();
+                                    }
+                                    break;
+                    default:
+                                    //no-op
+                            break;
+            }
+        }else{
+            iter = IteratorUtil.map(sequence.variantIterator(),
+            		Variant::getOrderedAlleles);
+            //switch uses fall through
+            //so frame 2 skips first 2 bp           
+            switch(frame){
+                    case THREE:
+                                    if(iter.hasNext()){
+                                            iter.next();
+                                    }
+                    case TWO:
+                                    if(iter.hasNext()){
+                                            iter.next();
+                                    }
+                                    break;
+                    default:
+                                    //no-op
+                            break;
+            }
+        }
+        if(limit ==null) {
+        	return iter;
+        }
+        return CountingIterator.of(iter, limit);
+    }
+    
+    private static class CountingIterator<T> implements Iterator<T>{
+    	private final Iterator<T> delegate;
+
+    	private int count=0;
+    	private final int limit;
+    	
+    	public static <T> CountingIterator<T> of(Iterator<T> iter, int limit){
+    		return new CountingIterator<T>(iter, limit);
+    	}
+		public CountingIterator(Iterator<T> delegate, int limit) {
+			this.delegate = delegate;
+			this.limit = limit;
+		}
+		
+		@Override
+		public boolean hasNext() {
+			return count < limit && delegate.hasNext();
+		}
+
+		@Override
+		public T next() {
+			if(!hasNext()) {
+				throw new NoSuchElementException();
+			}
+			T ret = delegate.next();
+			count++;
+			return ret;
+		}
+
+
+		@Override
+		public void remove() {
+			delegate.remove();
+		}
+		public int getCount() {
+			return count;
+		}
+
+    	
     }
 }

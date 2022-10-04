@@ -38,7 +38,6 @@ import org.jcvi.jillion.fasta.FastaVisitor;
 import org.jcvi.jillion.fasta.FastaVisitorCallback;
 import org.jcvi.jillion.fasta.nt.AbstractNucleotideFastaRecordVisitor;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
-import org.jcvi.jillion.maq.bfa.BfaParser;
 import org.junit.Test;
 
 public class TestBinaryFastaFileParser extends AbstractTestBinaryFastaFile {
@@ -69,7 +68,7 @@ public class TestBinaryFastaFileParser extends AbstractTestBinaryFastaFile {
 	
 	private static final class FastaVisitorSpy implements FastaVisitor{
 
-		private final Map<String,NucleotideFastaRecord> map = new LinkedHashMap<String,NucleotideFastaRecord>();
+		private final Map<String,NucleotideFastaRecord> map = new LinkedHashMap<>();
 		private boolean visitEnd=false;
 		private boolean halted = false;
 		@Override

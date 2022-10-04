@@ -36,6 +36,7 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Range.CoordinateSystem;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
 import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
 import org.jcvi.jillion.internal.core.io.TextLineParser;

@@ -5,6 +5,7 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.core.util.GrowableByteArray;
 
 import java.util.*;
+import java.util.stream.IntStream;
 
 /**
  * A simple NucleotideSequence implementation that doesn't
@@ -72,6 +73,10 @@ class ACGTOnlySimpleNucleotideSequence extends AbstractSimpleNucleotideSequence{
 	@Override
 	public List<Integer> getGapOffsets() {
 		return Collections.emptyList();
+	}
+	@Override
+	public IntStream gaps() {
+		return IntStream.empty();
 	}
 	@Override
 	public List<Range> getRangesOfGaps() {

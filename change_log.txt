@@ -14,7 +14,9 @@ Jillion 6.0
 Performance Improvements
 ------------------------
 1. Performance improvements on uncompressed NucleotideSequences if they are only ACGT or ACGTN
-2. Performance improvements to parsing and iterating over large Fasta files
+2. Performance improvements parsing and iterating over large Fasta files
+3. Improvements for various internal functions that used gap offsets that previously used boxed 
+	Integers but could be replaced with primitive int iterators.
 
 New Features
 ------------
@@ -107,7 +109,7 @@ to wrap a StreamingIterator into a DataStoreIterator
 28. SequenceBuilder now has a delete(Range...ranges) with a varargs of Ranges that will handle deleting
     multiple Ranges at once correctly.  The method is implemented with a default.
     
-29.  SingleThreadAdder is now comparable
+29.  SingleThreadAdder is now comparable and implements equals and hashcode
 
 API BREAKING CHANGES
 --------------------
@@ -116,6 +118,9 @@ API BREAKING CHANGES
 
 2.  TranslationVisitor will now visit all Codons not just the ones found between start and stop.  This 
     is to support translating partial sequences where the start codon is missing.
+    
+3.  TranslationVisitor now has new method visitVariantCodon(long nucleotideCoordinate, List<Codon> codons)
+	to support variant sequences
 
 Bug Fixes
 ---------

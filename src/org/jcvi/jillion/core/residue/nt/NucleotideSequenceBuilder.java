@@ -27,11 +27,14 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.PrimitiveIterator;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler;
+import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandlers;
 import org.jcvi.jillion.core.util.SingleThreadAdder;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.PeekableIterator;
@@ -49,7 +52,7 @@ import org.jcvi.jillion.internal.core.util.GrowableIntArray;
  *
  *
  */
-public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<Nucleotide,NucleotideSequence>{
+public final class NucleotideSequenceBuilder implements INucleotideSequenceBuilder<NucleotideSequence, NucleotideSequenceBuilder>{
 	/**
 	 * Initial buffer size is {@value} which should
 	 * be enough for most next-gen reads that are seen.
@@ -65,6 +68,11 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     private static final byte G_VALUE = Nucleotide.Guanine.getOrdinalAsByte();
     private static final byte T_VALUE = Nucleotide.Thymine.getOrdinalAsByte();
    
+    /**
+     * handler for invalid chars if set.
+     */
+    private static Nucleotide.InvalidCharacterHandler DEFAULT_INVALD_CHAR_HANDLER = InvalidCharacterHandlers.ERROR_OUT;
+
     
     private GrowableByteArray data;
     /**
@@ -75,6 +83,10 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * via  {@link #build()}.
      */
     private CodecDecider codecDecider;
+    /**
+     * handler for invalid chars if set.
+     */
+    private Nucleotide.InvalidCharacterHandler invalidCharacterHandler = InvalidCharacterHandlers.ERROR_OUT;
 
     /**
      * Creates a new NucleotideSequenceBuilder instance
@@ -82,6 +94,37 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      */
     public NucleotideSequenceBuilder(){
         this(INITITAL_BUFFER_SIZE);
+    }
+    /**
+     * Creates a new NucleotideSequenceBuilder instance
+     * which currently contains no nucleotides.
+     * @param InvalidCharacterHandler an {@link org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler}
+     * for how to handle parsing invalid nucleotide characters, set to {@code null}, then use the default handler
+     * which will throw an IllegalArgumentException.
+     * 
+     * @since 6.0
+     */
+    public NucleotideSequenceBuilder(Nucleotide.InvalidCharacterHandler invalidCharacterHandler){
+        this(INITITAL_BUFFER_SIZE);
+        _setInvalidCharacterHandler(invalidCharacterHandler);
+    }
+    /**
+     * Sets the {@link org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler}
+     * used to help parse {@link Nucleotide}s from a String or char[].
+     * @param invalidCharacterHandler the handler to use; if {@code null}
+     * use the default handler which will throw an IllegalArgumentException on invalid characters.
+     * 
+     * @since 6.0
+     */
+    @Override
+    public NucleotideSequenceBuilder setInvalidCharacterHandler(Nucleotide.InvalidCharacterHandler invalidCharacterHandler) {
+    	_setInvalidCharacterHandler(invalidCharacterHandler==null? DEFAULT_INVALD_CHAR_HANDLER: invalidCharacterHandler);
+    	return this;
+    }
+    private void _setInvalidCharacterHandler(Nucleotide.InvalidCharacterHandler invalidCharacterHandler) {
+    	if(invalidCharacterHandler !=null) {
+    		this.invalidCharacterHandler = invalidCharacterHandler;
+    	}
     }
     
     
@@ -104,7 +147,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @throws IllegalArgumentException if initialCapacity &lt; 1.
      */
     public NucleotideSequenceBuilder(int initialCapacity){
-        if(initialCapacity<1){
+    	if(initialCapacity<1){
             throw new IllegalArgumentException("initial capacity must be >=1");
         }
         data = new GrowableByteArray(initialCapacity);
@@ -117,7 +160,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @throws NullPointerException if sequence is null.
      */
     public NucleotideSequenceBuilder(NucleotideSequence sequence){
-        assertNotNull(sequence);
+    	assertNotNull(sequence);
         NewValues newValues = new NewValues(sequence);
         this.data = newValues.getData();
         codecDecider = new CodecDecider(newValues);
@@ -147,13 +190,36 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * into a {@link Nucleotide}.
      */
     public NucleotideSequenceBuilder(String sequence){
+		this(sequence, null);
+    }
+    /**
+     * Creates a new NucleotideSequenceBuilder instance
+     * which currently contains the given sequence.
+     *  Any whitespace in the input string will be ignored.
+     *  This method is able to parse both
+     * '*' (consed) and '-' (TIGR) as gap characters. 
+     * @param sequence the initial nucleotide sequence.
+     *  @param InvalidCharacterHandler an {@link org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler}
+     * for how to handle parsing invalid nucleotide characters, set to {@code null}, then use the default handler
+     * which will throw an IllegalArgumentException.
+     * 
+     * @since 6.0
+     * 
+     * @throws NullPointerException if sequence is null.
+     * @throws IllegalArgumentException if any non-whitespace
+     * in character in the sequence can not be converted
+     * into a {@link Nucleotide}.
+     */
+    public NucleotideSequenceBuilder(String sequence, Nucleotide.InvalidCharacterHandler invalidCharacterHandler){
 		if (sequence == null) {
 			throw new NullPointerException(NULL_SEQUENCE_ERROR_MSG);
 		}
-		NewValues newValues = new NewValues(sequence);
+		_setInvalidCharacterHandler(invalidCharacterHandler);
+		NewValues newValues = new NewValues(sequence, invalidCharacterHandler);
 		this.data = newValues.getData();
 		codecDecider = new CodecDecider(newValues);
-    }
+		
+	}
     
     /**
      * Creates a new NucleotideSequenceBuilder instance
@@ -168,12 +234,29 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * into a {@link Nucleotide}.
      */
     public NucleotideSequenceBuilder(char[] sequence){
+		this(sequence, null);
+    }
+    /**
+     * Creates a new NucleotideSequenceBuilder instance
+     * which currently contains the given sequence as a char[].
+     *  Any whitespace or '\0' characters in the input array will be ignored.
+     *  This method is able to parse both
+     * '*' (consed) and '-' (TIGR) as gap characters. 
+     * @param sequence the initial nucleotide sequence as a character array
+     * @throws NullPointerException if sequence is null.
+     * @throws IllegalArgumentException if any non-whitespace
+     * in character in the sequence can not be converted
+     * into a {@link Nucleotide}.
+     */
+    public NucleotideSequenceBuilder(char[] sequence, Nucleotide.InvalidCharacterHandler invalidCharacterHandler){
 		if (sequence == null) {
 			throw new NullPointerException(NULL_SEQUENCE_ERROR_MSG);
 		}
-		NewValues newValues = new NewValues(sequence);
+		_setInvalidCharacterHandler(invalidCharacterHandler);
+		NewValues newValues = new NewValues(sequence, this.invalidCharacterHandler);
 		this.data = newValues.getData();
 		codecDecider = new CodecDecider(newValues);
+		
     }
     /**
      * Creates a new NucleotideSequenceBuilder instance
@@ -194,11 +277,13 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     private NucleotideSequenceBuilder(NucleotideSequenceBuilder copy){    	
         this.data = copy.data.copy();
         this.codecDecider = copy.codecDecider.copy();
+        this.invalidCharacterHandler = copy.invalidCharacterHandler;
     }
-    private NucleotideSequenceBuilder(GrowableByteArray data){
+    private NucleotideSequenceBuilder(GrowableByteArray data, InvalidCharacterHandler invalidCharacterHandler){
     	this.data = data;
     	NewValues newValues = new NewValues(data);
     	this.codecDecider = new CodecDecider(newValues);
+    	this.invalidCharacterHandler = invalidCharacterHandler;
     }
     
     /**
@@ -335,6 +420,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * 
      * @return this.
      */
+    @Override
     public NucleotideSequenceBuilder append(NucleotideSequence sequence){
         assertNotNull(sequence);
         NewValues newValues = new NewValues(sequence);
@@ -356,6 +442,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @implNote This should be the same but more efficient as {@link #append(NucleotideSequence) append(sequence.trim(range))}.
      * 
      */
+    @Override
     public NucleotideSequenceBuilder append(NucleotideSequence sequence, Range range){
         assertNotNull(sequence);
         assertNotNull(range);
@@ -384,6 +471,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @throws NullPointerException if otherBuilder is null.
      * @throws IllegalArgumentException if otherBuilder is not a NucleotideSequenceBuilder.
      */
+	@Override
     public NucleotideSequenceBuilder append(NucleotideSequenceBuilder otherBuilder){
         
     	assertNotNull(otherBuilder);   
@@ -403,11 +491,12 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * to the end our builder.
      * @throws NullPointerException if sequence is null.
      */
+	@Override
     public NucleotideSequenceBuilder append(String sequence){
     	if(sequence ==null){
     		throw new NullPointerException(NULL_SEQUENCE_ERROR_MSG);
     	}
-        return append(new NewValues(sequence));
+        return append(new NewValues(sequence, invalidCharacterHandler));
     }
     
     
@@ -425,11 +514,12 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * 
      * @throws NullPointerException if sequence is null.
      */
+    @Override
     public NucleotideSequenceBuilder append(char[] sequence){
     	if(sequence ==null){
     		throw new NullPointerException(NULL_SEQUENCE_ERROR_MSG);
     	}
-        return append(new NewValues(sequence));
+        return append(new NewValues(sequence, invalidCharacterHandler));
     }
     
     /**
@@ -448,6 +538,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * 
      * @since 5.3
      */
+    @Override
     public NucleotideSequenceBuilder append(Nucleotide[] sequence){
         if(sequence ==null){
                 throw new NullPointerException(NULL_SEQUENCE_ERROR_MSG);
@@ -472,9 +563,10 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @throws NullPointerException if sequence is null.
      * @throws IllegalArgumentException if offset is invalid.
      */
+    @Override
     public NucleotideSequenceBuilder insert(int offset, String sequence){
     	 assertInsertionParametersValid(offset, sequence);
-    	return insert(offset, new NewValues(sequence));
+    	return insert(offset, new NewValues(sequence, invalidCharacterHandler));
     }
     /**
      * Inserts the given sequence to the builder's mutable sequence
@@ -498,9 +590,10 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @throws NullPointerException if sequence is null.
      * @throws IllegalArgumentException if offset is invalid.
      */
-    public NucleotideSequenceBuilder insert(int offset, char[] sequence){
+    @Override
+	public NucleotideSequenceBuilder insert(int offset, char[] sequence){
     	assertInsertionParametersValid(offset, sequence);
-		return insert(offset, new NewValues(sequence));
+		return insert(offset, new NewValues(sequence, invalidCharacterHandler));
     }
     
     /**
@@ -807,7 +900,8 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * 
      * @since 5.3
      */
-    public NucleotideSequenceBuilder insert(int offset, Nucleotide[] sequence) {
+    @Override
+	public NucleotideSequenceBuilder insert(int offset, Nucleotide[] sequence) {
         assertInsertionParametersValid(offset, sequence);   
         NewValues newValues = new NewValues(sequence);
         return insert(offset, newValues);
@@ -828,7 +922,8 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @throws NullPointerException if sequence is null.
      * @throws IllegalArgumentException if offset &lt; 0 or &gt; current sequence length.
      */
-    public NucleotideSequenceBuilder insert(int offset, NucleotideSequence sequence){
+    @Override
+	public NucleotideSequenceBuilder insert(int offset, NucleotideSequence sequence){
         assertInsertionParametersValid(offset, sequence);   
         NewValues newValues = new NewValues(sequence);
         return insert(offset, newValues);
@@ -871,7 +966,8 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @throws NullPointerException if otherBuilder is null.
      * @throws IllegalArgumentException if offset &lt; 0 or &gt; current sequence length or if otherBuilder is not a NucleotideSequenceBuilder.
      */
-    public NucleotideSequenceBuilder insert(int offset, ResidueSequenceBuilder<Nucleotide, NucleotideSequence> otherBuilder){
+    @Override
+	public NucleotideSequenceBuilder insert(int offset, NucleotideSequenceBuilder otherBuilder){
         assertNotNull(otherBuilder);
         if(!(otherBuilder instanceof NucleotideSequenceBuilder)){
         	throw new IllegalArgumentException("otherBuilder must be a NucleotideSequenceBuilder");
@@ -883,7 +979,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
             throw new IllegalArgumentException(
                     String.format("offset can not start beyond current length (%d) : %d", getLength(),offset));
         }
-        NucleotideSequenceBuilder otherSequenceBuilder = (NucleotideSequenceBuilder)otherBuilder;
+        NucleotideSequenceBuilder otherSequenceBuilder = otherBuilder;
         NewValues newValues = new NewValues(otherSequenceBuilder);
         if(offset == getLength()){
         	//act like append!
@@ -943,6 +1039,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @throws NullPointerException if sequence is null.
      * @see #insert(int, Iterable)
      */
+    @Override
     public NucleotideSequenceBuilder prepend(NucleotideSequence sequence){
         return insert(0, sequence);
     }
@@ -959,7 +1056,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @throws NullPointerException if otherBuilder is null.
      * @see #insert(int, ResidueSequenceBuilder)
      */
-    public NucleotideSequenceBuilder prepend(ResidueSequenceBuilder<Nucleotide, NucleotideSequence> otherBuilder){
+    public NucleotideSequenceBuilder prepend(NucleotideSequenceBuilder otherBuilder){
         return insert(0, otherBuilder);
     }
     /**
@@ -1154,7 +1251,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     	}
     	
     	Range trimRange = range.intersection(Range.ofLength(getLength()));
-    	NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(data.subArray(trimRange));
+    	NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(data.subArray(trimRange), invalidCharacterHandler);
 		if(codecDecider.hasAlignedReference()){
 			builder.setReferenceHint(codecDecider.alignedReference.reference, codecDecider.alignedReference.offset+ (int)range.getBegin());
 		}
@@ -1184,7 +1281,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * @since 5.0
      */
 	public NucleotideSequenceBuilder copy(Range gappedRange) {
-		return new NucleotideSequenceBuilder(data.subArray(gappedRange));
+		return new NucleotideSequenceBuilder(data.subArray(gappedRange), invalidCharacterHandler);
 	}
    
 	@Override
@@ -1507,6 +1604,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * 
      * 
      */
+    @Override
     public Range toGappedRange(Range ungappedRange) {
     	int ungappedStart = (int)ungappedRange.getBegin();
     	int ungappedEnd = (int)ungappedRange.getEnd();
@@ -1526,6 +1624,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
      * 
      * @since 5.2
      */
+    @Override
     public Range toUngappedRange(Range gappedRange) {
         Objects.requireNonNull(gappedRange);
         long gappedBegin = gappedRange.getBegin();
@@ -1561,12 +1660,14 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     
     public int getGappedOffsetFor(int ungappedOffset){
     	SingleThreadAdder currentOffset = new SingleThreadAdder(ungappedOffset);
-    	codecDecider.gapOffsets.stream()
-    							.forEach(i ->{
-    								if( i <= currentOffset.intValue()){
-    									currentOffset.increment();
-    								}
-    							});
+    	PrimitiveIterator.OfInt iter = codecDecider.gapOffsets.iterator();
+    	while(iter.hasNext()) {
+    		if(iter.nextInt() <= currentOffset.intValue()) {
+    			currentOffset.increment();
+    		}else {
+    			break;
+    		}
+    	}
     	
     	return currentOffset.intValue();
     }
@@ -2013,7 +2114,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
                 }
             }
         }
-    	public NewValues(String sequence){
+    	public NewValues(String sequence, Nucleotide.InvalidCharacterHandler invalidCharacterHandler){
     		nOffsets = new GrowableIntArray(12);
 			gapOffsets = new GrowableIntArray(12);
 			data = new GrowableByteArray(sequence.length());
@@ -2025,7 +2126,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
 
             for (int i = 0; i < chars.length; i++) {
                 char c = chars[i];
-                Nucleotide n = Nucleotide.parseOrNull(c);
+                Nucleotide n = Nucleotide.parseOrNull(c, invalidCharacterHandler);
                 if (n != null) {
                     handle(n, offset);
                     offset++;
@@ -2033,7 +2134,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
             }
     		
     	}
-    	public NewValues(char[] sequence){
+    	public NewValues(char[] sequence, Nucleotide.InvalidCharacterHandler invalidCharacterHandler){
     		nOffsets = new GrowableIntArray(12);
 			gapOffsets = new GrowableIntArray(12);
 			data = new GrowableByteArray(sequence.length);
@@ -2042,7 +2143,7 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
             
     		for(int i=0; i<sequence.length; i++){
     			char c = sequence[i];    			
-				Nucleotide n = Nucleotide.parseOrNull(c);
+				Nucleotide n = Nucleotide.parseOrNull(c, invalidCharacterHandler);
 				if(n !=null){
     				handle(n, offset);
                 	offset++;
@@ -2215,6 +2316,13 @@ public final class NucleotideSequenceBuilder implements ResidueSequenceBuilder<N
     	
     	
     }
+
+
+
+	@Override
+	public NucleotideSequenceBuilder getSelf() {
+		return this;
+	}
 
 
 

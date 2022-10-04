@@ -42,7 +42,6 @@ import org.jcvi.jillion.core.util.streams.ThrowingIndexedConsumer;
  * so that they take up less memory.
  * @author dkatzel
  *
- *
  */
 public interface Sequence<T> extends Iterable<T>{
    
@@ -159,7 +158,7 @@ public interface Sequence<T> extends Iterable<T>{
      * @return a new Builder instance, will never be null.
      * @since 5.1
      */
-    SequenceBuilder<T, ? extends Sequence<T>> toBuilder();
+    SequenceBuilder<T, ? extends Sequence<T>, ?> toBuilder();
 
     /**
      * Create a new SequenceBuilder object that is initialized
@@ -172,7 +171,7 @@ public interface Sequence<T> extends Iterable<T>{
      * @throws IndexOutOfBoundsException if Range contains
      *      values outside of the possible sequence offsets.
      */
-    SequenceBuilder<T, ? extends Sequence<T>> toBuilder(Range trimRange);
+    SequenceBuilder<T, ? extends Sequence<T>, ?> toBuilder(Range trimRange);
     
     /**
      * Convert this sequence into a String using the user defined function 

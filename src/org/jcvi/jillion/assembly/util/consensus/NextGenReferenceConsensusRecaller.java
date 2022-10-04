@@ -20,10 +20,21 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.util.consensus;
 
+
+import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import org.jcvi.jillion.assembly.util.Slice;
-import org.jcvi.jillion.assembly.util.SliceBuilder;
 import org.jcvi.jillion.assembly.util.SliceBuilder.SliceElementFilter;
+import org.jcvi.jillion.assembly.util.SliceCollectors;
 import org.jcvi.jillion.assembly.util.SliceElement;
+import org.jcvi.jillion.assembly.util.columns.AssemblyColumn;
+import org.jcvi.jillion.assembly.util.columns.AssemblyColumnCollectors;
+import org.jcvi.jillion.assembly.util.columns.AssemblyColumnConsensusCaller;
+import org.jcvi.jillion.assembly.util.columns.AssemblyColumnElement;
+import org.jcvi.jillion.assembly.util.columns.QualifiedAssemblyColumn;
+import org.jcvi.jillion.assembly.util.columns.QualifiedAssemblyColumnElement;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 /**
@@ -53,27 +64,25 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
  */
 public class NextGenReferenceConsensusRecaller implements ConsensusCaller {
 
-	private static final SliceElementFilter FORWARD_FILTER = new SliceElementFilter() {
-		
-		@Override
-		public boolean accept(SliceElement e) {
-			return e.getDirection()==Direction.FORWARD;
-		}
-	};
+	private static final Predicate<AssemblyColumnElement> FORWARD_FILTER = e-> e.getDirection()==Direction.FORWARD;
 	
-	private static final SliceElementFilter REVERSE_FILTER = new SliceElementFilter() {
-		
-		@Override
-		public boolean accept(SliceElement e) {
-			return e.getDirection()==Direction.REVERSE;
-		}
-	};
 
 	private static final int MIN_QUALITY = 5;
 	
 	private final ConsensusCaller delegateConsensusCaller;
 	
-	public NextGenReferenceConsensusRecaller(){
+	
+//	@SuppressWarnings("unchecked")
+//	public static <E extends QualifiedAssemblyColumnElement, C extends QualifiedAssemblyColumn<E>> AssemblyColumnConsensusCaller<E, QualifiedAssemblyColumn<E>> createDefault() {
+//		//need to have separate variable for type inference
+//		AssemblyColumnConsensusCaller<E,QualifiedAssemblyColumn<E>> delegate = MostFrequentBasecallConsensusCaller.instance();
+//		return create(delegate);
+//	}
+
+//	public static <E extends QualifiedAssemblyColumnElement, C extends QualifiedAssemblyColumn<E>> AssemblyColumnConsensusCaller<E, QualifiedAssemblyColumn<E>> create(AssemblyColumnConsensusCaller<E, QualifiedAssemblyColumn<E>> delegate) {
+//		return new NextGenReferenceConsensusRecaller<>(delegate);
+//	}
+	public NextGenReferenceConsensusRecaller() {
 		this(MostFrequentBasecallConsensusCaller.INSTANCE);
 	}
 	public NextGenReferenceConsensusRecaller(ConsensusCaller delegateConsensusCaller) {
@@ -82,7 +91,7 @@ public class NextGenReferenceConsensusRecaller implements ConsensusCaller {
 		}
 		this.delegateConsensusCaller = delegateConsensusCaller;
 	}
-
+	
 	@Override
 	public ConsensusResult callConsensus(Slice slice) {
 		ConsensusResult delegatedResult =getDelegateConsensus(slice);
@@ -95,12 +104,16 @@ public class NextGenReferenceConsensusRecaller implements ConsensusCaller {
 		
 		return delegatedResult;
 	}
+	
 
 	private ConsensusResult handleInsertion(Slice slice,
 			ConsensusResult majorityBase) {
-		SliceBuilder all = new SliceBuilder(slice);
-		Slice forwardSlice = all.copy().filter(FORWARD_FILTER).build();		
-		Slice reverseSlice = all.copy().filter(REVERSE_FILTER).build();
+
+		Map<Boolean, Slice> dirMap = slice.elements().collect(
+				Collectors.partitioningBy(FORWARD_FILTER, SliceCollectors.toSlice(slice.getCoverageDepth())));
+		
+		Slice forwardSlice = dirMap.get(Boolean.TRUE);
+		Slice reverseSlice = dirMap.get(Boolean.FALSE);
 		
 		if(forwardSlice.getCoverageDepth() ==0 || reverseSlice.getCoverageDepth()==0){
 			return majorityBase;
@@ -124,9 +137,12 @@ public class NextGenReferenceConsensusRecaller implements ConsensusCaller {
 
 	private ConsensusResult handleDeletion(Slice slice,
 			ConsensusResult majorityBase, Nucleotide originalConsensus) {
-		SliceBuilder all = new SliceBuilder(slice);
-		Slice forwardSlice = all.copy().filter(FORWARD_FILTER).build();		
-		Slice reverseSlice = all.copy().filter(REVERSE_FILTER).build();
+		
+		Map<Boolean, Slice> dirMap = slice.elements().collect(
+				Collectors.partitioningBy(FORWARD_FILTER, SliceCollectors.toSlice(slice.getCoverageDepth())));
+		
+		Slice forwardSlice = dirMap.get(Boolean.TRUE);
+		Slice reverseSlice = dirMap.get(Boolean.FALSE);
 		
 		ConsensusResult forwardMajority = getDelegateConsensus(forwardSlice);
 		ConsensusResult reverseMajority = getDelegateConsensus(reverseSlice);
@@ -166,10 +182,10 @@ public class NextGenReferenceConsensusRecaller implements ConsensusCaller {
 		int sum=0;
 		for(SliceElement e : slice){
 	        if(e.getBase() == consensus){
-	            sum+= e.getQuality().getQualityScore();
+	            sum+= e.getQualityScore();
 	        }
 	        else{
-	            sum -= e.getQuality().getQualityScore();
+	            sum -= e.getQualityScore();
 	        }
 		}
 		//we could have a negative quality sum

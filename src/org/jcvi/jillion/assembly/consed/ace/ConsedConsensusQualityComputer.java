@@ -174,7 +174,7 @@ final class ConsedConsensusQualityComputer {
     	
     	
     	try{
-	    	int[] consensusGapsArray = toIntArray(consensusSequence.getGapOffsets());
+	    	int[] consensusGapsArray = consensusSequence.gaps().toArray();
 	    	
 	    	int consensusLength = (int)consensusSequence.getLength();
 			List<List<QualityPosition>> forwardQualitiesTowardsConsensus = new ArrayList<List<QualityPosition>>((int)consensusSequence.getLength());
@@ -191,7 +191,7 @@ final class ConsedConsensusQualityComputer {
 	    		long start =read.getGappedStartOffset();
 	    		
 	    		int[] differenceArray = toIntArray( read.getNucleotideSequence().getDifferenceMap().keySet());	    		
-	    		int[] readGaps = toIntArray(read.getNucleotideSequence().getGapOffsets());
+	    		int[] readGaps = read.getNucleotideSequence().gaps().toArray();
 	    		Range validRange = read.getReadInfo().getValidRange();
 	    		Direction dir = read.getDirection();
 	    		if(dir ==Direction.REVERSE){

@@ -25,7 +25,6 @@
  */
 package org.jcvi.jillion.assembly.util;
 
-import org.jcvi.jillion.assembly.util.SliceElement;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;

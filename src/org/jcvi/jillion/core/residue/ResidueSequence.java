@@ -23,6 +23,7 @@ package org.jcvi.jillion.core.residue;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -38,7 +39,7 @@ import org.jcvi.jillion.core.Sequence;
  * @param <R> the Type of {@link Residue} in this {@link Sequence}.
  * @param <T> the ResidueSequence implementation, needed for some of the return types to make sure it returns "this" type.
  */
-public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R, T, B>, B extends ResidueSequenceBuilder<R, T>> extends Sequence<R>, Comparable<T> {
+public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R, T, B>, B extends ResidueSequenceBuilder<R, T,B>> extends Sequence<R>, Comparable<T> {
 
 	 /**
      * Get a List of all the offsets into this
@@ -47,7 +48,21 @@ public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R,
      * the same as the value returned by {@link #getNumberOfGaps()}.
      * @return a List of gap offsets as Integers.
      */
-    List<Integer> getGapOffsets();    
+    List<Integer> getGapOffsets();  
+    /**
+     * Get a List of all the offsets into this
+     * sequence which are gaps.  This list SHOULD be
+     * sorted by offset in ascending order.  The size of the returned list should be
+     * the same as the value returned by {@link #getNumberOfGaps()}.
+     * @return the gap offsets as IntStream.
+     * @implSpec this should return the same as {@code getGapOffsets().stream().mapToInt(Integer::intValue)}
+     * but implementations may be more efficient.
+     * 
+     * @since 6.0
+     */
+    default IntStream gaps() {
+    	return getGapOffsets().stream().mapToInt(Integer::intValue);
+    }
     /**
      * Get the list of contiguous spans of gapss; the returned list
      * will be in sorted order.

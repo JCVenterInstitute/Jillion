@@ -26,6 +26,8 @@
 package org.jcvi.jillion.assembly.util.consensus;
 
 import org.jcvi.jillion.assembly.util.Slice;
+import org.jcvi.jillion.assembly.util.SliceElement;
+import org.jcvi.jillion.assembly.util.columns.AssemblyColumnConsensusCaller;
 /**
  * <code>ConsensusCaller</code> compute the
  * {@link ConsensusResult} for the given Slice.
@@ -33,7 +35,7 @@ import org.jcvi.jillion.assembly.util.Slice;
  *
  *
  */
-public interface ConsensusCaller {
+public interface ConsensusCaller extends AssemblyColumnConsensusCaller<SliceElement, Slice>{
     /**
      * Compute the {@link ConsensusResult} for the given Slice.
      * @param slice the Slice to compute the consensus for.
@@ -41,4 +43,6 @@ public interface ConsensusCaller {
      * @throws NullPointerException if slice is null.
      */
     ConsensusResult callConsensus(Slice slice);
+    
+    
 }

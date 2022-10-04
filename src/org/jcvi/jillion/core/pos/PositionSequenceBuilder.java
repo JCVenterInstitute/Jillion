@@ -27,7 +27,7 @@ import org.jcvi.jillion.core.SequenceBuilder;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.core.util.GrowableShortArray;
 
-public final class PositionSequenceBuilder implements SequenceBuilder<Position, PositionSequence>{
+public final class PositionSequenceBuilder implements SequenceBuilder<Position, PositionSequence, PositionSequenceBuilder>{
 	/**
 	 * Default capacity set to {@value} 
 	 * since that should be big enough for
@@ -341,6 +341,11 @@ public final class PositionSequenceBuilder implements SequenceBuilder<Position, 
 			
 		}
 		
+	}
+
+	@Override
+	public PositionSequenceBuilder getSelf() {
+		return this;
 	}
 
 }

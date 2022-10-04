@@ -98,7 +98,7 @@ public interface FastaDataStore<S, T extends Sequence<S>,F extends FastaRecord<S
 		if(record ==null){
 			return null;
 		}
-		SequenceBuilder<S, ? extends Sequence<S>> builder = record.getSequence().toBuilder();
+		SequenceBuilder<S, ? extends Sequence<S>, ?> builder = record.getSequence().toBuilder();
 		
 		if(builder.getLength()-1 < startOffset){
 			throw new IllegalArgumentException("start offset is beyond sequence length : " + startOffset);

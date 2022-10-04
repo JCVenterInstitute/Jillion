@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
@@ -527,5 +528,27 @@ public class TestGrowableIntArray {
 		sut.forEachIndexed(r, (i, c)-> actual.set(i, c));
 
 		assertEquals(expected, actual);
+	}
+	
+	@Test
+	public void streamUntilMiddleExactMatch() {
+		GrowableIntArray sut = new GrowableIntArray(new int[]{10, 20,30,30,35, 40,50});
+		
+		List<Integer> actual = sut.streamUntil(40).boxed().collect(Collectors.toList());
+		assertEquals(List.of(10, 20,30,30,35), actual);
+	}
+	@Test
+	public void streamUntilBeforeAnyMatches() {
+		GrowableIntArray sut = new GrowableIntArray(new int[]{10, 20,30,30,35, 40,50});
+		
+		List<Integer> actual = sut.streamUntil(7).boxed().collect(Collectors.toList());
+		assertEquals(List.of(), actual);
+	}
+	@Test
+	public void streamUntilBeyondAllValuesShouldStreamAll() {
+		GrowableIntArray sut = new GrowableIntArray(new int[]{10, 20,30,30,35, 40,50});
+		
+		List<Integer> actual = sut.streamUntil(100).boxed().collect(Collectors.toList());
+		assertEquals(List.of(10, 20,30,30,35, 40, 50), actual);
 	}
 }

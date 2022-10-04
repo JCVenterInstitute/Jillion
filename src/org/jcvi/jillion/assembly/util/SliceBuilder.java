@@ -22,6 +22,7 @@ package org.jcvi.jillion.assembly.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.qual.PhredQuality;
@@ -57,7 +58,7 @@ public final class SliceBuilder implements Builder<Slice>{
      * @author dkatzel
      *
      */
-    public interface SliceElementFilter{
+    public interface SliceElementFilter extends Predicate<SliceElement>{
     	/**
     	 * Should the given SliceElement 
     	 * be included in the SliceBuilder.
@@ -68,6 +69,11 @@ public final class SliceBuilder implements Builder<Slice>{
     	 * {@code false} if the SliceElement should be removed.
     	 */
 		boolean accept(SliceElement e);
+		
+		@Override
+		default boolean test(SliceElement e) {
+			return accept(e);
+		}
 	}
     /**
      * Create a new {@link SliceBuilder}
@@ -75,6 +81,20 @@ public final class SliceBuilder implements Builder<Slice>{
      */
     public SliceBuilder(){
     	//creates empty builder with null consensus
+    	bytes = new GrowableShortArray(1024);
+        ids = new ArrayList<String>();
+    }
+    /**
+     * Create a new {@link SliceBuilder}
+     * which will start off empty with a null consensus.
+     * @param capacity the initial capacity for the underlying elements, if too small,
+     * this will grow to accommodate deeper coverage.
+     * @since 6.0
+     */
+    public SliceBuilder(int capacity){
+    	//creates empty builder with null consensus
+    	bytes = new GrowableShortArray(capacity);
+        ids = new ArrayList<String>(capacity);
     }
     /**
      * Create a new {@link SliceBuilder}
@@ -84,6 +104,21 @@ public final class SliceBuilder implements Builder<Slice>{
      * 
      */
     public SliceBuilder(Nucleotide consensus){
+    	this();
+    	setConsensus(consensus);
+    }
+    /**
+     * Create a new {@link SliceBuilder}
+     * which will start off empty with a null consensus.
+     * 
+     * @param consensus the {@link Nucleotide} of the consensus at this slice.
+     * @param capacity the initial capacity for the underlying elements, if too small,
+     * this will grow to accommodate deeper coverage.
+     * @since 6.0
+     * 
+     */
+    public SliceBuilder(Nucleotide consensus, int capacity){
+    	this(capacity);
     	setConsensus(consensus);
     }
     /**

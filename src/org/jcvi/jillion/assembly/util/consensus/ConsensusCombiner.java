@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.jcvi.jillion.assembly.util.SliceBuilder;
 import org.jcvi.jillion.assembly.util.SliceElement;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;

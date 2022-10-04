@@ -33,6 +33,7 @@ import org.jcvi.jillion.assembly.consed.ace.AceContigVisitor;
 import org.jcvi.jillion.assembly.consed.ace.AceFileParser;
 import org.jcvi.jillion.assembly.consed.ace.AceFileVisitorCallback;
 import org.jcvi.jillion.assembly.consed.ace.AceParser;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.ResourceHelper;

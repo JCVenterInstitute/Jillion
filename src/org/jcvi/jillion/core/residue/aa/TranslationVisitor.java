@@ -20,6 +20,8 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.aa;
 
+import java.util.List;
+
 public interface TranslationVisitor {
 
     public enum FoundStartResult{
@@ -39,4 +41,7 @@ public interface TranslationVisitor {
     FoundStopResult foundStop(long nucleotideCoordinate, Codon codon);
     
     void end();
+	default void visitVariantCodon(long nucleotideCoordinate, List<Codon> codons) {
+		visitCodon(nucleotideCoordinate, codons.get(0));
+	}
 }

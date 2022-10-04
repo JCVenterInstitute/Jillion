@@ -73,7 +73,10 @@ import org.junit.runners.Suite.SuiteClasses;
         
         CompressedNucleotidePercentNTest.class,
         UnCompressedNucleotidePercentNTest.class,
-        TestNucleotideSequenceComputeGC.class
+        TestNucleotideSequenceComputeGC.class,
+        TestNucleotideSequenceReverseComplementIterator.class,
+        TestVariantNucleotideSequence.class,
+        
     }
 )
 public class AllNucleotideUnitTests {

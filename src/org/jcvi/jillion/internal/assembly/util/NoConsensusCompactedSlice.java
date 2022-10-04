@@ -27,6 +27,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.jcvi.jillion.assembly.util.Slice;
 import org.jcvi.jillion.assembly.util.SliceBuilder;
@@ -58,6 +62,11 @@ public class NoConsensusCompactedSlice implements Slice{
         this.ids = ids.toArray(new String[ids.size()]);
     }
 
+    @Override
+    public Stream<SliceElement> elements(){
+    	//can't directly stream primitive short array
+    	return StreamSupport.stream(Spliterators.spliterator(iterator(), elements.length, Spliterator.IMMUTABLE), false);
+    }
     /**
     * {@inheritDoc}
     */

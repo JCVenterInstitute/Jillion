@@ -120,6 +120,16 @@ class RunLengthEncodedQualitySequence implements QualitySequence{
 	public Optional<PhredQuality> getMaxQuality() {
 		return RunLengthEncodedQualityCodec.INSTANCE.getMaxQuality(encodedData);
 	}
-
+	@Override
+    public QualitySequenceBuilder toBuilder() {
+        //this is a work around to fix the problem
+        //of calling toBuilder() using reflection
+        //which doesn't see default methods.
+        //The reflection calls are used in some of the 
+        //qualityFastaDataStore implementations.
+        //
+        //without this override, we will get an AbstractMethodError
+        return QualitySequence.super.toBuilder();
+    }
 
 }

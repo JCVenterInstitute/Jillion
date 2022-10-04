@@ -841,7 +841,22 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
             return target.intersects(this);
         }
 
-        return !(this.getBegin() > target.getEnd() || this.getEnd() < target.getBegin());
+        return this.getBegin() <= target.getEnd() && this.getEnd() >= target.getBegin();
+    }
+    /**
+     * Checks to see if the given coordinate intersects this Range.
+     * An empty range will never intersect anything.
+     * (even itself)
+     * @param coordinate The coordinate to check ( 0-based ).
+     * @return <code>true</code> if the coordinate intersects this Range.
+     * 
+     * @since 6.0
+     */
+    public boolean intersects(long coordinate) {
+    	if(isEmpty()) {
+    		return false;
+    	}
+    	return getBegin() <= coordinate && getEnd() >= coordinate;
     }
     /**
      * Calculates the intersection of this {@link Range} and a second one.

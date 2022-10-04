@@ -22,6 +22,7 @@ package org.jcvi.jillion.internal.align;
 
 import org.jcvi.jillion.align.NucleotideSequenceAlignment;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;

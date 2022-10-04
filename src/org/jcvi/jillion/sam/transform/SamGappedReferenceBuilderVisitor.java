@@ -47,9 +47,9 @@ import org.jcvi.jillion.sam.cigar.CigarOperation;
 import org.jcvi.jillion.sam.header.SamHeader;
 import org.jcvi.jillion.sam.header.SamReferenceSequence;
 
-final class SamGappedReferenceBuilderVisitor implements SamVisitor{
+public final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 
-	Map<String, GappedReferenceBuilder> builders = new LinkedHashMap<String, GappedReferenceBuilder>();
+	private final Map<String, GappedReferenceBuilder> builders = new LinkedHashMap<String, GappedReferenceBuilder>();
 	
 	
 	public static NucleotideSequenceDataStore createGappedReferencesFrom(SamParser parser, NucleotideFastaDataStore ungappedReferenceDataStore) throws IOException{

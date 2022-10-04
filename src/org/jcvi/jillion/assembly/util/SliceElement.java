@@ -25,9 +25,8 @@
  */
 package org.jcvi.jillion.assembly.util;
 
-import org.jcvi.jillion.core.Direction;
-import org.jcvi.jillion.core.qual.PhredQuality;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
+
+import org.jcvi.jillion.assembly.util.columns.QualifiedAssemblyColumnElement;
 /**
  * {@code SliceElement} is a single
  * position of a read contained
@@ -37,7 +36,7 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
  *
  *
  */
-public interface SliceElement {
+public interface SliceElement extends QualifiedAssemblyColumnElement {
 	
 	/**
      * Get the Id of this element.  Each element in a single Slice must
@@ -47,19 +46,4 @@ public interface SliceElement {
      * @return the Id of this slice element.
      */
     String getId();
-    /**
-     * Get the {@link Nucleotide} of this SliceElement.
-     * @return the {@link Nucleotide} of this sliceElement.
-     */
-    Nucleotide getBase();
-    /**
-     * Get the {@link PhredQuality} of this SliceElement.
-     * @return the quality value.
-     */
-    PhredQuality getQuality();
-    /**
-     * Get the {@link Direction} of this SliceElement.
-     * @return the direction of the read this element belongs.
-     */
-    Direction getDirection();
 }

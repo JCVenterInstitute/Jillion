@@ -29,6 +29,7 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.qual.PhredQuality;
@@ -46,6 +47,9 @@ public final class DefaultSlice implements Slice{
         
     }
     
+    public Stream<SliceElement> elements(){
+    	return elements.values().stream();
+    }
     
     @Override
 	public Nucleotide getConsensusCall() {

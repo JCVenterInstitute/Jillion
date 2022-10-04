@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.PrimitiveIterator;
 import java.util.stream.LongStream;
 
 import org.jcvi.jillion.core.Range;
@@ -378,7 +379,7 @@ public final class GrowableLongArray implements Iterable<Long>{
 	}
 	
 	@Override
-	public Iterator<Long> iterator() {
+	public PrimitiveIterator.OfLong iterator() {
 		return PrimitiveArrayIterators.create(data, currentLength);
 	}
 	

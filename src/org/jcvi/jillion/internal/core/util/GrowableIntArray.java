@@ -446,9 +446,10 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		this.currentLength=0;
 	}
 	@Override
-	public Iterator<Integer> iterator() {
+	public PrimitiveIterator.OfInt iterator() {
 		return PrimitiveArrayIterators.create(data, currentLength);
 	}
+	
 	/**
 	 * Get the number of values
 	 * in this array that currently
@@ -474,6 +475,14 @@ public final class GrowableIntArray implements Iterable<Integer>{
 	 */
 	public IntStream stream() {
 		return Arrays.stream(data, 0, currentLength);		
+	}
+	
+	public IntStream streamUntil(int value) {
+		int end = binarySearch(value);
+		if(end <0) {
+			end = -(end+1);
+		}
+		return Arrays.stream(data, 0, end);
 	}
 	/**
 	 * Create a sequential {@link IntStream}

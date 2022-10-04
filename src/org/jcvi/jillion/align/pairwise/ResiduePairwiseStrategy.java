@@ -49,7 +49,7 @@ import org.jcvi.jillion.internal.align.SequenceAlignmentBuilder;
  * @param <A> the {@link SequenceAlignment} type returned by this aligner.
  * @param <P> the {@link PairwiseSequenceAlignment} type returned by this aligner.
  */
-abstract class ResiduePairwiseStrategy<R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S>, A extends SequenceAlignment<R,S>,P extends PairwiseSequenceAlignment<R,S>> {
+abstract class ResiduePairwiseStrategy<R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S, B>, A extends SequenceAlignment<R,S>,P extends PairwiseSequenceAlignment<R,S>> {
 
 	
 	public static ResiduePairwiseStrategy<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder, NucleotideSequenceAlignment, NucleotidePairwiseSequenceAlignment>

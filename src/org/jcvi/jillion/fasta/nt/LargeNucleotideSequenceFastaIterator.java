@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.fasta.FastaFileParser;
 import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;

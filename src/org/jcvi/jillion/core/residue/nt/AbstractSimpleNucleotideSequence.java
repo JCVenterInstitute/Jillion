@@ -12,6 +12,7 @@ import java.util.*;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 abstract class AbstractSimpleNucleotideSequence extends AbstractResidueSequence<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder> implements NucleotideSequence{
@@ -113,7 +114,10 @@ abstract class AbstractSimpleNucleotideSequence extends AbstractResidueSequence<
     public List<Integer> getGapOffsets() {
         return gapSupplier.get().toBoxedList();
     }
-    
+    @Override
+    public IntStream gaps() {
+        return gapSupplier.get().stream();
+    }
     @Override
     public List<Range> getRangesOfGaps() {
         return Ranges.asRanges(gapSupplier.get().toArray());
@@ -148,12 +152,17 @@ abstract class AbstractSimpleNucleotideSequence extends AbstractResidueSequence<
 
     @Override
     public NucleotideSequenceBuilder toBuilder() {
-        return new NucleotideSequenceBuilder(this::iterator);
+        return new NucleotideSequenceBuilder((Iterable<Nucleotide>) this::iterator);
     }
 
     @Override
     public NucleotideSequenceBuilder toBuilder(Range range) {
-        return new NucleotideSequenceBuilder(() ->this.iterator(range));
+        return new NucleotideSequenceBuilder(this, range);
+    }
+    
+    @Override
+    public NucleotideSequenceBuilder toBuilder(List<Range> ranges) {
+        return new NucleotideSequenceBuilder(this, ranges);
     }
 
     @Override

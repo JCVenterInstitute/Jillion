@@ -37,7 +37,7 @@ import org.jcvi.jillion.internal.core.util.GrowableByteArray;
  * @author dkatzel
  *
  */
-public final class QualitySequenceBuilder implements SequenceBuilder<PhredQuality, QualitySequence>{
+public final class QualitySequenceBuilder implements SequenceBuilder<PhredQuality, QualitySequence, QualitySequenceBuilder>{
 	/**
 	 * Default capacity set to {@value} 
 	 * since that should be big enough for
@@ -452,4 +452,8 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
     public byte[] toArray() {
         return builder.toArray();
     }
+	@Override
+	public QualitySequenceBuilder getSelf() {
+		return this;
+	}
 }

@@ -229,7 +229,7 @@ public final class PaddedSamTransformationService implements AssemblyTransformat
 					Cigar cigar = record.getCigar();
 					NucleotideSequence gappedSequence = cigar.toGappedTrimmedSequence(record.getSequence());
 					paddedReferenceSequences.put(name, gappedSequence);
-					gapOffsetMap.put(name, new GrowableIntArray(gappedSequence.getGapOffsets()));
+					gapOffsetMap.put(name, new GrowableIntArray(gappedSequence.gaps().toArray()));
 					
 					transformer.referenceOrConsensus(name, gappedSequence);
 				}else{

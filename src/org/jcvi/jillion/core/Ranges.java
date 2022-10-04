@@ -367,6 +367,36 @@ public final class Ranges {
         }
         return false;
     }
+    
+    /**
+     * Check if the target coordinate intersects any range in the given list.
+     * 
+     * @param ranges the list of Ranges to check; can not be null but may be empty.
+     * @param targetCoordinate the coordinate ( 0-based) to check.
+     * 
+     * @return {@code true} if the target intersects any Range; {@code false} otherwise.
+     * 
+     * @apiNote this is the same as:
+     * <pre>
+     * for(Range r : ranges){
+     *     if(r.intersects(targetCoordinate)){
+     *         return true;
+     *     }
+     * }
+     * return false;
+     * </pre>
+     * @since 6.0
+     * 
+     * @throws NullPointerException if any parameter is null or any Range in the given list is null.
+     */
+    public static boolean intersects(Collection<Range> ranges, long targetCoordinate) {
+        for(Range r : ranges){
+            if(r.intersects(targetCoordinate)){
+                return true;
+            }
+        }
+        return false;
+    }
   
     
     /**

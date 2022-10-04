@@ -19,6 +19,9 @@
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
 package org.jcvi.jillion.core.util;
+
+import java.util.Objects;
+
 /**
  * {@code SingleThreadAdder}
  * is an equivalent class to {@link java.util.concurrent.atomic.LongAdder}
@@ -71,12 +74,29 @@ public class SingleThreadAdder implements Comparable<SingleThreadAdder>{
 
 	@Override
 	public String toString() {
-		return "SingleThreadAdder [value=" + value + "]";
+		return Long.toString(value);
 	}
 
 	@Override
 	public int compareTo(SingleThreadAdder o) {
 		return Long.compare(value, o.value);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(value);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SingleThreadAdder other = (SingleThreadAdder) obj;
+		return value == other.value;
 	}
 	
 	

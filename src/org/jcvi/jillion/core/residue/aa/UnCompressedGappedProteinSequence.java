@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
+import java.util.stream.IntStream;
 /**
  * ProteinSequence implementation that
  * stores the amino acids as a simple Array
@@ -57,6 +58,10 @@ class UnCompressedGappedProteinSequence extends AbstractResidueSequence<AminoAci
     @Override
     public List<Integer> getGapOffsets() {
         return gapSupplier.get().toBoxedList();
+    }
+    @Override
+    public IntStream gaps() {
+        return gapSupplier.get().stream();
     }
 
     @Override

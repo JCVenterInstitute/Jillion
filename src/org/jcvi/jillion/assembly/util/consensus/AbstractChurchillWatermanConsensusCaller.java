@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+
 import org.jcvi.jillion.assembly.util.Slice;
 import org.jcvi.jillion.assembly.util.SliceElement;
 import org.jcvi.jillion.core.qual.PhredQuality;
@@ -117,7 +118,7 @@ abstract class AbstractChurchillWatermanConsensusCaller implements ConsensusCall
             final SingleThreadAdder previousSum = qualityValueSumMap.get(basecall);
             //ignore not ACGT-?
             if(previousSum!=null){
-               previousSum.add(sliceElement.getQuality().getQualityScore());
+               previousSum.add(sliceElement.getQualityScore());
             }
             
         }
@@ -145,7 +146,7 @@ abstract class AbstractChurchillWatermanConsensusCaller implements ConsensusCall
             //special case if we only have matches, then sum slice qualities
             int sum =0;
             for(SliceElement element : slice){
-                sum += element.getQuality().getQualityScore();
+                sum += element.getQualityScore();
             }
             return sum;
         }

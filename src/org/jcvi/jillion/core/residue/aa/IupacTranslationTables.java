@@ -31,12 +31,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import org.jcvi.jillion.core.residue.Frame;
 import org.jcvi.jillion.core.residue.aa.TranslationVisitor.FoundStartResult;
 import org.jcvi.jillion.core.residue.aa.TranslationVisitor.FoundStopResult;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.Triplet;
+import org.jcvi.jillion.core.residue.nt.VariantNucleotideSequence;
 import org.jcvi.jillion.core.util.MapUtil;
 
 import lombok.Builder;
@@ -260,21 +263,19 @@ public enum IupacTranslationTables implements TranslationTable{
 	}
 	@Override
 	public ProteinSequence translate(NucleotideSequence sequence, Frame frame, boolean substituteStart) {
-		return translate(sequence, frame, (int)sequence.getLength(), substituteStart);
+		return translate(sequence, TranslationOptions.builder().frame(frame).substituteStart(substituteStart).build());
+		
 	}
 	@Override
 	public ProteinSequence translate(NucleotideSequence sequence, Frame frame, int length, boolean substituteStart) {
-		return translate(sequence, length, TranslationOptions.builder().frame(frame).substituteStart(substituteStart).build());
+		return translate(sequence,  TranslationOptions.builder()
+														.frame(frame)
+														.substituteStart(substituteStart)
+														.numberOfBasesToTranslate(length).build());
 	}
-	@Override
-	public void translate(NucleotideSequence sequence, TranslationOptions options, TranslationVisitor visitor) {
-		translate(sequence, (int) sequence.getLength(), options, visitor);
-	}
-	@Override
-	public void translate(NucleotideSequence sequence, int length, TranslationOptions options, TranslationVisitor visitor) {
-		if(sequence ==null){
-             throw new NullPointerException("sequence can not be null");
-     }
+
+	
+	private void _translate(Function<Frame,Iterator<Set<Triplet>>> tripletSupplier, TranslationOptions options, TranslationVisitor visitor) {
 		 
 	Frame frame = options.getFrame();
      if(frame ==null){
@@ -287,7 +288,7 @@ public enum IupacTranslationTables implements TranslationTable{
      //don't correctly handle the 'not first starts'
      //so if translation table says codon is a start
      //and we've already seen a start, then make it not the start?
-     Iterator<Set<Triplet>> iter = frame.asTriplets(sequence, options.isIgnoreGaps());
+     Iterator<Set<Triplet>> iter = tripletSupplier.apply(frame);
      
      boolean seenStart=false;
      long currentOffset=frame.ordinal();
@@ -296,23 +297,35 @@ public enum IupacTranslationTables implements TranslationTable{
              Set<Triplet> triplet =iter.next();
              
              if(triplet !=null){
-                     Codon codon =translate(triplet);
-//                     System.out.println(codon.getTriplet() + " " + codon.getAminoAcid());
-                     if(codon.isStart()){
-                         FoundStartResult result = visitor.foundStart(currentOffset, codon);
-                         if(result ==FoundStartResult.STOP){
-                             break;
-                         }
-                         seenStart = result != FoundStartResult.FIND_ADDITIONAL_STARTS;
-                     }else if(codon.isStop()){
-                             FoundStopResult result = visitor.foundStop(currentOffset, codon);
-                             if(result == FoundStopResult.STOP){
-                                 break;
-                             }
-                             
-                     }else{
-                             visitor.visitCodon(currentOffset, codon);
-                         
+            	 List<Codon> codons =translate(triplet);
+                 Codon codon=null;
+                 if(codons.size()==1) {
+                	 codon= codons.get(0);
+                 }else if(options.isMergeCodons()) {
+                	 //ambiguities
+                	 codon = Codon.merge(codons);
+                 }
+                     if(codon !=null) {
+                    	 //handle single codon
+	                     if(!seenStart && codon.isStart()){
+	                         FoundStartResult result = visitor.foundStart(currentOffset, codon);
+	                         if(result ==FoundStartResult.STOP){
+	                             break;
+	                         }
+	                         seenStart = result != FoundStartResult.FIND_ADDITIONAL_STARTS;
+	                     }else if(codon.isStop()){
+	                             FoundStopResult result = visitor.foundStop(currentOffset, codon);
+	                             if(result == FoundStopResult.STOP){
+	                                 break;
+	                             }
+	                             
+	                     }else{
+	                             visitor.visitCodon(currentOffset, codon);
+	                         
+	                     }
+                     }else {
+                    	 //handle variant codons
+                    	 visitor.visitVariantCodon(currentOffset, codons);
                      }
              }
              currentOffset+=3;
@@ -321,7 +334,25 @@ public enum IupacTranslationTables implements TranslationTable{
 
 	}
 	@Override
-	public ProteinSequence translate(NucleotideSequence sequence, int length, TranslationOptions options) {
+	public void translate(NucleotideSequence sequence, TranslationOptions options, TranslationVisitor visitor) {
+		if(sequence ==null){
+	             throw new NullPointerException("sequence can not be null");
+	     }
+		
+	     _translate(f -> f.asTriplets(sequence, options.isIgnoreGaps(), options.getNumberOfBasesToTranslate()), options, visitor);
+	    
+	}
+	@Override
+	public void translate(VariantNucleotideSequence sequence, TranslationOptions options, TranslationVisitor visitor) {
+		if(sequence ==null){
+            throw new NullPointerException("sequence can not be null");
+	    }
+		
+	    _translate(f -> f.asTriplets(sequence, options.isIgnoreGaps(), options.getNumberOfBasesToTranslate()), options, visitor);
+	   
+	}
+	@Override
+	public ProteinSequence translate(NucleotideSequence sequence, TranslationOptions options) {
 		if(sequence ==null){
 			throw new NullPointerException("sequence can not be null");
 		}
@@ -332,19 +363,27 @@ public enum IupacTranslationTables implements TranslationTable{
 		//don't correctly handle the 'not first starts'
 		//so if translation table says codon is a start
 		//and we've already seen a start, then make it not the start?
-
+		int length = options.getNumberOfBasesToTranslate() ==null? (int)sequence.getLength(): options.getNumberOfBasesToTranslate();
 		ProteinSequenceBuilder builder = new ProteinSequenceBuilder(length/3);
 		
-		Iterator<Set<Triplet>> iter = options.getFrame().asTriplets(sequence, options.isIgnoreGaps());
+		Iterator<Set<Triplet>> iter = options.getFrame().asTriplets(sequence, options.isIgnoreGaps(), options.getNumberOfBasesToTranslate());
 		
 		boolean seenStart=!options.isSubstituteStart();
-		long currentOffset=0;
 		
-		while(iter.hasNext() && currentOffset <length){
+		while(iter.hasNext()){
 			Set<Triplet> triplet =iter.next();
-			currentOffset+=3;
 			if(triplet !=null){
-				Codon codon =translate(triplet);
+				List<Codon> codons =translate(triplet);
+				Codon codon=null;
+                if(codons.size()==1) {
+               	 codon= codons.get(0);
+                }else if(options.isMergeCodons()) {
+               	 //ambiguities
+               	 codon = Codon.merge(codons);
+                }else {
+                	//pick 1st one?
+                	codon= codons.get(0);
+                }
 				if(codon.isStart() && !seenStart){
 					seenStart=true;
 					//hardcode an M if this is our first start
@@ -355,6 +394,7 @@ public enum IupacTranslationTables implements TranslationTable{
 				}else{
 					builder.append(codon.getAminoAcid());
 				}
+                
 			}
 		}
 		return builder.build();
@@ -363,7 +403,7 @@ public enum IupacTranslationTables implements TranslationTable{
 	
 	@Override
     public void translate(NucleotideSequence sequence, Frame frame, TranslationVisitor visitor) {
-		translate(sequence, (int) sequence.getLength(), TranslationOptions.builder().ignoreGaps(true).frame(frame).build(), visitor);
+		translate(sequence, TranslationOptions.builder().ignoreGaps(true).frame(frame).build(), visitor);
 	}
 	@Override
 	public ProteinSequence translate(NucleotideSequence sequence, Frame frame, int length) {
@@ -377,19 +417,28 @@ public enum IupacTranslationTables implements TranslationTable{
 	protected void updateTable(Map<Triplet, Codon> map){
 		//no-op
 	}
-	private Codon translate(Set<Triplet> triplets){
+	private List<Codon> translate(Set<Triplet> triplets){
 		List<Codon> codons = new ArrayList<>(3);
 		for(Triplet triplet : triplets) {
-			codons.add( map.computeIfAbsent(triplet, 
-		        t -> new Codon.Builder(t, AminoAcid.Unknown_Amino_Acid).build()));
+			codons.add( _translate(triplet));
 		}
+		return codons;
 		
-		if(codons.size()==1) {
-			return codons.get(0);
-		}
-		//ambiguities
-		return Codon.merge(codons);
 		
+	}
+	/**
+	 * Translate the given single triplet into a Codon
+	 * @param triplet the triplet to translate, can not be null.
+	 * @return a new Codon
+	 * @since 6.0
+	 * @throws NullPointerException if triplet is null.
+	 */
+	public Codon translate(Triplet triplet) {
+		return _translate(Objects.requireNonNull(triplet));
+	}
+	private Codon _translate(Triplet triplet) {
+		return map.computeIfAbsent(triplet, 
+		        t -> new Codon.Builder(t, AminoAcid.Unknown_Amino_Acid).build());
 	}
 
 	public int getTableNumber(){
@@ -421,8 +470,11 @@ public enum IupacTranslationTables implements TranslationTable{
 			Iterator<Set<Triplet>> tripletIter = frame.asTriplets(sequence);
 			while (tripletIter.hasNext())
 			{
-				if (translate(tripletIter.next()).isStop()){
-					stopCoordinates.add(index);
+				List<Codon> codons = translate(tripletIter.next());
+				for(Codon codon: codons) {
+					if (codon.isStop()){
+						stopCoordinates.add(index);
+					}
 				}
 				index += 3;
 			}

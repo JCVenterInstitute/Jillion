@@ -20,7 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly.util;
 
-import java.util.List;
+import java.util.PrimitiveIterator.OfInt;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.AssemblyUtil;
@@ -110,7 +110,7 @@ public enum GapQualityValueStrategy{
     		gappedValidRangeQualities.reverse();
     		complementedRawQualities.reverse();
     	}
-    	List<Integer> gapOffsets=validRangeSequence.getGapOffsets();
+    	OfInt gapOffsets=validRangeSequence.gaps().iterator();
 		
     	int rawShiftOffset = (int)validRange.getBegin();
     	//TODO we currently don't support any gap value strategy
@@ -121,8 +121,8 @@ public enum GapQualityValueStrategy{
     	//a good idea might be to cluster the gapOffsets
     	//into Ranges, then we can compute the left and right ungapped
     	//flanks once and call computeQualityValueForGap() range.length() times
-    	for(Integer gapOffset : gapOffsets){
-    		int offset = gapOffset.intValue();
+    	while(gapOffsets.hasNext()){
+    		int offset = gapOffsets.nextInt();
     		int leftFlank = validRangeSequence.getUngappedOffsetFor(offset);
     		int rightFlank = leftFlank+1;
     		

@@ -34,6 +34,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.PrimitiveIterator.OfInt;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
@@ -420,7 +421,7 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 
 	@Override
 	public boolean isGap(int index) {
-		return getGapOffsets().contains(Integer.valueOf(index));
+		return gaps().filter(i-> i==index).findAny().isPresent();
 
 	}
 
@@ -504,13 +505,19 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 	 * @return
 	 */
 	private GrowableIntArray shiftReferenceGaps() {
-		List<Integer> refGapOffsets = reference.getGapOffsets();
-		GrowableIntArray gaps = new GrowableIntArray(refGapOffsets.size());
-		for(Integer refGap : refGapOffsets){
-			int adjustedCoordinate = refGap.intValue() - startOffset;
-			if(adjustedCoordinate >=0 && adjustedCoordinate<length){
-				gaps.append(adjustedCoordinate);
+		OfInt iter = reference.gaps().iterator();
+		GrowableIntArray gaps = new GrowableIntArray(reference.getNumberOfGaps());
+		while(iter.hasNext()) {
+			int adjustedCoordinate = iter.nextInt() - startOffset;
+			if(adjustedCoordinate <0) {
+				continue;
 			}
+			if(adjustedCoordinate >=length) {
+				break;
+			}
+			gaps.append(adjustedCoordinate);
+			
+			
 		}
 		return gaps;
 	}
@@ -556,7 +563,7 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 	 */
 	@Override
 	public int getNumberOfGaps() {
-		return getGapOffsets().size();
+		return (int) gaps().count();
 	}
 
 
@@ -595,6 +602,19 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 	public NucleotideSequenceBuilder toBuilder(Range range) {
 		return new NucleotideSequenceBuilder(this, range)
 				.setReferenceHint(reference, (int)(startOffset + range.getBegin()));
+	}
+	@Override
+	public NucleotideSequenceBuilder toBuilder(List<Range> ranges) {
+		int size = ranges.size();
+		if(size==0) {
+			//empty
+			return newEmptyBuilder();
+		}
+		if(size ==1) {
+			return toBuilder(ranges.get(0));
+		}
+		//multiple ranges which will mess up our reference encoding so make it non-reference encoding
+		return new NucleotideSequenceBuilder(this, ranges);
 	}
 
 	@Override

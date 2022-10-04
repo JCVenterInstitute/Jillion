@@ -34,6 +34,10 @@ import java.util.SortedMap;
 
 import org.jcvi.jillion.assembly.util.Slice;
 import org.jcvi.jillion.assembly.util.SliceElement;
+import org.jcvi.jillion.assembly.util.columns.AssemblyColumn;
+import org.jcvi.jillion.assembly.util.columns.AssemblyColumnConsensusCaller;
+import org.jcvi.jillion.assembly.util.columns.QualifiedAssemblyColumn;
+import org.jcvi.jillion.assembly.util.columns.QualifiedAssemblyColumnElement;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.util.MapValueComparator;
 import org.jcvi.jillion.core.util.SingleThreadAdder;
@@ -53,6 +57,14 @@ import org.jcvi.jillion.core.util.SingleThreadAdder;
 public enum MostFrequentBasecallConsensusCaller implements ConsensusCaller{
 	INSTANCE;
 	
+	@SuppressWarnings("unchecked")
+	public static <E extends QualifiedAssemblyColumnElement, C extends QualifiedAssemblyColumn<E>> AssemblyColumnConsensusCaller<E, C> instance(){
+		return (AssemblyColumnConsensusCaller<E, C>) INSTANCE;
+	}
+	@SuppressWarnings("unchecked")
+	public static ConsensusCaller sliceInstance(){
+		return (ConsensusCaller) INSTANCE;
+	}
     @Override
     public ConsensusResult callConsensus(Slice slice) {
         if(slice==null){
@@ -60,15 +72,15 @@ public enum MostFrequentBasecallConsensusCaller implements ConsensusCaller{
         }
         Map<Nucleotide, SingleThreadAdder> histogramMap = new EnumMap<Nucleotide, SingleThreadAdder>(Nucleotide.class);
         Map<Nucleotide, SingleThreadAdder> qualitySums = new EnumMap<Nucleotide, SingleThreadAdder>(Nucleotide.class);
-        for(SliceElement sliceElement : slice){
+        for(QualifiedAssemblyColumnElement sliceElement : slice){
             Nucleotide base =sliceElement.getBase();
             SingleThreadAdder sum = histogramMap.get(base);
             if(sum ==null){
             	histogramMap.put(base, new SingleThreadAdder(1));
-            	qualitySums.put(base, new SingleThreadAdder(sliceElement.getQuality().getQualityScore()));
+            	qualitySums.put(base, new SingleThreadAdder(sliceElement.getQualityScore()));
             }else{
             	sum.increment();
-            	qualitySums.get(base).add(sliceElement.getQuality().getQualityScore());
+            	qualitySums.get(base).add(sliceElement.getQualityScore());
             }
                    
         }
@@ -105,21 +117,18 @@ public enum MostFrequentBasecallConsensusCaller implements ConsensusCaller{
         if(histogramMap.isEmpty()){
             return Nucleotide.Unknown;
         }
-        Map<Nucleotide, Integer> intMap = new HashMap<Nucleotide, Integer>();
-        for(Entry<Nucleotide, SingleThreadAdder> entry : histogramMap.entrySet()){
-        	intMap.put(entry.getKey(), entry.getValue().intValue());
-        }
+      
        
-        SortedMap<Nucleotide, Integer> sortedMap = MapValueComparator.sortDescending(intMap);
+        SortedMap<Nucleotide, SingleThreadAdder> sortedMap = MapValueComparator.sortDescending(histogramMap);
         
-        Iterator<Entry<Nucleotide, Integer>> iter = sortedMap.entrySet().iterator();
+        Iterator<Entry<Nucleotide, SingleThreadAdder>> iter = sortedMap.entrySet().iterator();
         //has to have at least one
-        Entry<Nucleotide, Integer> most = iter.next();
+        Entry<Nucleotide, SingleThreadAdder> most = iter.next();
         Nucleotide consensus = most.getKey();
         int count = most.getValue().intValue();
         int bestQv = qualitySums.get(consensus).intValue();
         while(iter.hasNext()){
-        	Entry<Nucleotide, Integer> next = iter.next();
+        	Entry<Nucleotide, SingleThreadAdder> next = iter.next();
         	if(next.getValue().intValue() <count){
         		break;
         	}

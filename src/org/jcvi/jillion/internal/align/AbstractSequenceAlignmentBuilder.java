@@ -43,7 +43,7 @@ import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
  * @param <B> the {@link ResidueSequenceBuilder} used.
  */
 public abstract class AbstractSequenceAlignmentBuilder
-		<R extends Residue, S extends ResidueSequence<R, S,B>, B extends ResidueSequenceBuilder<R, S>, A extends SequenceAlignment<R, S>> implements SequenceAlignmentBuilder<R, S,B,A>{
+		<R extends Residue, S extends ResidueSequence<R, S,B>, B extends ResidueSequenceBuilder<R, S, B>, A extends SequenceAlignment<R, S>> implements SequenceAlignmentBuilder<R, S,B,A>{
 
 	private final B querySequenceBuilder, subjectSequenceBuilder;
 	private int numMatches=0, numMisMatches=0;

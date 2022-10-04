@@ -38,7 +38,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
  *
  *
  */
-public final class HspBuilder<R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S>> implements org.jcvi.jillion.core.util.Builder<Hsp<R,S,B>>{
+public final class HspBuilder<R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S,B>> implements org.jcvi.jillion.core.util.Builder<Hsp<R,S,B>>{
 
     private static final double ONE_HUNDRED = 100.0D;
 
@@ -123,7 +123,7 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R, S,
         	throw new IllegalArgumentException("unknown type :" + type);
         }
     	
-        public static <R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S>> HspBuilder<R,S, B> copy(Hsp<R,S, B> hsp){
+        public static <R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S, B>> HspBuilder<R,S, B> copy(Hsp<R,S, B> hsp){
             return new HspBuilder<R,S,B>(hsp);
         }
         
@@ -375,7 +375,7 @@ public final class HspBuilder<R extends Residue, S extends ResidueSequence<R, S,
         
     
 
-    private static final class HspImpl<R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S>> implements Hsp<R,S, B>{
+    private static final class HspImpl<R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S, B>> implements Hsp<R,S, B>{
         
     private final String queryId,subjectId, subjectDef;
     private final double percentIdentity;

@@ -31,6 +31,7 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.ArrayIterator;

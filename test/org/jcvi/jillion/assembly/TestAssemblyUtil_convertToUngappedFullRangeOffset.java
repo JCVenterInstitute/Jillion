@@ -33,6 +33,7 @@ import java.util.stream.Stream;
 import org.easymock.EasyMockSupport;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
@@ -240,7 +241,11 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
 
         @Override
         public NucleotideSequenceBuilder toBuilder(Range range) {
-            return delegate.toBuilder();
+            return delegate.toBuilder(range);
+        }
+        @Override
+        public NucleotideSequenceBuilder toBuilder(List<Range> ranges) {
+            return delegate.toBuilder(ranges);
         }
 
         @Override

@@ -24,11 +24,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.internal.core.EncodedSequence;
 import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
+import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
 abstract class AbstractProteinSequence extends AbstractResidueSequence<AminoAcid, ProteinSequence, ProteinSequenceBuilder> implements ProteinSequence {
 
@@ -90,16 +92,23 @@ abstract class AbstractProteinSequence extends AbstractResidueSequence<AminoAcid
      }
 	@Override
 	public List<Integer> getGapOffsets() {
+		return getGapArray().toBoxedList();
+	}
+	@Override
+	public IntStream gaps() {
+		return getGapArray().stream();
+	}
+	private GrowableIntArray getGapArray() {
+		GrowableIntArray array = new GrowableIntArray();
 		Iterator<AminoAcid> iter = iterator();
 		int i=0;
-		List<Integer> gapOffsets = new ArrayList<Integer>();
 		while(iter.hasNext()){
 			if(iter.next() ==AminoAcid.Gap){
-				gapOffsets.add(Integer.valueOf(i));
+				array.append(i);
 			}
 			i++;
-		}		
-		return gapOffsets;
+		}	
+		return array;
 	}
 	@Override
 	public int getNumberOfGaps() {

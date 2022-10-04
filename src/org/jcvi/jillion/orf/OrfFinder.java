@@ -93,6 +93,8 @@ public class OrfFinder {
         		builder.append(codon.getAminoAcid());
         	}
         }
+        
+        
 
         @Override
         public FoundStartResult foundStart(long nucleotideCoordinate,

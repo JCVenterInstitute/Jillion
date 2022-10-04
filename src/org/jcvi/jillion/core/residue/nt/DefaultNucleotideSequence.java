@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.LongSupplier;
 import java.util.regex.Pattern;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.Range;
@@ -167,6 +168,11 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
     public List<Integer> getGapOffsets() {
     	return codec.getGapOffsets(data);
     }
+	
+	@Override
+	public IntStream gaps() {
+		return codec.getGapOffsetsAsStream(data);
+	}
 
     @Override
     public Nucleotide get(long index) {     
@@ -275,10 +281,13 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
 	}
 	
 	@Override
-        public NucleotideSequenceBuilder toBuilder(Range range) {
-                return new NucleotideSequenceBuilder(this, range);
-        }
-	
+    public NucleotideSequenceBuilder toBuilder(Range range) {
+		return new NucleotideSequenceBuilder(this, range);
+    }
+	@Override
+    public NucleotideSequenceBuilder toBuilder(List<Range> ranges) {
+            return new NucleotideSequenceBuilder(this, ranges);
+    }
 	 @Override
 	    public NucleotideSequence asSubtype(){
 	        return this;

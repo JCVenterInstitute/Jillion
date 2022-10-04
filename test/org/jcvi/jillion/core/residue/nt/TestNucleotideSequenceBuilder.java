@@ -1239,4 +1239,39 @@ public class TestNucleotideSequenceBuilder {
     public void multipleRangeCreationNullRangesListShouldThrowNPE() {
     	assertThrows(NullPointerException.class, ()->new NucleotideSequenceBuilder(NucleotideSequence.of("ACGT"), (List<Range>)null));
     }
+    
+    @Test
+    public void invalidCharsByDefaultThrowIllegalArgException() {
+    	assertThrows(IllegalArgumentException.class, ()-> new NucleotideSequenceBuilder("ACGZ"));
+    }
+    @Test
+    public void invalidCharsInAppendByDefaultThrowIllegalArgException() {
+    	assertThrows(IllegalArgumentException.class, ()-> new NucleotideSequenceBuilder("ACGT").append("ACGZ"));
+    }
+    
+    @Test
+    public void setInvalidCharacterHandlerIgnore() {
+    	assertEquals("ACGACG",  new NucleotideSequenceBuilder("ACGZ", Nucleotide.InvalidCharacterHandlers.IGNORE)
+    			.append("ACGZ")
+    			.toString());
+	}
+    @Test
+    public void setInvalidCharacterHandlerNs() {
+    	assertEquals("ACGNACGN",  new NucleotideSequenceBuilder("ACGZ", Nucleotide.InvalidCharacterHandlers.REPLACE_WITH_N)
+    			.append("ACGZ")
+    			.toString());
+	}
+    @Test
+    public void setDifferentInvalidCharacterHandlers() {
+    	assertEquals("ACGACGN",  new NucleotideSequenceBuilder("ACGZ", Nucleotide.InvalidCharacterHandlers.IGNORE)
+    			.setInvalidCharacterHandler(Nucleotide.InvalidCharacterHandlers.REPLACE_WITH_N)
+    			.append("ACGZ")
+    			.toString());
+	}
+    
+    @Test
+    public void setInvalidCharsToNullWillUseDefaultThrowIllegalArgException() {
+    	NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder("ACGZ", Nucleotide.InvalidCharacterHandlers.IGNORE);
+    	assertThrows(IllegalArgumentException.class, ()-> builder.setInvalidCharacterHandler(null).append("ACGZ"));
+    }
 }

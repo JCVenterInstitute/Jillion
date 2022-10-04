@@ -112,7 +112,12 @@ public final class CompactedSliceElement implements SliceElement{
         return PhredQuality.valueOf(quality);
     }
 
-    /**
+    
+    @Override
+	public byte getQualityScore() {
+		return quality;
+	}
+	/**
     * {@inheritDoc}
     */
     @Override

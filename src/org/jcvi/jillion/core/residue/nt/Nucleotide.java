@@ -155,7 +155,33 @@ public enum Nucleotide implements Residue {
     public static final List<Nucleotide> RNA_VALUES = Collections.unmodifiableList(Arrays.asList(RNA_VALUES_ARRAY));
     public static final List<Nucleotide> ALL_VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
 
-
+    @FunctionalInterface
+    public interface InvalidCharacterHandler{
+    	Nucleotide handle(char invalidCharacter);
+    }
+    
+    public enum InvalidCharacterHandlers implements InvalidCharacterHandler{
+    	ERROR_OUT{
+    		public Nucleotide handle(char invalidCharacter) {
+    			throw new IllegalArgumentException("invalid character '" + invalidCharacter + "' ascii value " + (int)invalidCharacter);
+    		}
+    	},
+    	REPLACE_WITH_N{
+    		public Nucleotide handle(char invalidCharacter) {
+    			return Nucleotide.Unknown;
+    		}
+    	},
+    	IGNORE{
+    		public Nucleotide handle(char invalidCharacter) {
+    			return null;
+    		}
+    	}
+    	;
+    }
+    
+    public static InvalidCharacterHandler defaultInvalidCharacterHandler() {
+    	return InvalidCharacterHandlers.ERROR_OUT;
+    }
     private static int computeOffsetFor(char c){
     	return c-42;
     }
@@ -305,7 +331,13 @@ public enum Nucleotide implements Residue {
      *
      */
 	protected static Nucleotide parseOrNull(char base) {
-        if(base == 32 || (base >=0 && base <=13)){
+        return parseOrNull(base, InvalidCharacterHandlers.ERROR_OUT);
+	}
+	protected static Nucleotide parseOrNull(char base, InvalidCharacterHandler handler) {
+		if(handler==null) {
+			handler = InvalidCharacterHandlers.ERROR_OUT;
+		}
+		if(base == 32 || (base >=0 && base <=13)){
             return null;
         }
         int offset =computeOffsetFor(base);
@@ -315,7 +347,7 @@ public enum Nucleotide implements Residue {
         }
 		//if we're still null then it's invalid character
     	if(ret==null){
-            throw new IllegalArgumentException("invalid character '" + base + "' ascii value " + (int)base);
+    		ret = handler.handle(base);
         }
 		return ret;
 	}

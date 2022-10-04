@@ -54,6 +54,11 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	 * is used.
 	 */
 	private File fastaFile;
+	/**
+	 * Handler for what to do when we get an invalid character
+	 * @since 6.0
+	 */
+	private Nucleotide.InvalidCharacterHandler invalidCharacterHandler = Nucleotide.defaultInvalidCharacterHandler();
 	
 	/**
 	 * Create a new Builder instance of 
@@ -145,18 +150,18 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 			Predicate<NucleotideFastaRecord> recordFilter, OptionalLong maxNumberOfRecords)
 			throws IOException {
 		if(parser.isReadOnceOnly()){
-			return DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter);	
+			return DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter, invalidCharacterHandler);	
 		}else{
 		    NucleotideFastaFileDataStore delegate;
 			switch(providerHint){
 				case RANDOM_ACCESS_OPTIMIZE_SPEED: 
-							delegate= DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter);
+							delegate= DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter, invalidCharacterHandler);
 							break;
 				case RANDOM_ACCESS_OPTIMIZE_MEMORY: 
 							delegate = parser.canCreateMemento()?
 										IndexedNucleotideSequenceFastaFileDataStore.create(parser,filter, recordFilter)
 										:
-										DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter);
+										DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter, invalidCharacterHandler);
 							break;
 				case ITERATION_ONLY: delegate= LargeNucleotideSequenceFastaFileDataStore.create(parser,filter, recordFilter, maxNumberOfRecords);
 								break;
@@ -183,6 +188,10 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 		return this;
 	}
 
+	public NucleotideFastaFileDataStoreBuilder invalidCharacterHandler(Nucleotide.InvalidCharacterHandler invalidCharacterHandler) {
+		this.invalidCharacterHandler = invalidCharacterHandler==null? Nucleotide.defaultInvalidCharacterHandler(): invalidCharacterHandler;
+		return this;
+	}
 	/**
 	 * 
 	 * {@inheritDoc}

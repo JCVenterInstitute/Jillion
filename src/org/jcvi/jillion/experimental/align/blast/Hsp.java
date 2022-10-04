@@ -37,7 +37,7 @@ import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
  *
  *
  */
-public interface Hsp<R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S>> extends SequenceAlignment<R,S> {
+public interface Hsp<R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S, B>> extends SequenceAlignment<R,S> {
 	/**
 	 * Get the Id of the Query sequence in this Hsp.
 	 * @return a String; will never be null.
