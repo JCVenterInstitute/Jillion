@@ -88,7 +88,7 @@ public class OrfFinder {
         
         Orf orf=null;
         @Override
-        public void visitCodon(long nucleotideCoordinate, Codon codon) {
+        public void visitCodon(long nucleotideStartCoordinate, long nucleotideEndCoordinate, Codon codon) {
         	if(hasStart) {
         		builder.append(codon.getAminoAcid());
         	}
@@ -97,14 +97,14 @@ public class OrfFinder {
         
 
         @Override
-        public FoundStartResult foundStart(long nucleotideCoordinate,
-                Codon codon) {
+        public FoundStartResult foundStart(long nucleotideStartCoordinate,
+                long nucleotideEndCoordinate, Codon codon) {
             if(hasStart){
                 //already seen a start
                 builder.append(codon.getAminoAcid());
             }else{
             hasStart=true;
-            startCoord = nucleotideCoordinate;
+            startCoord = nucleotideStartCoordinate;
           //hardcode an M if this is our first start
             //which may 
             //not be the amino acid returned by 
@@ -115,10 +115,10 @@ public class OrfFinder {
         }
 
         @Override
-        public FoundStopResult foundStop(long nucleotideCoordinate,
-                Codon codon) {
+        public FoundStopResult foundStop(long nucleotideStartCoordinate,
+                long nucleotideEndCoordinate, Codon codon) {
             hasStop = true;
-            stopCoord = nucleotideCoordinate+=2; // only +2 to include last base in aa
+            stopCoord = nucleotideEndCoordinate;
             builder.append(codon.getAminoAcid());
             return FoundStopResult.STOP;
         }

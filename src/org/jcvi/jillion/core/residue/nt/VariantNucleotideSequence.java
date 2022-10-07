@@ -238,9 +238,9 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 				this.majority = Objects.requireNonNull(majority);
 			}
 			public VariantBuilder addAllele(MinorityAllele allele) {
-				if(majority == allele.getBase()) {
-					throw new IllegalArgumentException("already specified as majority : " + allele.getBase());
-				}
+//				if(majority == allele.getBase()) {
+//					throw new IllegalArgumentException("already specified as majority : " + allele + " " + minorityAlleles);
+//				}
 				minorityAlleles.put(allele.getBase(), allele);
 				return this;
 			}
@@ -310,6 +310,10 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 		@Override
 		public int compareTo(MinorityAllele o) {
 			return -Double.compare(percent, o.percent);
+		}
+		@Override
+		public String toString() {
+			return "MinorityAllele [base=" + base + ", percent=" + percent + "]";
 		}
 		
 		

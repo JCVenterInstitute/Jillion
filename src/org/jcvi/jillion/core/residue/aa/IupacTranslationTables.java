@@ -31,16 +31,20 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.jcvi.jillion.core.residue.Frame;
 import org.jcvi.jillion.core.residue.aa.TranslationVisitor.FoundStartResult;
 import org.jcvi.jillion.core.residue.aa.TranslationVisitor.FoundStopResult;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.Triplet;
 import org.jcvi.jillion.core.residue.nt.VariantNucleotideSequence;
 import org.jcvi.jillion.core.util.MapUtil;
+import org.jcvi.jillion.core.util.SingleThreadAdder;
 
 import lombok.Builder;
 import lombok.Data;
@@ -275,8 +279,11 @@ public enum IupacTranslationTables implements TranslationTable{
 	}
 
 	
-	private void _translate(Function<Frame,Iterator<Set<Triplet>>> tripletSupplier, TranslationOptions options, TranslationVisitor visitor) {
-		 
+	private void _translate(BiFunction<Frame,Consumer<Nucleotide>, Iterator<Set<Triplet>>> tripletSupplier, TranslationOptions options, TranslationVisitor visitor) {
+	//-3 because the apply() method advances the iterator and calls the consumer 
+	SingleThreadAdder currentOffset = new SingleThreadAdder(-1); // start at -1 so the nuc coordinate is the END offset of that codon
+	Consumer<Nucleotide> consumer = n-> currentOffset.increment();
+	
 	Frame frame = options.getFrame();
      if(frame ==null){
              throw new NullPointerException("frame can not be null");
@@ -288,12 +295,13 @@ public enum IupacTranslationTables implements TranslationTable{
      //don't correctly handle the 'not first starts'
      //so if translation table says codon is a start
      //and we've already seen a start, then make it not the start?
-     Iterator<Set<Triplet>> iter = tripletSupplier.apply(frame);
+     long currentStart=frame.getNumberOfBasesSkipped();
+     Iterator<Set<Triplet>> iter = tripletSupplier.apply(frame, consumer);
      
      boolean seenStart=false;
-     long currentOffset=frame.ordinal();
     
      while(iter.hasNext()){
+    	 	long offset= currentOffset.longValue();
              Set<Triplet> triplet =iter.next();
              
              if(triplet !=null){
@@ -308,27 +316,27 @@ public enum IupacTranslationTables implements TranslationTable{
                      if(codon !=null) {
                     	 //handle single codon
 	                     if(!seenStart && codon.isStart()){
-	                         FoundStartResult result = visitor.foundStart(currentOffset, codon);
+	                         FoundStartResult result = visitor.foundStart(currentStart, offset, codon);
 	                         if(result ==FoundStartResult.STOP){
 	                             break;
 	                         }
 	                         seenStart = result != FoundStartResult.FIND_ADDITIONAL_STARTS;
 	                     }else if(codon.isStop()){
-	                             FoundStopResult result = visitor.foundStop(currentOffset, codon);
+	                             FoundStopResult result = visitor.foundStop(currentStart, offset, codon);
 	                             if(result == FoundStopResult.STOP){
 	                                 break;
 	                             }
 	                             
 	                     }else{
-	                             visitor.visitCodon(currentOffset, codon);
+	                             visitor.visitCodon(currentStart, offset, codon);
 	                         
 	                     }
                      }else {
                     	 //handle variant codons
-                    	 visitor.visitVariantCodon(currentOffset, codons);
+                    	 visitor.visitVariantCodon(currentStart, offset, codons);
                      }
              }
-             currentOffset+=3;
+             currentStart=offset+1;
      }
      visitor.end();
 
@@ -339,7 +347,7 @@ public enum IupacTranslationTables implements TranslationTable{
 	             throw new NullPointerException("sequence can not be null");
 	     }
 		
-	     _translate(f -> f.asTriplets(sequence, options.isIgnoreGaps(), options.getNumberOfBasesToTranslate()), options, visitor);
+	     _translate((f, consumer) -> f.asTriplets(sequence, options.isIgnoreGaps(), options.getNumberOfBasesToTranslate(), consumer), options, visitor);
 	    
 	}
 	@Override
@@ -348,7 +356,7 @@ public enum IupacTranslationTables implements TranslationTable{
             throw new NullPointerException("sequence can not be null");
 	    }
 		
-	    _translate(f -> f.asTriplets(sequence, options.isIgnoreGaps(), options.getNumberOfBasesToTranslate()), options, visitor);
+	    _translate((f, consumer) -> f.asTriplets(sequence, options.isIgnoreGaps(), options.getNumberOfBasesToTranslate(), consumer), options, visitor);
 	   
 	}
 	@Override

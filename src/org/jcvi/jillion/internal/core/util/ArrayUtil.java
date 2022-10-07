@@ -22,8 +22,11 @@ package org.jcvi.jillion.internal.core.util;
 
 import java.util.AbstractList;
 import java.util.Arrays;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.NoSuchElementException;
+import java.util.PrimitiveIterator.OfInt;
 import java.util.RandomAccess;
 /**
  * Utility class to work on arrays.
@@ -43,9 +46,9 @@ public final class ArrayUtil {
 	 * 
 	 * @param array the array to wrap in a List.
 	 * 
-	 * @return a new List of Integers.
+	 * @return a new List of int.
 	 */
-	public static List<Integer> asList(int[] array){
+	public static IntArrayList asList(int[] array){
 		return new IntArrayList(array);
 	}
 	
@@ -53,10 +56,9 @@ public final class ArrayUtil {
 		//can not instantiate
 	}
 	
-	private static final class IntArrayList extends AbstractList<Integer> implements RandomAccess {
+	public static final class IntArrayList extends AbstractList<Integer> implements RandomAccess {
 
 		private final int[] array;
-		
 		
 		private IntArrayList(int[] array) {
 			this.array = array;
@@ -76,6 +78,7 @@ public final class ArrayUtil {
 		public Integer set(int index, Integer element) {
 			Integer old = array[index];
 			array[index] = element.intValue();
+			modCount++;
 			return old;
 		}
 		
@@ -113,9 +116,16 @@ public final class ArrayUtil {
         	if (!(o instanceof List)){
         	    return false;
         	}
-
+        	if( o instanceof IntArrayList) {
+        		//quick equals check without boxing
+        		return Arrays.equals(array, ((IntArrayList)o).array);
+        	}
+        	List otherList = (List)o;
+			if(array.length != otherList.size()) {
+        		return false;
+        	}
         	int currentOffset=0;
-        	ListIterator e2 = ((List) o).listIterator();
+        	ListIterator e2 = otherList.listIterator();
         	while(currentOffset<array.length && e2.hasNext()) {
         	    Object o2 = e2.next();
         	    //will return false if o2 is null
@@ -137,7 +147,41 @@ public final class ArrayUtil {
             public int hashCode() {
             	return Arrays.hashCode(array);
             }
+            /**
+             * Get a new {@link java.util.PrimitiveIterator.OfInt} primitive int
+             * iterator (not threadsafe).
+             * @return a new OfInt.
+             * @since 6.0
+             */
+            public OfInt intIterator() {
+            	return new IntIterator();
+            }
 		
+            private class IntIterator implements OfInt{
+            	private int currentOffset=0;
+            	private final int  expectedModCount;
+            	
+				@Override
+				public boolean hasNext() {
+					return currentOffset<array.length;
+				}
+
+				public IntIterator() {
+					this.expectedModCount = modCount;
+				}
+
+				@Override
+				public int nextInt() {
+					if(!hasNext()) {
+						throw new NoSuchElementException();
+					}
+					if(expectedModCount != modCount) {
+						throw new ConcurrentModificationException();
+					}
+					return array[currentOffset++];
+				}
+            	
+            }
 	}
 	/**
 	 * In-place reverse the given array.

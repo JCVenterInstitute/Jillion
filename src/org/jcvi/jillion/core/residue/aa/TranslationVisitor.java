@@ -35,13 +35,13 @@ public interface TranslationVisitor {
     }
     
    
-    void visitCodon(long nucleotideCoordinate, Codon codon);
-    FoundStartResult foundStart(long nucleotideCoordinate, Codon codon);
+    void visitCodon(long nucleotideStartCoordinate, long nucleotideEndCoordinate, Codon codon);
+    FoundStartResult foundStart(long nucleotideStartCoordinate, long nucleotideEndCoordinate, Codon codon);
     
-    FoundStopResult foundStop(long nucleotideCoordinate, Codon codon);
+    FoundStopResult foundStop(long nucleotideStartCoordinate, long nucleotideEndCoordinate, Codon codon);
     
     void end();
-	default void visitVariantCodon(long nucleotideCoordinate, List<Codon> codons) {
-		visitCodon(nucleotideCoordinate, codons.get(0));
+	default void visitVariantCodon(long nucleotideStartCoordinate, long nucleotideEndCoordinate, List<Codon> codons) {
+		visitCodon(nucleotideStartCoordinate, nucleotideEndCoordinate, codons.get(0));
 	}
 }

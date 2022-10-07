@@ -111,6 +111,9 @@ to wrap a StreamingIterator into a DataStoreIterator
     
 29.  SingleThreadAdder is now comparable and implements equals and hashcode
 
+30. ArrayUtil IntegerArrayList now has new method intIterator() 
+    which returns an PrimitiveIterator.OfInt introduced in Java 8.
+
 API BREAKING CHANGES
 --------------------
 
@@ -121,6 +124,9 @@ API BREAKING CHANGES
     
 3.  TranslationVisitor now has new method visitVariantCodon(long nucleotideCoordinate, List<Codon> codons)
 	to support variant sequences
+	
+4.  TranslationVisitor methods now have an additional long parameter to provide the start and 
+    end coordinates (inclusive) of the nucleotides that contributed to the Codon.
 
 Bug Fixes
 ---------

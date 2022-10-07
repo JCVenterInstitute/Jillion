@@ -133,6 +133,14 @@ public enum Frame{
         // overridden by -1, -2 and -3
         return false;
     }
+    /**
+     * Get the number of bases that are skipped when reading this frame.
+     * @return the number of bases either 0,1 or 2.
+     * @since 6.0
+     */
+    public int getNumberOfBasesSkipped() {
+		return ordinal()%3;
+	}
     
     public Frame getOppositeFrame(){
         return VALUES[ (this.ordinal() +3)%VALUES.length];
@@ -141,12 +149,15 @@ public enum Frame{
     	return asTriplets(sequence, ignoreGaps, null);
     }
     public Iterator<Set<Triplet>> asTriplets(NucleotideSequence sequence, boolean ignoreGaps, Integer length){
-    	Iterator<Nucleotide> iter = handleFrame(sequence, this, length);
+    	return asTriplets(sequence, ignoreGaps, length, null);
+    }
+    public Iterator<Set<Triplet>> asTriplets(NucleotideSequence sequence, boolean ignoreGaps, Integer length, Consumer<Nucleotide> consumer){
+    	Iterator<Nucleotide> iter = handleFrame(sequence, this, length, consumer);
         return new Iterator<Set<Triplet>>() {
 
             Set<Triplet> next;
             {
-                next = getNextTriplet(iter, ignoreGaps);
+                next = getNextTriplet(iter, ignoreGaps, consumer);
             }
             @Override
             public boolean hasNext() {
@@ -159,7 +170,7 @@ public enum Frame{
                     throw new NullPointerException();
                 }
                 Set<Triplet> ret = next;
-                next = getNextTriplet(iter, ignoreGaps);
+                next = getNextTriplet(iter, ignoreGaps, consumer);
                 return ret;
             }
         };
@@ -168,12 +179,15 @@ public enum Frame{
     	return asTriplets(sequence, ignoreGaps, null);
     }
     public Iterator<Set<Triplet>> asTriplets(VariantNucleotideSequence sequence, boolean ignoreGaps, Integer limit){
-    	Iterator<List<Nucleotide>> iter = handleFrame(sequence, this, limit);
+    	return asTriplets(sequence, ignoreGaps, limit, null);
+    }
+    public Iterator<Set<Triplet>> asTriplets(VariantNucleotideSequence sequence, boolean ignoreGaps, Integer limit, Consumer<Nucleotide> consumer){
+    	Iterator<List<Nucleotide>> iter = handleFrame(sequence, this, limit, consumer);
         return new Iterator<Set<Triplet>>() {
 
             Set<Triplet> next;
             {
-                next = getNextVariantTriplet(iter, ignoreGaps);
+                next = getNextVariantTriplet(iter, ignoreGaps, consumer);
             }
             @Override
             public boolean hasNext() {
@@ -186,7 +200,7 @@ public enum Frame{
                     throw new NullPointerException();
                 }
                 Set<Triplet> ret = next;
-                next = getNextVariantTriplet(iter, ignoreGaps);
+                next = getNextVariantTriplet(iter, ignoreGaps, consumer);
                 return ret;
             }
         };
@@ -195,11 +209,11 @@ public enum Frame{
         return asTriplets(sequence, false);
     }
 
-    private Set<Triplet> getNextTriplet(Iterator<Nucleotide> iter, boolean ignoreGaps) {
+    private Set<Triplet> getNextTriplet(Iterator<Nucleotide> iter, boolean ignoreGaps, Consumer<Nucleotide> consumer) {
 
-        Nucleotide first = getNextNucleotide(iter, ignoreGaps);
-        Nucleotide second = getNextNucleotide(iter, ignoreGaps);
-        Nucleotide third = getNextNucleotide(iter, ignoreGaps);
+        Nucleotide first = getNextNucleotide(iter, ignoreGaps, consumer);
+        Nucleotide second = getNextNucleotide(iter, ignoreGaps, consumer);
+        Nucleotide third = getNextNucleotide(iter, ignoreGaps, consumer);
         if (first == null || second == null || third == null) {
             // no more bases
             return null;
@@ -221,11 +235,11 @@ public enum Frame{
         	return Set.of(Triplet.create(first, second, third));
         }
     }
-    private Set<Triplet> getNextVariantTriplet(Iterator<List<Nucleotide>> iter, boolean ignoreGaps) {
+    private Set<Triplet> getNextVariantTriplet(Iterator<List<Nucleotide>> iter, boolean ignoreGaps, Consumer<Nucleotide> consumer) {
 
-        List<Nucleotide> first = getNextVariantNucleotide(iter, ignoreGaps);
-        List<Nucleotide> second = getNextVariantNucleotide(iter, ignoreGaps);
-        List<Nucleotide> third = getNextVariantNucleotide(iter, ignoreGaps);
+        List<Nucleotide> first = getNextVariantNucleotide(iter, ignoreGaps, consumer);
+        List<Nucleotide> second = getNextVariantNucleotide(iter, ignoreGaps, consumer);
+        List<Nucleotide> third = getNextVariantNucleotide(iter, ignoreGaps, consumer);
         if (first == null || second == null || third == null) {
             // no more bases
             return null;
@@ -243,35 +257,47 @@ public enum Frame{
     	return triplets;
        
     }
-    private List<Nucleotide> getNextVariantNucleotide(Iterator<List<Nucleotide>> iter, boolean ignoreGaps) {
+    private List<Nucleotide> getNextVariantNucleotide(Iterator<List<Nucleotide>> iter, boolean ignoreGaps, Consumer<Nucleotide> consumer) {
         if (!iter.hasNext()) {
             return null;
         }
         
         List<Nucleotide> n = iter.next();
+        if(consumer !=null) {
+        	consumer.accept(n.get(0));
+        }
         if(ignoreGaps) {
         	while(n !=null &&  n.get(0)==Nucleotide.Gap) {
         		n = iter.hasNext()? iter.next(): null;
+        		if(n !=null && consumer !=null) {
+        			consumer.accept(n.get(0));
+        		}
         	}
         }
         return n;
     }
-    private Nucleotide getNextNucleotide(Iterator<Nucleotide> iter, boolean ignoreGaps) {
+    private Nucleotide getNextNucleotide(Iterator<Nucleotide> iter, boolean ignoreGaps, Consumer<Nucleotide> consumer) {
         if (!iter.hasNext()) {
             return null;
         }
         
         Nucleotide n = iter.next();
+        if(consumer !=null) {
+        	consumer.accept(n);
+        }
         if(ignoreGaps) {
         	while( n==Nucleotide.Gap) {
         		n = iter.hasNext()? iter.next(): null;
+        		if(n !=null && consumer !=null) {
+        			consumer.accept(n);
+        		}
         	}
         }
         return n;
     }
     @SuppressWarnings("fallthrough")
     @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SF_SWITCH_FALLTHROUGH")
-    private Iterator<Nucleotide> handleFrame(NucleotideSequence sequence, Frame frame, Integer limit) {
+    private Iterator<Nucleotide> handleFrame(NucleotideSequence sequence, Frame frame, Integer limit, Consumer<Nucleotide> consumer) {
         Iterator<Nucleotide> iter;
         if(frame.onReverseStrand()){
             iter = sequence.reverseComplementIterator();
@@ -280,11 +306,17 @@ public enum Frame{
             switch(frame){
                     case NEGATIVE_THREE:
                                     if(iter.hasNext()){
-                                            iter.next();
+                                            Nucleotide n = iter.next();
+                                            if(consumer !=null) {
+                                            	consumer.accept(n);
+                                            }
                                     }
                     case NEGATIVE_TWO:
                                     if(iter.hasNext()){
-                                            iter.next();
+                                    	Nucleotide n = iter.next();
+                                        if(consumer !=null) {
+                                        	consumer.accept(n);
+                                        }
                                     }
                                     break;
                     default:
@@ -298,11 +330,17 @@ public enum Frame{
             switch(frame){
                     case THREE:
                                     if(iter.hasNext()){
-                                            iter.next();
+                                    	Nucleotide n = iter.next();
+                                        if(consumer !=null) {
+                                        	consumer.accept(n);
+                                        }
                                     }
                     case TWO:
                                     if(iter.hasNext()){
-                                            iter.next();
+                                    	Nucleotide n = iter.next();
+                                        if(consumer !=null) {
+                                        	consumer.accept(n);
+                                        }
                                     }
                                     break;
                     default:
@@ -318,7 +356,7 @@ public enum Frame{
     
     @SuppressWarnings("fallthrough")
     @edu.umd.cs.findbugs.annotations.SuppressFBWarnings("SF_SWITCH_FALLTHROUGH")
-    private Iterator<List<Nucleotide>> handleFrame(VariantNucleotideSequence sequence, Frame frame, Integer limit) {
+    private Iterator<List<Nucleotide>> handleFrame(VariantNucleotideSequence sequence, Frame frame, Integer limit, Consumer<Nucleotide> consumer) {
         Iterator<List<Nucleotide>> iter;
         if(frame.onReverseStrand()){
             iter = IteratorUtil.map(sequence.reverseComplementVariantIterator(),
@@ -328,11 +366,17 @@ public enum Frame{
             switch(frame){
                     case NEGATIVE_THREE:
                                     if(iter.hasNext()){
-                                            iter.next();
+                                    	List<Nucleotide> n = iter.next();
+                                        if(consumer !=null) {
+                                        	consumer.accept(n.get(0));
+                                        }
                                     }
                     case NEGATIVE_TWO:
                                     if(iter.hasNext()){
-                                            iter.next();
+                                    	List<Nucleotide> n = iter.next();
+                                        if(consumer !=null) {
+                                        	consumer.accept(n.get(0));
+                                        }
                                     }
                                     break;
                     default:
@@ -347,11 +391,17 @@ public enum Frame{
             switch(frame){
                     case THREE:
                                     if(iter.hasNext()){
-                                            iter.next();
+                                    	List<Nucleotide> n = iter.next();
+                                        if(consumer !=null) {
+                                        	consumer.accept(n.get(0));
+                                        }
                                     }
                     case TWO:
                                     if(iter.hasNext()){
-                                            iter.next();
+                                    	List<Nucleotide> n = iter.next();
+                                        if(consumer !=null) {
+                                        	consumer.accept(n.get(0));
+                                        }
                                     }
                                     break;
                     default:
@@ -405,4 +455,6 @@ public enum Frame{
 
     	
     }
+
+	
 }

@@ -25,7 +25,16 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 public class TestFrame {
 
-    
+    @Test
+    public void getNumberOfBasesSkipped() {
+    	assertEquals(0, Frame.ONE.getNumberOfBasesSkipped());
+    	assertEquals(1, Frame.TWO.getNumberOfBasesSkipped());
+    	assertEquals(2, Frame.THREE.getNumberOfBasesSkipped());
+    	
+    	assertEquals(0, Frame.NEGATIVE_ONE.getNumberOfBasesSkipped());
+    	assertEquals(1, Frame.NEGATIVE_TWO.getNumberOfBasesSkipped());
+    	assertEquals(2, Frame.NEGATIVE_THREE.getNumberOfBasesSkipped());
+    }
     @Test
     public void shitPositiveStrand(){
         assertEquals(Frame.TWO, Frame.ONE.shift(1));
