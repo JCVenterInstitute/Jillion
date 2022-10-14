@@ -271,25 +271,7 @@ public interface NucleotideSequence extends INucleotideSequence<NucleotideSequen
                 .build();
     }
 
-    /**
-     * Is this sequence RNA.
-     * @return {@code true} if DNA, otherwise false.
-     *
-     * @since 5.3
-     * @see #isRna()
-     */
-    boolean isDna();
-
-    /**
-     * Is this sequence RNA.
-     * @return {@code true} if RNA, otherwise false.
-     *
-     * @since 5.3
-     * @see #isDna()
-     */
-    default boolean isRna(){
-        return !isDna();
-    }
+   
 
 
     @Override

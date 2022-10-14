@@ -26,6 +26,8 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -367,45 +369,11 @@ public enum IupacTranslationTables implements TranslationTable{
 		if(options ==null){
 			throw new NullPointerException("frame can not be null");
 		}
-		//Brian says legacy PFGRC and (BioJava and BioPerl?)
-		//don't correctly handle the 'not first starts'
-		//so if translation table says codon is a start
-		//and we've already seen a start, then make it not the start?
 		int length = options.getNumberOfBasesToTranslate() ==null? (int)sequence.getLength(): options.getNumberOfBasesToTranslate();
-		ProteinSequenceBuilder builder = new ProteinSequenceBuilder(length/3);
 		
-		Iterator<Set<Triplet>> iter = options.getFrame().asTriplets(sequence, options.isIgnoreGaps(), options.getNumberOfBasesToTranslate());
-		
-		boolean seenStart=!options.isSubstituteStart();
-		
-		while(iter.hasNext()){
-			Set<Triplet> triplet =iter.next();
-			if(triplet !=null){
-				List<Codon> codons =translate(triplet);
-				Codon codon=null;
-                if(codons.size()==1) {
-               	 codon= codons.get(0);
-                }else if(options.isMergeCodons()) {
-               	 //ambiguities
-               	 codon = Codon.merge(codons);
-                }else {
-                	//pick 1st one?
-                	codon= codons.get(0);
-                }
-				if(codon.isStart() && !seenStart){
-					seenStart=true;
-					//hardcode an M if this is our first start
-					//which may 
-					//not be the amino acid returned by 
-					//#getAminoAcid() depending on the translation table
-					builder.append(AminoAcid.Methionine);
-				}else{
-					builder.append(codon.getAminoAcid());
-				}
-                
-			}
-		}
-		return builder.build();
+		DefaultVisitor visitor = new DefaultVisitor(options, length/3);
+		translate(sequence, options,visitor);
+		return visitor.builder.build().getProteinSequence();
 	}
 	
 	
@@ -496,5 +464,76 @@ public enum IupacTranslationTables implements TranslationTable{
 	public Set<Triplet> getTripletsFor(AminoAcid aa){
 		Objects.requireNonNull(aa);
 		return aaToTripletMap.getOrDefault(aa, Collections.emptySet());
+	}
+	
+	protected static class DefaultVisitor implements TranslationVisitor{
+
+		VariantProteinSequence.Builder builder;
+		boolean substituteStart;
+		boolean merge;
+		boolean readThru;
+		boolean seenStart=false;
+		
+		DefaultVisitor(TranslationOptions options, int length) {
+			readThru = options.isReadThroughStops();
+			substituteStart = options.isSubstituteStart();
+			merge = options.isMergeCodons();
+			builder = new VariantProteinSequence.Builder(length);
+		}
+		@Override
+		public void visitCodon(long nucleotideStartCoordinate, long nucleotideEndCoordinate, Codon codon) {
+			builder.append(codon.getAminoAcid());
+			
+		}
+
+		@Override
+		public void visitVariantCodon(long nucleotideStartCoordinate, long nucleotideEndCoordinate,
+				List<Codon> codons) {
+			if(merge) {
+				visitCodon(nucleotideStartCoordinate, nucleotideEndCoordinate, Codon.merge(codons));
+			}else {
+				Iterator<Codon> iter = codons.iterator();
+				AminoAcid majority = iter.next().getAminoAcid();
+				//preserves iteration order
+				LinkedHashSet<AminoAcid> rest = new LinkedHashSet<AminoAcid>();
+				iter.forEachRemaining(c-> rest.add(c.getAminoAcid()));
+				builder.append(majority, rest);
+			}
+			
+		}
+		@Override
+		public FoundStartResult foundStart(long nucleotideStartCoordinate, long nucleotideEndCoordinate, Codon codon) {
+			//hardcode an M if this is our first start
+			//which may 
+			//not be the amino acid returned by 
+			//#getAminoAcid() depending on the translation table
+			if(!seenStart && substituteStart) {
+				builder.append(AminoAcid.Methionine);
+			}else {
+				//Brian says legacy PFGRC and (BioJava and BioPerl?)
+				//don't correctly handle the 'not first starts'
+				//so if translation table says codon is a start
+				//and we've already seen a start, then make it not the start?
+				builder.append(codon.getAminoAcid());
+			}
+			seenStart=true;
+			return FoundStartResult.CONTINUE;
+		}
+
+		@Override
+		public FoundStopResult foundStop(long nucleotideStartCoordinate, long nucleotideEndCoordinate, Codon codon) {
+			builder.append(codon.getAminoAcid());
+			if(readThru) {
+				return FoundStopResult.READ_THROUGH;
+			}
+			return FoundStopResult.STOP;
+		}
+
+		@Override
+		public void end() {
+			// TODO Auto-generated method stub
+			
+		}
+		
 	}
 }

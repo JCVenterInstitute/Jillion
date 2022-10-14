@@ -32,16 +32,17 @@ import org.apache.commons.compress.archivers.ArchiveOutputStream;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
+import org.jcvi.jillion.core.datastore.DataStoreFilters;
+import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 
 public class TestTarGzNucleotideFastaDataStore extends AbstractTestSequenceFastaDataStore {
 
-    @Rule
-    public TemporaryFolder tmpDir = new TemporaryFolder();
+   
 
     @Override
-    protected NucleotideFastaDataStore parseFile(File file)
+    protected NucleotideFastaDataStore parseFile(File file, InvalidCharacterHandler handler)
             throws IOException {
  
     	File t = tmpDir.newFile("fasta.tar.gz");
@@ -54,7 +55,7 @@ public class TestTarGzNucleotideFastaDataStore extends AbstractTestSequenceFasta
     		o.closeArchiveEntry();
     	}
     	
-    	return DefaultNucleotideFastaFileDataStore.create(t);
+    	return DefaultNucleotideFastaFileDataStore.create(t, DataStoreFilters.alwaysAccept(), null, handler);
     	
         
     }

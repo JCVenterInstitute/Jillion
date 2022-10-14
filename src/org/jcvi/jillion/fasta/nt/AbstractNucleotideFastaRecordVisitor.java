@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.fasta.nt;
 
+import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.fasta.AbstractFastaRecordVisitor;
 /**
@@ -41,7 +42,7 @@ import org.jcvi.jillion.fasta.AbstractFastaRecordVisitor;
 public abstract class AbstractNucleotideFastaRecordVisitor extends  AbstractFastaRecordVisitor{
 
 	private final boolean turnOffCompression;
-
+	private final InvalidCharacterHandler invalidCharacterHandler;
 	public AbstractNucleotideFastaRecordVisitor(String id, String comment) {
 		this(id,comment, false);
 	}
@@ -56,10 +57,23 @@ public abstract class AbstractNucleotideFastaRecordVisitor extends  AbstractFast
 	 * @since 5.3.3
 	 */
 	public AbstractNucleotideFastaRecordVisitor(String id, String comment, boolean turnOffCompression) {
-		super(id,comment);
-		this.turnOffCompression = turnOffCompression;
+		this(id,comment, null, turnOffCompression);
 	}
 
+	/**
+	 *  Create new visitor instance for a single fasta record with the given id and comment.
+	 * @param id the id of the record.
+	 * @param comment the optional comment (may be null).
+	 * @param turnOffCompression turn off sequence compression for a runtime
+	 *                           performance improvement but at the cost of taking up more memory.
+	 *
+	 * @since 6.0
+	 */
+	public AbstractNucleotideFastaRecordVisitor(String id, String comment, InvalidCharacterHandler invalidCharacterHandler, boolean turnOffCompression) {
+		super(id,comment);
+		this.invalidCharacterHandler = invalidCharacterHandler;
+		this.turnOffCompression = turnOffCompression;
+	}
 
 	protected abstract void visitRecord(NucleotideFastaRecord fastaRecord);
 
@@ -67,7 +81,7 @@ public abstract class AbstractNucleotideFastaRecordVisitor extends  AbstractFast
 	protected final  void visitRecord(String id, String optionalComment,
 			String fullBody) {
 		NucleotideFastaRecord record = new NucleotideFastaRecordBuilder(id,
-																new NucleotideSequenceBuilder(fullBody)
+																new NucleotideSequenceBuilder(fullBody, invalidCharacterHandler)
 																	.turnOffDataCompression(turnOffCompression).build())
 													.comment(optionalComment)
 													.build();

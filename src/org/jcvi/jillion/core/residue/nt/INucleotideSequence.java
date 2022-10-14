@@ -70,5 +70,25 @@ public interface INucleotideSequence<S extends INucleotideSequence<S,B>, B exten
      * @since 6.0
      */
     B toBuilder(List<Range> ranges);
+    
+    /**
+     * Is this sequence RNA.
+     * @return {@code true} if DNA, otherwise false.
+     *
+     * @since 5.3
+     * @see #isRna()
+     */
+    boolean isDna();
+
+    /**
+     * Is this sequence RNA.
+     * @return {@code true} if RNA, otherwise false.
+     *
+     * @since 5.3
+     * @see #isDna()
+     */
+    default boolean isRna(){
+        return !isDna();
+    }
 	
 }

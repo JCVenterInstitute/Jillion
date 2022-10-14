@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jcvi.jillion.core.residue.Frame;
+import org.jcvi.jillion.core.residue.aa.IupacTranslationTables.DefaultVisitor;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.Triplet;
 import org.jcvi.jillion.core.residue.nt.VariantNucleotideSequence;
@@ -201,6 +202,58 @@ public interface TranslationTable {
 	 * @since 6.0
 	 */
 	void translate(VariantNucleotideSequence sequence,TranslationOptions options, TranslationVisitor visitor);
+	/**
+	 * Translate the given {@link VariantNucleotideSequence} 
+	 * using default TranslationOptions.
+	 * 
+	 * 
+	 * @param sequence the sequence to translate; can not be null.
+	 * 
+	 * 
+	 * @return a new ProteinSequence, will never be null,
+	 * but may be empty if the sequence is empty or less than 3 bp after
+	 * frame is taken into account.
+	 * @throws NullPointerException if either parameter is null.
+	 * @throws IllegalArgumentException if the sequence contains gaps.
+	 * @implNote default implementation is {@code translate(sequence, (int)sequence.getLength(), options, visitor)}.
+	 * 
+	 * @since 6.0
+	 */
+	default VariantProteinSequence translate(VariantNucleotideSequence sequence) {
+		return translate(sequence, 
+				TranslationOptions.builder().mergeCodons(false).build());
+	}
+	/**
+	 * Translate the given {@link VariantNucleotideSequence} 
+	 * using given TranslationOptions.
+	 * 
+	 * 
+	 * @param sequence the sequence to translate; can not be null.
+	 * 
+	 * @param options the {@link TranslationOptions} to use; can not be {@code null}.
+	 * 
+	 * 
+	 * @return a new VariantProteinSequence, will never be null,
+	 * but may be empty if the sequence is empty or less than 3 bp after
+	 * frame is taken into account.
+	 * @throws NullPointerException if either parameter is null.
+	 * @throws IllegalArgumentException if the sequence contains gaps.
+	 * 
+	 * @since 6.0
+	 */
+	default VariantProteinSequence translate(VariantNucleotideSequence sequence, TranslationOptions options) {
+		if(sequence ==null){
+			throw new NullPointerException("sequence can not be null");
+		}
+		if(options ==null){
+			throw new NullPointerException("frame can not be null");
+		}
+		int length = options.getNumberOfBasesToTranslate() ==null? (int)sequence.getLength(): options.getNumberOfBasesToTranslate();
+		
+		DefaultVisitor visitor = new DefaultVisitor(options, length/3);
+		translate(sequence, options,visitor);
+		return visitor.builder.build();
+	}
 	
 	Map<Frame,List<Long>> findStops(NucleotideSequence sequence);
 	/**

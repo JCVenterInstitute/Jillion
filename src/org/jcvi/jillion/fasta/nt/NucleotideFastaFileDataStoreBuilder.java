@@ -159,11 +159,11 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 							break;
 				case RANDOM_ACCESS_OPTIMIZE_MEMORY: 
 							delegate = parser.canCreateMemento()?
-										IndexedNucleotideSequenceFastaFileDataStore.create(parser,filter, recordFilter)
+										IndexedNucleotideSequenceFastaFileDataStore.create(parser,filter, recordFilter, invalidCharacterHandler)
 										:
 										DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter, invalidCharacterHandler);
 							break;
-				case ITERATION_ONLY: delegate= LargeNucleotideSequenceFastaFileDataStore.create(parser,filter, recordFilter, maxNumberOfRecords);
+				case ITERATION_ONLY: delegate= LargeNucleotideSequenceFastaFileDataStore.create(parser,filter, recordFilter, maxNumberOfRecords, invalidCharacterHandler);
 								break;
 				default:
 					throw new IllegalArgumentException("unknown provider hint : "+ providerHint);
@@ -187,7 +187,17 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 		super.filter(filter);
 		return this;
 	}
-
+	/**
+	 * Set the {@link org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler} to use
+	 * when parsing sequences for this Datastore.  If set to {@code null}
+	 * then the default handler is used.
+	 * @param invalidCharacterHandler the handler to use; if set to {@code null}
+	 * then the default handler is used.
+	 * 
+	 * @return this
+	 * 
+	 * @since 6.0
+	 */
 	public NucleotideFastaFileDataStoreBuilder invalidCharacterHandler(Nucleotide.InvalidCharacterHandler invalidCharacterHandler) {
 		this.invalidCharacterHandler = invalidCharacterHandler==null? Nucleotide.defaultInvalidCharacterHandler(): invalidCharacterHandler;
 		return this;

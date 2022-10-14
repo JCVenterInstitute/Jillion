@@ -183,11 +183,13 @@ public enum Frame{
     }
     public Iterator<Set<Triplet>> asTriplets(VariantNucleotideSequence sequence, boolean ignoreGaps, Integer limit, Consumer<Nucleotide> consumer){
     	Iterator<List<Nucleotide>> iter = handleFrame(sequence, this, limit, consumer);
+    	boolean isRna = sequence.isRna();
+    	
         return new Iterator<Set<Triplet>>() {
 
             Set<Triplet> next;
             {
-                next = getNextVariantTriplet(iter, ignoreGaps, consumer);
+                next = getNextVariantTriplet(iter, ignoreGaps, consumer, isRna);
             }
             @Override
             public boolean hasNext() {
@@ -200,7 +202,7 @@ public enum Frame{
                     throw new NullPointerException();
                 }
                 Set<Triplet> ret = next;
-                next = getNextVariantTriplet(iter, ignoreGaps, consumer);
+                next = getNextVariantTriplet(iter, ignoreGaps, consumer, isRna);
                 return ret;
             }
         };
@@ -235,11 +237,11 @@ public enum Frame{
         	return Set.of(Triplet.create(first, second, third));
         }
     }
-    private Set<Triplet> getNextVariantTriplet(Iterator<List<Nucleotide>> iter, boolean ignoreGaps, Consumer<Nucleotide> consumer) {
+    private Set<Triplet> getNextVariantTriplet(Iterator<List<Nucleotide>> iter, boolean ignoreGaps, Consumer<Nucleotide> consumer, boolean isRna) {
 
-        List<Nucleotide> first = getNextVariantNucleotide(iter, ignoreGaps, consumer);
-        List<Nucleotide> second = getNextVariantNucleotide(iter, ignoreGaps, consumer);
-        List<Nucleotide> third = getNextVariantNucleotide(iter, ignoreGaps, consumer);
+        List<Nucleotide> first = getNextVariantNucleotide(iter, ignoreGaps, consumer, isRna);
+        List<Nucleotide> second = getNextVariantNucleotide(iter, ignoreGaps, consumer, isRna);
+        List<Nucleotide> third = getNextVariantNucleotide(iter, ignoreGaps, consumer, isRna);
         if (first == null || second == null || third == null) {
             // no more bases
             return null;
@@ -257,7 +259,7 @@ public enum Frame{
     	return triplets;
        
     }
-    private List<Nucleotide> getNextVariantNucleotide(Iterator<List<Nucleotide>> iter, boolean ignoreGaps, Consumer<Nucleotide> consumer) {
+    private List<Nucleotide> getNextVariantNucleotide(Iterator<List<Nucleotide>> iter, boolean ignoreGaps, Consumer<Nucleotide> consumer, boolean isRna) {
         if (!iter.hasNext()) {
             return null;
         }
@@ -273,6 +275,9 @@ public enum Frame{
         			consumer.accept(n.get(0));
         		}
         	}
+        }
+        if(isRna) {
+        	return n.stream().map(nuc-> nuc==Nucleotide.Uracil? Nucleotide.Thymine: nuc).collect(Collectors.toList());
         }
         return n;
     }
@@ -292,6 +297,9 @@ public enum Frame{
         			consumer.accept(n);
         		}
         	}
+        }
+        if(n==Nucleotide.Uracil) {
+        	return Nucleotide.Thymine;
         }
         return n;
     }

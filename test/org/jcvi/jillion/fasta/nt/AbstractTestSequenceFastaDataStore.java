@@ -28,14 +28,19 @@ package org.jcvi.jillion.fasta.nt;
 import static org.junit.Assert.*;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Iterator;
 
+import org.hamcrest.Matchers;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler;
+import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandlers;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
@@ -44,6 +49,7 @@ import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.rules.TemporaryFolder;
 public abstract class AbstractTestSequenceFastaDataStore {
 
     protected static final String FASTA_FILE_PATH = "files/19150.fasta";
@@ -157,6 +163,8 @@ public abstract class AbstractTestSequenceFastaDataStore {
     
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
+    @Rule
+    public TemporaryFolder tmpDir = new TemporaryFolder();
     
     ResourceHelper RESOURCES = new ResourceHelper(AbstractTestSequenceFastaDataStore.class);
     
@@ -226,8 +234,11 @@ public abstract class AbstractTestSequenceFastaDataStore {
         iter.close();
         assertFalse(iter.hasNext());
     }
-    protected abstract NucleotideFastaDataStore parseFile(File file) throws IOException;
+    protected abstract NucleotideFastaDataStore parseFile(File file, InvalidCharacterHandler handler) throws IOException;
     
+    private NucleotideFastaDataStore parseFile(File f) throws IOException {
+    	return parseFile(f, null);
+    }
    
     @Test
     public void getSequenceById() throws IOException, DataStoreException{
@@ -307,6 +318,47 @@ public abstract class AbstractTestSequenceFastaDataStore {
     	expectedException.expectMessage("beyond sequence length");
     	sut.getSubSequence(contig_1.getId(), 1_000_000);
     	
+    }
+    
+    @Test
+    public void invalidSequenceWithDefaultHandler() throws IOException {
+    	File fasta = tmpDir.newFile("invalid.fasta");
+    	//can't use fasta writers because making invalid sequence
+    	try(PrintWriter writer = new PrintWriter(fasta)){
+    		writer.println(">foo");
+    		writer.println("ACGTZ");
+    	}
+    	expectedException.expect(IllegalArgumentException.class);
+    	expectedException.expectMessage("Z");
+    	//depending on implementation might throw in either creating datastore or getting()
+    	NucleotideFastaDataStore sut = parseFile(fasta);
+    	sut.get("foo");
+    	fail("should throw exception with invalid character and default handler");
+    	
+    }
+    @Test
+    public void invalidSequenceWithReplaceWithNHandler() throws IOException {
+    	File fasta = tmpDir.newFile("invalid.fasta");
+    	//can't use fasta writers because making invalid sequence
+    	try(PrintWriter writer = new PrintWriter(fasta)){
+    		writer.println(">foo");
+    		writer.println("ACGTZ");
+    	}
+    	//depending on implementation might throw in either creating datastore or getting()
+    	NucleotideFastaDataStore sut = parseFile(fasta, InvalidCharacterHandlers.REPLACE_WITH_N);
+    	assertEquals("ACGTN", sut.get("foo").getSequence().toString());  	
+    }
+    @Test
+    public void invalidSequenceWithIngoreHandler() throws IOException {
+    	File fasta = tmpDir.newFile("invalid.fasta");
+    	//can't use fasta writers because making invalid sequence
+    	try(PrintWriter writer = new PrintWriter(fasta)){
+    		writer.println(">foo");
+    		writer.println("ACGTZ");
+    	}
+    	//depending on implementation might throw in either creating datastore or getting()
+    	NucleotideFastaDataStore sut = parseFile(fasta, InvalidCharacterHandlers.IGNORE);
+    	assertEquals("ACGT", sut.get("foo").getSequence().toString());  	
     }
     
     

@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -93,6 +94,18 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 		return nucleotideSequence.getLength();
 	}
 	
+	
+	@Override
+	public boolean isDna() {
+		boolean isDna = nucleotideSequence.isDna();
+		if(isDna ) {
+			//check variants to see if any Uracil in there?
+			boolean hasRna = variants.values().stream().flatMap(v-> v.minorityAlleles()).anyMatch(a-> a.base == Nucleotide.Uracil);
+			return !hasRna;
+		}
+		return isDna;
+		
+	}
 	public VariantNucleotideSequence trim(Range trimRange) {
 		return new Builder(this).trim(trimRange).build();
 	}
@@ -910,17 +923,29 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 	public Builder newEmptyBuilder(int initialCapacity) {
 		return new Builder(initialCapacity);
 	}
+	public Map<Integer, Variant> getVariantsThatIntersectGappedRange(List<Range> gappedSequenceRanges) {
+		Map<Integer, Variant> ret= new LinkedHashMap<>();
+		for(Range r : gappedSequenceRanges) {
+			addAllIntersectingVariants(r, ret::put);
+		}
+		return ret;
+	}
 	public Map<Integer, Variant> getVariantsThatIntersectGappedRange(Range gappedSequenceRange) {
 		Map<Integer, Variant> ret= new LinkedHashMap<>();
+
+		addAllIntersectingVariants(gappedSequenceRange, ret::put);
+		return ret;
+		
+	}
+	
+	private void addAllIntersectingVariants(Range gappedSequenceRange, BiConsumer<Integer, Variant> consumer) {
 		gappedSequenceRange.forEachValue(gappedOffset ->{
 			int asInt = (int)gappedOffset;
 			if(variantOffsets.binarySearch(asInt) >=0) {
 				Integer boxed = Integer.valueOf(asInt);
-				ret.put(boxed, variants.get(boxed));
+				consumer.accept(boxed, variants.get(boxed));
 			}
 		});
-		return ret;
-		
 	}
 	
 	

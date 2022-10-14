@@ -113,6 +113,8 @@ to wrap a StreamingIterator into a DataStoreIterator
 
 30. ArrayUtil IntegerArrayList now has new method intIterator() 
     which returns an PrimitiveIterator.OfInt introduced in Java 8.
+    
+31.  TranslationTables now also translate sequences with Uracil.
 
 API BREAKING CHANGES
 --------------------

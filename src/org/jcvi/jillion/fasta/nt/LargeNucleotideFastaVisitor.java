@@ -2,6 +2,7 @@ package org.jcvi.jillion.fasta.nt;
 
 import java.util.function.Predicate;
 
+import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
@@ -21,10 +22,12 @@ class LargeNucleotideFastaVisitor implements FastaVisitor{
 	
 	private final org.jcvi.jillion.core.util.streams.ThrowingBiConsumer<String, NucleotideFastaRecord, ? extends Throwable> consumer;
 	
-	public LargeNucleotideFastaVisitor( Predicate<String> idFilter, Predicate<NucleotideFastaRecord> recordFilter, org.jcvi.jillion.core.util.streams.ThrowingBiConsumer<String, NucleotideFastaRecord, ? extends Throwable> consumer) {
+	public LargeNucleotideFastaVisitor( Predicate<String> idFilter, Predicate<NucleotideFastaRecord> recordFilter, 
+			InvalidCharacterHandler invalidCharacterHandler,
+			org.jcvi.jillion.core.util.streams.ThrowingBiConsumer<String, NucleotideFastaRecord, ? extends Throwable> consumer) {
 		filter = idFilter;
 		this.consumer = consumer;
-		recordVisitor = new NucleotideFastaRecordVisitor(recordFilter);
+		recordVisitor = new NucleotideFastaRecordVisitor(recordFilter, invalidCharacterHandler);
 		
 	}
 	
@@ -52,15 +55,20 @@ class LargeNucleotideFastaVisitor implements FastaVisitor{
 	private class NucleotideFastaRecordVisitor implements FastaRecordVisitor{
 		private String currentId;
 		private String currentComment;
-		//since we are iterating only we probably don't care about compressing the data
-		//and initialize the size of the builder to a reasonable size for sequencing reads, it will grow if needed.
-		private NucleotideSequenceBuilder builder=  new NucleotideSequenceBuilder(2_000).turnOffDataCompression(true);
+		private final NucleotideSequenceBuilder builder;
 		
 		private final Predicate<NucleotideFastaRecord> recordFilter;
 		
 		
-		public NucleotideFastaRecordVisitor(Predicate<NucleotideFastaRecord> recordFilter){
+		public NucleotideFastaRecordVisitor(Predicate<NucleotideFastaRecord> recordFilter, InvalidCharacterHandler invalidCharacterHandler){
 		    this.recordFilter = recordFilter;
+		  //since we are iterating only we probably don't care about compressing the data
+			//and initialize the size of the builder to a reasonable size for sequencing reads, it will grow if needed.
+			
+		    builder=  new NucleotideSequenceBuilder(2_000)
+					.setInvalidCharacterHandler(invalidCharacterHandler)
+					.turnOffDataCompression(true);
+		    
 		}
 		public void prepareNewRecord(FastaVisitorCallback callback, String id, String optionalComment){
 			this.currentId = id;

@@ -31,6 +31,7 @@ import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
+import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaFileParser;
@@ -56,17 +57,19 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideFas
 	private final FastaParser parser;
 	private final Predicate<String> filter;
 	private final Predicate<NucleotideFastaRecord> recordFilter;
-	
+	private final InvalidCharacterHandler invalidCharacterHandler;
 	private final Map<String, FastaVisitorCallback.FastaVisitorMemento> mementos;
 	
 	private final File fastaFile;
 	
-	private IndexedNucleotideSequenceFastaFileDataStore(FastaParser parser, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter,  Map<String, FastaVisitorMemento> mementos) {
+	private IndexedNucleotideSequenceFastaFileDataStore(FastaParser parser, Predicate<String> filter,
+			Predicate<NucleotideFastaRecord> recordFilter, InvalidCharacterHandler invalidCharacterHandler,
+			Map<String, FastaVisitorMemento> mementos) {
 		this.parser = parser;
 		this.mementos = mementos;
 		this.filter = filter;
 		this.recordFilter = recordFilter;
-		
+		this.invalidCharacterHandler = invalidCharacterHandler;
 		File tmpFile = null;
                 if( parser instanceof FastaFileParser){
                     Optional<File> optFile =((FastaFileParser)parser).getFile();
@@ -101,7 +104,7 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideFas
 		if(!mementos.containsKey(id)){
 			return null;
 		}
-		SingleRecordVisitor visitor = new SingleRecordVisitor();
+		SingleRecordVisitor visitor = new SingleRecordVisitor(this.invalidCharacterHandler);
 		try {
 			parser.parse(visitor, mementos.get(id));
 			return visitor.fastaRecord;
@@ -211,11 +214,25 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideFas
 	 * @throws NullPointerException if the input fasta file is null.
 	 */
 	public static NucleotideFastaFileDataStore create(File fastaFile, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter) throws IOException{
-		BuilderVisitor builder = createBuilder(fastaFile, filter, recordFilter);
+		return create(fastaFile, filter, recordFilter, null);
+	}
+	/**
+	 * Creates a new {@link NucleotideFastaDataStore}
+	 * instance using the given fastaFile.
+	 * @param fastaFile the fasta to create an {@link NucleotideFastaDataStore}
+	 * for.
+	 * @param filter the {@link Predicate} to use to filter the records from the fasta file.
+	 * @return a new instance of {@link NucleotideFastaDataStore};
+	 * never null.
+	 * @throws IOException  if there is a problem parsing the fasta file.
+	 * @throws NullPointerException if the input fasta file is null.
+	 */
+	public static NucleotideFastaFileDataStore create(File fastaFile, Predicate<String> filter, 
+			Predicate<NucleotideFastaRecord> recordFilter, InvalidCharacterHandler invalidCharacterHandler) throws IOException{
+		BuilderVisitor builder = createBuilder(fastaFile, filter, recordFilter, invalidCharacterHandler);
 		builder.initialize();
 		return builder.build();
 	}
-	
 	/**
 	 * Creates a new {@link NucleotideFastaDataStore}
 	 * instance using the given fastaFile.
@@ -227,7 +244,7 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideFas
 	 * @throws NullPointerException if the parser is null.
 	 */
 	public static NucleotideFastaFileDataStore create(FastaParser parser) throws IOException{
-		return create(parser, DataStoreFilters.alwaysAccept(), null);
+		return create(parser, DataStoreFilters.alwaysAccept(), null, null);
 	}
 	/**
 	 * Creates a new {@link NucleotideFastaDataStore}
@@ -240,11 +257,14 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideFas
 	 * @throws IOException if there is a problem parsing the fasta data.
 	 * @throws NullPointerException if either parameter is null.
 	 */
-	public static NucleotideFastaFileDataStore create(FastaParser parser, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter) throws IOException{
-		BuilderVisitor builder = createBuilder(parser, filter, recordFilter);
+	public static NucleotideFastaFileDataStore create(FastaParser parser, Predicate<String> filter, 
+			Predicate<NucleotideFastaRecord> recordFilter,
+			InvalidCharacterHandler invalidCharacterHandler) throws IOException{
+		BuilderVisitor builder = createBuilder(parser, filter, recordFilter, invalidCharacterHandler);
 		builder.initialize();
 		return builder.build();
 	}
+	
 
 	/**
 	 * Creates a new {@link BuilderVisitor}
@@ -261,12 +281,13 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideFas
 	 * or there is a problem parsing the fasta file.
 	 * @throws NullPointerException if the input fasta file or filter are null.
 	 */
-	private static BuilderVisitor createBuilder(File fastaFile, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter) throws IOException{
+	private static BuilderVisitor createBuilder(File fastaFile, Predicate<String> filter, 
+			Predicate<NucleotideFastaRecord> recordFilter, InvalidCharacterHandler invalidCharacterHandler) throws IOException{
 		if(filter ==null){
 			throw new NullPointerException("filter can not be null");
 		}
 		
-		return new BuilderVisitor(fastaFile,filter, recordFilter);
+		return new BuilderVisitor(fastaFile,filter, recordFilter, invalidCharacterHandler);
 	}
 	/**
 	 * Creates a new {@link BuilderVisitor}
@@ -282,14 +303,16 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideFas
 	 * @throws IOException if the given fasta file does not exist.
 	 * @throws NullPointerException if the input fasta file or filter are null.
 	 */
-	private static BuilderVisitor createBuilder(FastaParser parser, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter) throws IOException{
+	private static BuilderVisitor createBuilder(FastaParser parser, Predicate<String> filter,
+			Predicate<NucleotideFastaRecord> recordFilter,
+			InvalidCharacterHandler invalidCharacterHandler) throws IOException{
 		if(filter ==null){
 			throw new NullPointerException("filter can not be null");
 		}
 		if(parser ==null){
 			throw new NullPointerException("parser can not be null");
 		}
-		return new BuilderVisitor(parser,filter, recordFilter);
+		return new BuilderVisitor(parser,filter, recordFilter, invalidCharacterHandler);
 	}
 	
 	
@@ -301,17 +324,21 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideFas
 		private final Predicate<String> filter;
 		private final Predicate<NucleotideFastaRecord> recordFilter;
 		private final FastaParser parser;
+		private final InvalidCharacterHandler invalidCharacterHandler;
 		
 		private final Map<String, FastaVisitorCallback.FastaVisitorMemento> mementos = new LinkedHashMap<String, FastaVisitorCallback.FastaVisitorMemento>();
 		
-		public BuilderVisitor(File fastaFile, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter) throws IOException {
-			this(FastaFileParser.create(fastaFile), filter, recordFilter);
+		public BuilderVisitor(File fastaFile, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter, InvalidCharacterHandler invalidCharacterHandler) throws IOException {
+			this(FastaFileParser.create(fastaFile), filter, recordFilter, invalidCharacterHandler);
 
 		}
 		
-		public BuilderVisitor(FastaParser parser, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter){
+		public BuilderVisitor(FastaParser parser, Predicate<String> filter, 
+				Predicate<NucleotideFastaRecord> recordFilter, 
+				InvalidCharacterHandler invalidCharacterHandler){
 			this.filter = filter;
 			this.parser =parser;
+			this.invalidCharacterHandler = invalidCharacterHandler;
 			this.recordFilter = recordFilter;
 		}
 
@@ -336,7 +363,7 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideFas
 			        return null;
 			    }
 			    //need to parse the whole record to see if we should filter
-			    return new AbstractNucleotideFastaRecordVisitor(id, optionalComment) {
+			    return new AbstractNucleotideFastaRecordVisitor(id, optionalComment, invalidCharacterHandler, true) {
                                 
                                 @Override
                                 protected void visitRecord(NucleotideFastaRecord fastaRecord) {
@@ -365,7 +392,7 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideFas
 
 		@Override
 		public NucleotideFastaFileDataStore build() {
-			return new IndexedNucleotideSequenceFastaFileDataStore(parser,filter,recordFilter, mementos);
+			return new IndexedNucleotideSequenceFastaFileDataStore(parser,filter,recordFilter, invalidCharacterHandler, mementos);
 		}
 	
 	}
@@ -374,6 +401,12 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideFas
 
 	private static class SingleRecordVisitor implements FastaVisitor{
 		private NucleotideFastaRecord fastaRecord=null;
+		private final InvalidCharacterHandler invalidCharacterHandler;
+		
+		private SingleRecordVisitor(InvalidCharacterHandler invalidCharacterHandler) {
+			this.invalidCharacterHandler = invalidCharacterHandler;
+		}
+
 		@Override
 		public FastaRecordVisitor visitDefline(final FastaVisitorCallback callback,
 				String id, String optionalComment) {
@@ -381,7 +414,7 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideFas
 				callback.haltParsing();
 				return null;
 			}
-			return new AbstractNucleotideFastaRecordVisitor(id, optionalComment) {
+			return new AbstractNucleotideFastaRecordVisitor(id, optionalComment, invalidCharacterHandler, false) {
 				
 				@Override
 				protected void visitRecord(NucleotideFastaRecord fastaRecord) {

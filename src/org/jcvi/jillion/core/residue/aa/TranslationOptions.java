@@ -9,10 +9,15 @@ import lombok.NonNull;
 @Data
 @Builder(toBuilder = true)
 public class TranslationOptions{
+	
+	public static TranslationOptions createDefaultOptions() {
+		return TranslationOptions.builder().build();
+	}
 	private boolean ignoreGaps;
 	@NonNull
 	private Frame frame= Frame.ONE;
 	private boolean substituteStart=true;
+	private boolean readThroughStops=true;
 	
 	private boolean mergeCodons = true;
 	private Integer numberOfBasesToTranslate=null;
@@ -22,6 +27,7 @@ public class TranslationOptions{
 						.frame(Frame.ONE)
 						.substituteStart(true)
 						.mergeCodons(true)
+						.readThroughStops(true)
 						;
 	}
 

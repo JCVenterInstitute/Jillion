@@ -28,6 +28,8 @@ package org.jcvi.jillion.fasta.nt;
 import java.io.File;
 import java.io.IOException;
 
+import org.jcvi.jillion.core.datastore.DataStoreFilters;
+import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler;
 import org.jcvi.jillion.fasta.nt.DefaultNucleotideFastaFileDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 
@@ -36,9 +38,9 @@ public class TestDefaultSequenceFastaDataStore extends AbstractTestSequenceFasta
     
 
     @Override
-    protected NucleotideFastaDataStore parseFile(File file)
+    protected NucleotideFastaDataStore parseFile(File file, InvalidCharacterHandler invalidCharacterHandler)
             throws IOException {
-        return DefaultNucleotideFastaFileDataStore.create(file);
+        return DefaultNucleotideFastaFileDataStore.create(file, DataStoreFilters.alwaysAccept(), null,invalidCharacterHandler);
     }
     
 }
