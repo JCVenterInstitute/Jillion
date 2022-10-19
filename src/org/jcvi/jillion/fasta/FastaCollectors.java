@@ -1,6 +1,7 @@
 package org.jcvi.jillion.fasta;
 
 import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.streams.ThrowingBiConsumer;
@@ -10,6 +11,7 @@ import org.jcvi.jillion.internal.core.util.Sneak;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.EnumSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.*;
 import java.util.function.BiConsumer;
@@ -34,7 +36,7 @@ import java.util.stream.Collectors;
  *  //write to the given file
  *  fastas.parallelStream().collect(FastaCollectors.writeAndClose(new ProteinFastaWriterBuilder(...).build());
  *
- *   //write records to given FastqWriter keeping writer open
+ *   //write records to given FastaWriter keeping writer open
  *   try(FastaWriter writer = ...){
  *      fastas.parallelStream().collect(FastaCollectors.write(writer));
  *
@@ -60,7 +62,8 @@ public class FastaCollectors {
      * @return a new Collector that will write the accumulated records to the fasta writer.
      */
     public static <R, S extends Sequence<R>, F extends FastaRecord<R,S>> Collector<F, ?, Void> writeAndClose(FastaWriter<R, S,F> writer){
-        return Collector.of(() -> writer,
+        Objects.requireNonNull(writer);
+    	return Collector.of(() -> writer,
                 (w, record) -> {
                     try{
                         w.write(record);
@@ -112,9 +115,13 @@ public class FastaCollectors {
      * @param writer the {@link FastaWriter} to write to.  Can not be {@code null}.
      * @param fastaFunction function to convert the elements of the Stream to FastaRecords to write.
      * @return a new Collector that will write the accumulated records to the fasta writer.
+     * @throws NullPointerException if any parameter is null.
      */
     public static <T, R, S extends Sequence<R>, F extends FastaRecord<R,S>, W extends FastaWriter<R, S,F>> Collector<T, ?, Void> write(W writer, Function<T, F> fastaFunction){
-        return Collector.of(() -> writer,
+        Objects.requireNonNull(writer);
+        Objects.requireNonNull(fastaFunction);
+        
+    	return Collector.of(() -> writer,
                 (w, t) -> {
                     try{
                         F fasta = fastaFunction.apply(t);
@@ -163,7 +170,7 @@ public class FastaCollectors {
         );
     }
 
-    public static <R, S extends Sequence<R>, F extends FastaRecord<R,S>, D extends FastaDataStore> Collector<F, ?, D> toDataStore(Class<D> datastoreClass){
+    public static <R, S extends Sequence<R>, F extends FastaRecord<R,S>, T extends DataStore<S>, D extends FastaDataStore<R,S,F, T>> Collector<F, ?, D> toDataStore(Class<D> datastoreClass){
         return Collectors.collectingAndThen(Collectors.toConcurrentMap(f -> f.getId(), Function.identity()),
                 map-> (D) DataStoreUtil.adapt(datastoreClass, map));
     }

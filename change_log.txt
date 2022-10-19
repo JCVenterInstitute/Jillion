@@ -116,6 +116,7 @@ to wrap a StreamingIterator into a DataStoreIterator
     
 31.  TranslationTables now also translate sequences with Uracil.
 
+
 API BREAKING CHANGES
 --------------------
 
@@ -129,7 +130,13 @@ API BREAKING CHANGES
 	
 4.  TranslationVisitor methods now have an additional long parameter to provide the start and 
     end coordinates (inclusive) of the nucleotides that contributed to the Codon.
-
+5.  FastaWriter#adapt() adapter parameter now takes a ThrowingTriConsumer that consumes 
+    the id, adapted sequence and comment instead of returning a new FastaRecord.  If the adapter
+    decides not to pass on the adapted sequence to the delegate, the implementation should not call
+    the consumer (previously it returned null).  this should improve performance and not require
+    the FastaRecord object to be created as sometimes some implementations don't have easily
+    accessible constructors.  This should also allow for chaining of consumers.
+    
 Bug Fixes
 ---------
 
@@ -137,6 +144,8 @@ Bug Fixes
    with compression turned off no longer throws a ClassCastException. 
    
 2. ProteinSequenceBuilder#copy() and #copy(Range) now correctly account for gaps and ambiguities.
+
+3. FastaWriters can now have their close() method called more than once without throwing an error.
 
 ================
 Jillion 5.3

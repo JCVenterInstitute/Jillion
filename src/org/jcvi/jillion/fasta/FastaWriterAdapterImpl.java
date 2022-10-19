@@ -24,16 +24,19 @@ import java.io.IOException;
 import java.util.Objects;
 
 import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.util.streams.ThrowingTriConsumer;
 
 class FastaWriterAdapterImpl<S, T extends Sequence<S>, F extends FastaRecord<S, T>> implements FastaWriter<S, T, F> {
 
     private final FastaWriter<S, T, F> delegate;
     private final FastaRecordAdapter<S, T, F> adapter;
+    private final ThrowingTriConsumer<String, T, String, IOException> consumer;
     
     public FastaWriterAdapterImpl(FastaWriter<S, T, F> delegate,
             FastaRecordAdapter<S, T, F> adapter) {
         this.delegate = Objects.requireNonNull(delegate);
         this.adapter = Objects.requireNonNull(adapter);
+        consumer = delegate::write;
     }
 
     @Override
@@ -44,10 +47,8 @@ class FastaWriterAdapterImpl<S, T extends Sequence<S>, F extends FastaRecord<S, 
     @Override
     public void write(String id, T sequence, String optionalComment)
             throws IOException {
-        F adapted = adapter.adapt(id, sequence, optionalComment);
-        if(adapted !=null){
-            delegate.write(adapted);
-        }
-    }
+        adapter.adapt(id, sequence, optionalComment, consumer);
+        
+     }
     
 }

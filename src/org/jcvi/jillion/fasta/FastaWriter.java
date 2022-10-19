@@ -24,11 +24,13 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.core.util.streams.ThrowingTriConsumer;
 
 /**
  * {@code FastaWriter} is a interface
@@ -72,13 +74,27 @@ public interface FastaWriter<S, T extends Sequence<S>, F extends FastaRecord<S, 
 	 */
 	void write(String id, T sequence, String optionalComment) throws IOException;
 	
-	
-	public static <S, T extends Sequence<S>, F extends FastaRecord<S, T>> FastaWriter<S,T,F> adapt(FastaWriter<S,T,F> delegate, FastaRecordAdapter<S,T,F> adapter){
-	    return new FastaWriterAdapterImpl<S,T,F>(delegate, adapter);
+	/**
+	 * Create a new FastaWriter that adapts a fasta record's data 
+	 * @param <S>
+	 * @param <T>
+	 * @param <F>
+	 * @param <W>
+	 * @param writerInterfaceClass
+	 * @param delegate
+	 * @param adapter
+	 * @return
+	 */
+	public static <S, T extends Sequence<S>, F extends FastaRecord<S, T>, W extends FastaWriter<S,T,F>> W adapt(Class<W> writerInterfaceClass,FastaWriter<S,T,F> delegate, FastaRecordAdapter<S,T,F> adapter){
+	    Objects.requireNonNull(writerInterfaceClass);
+	    Objects.requireNonNull(delegate);
+	    Objects.requireNonNull(adapter);
+	    
+		return FastaWriterProxy.createProxy(writerInterfaceClass, new FastaWriterAdapterImpl<S,T,F>(delegate, adapter));
 	}
 	@FunctionalInterface
 	public interface FastaRecordAdapter<S, T extends Sequence<S>, F extends FastaRecord<S, T>>{
-	    F adapt(String id, T sequence, String optionalComment);
+	    void adapt(String id, T sequence, String optionalComment, ThrowingTriConsumer<String, T, String, IOException> consumer) throws IOException;
 	}
 
 
@@ -107,11 +123,13 @@ public interface FastaWriter<S, T extends Sequence<S>, F extends FastaRecord<S, 
      *
      * @since 5.3.2
      */
+	@SuppressWarnings("unchecked")
 	default void write(F fasta, Range range) throws IOException{
 	    if(range ==null){
 	        write(fasta);
         }else{
-            write( fasta.getId(), (T) fasta.getSequence().trim(range), fasta.getComment());
+        	
+            write(fasta.getId(), (T) fasta.getSequence().trim(range), fasta.getComment());
         }
     }
 	/**
@@ -146,25 +164,22 @@ public interface FastaWriter<S, T extends Sequence<S>, F extends FastaRecord<S, 
 	 * @since 5.3.2
 	 * @implNote by default this just does
 	 * 	 * <pre>
-	 * 	     {@Code
-	 * try(StreamingIterator<DataStoreEntry<F>> iter = dataStore.entryIterator()) {
-	 *     while(iter.hasNext()) {
-	 * 	        DataStoreEntry<F> entry = iter.next();
-	 *          write(entry.getKey(), entry.getValue().getSequence());
-	 *
-	 *    }
-	 * }
+	 * 	     {@code
+	 * try(StreamingIterator<F> iter = dataStore.iterator()) {
+			while(iter.hasNext()) {
+				F fasta = iter.next();
+				write(fasta);
+			}
+		}
 	 * }
 	 * </pre>
 	 * implementations should override this to provide a more efficient version.
 	 */
 	default void write(FastaDataStore<S, T, F, ?> dataStore) throws IOException {
-		try(StreamingIterator<DataStoreEntry<F>> iter = dataStore.entryIterator()) {
+		try(StreamingIterator<F> iter = dataStore.iterator()) {
 			while(iter.hasNext()) {
-				DataStoreEntry<F> entry = iter.next();
-
-				write(entry.getKey(), entry.getValue().getSequence());
-
+				F fasta = iter.next();
+				write(fasta);
 			}
 		}
 	}

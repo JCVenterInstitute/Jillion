@@ -49,6 +49,7 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 	private final int numberOfResiduesPerLine;
 	private final boolean hasSymbolSeparator;
 	private final String eol;
+	private boolean closed=false;
 	/**
 	 * Lock object used to synchronize the recordBuffer.
 	 * This is a performance improvement to re-use the same
@@ -86,8 +87,11 @@ public  abstract class AbstractFastaRecordWriter<S, T extends Sequence<S>, F ext
 		//OutputStream is buffering we need to explicitly
 		//call flush
 		synchronized (lock) {
-			writer.flush();
-			writer.close();
+			if(!closed) {
+				writer.flush();
+				writer.close();
+			}
+			closed=true;
 		}
 	}
 

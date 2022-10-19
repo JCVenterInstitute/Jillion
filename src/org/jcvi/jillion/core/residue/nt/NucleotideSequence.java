@@ -271,7 +271,15 @@ public interface NucleotideSequence extends INucleotideSequence<NucleotideSequen
                 .build();
     }
 
-   
+    /**
+     * Return a new NucleotideSequence that is the reverseComplement of 
+     * this sequence.
+     * @return a new NucleotideSequence; will never be null.
+     * @since 6.0
+     */
+    default NucleotideSequence reverseComplement() {
+    	return toBuilder().reverseComplement().build();
+    }
 
 
     @Override

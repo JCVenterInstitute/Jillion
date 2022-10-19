@@ -20,8 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.fasta.nt;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,14 +30,25 @@ import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.fasta.FastaCollectors;
+import org.jcvi.jillion.fasta.FastaWriter;
+import org.jcvi.jillion.fasta.FastaWriter.FastaRecordAdapter;
+import org.jcvi.jillion.testutils.NucleotideSequenceTestUtil;
 import org.junit.Test;
 public class TestNucleotideFastaRecordWriter {
 	private final NucleotideFastaRecord record1 = 
@@ -337,5 +347,166 @@ public class TestNucleotideFastaRecordWriter {
                 
                 
     	}
+	}
+	
+	@Test
+	public void writeCollection() throws IOException {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		try(NucleotideFastaWriter writer = new NucleotideFastaWriterBuilder(out).build()){
+			writer.write(List.of(record1, record2));
+		}
+		//verify
+        try(NucleotideFastaDataStore datastore = new NucleotideFastaFileDataStoreBuilder(new ByteArrayInputStream(out.toByteArray()))
+                .build();
+                ){
+            assertEquals(record1, datastore.get(record1.getId()));
+            assertEquals(record2, datastore.get(record2.getId()));
+        }
+	}
+	@Test
+	public void writeDataStore() throws IOException {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		try(NucleotideFastaWriter writer = new NucleotideFastaWriterBuilder(out).build()){
+			writer.write(List.of(record1, record2)
+								.stream()
+								.collect(FastaCollectors.toDataStore(NucleotideFastaDataStore.class)));
+		}
+		//verify
+        try(NucleotideFastaDataStore datastore = new NucleotideFastaFileDataStoreBuilder(new ByteArrayInputStream(out.toByteArray()))
+                .build();
+                ){
+            assertEquals(record1, datastore.get(record1.getId()));
+            assertEquals(record2, datastore.get(record2.getId()));
+        }
+	}
+	@Test
+	public void writeMapOfSequences() throws IOException {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		try(NucleotideFastaWriter writer = new NucleotideFastaWriterBuilder(out).build()){
+			writer.write(Map.of(record1.getId(), record1.getSequence(), record2.getId(), record2.getSequence()));
+		}
+		//verify
+        try(NucleotideFastaDataStore datastore = new NucleotideFastaFileDataStoreBuilder(new ByteArrayInputStream(out.toByteArray()))
+                .build();
+                ){
+            assertEquals(record1.getSequence(), datastore.get(record1.getId()).getSequence());
+            assertEquals(record2.getSequence(), datastore.get(record2.getId()).getSequence());
+        }
+	}
+	@Test
+	public void writeLargeMapOfSequences() throws IOException {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		Map<String, NucleotideSequence> map = createRandomMap(1_000);
+		
+		try(NucleotideFastaWriter writer = new NucleotideFastaWriterBuilder(out).build()){
+			writer.write(map);
+		}
+		//verify
+        try(NucleotideFastaDataStore datastore = new NucleotideFastaFileDataStoreBuilder(new ByteArrayInputStream(out.toByteArray()))
+                .build();
+        	StreamingIterator<NucleotideFastaRecord> iter = datastore.iterator();	
+                ){
+        	assertEquals(map.size(), datastore.getNumberOfRecords());
+        	assertTrue(iter.hasNext());
+        	while(iter.hasNext()) {
+        		NucleotideFastaRecord record = iter.next();
+        		assertEquals(map.get(record.getId()), record.getSequence());
+        	}
+        }
+	}
+	@Test
+	public void writeLargeListOfSequences() throws IOException {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		Map<String, NucleotideSequence> map = createRandomMap(1_000);
+		
+		try(NucleotideFastaWriter writer = new NucleotideFastaWriterBuilder(out).build()){
+			writer.write(map.entrySet().stream()
+										.map(e-> new NucleotideFastaRecordBuilder(e.getKey(), e.getValue()).build())
+										.collect(Collectors.toList()));
+		}
+		//verify
+        try(NucleotideFastaDataStore datastore = new NucleotideFastaFileDataStoreBuilder(new ByteArrayInputStream(out.toByteArray()))
+                .build();
+        	StreamingIterator<NucleotideFastaRecord> iter = datastore.iterator();	
+                ){
+        	assertEquals(map.size(), datastore.getNumberOfRecords());
+        	assertTrue(iter.hasNext());
+        	while(iter.hasNext()) {
+        		NucleotideFastaRecord record = iter.next();
+        		assertEquals(map.get(record.getId()), record.getSequence());
+        	}
+        }
+	}
+	
+	private Map<String, NucleotideSequence> createRandomMap(int size){
+		Map<String, NucleotideSequence> map = new LinkedHashMap<>();
+		for(int i=0; i< size; i++) {
+			map.put(Integer.toString(i), NucleotideSequenceTestUtil.createRandom(100));
+		}
+		return map;
+	}
+	
+	@Test
+	public void writeTrimmed() throws IOException {
+		Range range = Range.of(2,4);
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		try(NucleotideFastaWriter writer = new NucleotideFastaWriterBuilder(out).build()){
+			writer.write(record1, range);
+			writer.write(record2, range);
+		}
+		//verify
+        try(NucleotideFastaDataStore datastore = new NucleotideFastaFileDataStoreBuilder(new ByteArrayInputStream(out.toByteArray()))
+                .build();
+                ){
+            assertEquals(record1.getSequence().trim(range), datastore.get(record1.getId()).getSequence());
+            assertEquals(record2.getSequence().trim(range), datastore.get(record2.getId()).getSequence());
+        }
+	}
+	
+	@Test
+	public void writeAdapterTrimmed() throws IOException {
+		Range range = Range.of(2,4);
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		
+		FastaRecordAdapter<Nucleotide, NucleotideSequence, NucleotideFastaRecord> adapter = (id,seq, comment, consumer)-> {
+				NucleotideSequence trimmed = seq.trim(range);
+				if(!trimmed.isEmpty()) {
+					consumer.accept(id, trimmed, comment);
+				}
+		};
+		try(
+				NucleotideFastaWriter delegate = new NucleotideFastaWriterBuilder(out).build();
+				NucleotideFastaWriter writer = FastaWriter.adapt(NucleotideFastaWriter.class, delegate, adapter);	
+			){
+			writer.write(record1);
+			writer.write(record2);
+		}
+		//verify
+        try(NucleotideFastaDataStore datastore = new NucleotideFastaFileDataStoreBuilder(new ByteArrayInputStream(out.toByteArray()))
+                .build();
+                ){
+            assertEquals(record1.getSequence().trim(range), datastore.get(record1.getId()).getSequence());
+            assertEquals(record2.getSequence().trim(range), datastore.get(record2.getId()).getSequence());
+        }
+	}
+	
+	@Test
+	public void closeTwiceIsOK() throws IOException {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		try(
+				NucleotideFastaWriter writer = new NucleotideFastaWriterBuilder(out).build();
+			
+			){
+			writer.write(record1);
+			writer.write(record2);
+			writer.close();
+		}
+		//verify
+        try(NucleotideFastaDataStore datastore = new NucleotideFastaFileDataStoreBuilder(new ByteArrayInputStream(out.toByteArray()))
+                .build();
+                ){
+            assertEquals(record1.getSequence(), datastore.get(record1.getId()).getSequence());
+            assertEquals(record2.getSequence(), datastore.get(record2.getId()).getSequence());
+        }
 	}
 }
