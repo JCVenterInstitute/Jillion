@@ -44,7 +44,7 @@ class SamRecordImpl implements SamRecord {
 	private final SamHeader header;
 	private final String queryName, referenceName, nextReferenceName;
 	private final SamRecordFlags flags;
-	private final int startPosition, nextOffset;
+	private final int startPosition, nextPosition;
 	private final byte mappingQuality;
 	private final Cigar cigar;
 	private final NucleotideSequence sequence;
@@ -62,7 +62,7 @@ class SamRecordImpl implements SamRecord {
 		this.mappingQuality = builder.mappingQuality;
 		this.cigar = builder.cigar;
 		
-		this.nextOffset = builder.nextPosition;
+		this.nextPosition = builder.nextPosition;
 		this.observedTemplateLength = builder.observedTemplateLength;
 		this.sequence = builder.sequence;
 		this.qualities = builder.qualities;
@@ -76,7 +76,28 @@ class SamRecordImpl implements SamRecord {
 			this.nextReferenceName = builder.nextReferenceName;
 		}
 	}
-	
+	@Override
+	public SamRecordBuilder toBuilder() {
+		SamRecordBuilder builder = new SamRecordBuilder(header);
+		
+		builder.setQueryName(queryName);
+		builder.setFlags(this.flags.asInt());
+		builder.setReferenceName(referenceName);
+		
+		builder.setStartPosition(startPosition);
+		builder.setMappingQuality(mappingQuality);
+		builder.setCigar(cigar);
+		
+		builder.setNextPosition(nextPosition);
+		builder.setObservedTemplateLength(observedTemplateLength);
+		builder.setSequence(sequence);
+		builder.setQualities(qualities);
+		builder._addAllAttributes(attributes);
+		if(nextReferenceName !=null) {
+			builder.setNextReferenceName(nextReferenceName);
+		}
+		return builder;
+	}
 	@Override
 	public boolean isPrimary(){
 		return 
@@ -128,8 +149,8 @@ class SamRecordImpl implements SamRecord {
 	}
 
 	@Override
-	public int getNextOffset() {
-		return nextOffset;
+	public int getNextPosition() {
+		return nextPosition;
 	}
 
 	@Override
@@ -200,7 +221,7 @@ class SamRecordImpl implements SamRecord {
 		result = prime * result + ((cigar == null) ? 0 : cigar.hashCode());
 		result = prime * result + ((flags == null) ? 0 : flags.hashCode());
 		result = prime * result + mappingQuality;
-		result = prime * result + nextOffset;
+		result = prime * result + nextPosition;
 		result = prime
 				* result
 				+ ((nextReferenceName == null) ? 0 : nextReferenceName
@@ -253,7 +274,7 @@ class SamRecordImpl implements SamRecord {
 		if (mappingQuality != other.mappingQuality) {
 			return false;
 		}
-		if (nextOffset != other.nextOffset) {
+		if (nextPosition != other.nextPosition) {
 			return false;
 		}
 		if (nextReferenceName == null) {
@@ -306,7 +327,7 @@ class SamRecordImpl implements SamRecord {
 		return "SamRecord [queryName=" + queryName + ", referenceName="
 				+ referenceName + ", nextReferenceName=" + nextReferenceName
 				+ ", flags=" + flags + ", startPosition=" + startPosition
-				+ ", nextOffset=" + nextOffset + ", mappingQuality="
+				+ ", nextPosition=" + nextPosition + ", mappingQuality="
 				+ mappingQuality + ", cigar=" + cigar + ", sequence="
 				+ sequence + ", qualities=" + qualities
 				+ ", observedTemplateLength=" + observedTemplateLength

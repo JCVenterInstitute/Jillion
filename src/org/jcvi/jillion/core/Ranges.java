@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.internal.core.util.GrowableLongArray;
@@ -52,7 +53,7 @@ public final class Ranges {
      * @return a new list of merged Ranges.
      * @see #merge(Collection, int)
      */
-    public static List<Range> merge(Collection<Range> rangesToMerge){
+    public static List<Range> merge(Collection<? extends Rangeable> rangesToMerge){
         return merge(rangesToMerge,0);
     }
     /**
@@ -66,12 +67,15 @@ public final class Ranges {
      * @return a new list of merged Ranges.
      * @throws IllegalArgumentException if maxDistanceBetweenAdjacentRanges &lt; 0.
      */
-    public static List<Range> merge(Collection<Range> rangesToMerge, int maxDistanceBetweenAdjacentRanges){
+    public static List<Range> merge(Collection<? extends Rangeable> rangesToMerge, int maxDistanceBetweenAdjacentRanges){
         if(maxDistanceBetweenAdjacentRanges <0){
             throw new IllegalArgumentException("cluster distance can not be negative");
         }
-        List<Range> sortedCopy = new ArrayList<Range>(rangesToMerge);
-        Collections.sort(sortedCopy, Range.Comparators.ARRIVAL);
+        List<Range> sortedCopy = rangesToMerge.stream()
+        								.map(Rangeable::asRange)
+        								.sorted(Range.Comparators.ARRIVAL)
+        								.collect(Collectors.toList());
+       
 
         mergeAnyRangesThatCanBeCombined(sortedCopy, maxDistanceBetweenAdjacentRanges);
         return sortedCopy;
@@ -224,18 +228,18 @@ public final class Ranges {
      * @return a new list of merged Ranges.
      * @throws IllegalArgumentException if clusterDistance &lt; 0.
      */
-    public static List<Range> mergeIntoClusters(Collection<Range> rangesToMerge, int maxClusterDistance){
+    public static List<Range> mergeIntoClusters(Collection<? extends Rangeable> rangesToMerge, int maxClusterDistance){
         List<Range> tempRanges = merge(rangesToMerge);
         return privateMergeRangesIntoClusters(tempRanges,maxClusterDistance);
 
     }
-    private static List<Range> privateMergeRangesIntoClusters(List<Range> rangesToMerge, int maxClusterDistance){
+    private static List<Range> privateMergeRangesIntoClusters(List<? extends Rangeable> rangesToMerge, int maxClusterDistance){
         if(maxClusterDistance <0){
             throw new IllegalArgumentException("max cluster distance can not be negative");
         }
         List<Range> sortedSplitCopy = new ArrayList<Range>();
-        for(Range range : rangesToMerge){
-            sortedSplitCopy.addAll(range.split(maxClusterDistance));
+        for(Rangeable range : rangesToMerge){
+            sortedSplitCopy.addAll(range.asRange().split(maxClusterDistance));
         }        
         
         privateMergeAnyRangesThatCanBeClustered(sortedSplitCopy, maxClusterDistance);
@@ -432,14 +436,15 @@ public final class Ranges {
      * @param queryRanges
      * @return a List of Ranges that are the intersections of both lists.
      */
-	public static List<Range> union(List<Range> subjectRanges, List<Range> queryRanges) {
+	public static List<Range> union(List<? extends Rangeable> subjectRanges, List<? extends Rangeable> queryRanges) {
 		Objects.requireNonNull(subjectRanges);
 		Objects.requireNonNull(queryRanges);
 		
-		List<Range> intersections = new ArrayList<Range>();
-		for(Range s : subjectRanges) {
-			for(Range q : queryRanges) {
-				Range intersection = s.intersection(q);
+		List<Range> intersections = new ArrayList<>();
+		for(Rangeable s : subjectRanges) {
+			Range sRange = s.asRange();
+			for(Rangeable q : queryRanges) {
+				Range intersection = sRange.intersection(q.asRange());
 				if(!intersection.isEmpty()) {
 					intersections.add(intersection);
 				}
@@ -460,11 +465,11 @@ public final class Ranges {
 	 * @since 6.0
 	 * @throws NullPointerException if a or b are {@code null}.
 	 */
-	public static List<Range> complement(List<Range> a, List<Range> b){
+	public static List<Range> complement(List<? extends Rangeable> a, List<? extends Rangeable> b){
 		List<Range> union = Ranges.union(a, b);
 		List<Range> complement = new ArrayList<>();
-		for(Range s : a) {
-			complement.addAll( s.complement(union));
+		for(Rangeable s : a) {
+			complement.addAll( s.asRange().complement(union));
 		}
 		return Ranges.merge(complement);
 	}

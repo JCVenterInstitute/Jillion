@@ -123,7 +123,7 @@ class PresortedSamFileWriter implements SamWriter {
 		
 		appendMandatoryField(builder, record.getCigar());
 		appendMandatoryField(builder, record.getNextName());
-		appendMandatoryField(builder, record.getNextOffset());
+		appendMandatoryField(builder, record.getNextPosition());
 		appendMandatoryField(builder, record.getObservedTemplateLength());
 		appendMandatoryField(builder, record.getSequence());
 		//always encode qualities in SANGER ?

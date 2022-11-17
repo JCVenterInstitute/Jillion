@@ -122,8 +122,42 @@ public class SamRecordBuilder implements SamAttributed{
 		attributes.put(key, attribute);
 		return this;
 	}
-	
-	
+	/**
+	 * package private method to add all attributes from input map
+	 * to this builder, skipping validation.  This method should only be used
+	 * by other internal package methods, not intended for public use.
+	 * @param map the map of attributes to add; can not be null or contain nulls.
+	 * @return this
+	 * 
+	 * @since 6.0
+	 */
+	SamRecordBuilder _addAllAttributes(Map<SamAttributeKey, SamAttribute> map){
+		attributes.putAll(map);
+		return this;
+	}
+	/**
+	 * Set whether this Record should be considered mapped or not.
+	 * This method will set or unset the appropriate flags and start position so that
+	 * this built SamRecord#mapped() will return the passed in boolean.
+	 * @param mapped {@code true} to set as mapped; {@code false} otherwise.
+	 * @return this
+	 * 
+	 * @since 6.0
+	 */
+	public SamRecordBuilder setMapped(boolean mapped) {
+		//flags is immutable to add/remove returns new obj
+		if(mapped) {
+			
+			flags = flags.remove(SamRecordFlag.READ_UNMAPPED);
+		}else {
+			flags = flags.add(SamRecordFlag.READ_UNMAPPED)
+						.remove(SamRecordFlag.EACH_SEGMENT_PROPERLY_ALIGNED);
+					
+			setStartPosition(0);
+			setMappingQuality(0);
+		}
+		return this;
+	}
 	/**
 	 * Remove the attribute with the given
 	 * {@link SamAttributeKey}.
@@ -234,18 +268,41 @@ public class SamRecordBuilder implements SamAttributed{
 		return this;
 	}
 	/**
-         * Set the {@link SamRecordFlags} of this 
-         * record This method call is required.  This method call makes a defensive copy
-         * of the input Set.
-         * @param flags the {@link SamRecordFlags} relevant
-         * to this record; can not be null.
-         * @return this;
-         * @throws NullPointerException if flags is null.
-         */
-        public SamRecordBuilder setFlags(int flags) {
-            this.flags = SamRecordFlags.valueOf(flags);
-            return this;
-        }
+     * Set the {@link SamRecordFlags} of this 
+     * record This method call is required.  This method call makes a defensive copy
+     * of the input Set.
+     * @param flags the {@link SamRecordFlags} relevant
+     * to this record; can not be null.
+     * @return this;
+     * @throws NullPointerException if flags is null.
+     */
+    public SamRecordBuilder setFlags(int flags) {
+        this.flags = SamRecordFlags.valueOf(flags);
+        return this;
+    }
+    /**
+     * Set the {@link SamRecordFlags} of this 
+     * record This method call is required.  This method call makes a defensive copy
+     * of the input Set.
+     * @param flags the {@link SamRecordFlags} relevant
+     * to this record; can not be null.
+     * @return this;
+     * @throws NullPointerException if flags is null.
+     * @since 6.0
+     */
+    public SamRecordBuilder setFlags(SamRecordFlags flags) {
+		this.flags = flags;
+		return this;
+	}
+        
+    /**
+     * Get the  {@link SamRecordFlags} of this record.   
+     * @return the {@link SamRecordFlags}.
+     * @since 6.0
+     */
+	public SamRecordFlags getFlags() {
+		return flags;
+	}
 	/**
 	 * Set the {@link SamRecordFlags} of this 
 	 * record This method call is required.  This method call makes a defensive copy
@@ -395,8 +452,14 @@ public class SamRecordBuilder implements SamAttributed{
 		if(SamRecord.IDENTICAL.equals(nextReferenceName)){
 			nextReferenceName = referenceName;
 		}
+		if(startPosition==0) {
+			flags.add(SamRecordFlag.READ_UNMAPPED);
+		}
 		//TODO force unmapped read to have mapping quality of 0?
-		
+		if(flags.contains(SamRecordFlag.READ_UNMAPPED)) {
+//			startPosition=0;
+			mappingQuality=0;
+		}
 		return new SamRecordImpl(this);
 	}
 	private void assertSequenceLengthsCorrect() {
@@ -444,5 +507,6 @@ public class SamRecordBuilder implements SamAttributed{
 		}
 		return getAttribute(key.getKey());
 	}
+	
 	
 }

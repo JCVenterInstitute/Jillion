@@ -173,12 +173,10 @@ public final class IOUtil {
     	if(dir==null){
     		return;
     	}
-        if(dir.exists()){
-            return;
-        }
-        if(!dir.mkdirs()){
-            throw new IOException("unable to mkdirs for "+ dir);
-        }
+    	//use new Java 7 method
+        //which will throw a meaningful IOException if there are permission or file problems
+        //and checks if already exists and doesn't do anything if it already exists.
+        Files.createDirectories(dir.toPath());
     }
     /**
      * Make the given directory.  This method should be used

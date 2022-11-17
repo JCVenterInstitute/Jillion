@@ -271,6 +271,12 @@ public interface NucleotideSequence extends INucleotideSequence<NucleotideSequen
                 .build();
     }
 
+    static NucleotideSequence wrap(Nucleotide[] array) {
+    	return new SimpleNucleotideSequence(array);
+    }
+    static NucleotideSequence wrapACGTN(Nucleotide[] array) {
+    	return new ACGTNOnlySimpleNucleotideSequence(array);
+    }
     /**
      * Return a new NucleotideSequence that is the reverseComplement of 
      * this sequence.

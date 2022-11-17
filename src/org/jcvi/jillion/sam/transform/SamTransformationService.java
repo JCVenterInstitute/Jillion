@@ -176,14 +176,13 @@ public final class SamTransformationService implements AssemblyTransformationSer
 						quals = record.getQualities();
 						validRange = cigar.getValidRange();
 					}else{
-						rawSequence = new NucleotideSequenceBuilder(record.getSequence())
-											.reverseComplement()
-											.build();
+						rawSequence = record.getSequence().reverseComplement();
 						if(record.getQualities() ==null){
 							quals = null;
 						}else{
 							quals = new QualitySequenceBuilder(record.getQualities())
 											.reverse()
+											.turnOffDataCompression(true)
 											.build();
 						}
 						validRange = AssemblyUtil.reverseComplementValidRange(cigar.getValidRange(), rawLength);
@@ -245,19 +244,18 @@ public final class SamTransformationService implements AssemblyTransformationSer
 			throw new IllegalArgumentException("rawUngapped Sequence can not have gaps");
 		}
 		
-		NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder((int)rawUngappedSequence.getLength());
+		NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder((int)rawUngappedSequence.getLength())
+												.turnOffDataCompression(true);
 		int referenceOffset = gappedStartOffset;
 		
 		Iterator<Nucleotide> ungappedBasesIter;
 		if(dir == Direction.FORWARD){
 			ungappedBasesIter= rawUngappedSequence.iterator();
 		}else{
-			ungappedBasesIter= new NucleotideSequenceBuilder(rawUngappedSequence)
-									.reverseComplement()
-									.iterator();
+			ungappedBasesIter= rawUngappedSequence.reverseComplementIterator();
 		}
 		for(CigarElement e : cigar){
-			if(e.getOp() == CigarOperation.HARD_CLIP ||e.getOp() == CigarOperation.SOFT_CLIP ){
+			if(e.getOp().isClip() ){
 				//skip over clipped bases
 				for(int i=0; i<e.getLength(); i++){
 					ungappedBasesIter.next();

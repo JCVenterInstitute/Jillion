@@ -116,6 +116,17 @@ to wrap a StreamingIterator into a DataStoreIterator
     
 31.  TranslationTables now also translate sequences with Uracil.
 
+32. Cigar.Builder now has a trim(Range) method to add further trim the sequence with soft clips.
+
+33. Added Cigar#toBuilder() method.
+
+34. Ranges methods now take Collection<? extends Rangeable> instead of Collection<Range> for greater usage.
+
+35. Range#complement(List<Range>)  and Range#union(List<Range>) are now 
+    Range#complement(List<? extends Rangeable>) and Range#union(List<? extends Rangeable>) for same reason.
+    
+36. New method Cigar.Builder#trim(Range) will update a Cigar to clipping operations to
+    make the Cigar String a soft clip beyond the given valid range.
 
 API BREAKING CHANGES
 --------------------
@@ -137,6 +148,8 @@ API BREAKING CHANGES
     the FastaRecord object to be created as sometimes some implementations don't have easily
     accessible constructors.  This should also allow for chaining of consumers.
     
+6.  SamRecord#getNextOffset() is now called SamRecord#getNextPosition()
+    
 Bug Fixes
 ---------
 
@@ -146,6 +159,10 @@ Bug Fixes
 2. ProteinSequenceBuilder#copy() and #copy(Range) now correctly account for gaps and ambiguities.
 
 3. FastaWriters can now have their close() method called more than once without throwing an error.
+
+4. Bam parsing only selected regions no longer throws NullPointerException on unmapped reads.
+
+5. Bam Indexing improvements handling incorrectly formatted unaligned reads.
 
 ================
 Jillion 5.3

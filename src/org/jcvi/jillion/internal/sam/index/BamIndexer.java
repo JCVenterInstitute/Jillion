@@ -65,7 +65,7 @@ public class BamIndexer implements IndexerCallback{
 		if(record ==null){
 			return;
 		}
-		if(record.mapped()){
+		if(record.mapped() && record.getStartPosition()>0){
 			String ref = record.getReferenceName();
 			if(!ref.equals(currentRefName)){				
 				int refIndex = refSeqIndexMap.get(ref);

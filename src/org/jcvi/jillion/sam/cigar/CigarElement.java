@@ -49,7 +49,7 @@ public final class CigarElement {
 		}
 		//length shouldn't be 0
 		if(length<1){
-			throw new IllegalArgumentException("length can < 1");
+			throw new IllegalArgumentException("length can < 1 : " + length);
 		}
 		this.op = op;
 		this.length = length;
@@ -97,6 +97,10 @@ public final class CigarElement {
 			return false;
 		}
 		return true;
+	}
+	@Override
+	public String toString() {
+		return length + op.toString();
 	}
 	
 	

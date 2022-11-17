@@ -1722,7 +1722,8 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
                 return new SimpleNucleotideSequence(nucleotideSequenceBuilder.data.copy());
 
         	}
-        	if( forceBasicCodec) {
+        	//force Us to go through encoding
+        	if(numUs ==0 && forceBasicCodec) {
         		int numberOfGaps = gapOffsets.getCurrentLength();
                 
                 if(numberOfGaps==0) {

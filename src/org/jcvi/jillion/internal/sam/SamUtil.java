@@ -236,36 +236,50 @@ public final class SamUtil {
 	public static NucleotideSequence readBamEncodedSequence(InputStream in, int seqLength) throws IOException {
 		byte[] seqBytes = new byte[(seqLength+1)/2];
 		IOUtil.blockingRead(in, seqBytes);
-		NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(seqLength);
+		
 		//we turn off data compression since we
 		//usually stream through millions of these records and
 		//often throw the results away
 		//so we don't care if temporarily we take up more memory
-		builder.turnOffDataCompression(true);
+		
+		Nucleotide[] bases = new Nucleotide[seqLength];
+		int j=0;
+		boolean acgtn=true;
 		if(seqBytes.length >1){
-        		Nucleotide[] array = new Nucleotide[(seqBytes.length-1)*2];
+        		
         		//first fully populate all but last byte
-        		for(int i=0, j=0; i<seqBytes.length-1; i++){
+        		for(int i=0; i<seqBytes.length-1; i++){
         		    Nucleotide[] pair = PAIR_OF_BAM_ENCODED_BASES[seqBytes[i] & 0xFF];
-        		    array[j++] = pair[0];
-        		    array[j++] = pair[1];
-                   
+        		    bases[j++] = pair[0];
+        		    bases[j++] = pair[1];
+                    if(acgtn) {
+                    	acgtn = pair[0].isACGTN() && pair[1].isACGTN();
+                    }
         		}
-        		builder.append(array);
 		}
 		byte lastByte = seqBytes[seqBytes.length-1];
 		//for last byte we should always include high nibble
-		builder.append(BAM_ENCODED_BASES[(lastByte>>4) & 0x0F]);
+		Nucleotide secondToLast = (BAM_ENCODED_BASES[(lastByte>>4) & 0x0F]);
+		bases[j++]=secondToLast;
+		if(acgtn) {
+			acgtn = secondToLast.isACGTN();
+		}
 		//only include lower nibble if we are even
 		if(seqLength %2 ==0){
-			builder.append(BAM_ENCODED_BASES[lastByte & 0x0F]);
+			Nucleotide last = (BAM_ENCODED_BASES[lastByte & 0x0F]);
+			bases[j++]=last;
+			if(acgtn) {
+				acgtn = last.isACGTN();
+			}
 		}
 		//TODO '=' char not supported yet
 		//which is used to mean "same as reference"
 		//we would need to link to the reference seq
 		//to get those.
-		
-		return builder.build();
+		if(acgtn) {
+			return NucleotideSequence.wrapACGTN(bases);
+		}
+		return NucleotideSequence.wrap(bases);
 	}
 	
 	/**
@@ -471,7 +485,7 @@ public final class SamUtil {
 		buf.putInt(startOffset);
 		long bin;
 		final Cigar cigar;
-		if(record.mapped()){
+		if(record.mapped() && startOffset>=0){
 			cigar = record.getCigar();
 			//binMapNameLength =computeBinFor(startOffset, startOffset + cigar.getPaddedReadLength(ClipType.SOFT_CLIPPED) -1);
 			int refAlignLength = cigar.getNumberOfReferenceBasesAligned();
@@ -501,7 +515,7 @@ public final class SamUtil {
 		
 		buf.putInt(seqLength);
 		buf.putInt(nextNameIndex);
-		buf.putInt(record.getNextOffset() -1);
+		buf.putInt(record.getNextPosition() -1);
 		buf.putInt(record.getObservedTemplateLength());
 		buf.put(writeNullTerminatedStringAsBytes(record.getQueryName()));
 		for(CigarElement cigarElement : cigar){

@@ -98,8 +98,12 @@ public interface SamRecord extends SamAttributed {
 	SamRecordFlags getFlags();
 
 	int getStartPosition();
-
-	int getNextOffset();
+	/**
+	 * This is the start Position of this reads MATE; or {@code 0}
+	 * if there is no mate or it did not map.
+	 * @return
+	 */
+	int getNextPosition();
 
 	byte getMappingQuality();
 
@@ -148,5 +152,19 @@ public interface SamRecord extends SamAttributed {
 	 * or {@code null} if this record didn't map.
 	 */
 	Range getAlignmentRange();
-
+	/**
+	 * Create a new {@link SamRecordBuilder}
+	 * using the current values of this record.
+	 * @return a new SamRecordBuilder
+	 * @since 6.0
+	 */
+	SamRecordBuilder toBuilder();
+	/**
+	 * Does this read have a mate pair.
+	 * @return
+	 * @since 6.0
+	 */
+	default boolean hasMatePair() {
+		return getFlags().contains(SamRecordFlag.HAS_MATE_PAIR);
+	}
 }

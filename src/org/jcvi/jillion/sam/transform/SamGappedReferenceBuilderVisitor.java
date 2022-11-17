@@ -106,6 +106,9 @@ public final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 			int offset = record.getStartPosition() - 1;
 			int currentOffset = offset;
 			Cigar cigar = record.getCigar();
+			if(cigar==null) {
+				System.out.println("here");
+			}
 			Iterator<CigarElement> iter =cigar.getElementIterator();
 			while(iter.hasNext()){
 				CigarElement element = iter.next();

@@ -944,7 +944,7 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
      * if this Range is entirely covered by others.
      * @throws NullPointerException if others is null.
      */
-    public List<Range> complement(Collection<Range> others){
+    public List<Range> complement(Collection<? extends Rangeable> others){
     	//we can treat this operation 
     	//like genomic concept of introns and exons
     	//if we treat "this" as the complete genome size

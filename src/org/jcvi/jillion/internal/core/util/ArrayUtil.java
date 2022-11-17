@@ -197,6 +197,19 @@ public final class ArrayUtil {
 		}
 		
 	}
-	
+	/**
+	 * In-place reverse the given array.
+	 * @param array
+	 * @since 6.0
+	 */
+	public static void reverse(Object[] array) {
+		int mid = array.length/2;
+		for(int i = 0, j=array.length-1; i < mid; i++, j--){
+		    Object tmp = array[i];
+		    array[i] = array[j];
+		    array[j] = tmp;
+		}
+		
+	}
 	
 }

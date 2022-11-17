@@ -179,4 +179,137 @@ public class TestCigar {
 		Arrays.fill(longSeq, 'A');
 		cigar.toGappedTrimmedSequence(new NucleotideSequenceBuilder(longSeq).build());
 	}
+	
+	@Test
+	public void onlyClippedOnOneEnd(){
+		String cigarString = "8H3S40M";
+		Cigar cigar = Cigar.parse(cigarString);
+		Cigar expected = new Cigar.Builder(3)
+								.addElement(CigarOperation.HARD_CLIP, 8)
+								.addElement(CigarOperation.SOFT_CLIP, 3)
+								.addElement(CigarOperation.ALIGNMENT_MATCH, 40)
+								
+								.build();
+		
+		assertEquals(expected, cigar);
+		assertEquals(cigarString, cigar.toCigarString());
+	}
+	@Test
+	public void onlyClippedOnOneEndOtherEnd(){
+		String cigarString = "40M3S8H";
+		Cigar cigar = Cigar.parse(cigarString);
+		Cigar expected = new Cigar.Builder(3)
+								.addElement(CigarOperation.ALIGNMENT_MATCH, 40)
+								.addElement(CigarOperation.SOFT_CLIP, 3)
+								.addElement(CigarOperation.HARD_CLIP, 8)
+								
+								
+								.build();
+		
+		assertEquals(expected, cigar);
+		assertEquals(cigarString, cigar.toCigarString());
+	}
+	@Test
+	public void noClips(){
+		String cigarString = "40M";
+		Cigar cigar = Cigar.parse(cigarString);
+		Cigar expected = new Cigar.Builder(3)
+								.addElement(CigarOperation.ALIGNMENT_MATCH, 40)
+								
+								
+								
+								.build();
+		
+		assertEquals(expected, cigar);
+		assertEquals(cigarString, cigar.toCigarString());
+	}
+	
+	@Test
+	public void softClipNoHardOnlyOnOneEnd(){
+		String cigarString = "23S121M";
+		Cigar cigar = Cigar.parse(cigarString);
+		Cigar expected = new Cigar.Builder(3)
+								
+								.addElement(CigarOperation.SOFT_CLIP, 23)
+								.addElement(CigarOperation.ALIGNMENT_MATCH, 121)
+								
+								
+								.build();
+		
+		assertEquals(expected, cigar);
+		assertEquals(cigarString, cigar.toCigarString());
+	}
+	@Test
+	public void softClipNoHardOnlyOnOneEndOtherSide(){
+		String cigarString = "121M23S";
+		Cigar cigar = Cigar.parse(cigarString);
+		Cigar expected = new Cigar.Builder(3)
+								.addElement(CigarOperation.ALIGNMENT_MATCH, 121)
+								.addElement(CigarOperation.SOFT_CLIP, 23)
+								
+								
+								.build();
+		
+		assertEquals(expected, cigar);
+		assertEquals(cigarString, cigar.toCigarString());
+	}
+	
+	@Test
+	public void softClipOneSideHardClipOntheOther(){
+		String cigarString = "22S50M77H";
+		Cigar cigar = Cigar.parse(cigarString);
+		Cigar expected = new Cigar.Builder(3)
+								.addElement(CigarOperation.SOFT_CLIP, 22)
+								.addElement(CigarOperation.ALIGNMENT_MATCH, 50)
+								.addElement(CigarOperation.HARD_CLIP, 77)
+								
+								
+								.build();
+		
+		assertEquals(expected, cigar);
+		assertEquals(cigarString, cigar.toCigarString());
+	}
+	@Test
+	public void softClipOneSideHardClipOntheOtherReverseSide(){
+		String cigarString = "77H50M22S";
+		Cigar cigar = Cigar.parse(cigarString);
+		Cigar expected = new Cigar.Builder(3)
+								.addElement(CigarOperation.HARD_CLIP, 77)
+								.addElement(CigarOperation.ALIGNMENT_MATCH, 50)
+								
+								.addElement(CigarOperation.SOFT_CLIP, 22)
+								
+								.build();
+		
+		assertEquals(expected, cigar);
+		assertEquals(cigarString, cigar.toCigarString());
+	}
+	
+	@Test
+	public void hardClipSoftClipOneSideHardClipOntheOther(){
+		String cigarString = "20H3S50M75H";
+		Cigar cigar = Cigar.parse(cigarString);
+		Cigar expected = new Cigar.Builder(3)
+								.addElement(CigarOperation.HARD_CLIP, 20)
+								.addElement(CigarOperation.SOFT_CLIP, 3)
+								.addElement(CigarOperation.ALIGNMENT_MATCH, 50)
+								
+								.addElement(CigarOperation.HARD_CLIP, 75)
+								
+								.build();
+		
+		assertEquals(expected, cigar);
+		assertEquals(cigarString, cigar.toCigarString());
+	}
+	
+	@Test
+	public void toBuilderCopy() {
+		String cigarString = "20H3S50M75H";
+		
+		Cigar cigar = Cigar.parse(cigarString);
+		Cigar copy = cigar.toBuilder().build();
+		assertEquals(cigarString, copy.toCigarString());
+	}
+	
+	
 }

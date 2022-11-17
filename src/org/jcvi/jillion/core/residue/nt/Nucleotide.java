@@ -406,6 +406,14 @@ public enum Nucleotide implements Residue {
         return !isGap() && this !=Adenine  
          && this !=Cytosine && this != Guanine && this != Thymine && this != Uracil;
     }
+    /**
+     * Is this A, C, G, T or N ?
+     * @return {@code true} if A, C, G, T or N; {@code false} otherwise.
+     * @since 6.0
+     */
+    public boolean isACGTN() {
+    	return this==Adenine || this==Cytosine || this==Guanine || this==Thymine || this==Unknown;
+    }
     
     @Override
 	public byte getOrdinalAsByte() {

@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 
 import org.jcvi.jillion.align.pairwise.PairwiseSequenceAlignment;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequence;
@@ -36,6 +37,8 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.ArrayIterator;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
+import org.jcvi.jillion.core.util.iter.PeekableIterator;
+import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 /**
  * {@code Cigar} is an Object for a single
  * read alignment encoded in the CIGAR format.
@@ -238,7 +241,15 @@ public final class Cigar implements Iterable<CigarElement>{
 				throw new IllegalArgumentException("unknown clip type : " + type);
 		}
 	}
-
+	/**
+	 * Create a new Cigar Builder that contains this Cigar data.
+	 * @return a new Builder that contains a copy of this Cigar's data.
+	 * 
+	 * @since 6.0
+	 */
+	public Builder toBuilder() {
+		return new Builder(this);
+	}
 	private int getRawUnPaddedReadLength(){
 		int length=0;
 		for(CigarElement element : elements){
@@ -663,6 +674,129 @@ public final class Cigar implements Iterable<CigarElement>{
 			elements.add(e);
 			return this;
 		}
+		
+		/**
+		 * Update this Cigar String to soft clip beyond the given valid range.  Any Hard Clips,
+		 * if present will remain in place beyond the soft clips.
+		 * @param trimRange the range that is to be unclipped; can not be null.
+		 * if the trim range is empty then the entire cigar will only consist of clips.
+		 * @return this
+		 * @throws NullPointerException if trimRange is null.
+		 */
+		public Builder trim(Range trimRange) {
+			int validLength = (int) trimRange.getLength();
+			List<CigarElement> newElements = new ArrayList<>();
+			if(validLength ==0) {
+				//trim everything!
+				for(CigarElement e : elements) {
+					if(e.getOp().isClip() || e.getOp() == CigarOperation.SKIPPED) {
+						newElements.add(e);
+					}else if(e.getOp()==CigarOperation.PADDING || e.getOp()==CigarOperation.DELETION) {
+						//ignore
+					}else {
+						newElements.add(new CigarElement(CigarOperation.SOFT_CLIP, e.getLength()));
+					}
+				}
+				elements.clear();
+				elements.addAll(mergeClipsOps(newElements));
+				return this;
+			}
+			
+			int leftRemaining = (int) trimRange.getBegin();
+			Iterator<CigarElement> iter = elements.iterator();
+			while(iter.hasNext() && leftRemaining>0) {
+				CigarElement e = iter.next();
+				if(e.getOp().isClip()) {
+					newElements.add(e);
+					leftRemaining -= e.getLength();
+				}else if(e.getOp()== CigarOperation.DELETION || e.getOp()== CigarOperation.PADDING){
+					//deletions and padding with respect to the reference or other reads should be ignored if its not in valid range
+					continue;
+				}else {
+					//not a clip
+					if(leftRemaining < e.getLength()) {
+						//the amount left ends here split
+						newElements.add(new CigarElement(CigarOperation.SOFT_CLIP, leftRemaining));
+						int remainder = e.getLength() - leftRemaining;
+						if(remainder <=validLength) {
+							newElements.add(new CigarElement(e.getOp(), remainder));
+							validLength -= remainder;
+						}else {
+							newElements.add(new CigarElement(e.getOp(), validLength));
+							newElements.add(new CigarElement(CigarOperation.SOFT_CLIP, remainder -validLength));
+							validLength=0;
+						}
+						leftRemaining=0;
+					}else {
+						//trim off this element by replacing it with a soft clip
+						newElements.add(new CigarElement(CigarOperation.SOFT_CLIP, e.getLength()));
+						leftRemaining -= e.getLength();
+					}
+				}
+			}
+			while(iter.hasNext() && validLength>0) {
+				//right clip
+				CigarElement e = iter.next();
+				if(e.getOp()== CigarOperation.DELETION || e.getOp()== CigarOperation.PADDING){
+					//we are in the valid range and so keep them but these shouldn't count toward valid range?
+					newElements.add(e);
+					continue;
+				}
+				if(validLength <= e.getLength()) {
+					//last valid cigar element
+					newElements.add(new CigarElement(e.getOp(), validLength));
+					int trimLength = e.getLength() - validLength;
+					if(trimLength >0) {
+						newElements.add(new CigarElement(CigarOperation.SOFT_CLIP, trimLength));
+					}
+					validLength=0;
+				}else {
+					newElements.add(e);
+					validLength-=e.getLength();
+				}
+			}
+			//trim the rest
+			while(iter.hasNext()) {
+				CigarElement e = iter.next();
+				if(e.getOp()== CigarOperation.DELETION || e.getOp()== CigarOperation.PADDING){
+					//deletions and padding with respect to the reference or other reads should be ignored if its not in valid range
+					continue;
+				}
+				if(e.getOp().isClip()) {
+					//keep as is
+					newElements.add(e);
+				}else {
+					newElements.add(new CigarElement(CigarOperation.SOFT_CLIP, e.getLength()));
+				}
+			}
+			this.elements.clear();
+			this.elements.addAll(mergeClipsOps(newElements));
+			return this;
+		}
+		
+		private List<CigarElement> mergeClipsOps(List<CigarElement> list){
+			List<CigarElement> merged = new ArrayList<>();
+			Iterator<CigarElement> iter = list.iterator();
+			CigarOperation currentOperation = null;
+			int currentLength=0;
+			while(iter.hasNext()) {
+				CigarElement current = iter.next();
+				if(currentOperation !=current.getOp()) {
+					//new element type
+					if(currentLength>0) {
+						merged.add(new CigarElement(currentOperation, currentLength));
+					}
+					currentLength=current.getLength();
+					currentOperation = current.getOp();
+				}else {
+					currentLength +=current.getLength();
+				}
+			}
+			if(currentLength>0) {
+				merged.add(new CigarElement(currentOperation, currentLength));
+			}
+			return merged;
+		}
 		/**
 		 * Create a new {@link Cigar} object using
 		 * the current contents of the builder.
@@ -683,29 +817,94 @@ public final class Cigar implements Iterable<CigarElement>{
 		}
 		private void validate(CigarElement[] array) {
 			//only first and last ops may be hard_clips
+			GrowableIntArray softClipPoints = new GrowableIntArray(2);
+			GrowableIntArray hardClipPoints = new GrowableIntArray(2);
+			
 			for(int i=0; i<array.length; i++){
 				if(i !=0 && i!=array.length-1 && array[i].getOp() ==CigarOperation.HARD_CLIP){
 					throw new IllegalStateException("hard clips may only be first and/or last operations");
 				}
+				if(array[i].getOp() == CigarOperation.HARD_CLIP) {
+					hardClipPoints.append(i);
+				}
 				if(array[i].getOp() == CigarOperation.SOFT_CLIP){
-					if(i<array.length/2){
-						//check left
-						for(int j=0; j<i; j++){
-							if(array[j].getOp() != CigarOperation.HARD_CLIP){
-								throw new IllegalStateException("soft clips may only have hard clips between them and the end of the CIGAR string");
-							}
-						}
-					}else{
-						//check right
-						for(int j=i+1; j<array.length; j++){
-							if(array[j].getOp() != CigarOperation.HARD_CLIP){
-								throw new IllegalStateException("soft clips may only have hard clips between them and the end of the CIGAR string");
-							}
-						}
-					}
+					softClipPoints.append(i);
+					
 				}
 			}
-			
+			if(softClipPoints.getCurrentLength() >0) {
+				//check softclips only inside hard ones
+				if(softClipPoints.getCurrentLength() ==1) {
+					//only 1 soft clip point
+					//check left and right
+					int softClipOffset= softClipPoints.get(0);
+					if(hardClipPoints.getCurrentLength() ==0) {
+						//no hard clips then soft clip should be on extreme end
+						if(softClipOffset!=0 && softClipOffset != array.length -1) {
+							throw new IllegalStateException("soft clips may only have hard clips between them and the beginning of the CIGAR string : " +
+									Arrays.toString(array));
+						}
+					}else {
+						int softClipIndex = -hardClipPoints.binarySearch(softClipOffset) -1;
+						if(softClipIndex==0) {
+							//no hardclip on left
+							//might be soft clip, <match/insert etc> hardclip
+							boolean foundHardClip=false;
+							for(int i=softClipOffset+1; i<array.length; i++) {
+								if(foundHardClip && array[i].getOp() != CigarOperation.HARD_CLIP){
+									throw new IllegalStateException("soft clips may only have hard clips between them and the beginning of the CIGAR string : " +
+											Arrays.toString(array));
+								}
+								if(array[i].getOp() == CigarOperation.HARD_CLIP) {
+									foundHardClip=true;
+								}
+							}
+						}else if(softClipIndex== hardClipPoints.getCurrentLength()){
+							//no hard clips to the right
+							for(int i=0; i<softClipIndex; i++) {
+								if(array[i].getOp() != CigarOperation.HARD_CLIP){
+									throw new IllegalStateException("soft clips may only have hard clips between them and the end of the CIGAR string : " +
+											Arrays.toString(array));
+								}
+							}
+						}
+//						else {
+//							//softclip between 2 hardclips?  check nothing but hardclips everywhere else?
+//							if(array.length != hardClipPoints.getCurrentLength() +1) { // +1 is this soft clip
+//								throw new IllegalStateException("soft clips may only have hard clips between them and the end of the CIGAR string : " +
+//										Arrays.toString(array));
+//							}
+//						}
+					}
+				}else if(softClipPoints.getCurrentLength() ==2) {
+					//2 soft clips
+					//check left
+					for(int i=0; i< softClipPoints.get(0); i++) {
+						if(array[i].getOp() != CigarOperation.HARD_CLIP){
+							throw new IllegalStateException("soft clips may only have hard clips between them and the end of the CIGAR string : " +
+									Arrays.toString(array));
+						}
+					}
+					//check right
+					for(int i=softClipPoints.get(1)+1; i< array.length; i++) {
+						if(array[i].getOp() != CigarOperation.HARD_CLIP){
+							throw new IllegalStateException("soft clips may only have hard clips between them and the end of the CIGAR string : " +
+									Arrays.toString(array));
+						}
+					}
+					//check in between
+					for(int i= softClipPoints.get(0)+1; i< softClipPoints.get(1); i++) {
+						if(array[i].getOp() == CigarOperation.HARD_CLIP){
+							throw new IllegalStateException("soft clips may only have hard clips between them and the end of the CIGAR string : " +
+									Arrays.toString(array));
+						}
+					}
+				}else {
+					//is this possible?
+					throw new IllegalStateException("more than 2 soft clip points is not allowed CIGAR string : " +
+							Arrays.toString(array));
+				}
+			}
 		}
 		/**
 		 * Remove the {@link CigarOperation#HARD_CLIP} at the

@@ -70,11 +70,25 @@ public enum CigarOperation {
 	/**
 	 * Clipped sequences present in the sequence.
 	 */
-	SOFT_CLIP('S'),
+	SOFT_CLIP('S'){
+
+		@Override
+		public boolean isClip() {
+			return true;
+		}
+		
+	},
 	/**
 	 * Clipped sequences NOT present in the sequence.
 	 */
-	HARD_CLIP('H'),
+	HARD_CLIP('H'){
+
+		@Override
+		public boolean isClip() {
+			return true;
+		}
+		
+	},
 	/**
 	 * Silent deletion from padded reference. This is 
 	 * caused when the read AND the reference both have a 
@@ -185,5 +199,15 @@ public enum CigarOperation {
 			}
 		}
 		throw new IllegalArgumentException("invalid cigar opcode : " + op);
+	}
+	/**
+	 * Is a Clipping Operation.
+	 * @return {@code true} for {@link #HARD_CLIP} and {@link #SOFT_CLIP}
+	 * {@code false} for everything else.
+	 * 
+	 * @since 6.0
+	 */
+	public boolean isClip() {
+		return false;
 	}
 }

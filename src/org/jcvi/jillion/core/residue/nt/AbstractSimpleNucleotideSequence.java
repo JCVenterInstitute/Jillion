@@ -3,8 +3,10 @@ package org.jcvi.jillion.core.residue.nt;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.util.MemoizedSupplier;
+import org.jcvi.jillion.core.util.iter.ArrayIterator;
 import org.jcvi.jillion.internal.core.io.StreamUtil;
 import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
+import org.jcvi.jillion.internal.core.util.ArrayUtil;
 import org.jcvi.jillion.internal.core.util.GrowableByteArray;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
@@ -152,17 +154,20 @@ abstract class AbstractSimpleNucleotideSequence extends AbstractResidueSequence<
 
     @Override
     public NucleotideSequenceBuilder toBuilder() {
-        return new NucleotideSequenceBuilder((Iterable<Nucleotide>) this::iterator);
+        return new NucleotideSequenceBuilder((Iterable<Nucleotide>) this::iterator)
+        		.turnOffDataCompression(true);
     }
 
     @Override
     public NucleotideSequenceBuilder toBuilder(Range range) {
-        return new NucleotideSequenceBuilder(this, range);
+        return new NucleotideSequenceBuilder(this, range)
+        		.turnOffDataCompression(true);
     }
     
     @Override
     public NucleotideSequenceBuilder toBuilder(List<Range> ranges) {
-        return new NucleotideSequenceBuilder(this, ranges);
+        return new NucleotideSequenceBuilder(this, ranges)
+        		.turnOffDataCompression(true);
     }
 
     @Override
@@ -195,6 +200,13 @@ abstract class AbstractSimpleNucleotideSequence extends AbstractResidueSequence<
     }
 
     @Override
+	public Iterator<Nucleotide> reverseComplementIterator() {
+		Nucleotide[] copy = Arrays.stream(data).map(Nucleotide::complement).toArray(i-> new Nucleotide[i]);
+		ArrayUtil.reverse(copy);
+		
+		return new ArrayIterator<Nucleotide>(copy, false);
+	}
+	@Override
     public int hashCode() {
         return Objects.hash(data);
     }

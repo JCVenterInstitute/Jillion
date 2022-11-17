@@ -20,8 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.sam.cigar;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import org.junit.Test;
 public class TestCigarOperation {
@@ -63,5 +62,16 @@ public class TestCigarOperation {
 	@Test(expected = NullPointerException.class)
 	public void parseNullShouldThrowNPE(){
 		CigarOperation.parseOp(null);
+	}
+	
+	@Test
+	public void isClip() {
+		for(CigarOperation op : CigarOperation.values()) {
+			if(op == CigarOperation.HARD_CLIP || op==CigarOperation.SOFT_CLIP) {
+				assertTrue(op.isClip());
+			}else {
+				assertFalse(op.isClip());
+			}
+		}
 	}
 }

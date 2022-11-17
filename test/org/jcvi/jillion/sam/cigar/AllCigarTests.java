@@ -29,7 +29,8 @@ import org.junit.runners.Suite.SuiteClasses;
     {
     	TestCigarOperation.class,
     	TestCigarElement.class,
-    	TestCigar.class
+    	TestCigar.class,
+    	TestCigarTrim.class
     }
     )
 public class AllCigarTests {
