@@ -58,7 +58,7 @@ public abstract class AbtractVcfVisitor implements VcfVisitor {
 
 	}
 
-	protected abstract void visitHeader(VcfVisitorCallback callback, VcfHeader build);
+	protected abstract void visitHeader(VcfVisitorCallback callback, VcfHeader header);
 
 	
 

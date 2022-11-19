@@ -7,6 +7,7 @@ import java.util.Map;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.NonNull;
 import lombok.Singular;
 
 @Data
@@ -20,17 +21,17 @@ public class VcfHeader {
 	private String version;
 	//TODO can normal properties have duplicate keys?
 	@Singular
-	private Map<String, String> properties;
+	private Map<@NonNull String, @NonNull String> properties;
 	@Singular
-	private List<VcfFilter> filters;
+	private List<@NonNull VcfFilter> filters;
 	@Singular
-	private List<VcfFormat> formats;
+	private List<@NonNull VcfFormat> formats;
 	@Singular
-	private List<VcfInfo> infos;
+	private List<@NonNull VcfInfo> infos;
 	@Singular
-	private List<VcfContigInfo> contigInfos;
-	
-	private List<String> extraColumns;
+	private List<@NonNull VcfContigInfo> contigInfos;
+	@Singular
+	private List<@NonNull String> extraColumns;
 	
 	public static VcfHeaderBuilder builder() {
 		//this is a terrible way to do this but is the cleanest

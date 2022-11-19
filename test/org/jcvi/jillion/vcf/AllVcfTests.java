@@ -1,5 +1,6 @@
 package org.jcvi.jillion.vcf;
 
+import org.jcvi.jillion.vcf.dsl.AllVcfDSLTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -17,6 +18,8 @@ import org.junit.runners.Suite.SuiteClasses;
     	
     	VcfHeaderTest.class,
     	VcfFileParserTest.class,
+    	
+    	AllVcfDSLTests.class
     })
 public class AllVcfTests {
 

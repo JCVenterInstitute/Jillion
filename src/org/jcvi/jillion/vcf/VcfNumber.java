@@ -6,13 +6,24 @@ import java.util.Optional;
 public class VcfNumber{
 	private final VcfNumberType type;
 	private final Integer value;
-	
+	/**
+	 * The number of possible values varies, is unknown or unbounded.
+	 */
 	public final static VcfNumber DOT = new VcfNumber(VcfNumberType.DOT, null);
-	
+	/**
+	 * The field has one value for each possible genotype. The values must be in the same order.
+	 */
 	public final static VcfNumber G = new VcfNumber(VcfNumberType.G, null);
-	
+	/**
+	 * The field has one value per alternate allele. The values must be in the same order 
+	 * as listed in the ALT column.
+	 */
 	public final static VcfNumber A = new VcfNumber(VcfNumberType.A, null);
-	
+	/**
+	 * The field has one value for each possible allele, including the reference. 
+	 * The order of the values must be the reference allele first, then the alternate 
+	 * alleles as listed in the ALT column.
+	 */
 	public final static VcfNumber R = new VcfNumber(VcfNumberType.R, null);
 	
 	private final static VcfNumber[] CACHE = new VcfNumber[100];
