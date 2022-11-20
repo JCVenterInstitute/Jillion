@@ -11,10 +11,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 import org.jcvi.jillion.core.io.IOUtil;
@@ -28,7 +30,6 @@ import org.jcvi.jillion.vcf.VcfInfo;
 import org.jcvi.jillion.vcf.VcfInfo.VcfInfoBuilder;
 import org.jcvi.jillion.vcf.dsl.VcfDSL.VcfFile.GenotypeData.GenotypeDataBuilder;
 import org.jcvi.jillion.vcf.VcfNumber;
-import org.jcvi.jillion.vcf.VcfNumberType;
 import org.jcvi.jillion.vcf.VcfValueType;
 
 import lombok.Builder;
@@ -52,20 +53,42 @@ public class VcfDSL {
 	private Set<String> knownGenotypes = new HashSet<>();
 	
 	public class LineModeVcfDSL{
-		private final VcfHeader header;
-		private List<LineDSL> lines = new ArrayList<>();
+		private VcfHeader header;
+		private Set<String> knownGenotypeNames;
+		private boolean addedGenotypes=false;
+		private Map<String, Map<Integer, LineDSL>> linesByCoord = new TreeMap<>();
 		public LineModeVcfDSL(VcfHeader header) {
 			this.header = header;
+			knownGenotypeNames = new LinkedHashSet<>(header.getExtraColumns());
 		}
 
-		public LineDSL line(String chromId, int position, String id, String refBase, String altBase, int quality) {
-			LineDSL line= new LineDSL(this, header, chromId, position, id, refBase, altBase, quality);
-			lines.add(line);
-			return line;
+		public synchronized LineDSL line(String chromId, int position, String id, String refBase, String altBase, int quality) {
+			
+			
+			return linesByCoord.computeIfAbsent(chromId, k-> new TreeMap<>())
+						.computeIfAbsent(position, p-> new LineDSL(this, header, chromId, position, id, refBase, altBase, quality));
+			
 		}
 		
-		public VcfFile done() {
-			return new VcfFile(header, lines);
+		
+		
+		private synchronized void addGenotypeNameIfNeeded(String name) {
+			//just add them to our internal set
+			//we will add the new names to the header in #done() so we only modify header once.
+			if(knownGenotypeNames.add(name)) {
+				addedGenotypes=true;
+			}
+		}
+		
+		
+		public synchronized VcfFile done() {
+			if(addedGenotypes) {
+				header = header.toBuilder().extraColumns(knownGenotypeNames).build();
+			}
+			return new VcfFile(header, 
+					linesByCoord.values().stream()
+									.flatMap(m-> m.values().stream())
+									.collect(Collectors.toList()));
 		}
 	}
 	public enum WriteMode{
@@ -98,12 +121,10 @@ public class VcfDSL {
 		private void writeVcf(PrintWriter out) throws IOException{
 			try(VcfFileWriter writer = new VcfFileWriter(header, out)){
 				for(LineDSL line : lines) {
-					//public void writeData(String chromId, int position, String id, String refBase, String altBase,
-//					int quality, String filter, String info, String format, List<String> extraFields) throws IOException {
 					
 					//TODO refactor to support BCF
 					GenotypeData genotype = vcfEncodeGenotype(line);
-					writer.writeData(line.chromId, line.position, line.id, line.refBase, line.altBase, line.quality, 
+					writer.writeData(line.chromId, line.position, line.id, line.refBase, vcfEncodeAltBases(line.altBases), line.quality, 
 							vcfEncodeFilters(line), vcfEncodeInfo(line), genotype.formatField, genotype.extraLines);
 				}
 			}
@@ -121,6 +142,9 @@ public class VcfDSL {
 				return new GenotypeDataBuilder()
 								.extraLines(new ArrayList<>());
 			}
+		}
+		private String vcfEncodeAltBases(Set<String> bases) {
+			return bases.stream().collect(Collectors.joining(","));
 		}
 		private GenotypeData vcfEncodeGenotype(LineDSL line ) {
 			if(line.genotypes==null) {
@@ -373,12 +397,8 @@ not been applied, then this field must be set to the MISSING value.
 			this.formats = formats;
 		}
 		
-		public GenotypeDSL add(AbstractVcfFormatDSL<?> format) {
-			formats.add(Objects.requireNonNull(format));
-			return this;
-		}
-		
 		public GenotypeValuesDSL add(String name) {
+			parent.parent.addGenotypeNameIfNeeded(name);
 			GenotypeValuesDSL dsl = new GenotypeValuesDSL(this);
 			values.put(name, dsl);
 			return dsl;
@@ -483,11 +503,11 @@ not been applied, then this field must be set to the MISSING value.
 		private final LineModeVcfDSL parent;
 		private final VcfHeader header;
 		private final  int position;
-		private final String chromId, id, refBase, altBase;
+		private final String chromId, id, refBase;
+		private final Set<String> altBases =new LinkedHashSet<String>();
 		private final int quality;
 		private boolean passedFiltering;
 		private List<VcfFilter> filters= new ArrayList<>();
-		private List<String> extraFields = new ArrayList<>();
 		private List<InfoRecord<?>> infos = new ArrayList<>();
 		private GenotypeDSL genotypes;
 		
@@ -499,7 +519,7 @@ not been applied, then this field must be set to the MISSING value.
 			this.position = position;
 			this.id = id;
 			this.refBase = refBase;
-			this.altBase = altBase;
+			this.altBases.add(altBase);
 			this.quality = quality;
 		}
 		
@@ -519,6 +539,10 @@ not been applied, then this field must be set to the MISSING value.
 			return this;
 		}
 		
+		public synchronized LineDSL addAltBase(String altBase) {
+			altBases.add(altBase);
+			return this;
+		}
 		
 		public LineDSL info(StringVcfInfoDSL infoType, String value) {
 			infos.add(new SingleInfoRecord<String>(infoType, value));
@@ -579,11 +603,18 @@ not been applied, then this field must be set to the MISSING value.
 //			return this;
 //		}
 		
-		public GenotypeDSL genotypes(AbstractVcfFormatDSL<?>... formats) {
+		public synchronized GenotypeDSL genotypes(AbstractVcfFormatDSL<?>... formats) {
+//			if(genotypes !=null) {
+//				throw new IllegalStateException("can only call genotypes once!");
+//			}
+			List<AbstractVcfFormatDSL<?>> formatList = List.of(formats);
 			if(genotypes !=null) {
-				throw new IllegalStateException("can only call genotypes once!");
+				if(!genotypes.formats.equals(formatList)) {
+					throw new IllegalStateException("format list does not match ");
+				}
+				return genotypes;
 			}
-			GenotypeDSL genotypeDsl = new GenotypeDSL(this, List.of(formats));
+			GenotypeDSL genotypeDsl = new GenotypeDSL(this, formatList);
 			genotypes = genotypeDsl;
 			return genotypeDsl;
 		}
@@ -612,10 +643,6 @@ not been applied, then this field must be set to the MISSING value.
 //		}
 		public LineDSL info(FlagVcfInfoDSL infoType) {
 			infos.add(new FlagInfoRecord<Void>(infoType));
-			return this;
-		}
-		public LineDSL extraField(String field) {
-			extraFields.add(field);
 			return this;
 		}
 	}

@@ -11,7 +11,7 @@ import lombok.NonNull;
 import lombok.Singular;
 
 @Data
-@Builder
+@Builder(toBuilder = true)
 public class VcfHeader {
 	/*
 	 * Following BCF encoding the header is every line until the #CHROM
@@ -45,6 +45,7 @@ public class VcfHeader {
 					.infos(new ArrayList<>())
 					.contigInfos(new ArrayList<>())
 					.extraColumns(new ArrayList<>())
+					
 					;
 					
 	}
