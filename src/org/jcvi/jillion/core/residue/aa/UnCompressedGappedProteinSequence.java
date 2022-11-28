@@ -30,8 +30,8 @@ class UnCompressedGappedProteinSequence extends AbstractResidueSequence<AminoAci
 
     private final AminoAcid[] array;
 
-    private final Supplier<GrowableIntArray> gapSupplier;
-    private final Supplier<String> stringSupplier;
+    private transient final Supplier<GrowableIntArray> gapSupplier;
+    private transient final Supplier<String> stringSupplier;
 
     public UnCompressedGappedProteinSequence(AminoAcid[] array) {
         this.array = array;

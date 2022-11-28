@@ -20,6 +20,8 @@
  ******************************************************************************/
 package org.jcvi.jillion.sam.header;
 
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.Date;
 
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -383,9 +385,11 @@ public class SamReadGroupBuilder{
 		return new SamReadGroupImpl(this);
 	}
 	
-	private static final class SamReadGroupImpl implements SamReadGroup {
+	private static final class SamReadGroupImpl implements SamReadGroup, Serializable {
 
-	        final String id;
+	   
+		private static final long serialVersionUID = -4973755212115157529L;
+			final String id;
 	        final String sequencingCenter;
 	        final String description;
 	        final String library;
@@ -399,7 +403,7 @@ public class SamReadGroupBuilder{
 	        final Long datetime;
 	        
 	        final NucleotideSequence keySequence;
-	    final NucleotideSequence flowOrder;
+	        final NucleotideSequence flowOrder;
 	        
 	        SamReadGroupImpl(SamReadGroupBuilder builder){
 	                this.id = builder.id;
@@ -415,6 +419,64 @@ public class SamReadGroupBuilder{
 	                this.keySequence = builder.keySequence;
 	                this.flowOrder = builder.flowOrder;
 	                                
+	        }
+	        
+	        private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+	    		throw new java.io.InvalidObjectException("Proxy required");
+	    	}
+	        private Object writeReplace(){
+	        	return new SamReadGroupProxy(this);
+	        }
+	        
+	        private static class SamReadGroupProxy implements Serializable{
+	        	
+				private static final long serialVersionUID = -2503441907365241801L;
+				final String id;
+		        final String sequencingCenter;
+		        final String description;
+		        final String library;
+		        final String programs;
+		        final String platformUnit;
+		        final String sampleOrPoolName;
+		        
+		        private final Integer predictedMedianInsertSize;
+		        final PlatformTechnology platform;
+		        
+		        final Long datetime;
+		        
+		        final NucleotideSequence keySequence;
+		        final NucleotideSequence flowOrder;
+		        
+	        	public SamReadGroupProxy( SamReadGroupImpl impl) {
+	        		this.id = impl.id;
+	                this.sequencingCenter = impl.sequencingCenter;
+	                this.description = impl.description;
+	                this.library = impl.library;
+	                this.programs = impl.programs;
+	                this.platformUnit = impl.platformUnit;
+	                this.sampleOrPoolName = impl.sampleOrPoolName;
+	                this.predictedMedianInsertSize = impl.predictedMedianInsertSize;
+	                this.platform = impl.platform;
+	                this.datetime = impl.datetime;
+	                this.keySequence = impl.keySequence;
+	                this.flowOrder = impl.flowOrder;
+	        	}
+	        	
+	        	private Object readResolve(){
+	        		return new SamReadGroupBuilder(id)
+	        				.setSequencingCenter(sequencingCenter)
+	        				.setDescription(description)
+	        				.setLibrary(library)
+	        				.setPrograms(programs)
+	        				.setPlatform(platform)
+	        				.setPlatformUnit(platformUnit)
+	        				.setSampleOrPoolName(sampleOrPoolName)
+	        				.setPredictedInsertSize(predictedMedianInsertSize)
+	        				.setKeySequence(keySequence)
+	        				.setFlowOrder(flowOrder)
+	        				.setRunDate(datetime==null? null : new Date(datetime))
+	        				.build();
+	        	}
 	        }
 	        /**
 	         * The predicted median insert size.

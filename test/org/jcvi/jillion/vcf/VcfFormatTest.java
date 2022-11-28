@@ -79,7 +79,7 @@ public class VcfFormatTest {
 	}
 	
 	@Test
-	public void differentPropertiesNotEqual() {
+	public void differentPropertiesStillEqual() {
 		VcfFormat sut = VcfFormat.builder()
 							.id("id")
 							.number(VcfNumber.valueOf(1))
@@ -94,7 +94,7 @@ public class VcfFormatTest {
 				.parameter("diff key", "value")
 				.build();
 		
-		TestUtil.assertNotEqualAndHashcodeDifferent(sut, different);
+		TestUtil.assertEqualAndHashcodeSame(sut, different);
 		
 	}
 	

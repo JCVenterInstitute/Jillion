@@ -32,6 +32,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder.DecodingOptions;
 import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.jcvi.jillion.testutils.NucleotideSequenceTestUtil;
 import org.junit.Test;
@@ -1273,5 +1274,42 @@ public class TestNucleotideSequenceBuilder {
     public void setInvalidCharsToNullWillUseDefaultThrowIllegalArgException() {
     	NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder("ACGZ", Nucleotide.InvalidCharacterHandlers.IGNORE);
     	assertThrows(IllegalArgumentException.class, ()-> builder.setInvalidCharacterHandler(null).append("ACGZ"));
+    }
+    
+    @Test
+    public void setReplceAmbiguitiesToNsMethod() {
+    	NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder();
+    	builder.replaceAllAmbiguitiesWithNs(true);
+
+    	builder.append("VHDBWMRSYK-ACGTN");
+    	assertEquals(  "NNNNNNNNNN-ACGTN", builder.toString());
+    	assertEquals(  "NNNNNNNNNN-ACGTN", builder.build().toString());
+    }
+    @Test
+    public void setDecoderChangeAmbiguitiesToNs() {
+    	NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder();
+    	builder.setDecodingOptions(DecodingOptions.builder().replaceAllAmbiguitiesWithNs(true).build());
+
+    	builder.append("VHDBWMRSYK-ACGTN");
+    	assertEquals(  "NNNNNNNNNN-ACGTN", builder.toString());
+    	assertEquals(  "NNNNNNNNNN-ACGTN", builder.build().toString());
+    }
+    @Test
+    public void setDecoderChangeAmbiguitiesToNsMethodFalse() {
+    	NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder();
+    	builder.setDecodingOptions(DecodingOptions.builder().replaceAllAmbiguitiesWithNs(false).build());
+
+    	builder.append("VHDBWMRSYK-ACGTN");
+    	assertEquals(  "VHDBWMRSYK-ACGTN", builder.toString());
+    	assertEquals(  "VHDBWMRSYK-ACGTN", builder.build().toString());
+    }
+    @Test
+    public void setDecoderChangeAmbiguitiesToNsNullSetsDefault() {
+    	NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder();
+    	builder.setDecodingOptions(DecodingOptions.builder().replaceAllAmbiguitiesWithNs(true).build());
+    	builder.setDecodingOptions(null);
+    	builder.append("VHDBWMRSYK-ACGTN");
+    	assertEquals(  "VHDBWMRSYK-ACGTN", builder.toString());
+    	assertEquals(  "VHDBWMRSYK-ACGTN", builder.build().toString());
     }
 }

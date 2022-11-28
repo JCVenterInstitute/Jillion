@@ -21,10 +21,10 @@ abstract class AbstractSimpleNucleotideSequence extends AbstractResidueSequence<
 
     private final Nucleotide[] data;
 
-    private final Supplier<String> stringSupplier;
-    private final Supplier<List<Range>> nRangeSupplier;
-    private final Supplier<GrowableIntArray> gapSupplier;
-    private final Supplier<Boolean> isDnaSupplier, isRnaSupplier;
+    private transient final Supplier<String> stringSupplier;
+    private transient final Supplier<List<Range>> nRangeSupplier;
+    private transient final Supplier<GrowableIntArray> gapSupplier;
+    private transient final Supplier<Boolean> isDnaSupplier, isRnaSupplier;
 
     public AbstractSimpleNucleotideSequence(GrowableByteArray data) {
         this(data.stream().mapToObj(i -> Nucleotide.getByOrdinal(i)).toArray(i -> new Nucleotide[i]));

@@ -521,4 +521,30 @@ public final class GrowableCharArray implements Iterable<Character>{
             consumer.accept(i, data[i]);
         }
     }
+    
+    @Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof GrowableCharArray)){
+			return false;
+		}
+		GrowableCharArray bytes = (GrowableCharArray) o;
+		if(currentLength != bytes.currentLength){
+			return false;
+		}
+		for (int i=0; i<currentLength; i++) {
+			if (data[i] != bytes.data[i]) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = Objects.hash(currentLength);
+		result = 31 * result + Arrays.hashCode(data);
+		return result;
+	}
 }

@@ -27,6 +27,7 @@ import java.util.function.Predicate;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder.DecodingOptions;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.fasta.FastaFileParser;
 import org.jcvi.jillion.fasta.FastaParser;
@@ -45,26 +46,26 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 	private final FastaParser parser;
 	private final Predicate<String> filter;
 	private final Predicate<NucleotideFastaRecord> recordFilter;
-	private final InvalidCharacterHandler invalidCharacterHandler;
+	private final DecodingOptions decodingOptions;
 	
 	 public static LargeNucleotideSequenceFastaIterator createNewIteratorFor(File fastaFile, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter) throws IOException{
-		 return createNewIteratorFor(FastaFileParser.create(fastaFile), filter, recordFilter, Nucleotide.defaultInvalidCharacterHandler());				                               
+		 return createNewIteratorFor(FastaFileParser.create(fastaFile), filter, recordFilter, null);				                               
 	 }
-	 public static LargeNucleotideSequenceFastaIterator createNewIteratorFor(File fastaFile, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter, InvalidCharacterHandler invalidCharacterHandler) throws IOException{
-		 return createNewIteratorFor(FastaFileParser.create(fastaFile), filter, recordFilter, invalidCharacterHandler);				                               
+	 public static LargeNucleotideSequenceFastaIterator createNewIteratorFor(File fastaFile, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter, DecodingOptions decodingOptions) throws IOException{
+		 return createNewIteratorFor(FastaFileParser.create(fastaFile), filter, recordFilter, decodingOptions);				                               
 	 }
 	 public static LargeNucleotideSequenceFastaIterator createNewIteratorFor(FastaParser parser, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter) throws IOException{
-		 return createNewIteratorFor(parser, filter, recordFilter, Nucleotide.defaultInvalidCharacterHandler());
+		 return createNewIteratorFor(parser, filter, recordFilter, null);
 	 }
-	 public static LargeNucleotideSequenceFastaIterator createNewIteratorFor(FastaParser parser, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter, InvalidCharacterHandler invalidCharacterHandler) throws IOException{
-		 LargeNucleotideSequenceFastaIterator iter = new LargeNucleotideSequenceFastaIterator(parser, filter, recordFilter, invalidCharacterHandler);
+	 public static LargeNucleotideSequenceFastaIterator createNewIteratorFor(FastaParser parser, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter, DecodingOptions decodingOptions) throws IOException{
+		 LargeNucleotideSequenceFastaIterator iter = new LargeNucleotideSequenceFastaIterator(parser, filter, recordFilter, decodingOptions);
 				                                iter.start();			
 	    	
 	    	return iter;
 	 }
 	 
 	 private LargeNucleotideSequenceFastaIterator(FastaParser parser, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter,
-			 InvalidCharacterHandler invalidCharacterHandler){
+			 DecodingOptions decodingOptions){
 		 super(5_000); // fasta records shouldn't be that big...
 		 
 		 if(!parser.canParse()){
@@ -73,7 +74,7 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 		 this.parser = parser;
 		 this.filter = filter;
 		 this.recordFilter = recordFilter;
-		 this.invalidCharacterHandler = invalidCharacterHandler;
+		 this.decodingOptions = decodingOptions;
 	 }
 	 /**
 	    * {@inheritDoc}
@@ -117,7 +118,7 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 			//since we are iterating only we probably don't care about compressing the data
 			//and initialize the size of the builder to a reasonable size for sequencing reads, it will grow if needed.
 			private NucleotideSequenceBuilder builder=  new NucleotideSequenceBuilder(2_000)
-															.setInvalidCharacterHandler(invalidCharacterHandler)
+															.setDecodingOptions(decodingOptions)
 															.turnOffDataCompression(true);
 			private FastaVisitorCallback callback;
 			

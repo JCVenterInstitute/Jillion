@@ -24,9 +24,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.function.IntPredicate;
 import java.util.stream.IntStream;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.util.streams.BytePredicate;
 import org.jcvi.jillion.core.util.streams.ThrowingIntIndexedByteConsumer;
 import org.jcvi.jillion.internal.core.util.iter.PrimitiveArrayIterators;
 /**
@@ -555,6 +557,44 @@ public final class GrowableByteArray implements Iterable<Byte>{
 		}
 	}
 
+	/**
+	 * Replace any values that pass the given predicate with the given replacement value.
+	 * @param predicate the predicate to test; can not be null.
+	 * @param replacementValue the value to set for all values the predicate returns true.
+	 * @throws NullPointerException if predicate is null.
+	 * @return this
+	 * 
+	 * @since 6.0
+	 */
+	public GrowableByteArray replaceIf(BytePredicate predicate, byte replacementValue){
+		for(int i=0; i< currentLength; i++) {
+			if(predicate.test(data[i])) {
+				data[i] = replacementValue;
+			}
+		}
+		return this;
+	}
+	/**
+	 * Replace any values within the given offset range that pass the given predicate with the given replacement value.
+	 * @param range the offset range to check over; can not be null.
+	 * @param predicate the predicate to test; can not be null.
+	 * @param replacementValue the value to set for all values the predicate returns true.
+	 * @throws NullPointerException if either range or predicate are null.
+	 * 
+	 * @return this
+	 * 
+	 * @since 6.0
+	 */
+	public GrowableByteArray replaceIf(Range range, BytePredicate predicate, byte replacementValue){
+		int end = (int) Math.min(currentLength, range.getEnd()+1);
+		for(int i=(int) range.getBegin(); i< end; i++){
+			if(predicate.test(data[i])) {
+				data[i] = replacementValue;
+			}
+		}
+		return this;
+	}
+	
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;

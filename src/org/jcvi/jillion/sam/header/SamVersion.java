@@ -20,6 +20,8 @@
  ******************************************************************************/
 package org.jcvi.jillion.sam.header;
 
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 /**
@@ -30,7 +32,10 @@ import java.util.regex.Pattern;
  * @author dkatzel
  *
  */
-public final class SamVersion {
+public final class SamVersion implements Serializable{
+
+	
+	private static final long serialVersionUID = 2980081302937086841L;
 
 	private static final Pattern VERSION_PATTERN = Pattern.compile("^(\\d+)\\.(\\d+)$");
 	
@@ -52,6 +57,27 @@ public final class SamVersion {
 		}
 		this.major = major;
 		this.minor = minor;
+	}
+	private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+		throw new java.io.InvalidObjectException("Proxy required");
+	}
+	private Object writeReplace(){
+		return new VersionProxy(major,minor);
+	}
+	
+	private static class VersionProxy implements Serializable{
+		
+		private static final long serialVersionUID = -5965174676512575362L;
+		private int major,minor;
+		
+		public VersionProxy(int major, int minor) {
+			this.major = major;
+			this.minor = minor;
+		}
+
+		private Object readResolve(){
+			return new SamVersion(major,minor);
+		}
 	}
 	/**
 	 * Get the major part of this version.

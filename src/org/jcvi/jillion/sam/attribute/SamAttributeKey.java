@@ -20,14 +20,19 @@
  ******************************************************************************/
 package org.jcvi.jillion.sam.attribute;
 
+import java.io.ObjectInputStream;
+import java.io.Serializable;
+
 import org.jcvi.jillion.internal.sam.SamUtil;
 
-public final class SamAttributeKey{
+public final class SamAttributeKey implements Serializable{
+	
+	private static final long serialVersionUID = -3273090126405748439L;
 	/**
 	 * The two letters of our key
 	 * stored as primitives to save memory.
 	 */
-	char key1,key2;
+	private final char key1,key2;
 
 	public SamAttributeKey(char key1, char key2) {
 		 if(!SamUtil.isValidKey(key1, key2)){
@@ -39,6 +44,26 @@ public final class SamAttributeKey{
 		this.key2 = key2;
 	}
 	
+	private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+		throw new java.io.InvalidObjectException("Proxy required");
+	}
+	private Object writeReplace(){
+		return new KeyProxy(this);
+	}
+	
+	private static class KeyProxy implements Serializable{
+		
+		private static final long serialVersionUID = 2405702978232081432L;
+		private final char key1,key2;
+		
+		public KeyProxy(SamAttributeKey k) {
+			this.key1 = k.key1;
+			this.key2 = k.key2;
+		}
+		private Object readResolve(){
+			return new SamAttributeKey(key1,key2);
+		}
+	}
 
 	@Override
 	public int hashCode() {

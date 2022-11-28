@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.sam;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -40,7 +41,7 @@ import org.jcvi.jillion.sam.header.SamHeader;
  * @author dkatzel
  *
  */
-class SamRecordImpl implements SamRecord {
+class SamRecordImpl implements SamRecord, Serializable {
 	private final SamHeader header;
 	private final String queryName, referenceName, nextReferenceName;
 	private final SamRecordFlags flags;
@@ -52,6 +53,7 @@ class SamRecordImpl implements SamRecord {
 	
 	private final int observedTemplateLength;
 	private final Map<SamAttributeKey, SamAttribute> attributes;
+	
 	
 	SamRecordImpl(SamRecordBuilder builder) {
 		this.header = builder.header;

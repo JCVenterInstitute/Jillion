@@ -21,6 +21,7 @@
 package org.jcvi.jillion.internal.core.util;
 
 import java.util.*;
+import java.util.function.IntPredicate;
 import java.util.stream.IntStream;
 
 import org.jcvi.jillion.core.Range;
@@ -535,10 +536,12 @@ public final class GrowableIntArray implements Iterable<Integer>{
 	/**
 	 * Iterate over the elements in the given range of this array and call the given consumer
 	 * which captures the offset and the value.
+	 * @param range the offset range to check over; can not be null.
 	 * @param consumer the consumer of each element; can not be null.
 	 * @param <E> the Throwable that might be thrown by the consumer.
 	 * @throws E the Throwable from the consumer.
 	 *
+	 * @throws NullPointer exception if either range or consumer are null.
 	 * @since 5.3
 	 */
 	public <E extends Throwable> void forEachIndexed(Range range, ThrowingIntIndexedIntConsumer<E> consumer) throws E{
@@ -546,5 +549,68 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		for(int i=(int) range.getBegin(); i< end; i++){
 			consumer.accept(i, data[i]);
 		}
+	}
+	/**
+	 * Replace any values that pass the given predicate with the given replacement value.
+	 * @param predicate the predicate to test; can not be null.
+	 * @param replacementValue the value to set for all values the predicate returns true.
+	 * @throws NullPointerException if predicate is null.
+	 * 
+	 * @return this
+	 * 
+	 * @since 6.0
+	 */
+	public GrowableIntArray replaceIf(IntPredicate predicate, int replacementValue){
+		for(int i=0; i< currentLength; i++) {
+			if(predicate.test(data[i])) {
+				data[i] = replacementValue;
+			}
+		}
+		return this;
+	}
+	/**
+	 * Replace any values within the given offset range that pass the given predicate with the given replacement value.
+	 * @param range the offset range to check over; can not be null.
+	 * @param predicate the predicate to test; can not be null.
+	 * @param replacementValue the value to set for all values the predicate returns true.
+	 * 
+	 * @return this
+	 * @throws NullPointerException if either range or predicate are null.
+	 * @since 6.0
+	 */
+	public GrowableIntArray replaceIf(Range range, IntPredicate predicate, int replacementValue){
+		int end = (int) Math.min(currentLength, range.getEnd()+1);
+		for(int i=(int) range.getBegin(); i< end; i++){
+			if(predicate.test(data[i])) {
+				data[i] = replacementValue;
+			}
+		}
+		return this;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof GrowableIntArray)){
+			return false;
+		}
+		GrowableIntArray bytes = (GrowableIntArray) o;
+		if(currentLength != bytes.currentLength){
+			return false;
+		}
+		for (int i=0; i<currentLength; i++) {
+			if (data[i] != bytes.data[i]) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = Objects.hash(currentLength);
+		result = 31 * result + Arrays.hashCode(data);
+		return result;
 	}
 }

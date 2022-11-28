@@ -20,6 +20,8 @@
  ******************************************************************************/
 package org.jcvi.jillion.sam.cigar;
 
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -28,16 +30,12 @@ import java.util.regex.Pattern;
 
 import org.jcvi.jillion.align.pairwise.PairwiseSequenceAlignment;
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.Ranges;
-import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.ArrayIterator;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
-import org.jcvi.jillion.core.util.iter.PeekableIterator;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 /**
  * {@code Cigar} is an Object for a single
@@ -46,9 +44,11 @@ import org.jcvi.jillion.internal.core.util.GrowableIntArray;
  * @author dkatzel
  *
  */
-public final class Cigar implements Iterable<CigarElement>{
+public final class Cigar implements Iterable<CigarElement>, Serializable{
     
-        private static Pattern REMOVE_WHITESPACE = Pattern.compile("\\s+");
+    
+	private static final long serialVersionUID = 7069290821954241732L;
+	private static Pattern REMOVE_WHITESPACE = Pattern.compile("\\s+");
 	/**
 	 * Singleton instance of an empty {@link Cigar}.
 	 */
@@ -608,6 +608,27 @@ public final class Cigar implements Iterable<CigarElement>{
 	}
 
 
+	private Object writeReplace(){
+		return new CigarProxy(this);
+	}
+	
+	private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+		throw new java.io.InvalidObjectException("Proxy required");
+	}
+	
+	
+	private static class CigarProxy implements Serializable{
+		
+		private static final long serialVersionUID = -6783881038719069511L;
+		private String encoded;
+		public CigarProxy(Cigar cigar) {
+			this.encoded = cigar.toCigarString();
+		}
+		private Object readResolve(){
+			return Cigar.parse(encoded);
+		}
+	}
+	
 	/**
 	 * Builder class to programmatically build
 	 * up a {@link Cigar} object.
@@ -822,7 +843,7 @@ public final class Cigar implements Iterable<CigarElement>{
 			
 			for(int i=0; i<array.length; i++){
 				if(i !=0 && i!=array.length-1 && array[i].getOp() ==CigarOperation.HARD_CLIP){
-					throw new IllegalStateException("hard clips may only be first and/or last operations");
+					throw new IllegalStateException("hard clips may only be first and/or last operations: " + Arrays.toString(array));
 				}
 				if(array[i].getOp() == CigarOperation.HARD_CLIP) {
 					hardClipPoints.append(i);

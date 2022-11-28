@@ -142,6 +142,10 @@ public class VcfDSL {
 				return new GenotypeDataBuilder()
 								.extraLines(new ArrayList<>());
 			}
+			//required for javadoc..
+			public static class GenotypeDataBuilder{
+				
+			}
 		}
 		private String vcfEncodeAltBases(Set<String> bases) {
 			return bases.stream().collect(Collectors.joining(","));

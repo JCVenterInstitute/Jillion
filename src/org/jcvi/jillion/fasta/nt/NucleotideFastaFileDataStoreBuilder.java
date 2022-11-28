@@ -31,6 +31,7 @@ import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.InputStreamSupplier;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.shared.fasta.AbstractFastaFileDataStoreBuilder;
@@ -58,7 +59,7 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	 * Handler for what to do when we get an invalid character
 	 * @since 6.0
 	 */
-	private Nucleotide.InvalidCharacterHandler invalidCharacterHandler = Nucleotide.defaultInvalidCharacterHandler();
+	private NucleotideSequenceBuilder.DecodingOptions decodingOptions = NucleotideSequenceBuilder.DecodingOptions.DEFAULT;
 	
 	/**
 	 * Create a new Builder instance of 
@@ -150,20 +151,20 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 			Predicate<NucleotideFastaRecord> recordFilter, OptionalLong maxNumberOfRecords)
 			throws IOException {
 		if(parser.isReadOnceOnly()){
-			return DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter, invalidCharacterHandler);	
+			return DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter, decodingOptions);	
 		}else{
 		    NucleotideFastaFileDataStore delegate;
 			switch(providerHint){
 				case RANDOM_ACCESS_OPTIMIZE_SPEED: 
-							delegate= DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter, invalidCharacterHandler);
+							delegate= DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter, decodingOptions);
 							break;
 				case RANDOM_ACCESS_OPTIMIZE_MEMORY: 
 							delegate = parser.canCreateMemento()?
-										IndexedNucleotideSequenceFastaFileDataStore.create(parser,filter, recordFilter, invalidCharacterHandler)
+										IndexedNucleotideSequenceFastaFileDataStore.create(parser,filter, recordFilter, decodingOptions)
 										:
-										DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter, invalidCharacterHandler);
+										DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter, decodingOptions);
 							break;
-				case ITERATION_ONLY: delegate= LargeNucleotideSequenceFastaFileDataStore.create(parser,filter, recordFilter, maxNumberOfRecords, invalidCharacterHandler);
+				case ITERATION_ONLY: delegate= LargeNucleotideSequenceFastaFileDataStore.create(parser,filter, recordFilter, maxNumberOfRecords, decodingOptions);
 								break;
 				default:
 					throw new IllegalArgumentException("unknown provider hint : "+ providerHint);
@@ -199,7 +200,21 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	 * @since 6.0
 	 */
 	public NucleotideFastaFileDataStoreBuilder invalidCharacterHandler(Nucleotide.InvalidCharacterHandler invalidCharacterHandler) {
-		this.invalidCharacterHandler = invalidCharacterHandler==null? Nucleotide.defaultInvalidCharacterHandler(): invalidCharacterHandler;
+		return decoderOptions(this.decodingOptions.toBuilder().invalidCharacterHandler(invalidCharacterHandler).build());
+	}
+	/**
+	 * Set the {@link org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder.DecodingOptions} to use
+	 * when parsing sequences for this Datastore.  If set to {@code null}
+	 * then the default decoder is used.
+	 * @param decodingOptions the options to use; if set to {@code null}
+	 * then the default is used.
+	 * 
+	 * @return this
+	 * 
+	 * @since 6.0
+	 */
+	public NucleotideFastaFileDataStoreBuilder decoderOptions(NucleotideSequenceBuilder.DecodingOptions decodingOptions) {
+		this.decodingOptions = decodingOptions==null? NucleotideSequenceBuilder.DecodingOptions.DEFAULT: decodingOptions;
 		return this;
 	}
 	/**

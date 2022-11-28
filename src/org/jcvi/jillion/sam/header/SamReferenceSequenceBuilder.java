@@ -20,6 +20,9 @@
  ******************************************************************************/
 package org.jcvi.jillion.sam.header;
 
+import java.io.ObjectInputStream;
+import java.io.Serializable;
+
 public final class SamReferenceSequenceBuilder{
 	String name;
 	int length;
@@ -162,55 +165,93 @@ public final class SamReferenceSequenceBuilder{
 		return new SamReferenceSequenceImpl(this);
 	}
 	
-	private static class SamReferenceSequenceImpl implements SamReferenceSequence {
+	private static class SamReferenceSequenceImpl implements SamReferenceSequence, Serializable {
 
-	        private final String name;
-	        private final int length;
-	        
-	        private final String genomeAssemblyId;
-	        private final String species;
-	        private final String uri;
-	        private final String md5;
-	        
-	        
-	        SamReferenceSequenceImpl(SamReferenceSequenceBuilder builder){
-	                this.name = builder.name;
-	                this.length = builder.length;
-	                
-	                this.genomeAssemblyId = builder.genomeAssemblyId;
-	                this.species = builder.species;
-	                this.uri = builder.uri;
-	                this.md5 = builder.md5;
-	        }
-	        
-	        
-	        
-	        
-	        @Override
-	        public String toString() {
-	                return "ReferenceSequence [name=" + name + ", length=" + length
-	                                + ", genomeAssemblyId=" + genomeAssemblyId + ", species="
-	                                + species + ", uri=" + uri + ", md5=" + md5 + "]";
-	        }
+        
+		private static final long serialVersionUID = 6289946721246791820L;
+		private final String name;
+        private final int length;
+        
+        private final String genomeAssemblyId;
+        private final String species;
+        private final String uri;
+        private final String md5;
+        
+        
+        SamReferenceSequenceImpl(SamReferenceSequenceBuilder builder){
+                this.name = builder.name;
+                this.length = builder.length;
+                
+                this.genomeAssemblyId = builder.genomeAssemblyId;
+                this.species = builder.species;
+                this.uri = builder.uri;
+                this.md5 = builder.md5;
+        }
+        
+        
+        private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+    		throw new java.io.InvalidObjectException("Proxy required");
+    	}
+        private Object writeReplace(){
+        	return new ReferenceProxy(name, length, genomeAssemblyId, species, uri, md5);
+        }
+        
+        private static class ReferenceProxy implements Serializable{
+        	
+        	
+			private static final long serialVersionUID = -7144795617377727301L;
+			private final String name;
+            private final int length;
+            
+            private final String genomeAssemblyId;
+            private final String species;
+            private final String uri;
+            private final String md5;
+            
+			public ReferenceProxy(String name, int length, String genomeAssemblyId, String species, String uri,
+					String md5) {
+				this.name = name;
+				this.length = length;
+				this.genomeAssemblyId = genomeAssemblyId;
+				this.species = species;
+				this.uri = uri;
+				this.md5 = md5;
+			}
+            
+			private Object readResolve(){
+				return new SamReferenceSequenceBuilder(name, length)
+								.setGenomeAssemblyId(genomeAssemblyId)
+								.setSpecies(species)
+								.setUri(uri)
+								.setMd5(md5)
+								.build();
+			}
+        }
+        @Override
+        public String toString() {
+                return "ReferenceSequence [name=" + name + ", length=" + length
+                                + ", genomeAssemblyId=" + genomeAssemblyId + ", species="
+                                + species + ", uri=" + uri + ", md5=" + md5 + "]";
+        }
 
 
 
-	        /**
-	         * Get the human readable name of this reference sequence.
-	         * @return a String; will never be null.
-	         */
-	        @Override
+        /**
+         * Get the human readable name of this reference sequence.
+         * @return a String; will never be null.
+         */
+	    @Override
 	    public String getName() {
 	                return name;
 	        }
 
 
 
-	        /**
-	         * Get the number of bases in this reference sequence.
-	         * @return the number of bases; will always be > 0.
-	         */
-	        @Override
+        /**
+         * Get the number of bases in this reference sequence.
+         * @return the number of bases; will always be > 0.
+         */
+        @Override
 	    public int getLength() {
 	                return length;
 	        }

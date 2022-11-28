@@ -20,6 +20,8 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.qual;
 
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.Optional;
 import java.util.OptionalDouble;
 
@@ -35,7 +37,9 @@ import org.jcvi.jillion.internal.core.EncodedSequence;
 final class EncodedQualitySequence extends EncodedSequence<PhredQuality> implements QualitySequence{
 
    
-        private Stats stats;
+    
+	private static final long serialVersionUID = 4852176142847948773L;
+	private transient Stats stats;
         
 	public EncodedQualitySequence(QualitySymbolCodec codec, byte[] data) {
 		super(codec, data);
@@ -140,8 +144,26 @@ final class EncodedQualitySequence extends EncodedSequence<PhredQuality> impleme
         //without this override, we will get an AbstractMethodError
         return QualitySequence.super.toBuilder();
     }
-	
-	
+    private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+		throw new java.io.InvalidObjectException("Proxy required");
+	}
+    private Object writeReplace(){
+    	return new QualitySequenceProxy(toArray());
+    }
+	private static class QualitySequenceProxy implements Serializable{
+		
+		private static final long serialVersionUID = -154475330294914979L;
+		private byte[] array;
+
+		public QualitySequenceProxy(byte[] array) {
+			this.array = array;
+		}
+		
+		private Object readResolve(){
+			return new QualitySequenceBuilder(array).turnOffDataCompression(true).build();
+		}
+		
+	}
 
     private static class Stats{
         private final byte min, max;

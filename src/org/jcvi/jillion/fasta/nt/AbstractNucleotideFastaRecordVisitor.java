@@ -22,6 +22,7 @@ package org.jcvi.jillion.fasta.nt;
 
 import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder.DecodingOptions;
 import org.jcvi.jillion.fasta.AbstractFastaRecordVisitor;
 /**
  * Abstract
@@ -42,7 +43,7 @@ import org.jcvi.jillion.fasta.AbstractFastaRecordVisitor;
 public abstract class AbstractNucleotideFastaRecordVisitor extends  AbstractFastaRecordVisitor{
 
 	private final boolean turnOffCompression;
-	private final InvalidCharacterHandler invalidCharacterHandler;
+	private final DecodingOptions decodingOptions;
 	public AbstractNucleotideFastaRecordVisitor(String id, String comment) {
 		this(id,comment, false);
 	}
@@ -69,9 +70,9 @@ public abstract class AbstractNucleotideFastaRecordVisitor extends  AbstractFast
 	 *
 	 * @since 6.0
 	 */
-	public AbstractNucleotideFastaRecordVisitor(String id, String comment, InvalidCharacterHandler invalidCharacterHandler, boolean turnOffCompression) {
+	public AbstractNucleotideFastaRecordVisitor(String id, String comment, DecodingOptions decodingOptions, boolean turnOffCompression) {
 		super(id,comment);
-		this.invalidCharacterHandler = invalidCharacterHandler;
+		this.decodingOptions = decodingOptions;
 		this.turnOffCompression = turnOffCompression;
 	}
 
@@ -81,7 +82,7 @@ public abstract class AbstractNucleotideFastaRecordVisitor extends  AbstractFast
 	protected final  void visitRecord(String id, String optionalComment,
 			String fullBody) {
 		NucleotideFastaRecord record = new NucleotideFastaRecordBuilder(id,
-																new NucleotideSequenceBuilder(fullBody, invalidCharacterHandler)
+																new NucleotideSequenceBuilder(fullBody, decodingOptions)
 																	.turnOffDataCompression(turnOffCompression).build())
 													.comment(optionalComment)
 													.build();

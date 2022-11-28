@@ -20,7 +20,10 @@
  ******************************************************************************/
 package org.jcvi.jillion.sam.header;
 
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,6 +31,9 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.jcvi.jillion.sam.SamRecord;
 import org.jcvi.jillion.sam.SamValidationException;
@@ -211,9 +217,12 @@ public final class SamHeaderBuilder{
 		return sortOrder;
 	}
 	
-	private static final class SamHeaderImpl implements SamHeader {
+	
+	private static final class SamHeaderImpl implements SamHeader, Serializable {
 
-	        private final SortOrder sortOrder;
+	      
+		private static final long serialVersionUID = -4029116636776007320L;
+			private final SortOrder sortOrder;
 	        private final SamVersion version;
 	        
 	        private final Map<String, SamReferenceSequence> referenceSequences;
@@ -227,7 +236,27 @@ public final class SamHeaderBuilder{
 	        
 	        private final List<String> comments;
 	        
-	        
+	        SamHeaderImpl(SamHeaderProxy proxy){
+	        	this.sortOrder = proxy.sortOrder;
+	        	this.version=proxy.version;
+	        	this.indexedReferenceSequences = proxy.indexedReferenceSequences;
+	        	this.referenceSequences = Arrays.stream(proxy.indexedReferenceSequences)
+	        										.collect(Collectors.toUnmodifiableMap(SamReferenceSequence::getName, Function.identity()));
+	        	
+	        	Map<String, Integer> mutMap = new HashMap<>();
+	        	for(int i=0; i< indexedReferenceSequences.length; i++) {
+	        		mutMap.put(indexedReferenceSequences[i].getName(), i);
+	        	}
+	        	this.referenceIndexMap = Collections.unmodifiableMap(mutMap);
+	        	
+	        	this.readGroups = Arrays.stream(proxy.readGroups)
+						.collect(Collectors.toUnmodifiableMap(SamReadGroup::getId, Function.identity()));
+
+	        	this.programs = Arrays.stream(proxy.programs)
+						.collect(Collectors.toUnmodifiableMap(SamProgram::getId, Function.identity()));
+	        	
+	        	this.comments = Collections.unmodifiableList(proxy.comments);
+	        }
 	        SamHeaderImpl(SamHeaderBuilder builder){
 	                this.sortOrder = builder.sortOrder;
 	                this.version =  builder.version;
@@ -242,12 +271,50 @@ public final class SamHeaderBuilder{
 	                int i=0;
 	                Collection<SamReferenceSequence> refSeqs = referenceSequences.values();
 	                this.indexedReferenceSequences = new SamReferenceSequence[refSeqs.size()];
-	                        
-                        for(SamReferenceSequence refSeq : refSeqs){
-                            indexedReferenceSequences[i] = refSeq;
+                        
+                    for(SamReferenceSequence refSeq : refSeqs){
+                        indexedReferenceSequences[i] = refSeq;
 	                    referenceIndexMap.put(refSeq.getName(), Integer.valueOf(i));	                       
 	                    i++;
 	                }
+	        }
+	        private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+	    		throw new java.io.InvalidObjectException("Proxy required");
+	    	}
+	    	private Object writeReplace(){
+	    		return new SamHeaderProxy(this);
+	    	}
+	        
+	        private static class SamHeaderProxy implements Serializable{
+	        	
+	        	
+				private static final long serialVersionUID = -1505982820259897532L;
+				private final SortOrder sortOrder;
+		        private final SamVersion version;
+		        
+		        
+		        
+		        private final SamReferenceSequence[] indexedReferenceSequences;
+		        
+		        private final SamReadGroup[] readGroups;
+		        
+		        private final SamProgram[] programs;
+		        
+		        private final List<String> comments;
+		        
+		        public SamHeaderProxy(SamHeaderImpl impl) {
+		        	this.sortOrder=impl.sortOrder;
+		        	this.version =impl.version;
+		        	this.indexedReferenceSequences = impl.indexedReferenceSequences;
+		        	this.readGroups = impl.readGroups.values().stream().toArray(size-> new SamReadGroup[size]);
+		        	this.programs = impl.programs.values().stream().toArray(size-> new SamProgram[size]);
+		        	this.comments =impl.comments;
+		        	
+		        }
+		        
+		        private Object readResolve(){
+		        	return new SamHeaderImpl(this);
+		        }
 	        }
 	        
 	    @Override

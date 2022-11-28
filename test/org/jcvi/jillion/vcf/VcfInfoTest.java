@@ -46,7 +46,7 @@ public class VcfInfoTest {
 	}
 	
 	@Test
-	public void differentDescriptionNotEqual() {
+	public void differentDescriptionStillEqual() {
 		VcfInfo sut = VcfInfo.builder()
 								.id("id")
 								.description("description")
@@ -61,7 +61,7 @@ public class VcfInfoTest {
 				.type(VcfValueType.Integer)
 				.build();
 		
-		TestUtil.assertNotEqualAndHashcodeDifferent(sut, different);
+		TestUtil.assertEqualAndHashcodeSame(sut, different);
 	}
 	
 	@Test
@@ -103,7 +103,7 @@ public class VcfInfoTest {
 	}
 	
 	@Test
-	public void differentPropertiesNotEqual() {
+	public void differentPropertiesStillEqual() {
 		VcfInfo sut = VcfInfo.builder()
 								.id("id")
 								.description("description")
@@ -120,11 +120,11 @@ public class VcfInfoTest {
 				.parameter("different key", "different value")
 				.build();
 		
-		TestUtil.assertNotEqualAndHashcodeDifferent(sut, different);
+		TestUtil.assertEqualAndHashcodeSame(sut, different);
 	}
 	
 	@Test
-	public void differentPropertiesSameKeyDifferentValueNotEqual() {
+	public void differentPropertiesSameKeyDifferentValueStillEqual() {
 		VcfInfo sut = VcfInfo.builder()
 								.id("id")
 								.description("description")
@@ -141,6 +141,6 @@ public class VcfInfoTest {
 				.parameter("key1", "value2")
 				.build();
 		
-		TestUtil.assertNotEqualAndHashcodeDifferent(sut, different);
+		TestUtil.assertEqualAndHashcodeSame(sut, different);
 	}
 }

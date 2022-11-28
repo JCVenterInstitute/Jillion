@@ -29,18 +29,19 @@ import java.io.InputStream;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder.DecodingOptions;
 
 public class TestDefaultNucleotideFastaDataStoreAsStream extends AbstractTestSequenceFastaDataStore {
 
     
 
     @Override
-    protected NucleotideFastaDataStore parseFile(File file, InvalidCharacterHandler invalidCharacterHandler)
+    protected NucleotideFastaDataStore parseFile(File file, DecodingOptions decodingOptions)
             throws IOException {
     	InputStream in = null;
     	try{
     		in = new BufferedInputStream(new FileInputStream(file));
-    		return DefaultNucleotideFastaFileDataStore.create(in, DataStoreFilters.alwaysAccept(), null, invalidCharacterHandler);
+    		return DefaultNucleotideFastaFileDataStore.create(in, DataStoreFilters.alwaysAccept(), null, decodingOptions);
     	}finally{
     		IOUtil.closeAndIgnoreErrors(in);
     	}

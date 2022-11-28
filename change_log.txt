@@ -132,6 +132,13 @@ to wrap a StreamingIterator into a DataStoreIterator
 
 38.  Added Reserved VCF Info and Filter objects based on VCF 4.3 spec.
 
+39. Added new DecodingOptions class to use inside NucletoideSequenceBuilder to add more configuration options
+    for invalid character handling and other common string manipulation such as making all ambiguities Ns.
+    
+40.  GrowableXArrays added replaceIf(predicate, value) 
+
+41. SamRecord and related objects are now Serializable
+
 API BREAKING CHANGES
 --------------------
 
@@ -167,6 +174,8 @@ Bug Fixes
 4. Bam parsing only selected regions no longer throws NullPointerException on unmapped reads.
 
 5. Bam Indexing improvements handling incorrectly formatted unaligned reads.
+
+6. Fixed Serialization issues from caching performance improvements introduced in 5.3
 
 ================
 Jillion 5.3

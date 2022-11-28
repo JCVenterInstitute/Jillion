@@ -2,6 +2,7 @@ package org.jcvi.jillion.core.residue.nt;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder.DecodingOptions;
 
 public interface INucleotideSequenceBuilder<S extends INucleotideSequence<S, B>, B extends INucleotideSequenceBuilder<S,B>> extends ResidueSequenceBuilder<Nucleotide,S, B>{
 	/**
@@ -161,6 +162,15 @@ public interface INucleotideSequenceBuilder<S extends INucleotideSequence<S, B>,
      * @since 6.0
      */
     B setInvalidCharacterHandler(Nucleotide.InvalidCharacterHandler invalidCharacterHandler);
+    /**
+     * Sets the {@link org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder.DecodingOptions}
+     * used to help parse {@link Nucleotide}s from a String or char[].
+     * @param decodingOptions the options to use; if {@code null}
+     * use the default options which will throw an IllegalArgumentException on invalid characters.
+     * 
+     * @since 6.0
+     */
+    B setDecodingOptions(DecodingOptions decodingOptions);
     
     /**
      * Inserts the given sequence the beginning

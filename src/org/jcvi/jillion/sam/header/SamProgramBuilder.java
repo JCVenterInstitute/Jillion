@@ -20,6 +20,9 @@
  ******************************************************************************/
 package org.jcvi.jillion.sam.header;
 
+import java.io.ObjectInputStream;
+import java.io.Serializable;
+
 /**
  * {@code Builder} is the Builder object
  * used to create {@link SamProgram}
@@ -214,9 +217,9 @@ public final class SamProgramBuilder{
 		return new SamProgramImpl(this);
 	}
 	
-	private static final class SamProgramImpl implements SamProgram {
-
-	        private final String id;
+	private static final class SamProgramImpl implements SamProgram, Serializable {
+		private static final long serialVersionUID = 2829055796159924459L;
+			private final String id;
 	        private final String name;
 	        private final String version;
 	        private final String description;
@@ -232,7 +235,44 @@ public final class SamProgramBuilder{
 	                this.previousProgramid = builder.prevousProgramId;
 	        }
 	        
+	        private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+	    		throw new java.io.InvalidObjectException("Proxy required");
+	    	}
 	        
+	        private Object writeReplace(){
+	        	return new SamProgramProxy(this);
+	        }
+	        
+	        private static class SamProgramProxy implements Serializable{
+	        	
+				private static final long serialVersionUID = -3946244974406605523L;
+				private final String id;
+	 	        private final String name;
+	 	        private final String version;
+	 	        private final String description;
+	 	        private final String commandLine;
+	 	        private final String previousProgramid;
+	 	        
+	 	        public SamProgramProxy(SamProgramImpl impl) {
+	 	        	this.id= impl.id;
+	 	        	this.name = impl.name;
+	 	        	this.version = impl.version;
+	 	        	this.description = impl.description;
+	 	        	this.commandLine = impl.commandLine;
+	 	        	this.previousProgramid = impl.previousProgramid;
+	 	        	
+	 	        }
+	 	        
+	 	       private Object readResolve(){
+	 	    	   return new SamProgramBuilder(id)
+	 	    			   		.setName(name)
+	 	    			   		.setVersion(version)
+	 	    			   		.setDescription(description)
+	 	    			   		.setCommandLine(commandLine)
+	 	    			   		.setPrevousProgramId(previousProgramid)
+	 	    			   		.build();
+	 	       }
+	        }
 	        /**
 	         * Get the unique ID. The value of ID is used in the
 	         * {@link org.jcvi.jillion.sam.attribute.ReservedSamAttributeKeys#PROGRAM}

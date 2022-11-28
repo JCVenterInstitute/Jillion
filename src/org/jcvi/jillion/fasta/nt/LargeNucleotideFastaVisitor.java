@@ -4,6 +4,7 @@ import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder.DecodingOptions;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
@@ -23,11 +24,11 @@ class LargeNucleotideFastaVisitor implements FastaVisitor{
 	private final org.jcvi.jillion.core.util.streams.ThrowingBiConsumer<String, NucleotideFastaRecord, ? extends Throwable> consumer;
 	
 	public LargeNucleotideFastaVisitor( Predicate<String> idFilter, Predicate<NucleotideFastaRecord> recordFilter, 
-			InvalidCharacterHandler invalidCharacterHandler,
+			DecodingOptions decodingOptions,
 			org.jcvi.jillion.core.util.streams.ThrowingBiConsumer<String, NucleotideFastaRecord, ? extends Throwable> consumer) {
 		filter = idFilter;
 		this.consumer = consumer;
-		recordVisitor = new NucleotideFastaRecordVisitor(recordFilter, invalidCharacterHandler);
+		recordVisitor = new NucleotideFastaRecordVisitor(recordFilter, decodingOptions);
 		
 	}
 	
@@ -60,13 +61,13 @@ class LargeNucleotideFastaVisitor implements FastaVisitor{
 		private final Predicate<NucleotideFastaRecord> recordFilter;
 		
 		
-		public NucleotideFastaRecordVisitor(Predicate<NucleotideFastaRecord> recordFilter, InvalidCharacterHandler invalidCharacterHandler){
+		public NucleotideFastaRecordVisitor(Predicate<NucleotideFastaRecord> recordFilter, DecodingOptions decodingOptions){
 		    this.recordFilter = recordFilter;
 		  //since we are iterating only we probably don't care about compressing the data
 			//and initialize the size of the builder to a reasonable size for sequencing reads, it will grow if needed.
 			
 		    builder=  new NucleotideSequenceBuilder(2_000)
-					.setInvalidCharacterHandler(invalidCharacterHandler)
+					.setDecodingOptions(decodingOptions)
 					.turnOffDataCompression(true);
 		    
 		}

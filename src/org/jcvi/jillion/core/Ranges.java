@@ -430,13 +430,39 @@ public final class Ranges {
         return false;
     }
     /**
-     * Return a list of ranges that intersect both lists of input ranges;
+     * Return a list of ranges that intersect both groups of input ranges;
+     * 
+     * @param subjectRange a single Range
+     * @param queryRanges
+     * @return a List of Ranges that are the intersections of both lists.
+     * @since 6.0
+     */
+	public static List<Range> union(Rangeable subjectRange, Collection<? extends Rangeable> queryRanges) {
+		Objects.requireNonNull(subjectRange);
+		Objects.requireNonNull(queryRanges);
+		List<Range> intersections = new ArrayList<>();
+		
+		Range sRange = subjectRange.asRange();
+		for(Rangeable q : queryRanges) {
+			Range intersection = sRange.intersection(q.asRange());
+			if(!intersection.isEmpty()) {
+				intersections.add(intersection);
+			}
+		}
+		
+		if(intersections.isEmpty()) {
+			return Collections.emptyList();
+		}
+		return Ranges.merge(intersections);
+	}
+    /**
+     * Return a list of ranges that intersect both groups of input ranges;
      * 
      * @param subjectRanges
      * @param queryRanges
      * @return a List of Ranges that are the intersections of both lists.
      */
-	public static List<Range> union(List<? extends Rangeable> subjectRanges, List<? extends Rangeable> queryRanges) {
+	public static List<Range> union(Collection<? extends Rangeable> subjectRanges, Collection<? extends Rangeable> queryRanges) {
 		Objects.requireNonNull(subjectRanges);
 		Objects.requireNonNull(queryRanges);
 		
@@ -465,7 +491,24 @@ public final class Ranges {
 	 * @since 6.0
 	 * @throws NullPointerException if a or b are {@code null}.
 	 */
-	public static List<Range> complement(List<? extends Rangeable> a, List<? extends Rangeable> b){
+	public static List<Range> complement(Rangeable a, Collection<? extends Rangeable> b){
+		List<Range> union = Ranges.union(a, b);
+		List<Range> complement = new ArrayList<>();
+		
+		complement.addAll( a.asRange().complement(union));
+		
+		return Ranges.merge(complement);
+	}
+	/**
+	 * Return the list of Ranges of everything that is in A but not in B.
+	 * 
+	 * @param a the list of ranges in A.
+	 * @param b the list of ranges in B.
+	 * @return
+	 * @since 6.0
+	 * @throws NullPointerException if a or b are {@code null}.
+	 */
+	public static List<Range> complement(Collection<? extends Rangeable> a, Collection<? extends Rangeable> b){
 		List<Range> union = Ranges.union(a, b);
 		List<Range> complement = new ArrayList<>();
 		for(Rangeable s : a) {

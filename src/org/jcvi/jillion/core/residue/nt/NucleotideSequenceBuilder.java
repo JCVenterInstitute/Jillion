@@ -41,6 +41,13 @@ import org.jcvi.jillion.core.util.iter.PeekableIterator;
 import org.jcvi.jillion.internal.core.util.GrowableByteArray;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
+
 /**
  * {@code NucleotideSequenceBuilder}  is a way to
  * construct a {@link NucleotideSequence}
@@ -69,6 +76,92 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
     private static final byte T_VALUE = Nucleotide.Thymine.getOrdinalAsByte();
    
     /**
+     * Options for how to decode Nucleotide's from Strings/characters into {@link Nucleotide}
+     * objects.  This object handles invalid characters via and
+     * additional options such as converting ambigious bases all to Ns.
+     * Create using the {@link #builder()} and {@link #toBuilder()}
+     * methods.
+     * 
+     * @author dkatzel
+     * @since 6.0
+     *
+     * see {@link DecodingOptionsBuilder}
+     */
+    @Builder(toBuilder = true)
+    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+    public static class DecodingOptions{
+    	
+    	public static DecodingOptions DEFAULT =  DecodingOptions.builder().build();
+    	@NonNull
+    	private final Nucleotide.InvalidCharacterHandler invalidCharacterHandler;
+    	@NonNull
+    	@Getter(value = AccessLevel.PRIVATE)
+    	private final NewValuesFactory newValuesFactory;
+    	
+    	
+    	protected NewValues create(String sequence) {
+    		return newValuesFactory.create(sequence, invalidCharacterHandler);
+    	}
+    	protected NewValues create(char[] sequence) {
+    		return newValuesFactory.create(sequence, invalidCharacterHandler);
+    	}
+    	protected NewValues create(NucleotideSequence sequence) {
+    		return newValuesFactory.create(sequence);
+    	}
+    	protected NewValues create(Iterable<Nucleotide> sequence) {
+    		return newValuesFactory.create(sequence);
+    	}
+    	protected NewValues create(Iterator<Nucleotide> sequence) {
+    		return newValuesFactory.create(sequence);
+    	}
+    	/**
+    	 * Builder class to create new {@link DecodingOptions}.
+    	 * @author dkatzel
+    	 * 
+    	 * @since 6.0
+    	 *
+    	 */
+    	public static class DecodingOptionsBuilder{
+    		private Nucleotide.InvalidCharacterHandler invalidCharacterHandler = DEFAULT_INVALD_CHAR_HANDLER;
+    		
+        	private NewValuesFactory newValuesFactory = DefaultNewValuesFactory.INSTANCE;
+        	/**
+        	 * Set the {@link org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler}.
+        	 * @param invalidCharacterHandler the handler to use; if set to {@code null},
+        	 * then the default handler is used.
+        	 * @return this
+        	 */
+        	public DecodingOptionsBuilder invalidCharacterHandler(Nucleotide.InvalidCharacterHandler invalidCharacterHandler) {
+        		if(invalidCharacterHandler==null) {
+        			this.invalidCharacterHandler = DEFAULT_INVALD_CHAR_HANDLER;
+        		}else{
+        			this.invalidCharacterHandler = invalidCharacterHandler;
+        		}
+        		return this;
+        	}
+        	/**
+             * Replace all ambiguous bases with Ns.  This only affects
+             * downstream calls to append/prepend/insert, previously
+             * added bases are not changed.
+             *  
+             * @param replaceAllAmbigutiesWithNs {@code true} if any future encountered
+             * ambiguities should be changed to Ns, {@code false} otherwise.
+             * 
+             * @return this
+             */
+            public DecodingOptionsBuilder replaceAllAmbiguitiesWithNs(boolean replaceAllAmbigutiesWithNs) {
+            	if(replaceAllAmbigutiesWithNs) {
+            		newValuesFactory = AdjustedNewValuesFactory.INSTANCE;
+            	}else {
+            		newValuesFactory = DefaultNewValuesFactory.INSTANCE;
+            	}
+            	return this;
+            }
+        	
+        	
+    	}
+    }
+    /**
      * handler for invalid chars if set.
      */
     private static Nucleotide.InvalidCharacterHandler DEFAULT_INVALD_CHAR_HANDLER = InvalidCharacterHandlers.ERROR_OUT;
@@ -86,8 +179,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
     /**
      * handler for invalid chars if set.
      */
-    private Nucleotide.InvalidCharacterHandler invalidCharacterHandler = InvalidCharacterHandlers.ERROR_OUT;
-
+    private DecodingOptions decodingOptions = DecodingOptions.DEFAULT;
     /**
      * Creates a new NucleotideSequenceBuilder instance
      * which currently contains no nucleotides.
@@ -123,8 +215,14 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
     }
     private void _setInvalidCharacterHandler(Nucleotide.InvalidCharacterHandler invalidCharacterHandler) {
     	if(invalidCharacterHandler !=null) {
-    		this.invalidCharacterHandler = invalidCharacterHandler;
+    		this.decodingOptions = this.decodingOptions.toBuilder().invalidCharacterHandler(invalidCharacterHandler).build();
     	}
+    }
+    
+    @Override
+    public NucleotideSequenceBuilder setDecodingOptions(DecodingOptions decodingOptions) {
+    	this.decodingOptions = decodingOptions==null? DecodingOptions.DEFAULT: decodingOptions;
+    	return this;
     }
     
     
@@ -161,7 +259,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
      */
     public NucleotideSequenceBuilder(NucleotideSequence sequence){
     	assertNotNull(sequence);
-        NewValues newValues = new NewValues(sequence);
+        NewValues newValues = decodingOptions.create(sequence);
         this.data = newValues.getData();
         codecDecider = new CodecDecider(newValues);
     }
@@ -173,7 +271,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
      */
     public NucleotideSequenceBuilder(Iterable<Nucleotide> sequence){
         assertNotNull(sequence);
-        NewValues newValues = new NewValues(sequence);
+        NewValues newValues = decodingOptions.newValuesFactory.create(sequence);
         this.data = newValues.getData();
         codecDecider = new CodecDecider(newValues);
     }
@@ -190,7 +288,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
      * into a {@link Nucleotide}.
      */
     public NucleotideSequenceBuilder(String sequence){
-		this(sequence, null);
+		this(sequence, DecodingOptions.DEFAULT);
     }
     /**
      * Creates a new NucleotideSequenceBuilder instance
@@ -211,16 +309,37 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
      * into a {@link Nucleotide}.
      */
     public NucleotideSequenceBuilder(String sequence, Nucleotide.InvalidCharacterHandler invalidCharacterHandler){
+		this(sequence, DecodingOptions.builder().invalidCharacterHandler(invalidCharacterHandler).build());
+		
+	}
+    /**
+     * Creates a new NucleotideSequenceBuilder instance
+     * which currently contains the given sequence.
+     *  Any whitespace in the input string will be ignored.
+     *  This method is able to parse both
+     * '*' (consed) and '-' (TIGR) as gap characters. 
+     * @param sequence the initial nucleotide sequence.
+     *  @param InvalidCharacterHandler an {@link org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler}
+     * for how to handle parsing invalid nucleotide characters, set to {@code null}, then use the default handler
+     * which will throw an IllegalArgumentException.
+     * 
+     * @since 6.0
+     * 
+     * @throws NullPointerException if sequence is null.
+     * @throws IllegalArgumentException if any non-whitespace
+     * in character in the sequence can not be converted
+     * into a {@link Nucleotide}.
+     */
+    public NucleotideSequenceBuilder(String sequence,DecodingOptions decodingOptions){
 		if (sequence == null) {
 			throw new NullPointerException(NULL_SEQUENCE_ERROR_MSG);
 		}
-		_setInvalidCharacterHandler(invalidCharacterHandler);
-		NewValues newValues = new NewValues(sequence, invalidCharacterHandler);
+		this.decodingOptions= decodingOptions==null? DecodingOptions.DEFAULT: decodingOptions;
+		NewValues newValues = this.decodingOptions.create(sequence);
 		this.data = newValues.getData();
 		codecDecider = new CodecDecider(newValues);
 		
 	}
-    
     /**
      * Creates a new NucleotideSequenceBuilder instance
      * which currently contains the given sequence as a char[].
@@ -234,7 +353,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
      * into a {@link Nucleotide}.
      */
     public NucleotideSequenceBuilder(char[] sequence){
-		this(sequence, null);
+		this(sequence, DecodingOptions.DEFAULT);
     }
     /**
      * Creates a new NucleotideSequenceBuilder instance
@@ -248,12 +367,12 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
      * in character in the sequence can not be converted
      * into a {@link Nucleotide}.
      */
-    public NucleotideSequenceBuilder(char[] sequence, Nucleotide.InvalidCharacterHandler invalidCharacterHandler){
+    public NucleotideSequenceBuilder(char[] sequence, DecodingOptions decodingOptions){
 		if (sequence == null) {
 			throw new NullPointerException(NULL_SEQUENCE_ERROR_MSG);
 		}
-		_setInvalidCharacterHandler(invalidCharacterHandler);
-		NewValues newValues = new NewValues(sequence, this.invalidCharacterHandler);
+		this.decodingOptions = Objects.requireNonNull(decodingOptions);
+		NewValues newValues = decodingOptions.create(sequence);
 		this.data = newValues.getData();
 		codecDecider = new CodecDecider(newValues);
 		
@@ -268,7 +387,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
 		if (singleNucleotide == null) {
 			throw new NullPointerException("singleNucleotide can not be null");
 		}
-		NewValues newValues = new NewValues(singleNucleotide);
+		NewValues newValues = decodingOptions.newValuesFactory.create(singleNucleotide);
 		this.data = newValues.getData();
 		codecDecider = new CodecDecider(newValues);
 	}
@@ -277,13 +396,13 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
     private NucleotideSequenceBuilder(NucleotideSequenceBuilder copy){    	
         this.data = copy.data.copy();
         this.codecDecider = copy.codecDecider.copy();
-        this.invalidCharacterHandler = copy.invalidCharacterHandler;
+        this.decodingOptions = copy.decodingOptions;
     }
-    private NucleotideSequenceBuilder(GrowableByteArray data, InvalidCharacterHandler invalidCharacterHandler){
+    private NucleotideSequenceBuilder(GrowableByteArray data, DecodingOptions decodingOptions){
     	this.data = data;
-    	NewValues newValues = new NewValues(data);
+    	NewValues newValues = decodingOptions.newValuesFactory.create(data);
     	this.codecDecider = new CodecDecider(newValues);
-    	this.invalidCharacterHandler = invalidCharacterHandler;
+    	this.decodingOptions = decodingOptions;
     }
     
     /**
@@ -303,7 +422,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
      * @throws IndexOutOfBoundsException if Range contains values outside of the possible sequence offsets.
      */
 	public NucleotideSequenceBuilder(NucleotideSequence seq, Range range) {
-		NewValues newValues = new NewValues(seq.iterator(range), (int) range.getLength());
+		NewValues newValues = decodingOptions.newValuesFactory.create(seq.iterator(range), (int) range.getLength());
 		this.data = newValues.getData();
 		codecDecider = new CodecDecider(newValues);
 	}
@@ -330,12 +449,12 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
      */
 	public NucleotideSequenceBuilder(NucleotideSequence seq, Range... ranges) {
 		Range firstRange = ranges[0];
-		NewValues newValues = new NewValues(seq.iterator(firstRange), (int) firstRange.getLength());
+		NewValues newValues = decodingOptions.newValuesFactory.create(seq.iterator(firstRange), (int) firstRange.getLength());
 		this.data = newValues.getData();
 		codecDecider = new CodecDecider(newValues);
 		for(int i=1; i< ranges.length; i++) {
 			Range r = ranges[i];
-			append(new NewValues(seq.iterator(r), (int) r.getLength()));
+			append(decodingOptions.newValuesFactory.create(seq.iterator(r), (int) r.getLength()));
 		}
 		
 	}
@@ -370,12 +489,12 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
 			return; 
 		}
 		Range firstRange = iter.next();
-		NewValues newValues = new NewValues(seq.iterator(firstRange), (int) firstRange.getLength());
+		NewValues newValues = decodingOptions.newValuesFactory.create(seq.iterator(firstRange), (int) firstRange.getLength());
 		this.data = newValues.getData();
 		codecDecider = new CodecDecider(newValues);
 		while(iter.hasNext()) {
 			Range r = iter.next();
-			append(new NewValues(seq.iterator(r), (int) r.getLength()));
+			append(decodingOptions.newValuesFactory.create(seq.iterator(r), (int) r.getLength()));
 		}
 		
 	}
@@ -407,7 +526,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
      */
     public NucleotideSequenceBuilder append(Iterable<Nucleotide> sequence){
         assertNotNull(sequence);
-        NewValues newValues = new NewValues(sequence);
+        NewValues newValues = decodingOptions.newValuesFactory.create(sequence);
         return append(newValues);
     }
     
@@ -423,7 +542,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
     @Override
     public NucleotideSequenceBuilder append(NucleotideSequence sequence){
         assertNotNull(sequence);
-        NewValues newValues = new NewValues(sequence);
+        NewValues newValues = decodingOptions.newValuesFactory.create(sequence);
         return append(newValues);
     }
     
@@ -446,7 +565,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
     public NucleotideSequenceBuilder append(NucleotideSequence sequence, Range range){
         assertNotNull(sequence);
         assertNotNull(range);
-        NewValues newValues = new NewValues(sequence.iterator(range), (int) range.getLength());
+        NewValues newValues = decodingOptions.newValuesFactory.create(sequence.iterator(range), (int) range.getLength());
         return append(newValues);
     }
 	private NucleotideSequenceBuilder append(NewValues newValues) {
@@ -496,7 +615,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
     	if(sequence ==null){
     		throw new NullPointerException(NULL_SEQUENCE_ERROR_MSG);
     	}
-        return append(new NewValues(sequence, invalidCharacterHandler));
+        return append(decodingOptions.create(sequence));
     }
     
     
@@ -519,7 +638,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
     	if(sequence ==null){
     		throw new NullPointerException(NULL_SEQUENCE_ERROR_MSG);
     	}
-        return append(new NewValues(sequence, invalidCharacterHandler));
+        return append(decodingOptions.create(sequence));
     }
     
     /**
@@ -543,7 +662,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
         if(sequence ==null){
                 throw new NullPointerException(NULL_SEQUENCE_ERROR_MSG);
         }
-        return append(new NewValues(sequence));
+        return append(decodingOptions.newValuesFactory.create(sequence));
     }
     /**
      * Inserts the given sequence to the builder's mutable sequence
@@ -565,8 +684,8 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
      */
     @Override
     public NucleotideSequenceBuilder insert(int offset, String sequence){
-    	 assertInsertionParametersValid(offset, sequence);
-    	return insert(offset, new NewValues(sequence, invalidCharacterHandler));
+    	assertInsertionParametersValid(offset, sequence);
+    	return insert(offset, decodingOptions.create(sequence));
     }
     /**
      * Inserts the given sequence to the builder's mutable sequence
@@ -593,7 +712,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
     @Override
 	public NucleotideSequenceBuilder insert(int offset, char[] sequence){
     	assertInsertionParametersValid(offset, sequence);
-		return insert(offset, new NewValues(sequence, invalidCharacterHandler));
+		return insert(offset, decodingOptions.create(sequence));
     }
     
     /**
@@ -776,7 +895,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
         			Math.min(data.getCurrentLength()-1, range.getEnd()));
         	GrowableByteArray deletedBytes = data.subArray(rangeToDelete);
         	
-            NewValues newValues = new NewValues(deletedBytes);
+            NewValues newValues = decodingOptions.newValuesFactory.create(deletedBytes);
             this.codecDecider.delete((int)range.getBegin(),newValues);
             data.remove(rangeToDelete);
         }
@@ -878,7 +997,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
      */
     public NucleotideSequenceBuilder insert(int offset, Iterable<Nucleotide> sequence){
         assertInsertionParametersValid(offset, sequence);   
-        NewValues newValues = new NewValues(sequence);
+        NewValues newValues = decodingOptions.newValuesFactory.create(sequence);
         return insert(offset, newValues);
     }
     /**
@@ -903,7 +1022,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
     @Override
 	public NucleotideSequenceBuilder insert(int offset, Nucleotide[] sequence) {
         assertInsertionParametersValid(offset, sequence);   
-        NewValues newValues = new NewValues(sequence);
+        NewValues newValues = decodingOptions.newValuesFactory.create(sequence);
         return insert(offset, newValues);
     }
     
@@ -925,7 +1044,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
     @Override
 	public NucleotideSequenceBuilder insert(int offset, NucleotideSequence sequence){
         assertInsertionParametersValid(offset, sequence);   
-        NewValues newValues = new NewValues(sequence);
+        NewValues newValues = decodingOptions.newValuesFactory.create(sequence);
         return insert(offset, newValues);
     }
 	private void assertInsertionParametersValid(int offset,
@@ -980,7 +1099,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
                     String.format("offset can not start beyond current length (%d) : %d", getLength(),offset));
         }
         NucleotideSequenceBuilder otherSequenceBuilder = otherBuilder;
-        NewValues newValues = new NewValues(otherSequenceBuilder);
+        NewValues newValues = decodingOptions.newValuesFactory.create(otherSequenceBuilder);
         if(offset == getLength()){
         	//act like append!
         	return append(newValues);
@@ -1251,7 +1370,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
     	}
     	
     	Range trimRange = range.intersection(Range.ofLength(getLength()));
-    	NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(data.subArray(trimRange), invalidCharacterHandler);
+    	NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(data.subArray(trimRange), decodingOptions);
 		if(codecDecider.hasAlignedReference()){
 			builder.setReferenceHint(codecDecider.alignedReference.reference, codecDecider.alignedReference.offset+ (int)range.getBegin());
 		}
@@ -1281,7 +1400,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
      * @since 5.0
      */
 	public NucleotideSequenceBuilder copy(Range gappedRange) {
-		return new NucleotideSequenceBuilder(data.subArray(gappedRange), invalidCharacterHandler);
+		return new NucleotideSequenceBuilder(data.subArray(gappedRange), decodingOptions);
 	}
    
 	@Override
@@ -1676,6 +1795,21 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
         return codecDecider.numUs;
     }
 
+    /**
+     * Replace all ambiguous bases with Ns.  This only affects
+     * downstream calls to append/prepend/insert, previously
+     * added bases are not changed.
+     *  
+     * @param replaceAllAmbigutiesWithNs {@code true} if any future encountered
+     * ambiguities should be changed to Ns, {@code false} otherwise.
+     * 
+     * @return this
+     * @since 6.0
+     */
+    public NucleotideSequenceBuilder replaceAllAmbiguitiesWithNs(boolean replaceAllAmbigutiesWithNs) {
+    	this.decodingOptions = decodingOptions.toBuilder().replaceAllAmbiguitiesWithNs(replaceAllAmbigutiesWithNs).build();
+    	return this;
+    }
 
     /**
      * This class keeps track of the number of special
@@ -2064,8 +2198,187 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
     	
     }
     
+    interface NewValuesFactory{
+		NewValues create(char[] sequence, InvalidCharacterHandler invalidCharacterHandler);
+
+		NewValues create(GrowableByteArray data);
+
+		NewValues create(Iterable<Nucleotide> nucleotides);
+
+		NewValues create(Iterator<Nucleotide> iter, int length);
+
+		NewValues create(Iterator<Nucleotide> iter);
+
+		NewValues create(Nucleotide nucleotide);
+
+		NewValues create(Nucleotide[] sequence);
+
+		NewValues create(NucleotideSequence sequence);
+
+		NewValues create(String sequence, InvalidCharacterHandler invalidCharacterHandler);
+    }
+    public enum DefaultNewValuesFactory implements NewValuesFactory{
+    	INSTANCE;
+    	
+		@Override
+		public NewValues create(char[] sequence, InvalidCharacterHandler invalidCharacterHandler) {
+			return new NewValues(sequence, invalidCharacterHandler);
+		}
+
+		@Override
+		public NewValues create(GrowableByteArray data) {
+			return new NewValues(data);
+		}
+
+		@Override
+		public NewValues create(Iterable<Nucleotide> nucleotides) {
+			return new NewValues(nucleotides);
+		}
+
+		@Override
+		public NewValues create(Iterator<Nucleotide> iter, int length) {
+			return new NewValues(iter, length);
+		}
+
+		@Override
+		public NewValues create(Iterator<Nucleotide> iter) {
+			return new NewValues(iter);
+		}
+
+		@Override
+		public NewValues create(Nucleotide nucleotide) {
+			return new NewValues(nucleotide);
+		}
+
+		@Override
+		public NewValues create(Nucleotide[] sequence) {
+			return new NewValues(sequence);
+		}
+
+		@Override
+		public NewValues create(NucleotideSequence sequence) {
+			return new NewValues(sequence);
+		}
+
+		@Override
+		public NewValues create(String sequence, InvalidCharacterHandler invalidCharacterHandler) {
+			return new NewValues(sequence, invalidCharacterHandler);
+		}
+    	
+    }
+    public enum AdjustedNewValuesFactory implements NewValuesFactory{
+
+    	INSTANCE;
+    	
+		@Override
+		public NewValues create(char[] sequence, InvalidCharacterHandler invalidCharacterHandler) {
+			return new AdjustedNewValues(sequence, invalidCharacterHandler);
+		}
+
+		@Override
+		public NewValues create(GrowableByteArray data) {
+			return new AdjustedNewValues(data);
+		}
+
+		@Override
+		public NewValues create(Iterable<Nucleotide> nucleotides) {
+			return new AdjustedNewValues(nucleotides);
+		}
+
+		@Override
+		public NewValues create(Iterator<Nucleotide> iter, int length) {
+			return new AdjustedNewValues(iter, length);
+		}
+
+		@Override
+		public NewValues create(Iterator<Nucleotide> iter) {
+			return new AdjustedNewValues(iter);
+		}
+
+		@Override
+		public NewValues create(Nucleotide nucleotide) {
+			return new AdjustedNewValues(nucleotide);
+		}
+
+		@Override
+		public NewValues create(Nucleotide[] sequence) {
+			return new AdjustedNewValues(sequence);
+		}
+
+		@Override
+		public NewValues create(NucleotideSequence sequence) {
+			return new AdjustedNewValues(sequence);
+		}
+
+		@Override
+		public NewValues create(String sequence, InvalidCharacterHandler invalidCharacterHandler) {
+			return new AdjustedNewValues(sequence, invalidCharacterHandler);
+		}
+    	
+    }
     
-    
+    private static class AdjustedNewValues extends NewValues{
+    	private static boolean[] nonNAmbiguityOffsets;
+    	private static byte N_Ordinal = Nucleotide.Unknown.getOrdinalAsByte();
+    	
+    	static {
+    		Nucleotide[] values = Nucleotide.values();
+    		nonNAmbiguityOffsets = new boolean[values.length];
+    		
+    		for(int i=0; i< values.length; i++) {
+    			Nucleotide nucleotide = values[i];
+				if(i!=N_Ordinal && nucleotide.isAmbiguity()) {
+					nonNAmbiguityOffsets[i] =true;
+				}
+    		}
+    	}
+
+		@Override
+		protected byte adjustValue(byte nucleotideOrdinal) {
+			if(nonNAmbiguityOffsets[nucleotideOrdinal]) {
+				return N_Ordinal;
+			}
+			return nucleotideOrdinal;
+		}
+
+		public AdjustedNewValues(char[] sequence, InvalidCharacterHandler invalidCharacterHandler) {
+			super(sequence, invalidCharacterHandler);
+		}
+
+		public AdjustedNewValues(GrowableByteArray data) {
+			super(data.replaceIf(i-> nonNAmbiguityOffsets[i], N_Ordinal ));
+		}
+
+		public AdjustedNewValues(Iterable<Nucleotide> nucleotides) {
+			super(nucleotides);
+		}
+
+		public AdjustedNewValues(Iterator<Nucleotide> iter, int length) {
+			super(iter, length);
+		}
+
+		public AdjustedNewValues(Iterator<Nucleotide> iter) {
+			super(iter);
+		}
+
+		public AdjustedNewValues(Nucleotide nucleotide) {
+			super(nucleotide);
+		}
+
+		public AdjustedNewValues(Nucleotide[] sequence) {
+			super(sequence);
+		}
+
+		public AdjustedNewValues(NucleotideSequence sequence) {
+			super(sequence);
+		}
+
+		public AdjustedNewValues(String sequence, InvalidCharacterHandler invalidCharacterHandler) {
+			super(sequence, invalidCharacterHandler);
+		}
+    	
+    	
+    }
     private static class NewValues{
     	
     	private final GrowableByteArray data;
@@ -2082,12 +2395,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
 			gapOffsets = new GrowableIntArray(12);
 			
     		
-    		SingleThreadAdder offset = new SingleThreadAdder();
-    		data.stream()
-    				.forEach(i->{
-    					handleOrdinal((byte)i, offset.intValue());
-    					offset.increment();
-    				});
+    		data.forEachIndexed((offset, i)-> handleOrdinal(i, offset));
     		
     	}
     	
@@ -2205,9 +2513,13 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
             	offset++;            	
             }
     	}
+    	
+    	protected byte adjustValue(byte nucleotideOrdinal) {
+    		return nucleotideOrdinal;
+    	}
     	@SuppressWarnings("fallthrough")
 		private void handle(Nucleotide n, int offset) {
-			byte value=n.getOrdinalAsByte();
+			byte value=adjustValue(n.getOrdinalAsByte());
 			//switch statements has been optimized using profiler 
 			//this will cause a special tableswitch opcode
 			//which is is an O(1) lookup instead of an

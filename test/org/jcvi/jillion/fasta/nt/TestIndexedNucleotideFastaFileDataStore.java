@@ -25,13 +25,14 @@ import java.io.IOException;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder.DecodingOptions;
 
 public class TestIndexedNucleotideFastaFileDataStore extends AbstractTestSequenceFastaDataStore {
 
     @Override
-    protected NucleotideFastaDataStore parseFile(File file, InvalidCharacterHandler invalidCharacterHandler)
+    protected NucleotideFastaDataStore parseFile(File file,  DecodingOptions decodingOptions)
             throws IOException {
-        return IndexedNucleotideSequenceFastaFileDataStore.create(file, DataStoreFilters.alwaysAccept(), null, invalidCharacterHandler);
+        return IndexedNucleotideSequenceFastaFileDataStore.create(file, DataStoreFilters.alwaysAccept(), null, decodingOptions);
     }
 
 }

@@ -37,6 +37,7 @@ import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder.DecodingOptions;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.fasta.FastaFileParser;
 import org.jcvi.jillion.fasta.FastaParser;
@@ -59,22 +60,23 @@ final class DefaultNucleotideFastaFileDataStore{
 		//can not instantiate.
 	}
 
-	private static NucleotideFastaDataStoreBuilderVisitorImpl2 createBuilder(Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter, Nucleotide.InvalidCharacterHandler invalidCharacterHandler){
-		return new NucleotideFastaDataStoreBuilderVisitorImpl2(filter, recordFilter, invalidCharacterHandler);
+	private static NucleotideFastaDataStoreBuilderVisitorImpl2 createBuilder(Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter, 
+			DecodingOptions decodingOptions){
+		return new NucleotideFastaDataStoreBuilderVisitorImpl2(filter, recordFilter, decodingOptions);
 	}
 	
 	public static NucleotideFastaFileDataStore create(File fastaFile) throws IOException{
 		return create(fastaFile,DataStoreFilters.alwaysAccept(), null, null);
 	}
-	public static NucleotideFastaFileDataStore create(File fastaFile, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter,  Nucleotide.InvalidCharacterHandler invalidCharacterHandler) throws IOException{
+	public static NucleotideFastaFileDataStore create(File fastaFile, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter,  DecodingOptions decodingOptions) throws IOException{
 		
 		FastaParser parser = FastaFileParser.create(fastaFile);
 		
-		return create(parser, filter, recordFilter, invalidCharacterHandler);
+		return create(parser, filter, recordFilter, decodingOptions);
 	}
 
-	public static NucleotideFastaFileDataStore create(FastaParser parser,Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter,  Nucleotide.InvalidCharacterHandler invalidCharacterHandler) throws IOException {
-		NucleotideFastaDataStoreBuilderVisitorImpl2 builder = createBuilder(filter, recordFilter, invalidCharacterHandler);
+	public static NucleotideFastaFileDataStore create(FastaParser parser,Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter,  DecodingOptions decodingOptions) throws IOException {
+		NucleotideFastaDataStoreBuilderVisitorImpl2 builder = createBuilder(filter, recordFilter, decodingOptions);
 		if(parser instanceof FastaFileParser){
 		    ((FastaFileParser)parser).getFile().ifPresent(file -> builder.setSourceFile(file));
 		}
@@ -85,9 +87,11 @@ final class DefaultNucleotideFastaFileDataStore{
 	public static NucleotideFastaFileDataStore create(InputStream in) throws IOException{
 		return create(in,DataStoreFilters.alwaysAccept(), null, null);
 	}
-	public static NucleotideFastaFileDataStore create(InputStream in, DataStoreFilter filter, Predicate<NucleotideFastaRecord> recordFilter,  Nucleotide.InvalidCharacterHandler invalidCharacterHandler) throws IOException{
+	public static NucleotideFastaFileDataStore create(InputStream in, DataStoreFilter filter, 
+			Predicate<NucleotideFastaRecord> recordFilter, 
+			DecodingOptions decodingOptions) throws IOException{
 		try{
-			NucleotideFastaDataStoreBuilderVisitorImpl2 builder = createBuilder(filter, recordFilter, invalidCharacterHandler);
+			NucleotideFastaDataStoreBuilderVisitorImpl2 builder = createBuilder(filter, recordFilter, decodingOptions);
 			FastaFileParser.create(in).parse(builder);
 			return builder.build();
 		}finally{
@@ -105,9 +109,10 @@ final class DefaultNucleotideFastaFileDataStore{
 		private final ReusableNucleotideFastaRecordVisitor currentVisitor;
 		
 		private File fastaFile =null;
-		public NucleotideFastaDataStoreBuilderVisitorImpl2(Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter, Nucleotide.InvalidCharacterHandler invalidCharacterHandler){
+		public NucleotideFastaDataStoreBuilderVisitorImpl2(Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter, 
+				DecodingOptions decodingOptions){
 			this.filter = filter;
-			this.currentVisitor = new ReusableNucleotideFastaRecordVisitor(recordFilter, invalidCharacterHandler);
+			this.currentVisitor = new ReusableNucleotideFastaRecordVisitor(recordFilter, decodingOptions);
 		}
 		@Override
 		public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
@@ -158,9 +163,9 @@ final class DefaultNucleotideFastaFileDataStore{
 			 * Default constructor needs to have it's data
 			 * initialized.
 			 */
-			public ReusableNucleotideFastaRecordVisitor(Predicate<NucleotideFastaRecord> recordFilter, Nucleotide.InvalidCharacterHandler invalidCharacterHandler){
+			public ReusableNucleotideFastaRecordVisitor(Predicate<NucleotideFastaRecord> recordFilter,DecodingOptions decodingOptions){
 				this.recordFilter = recordFilter;
-				builder.setInvalidCharacterHandler(invalidCharacterHandler);
+				this.builder.setDecodingOptions(decodingOptions);
 			}
 			/**
 			 * Prepare this visitor to visit a new record.

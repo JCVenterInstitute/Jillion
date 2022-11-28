@@ -1,5 +1,7 @@
 package org.jcvi.jillion.sam;
 
+import java.io.ObjectInputStream;
+import java.io.Serializable;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.Set;
@@ -20,9 +22,11 @@ import org.jcvi.jillion.core.io.IOUtil;
  *
  * @since 5.3
  */
-public class SamRecordFlags {
+public class SamRecordFlags implements Serializable{
 
-    private static final ConcurrentHashMap<Integer, SamRecordFlags> CACHE = new ConcurrentHashMap<>();
+    
+	private static final long serialVersionUID = 8586093977275081582L;
+	private static final ConcurrentHashMap<Integer, SamRecordFlags> CACHE = new ConcurrentHashMap<>();
     /**
      * Get the {@link SamRecordFlags} object for the given set bits as an int (as it is stored in BAM).
      * @param bits the bit values for the set flag; will always be >=0.
@@ -216,5 +220,24 @@ public class SamRecordFlags {
         return setBits == 768;
     }
     
-    
+    private Object writeReplace(){
+		return new FlagProxy(this);
+	}
+	
+	private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+		throw new java.io.InvalidObjectException("Proxy required");
+	}
+	
+	private static class FlagProxy implements Serializable{
+		
+		private static final long serialVersionUID = -8170063982187142849L;
+		private int flags;
+		public FlagProxy(SamRecordFlags flags) {
+			this.flags = flags.asInt();
+		}
+		
+		private Object readResolve(){
+			return SamRecordFlags.valueOf(flags);
+		}
+	}
 }

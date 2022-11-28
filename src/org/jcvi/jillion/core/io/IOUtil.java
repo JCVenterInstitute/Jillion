@@ -48,7 +48,9 @@ import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
+import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
+import java.nio.file.attribute.FileAttribute;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -173,10 +175,16 @@ public final class IOUtil {
     	if(dir==null){
     		return;
     	}
-    	//use new Java 7 method
-        //which will throw a meaningful IOException if there are permission or file problems
-        //and checks if already exists and doesn't do anything if it already exists.
-        Files.createDirectories(dir.toPath());
+    	if(!dir.exists()) {
+    		try {
+		    	//use new Java 7 method
+		        //which will throw a meaningful IOException if there are permission or file problems
+		        //and checks if already exists and doesn't do anything if it already exists.
+		        Files.createDirectories(dir.toPath());
+    		}catch(FileAlreadyExistsException e) {
+    			//ignore
+    		}
+    	}
     }
     /**
      * Make the given directory.  This method should be used

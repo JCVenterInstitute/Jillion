@@ -29,7 +29,7 @@ class UnCompressedUngappedProteinSequence implements ProteinSequence{
     //to substitute a proxy class to be serialized.
 
     private final AminoAcid[] array;
-    private final Supplier<String> stringSupplier;
+    private transient final Supplier<String> stringSupplier;
 
     public UnCompressedUngappedProteinSequence(AminoAcid[] array) {
         this.array = array;

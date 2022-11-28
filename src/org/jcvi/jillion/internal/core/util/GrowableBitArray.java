@@ -23,6 +23,7 @@ package org.jcvi.jillion.internal.core.util;
 
 import java.util.Arrays;
 import java.util.BitSet;
+import java.util.Objects;
 import java.util.stream.IntStream;
 
 import org.jcvi.jillion.core.Range;
@@ -332,4 +333,30 @@ public final class GrowableBitArray {
             consumer.accept(i, data[i]);
         }
     }
+    
+    @Override
+   	public boolean equals(Object o) {
+   		if (this == o) return true;
+   		if (!(o instanceof GrowableBitArray)){
+   			return false;
+   		}
+   		GrowableBitArray bytes = (GrowableBitArray) o;
+   		if(currentLength != bytes.currentLength){
+   			return false;
+   		}
+   		for (int i=0; i<currentLength; i++) {
+   			if (data[i] != bytes.data[i]) {
+   				return false;
+   			}
+   		}
+
+   		return true;
+   	}
+
+   	@Override
+   	public int hashCode() {
+   		int result = Objects.hash(currentLength);
+   		result = 31 * result + Arrays.hashCode(data);
+   		return result;
+   	}
 }

@@ -39,6 +39,7 @@ import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder.DecodingOptions;
 import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler;
 import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandlers;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
@@ -234,7 +235,7 @@ public abstract class AbstractTestSequenceFastaDataStore {
         iter.close();
         assertFalse(iter.hasNext());
     }
-    protected abstract NucleotideFastaDataStore parseFile(File file, InvalidCharacterHandler handler) throws IOException;
+    protected abstract NucleotideFastaDataStore parseFile(File file,DecodingOptions decodingOptions) throws IOException;
     
     private NucleotideFastaDataStore parseFile(File f) throws IOException {
     	return parseFile(f, null);
@@ -345,7 +346,7 @@ public abstract class AbstractTestSequenceFastaDataStore {
     		writer.println("ACGTZ");
     	}
     	//depending on implementation might throw in either creating datastore or getting()
-    	NucleotideFastaDataStore sut = parseFile(fasta, InvalidCharacterHandlers.REPLACE_WITH_N);
+    	NucleotideFastaDataStore sut = parseFile(fasta, DecodingOptions.builder().invalidCharacterHandler( InvalidCharacterHandlers.REPLACE_WITH_N).build());
     	assertEquals("ACGTN", sut.get("foo").getSequence().toString());  	
     }
     @Test
@@ -357,7 +358,7 @@ public abstract class AbstractTestSequenceFastaDataStore {
     		writer.println("ACGTZ");
     	}
     	//depending on implementation might throw in either creating datastore or getting()
-    	NucleotideFastaDataStore sut = parseFile(fasta, InvalidCharacterHandlers.IGNORE);
+    	NucleotideFastaDataStore sut = parseFile(fasta, DecodingOptions.builder().invalidCharacterHandler(InvalidCharacterHandlers.IGNORE).build());
     	assertEquals("ACGT", sut.get("foo").getSequence().toString());  	
     }
     

@@ -20,12 +20,18 @@
  ******************************************************************************/
 package org.jcvi.jillion.sam.attribute;
 
+import java.io.ObjectInputStream;
+import java.io.Serializable;
+
 import org.jcvi.jillion.core.util.UnsignedByteArray;
 import org.jcvi.jillion.core.util.UnsignedIntArray;
 import org.jcvi.jillion.core.util.UnsignedShortArray;
 
-public class SamAttribute {
+public class SamAttribute implements Serializable{
 	
+	
+	private static final long serialVersionUID = -6565312189027626783L;
+
 	private final SamAttributeKey key;
 	
 	private final SamAttributeType type;
@@ -50,6 +56,33 @@ public class SamAttribute {
 		this.key = key;
 		this.type = type;
 		this.value = value;
+	}
+	
+	private void readObject(ObjectInputStream stream) throws java.io.InvalidObjectException{
+		throw new java.io.InvalidObjectException("Proxy required");
+	}
+	private Object writeReplace(){
+		return new AttributeProxy(this);
+	}
+	
+	private static class AttributeProxy implements Serializable{
+		
+		private static final long serialVersionUID = 4496012843288559716L;
+
+		private final SamAttributeKey key;
+		
+		private final SamAttributeType type;
+		
+		private final Object value;
+		
+		public AttributeProxy(SamAttribute attr) {
+			this.key = attr.key;
+			this.type = attr.type;
+			this.value = attr.value;
+		}
+		private Object readResolve(){
+			return new SamAttribute(key,type,value);
+		}
 	}
 	
 	public SamAttributeType getType() {

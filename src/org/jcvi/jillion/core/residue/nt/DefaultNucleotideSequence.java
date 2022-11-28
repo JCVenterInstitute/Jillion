@@ -268,10 +268,7 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
 		}
 		
 		private Object readResolve(){
-			return new NucleotideSequenceBuilder(bases)
-																				.build();
-//
-//			return new DefaultNucleotideSequence(seq.codec, seq.data, seq.isRna());
+			return new NucleotideSequenceBuilder(bases).build();
 		}
 	}
 

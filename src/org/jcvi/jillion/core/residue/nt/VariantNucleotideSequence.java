@@ -30,6 +30,8 @@ import java.util.stream.Stream;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder.DecodingOptions;
+import org.jcvi.jillion.core.residue.nt.VariantNucleotideSequence.Builder;
 import org.jcvi.jillion.core.residue.nt.VariantNucleotideSequence.Variant.VariantBuilder;
 import org.jcvi.jillion.core.util.SingleThreadAdder;
 import org.jcvi.jillion.internal.core.util.ArrayUtil;
@@ -833,6 +835,12 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 		@Override
 		public Builder setInvalidCharacterHandler(InvalidCharacterHandler invalidCharacterHandler) {
 			nucleotideSequence.setInvalidCharacterHandler(invalidCharacterHandler);
+			return this;
+		}
+		
+		@Override
+		public Builder setDecodingOptions(DecodingOptions decodingOptions) {
+			nucleotideSequence.setDecodingOptions(decodingOptions);
 			return this;
 		}
 		@Override

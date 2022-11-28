@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.qual;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.DoubleSummaryStatistics;
 import java.util.Iterator;
@@ -41,7 +42,7 @@ import org.jcvi.jillion.core.Sequence;
  *
  *
  */
-public interface QualitySequence extends Sequence<PhredQuality>{
+public interface QualitySequence extends Sequence<PhredQuality>, Serializable{
 
 	/**
      * Two {@link QualitySequence}s are equal
