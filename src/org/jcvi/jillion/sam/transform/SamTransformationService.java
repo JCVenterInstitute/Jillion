@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Predicate;
 
 import org.jcvi.jillion.assembly.AssemblyTransformationService;
 import org.jcvi.jillion.assembly.AssemblyTransformer;
@@ -38,7 +40,6 @@ import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
@@ -57,6 +58,7 @@ import org.jcvi.jillion.sam.cigar.CigarElement;
 import org.jcvi.jillion.sam.cigar.CigarOperation;
 import org.jcvi.jillion.sam.header.SamHeader;
 import org.jcvi.jillion.sam.header.SamReferenceSequence;
+import org.jcvi.jillion.sam.SamParser.SamParserOptions;
 /**
  * {@code SamTransformationService}
  * is a class that can parse a SAM file
@@ -74,6 +76,7 @@ public final class SamTransformationService implements AssemblyTransformationSer
 	
 	private final NucleotideSequenceDataStore referenceDataStore;
 	private final SamParser parser;
+	private final Predicate<SamRecord> filter;
 	
 	/**
 	 * Create a new {@link SamTransformationService} using
@@ -88,11 +91,29 @@ public final class SamTransformationService implements AssemblyTransformationSer
 	 */
 	public SamTransformationService(File samFile, File referenceFasta) throws IOException {
 		
+		this(samFile, referenceFasta, null);
+	}
+	/**
+	 * Create a new {@link SamTransformationService} using
+	 * the given SAM encoded file and a fasta file of the ungapped
+	 * references sequences referred to in the SAM.  The ids in the fasta file
+	 * must match the reference sequence names in the SAM file (@SQ SN:$ID) in the SAM header.
+	 * @param samFile the SAM file to parse and transform; can not be null
+	 * and must exist.
+	 * @param referenceFasta the reference fasta file; can not be null and must exist.
+	 * @param a filter of reads to include- if null, then no filter is applied.
+	 * @throws IOException if there is a problem parsing the input files.
+	 * @throws NullPointerException if either parameter is null.
+	 * 
+	 * @since 6.0
+	 */
+	public SamTransformationService(File samFile, File referenceFasta, Predicate<SamRecord> filter) throws IOException {
+		
 		parser = SamParserFactory.create(samFile);
 		NucleotideFastaDataStore ungappedReferenceDataStore = new NucleotideFastaFileDataStoreBuilder(referenceFasta)
 																	.build();
-		
-		referenceDataStore = SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(parser, ungappedReferenceDataStore);
+		this.filter = filter;
+		referenceDataStore = SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(parser, ungappedReferenceDataStore, filter);
 	}
 	/**
 	 * Parse the SAM file and call the appropriate methods on the given
@@ -102,16 +123,29 @@ public final class SamTransformationService implements AssemblyTransformationSer
 	 * @throws NullPointerException if transformer is null.
 	 */
 	@Override
-	public void transform(final AssemblyTransformer transformer){
+	public void transform(final AssemblyTransformer transformer) throws IOException{
 		if(transformer ==null){
 			throw new NullPointerException("transformer can not be null");
 		}
 		try {
 			SamTransformerVisitor visitor = new SamTransformerVisitor(referenceDataStore, transformer);
-			parser.parse(visitor);
+			parser.parse(new SamParserOptions().filter(filter), visitor);
+			
 		} catch (Exception e) {
-			throw new IllegalStateException("error parsing sam file", e);
+			throw new IOException("error parsing sam file", e);
 		}
+	}
+	
+	public void transform(String referenceId, Range range, AssemblyTransformer transformer) throws IOException {
+		Objects.requireNonNull(referenceId);
+		Objects.requireNonNull(range);
+		Objects.requireNonNull(transformer);
+		
+		if(!referenceDataStore.contains(referenceId)) {
+			throw new IllegalArgumentException(referenceId+ " does not exist");
+		}
+		SamTransformerVisitor visitor = new SamTransformerVisitor(referenceDataStore, transformer);
+		parser.parse(new SamParserOptions().filter(filter).reference(referenceId, range), visitor);
 	}
 	
 	

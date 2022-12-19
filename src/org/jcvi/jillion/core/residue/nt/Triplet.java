@@ -20,16 +20,26 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.nt;
 
+import java.util.Comparator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
  * {@code Triplet} is a group of three
  * consecutive {@link Nucleotide}s.
  * @author dkatzel
  *
  */
-public final class Triplet {
+public final class Triplet implements Comparable<Triplet>{
 
 	private final byte first,second,third;
+	private static final byte URACIL_VALUE = Nucleotide.Uracil.getOrdinalAsByte();
+	private static final byte THYMINE_VALUE = Nucleotide.Thymine.getOrdinalAsByte();
 	private static final byte GAP_VALUE = Nucleotide.Gap.getOrdinalAsByte();
+	
+	private final boolean hasUracil;
+	
 	/**
 	 * Our cache of all unique triplets.  Uses the fly-weight
 	 * design pattern to not create more instances
@@ -39,10 +49,75 @@ public final class Triplet {
 	 * too expensive
 	 */
 	private static final int cacheSize = Nucleotide.values().length;
+	private static final boolean[] isAmbiguityCache = new boolean[cacheSize];
+	
 	private static final Triplet[][][] CACHE = new Triplet[cacheSize][cacheSize][cacheSize];
 
+	static {
+		int i=0;
+		for(Nucleotide n : Nucleotide.values()) {
+			if(n.isAmbiguity()) {
+				isAmbiguityCache[i]=true;
+			}
+			i++;
+		}
+	}
 	public static Triplet create(char first, char second, char third){
 		return create(Nucleotide.parse(first), Nucleotide.parse(second), Nucleotide.parse(third));
+	}
+	
+	public Triplet withUracil() {
+		boolean changed=false;
+		byte a,b,c;
+		if(first==THYMINE_VALUE) {
+			a=URACIL_VALUE;
+			changed=true;
+		}else {
+			a=first;
+		}
+		if(second==THYMINE_VALUE) {
+			b=URACIL_VALUE;
+			changed=true;
+		}else {
+			b=second;
+		}
+		if(third==THYMINE_VALUE) {
+			c=URACIL_VALUE;
+			changed=true;
+		}else {
+			c=third;
+		}
+		if(changed) {
+			return getCachedValue(a,b,c); 
+		}
+		return this;
+	}
+	public Triplet withThymine() {
+		if(!hasUracil) {
+			return this;
+		}
+		byte a,b,c;
+		if(first==URACIL_VALUE) {
+			a=THYMINE_VALUE;
+		
+		}else {
+			a=first;
+		}
+		if(second==URACIL_VALUE) {
+			b=THYMINE_VALUE;
+			
+		}else {
+			b=second;
+		}
+		if(third==URACIL_VALUE) {
+			c=THYMINE_VALUE;
+			
+		}else {
+			c=third;
+		}
+			
+		return getCachedValue(a,b,c); 
+		
 	}
 
 	public static Triplet create(Nucleotide first, Nucleotide second, Nucleotide third){
@@ -50,6 +125,10 @@ public final class Triplet {
 		int o2 = second.ordinal();
 		int o3 = third.ordinal();
 
+		return getCachedValue(o1, o2, o3);
+	}
+
+	private static Triplet getCachedValue(int o1, int o2, int o3) {
 		Triplet fromCache = CACHE[o1][o2][o3];
 		if(fromCache !=null){
 			return fromCache;
@@ -73,6 +152,7 @@ public final class Triplet {
 		this.first = (byte)first;
 		this.second = (byte)second;
 		this.third = (byte)third;
+		hasUracil = this.first==URACIL_VALUE || this.second==URACIL_VALUE || this.third == URACIL_VALUE;
 	}
 
 	@Override
@@ -124,6 +204,39 @@ public final class Triplet {
 
 	public boolean hasGaps() {
 		return first==GAP_VALUE || second == GAP_VALUE || third == GAP_VALUE;
+	}
+	
+	public Set<Triplet> explode(){
+		if(isAmbiguityCache[first] || isAmbiguityCache[second] || isAmbiguityCache[third]) {
+        	//handle ambiguities
+        	Set<Triplet> triplets = new LinkedHashSet<Triplet>();
+        	for(Nucleotide f : getFirst().getBasesFor()) {
+        		for(Nucleotide s : getSecond().getBasesFor()) {
+        			for(Nucleotide t: getThird().getBasesFor()) {
+        				triplets.add(Triplet.create(f, s, t));
+        			}
+        		}
+        	}
+        	return triplets;
+		}
+		return Set.of(this);
+	}
+
+	@Override
+	public int compareTo(Triplet o) {
+		//we cache so this might to be an exact match
+		if(this==o) {
+			return 0;
+		}
+		int f = Byte.compare(first, o.first);
+		if(f!=0) {
+			return f;
+		}
+		int s = Byte.compare(second, o.second);
+		if(s!=0) {
+			return s;
+		}
+		return Byte.compare(third, o.third);
 	}
 
 }

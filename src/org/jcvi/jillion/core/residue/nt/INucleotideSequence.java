@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.ResidueSequence;
@@ -28,6 +29,72 @@ public interface INucleotideSequence<S extends INucleotideSequence<S,B>, B exten
 		Collections.reverse(list);
 		return list.iterator();
 		
+	}
+	/**
+	 * Create an Iterator that iterates over the reverse complement
+	 * of this sequence.
+	 * @param range the range to iterate over
+	 * @return a new Iterator.
+	 * 
+	 * @implNote the default implementation uses copies all the base's complements into a List
+	 * then reverses it and returns the iterator to that list
+	 * @since 6.0
+	 */
+	default Iterator<Nucleotide> reverseComplementIterator(Range range){
+		List<Nucleotide> list = new ArrayList<>((int)range.getLength());
+		Iterator<Nucleotide> iter = iterator(range);
+		while(iter.hasNext()) {
+			list.add(iter.next().complement());
+		}
+		Collections.reverse(list);
+		return list.iterator();
+		
+	}
+	
+	default Iterator<List<VariantTriplet>> getTriplets(Range range) {
+	
+		List<List<VariantTriplet>> list = new ArrayList<>((int)(range.getLength())/3);
+		consumeTripletIterator(OffsetKnowingIterator.createFwd(iterator(range), (int) range.getBegin()), list::add);
+		return list.iterator();
+	}
+	
+	private void consumeTripletIterator(OffsetKnowingIterator iter, Consumer<List<VariantTriplet>> consumer) {
+		while(iter.hasNext()) {
+			
+			Nucleotide a=null, b=null,c=null;
+			int offsetA=0, offsetB=0, offsetC=0;
+			while(a==null && iter.hasNext()) {
+				Nucleotide n = iter.next();
+				if(!n.isGap()) {
+					a=n;
+					offsetA=iter.getNextOffset()-1;
+				}
+			}
+			while(b==null && iter.hasNext()) {
+				Nucleotide n = iter.next();
+				if(!n.isGap()) {
+					b=n;
+					offsetB=iter.getNextOffset()-1;
+				}
+			}
+			while(c==null && iter.hasNext()) {
+				Nucleotide n = iter.next();
+				if(!n.isGap()) {
+					c=n;
+					offsetC=iter.getNextOffset()-1;
+				}
+			}
+			if(c !=null) {
+				consumer.accept(List.of(new VariantTriplet(Triplet.create(a, b, c), 1D, offsetA, offsetB, offsetC)));
+			}
+		}
+	}
+	
+	default Iterator<List<VariantTriplet>> getReverseComplementTriplets(Range range) {
+
+		List<List<VariantTriplet>> list = new ArrayList<>((int)(range.getLength())/3);
+		consumeTripletIterator(OffsetKnowingIterator.createRev(reverseComplementIterator(range), (int) range.getEnd()), list::add);
+		return list.iterator();
 	}
 	
 	NucleotideSequence toNucleotideSequence();

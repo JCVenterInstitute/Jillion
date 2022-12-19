@@ -38,6 +38,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.Frame;
 import org.jcvi.jillion.core.residue.aa.TranslationVisitor.FoundStartResult;
 import org.jcvi.jillion.core.residue.aa.TranslationVisitor.FoundStopResult;
@@ -45,7 +46,9 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.Triplet;
 import org.jcvi.jillion.core.residue.nt.VariantNucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.VariantTriplet;
 import org.jcvi.jillion.core.util.MapUtil;
+import org.jcvi.jillion.core.util.MapValueComparator;
 import org.jcvi.jillion.core.util.SingleThreadAdder;
 
 import lombok.Builder;
@@ -200,6 +203,7 @@ public enum IupacTranslationTables implements TranslationTable{
 
 	protected void removeFromTable(char base1, char base2, char base3){
 		Triplet triplet = Triplet.create(base1, base2, base3);
+		
 		map.remove(triplet);
 	}
 	protected void  insertIntoTable(char base1, char base2, char base3, AminoAcid aa){
@@ -280,7 +284,66 @@ public enum IupacTranslationTables implements TranslationTable{
 														.numberOfBasesToTranslate(length).build());
 	}
 
+
+	void _translate2(Iterator<List<VariantTriplet>> iter, TranslationOptions options, TranslationVisitor visitor) {
+		boolean seenStart=false;
+		
+		while(iter.hasNext()) {
+			List<VariantTriplet> triplets = iter.next();
+			if(triplets.isEmpty()) {
+				continue;
+			}
+			Map<Codon, Double> codons = translateExplodedTriplets(triplets);
+			Codon codon = null;
+			if(codons.size()==1) {
+				codon = codons.keySet().iterator().next();
+			}else if(options.isMergeCodons()) {
+				codon = Codon.merge(codons.keySet());
+			}
+			int offset1 = triplets.get(0).getOffset1();
+			int offset3 = triplets.get(0).getOffset3();
+			if(codon !=null) {
+				if(!seenStart && codon.isStart()){
+					 FoundStartResult result = visitor.foundStart(offset1, offset3, codon);
+                     if(result ==FoundStartResult.STOP){
+                         break;
+                     }
+                     seenStart = result != FoundStartResult.FIND_ADDITIONAL_STARTS;
+				}else if(codon.isStop()){
+                    FoundStopResult result = visitor.foundStop(offset1, offset3, codon);
+                    if(result == FoundStopResult.STOP){
+                        break;
+                    }
+                    
+	            }else{
+	                    visitor.visitCodon(offset1, offset3, codon);
+	                
+	            }
+            }else {
+            	 visitor.visitVariantCodon(offset1, offset3, codons);
+            }
+			
+			
+			
+		}
+		visitor.end();
+		
+	}
 	
+	private Map<Codon, Double> translateExplodedTriplets(List<VariantTriplet> triplets){
+		Map<Codon, Double> codons = new HashMap<>();
+		for(VariantTriplet variantTriplet: triplets) {
+			
+			Set<Triplet> exploded = variantTriplet.getTriplet().withThymine().explode();
+			double percentPer = variantTriplet.getPercent()/exploded.size();
+			for(Triplet triplet : exploded) {
+				codons.put(_translate(triplet), percentPer);
+			}
+			
+		}
+		return codons;
+	}
+	/*
 	private void _translate(BiFunction<Frame,Consumer<Nucleotide>, Iterator<Set<Triplet>>> tripletSupplier, TranslationOptions options, TranslationVisitor visitor) {
 	//-3 because the apply() method advances the iterator and calls the consumer 
 	SingleThreadAdder currentOffset = new SingleThreadAdder(-1); // start at -1 so the nuc coordinate is the END offset of that codon
@@ -343,22 +406,54 @@ public enum IupacTranslationTables implements TranslationTable{
      visitor.end();
 
 	}
+	*/
 	@Override
 	public void translate(NucleotideSequence sequence, TranslationOptions options, TranslationVisitor visitor) {
 		if(sequence ==null){
 	             throw new NullPointerException("sequence can not be null");
 	     }
-		
-	     _translate((f, consumer) -> f.asTriplets(sequence, options.isIgnoreGaps(), options.getNumberOfBasesToTranslate(), consumer), options, visitor);
+		int basesToSkip = options.getFrame().getNumberOfBasesSkipped();
+		long length = options.getNumberOfBasesToTranslate()==null? sequence.getLength(): options.getNumberOfBasesToTranslate();
+		Range range;
+		 if(options.getFrame().onReverseStrand()) {
+			 range = new Range.Builder(length)
+				 		.shift(-basesToSkip)
+				 		.build();
+		 }else {
+			 range = new Range.Builder(length)
+					 		.shift(basesToSkip)
+					 		.build();
+		 }
+		 
+		 _translate2(sequence.getTriplets(Range.ofLength(sequence.getLength()).intersection(range)), options, visitor);
+//	     _translate((f, consumer) -> f.asTriplets(sequence, options.isIgnoreGaps(), options.getNumberOfBasesToTranslate(), consumer), options, visitor);
 	    
 	}
+	
+
+
 	@Override
 	public void translate(VariantNucleotideSequence sequence, TranslationOptions options, TranslationVisitor visitor) {
 		if(sequence ==null){
             throw new NullPointerException("sequence can not be null");
 	    }
+	
+		int basesToSkip = options.getFrame().getNumberOfBasesSkipped();
+		long length = options.getNumberOfBasesToTranslate()==null? sequence.getLength(): options.getNumberOfBasesToTranslate();
 		
-	    _translate((f, consumer) -> f.asTriplets(sequence, options.isIgnoreGaps(), options.getNumberOfBasesToTranslate(), consumer), options, visitor);
+		Range range;
+		 if(options.getFrame().onReverseStrand()) {
+			 range = new Range.Builder(length)
+				 		.shift(-basesToSkip)
+				 		.build();
+		 }else {
+			 range = new Range.Builder(length)
+					 		.shift(basesToSkip)
+					 		.build();
+		 }
+	 
+	 _translate2(sequence.getTriplets(Range.ofLength(sequence.getLength()).intersection(range)), options, visitor);
+//	    _translate((f, consumer) -> f.asTriplets(sequence, options.isIgnoreGaps(), options.getNumberOfBasesToTranslate(), consumer), options, visitor);
 	   
 	}
 	@Override
@@ -488,11 +583,12 @@ public enum IupacTranslationTables implements TranslationTable{
 
 		@Override
 		public void visitVariantCodon(long nucleotideStartCoordinate, long nucleotideEndCoordinate,
-				List<Codon> codons) {
+				Map<Codon, Double> codons) {
 			if(merge) {
-				visitCodon(nucleotideStartCoordinate, nucleotideEndCoordinate, Codon.merge(codons));
+				visitCodon(nucleotideStartCoordinate, nucleotideEndCoordinate, Codon.merge(codons.keySet()));
 			}else {
-				Iterator<Codon> iter = codons.iterator();
+				Map<Codon, Double> sorted = MapValueComparator.sortDescending(codons);
+				Iterator<Codon> iter = sorted.keySet().iterator();
 				AminoAcid majority = iter.next().getAminoAcid();
 				//preserves iteration order
 				LinkedHashSet<AminoAcid> rest = new LinkedHashSet<AminoAcid>();

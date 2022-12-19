@@ -1,6 +1,7 @@
 package org.jcvi.jillion.core.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,9 +10,9 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Rangeable;
 import org.jcvi.jillion.core.util.streams.ThrowingTriConsumer;
 
-import lombok.Data;
 /**
  * Wrapper around a {@code Map<Range, T>} with methods to get values in the map that intersect ranges inside the map.
  * @author dkatzel
@@ -24,6 +25,13 @@ public class RangeMap<T> {
 
 	private final Map<Range, T> map;
 	
+	public static RangeMap<Boolean> setOf(Collection<? extends Rangeable> rangeables) {
+		RangeMap<Boolean> map = new RangeMap<>(rangeables.size());
+		for(Rangeable r : rangeables) {
+			map.put(r.asRange(), Boolean.TRUE);
+		}
+		return map;
+	}
 	public RangeMap() {
 		map = new HashMap<Range, T>();
 	}

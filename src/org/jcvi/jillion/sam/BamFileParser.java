@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
@@ -126,44 +127,41 @@ class BamFileParser extends AbstractSamFileParser {
             throws IOException {
 	    Predicate<SamRecord> predicate;
         if(options.getReferenceName().isPresent()){
-           
-            
-            if(options.getReferenceRange().isPresent()){
-                _parse(options.getReferenceName().get(), options.getReferenceRange().get(), options.shouldCreateMementos(), visitor);
-            }else{
-                _parse(options.getReferenceName().get(), options.shouldCreateMementos(), visitor);
-                
-            }
+           String referenceName = options.getReferenceName().get();
+           verifyReferenceInHeader(referenceName);
+           if(options.getReferenceRange().isPresent()){
+               predicate = SamUtil.alignsToReference(options.getReferenceName().get(), options.getReferenceRange().get());
+           }else{
+               predicate = SamUtil.alignsToReference(options.getReferenceName().get());
+           }
+           Optional<Predicate<SamRecord>> otherFilter = options.getFilter();
+           if(otherFilter.isPresent()) {
+        	   predicate = predicate.and(otherFilter.get());
+           }
+          
+            accept(visitor, options.shouldCreateMementos(), predicate);
             return;
         }else{
-            predicate = record -> true;
+        	 predicate = options.getFilter().orElse(record -> true);
         }
         accept(visitor, options.shouldCreateMementos(), predicate);
         
     }
 	
 
-	protected void _parse(String referenceName, Range alignmentRange, boolean shouldCreateMementos, SamVisitor visitor) throws IOException{
-	    verifyReferenceInHeader(referenceName);
-            accept(visitor, shouldCreateMementos, SamUtil.alignsToReference(referenceName, alignmentRange));
-	}
-	protected void _parse(String referenceName, boolean shouldCreateMementos, SamVisitor visitor ) throws IOException{
-            verifyReferenceInHeader(referenceName);
-            accept(visitor, shouldCreateMementos, SamUtil.alignsToReference(referenceName));
-        }
 	
     @Override
 	public void parse(String referenceName, SamVisitor visitor) throws IOException {
-		 _parse(referenceName, false, visitor);
+		 parse(new SamParserOptions().reference(referenceName), visitor);
 	}
 	@Override
 	public void parse(String referenceName, Range alignmentRange, SamVisitor visitor) throws IOException {
-	    _parse(referenceName, alignmentRange, false, visitor);		
+	    parse(new SamParserOptions().reference(referenceName, alignmentRange), visitor);		
 	}
 	
 	@Override
 	public void parse(SamVisitor visitor) throws IOException {
-		accept(visitor, false, (record)->true);
+		parse(new SamParserOptions(), visitor);
 	}
 	
 	@Override

@@ -76,7 +76,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestNucleotideSequenceComputeGC.class,
         TestNucleotideSequenceReverseComplementIterator.class,
         TestVariantNucleotideSequence.class,
-        
+        TestVariantNucleotideSequenceUnAdjust.class
     }
 )
 public class AllNucleotideUnitTests {

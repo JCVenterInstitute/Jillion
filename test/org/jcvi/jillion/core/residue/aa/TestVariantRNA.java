@@ -69,7 +69,7 @@ public class TestVariantRNA {
 		NucleotideSequence seq = NucleotideSequence.of("UUG");
 		
 		VariantNucleotideSequence sut = new VariantNucleotideSequence.Builder(seq)
-													.variant(2, Nucleotide.Uracil, .5)
+													.variant(2, Nucleotide.Uracil, .4)
 													.build();
 		VariantProteinSequence proteinSeq = IupacTranslationTables.STANDARD.translate(sut);
 		assertEquals(AminoAcid.parse("L"), proteinSeq.getProteinSequence().get(0));

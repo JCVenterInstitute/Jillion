@@ -22,18 +22,22 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder.DecodingOptions;
+import org.jcvi.jillion.core.residue.nt.UnderlyingCoverage.UnderlyingCoverageParameters;
 import org.jcvi.jillion.core.residue.nt.VariantNucleotideSequence.Builder;
 import org.jcvi.jillion.core.residue.nt.VariantNucleotideSequence.Variant.VariantBuilder;
 import org.jcvi.jillion.core.util.SingleThreadAdder;
+import org.jcvi.jillion.core.util.UnAdjustedCoordinateMapper;
 import org.jcvi.jillion.internal.core.util.ArrayUtil;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 import org.jcvi.jillion.internal.core.util.iter.PrimitiveArrayIterators;
@@ -44,7 +48,14 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 	private final Map<Integer, Variant> variants;
 	//for faster iteration
 	private final GrowableIntArray variantOffsets;
+	private UnderlyingCoverage underlyingCoverage;
 	
+	public UnderlyingCoverage getUnderlyingCoverage() {
+		return underlyingCoverage;
+	}
+	public void setUnderlyingCoverage(UnderlyingCoverage underlyingCoverage) {
+		this.underlyingCoverage = underlyingCoverage;
+	}
 	public static VariantNucleotideSequence.Builder builder(){
 		return new Builder();
 	}
@@ -61,6 +72,168 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 		
 		variantOffsets = new GrowableIntArray(variants.keySet());
 		variantOffsets.sort();
+	}
+	
+	public int[] getVariantOffsets() {
+		return variantOffsets.toArray();
+	}
+	
+	@Override
+	public Iterator<List<VariantTriplet>> getTriplets(Range range) {
+		return getTriplets(range, null);
+	}
+	public Iterator<List<VariantTriplet>> getTriplets(Range range, BiConsumer<UnderlyingCoverageParameters, String> featureConsumer) {
+		List<List<VariantTriplet>> list = new ArrayList<>((int) range.getLength()/3);
+		
+		consumeTripletIterator(OffsetKnowingIterator.createFwd(iterator(range), (int) range.getBegin()),false, list::add, featureConsumer);
+		return list.iterator();
+	}
+	
+	@Override
+	public Iterator<List<VariantTriplet>> getReverseComplementTriplets(Range range) {
+		return getReverseComplementTriplets(range, null);
+	}
+	public Iterator<List<VariantTriplet>> getReverseComplementTriplets(Range range, BiConsumer<UnderlyingCoverageParameters, String> featureConsumer) {
+		List<List<VariantTriplet>> list = new ArrayList<>((int) range.getLength()/3);
+		
+		consumeTripletIterator(OffsetKnowingIterator.createRev(reverseComplementIterator(range), (int) range.getEnd()), true, list::add, featureConsumer);
+		return list.iterator();
+	}
+	
+	
+	
+	private void consumeTripletIterator(OffsetKnowingIterator iter, boolean revComplement, 
+			Consumer<List<VariantTriplet>> consumer, BiConsumer<UnderlyingCoverageParameters, String> featureConsumer) {
+		while(iter.hasNext()) {
+			
+			Nucleotide a=null, b=null,c=null;
+			Variant va=null, vb=null,vc=null;
+			//set to 0 to make compiler happy but if they get used they should be set by if statements below
+			int offsetA=0, offsetB=0, offsetC=0;
+			while((a==null && va==null) && iter.hasNext()) {
+				int nextOffset = iter.getNextOffset();
+				if(variantOffsets.binarySearch(nextOffset) >=0){
+					//is variant
+					va = variants.get(nextOffset);
+					if(revComplement) {
+						va= va.complement();
+					}
+				}
+				Nucleotide n = iter.next();
+				if(n.isGap()) {
+					va = null;
+				}else{
+					a=n;
+					offsetA=iter.nextOffset-1;
+				}
+			}
+			while((b==null && vb==null) && iter.hasNext()) {
+				if(variantOffsets.binarySearch(iter.getNextOffset()) >=0){
+					//is variant
+					vb = variants.get(iter.getNextOffset());
+					if(revComplement) {
+						vb= vb.complement();
+					}
+				}
+				Nucleotide n = iter.next();
+				if(n.isGap()) {
+					vb = null;
+				}else{
+					b=n;
+					offsetB=iter.nextOffset-1;
+				}
+			}
+			while((c==null && vc==null) && iter.hasNext()) {
+				if(variantOffsets.binarySearch(iter.getNextOffset()) >=0){
+					//is variant
+					vc = variants.get(iter.getNextOffset());
+					if(revComplement) {
+						vc= vc.complement();
+					}
+				}
+				Nucleotide n = iter.next();
+				if(n.isGap()) {
+					vc = null;
+				}else {
+					c=n;
+					offsetC=iter.nextOffset-1;
+				}
+			}
+			if(c !=null) {
+				if(va==null && vb==null && vc==null) {
+					consumer.accept(List.of(new VariantTriplet(Triplet.create(a, b, c), 1D, offsetA, offsetB, offsetC)));
+				}else{
+					List<VariantTriplet> list=null;
+					
+					list = new ArrayList<>();
+					List<VariantTriplet> innerList = list;
+					if(va !=null && vb==null && vc==null){
+						//simple case only 1 col is variant
+						Nucleotide majority = va.getMajorityAllele();
+						list.add(new VariantTriplet(Triplet.create(majority, b, c), va.getMajorityPercentage(), offsetA, offsetB, offsetC));
+						Nucleotide finalB=b;
+						Nucleotide finalC =c;
+						final int finalOffsetA=offsetA;
+						final int finalOffsetB=offsetB;
+						final int finalOffsetC=offsetC;
+						va.minorityAlleles()
+							.forEach(ma -> innerList.add(new VariantTriplet(Triplet.create(ma.getBase(), finalB, finalC), ma.getPercent(), finalOffsetA, finalOffsetB, finalOffsetC)));
+						
+					}else if(va ==null && vb!=null && vc==null){
+						//simple case only 1 col is variant
+						Nucleotide majority = vb.getMajorityAllele();
+						list.add(new VariantTriplet(Triplet.create(a, majority, c), vb.getMajorityPercentage(), offsetA, offsetB, offsetC));
+						Nucleotide finalA=a;
+						Nucleotide finalC =c;
+						final int finalOffsetA=offsetA;
+						final int finalOffsetB=offsetB;
+						final int finalOffsetC=offsetC;
+						vb.minorityAlleles()
+							.forEach(mb -> innerList.add(new VariantTriplet(Triplet.create(finalA, mb.getBase(), finalC), mb.getPercent(), finalOffsetA, finalOffsetB, finalOffsetC)));
+						
+					}else if(va ==null && vb==null && vc!=null){
+						//simple case only 1 col is variant
+						Nucleotide majority = vc.getMajorityAllele();
+						list.add(new VariantTriplet(Triplet.create(a, b,majority), vc.getMajorityPercentage(), offsetA, offsetB, offsetC));
+						Nucleotide finalA=a;
+						Nucleotide finalB =b;
+						final int finalOffsetA=offsetA;
+						final int finalOffsetB=offsetB;
+						final int finalOffsetC=offsetC;
+						vc.minorityAlleles()
+							.forEach(mc -> innerList.add(new VariantTriplet(Triplet.create(finalA, finalB, mc.getBase()), mc.getPercent(), finalOffsetA, finalOffsetB, finalOffsetC)));
+						
+					}else {
+						if(underlyingCoverage!=null) {
+							list = underlyingCoverage.getCoverageFor(UnderlyingCoverageParameters.builder()
+									.gappedOffsets(offsetA, offsetB, offsetC)
+									.dir(revComplement? Direction.REVERSE: Direction.FORWARD)
+									.variant1(va)
+									.variant2(vb)
+									.variant3(vc)
+									.refs(a, b, c)
+									.featureConsumer(featureConsumer)
+									.build());
+						}else {
+							List<Nucleotide> as = va==null? List.of(a): va.getOrderedAlleles();
+							List<Nucleotide> bs = vb==null? List.of(b): vb.getOrderedAlleles();
+							List<Nucleotide> cs = vc==null? List.of(c): vc.getOrderedAlleles();
+							for(Nucleotide aentry: as) {
+								for(Nucleotide bEntry: bs) {
+									for(Nucleotide cEntry: cs) {
+										list.add(new VariantTriplet(Triplet.create(aentry, bEntry, cEntry), 1, offsetA, offsetB, offsetC));
+									}
+								}
+							}
+						}
+						
+					}
+					//consume all
+					consumer.accept(list);
+				}
+				
+			}
+		}
 	}
 	
 	@Override
@@ -109,7 +282,7 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 		
 	}
 	public VariantNucleotideSequence trim(Range trimRange) {
-		return new Builder(this).trim(trimRange).build();
+		return new Builder(this, trimRange).build();
 	}
 	public Iterator<Nucleotide> iterator(){
 		return nucleotideSequence.iterator();
@@ -179,7 +352,9 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 		public double getMajorityPercentage() {
 			return 1 - minorityAlleles.values().stream().mapToDouble(MinorityAllele::getPercent).sum();
 		}
-		
+		public boolean hasMinorityAllele(Nucleotide n) {
+			return minorityAlleles.containsKey(n);
+		}
 		public Stream<MinorityAllele> minorityAlleles(){
 			return minorityAlleles.values().stream();
 		}
@@ -405,7 +580,8 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 	public static class Builder implements INucleotideSequenceBuilder<VariantNucleotideSequence, Builder>{
 		private NucleotideSequenceBuilder nucleotideSequence;
 		private Set<VariantAndOffset> variants = new HashSet<>();
-		
+		private UnAdjustedCoordinateMapper.Builder unadjustedBuilder = new UnAdjustedCoordinateMapper.Builder();
+		private UnderlyingCoverage underlyingCoverage;
 		
 		public Builder() {
 			this.nucleotideSequence = new NucleotideSequenceBuilder();
@@ -437,7 +613,20 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 			//first pass remove variants at gap offsets
 			//second pass adjust upstream variant offsets accordingly
 			int gapOffsets[] = nucleotideSequence.getGapOffsets();
-			
+			//copy of array since it will be modified below and we don't want to use the modified version
+			int copyOfGapOffsets[] = Arrays.copyOf(gapOffsets, gapOffsets.length);
+			this.unadjustedBuilder.add(c->{
+				PrimitiveIterator.OfInt iter =  PrimitiveArrayIterators.create(copyOfGapOffsets);
+				while(iter.hasNext()) {
+					int nextOffset = iter.nextInt();
+					if(c >= nextOffset) {
+						c++;
+					}else {
+						break;
+					}
+				}
+				return c;
+			});
 			variants.removeIf(vo -> Arrays.binarySearch(gapOffsets, vo.getOffset()) >=0);
 			
 			//only do 2nd pass if we have any variants left
@@ -474,6 +663,7 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 			for(Map.Entry<Integer, Variant> entry :  copy.variants.entrySet()) {
 				variants.add(new VariantAndOffset(entry.getKey(), entry.getValue().toBuilder()));
 			}
+			this.underlyingCoverage = copy.underlyingCoverage;
 		}
 		private Builder(VariantNucleotideSequence copy, Range trimRange) {
 			this.nucleotideSequence = copy.nucleotideSequence.toBuilder(trimRange);
@@ -484,6 +674,11 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 					variants.add(new VariantAndOffset(entry.getKey()-delta, entry.getValue().toBuilder()));
 				}
 			}
+			this.underlyingCoverage = copy.underlyingCoverage;
+			if(trimRange.getBegin()>0) {
+				unadjustedBuilder.add(c-> c+ trimRange.getBegin());
+			}
+			
 		}
 		private Builder(VariantNucleotideSequence copy, List<Range> trimRanges) {
 			this.nucleotideSequence = copy.nucleotideSequence.toBuilder(trimRanges);
@@ -501,6 +696,22 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 					current+=r.getLength();
 				}
 			}
+			this.underlyingCoverage = copy.underlyingCoverage;
+			if(underlyingCoverage !=null) {
+				unadjustedBuilder.add( c->{
+					long current=0;
+					for(Range r: trimRanges) {
+						current+=r.getLength();
+						
+						if( current > c) {
+							//this range covers the coordinate
+							long delta = current-c;
+							return r.getEnd()-delta+1;
+						}
+					}
+					return current;
+				});
+			}
 		}
 		public Builder trim(Range trimRange) {
 			int delta = -(int)trimRange.getBegin();
@@ -514,6 +725,9 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 				}
 			}
 			nucleotideSequence.trim(trimRange);
+			if(trimRange.getBegin()>0) {
+				unadjustedBuilder.add(c-> c+ trimRange.getBegin());
+			}
 			return this;
 			
 			
@@ -553,7 +767,10 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 			for(VariantAndOffset  entry :  variants) {
 				built.put(entry.getOffset(), entry.getVariant().build());
 			}
-			return new VariantNucleotideSequence(nucleotideSequence.build(), built);
+			VariantNucleotideSequence variantSeq= new VariantNucleotideSequence(nucleotideSequence.build(), built);
+			
+			variantSeq.underlyingCoverage = this.underlyingCoverage==null? null: this.underlyingCoverage.map(this.unadjustedBuilder.build());
+			return variantSeq;
 		}
 		@Override
 		public Builder append(Iterable<Nucleotide> sequence) {
@@ -577,8 +794,12 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 				}
 				
 			});
-			
-			this.nucleotideSequence.insert(offset, sequence);
+			unadjustedBuilder.add(c-> {
+				if(c >offset) {
+					return c -delta;
+				}
+				return c;
+			});
 			return this;
 		}
 		@Override
@@ -634,6 +855,12 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 			}
 			
 			this.nucleotideSequence.delete(range);
+			this.unadjustedBuilder.add(c-> {
+				if(c >= range.getBegin()) {
+					return c + range.getLength();
+				}
+				return c;
+			});
 			return this;
 		}
 		@Override
@@ -652,6 +879,7 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 			long newLength = nucleotideSequence.getLength();
 			int delta = (int) (newLength-oldLength);
 			variants.forEach(va-> va.shift(delta));
+			this.unadjustedBuilder.add(c-> c-delta);
 			return this;
 		}
 		@Override
@@ -666,6 +894,12 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 				}
 				
 			});
+			this.unadjustedBuilder.add(c-> {
+				if( c > offset) {
+					return c - delta;
+				}
+				return c;
+			});
 			return this;
 		}
 		@Override
@@ -677,6 +911,12 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 					va.shift(1);
 				}
 				
+			});
+			this.unadjustedBuilder.add(c-> {
+				if( c > offset) {
+					return c - 1;
+				}
+				return c;
 			});
 			return this;
 		}
@@ -692,6 +932,7 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 			long newLength = nucleotideSequence.getLength();
 			int delta = (int) (newLength-oldLength);
 			variants.forEach(va-> va.shift(delta));
+			this.unadjustedBuilder.add(c-> c-delta);
 			return this;
 		}
 		@Override
@@ -701,6 +942,7 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 			
 			nucleotideSequence.prepend(otherBuilder.nucleotideSequence);
 			otherBuilder.variants.forEach(va -> variants.add(va.copy()));
+			this.unadjustedBuilder.add(c-> c-shift);
 			return this;
 			
 		}
@@ -709,6 +951,7 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 			Builder copy = new Builder();
 			copy.nucleotideSequence = nucleotideSequence.copy();
 			copy.variants = this.variants.stream().map(VariantAndOffset::copy).collect(Collectors.toSet());
+			copy.unadjustedBuilder = this.unadjustedBuilder==null?null:this.unadjustedBuilder.copy();
 			return copy;
 		}
 		@Override
@@ -763,6 +1006,13 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 								})
 								.forEach(variants::add);
 			
+			this.unadjustedBuilder.add(c-> {
+				if( c > offset) {
+					return c - delta;
+				}
+				return c;
+			});
+			
 			return this;
 		}
 		@Override
@@ -776,6 +1026,13 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 					va.shift(delta);
 				}
 				
+				
+			});
+			this.unadjustedBuilder.add(c-> {
+				if( c > offset) {
+					return c - delta;
+				}
+				return c;
 			});
 			return this;
 		}
@@ -791,6 +1048,12 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 				}
 				
 			});
+			this.unadjustedBuilder.add(c-> {
+				if( c > offset) {
+					return c - delta;
+				}
+				return c;
+			});
 			return this;
 		}
 		@Override
@@ -804,6 +1067,12 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 					va.shift(delta);
 				}
 				
+			});
+			this.unadjustedBuilder.add(c-> {
+				if( c > offset) {
+					return c - delta;
+				}
+				return c;
 			});
 			return this;
 		}
@@ -849,6 +1118,7 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 			nucleotideSequence.prepend(n);
 			
 			variants.forEach(va-> va.shift(1));
+			this.unadjustedBuilder.add(c-> c-1);
 			return this;
 		}
 		@Override
@@ -863,6 +1133,7 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 			long newLength = nucleotideSequence.getLength();
 			int delta = (int) (newLength-oldLength);
 			variants.forEach(va-> va.shift(delta));
+			this.unadjustedBuilder.add(c-> c-delta);
 			return this;
 		}
 		@Override

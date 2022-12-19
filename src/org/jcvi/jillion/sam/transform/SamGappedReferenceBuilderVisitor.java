@@ -27,6 +27,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.jcvi.jillion.assembly.GappedReferenceBuilder;
 import org.jcvi.jillion.core.datastore.DataStore;
@@ -46,13 +47,18 @@ import org.jcvi.jillion.sam.cigar.CigarElement;
 import org.jcvi.jillion.sam.cigar.CigarOperation;
 import org.jcvi.jillion.sam.header.SamHeader;
 import org.jcvi.jillion.sam.header.SamReferenceSequence;
-
+import org.jcvi.jillion.sam.SamParser.SamParserOptions;
 public final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 
 	private final Map<String, GappedReferenceBuilder> builders = new LinkedHashMap<String, GappedReferenceBuilder>();
 	
-	
-	public static NucleotideSequenceDataStore createGappedReferencesFrom(SamParser parser, NucleotideFastaDataStore ungappedReferenceDataStore) throws IOException{
+	public static NucleotideSequenceDataStore createGappedReferencesFrom(SamParser parser, 
+			NucleotideFastaDataStore ungappedReferenceDataStore) throws IOException{
+		return createGappedReferencesFrom(parser,ungappedReferenceDataStore, null);
+	}
+	public static NucleotideSequenceDataStore createGappedReferencesFrom(SamParser parser, 
+			NucleotideFastaDataStore ungappedReferenceDataStore,
+			Predicate<SamRecord> filter) throws IOException{
 		SamGappedReferenceBuilderVisitor visitor;
 		try {
 			visitor = new SamGappedReferenceBuilderVisitor(ungappedReferenceDataStore);
@@ -60,7 +66,7 @@ public final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 			throw new IOException("error parsing reference datastore", e);
 		}
 		
-		parser.parse(visitor);
+		parser.parse(new SamParserOptions().filter(filter), visitor);
 		return visitor.buildGappedReferences();
 	}
 	
@@ -106,9 +112,7 @@ public final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 			int offset = record.getStartPosition() - 1;
 			int currentOffset = offset;
 			Cigar cigar = record.getCigar();
-			if(cigar==null) {
-				System.out.println("here");
-			}
+			
 			Iterator<CigarElement> iter =cigar.getElementIterator();
 			while(iter.hasNext()){
 				CigarElement element = iter.next();

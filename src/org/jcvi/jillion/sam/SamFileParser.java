@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -65,9 +66,7 @@ final class SamFileParser extends AbstractSamFileParser{
 	private final File samFile;
 	private final SamAttributeValidator validator;
 	
-	public SamFileParser(File samFile) throws IOException{
-		this(samFile,ReservedAttributeValidator.INSTANCE );
-	}
+	
 	public SamFileParser(File samFile, SamAttributeValidator validator) throws IOException {
 		if(samFile ==null){
 			throw new NullPointerException("sam file can not be null");
@@ -105,9 +104,13 @@ final class SamFileParser extends AbstractSamFileParser{
 	               }else{
 	                   predicate = SamUtil.alignsToReference(options.getReferenceName().get());
 	               }
+	               Optional<Predicate<SamRecord>> otherFilter = options.getFilter();
+	               if(otherFilter.isPresent()) {
+	            	   predicate = predicate.and(otherFilter.get());
+	               }
 	               
 	           }else{
-	               predicate = record -> true;
+	               predicate = options.getFilter().orElse(record -> true);
 	           }
 	           CallbackSupplier supplier = options.shouldCreateMementos() ? 
 	                   (keepParsing, pos)-> new SamCallback(keepParsing, pos) :
@@ -166,13 +169,11 @@ final class SamFileParser extends AbstractSamFileParser{
 	}
 	@Override
 	public void parse(String referenceName, SamVisitor visitor) throws IOException {
-	    parse(new SamParserOptions().reference(referenceName), 
-	            visitor);	
+	    parse(new SamParserOptions().reference(referenceName), visitor);	
 	}
 	@Override
 	public void parse(String referenceName, Range alignmentRange, SamVisitor visitor) throws IOException {
-	    parse(new SamParserOptions().reference(referenceName, alignmentRange), 
-                    visitor);		
+	    parse(new SamParserOptions().reference(referenceName, alignmentRange), visitor);		
 	}
 	@Override
 	public void parse(SamVisitor visitor) throws IOException {

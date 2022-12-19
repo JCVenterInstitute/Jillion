@@ -27,6 +27,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.jcvi.jillion.align.pairwise.PairwiseSequenceAlignment;
 import org.jcvi.jillion.core.Range;
@@ -531,7 +532,14 @@ public final class Cigar implements Iterable<CigarElement>, Serializable{
 	public CigarElement getElement(int i){
 		return elements[i];
 	}
-	
+	/**
+	 * Get the {@link CigarElement}s as a Stream.
+	 * @return a new Stream
+	 * @since 6.0
+	 */
+	public Stream<CigarElement> elements(){
+		return Arrays.stream(elements);
+	}
 	public Iterator<CigarElement> getElementIterator(){
 		return IteratorUtil.createIteratorFromArray(elements);
 	}

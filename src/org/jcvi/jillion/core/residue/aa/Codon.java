@@ -28,7 +28,7 @@ import java.util.Objects;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.Triplet;
 
-public final class Codon {
+public final class Codon implements Comparable<Codon>{
 
 	private final Triplet triplet;
 	
@@ -150,6 +150,11 @@ public final class Codon {
 				isStart, isStop
 				);
 		
+	}
+
+	@Override
+	public int compareTo(Codon o) {
+		return triplet.compareTo(o.triplet);
 	}
 	
 }

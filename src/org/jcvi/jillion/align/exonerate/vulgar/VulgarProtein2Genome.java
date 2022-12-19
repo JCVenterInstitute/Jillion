@@ -219,9 +219,7 @@ public class VulgarProtein2Genome {
         for(int i= queryGaps.size()-1; i>=0; i--){
             Range gap = queryGaps.get(i);
             char[] gaps = new char[(int) gap.getLength()];
-            if(gaps.length > 1){
-                System.out.println("here");
-            }
+           
             Arrays.fill(gaps, AminoAcid.Gap.asChar());
             queryBuilder.insert((int)gap.getBegin(), new String(gaps));
         }

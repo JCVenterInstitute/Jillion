@@ -20,7 +20,12 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.aa;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.jcvi.jillion.core.util.MapValueComparator;
 
 public interface TranslationVisitor {
 
@@ -41,7 +46,8 @@ public interface TranslationVisitor {
     FoundStopResult foundStop(long nucleotideStartCoordinate, long nucleotideEndCoordinate, Codon codon);
     
     void end();
-	default void visitVariantCodon(long nucleotideStartCoordinate, long nucleotideEndCoordinate, List<Codon> codons) {
-		visitCodon(nucleotideStartCoordinate, nucleotideEndCoordinate, codons.get(0));
+	default void visitVariantCodon(long nucleotideStartCoordinate, long nucleotideEndCoordinate, Map<Codon, Double> codons) {
+		
+		visitCodon(nucleotideStartCoordinate, nucleotideEndCoordinate, MapValueComparator.sortDescending(codons).firstKey());
 	}
 }

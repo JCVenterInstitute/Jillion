@@ -27,6 +27,7 @@ package org.jcvi.jillion.core.residue.nt;
 
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -124,7 +125,9 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
 
 
 
-    @Override
+
+
+	@Override
     public Stream<Range> findMatches(Pattern pattern, Range subSequenceRange) {
         return codec.matches(data, pattern, subSequenceRange);
     }
@@ -213,6 +216,14 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
         NucleotideSequence other = (NucleotideSequence) obj;
         if(getLength() != other.getLength()){
         	return false;
+        }
+        if(hash !=0 && obj instanceof DefaultNucleotideSequence) {
+        	DefaultNucleotideSequence otherDefault = (DefaultNucleotideSequence)obj;
+        	if(otherDefault.hash !=0) {
+        		if (hash !=otherDefault.hash) {
+        			return false;
+        		}
+        	}
         }
        Iterator<Nucleotide> iter = iterator();
        Iterator<Nucleotide> otherIter = other.iterator();

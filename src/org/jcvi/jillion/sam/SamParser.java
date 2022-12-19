@@ -22,6 +22,7 @@ package org.jcvi.jillion.sam;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.sam.SamVisitor.SamVisitorCallback.SamVisitorMemento;
@@ -159,26 +160,30 @@ public interface SamParser {
             private final boolean createMementos;
             private final String referenceName;
             private final Range referenceRange;
+            private final Predicate<SamRecord> filter;
             
             public SamParserOptions(){
-                this(false, null, null);
+                this(false, null, null, null);
             }
             
-            private SamParserOptions(boolean createMementos, String referenceName, Range range){
+            private SamParserOptions(boolean createMementos, String referenceName, Range range, Predicate<SamRecord> filter){
                 this.createMementos = createMementos;
                 this.referenceName = referenceName;
                 this.referenceRange = range;
+                this.filter = filter;
             }
             public SamParserOptions reference(String referenceName){
-                return new SamParserOptions(createMementos, referenceName,null);
+                return new SamParserOptions(createMementos, referenceName,null, filter);
              }
             public SamParserOptions reference(String referenceName, Range referenceRange){
-                return new SamParserOptions(createMementos, referenceName,referenceRange);
+                return new SamParserOptions(createMementos, referenceName,referenceRange, filter);
              }
             public SamParserOptions createMementos(boolean createMementos){
-               return new SamParserOptions(createMementos, referenceName, referenceRange);
+               return new SamParserOptions(createMementos, referenceName, referenceRange, filter);
             }
-
+            public SamParserOptions filter(Predicate<SamRecord> filter){
+                return new SamParserOptions(createMementos, referenceName, referenceRange, filter);
+             }
             public boolean shouldCreateMementos() {
                 return createMementos;
             }
@@ -188,6 +193,10 @@ public interface SamParser {
             }
             public Optional<Range> getReferenceRange() {
                 return Optional.ofNullable(referenceRange);
+            }
+            
+            public Optional<Predicate<SamRecord>> getFilter(){
+            	return Optional.ofNullable(filter);
             }
             
         }

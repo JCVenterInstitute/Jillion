@@ -33,6 +33,7 @@ import java.util.function.Predicate;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.sam.SamUtil;
 import org.jcvi.jillion.internal.sam.index.IndexUtil;
+import org.jcvi.jillion.sam.SamParser.SamParserOptions;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 import org.jcvi.jillion.sam.index.BamIndex;
 import org.jcvi.jillion.sam.index.ReferenceIndex;
@@ -51,92 +52,86 @@ class IndexedBamFileParser extends BamFileParser{
    
 
     @Override
-    protected void _parse(String referenceName, boolean shouldCreateMementos,
-            SamVisitor visitor) throws IOException {
-       
-		Objects.requireNonNull(referenceName);
-		Objects.requireNonNull(visitor);
-		
-		Integer indexOffset = index.getReferenceIndexOffset(referenceName);
-		
-		if(indexOffset ==null){
-			throw new IllegalArgumentException("no reference with name '"+ referenceName +"'");
+	public void parse(SamParserOptions options, SamVisitor visitor) throws IOException {
+		if(options.getReferenceName().isEmpty()) {
+			 super.parse(options,visitor);
+			 return;
 		}
-		ReferenceIndex refIndex =index.getReferenceIndex(indexOffset);
-		
-		VirtualFileOffset start = refIndex.getLowestStartOffset();
-		
-		VirtualFileOffset end = refIndex.getHighestEndOffset();
-		
-		Predicate<SamRecord> recordMatchPredicate =(record) ->referenceName.equals(record.getReferenceName());
-		
-		Predicate<VirtualFileOffset> endPredicate =(vfs) ->vfs.compareTo(end) <0;
-		
-		
-		
-		try(BgzfInputStream in = BgzfInputStream.create(bamFile, start)){
-			if(BEGINING_OF_FILE.equals(start)){
-				this.parseBamFromBeginning(visitor, 
-				        shouldCreateMementos,
-						recordMatchPredicate,
-						endPredicate, in);
-			}else{
-				//assume anything in this interval matches?
-				AtomicBoolean keepParsing = new AtomicBoolean(true);
-				this.parseBamRecords(visitor, 
-						recordMatchPredicate,
-						endPredicate,
-						in,
-						keepParsing, shouldCreateMementos ? new BamCallback(keepParsing) :new MementoLessBamCallback(keepParsing));
-			}
-		}
-	}
-    @Override
-    protected void _parse(String referenceName, Range alignmentRange,
-            boolean shouldCreateMementos, SamVisitor visitor)
-            throws IOException {
-       
-		Objects.requireNonNull(referenceName);
-		Objects.requireNonNull(visitor);
-		
+		String referenceName = options.getReferenceName().get();
 		ReferenceIndex refIndex =index.getReferenceIndex(referenceName);
 		if(refIndex ==null){
 			throw new IllegalArgumentException("no reference with name '"+ referenceName +"'");
 		}
-		//only let things pass that match some bin
-		int[] overlappingBins = SamUtil.getCandidateOverlappingBins(alignmentRange);
 		
-		//TODO can probably do better filtering by specific bins...
-		VirtualFileOffset start = refIndex.getLowestStartOffset();
-		VirtualFileOffset end = refIndex.getHighestEndOffset();
-		
-		Predicate<SamRecord> recordBinFilter = (record) -> {
-			if(!referenceName.equals(record.getReferenceName())){
-				return false;
+		if(options.getReferenceRange().isPresent()) {
+			
+			Range alignmentRange = options.getReferenceRange().get();
+			//alignment range
+			int[] overlappingBins = SamUtil.getCandidateOverlappingBins(alignmentRange);
+			
+			//TODO can probably do better filtering by specific bins...
+			VirtualFileOffset start = refIndex.getLowestStartOffset();
+			VirtualFileOffset end = refIndex.getHighestEndOffset();
+			Predicate<SamRecord> recordBinFilter = (record) -> {
+				if(!referenceName.equals(record.getReferenceName())){
+					return false;
+				}
+			
+				Range readAlignmentRange = record.getAlignmentRange();
+				if(readAlignmentRange ==null) {
+					return false;
+				}
+				int bin = SamUtil.computeBinFor(readAlignmentRange);
+				if(Arrays.binarySearch(overlappingBins, bin) <0){
+					return false;
+				}
+				return readAlignmentRange.isSubRangeOf(alignmentRange);
+			};
+			if(options.getFilter().isPresent()) {
+				recordBinFilter = recordBinFilter.and(options.getFilter().get());
 			}
-		
-			Range readAlignmentRange = record.getAlignmentRange();
-			if(readAlignmentRange ==null) {
-				return false;
+			try(BgzfInputStream in = BgzfInputStream.create(bamFile, start)){
+				//assume anything in this interval matches?
+				AtomicBoolean keepParsing = new AtomicBoolean(true);
+				this.parseBamRecords(visitor, 
+						recordBinFilter,
+						(vfs)-> vfs.compareTo(end) <=0,
+						in,
+						keepParsing,
+						options.shouldCreateMementos() ? new BamCallback(keepParsing) :new MementoLessBamCallback(keepParsing));
 			}
-			int bin = SamUtil.computeBinFor(readAlignmentRange);
-			if(Arrays.binarySearch(overlappingBins, bin) <0){
-				return false;
+		}else {
+			VirtualFileOffset start = refIndex.getLowestStartOffset();
+			
+			VirtualFileOffset end = refIndex.getHighestEndOffset();
+			
+			Predicate<SamRecord> recordMatchPredicate =(record) ->referenceName.equals(record.getReferenceName());
+			if(options.getFilter().isPresent()) {
+				recordMatchPredicate = recordMatchPredicate.and(options.getFilter().get());
 			}
-			return readAlignmentRange.isSubRangeOf(alignmentRange);
-		};
-		
-		try(BgzfInputStream in = BgzfInputStream.create(bamFile, start)){
-			//assume anything in this interval matches?
-			AtomicBoolean keepParsing = new AtomicBoolean(true);
-			this.parseBamRecords(visitor, 
-					recordBinFilter,
-					(vfs)-> vfs.compareTo(end) <=0,
-					in,
-					keepParsing,
-					shouldCreateMementos ? new BamCallback(keepParsing) :new MementoLessBamCallback(keepParsing));
+			Predicate<VirtualFileOffset> endPredicate =(vfs) ->vfs.compareTo(end) <0;
+			try(BgzfInputStream in = BgzfInputStream.create(bamFile, start)){
+				if(BEGINING_OF_FILE.equals(start)){
+					this.parseBamFromBeginning(visitor, 
+					        options.shouldCreateMementos(),
+							recordMatchPredicate,
+							endPredicate, in);
+				}else{
+					//assume anything in this interval matches?
+					AtomicBoolean keepParsing = new AtomicBoolean(true);
+					this.parseBamRecords(visitor, 
+							recordMatchPredicate,
+							endPredicate,
+							in,
+							keepParsing, options.shouldCreateMementos() ? new BamCallback(keepParsing) :new MementoLessBamCallback(keepParsing));
+				}
+			}
 		}
 	}
+
+
+
+	
 
 	
 

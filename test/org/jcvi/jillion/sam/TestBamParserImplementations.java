@@ -129,7 +129,7 @@ public class TestBamParserImplementations {
 		SamVisitorMemento[] memento = new SamVisitorMemento[1];
 		//have to use actual parser both for expectations and replay
 		//because memento has to be the same instance
-		actualParser.parse(new SamParser.SamParserOptions().createMementos(true), new WrappedVisitor(mock){
+		actualParser.parse(new SamParser.SamParserOptions().createMementos(true), new FilteredSamVisitor(mock){
 
 			@Override
 			public void visitHeader(SamVisitorCallback callback, SamHeader header) {
@@ -156,7 +156,7 @@ public class TestBamParserImplementations {
 		SamVisitorMemento[] memento = new SamVisitorMemento[1];
 		//have to use actual parser both for expectations and replay
 		//because memento has to be the same instance
-		actualParser.parse(new SamParser.SamParserOptions().createMementos(true), new WrappedVisitor(mock){
+		actualParser.parse(new SamParser.SamParserOptions().createMementos(true), new FilteredSamVisitor(mock){
 			private int recordCounter=0;
 			
 			@Override
@@ -197,7 +197,7 @@ public class TestBamParserImplementations {
 		ReplayableMockSamVisitor mock = new ReplayableMockSamVisitor(true);
 		String firstReferenceName = FULL_BAM_PARSER.getHeader().getReferenceSequences().iterator().next().getName();
 		
-		FULL_BAM_PARSER.parse(new WrappedVisitor(mock){
+		FULL_BAM_PARSER.parse(new FilteredSamVisitor(mock){
 
 			@Override
 			protected boolean accept(SamRecord record) {
@@ -219,7 +219,7 @@ public class TestBamParserImplementations {
 		ReplayableMockSamVisitor mock = new ReplayableMockSamVisitor(true);
 		String firstReferenceName = FULL_BAM_PARSER.getHeader().getReferenceSequences().iterator().next().getName();
 		
-		FULL_BAM_PARSER.parse(new WrappedVisitor(mock){
+		FULL_BAM_PARSER.parse(new FilteredSamVisitor(mock){
 
 			@Override
 			protected boolean accept(SamRecord record) {
@@ -261,7 +261,7 @@ public class TestBamParserImplementations {
 		ReplayableMockSamVisitor mock = new ReplayableMockSamVisitor(true);
 		String lastReferenceName = getLastReferenceName(FULL_BAM_PARSER.getHeader());
 		
-		FULL_BAM_PARSER.parse(new WrappedVisitor(mock){
+		FULL_BAM_PARSER.parse(new FilteredSamVisitor(mock){
 
 			@Override
 			protected boolean accept(SamRecord record) {
@@ -278,7 +278,7 @@ public class TestBamParserImplementations {
 		ReplayableMockSamVisitor mock = new ReplayableMockSamVisitor(true);
 		String lastReferenceName = getInnerReferenceName(FULL_BAM_PARSER.getHeader());
 		
-		FULL_BAM_PARSER.parse(new WrappedVisitor(mock){
+		FULL_BAM_PARSER.parse(new FilteredSamVisitor(mock){
 
 			@Override
 			protected boolean accept(SamRecord record) {
@@ -288,40 +288,6 @@ public class TestBamParserImplementations {
 		});
 		
 		actualParser.parse(lastReferenceName, mock);
-	}
-	
-	private static abstract class WrappedVisitor implements SamVisitor{
-		private final SamVisitor delegate;
-
-		public WrappedVisitor(SamVisitor delegate) {
-			this.delegate = delegate;
-		}
-		@Override
-		public void visitHeader(SamVisitorCallback callback, SamHeader header) {
-			delegate.visitHeader(callback, header);
-		}
-
-		@Override
-		public void visitRecord(SamVisitorCallback callback, SamRecord record, VirtualFileOffset start,
-				VirtualFileOffset end) {
-			if(accept(record)){
-				delegate.visitRecord(callback, record, start, end);
-			}
-			
-		}
-
-		protected abstract boolean accept(SamRecord record);
-		@Override
-		public void visitEnd() {
-			delegate.visitEnd();
-		}
-
-		@Override
-		public void halted() {
-			delegate.halted();
-		}
-		
-		
 	}
 }
 

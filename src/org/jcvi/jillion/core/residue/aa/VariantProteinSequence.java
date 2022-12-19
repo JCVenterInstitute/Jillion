@@ -151,6 +151,7 @@ public class VariantProteinSequence {
 		public Builder append(AminoAcid majority, Map<AminoAcid, Double> variants) {
 			
 			SNPMap snpMap = new SNPMap();
+			snpMap.majority=majority;
 			if(variants.containsKey(majority)) {
 				for(Map.Entry<AminoAcid, Double> entry : variants.entrySet()) {
 					snpMap.getVariants().put(entry.getKey(), entry.getValue());
@@ -211,10 +212,16 @@ public class VariantProteinSequence {
 	
 	@Data
 	@lombok.Builder
-	public static class SNP{
+	public static class SNP implements Comparable<SNP>{
 		private final AminoAcid aa;
 		private final double percent;
 		private final boolean isMajority;
+		
+		
+		@Override
+		public int compareTo(SNP o) {
+			return Double.compare(percent, o.percent);
+		}
 	}
 	
 	public static class SNPMap{
@@ -233,6 +240,8 @@ public class VariantProteinSequence {
 				}
 			}
 		}
+		
+		
 		public Map<AminoAcid, Double> getVariants() {
 			return variants;
 		}
