@@ -88,17 +88,19 @@ class IndexedBamFileParser extends BamFileParser{
 				return readAlignmentRange.isSubRangeOf(alignmentRange);
 			};
 			if(options.getFilter().isPresent()) {
-				recordBinFilter = recordBinFilter.and(options.getFilter().get());
+				recordBinFilter = recordBinFilter.and(options.getFilter().get().asPredicate());
 			}
 			try(BgzfInputStream in = BgzfInputStream.create(bamFile, start)){
 				//assume anything in this interval matches?
 				AtomicBoolean keepParsing = new AtomicBoolean(true);
+				options.getFilter().ifPresent(f->f.begin());
 				this.parseBamRecords(visitor, 
 						recordBinFilter,
 						(vfs)-> vfs.compareTo(end) <=0,
 						in,
 						keepParsing,
 						options.shouldCreateMementos() ? new BamCallback(keepParsing) :new MementoLessBamCallback(keepParsing));
+				options.getFilter().ifPresent(f->f.end());
 			}
 		}else {
 			VirtualFileOffset start = refIndex.getLowestStartOffset();
@@ -107,10 +109,11 @@ class IndexedBamFileParser extends BamFileParser{
 			
 			Predicate<SamRecord> recordMatchPredicate =(record) ->referenceName.equals(record.getReferenceName());
 			if(options.getFilter().isPresent()) {
-				recordMatchPredicate = recordMatchPredicate.and(options.getFilter().get());
+				recordMatchPredicate = recordMatchPredicate.and(options.getFilter().get().asPredicate());
 			}
 			Predicate<VirtualFileOffset> endPredicate =(vfs) ->vfs.compareTo(end) <0;
 			try(BgzfInputStream in = BgzfInputStream.create(bamFile, start)){
+				options.getFilter().ifPresent(f->f.begin());
 				if(BEGINING_OF_FILE.equals(start)){
 					this.parseBamFromBeginning(visitor, 
 					        options.shouldCreateMementos(),
@@ -125,6 +128,7 @@ class IndexedBamFileParser extends BamFileParser{
 							in,
 							keepParsing, options.shouldCreateMementos() ? new BamCallback(keepParsing) :new MementoLessBamCallback(keepParsing));
 				}
+				options.getFilter().ifPresent(f->f.end());
 			}
 		}
 	}

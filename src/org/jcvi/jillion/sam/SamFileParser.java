@@ -104,19 +104,27 @@ final class SamFileParser extends AbstractSamFileParser{
 	               }else{
 	                   predicate = SamUtil.alignsToReference(options.getReferenceName().get());
 	               }
-	               Optional<Predicate<SamRecord>> otherFilter = options.getFilter();
+	               Optional<SamRecordFilter> otherFilter = options.getFilter();
 	               if(otherFilter.isPresent()) {
-	            	   predicate = predicate.and(otherFilter.get());
+	            	   predicate = predicate.and(otherFilter.get().asPredicate());
 	               }
 	               
 	           }else{
-	               predicate = options.getFilter().orElse(record -> true);
+	        	   Optional<SamRecordFilter> otherFilter = options.getFilter();
+	               if(otherFilter.isPresent()) {
+	            	   predicate = otherFilter.get().asPredicate();
+	               }else {
+	            	   predicate = f-> true;
+	               }
 	           }
 	           CallbackSupplier supplier = options.shouldCreateMementos() ? 
 	                   (keepParsing, pos)-> new SamCallback(keepParsing, pos) :
 	                       (keepParsing, pos)-> new MementoLessSamCallback(keepParsing) ;
 	                       
+	                       
+	           options.getFilter().ifPresent(f-> f.begin());
 	           accept(visitor, predicate, supplier);
+	           options.getFilter().ifPresent(f-> f.end());
 	           
 	       }
 	@Override

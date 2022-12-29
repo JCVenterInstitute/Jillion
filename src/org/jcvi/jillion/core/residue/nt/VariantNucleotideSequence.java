@@ -33,6 +33,7 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder.DecodingOptions;
+import org.jcvi.jillion.core.residue.nt.UnderlyingCoverage.UnderlyingCoverageFeature;
 import org.jcvi.jillion.core.residue.nt.UnderlyingCoverage.UnderlyingCoverageParameters;
 import org.jcvi.jillion.core.residue.nt.VariantNucleotideSequence.Builder;
 import org.jcvi.jillion.core.residue.nt.VariantNucleotideSequence.Variant.VariantBuilder;
@@ -82,7 +83,7 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 	public Iterator<List<VariantTriplet>> getTriplets(Range range) {
 		return getTriplets(range, null);
 	}
-	public Iterator<List<VariantTriplet>> getTriplets(Range range, BiConsumer<UnderlyingCoverageParameters, String> featureConsumer) {
+	public Iterator<List<VariantTriplet>> getTriplets(Range range, Consumer<UnderlyingCoverageFeature> featureConsumer) {
 		List<List<VariantTriplet>> list = new ArrayList<>((int) range.getLength()/3);
 		
 		consumeTripletIterator(OffsetKnowingIterator.createFwd(iterator(range), (int) range.getBegin()),false, list::add, featureConsumer);
@@ -93,7 +94,7 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 	public Iterator<List<VariantTriplet>> getReverseComplementTriplets(Range range) {
 		return getReverseComplementTriplets(range, null);
 	}
-	public Iterator<List<VariantTriplet>> getReverseComplementTriplets(Range range, BiConsumer<UnderlyingCoverageParameters, String> featureConsumer) {
+	public Iterator<List<VariantTriplet>> getReverseComplementTriplets(Range range, Consumer<UnderlyingCoverageFeature> featureConsumer) {
 		List<List<VariantTriplet>> list = new ArrayList<>((int) range.getLength()/3);
 		
 		consumeTripletIterator(OffsetKnowingIterator.createRev(reverseComplementIterator(range), (int) range.getEnd()), true, list::add, featureConsumer);
@@ -103,7 +104,7 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 	
 	
 	private void consumeTripletIterator(OffsetKnowingIterator iter, boolean revComplement, 
-			Consumer<List<VariantTriplet>> consumer, BiConsumer<UnderlyingCoverageParameters, String> featureConsumer) {
+			Consumer<List<VariantTriplet>> consumer, Consumer<UnderlyingCoverageFeature> featureConsumer) {
 		while(iter.hasNext()) {
 			
 			Nucleotide a=null, b=null,c=null;

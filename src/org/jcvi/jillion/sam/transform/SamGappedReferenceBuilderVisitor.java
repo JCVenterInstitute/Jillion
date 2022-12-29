@@ -40,6 +40,7 @@ import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
 import org.jcvi.jillion.sam.SamParser;
 import org.jcvi.jillion.sam.SamRecord;
+import org.jcvi.jillion.sam.SamRecordFilter;
 import org.jcvi.jillion.sam.SamVisitor;
 import org.jcvi.jillion.sam.VirtualFileOffset;
 import org.jcvi.jillion.sam.cigar.Cigar;
@@ -58,7 +59,7 @@ public final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 	}
 	public static NucleotideSequenceDataStore createGappedReferencesFrom(SamParser parser, 
 			NucleotideFastaDataStore ungappedReferenceDataStore,
-			Predicate<SamRecord> filter) throws IOException{
+			SamRecordFilter filter) throws IOException{
 		SamGappedReferenceBuilderVisitor visitor;
 		try {
 			visitor = new SamGappedReferenceBuilderVisitor(ungappedReferenceDataStore);

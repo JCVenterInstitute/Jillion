@@ -452,7 +452,7 @@ public enum IupacTranslationTables implements TranslationTable{
 					 		.build();
 		 }
 	 
-	 _translate2(sequence.getTriplets(Range.ofLength(sequence.getLength()).intersection(range)), options, visitor);
+	 _translate2(sequence.getTriplets(Range.ofLength(sequence.getLength()).intersection(range), options.getFeatureConsumer()), options, visitor);
 //	    _translate((f, consumer) -> f.asTriplets(sequence, options.isIgnoreGaps(), options.getNumberOfBasesToTranslate(), consumer), options, visitor);
 	   
 	}
@@ -577,6 +577,7 @@ public enum IupacTranslationTables implements TranslationTable{
 		}
 		@Override
 		public void visitCodon(long nucleotideStartCoordinate, long nucleotideEndCoordinate, Codon codon) {
+			
 			builder.append(codon.getAminoAcid());
 			
 		}

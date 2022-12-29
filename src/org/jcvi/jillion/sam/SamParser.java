@@ -160,13 +160,13 @@ public interface SamParser {
             private final boolean createMementos;
             private final String referenceName;
             private final Range referenceRange;
-            private final Predicate<SamRecord> filter;
+            private final SamRecordFilter filter;
             
             public SamParserOptions(){
                 this(false, null, null, null);
             }
             
-            private SamParserOptions(boolean createMementos, String referenceName, Range range, Predicate<SamRecord> filter){
+            private SamParserOptions(boolean createMementos, String referenceName, Range range, SamRecordFilter filter){
                 this.createMementos = createMementos;
                 this.referenceName = referenceName;
                 this.referenceRange = range;
@@ -182,8 +182,11 @@ public interface SamParser {
                return new SamParserOptions(createMementos, referenceName, referenceRange, filter);
             }
             public SamParserOptions filter(Predicate<SamRecord> filter){
+                return new SamParserOptions(createMementos, referenceName, referenceRange, filter==null? null: SamRecordFilter.wrap(filter));
+            }
+            public SamParserOptions filter(SamRecordFilter filter){
                 return new SamParserOptions(createMementos, referenceName, referenceRange, filter);
-             }
+            }
             public boolean shouldCreateMementos() {
                 return createMementos;
             }
@@ -195,7 +198,7 @@ public interface SamParser {
                 return Optional.ofNullable(referenceRange);
             }
             
-            public Optional<Predicate<SamRecord>> getFilter(){
+            public Optional<SamRecordFilter> getFilter(){
             	return Optional.ofNullable(filter);
             }
             

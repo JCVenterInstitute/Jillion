@@ -38,6 +38,12 @@ public interface UnderlyingCoverage {
 		};
 	}
 	
+	public static interface UnderlyingCoverageFeature{
+		String getType();
+		String getMessage();
+		UnderlyingCoverageParameters getParameters();
+	}
+	
 	@Data
 	@Builder(toBuilder = true)
 	public static class UnderlyingCoverageParameters{
@@ -46,7 +52,7 @@ public interface UnderlyingCoverage {
 		private final Variant variant1, variant2, variant3;
 		private final Nucleotide ref1, ref2, ref3;
 		private final @NonNull Direction dir;
-		private final BiConsumer<UnderlyingCoverageParameters, String> featureConsumer;
+		private final Consumer<UnderlyingCoverageFeature> featureConsumer;
 		
 		public UnderlyingCoverageParameters map(UnAdjustedCoordinateMapper mapper) {
 			Objects.requireNonNull(mapper);

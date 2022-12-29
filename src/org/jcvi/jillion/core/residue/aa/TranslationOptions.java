@@ -1,8 +1,10 @@
 package org.jcvi.jillion.core.residue.aa;
 
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import org.jcvi.jillion.core.residue.Frame;
+import org.jcvi.jillion.core.residue.nt.UnderlyingCoverage.UnderlyingCoverageFeature;
 import org.jcvi.jillion.core.residue.nt.UnderlyingCoverage.UnderlyingCoverageParameters;
 
 import lombok.Builder;
@@ -24,7 +26,7 @@ public class TranslationOptions{
 	
 	private boolean mergeCodons = true;
 	private Integer numberOfBasesToTranslate=null;
-	private BiConsumer<UnderlyingCoverageParameters, String> featureConsumer;
+	private Consumer<UnderlyingCoverageFeature> featureConsumer;
 	
 	public static TranslationOptionsBuilder builder() {
 		return new TranslationOptionsBuilder()

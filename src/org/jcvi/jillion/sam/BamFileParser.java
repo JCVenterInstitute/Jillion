@@ -125,8 +125,9 @@ class BamFileParser extends AbstractSamFileParser {
 	@Override
     public void parse(SamParserOptions options, SamVisitor visitor)
             throws IOException {
-	    Predicate<SamRecord> predicate;
+	    
         if(options.getReferenceName().isPresent()){
+           Predicate<SamRecord> predicate;
            String referenceName = options.getReferenceName().get();
            verifyReferenceInHeader(referenceName);
            if(options.getReferenceRange().isPresent()){
@@ -134,17 +135,19 @@ class BamFileParser extends AbstractSamFileParser {
            }else{
                predicate = SamUtil.alignsToReference(options.getReferenceName().get());
            }
-           Optional<Predicate<SamRecord>> otherFilter = options.getFilter();
+           Optional<SamRecordFilter> otherFilter = options.getFilter();
            if(otherFilter.isPresent()) {
-        	   predicate = predicate.and(otherFilter.get());
+        	   predicate = predicate.and(otherFilter.get().asPredicate());
            }
           
-            accept(visitor, options.shouldCreateMementos(), predicate);
+            accept(visitor, options.shouldCreateMementos(), otherFilter.orElse(null),  predicate);
             return;
-        }else{
-        	 predicate = options.getFilter().orElse(record -> true);
         }
-        accept(visitor, options.shouldCreateMementos(), predicate);
+        
+    	Optional<SamRecordFilter> otherFilter = options.getFilter();
+       
+        
+        accept(visitor, options.shouldCreateMementos(), otherFilter.orElse(null), r->true);
         
     }
 	
@@ -197,13 +200,18 @@ class BamFileParser extends AbstractSamFileParser {
 	
 	
 	
-	private void accept(SamVisitor visitor, boolean enableMementos, Predicate<SamRecord> filter) throws IOException {
+	private void accept(SamVisitor visitor, boolean enableMementos, SamRecordFilter recordFilter, Predicate<SamRecord> predicate) throws IOException {
 		if(visitor ==null){
 			throw new NullPointerException("visitor can not be null");
 		}
 		try(BgzfInputStream in=new BgzfInputStream(bamFile)){			
-			
-			parseBamFromBeginning(visitor, enableMementos, filter, (vfs)->true, in);
+			if(recordFilter==null) {
+				parseBamFromBeginning(visitor, enableMementos, predicate, (vfs)->true, in);
+			}else {
+				recordFilter.begin();
+				parseBamFromBeginning(visitor, enableMementos, predicate, (vfs)->true, in);
+				recordFilter.end();
+			}
 		}
 	}
 	
