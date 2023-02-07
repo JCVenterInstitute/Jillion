@@ -64,7 +64,7 @@ public final class ContigDataStoreTransfomationService implements AssemblyTransf
 						
 						transformer.aligned(read.getId(), rawSeq, rawQual, null, null, contigId,
 								(int) read.getGappedStartOffset(), 
-								read.getDirection(), read.getNucleotideSequence(), read.getReadInfo());
+								read.getDirection(), read.getNucleotideSequence(), read.getReadInfo(), read);
 					}
 				}finally{
 					IOUtil.closeAndIgnoreErrors(readIter);

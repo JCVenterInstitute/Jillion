@@ -139,6 +139,8 @@ to wrap a StreamingIterator into a DataStoreIterator
 
 41. SamRecord and related objects are now Serializable
 
+42. new class SamAlignmentGapInserter which performs the extra gap insertions for read alignments to convert SAM/BAM alignments into proper aligned contigs.
+
 API BREAKING CHANGES
 --------------------
 
@@ -160,6 +162,10 @@ API BREAKING CHANGES
     accessible constructors.  This should also allow for chaining of consumers.
     
 6.  SamRecord#getNextOffset() is now called SamRecord#getNextPosition()
+
+7.  AssemblyTransformationService#aligned() and #unaligned() methods now have additional parameter `Object readObject` which is the 
+    actual read object the transformer is transforming for you in the event you need to query the object directly (by downcasting)
+    to get additional information in your transformer.
     
 Bug Fixes
 ---------

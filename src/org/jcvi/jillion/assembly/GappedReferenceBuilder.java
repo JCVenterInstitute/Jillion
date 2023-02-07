@@ -22,9 +22,13 @@ package org.jcvi.jillion.assembly;
 
 
 import java.util.Arrays;
+import java.util.Iterator;
 
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.sam.cigar.Cigar;
+import org.jcvi.jillion.sam.cigar.CigarElement;
+import org.jcvi.jillion.sam.cigar.CigarOperation;
 /**
  * {@code GappedReferenceBuilder} builds 
  * a GAPPED reference {@link NucleotideSequence}
@@ -80,6 +84,34 @@ public final class GappedReferenceBuilder {
         }else{
         	insertions[offset].updateSize(insertionSize);
         }
+		return this;
+	}
+	/**
+	 * Add all inserts from the given {@link Cigar}.
+	 * @param offset the ungapped offset into the reference.
+	 * @param cigar the cigar; can not be null.
+	 * @return this
+	 * @throws NullPointerException if cigar is null.
+	 * @throws IndexOutOfBoundsException if offset is negative or larger than the reference sequence.
+	 * @since 6.0
+	 */
+	public GappedReferenceBuilder addReadByCigar(int offset, Cigar cigar) {
+		int currentOffset = offset;
+		
+		Iterator<CigarElement> iter =cigar.getElementIterator();
+		while(iter.hasNext()){
+			CigarElement element = iter.next();
+			
+			CigarOperation op = element.getOp();
+			
+			if(op == CigarOperation.HARD_CLIP || op == CigarOperation.SOFT_CLIP || op == CigarOperation.PADDING){
+				//ignore gaps and clipping
+			}else if(op == CigarOperation.INSERTION){				
+					addReadInsertion(currentOffset, element.getLength());
+			}else{
+				currentOffset+=element.getLength();
+			}
+		}
 		return this;
 	}
 	

@@ -77,7 +77,6 @@ public class ConsedTransformationService implements AssemblyTransformationServic
 		if(transformer ==null){
 			throw new NullPointerException("transformer can not be null");
 		}
-		//TODO implement!!
 		AceFileParser.create(aceFile)
 						.parse(new AbstractAceFileVisitor() {
 
@@ -153,8 +152,7 @@ public class ConsedTransformationService implements AssemblyTransformationServic
 											@Override
 											public void visitEnd() {
 												
-												NucleotideSequence gappedValidRangeSequence = fullLengthReadBuilder.copy()
-																								.trim(gappedValidRange)
+												NucleotideSequence gappedValidRangeSequence = fullLengthReadBuilder.copy(gappedValidRange)
 																								.build();
 												//TODO make this more efficient.
 												//currently have to create NucleteotideSequence just
@@ -171,7 +169,7 @@ public class ConsedTransformationService implements AssemblyTransformationServic
 														readStarts.get(readId), readDirs.get(readId), 
 														gappedValidRangeSequence, 
 														new ReadInfo(AssemblyUtil.toUngappedRange(gappedFullLengthSequence, gappedValidRange),
-																(int)ungappedFullLengthSequence.getLength()));
+																(int)ungappedFullLengthSequence.getLength()), null);
 												
 											}
 											

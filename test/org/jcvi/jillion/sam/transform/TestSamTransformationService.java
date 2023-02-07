@@ -20,9 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.sam.transform;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.replay;
-import static org.easymock.EasyMock.verify;
+import static org.easymock.EasyMock.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,32 +64,32 @@ public class TestSamTransformationService {
 		
 		transformer.referenceOrConsensus("ref", NucleotideSequenceTestUtil.create("AGCATGTTAGATAA**GATAGCTGTGCTAGTAGGCAGTCAGCGCCAT"));
 		
-		transformer.aligned("r001/1",
-				NucleotideSequenceTestUtil.create("TTAGATAAAGGATACTG")
-				, null, null, null, "ref", 6, Direction.FORWARD, NucleotideSequenceTestUtil.create("TTAGATAAAGGATA*CTG"), 
-				new ReadInfo(Range.ofLength(17), 17));
+		transformer.aligned(eq("r001/1"),
+				eq(NucleotideSequenceTestUtil.create("TTAGATAAAGGATACTG"))
+				, isNull(), isNull(), isNull(), eq("ref"), eq(6L), eq(Direction.FORWARD), eq(NucleotideSequenceTestUtil.create("TTAGATAAAGGATA*CTG")), 
+				eq(new ReadInfo(Range.ofLength(17), 17)), notNull());
 		
-		transformer.aligned("r002",
-				NucleotideSequenceTestUtil.create("aaaAGATAAGGATA")
-				, null, null, null, "ref", 8, Direction.FORWARD, 
-				NucleotideSequenceTestUtil.create("AGATAA*GGATA"), 
-				new ReadInfo(Range.of(3,13), 14));
-		transformer.aligned("r003",
-				NucleotideSequenceTestUtil.create("gcctaAGCTAA")
-				, null, null, null, "ref", 8, Direction.FORWARD, 
-				NucleotideSequenceTestUtil.create("AGCTAA"), 
-				new ReadInfo(Range.of(5,10), 11));
-		transformer.aligned("r004",
-				NucleotideSequenceTestUtil.create("ATAGCTTCAGC")
-				, null, null, null, "ref", 17, Direction.FORWARD, 
-				NucleotideSequenceTestUtil.create("ATAGCT**************TCAGC"), 
-				new ReadInfo(Range.ofLength(11), 11));
+		transformer.aligned(eq("r002"),
+				eq(NucleotideSequenceTestUtil.create("aaaAGATAAGGATA"))
+				, isNull(), isNull(), isNull(), eq("ref"), eq(8L), eq(Direction.FORWARD), 
+				eq(NucleotideSequenceTestUtil.create("AGATAA*GGATA")), 
+				eq(new ReadInfo(Range.of(3,13), 14)), notNull());
+		transformer.aligned(eq("r003"),
+				eq(NucleotideSequenceTestUtil.create("gcctaAGCTAA"))
+				, isNull(), isNull(), isNull(), eq("ref"), eq(8L), eq(Direction.FORWARD), 
+				eq(NucleotideSequenceTestUtil.create("AGCTAA")), 
+				eq(new ReadInfo(Range.of(5,10), 11)), notNull());
+		transformer.aligned(eq("r004"),
+				eq(NucleotideSequenceTestUtil.create("ATAGCTTCAGC"))
+				, isNull(), isNull(), isNull(), eq("ref"), eq(17L), eq(Direction.FORWARD), 
+				eq(NucleotideSequenceTestUtil.create("ATAGCT**************TCAGC")), 
+				eq(new ReadInfo(Range.ofLength(11), 11)), notNull());
 		//the other alignment for r003 should not map since it's not primary?
-		transformer.aligned("r001/2",
-				NucleotideSequenceTestUtil.create("CAGCGGCAT").toBuilder().reverseComplement().build()
-				, null, null, null, "ref", 38, Direction.REVERSE, 
-				NucleotideSequenceTestUtil.create("CAGCGGCAT"), 
-				new ReadInfo(Range.ofLength(9), 9));
+		transformer.aligned(eq("r001/2"),
+				eq(NucleotideSequenceTestUtil.create("CAGCGGCAT").toBuilder().reverseComplement().build())
+				, isNull(), isNull(), isNull(), eq("ref"), eq(38L), eq(Direction.REVERSE), 
+				eq(NucleotideSequenceTestUtil.create("CAGCGGCAT")), 
+				eq(new ReadInfo(Range.ofLength(9), 9)), notNull());
 		
 		transformer.endAssembly();
 		return transformer;

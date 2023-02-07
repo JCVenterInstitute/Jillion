@@ -170,7 +170,7 @@ public abstract class AbstractTestCasTransformationService {
 			
 			mock.readFile(readFastaFileUri);
 			//TODO not aligned for now
-			mock.notAligned(isA(String.class), isA(NucleotideSequence.class), (QualitySequence)isNull(),(PositionSequence)isNull(), isA(URI.class));
+			mock.notAligned(isA(String.class), isA(NucleotideSequence.class), (QualitySequence)isNull(),(PositionSequence)isNull(), isA(URI.class), notNull());
 			
 			expectLastCall().anyTimes();
 			
@@ -181,12 +181,12 @@ public abstract class AbstractTestCasTransformationService {
 				mock.referenceOrConsensus(contig.getId(), contig.getConsensusSequence());
 				while(readIter.hasNext()){
 					AssembledRead read = readIter.next();
-					mock.aligned(read.getId(), readDataStore.get(read.getId()).getSequence(), 
-							null, null, 
-							readFastaFileUri, contig.getId(), 
+					mock.aligned(eq(read.getId()), eq(readDataStore.get(read.getId()).getSequence()), 
+							isNull(), isNull(), 
+							eq(readFastaFileUri), eq(contig.getId()), 
 							
-							read.getGappedStartOffset(), read.getDirection(), 
-							read.getNucleotideSequence(), read.getReadInfo());
+							eq(read.getGappedStartOffset()), eq(read.getDirection()), 
+							eq(read.getNucleotideSequence()), eq(read.getReadInfo()), notNull());
 				}
 			}
 			mock.endAssembly();

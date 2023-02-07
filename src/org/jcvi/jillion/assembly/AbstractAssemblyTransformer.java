@@ -50,7 +50,7 @@ public abstract class AbstractAssemblyTransformer implements AssemblyTransformer
 
 	@Override
 	public void notAligned(String id, NucleotideSequence nucleotideSequence,
-			QualitySequence qualitySequence, PositionSequence positions, URI uri) {
+			QualitySequence qualitySequence, PositionSequence positions, URI uri, Object readObject) {
 		//no-op
 	}
 
@@ -59,7 +59,7 @@ public abstract class AbstractAssemblyTransformer implements AssemblyTransformer
 			QualitySequence qualitySequence, PositionSequence positions,
 			URI sourceFileUri, String referenceId, long gappedStartOffset,
 			Direction direction, NucleotideSequence gappedSequence,
-			ReadInfo readInfo) {
+			ReadInfo readInfo, Object readObject) {
 		//no-op
 	}
 

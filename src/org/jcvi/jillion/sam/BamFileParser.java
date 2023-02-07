@@ -209,7 +209,7 @@ class BamFileParser extends AbstractSamFileParser {
 				parseBamFromBeginning(visitor, enableMementos, predicate, (vfs)->true, in);
 			}else {
 				recordFilter.begin();
-				parseBamFromBeginning(visitor, enableMementos, predicate, (vfs)->true, in);
+				parseBamFromBeginning(visitor, enableMementos, recordFilter.asPredicate().and(predicate), (vfs)->true, in);
 				recordFilter.end();
 			}
 		}

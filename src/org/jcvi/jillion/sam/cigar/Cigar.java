@@ -37,6 +37,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.ArrayIterator;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
+import org.jcvi.jillion.core.util.iter.PeekableIterator;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 /**
  * {@code Cigar} is an Object for a single
@@ -732,7 +733,8 @@ public final class Cigar implements Iterable<CigarElement>, Serializable{
 			}
 			
 			int leftRemaining = (int) trimRange.getBegin();
-			Iterator<CigarElement> iter = elements.iterator();
+			PeekableIterator<CigarElement> iter = IteratorUtil.createPeekableIterator(elements.iterator());
+			boolean splitElementInFirstValidRange=false;
 			while(iter.hasNext() && leftRemaining>0) {
 				CigarElement e = iter.next();
 				if(e.getOp().isClip()) {
@@ -745,6 +747,7 @@ public final class Cigar implements Iterable<CigarElement>, Serializable{
 					//not a clip
 					if(leftRemaining < e.getLength()) {
 						//the amount left ends here split
+						splitElementInFirstValidRange =true;
 						newElements.add(new CigarElement(CigarOperation.SOFT_CLIP, leftRemaining));
 						int remainder = e.getLength() - leftRemaining;
 						if(remainder <=validLength) {
@@ -763,6 +766,13 @@ public final class Cigar implements Iterable<CigarElement>, Serializable{
 					}
 				}
 			}
+			//here we are done trimmed off the left side
+			//dkatzel 2023-02-03
+			//need to first check if the next element is a deletion
+			while(!splitElementInFirstValidRange && iter.hasNext() && (iter.peek().getOp() == CigarOperation.DELETION || iter.peek().getOp() == CigarOperation.PADDING ) ) {
+				iter.next();
+			}
+			//here we are now in valid range
 			while(iter.hasNext() && validLength>0) {
 				//right clip
 				CigarElement e = iter.next();
@@ -1028,12 +1038,17 @@ public final class Cigar implements Iterable<CigarElement>, Serializable{
 		NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(rawUngappedSequence);
 		int currentOffset=0;
 		int ungappedLength=0;
+		int hardClipedLength=0;
 		for(CigarElement e : elements){
 			switch(e.getOp()){
-			case HARD_CLIP:
-			case SOFT_CLIP: builder.delete(new Range.Builder(e.getLength())
+			case HARD_CLIP: hardClipedLength+=e.getLength();
+			case SOFT_CLIP: 
+							if(builder.getLength()>0) {
+								builder.delete(new Range.Builder(e.getLength())
+							
 												.shift(currentOffset)
 												.build());
+							}
 							ungappedLength+=e.getLength();
 							break;
 			//insert gap into read
@@ -1073,7 +1088,7 @@ public final class Cigar implements Iterable<CigarElement>, Serializable{
 				ungappedLength+=e.getLength();
 			}
 		}
-		if(ungappedLength != rawUngappedSequence.getLength()){
+		if((ungappedLength != rawUngappedSequence.getLength()) && (ungappedLength-hardClipedLength) != rawUngappedSequence.getLength()){
 			throw new IllegalArgumentException("invalid input sequence length, expected " + ungappedLength + " but was " + rawUngappedSequence.getLength());
 		}
 		return builder;

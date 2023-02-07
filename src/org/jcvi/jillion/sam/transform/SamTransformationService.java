@@ -135,6 +135,9 @@ public final class SamTransformationService implements AssemblyTransformationSer
 		NucleotideFastaDataStore ungappedReferenceDataStore = new NucleotideFastaFileDataStoreBuilder(referenceFasta)
 																	.build();
 		this.filter = filter;
+		if(filter!=null) {
+			filter.ungappedReferenceDataStore(ungappedReferenceDataStore);
+		}
 		referenceDataStore = SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(parser, ungappedReferenceDataStore, filter);
 	}
 	/**
@@ -175,12 +178,12 @@ public final class SamTransformationService implements AssemblyTransformationSer
 
 		private final AssemblyTransformer transformer;
 		private final NucleotideSequenceDataStore referenceDataStore;
-		private final Map<String,GrowableIntArray> gapOffsetMap;
+		private final Map<String,SamAlignmentGapInserter> gapOffsetMap;
 		
 		public SamTransformerVisitor(NucleotideSequenceDataStore referenceDataStore, AssemblyTransformer transformer) throws DataStoreException {
 			this.referenceDataStore = referenceDataStore;
 			this.transformer = transformer;
-			gapOffsetMap = new HashMap<String, GrowableIntArray>(MapUtil.computeMinHashMapSizeWithoutRehashing(referenceDataStore.getNumberOfRecords()));
+			gapOffsetMap = new HashMap<>(MapUtil.computeMinHashMapSizeWithoutRehashing(referenceDataStore.getNumberOfRecords()));
 			
 		}
 
@@ -194,7 +197,7 @@ public final class SamTransformationService implements AssemblyTransformationSer
 					if(ref ==null){
 						throw new IllegalStateException("error could not find reference sequence in fasta file with id " + id);
 					}
-					gapOffsetMap.put(id,  new GrowableIntArray(ref.gaps().toArray()));
+					gapOffsetMap.put(id,  new SamAlignmentGapInserter(ref));
 					
 					transformer.referenceOrConsensus(id, ref);
 				} catch (DataStoreException e) {
@@ -212,14 +215,11 @@ public final class SamTransformationService implements AssemblyTransformationSer
 				
 				if(record.mapped()){
 					String refName = record.getReferenceName();
-					try {
-						NucleotideSequence referenceSeq = referenceDataStore.get(refName);
-					
+						
 					Direction dir = record.getDirection();
 					Cigar cigar = record.getCigar();
 					int rawLength = cigar.getUnpaddedReadLength(ClipType.RAW);
 					Range validRange;
-					int gappedStartOffset = referenceSeq.getGappedOffsetFor(record.getStartPosition()-1);
 					
 					
 					//extra insertions have been added to the reference
@@ -243,9 +243,12 @@ public final class SamTransformationService implements AssemblyTransformationSer
 						}
 						validRange = AssemblyUtil.reverseComplementValidRange(cigar.getValidRange(), rawLength);
 					}
+					SamAlignmentGapInserter samAlignmentGapInserter = gapOffsetMap.get(refName);
+					if(samAlignmentGapInserter==null) {
+						throw new IllegalStateException("unknown reference " + refName);
+					}
+					SamAlignmentGapInserter.Result insertedResult = samAlignmentGapInserter.computeExtraInsertions(cigar, rawSequence, record.getStartPosition()-1, dir);
 					
-					NucleotideSequence gappedReadSequence =toGappedTrimmedSequenceBuilder(cigar, rawSequence, gapOffsetMap.get(refName), gappedStartOffset, dir)
-															.build();
 					
 				
 					//if the read is mated SAM doesn't put the /1 or /2 ?
@@ -269,16 +272,14 @@ public final class SamTransformationService implements AssemblyTransformationSer
 					//update valid range?
 					transformer.aligned(readName, rawSequence, quals, null, null, 
 							refName, 
-							gappedStartOffset, 
+							insertedResult.getGappedStartOffset(), 
 							dir, 
-							gappedReadSequence, 
+							insertedResult.getGappedSequence().build(), 
 							
-							new ReadInfo(validRange, rawLength));
-					} catch (DataStoreException e) {
-						throw new IllegalStateException("unknown reference " + refName, e);
-					}
+							new ReadInfo(validRange, rawLength), record);
+					
 				}else{
-					transformer.notAligned(record.getQueryName(), record.getSequence(), record.getQualities(), null, null);
+					transformer.notAligned(record.getQueryName(), record.getSequence(), record.getQualities(), null, null, record);
 					
 				}
 			}
@@ -295,66 +296,7 @@ public final class SamTransformationService implements AssemblyTransformationSer
 			transformer.endAssembly();		
 		}
 
-	private NucleotideSequenceBuilder toGappedTrimmedSequenceBuilder(Cigar cigar, NucleotideSequence rawUngappedSequence, GrowableIntArray refGaps, int gappedStartOffset, Direction dir) {
-		if(rawUngappedSequence.getNumberOfGaps() !=0){
-			throw new IllegalArgumentException("rawUngapped Sequence can not have gaps");
-		}
-		
-		NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder((int)rawUngappedSequence.getLength())
-												.turnOffDataCompression(true);
-		int referenceOffset = gappedStartOffset;
-		
-		Iterator<Nucleotide> ungappedBasesIter;
-		if(dir == Direction.FORWARD){
-			ungappedBasesIter= rawUngappedSequence.iterator();
-		}else{
-			ungappedBasesIter= rawUngappedSequence.reverseComplementIterator();
-		}
-		for(CigarElement e : cigar){
-			if(e.getOp().isClip() ){
-				//skip over clipped bases
-				for(int i=0; i<e.getLength(); i++){
-					ungappedBasesIter.next();
-				}
-				continue;
-			}
-			referenceOffset = appendBases(builder, ungappedBasesIter, refGaps, referenceOffset, e);
-			
-		}
-		
-		return builder;
-	}
 	
-	private int appendBases(NucleotideSequenceBuilder builder, Iterator<Nucleotide> ungappedReadBaseIterator, GrowableIntArray refGaps, int refOffset, CigarElement e){
-		
-		int ret = refOffset;
-		for(int i=0; i<e.getLength(); i++){
-			
-			if(e.getOp() != CigarOperation.INSERTION){
-				while(refGaps.binarySearch(ret) >=0){
-					//insert gap
-					builder.append(Nucleotide.Gap);
-					ret++;
-				}
-			}
-			if(e.getOp() == CigarOperation.PADDING){
-				//remove this many gaps
-				builder.delete(new Range.Builder(1)
-										.shift(builder.getLength()-1)
-										.build());
-			}
-			else if(e.getOp() ==CigarOperation.DELETION ||e.getOp() == CigarOperation.SKIPPED){
-				//insert gap
-				builder.append(Nucleotide.Gap);
-				
-			}else{
-				builder.append(ungappedReadBaseIterator.next());			
-				
-			}
-			ret++;
-		}
-		return ret;
-	}
 	
 }
 }

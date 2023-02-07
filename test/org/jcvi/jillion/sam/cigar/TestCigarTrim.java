@@ -70,7 +70,14 @@ public class TestCigarTrim {
 				
 				new Object[] {"soft clips trim and merge", "8S43M", new Range.Builder(40).shift(11).build(), "11S40M"},
 				new Object[] {"soft clips trim and merge other side", "8S43M", new Range.Builder(40).shift(8).build(), "8S40M3S"},
-				new Object[] {"soft clips trim and merge other side trim", "8S43M1S", new Range.Builder(40).shift(8).build(), "8S40M4S"}
+				new Object[] {"soft clips trim and merge other side trim", "8S43M1S", new Range.Builder(40).shift(8).build(), "8S40M4S"},
+				
+				//real world examples
+				new Object[] {"clipped insertion and deletions cancel out", "15M3I3M3D122M", new Range.Builder(93).shift(23).build(), "23S93M27S"},
+				new Object[] {"clipped insertion and deletions cancel out2", "5M1D5M1I138M", new Range.Builder(127).shift(22).build(), "22S127M"},
+				new Object[] {"clipped insertion with deletion in valid range", "11M1I27M1D104M", new Range.Builder(103).shift(18).build(), "18S21M1D82M22S"},
+				
+				new Object[] {"deletion at start of new valid range", "20M2D126M", new Range.Builder(103).shift(20).build(), "20S103M23S"}
 				);
 	}
 	public TestCigarTrim(String ignored, String initialCigar, Range validRange, String expectedCigar) {

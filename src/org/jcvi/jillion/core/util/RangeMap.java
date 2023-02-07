@@ -11,6 +11,7 @@ import java.util.function.BiConsumer;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Rangeable;
+import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.util.streams.ThrowingTriConsumer;
 
 /**
@@ -49,6 +50,20 @@ public class RangeMap<T> {
 	public T remove(Range range) {
 		return map.remove(range);
 	}
+	/**
+	 * Are there any elements in this Map.
+	 * @return {@code false} if there are no Ranges; otherwise {@code true}.
+	 */
+	public boolean isEmpty() {
+		return map.isEmpty();
+	}
+	/**
+	 * Get the number of elements in this Map.
+	 * @return
+	 */
+	public int size() {
+		return map.size();
+	}
 	public <E extends Throwable> void getAllThatIntersect(Range range, ThrowingTriConsumer<Range, T, Callback, E> consumer) throws E{
 		getAllThatIntersect(IntersectionOptions.intersect(range), consumer);
 	}
@@ -66,7 +81,9 @@ public class RangeMap<T> {
 			}
 		}
 	}
-	
+	public List<Range> computeMergedRanges() {
+		return Ranges.merge(map.keySet());
+	}
 	
 	public interface IntersectionOptions{
 		boolean intersects(Range range, Callback callback);
@@ -141,4 +158,6 @@ public class RangeMap<T> {
 	public interface Callback{
 		void halt();
 	}
+	
+	
 }

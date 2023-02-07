@@ -221,7 +221,7 @@ public final class PaddedSamTransformationService implements AssemblyTransformat
 							dir, 
 							gappedReadSequence, 
 							
-							new ReadInfo(validRange, rawLength));
+							new ReadInfo(validRange, rawLength), record);
 					
 				}else if(isReference(record)){
 					//add padded sequence to our map of references
@@ -233,7 +233,7 @@ public final class PaddedSamTransformationService implements AssemblyTransformat
 					
 					transformer.referenceOrConsensus(name, gappedSequence);
 				}else{
-					transformer.notAligned(record.getQueryName(), record.getSequence(), record.getQualities(), null, null);
+					transformer.notAligned(record.getQueryName(), record.getSequence(), record.getQualities(), null, null, record);
 					
 				}
 			}

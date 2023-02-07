@@ -101,7 +101,8 @@ import org.junit.runners.Suite.SuiteClasses;
         
         TestThrowingStream.class,
         
-        TestBoundedPriorityQueue.class
+        TestBoundedPriorityQueue.class,
+        TestRangeMap.class
         
     }
     )

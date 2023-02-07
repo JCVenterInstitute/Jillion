@@ -22,6 +22,7 @@ package org.jcvi.jillion.assembly.tigr.contig;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import org.jcvi.jillion.assembly.AbstractContigBuilder;
 import org.jcvi.jillion.assembly.AssembledRead;
@@ -185,6 +186,23 @@ public class TigrContigBuilder extends AbstractContigBuilder<TigrContigRead, Tig
 		@Override
 		public ReadInfo getReadInfo() {
 			return delegate.getReadInfo();
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(delegate);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			DefaultTigrContigRead other = (DefaultTigrContigRead) obj;
+			return Objects.equals(delegate, other.delegate);
 		}
 		
 	}

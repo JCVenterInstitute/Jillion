@@ -62,9 +62,12 @@ public interface AssemblyTransformer {
 	 * positions (for example if this read is not sanger).
 	 * @param uri the {@link URI} for the location of the file
 	 * that contains this read; may be {@code null} if not known.
+	 * @param readObject the input object of the read.  Usually this shouldn't be used, 
+	 * however sometimes if you may need to know additional property information from the original object 
+	 * and if you know the type you can downcast this object to get it.
 	 */
 	void notAligned(String id, NucleotideSequence nucleotideSequence,
-			QualitySequence qualitySequence, PositionSequence positions, URI uri);
+			QualitySequence qualitySequence, PositionSequence positions, URI uri, Object readObject);
 	/**
 	 * This read aligned to a particular reference at the given location.
 	 * @param readId the read id.
@@ -85,13 +88,17 @@ public interface AssemblyTransformer {
 	 * @param gappedSequence the gapped sequence of this read
 	 * to align to the reference/consensus
 	 * @param readInfo the {@link ReadInfo} for this read.
+	 * @param readObject the input object of the read.  Usually this shouldn't be used, 
+	 * however sometimes if you may need to know additional property information from the original object 
+	 * and if you know the type you can downcast this object to get it.
+	 * 
 	 */
 	void aligned(String readId, NucleotideSequence nucleotideSequence,
 			QualitySequence qualitySequence, PositionSequence positions,
 			URI sourceFileUri, String referenceId, long gappedStartOffset,
 			Direction direction,
 			NucleotideSequence gappedSequence,
-			ReadInfo readInfo);
+			ReadInfo readInfo, Object readObject);
 	/**
 	 * The command that was run to generate this assembly.
 	 * This method will only be called if the command is known.

@@ -303,7 +303,7 @@ public class ConsedAssemblyTransformerBuilder {
 		public void notAligned(String id,
 				NucleotideSequence nucleotideSequence,
 				QualitySequence qualitySequence, PositionSequence positions,
-				URI uri) {
+				URI uri, Object readObject) {
 			//don't care
 			
 		}
@@ -314,7 +314,7 @@ public class ConsedAssemblyTransformerBuilder {
 				URI sourceFileUri, String referenceId, long gappedStartOffset,
 				Direction direction,
 				NucleotideSequence gappedSequence,
-				ReadInfo readInfo) {
+				ReadInfo readInfo, Object readObject) {
 			
 			//TODO handle symlink to uri?
 			if(!builderMap.containsKey(referenceId)){

@@ -109,25 +109,8 @@ public final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 			
 			String refName = record.getReferenceName();
 			GappedReferenceBuilder refBuilder = builders.get(refName);
+			refBuilder.addReadByCigar(record.getStartPosition() - 1, record.getCigar());
 			
-			int offset = record.getStartPosition() - 1;
-			int currentOffset = offset;
-			Cigar cigar = record.getCigar();
-			
-			Iterator<CigarElement> iter =cigar.getElementIterator();
-			while(iter.hasNext()){
-				CigarElement element = iter.next();
-				
-				CigarOperation op = element.getOp();
-				
-				if(op == CigarOperation.HARD_CLIP || op == CigarOperation.SOFT_CLIP || op == CigarOperation.PADDING){
-					//ignore gaps and clipping
-				}else if(op == CigarOperation.INSERTION){				
-						refBuilder.addReadInsertion(currentOffset, element.getLength());
-				}else{
-					currentOffset+=element.getLength();
-				}
-			}
 			
 		}
 		

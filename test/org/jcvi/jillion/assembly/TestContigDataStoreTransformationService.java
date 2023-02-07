@@ -65,7 +65,7 @@ public class TestContigDataStoreTransformationService {
 		transformer.aligned(readId, null, null, null, null, 
 				contigId, offset, Direction.FORWARD, 
 				new NucleotideSequenceBuilder(bases).build(),
-				new ReadInfo(Range.ofLength(7), 7));
+				new ReadInfo(Range.ofLength(7), 7), contig.getRead(readId));
 		
 		transformer.endAssembly();
 		

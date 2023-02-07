@@ -233,7 +233,7 @@ public class CasFileTransformationService implements AssemblyTransformationServi
 					readData.getNucleotideSequence(),
 					readData.getQualitySequence(),
 					readData.getPositions(),
-					readData.getUri()
+					readData.getUri(), readData
 					);
 			
 		}
@@ -254,7 +254,7 @@ public class CasFileTransformationService implements AssemblyTransformationServi
 			read.getGappedStartOffset(),
 			read.getDirection(),
 			read.getNucleotideSequence(),
-			read.getReadInfo()
+			read.getReadInfo(), read
 			);
 		}
 

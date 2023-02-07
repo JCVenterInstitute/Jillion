@@ -2,6 +2,9 @@ package org.jcvi.jillion.sam;
 
 import java.util.function.Predicate;
 
+import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
+import org.jcvi.jillion.sam.header.SamHeader;
+
 final class WrappedPredicateFilter implements SamRecordFilter {
 	private final Predicate<SamRecord> filter;
 
@@ -28,6 +31,12 @@ final class WrappedPredicateFilter implements SamRecordFilter {
 	@Override
 	public Predicate<SamRecord> asPredicate() {
 		return filter;
+	}
+
+	@Override
+	public void ungappedReferenceDataStore(NucleotideFastaDataStore ungappedReferenceDataStore) {
+		//no-op
+		
 	}
 	
 }

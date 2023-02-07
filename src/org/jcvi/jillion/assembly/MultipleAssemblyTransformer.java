@@ -58,16 +58,16 @@ public class MultipleAssemblyTransformer implements AssemblyTransformer{
 
 	@Override
 	public void notAligned(String id, NucleotideSequence nucleotideSequence, QualitySequence qualitySequence,
-			PositionSequence positions, URI uri) {
-		transformers.forEach(t-> t.notAligned(id, nucleotideSequence, qualitySequence, positions, uri));
+			PositionSequence positions, URI uri, Object readObject) {
+		transformers.forEach(t-> t.notAligned(id, nucleotideSequence, qualitySequence, positions, uri, readObject));
 		
 	}
 
 	@Override
 	public void aligned(String readId, NucleotideSequence nucleotideSequence, QualitySequence qualitySequence,
 			PositionSequence positions, URI sourceFileUri, String referenceId, long gappedStartOffset,
-			Direction direction, NucleotideSequence gappedSequence, ReadInfo readInfo) {
-		transformers.forEach(t->t.aligned(readId, nucleotideSequence, qualitySequence, positions, sourceFileUri, referenceId, gappedStartOffset, direction, gappedSequence, readInfo));
+			Direction direction, NucleotideSequence gappedSequence, ReadInfo readInfo, Object readObject) {
+		transformers.forEach(t->t.aligned(readId, nucleotideSequence, qualitySequence, positions, sourceFileUri, referenceId, gappedStartOffset, direction, gappedSequence, readInfo, readObject));
 		
 	}
 
