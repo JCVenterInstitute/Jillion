@@ -512,7 +512,15 @@ public final class Ranges {
 		List<Range> union = Ranges.union(a, b);
 		List<Range> complement = new ArrayList<>();
 		for(Rangeable s : a) {
-			complement.addAll( s.asRange().complement(union));
+			Range sRange = s.asRange();
+			//2023-03-06 
+			//complement only returns non-empty list if there is intersection
+			if(Ranges.intersects(union, sRange)) {
+				complement.addAll( sRange.complement(union));
+			}else {
+				complement.add(sRange);
+			}
+			
 		}
 		return Ranges.merge(complement);
 	}
