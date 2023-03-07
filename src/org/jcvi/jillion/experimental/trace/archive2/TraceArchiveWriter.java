@@ -70,7 +70,7 @@ import org.jcvi.jillion.trace.chromat.ChromatogramFactory;
 public final class TraceArchiveWriter implements Closeable{
 
 	private static final String README_TEXT = 
-			"JCVI Trace Volume Generated: %s%n"
+			"Jillion Trace Volume Generated: %s%n"
 			+ "In instances where two basecallers are reported both callers were used in%n"
 			+ "conjuction to create the basecall and/or assign quality values.%n%n"
 
