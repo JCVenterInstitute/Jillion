@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.util.streams.ThrowingSupplier;
@@ -44,12 +45,37 @@ import lombok.Data;
  */
 @FunctionalInterface
 public interface InputStreamSupplier extends ThrowingSupplier<InputStream, IOException>{
+	/**
+	 * Class with all options to tell an {@link InputStreamSupplier}
+	 * how to generate an inputStream with {@link InputStreamSupplier#get(InputStreamReadOptions)}.
+	 * @author dkatzel
+	 *
+	 * @since 6.0
+	 */
 	@Data
 	@Builder
 	public static class InputStreamReadOptions{
+		/**
+		 * The number of bytes to skip before reading.  If not set will
+		 * start reading from beginning of inputStream.
+		 */
 		private Long start;
+		/**
+		 * The maximum number of bytes to read of the stream.  If not set
+		 * will read the entire stream.
+		 */
 		private Long length;
+		/**
+		 * Should nested compressed streams be decompressed.
+		 * For example, if the file was {@code tar.gz} then it would ungunzip and then untar
+		 * that result and send you the untarred resulting stream.
+		 */
 		private boolean nestedDecompress;
+		/**
+		 * Read the first Zip or Tar entry whose name matches the given predicate.
+		 * If not set, then the first entry will be read.
+		 */
+		private Predicate<String> entryNamePredicate;
 		
 		public static class InputStreamReadOptionsBuilder{
 			
@@ -103,7 +129,10 @@ public interface InputStreamSupplier extends ThrowingSupplier<InputStream, IOExc
      * @throws IOException if there is a problem creating the {@link InputStream}.
      */
     default InputStream get(InputStreamReadOptions readOptions) throws IOException{
-    	InputStream in = get(readOptions.nestedDecompress);
+    	InputStream in = get();
+    	if(readOptions.nestedDecompress) {
+    		in= InputStreamSupplierRegistery.getInstance().decodeInputStream(in, readOptions);
+    	}
     	
     	if(readOptions.getStart() !=null && readOptions.getStart().longValue() >0L) {
     		IOUtil.blockingSkip(in, readOptions.getStart());

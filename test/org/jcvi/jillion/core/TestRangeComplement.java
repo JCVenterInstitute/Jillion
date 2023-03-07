@@ -42,8 +42,23 @@ public class TestRangeComplement {
 																					List.of(Range.of(0, 10), Range.of(20, 30))},
 				new Object[] {"b spans all of a should return empty", List.of(Range.of(0, 10), Range.of(20, 30)),
 																		List.of(Range.of(-10, 15), Range.of(18, 50)),
-																		emptyList()}
+																		emptyList()},
 				
+				//real world examples
+				/*
+				 * ranges to ignore : [[ 157 .. 305 ]/0B]
+gisaidMutationRanges : [[ 88 .. 88 ]/0B, [ 160 .. 165 ]/0B, [ 184 .. 185 ]/0B]
+				 */
+				new Object[] {"one range outside of overlap", List.of(Range.of(88)),
+						List.of(Range.of(158, 305)),
+						List.of(Range.of(88))},
+				
+				new Object[] {"one range outside of overlap the rest inside", List.of(Range.of(88), Range.of(158, 305)),
+						List.of(Range.of(158, 305)),
+						List.of(Range.of(88))},
+				new Object[] {"one range outside of overlap the rest inside sub range", List.of(Range.of(88), Range.of(200, 250)),
+						List.of(Range.of(158, 305)),
+						List.of(Range.of(88))}
 				);
 	}
 	

@@ -25,10 +25,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.function.Predicate;
 import java.util.zip.ZipInputStream;
+
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.jcvi.jillion.core.io.InputStreamSupplier.InputStreamReadOptions;
 /**
- * {@link InputStreamSupplier} that assumes the wrapped zip file
- * only contains a single entry.
+ * {@link InputStreamSupplier} that assumes the wrapped supports zip files.  Added support for multiple entries in {@code 6.0}.
  * 
  * @author dkatzel
  * 
@@ -48,5 +52,16 @@ class BasicZipInputStreamSupplier extends AbstractFileInputStreamSupplier {
         in.getNextEntry();
         return in;
     }
+    
+    @Override
+	public InputStream get(InputStreamReadOptions readOptions) throws IOException {
+		//check if we have to do entry checking
+		if(readOptions.getEntryNamePredicate() !=null) {
+			ZipArchiveInputStream in = new ZipArchiveInputStream(new BufferedInputStream(new FileInputStream(file)));
+			Predicate<String> predicate = readOptions.getEntryNamePredicate();
+			return InputStreamSupplierUtil.getInputStreamForFirstEntryThatMatches(in, predicate);
+		}
+		return super.get(readOptions);
+	}
 
 }

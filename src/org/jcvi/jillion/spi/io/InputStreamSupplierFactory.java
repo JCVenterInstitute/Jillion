@@ -14,6 +14,12 @@ public interface InputStreamSupplierFactory {
 	
 	InputStream create(InputStream inputStream) throws IOException;
 	
+	default InputStream create(InputStream inputStream, InputStreamSupplier.InputStreamReadOptions options) throws IOException{
+		return create(inputStream);
+	}
+	
 	InputStreamSupplier createFromFile(File f) throws IOException;
+	
+	
 	
 }

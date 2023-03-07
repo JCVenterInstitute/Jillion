@@ -31,6 +31,8 @@ New Features
 8. FastaFileParser and FastqFileParser can now correctly parse compressed archive formats such as "tar.gz". 
    Assuming we only want the first file entry to be parsed.
    This means that fasta and fastq visitors and datastores will now seamlessly works on tar.gz files.
+   
+9.  InputStreamSuppliers of formats with multiple entries can read a specific entry instead of just the first.
 
 API Changes
 -----------

@@ -78,8 +78,10 @@ public final class InputStreamSupplierRegistery {
        }
        return new RawFileInputStreamSupplier(f);
 	}
-	
 	public InputStream decodeInputStream(InputStream in) throws IOException {
+		return decodeInputStream(in, null);
+	}
+	public InputStream decodeInputStream(InputStream in, InputStreamSupplier.InputStreamReadOptions options) throws IOException {
 	    byte[] magicNumber = new byte[magicNumberSize.get()];
 		PushbackInputStream pushbackInputStream = new PushbackInputStream(in, magicNumber.length);
 		int bytesRead = IOUtil.tryBlockingRead(pushbackInputStream, magicNumber);
@@ -89,14 +91,14 @@ public final class InputStreamSupplierRegistery {
 		if(bytesRead == magicNumber.length) {
 			 for(InputStreamSupplierFactory factory: factories) {
 			   	   if(factory.supports(magicNumber)) {
-			   		   found = factory.create(pushbackInputStream);
+			   		   found = factory.create(pushbackInputStream, options);
 			   		   break;
 			   	   }
 		      }
 		}else {
 			 for(InputStreamSupplierFactory factory: factories) {
 			   	   if(factory.getMagicNumberLength() <= bytesRead && factory.supports(magicNumber)) {
-			   		   found = factory.create(pushbackInputStream);
+			   		   found = factory.create(pushbackInputStream, options);
 			   		   break;
 			   	   }
 		      }
@@ -105,6 +107,6 @@ public final class InputStreamSupplierRegistery {
       if(found==null) {
     	  return pushbackInputStream;
       }
-      return decodeInputStream(found);
+      return decodeInputStream(found, options);
 	}
 }

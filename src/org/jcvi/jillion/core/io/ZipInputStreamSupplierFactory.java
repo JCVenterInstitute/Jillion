@@ -1,10 +1,16 @@
 package org.jcvi.jillion.core.io;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.function.Predicate;
 import java.util.zip.ZipInputStream;
 
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.jcvi.jillion.core.io.InputStreamSupplier.InputStreamReadOptions;
 import org.jcvi.jillion.spi.io.InputStreamSupplierFactory;
 
 public class ZipInputStreamSupplierFactory implements InputStreamSupplierFactory{
@@ -36,6 +42,14 @@ public class ZipInputStreamSupplierFactory implements InputStreamSupplierFactory
         return s;
 	}
 	
-	
+	@Override
+	public InputStream create(InputStream inputStream, InputStreamReadOptions options) throws IOException {
+		if(options !=null && options.getEntryNamePredicate()!=null) {
+			ZipArchiveInputStream s= new ZipArchiveInputStream(inputStream);
+			InputStreamSupplierUtil.getInputStreamForFirstEntryThatMatches(s, options.getEntryNamePredicate());
+	        return s;
+		}
+		return create(inputStream);
+	}
 
 }

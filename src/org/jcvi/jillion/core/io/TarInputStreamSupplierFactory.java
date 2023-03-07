@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.jcvi.jillion.core.io.InputStreamSupplier.InputStreamReadOptions;
 import org.jcvi.jillion.spi.io.InputStreamSupplierFactory;
 
 public class TarInputStreamSupplierFactory implements InputStreamSupplierFactory{
@@ -37,6 +38,17 @@ public class TarInputStreamSupplierFactory implements InputStreamSupplierFactory
         s.getNextEntry();
         return s;
 	}
+
+	@Override
+	public InputStream create(InputStream inputStream, InputStreamReadOptions options) throws IOException {
+		if(options !=null && options.getEntryNamePredicate()!=null) {
+			TarArchiveInputStream s= new TarArchiveInputStream(inputStream);
+			InputStreamSupplierUtil.getInputStreamForFirstEntryThatMatches(s, options.getEntryNamePredicate());
+	        return s;
+		}
+		return create(inputStream);
+	}
+
 	
 	
 

@@ -59,7 +59,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestTextLineParser.class,
         TestBufferSize.class,
         
-        TestPushBackBufferedReader.class
+        TestPushBackBufferedReader.class,
+        TestInputStreamEntryPredicate.class
     }
     )
 public class AllCoreIOUnitTests {
