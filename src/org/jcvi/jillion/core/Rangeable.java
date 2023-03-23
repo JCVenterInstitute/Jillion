@@ -85,23 +85,40 @@ public interface Rangeable {
 	    return asRange().getEnd();
 	}
 	/**
-         * Is this Rangeable empty.
-         * 
-         * @return {@code true} if this
-         * Rangeable is emtpy; {@code false} otherwise..
-         * 
-         * @implNote by default, this method should return
-         * {@code asRange().isEmpty();}.
-         * 
-         * @since 5.2
-         * 
-         * @see Range#isEmpty()
-         */
+     * Is this Rangeable empty.
+     * 
+     * @return {@code true} if this
+     * Rangeable is empty; {@code false} otherwise..
+     * 
+     * @implNote by default, this method should return
+     * {@code asRange().isEmpty();}.
+     * 
+     * @since 5.2
+     * 
+     * @see Range#isEmpty()
+     * @see #isNotEmpty()
+     */
 	default boolean isEmpty(){
 	    return asRange().isEmpty();
 	}
 	
-	
+	/**
+     * Is this Rangeable NOT empty.  This is mostly useful
+     * when filtering streams for non-empty Ranges.
+     * 
+     * @return {@code true} if this
+     * Rangeable is not empty; {@code false} otherwise..
+     * 
+     * @implNote by default, this method should return
+     * {@code !isEmpty()}.
+     * 
+     * @since 6.0
+     * 
+     * @see Range#isEmpty()
+     */
+	default boolean isNotEmpty(){
+	    return !isEmpty();
+	}
     /**
      * Checks to see if the given {@link Rangeable} intersects this one. An
      * empty range will never intersect any other range (even itself).
