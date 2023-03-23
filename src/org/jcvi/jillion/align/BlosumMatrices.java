@@ -139,4 +139,5 @@ public final class BlosumMatrices {
 			throw new IllegalStateException("could not parse substitution matrix file", e);
 		}
 	}
+	
 }
