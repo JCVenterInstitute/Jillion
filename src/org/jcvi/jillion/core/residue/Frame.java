@@ -85,7 +85,9 @@ public enum Frame{
     }
     
     public Frame shift(int amount){
-        
+        if(amount==0) {
+        	return this; // no shift
+        }
         if(amount <1){
             throw new IllegalArgumentException("amount must be positive");
         }
@@ -463,6 +465,4 @@ public enum Frame{
 
     	
     }
-
-	
 }
