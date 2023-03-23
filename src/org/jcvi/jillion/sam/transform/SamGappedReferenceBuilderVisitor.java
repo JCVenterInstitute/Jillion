@@ -98,6 +98,10 @@ public final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 				entryIter.remove();
 			}
 		}
+		if(builders.isEmpty()) {
+			//no known references?
+			throw new IllegalStateException("reference names don't match input fasta, references names are : " + namesUsed);
+		}
 	}
 
 	
@@ -109,7 +113,12 @@ public final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 			
 			String refName = record.getReferenceName();
 			GappedReferenceBuilder refBuilder = builders.get(refName);
+			try {
 			refBuilder.addReadByCigar(record.getStartPosition() - 1, record.getCigar());
+			}catch(NullPointerException e) {
+				System.out.println("here");
+				throw e;
+			}
 			
 			
 		}
