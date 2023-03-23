@@ -74,6 +74,8 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
     private static final byte C_VALUE = Nucleotide.Cytosine.getOrdinalAsByte();
     private static final byte G_VALUE = Nucleotide.Guanine.getOrdinalAsByte();
     private static final byte T_VALUE = Nucleotide.Thymine.getOrdinalAsByte();
+    
+    private static final Nucleotide[] VALUES = Nucleotide.values();
    
     /**
      * Options for how to decode Nucleotide's from Strings/characters into {@link Nucleotide}
@@ -1795,6 +1797,19 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
         return codecDecider.numUs;
     }
 
+    /**
+     * Create a new array of all the {@link Nucleotide}s
+     * in the current builder.
+     * @return a new array, will never be null but might be empty.
+     * @since 6.0
+     */
+    public Nucleotide[] toArray() {
+    	Nucleotide[] array = new Nucleotide[data.getCurrentLength()];
+    	data.forEachIndexed((i, v)->{
+    		array[i] = VALUES[v];
+    	});
+    	return array;
+    }
     /**
      * Replace all ambiguous bases with Ns.  This only affects
      * downstream calls to append/prepend/insert, previously

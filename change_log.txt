@@ -143,6 +143,9 @@ to wrap a StreamingIterator into a DataStoreIterator
 
 42. new class SamAlignmentGapInserter which performs the extra gap insertions for read alignments to convert SAM/BAM alignments into proper aligned contigs.
 
+43.  Added #toArray() methods to NucleotideSequenceBuilder and ProteinSequenceBuilder.
+
+
 API BREAKING CHANGES
 --------------------
 

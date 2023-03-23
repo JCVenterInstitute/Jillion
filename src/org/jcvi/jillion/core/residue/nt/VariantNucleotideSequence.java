@@ -79,6 +79,13 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 		return variantOffsets.toArray();
 	}
 	
+	
+	
+	@Override
+	public List<Range> getRangesOfNs() {
+		return nucleotideSequence.getRangesOfNs();
+	}
+	
 	@Override
 	public Iterator<List<VariantTriplet>> getTriplets(Range range) {
 		return getTriplets(range, null);
@@ -818,6 +825,11 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 		}
 		@Override
 		public Builder replace(Range range, Nucleotide[] replacement) {
+			this.nucleotideSequence.replace(range, replacement);
+			return this;
+		}
+		@Override
+		public Builder replace(Range range, NucleotideSequence replacement) {
 			this.nucleotideSequence.replace(range, replacement);
 			return this;
 		}

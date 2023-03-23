@@ -528,6 +528,22 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 		}
 		return stringBuilder.toString();
 	}
+	
+	 /**
+     * Create a new array of all the {@link AminoAcid}s
+     * in the current builder.
+     * @return a new array, will never be null but might be empty.
+     * @since 6.0
+     */
+	public AminoAcid[] toArray() {
+		AminoAcid[] array = new AminoAcid[builder.getCurrentLength()];
+		AminoAcid[] values = AminoAcid.values();
+		builder.forEachIndexed((i, v)->{
+			array[i]= values[v];
+		});
+		
+		return array;
+	}
 
 	@Override
 	public Iterator<AminoAcid> iterator() {

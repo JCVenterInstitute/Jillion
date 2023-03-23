@@ -158,4 +158,12 @@ public interface INucleotideSequence<S extends INucleotideSequence<S,B>, B exten
         return !isDna();
     }
 	
+    /**
+     * Get the list of contiguous spans of Ns; the returned list
+     * will be in sorted order.
+     * @return a List which may be empty.
+     * 
+     * @since 5.3
+     */
+    List<Range> getRangesOfNs();
 }

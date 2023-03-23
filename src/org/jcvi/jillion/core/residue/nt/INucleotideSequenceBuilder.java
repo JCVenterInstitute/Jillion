@@ -243,4 +243,6 @@ public interface INucleotideSequenceBuilder<S extends INucleotideSequence<S, B>,
     B replace(Range range, B otherBuilder);
     
     B replace(Range range, Nucleotide[] replacementSequence);
+    
+    B replace(Range range, NucleotideSequence replacementSequence);
 }
