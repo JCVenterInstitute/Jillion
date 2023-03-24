@@ -145,6 +145,7 @@ to wrap a StreamingIterator into a DataStoreIterator
 
 43.  Added #toArray() methods to NucleotideSequenceBuilder and ProteinSequenceBuilder.
 
+44.  Added #getNumberOfXs() to ProteinSequence
 
 API BREAKING CHANGES
 --------------------

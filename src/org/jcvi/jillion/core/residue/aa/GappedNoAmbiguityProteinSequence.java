@@ -17,6 +17,12 @@ public class GappedNoAmbiguityProteinSequence extends CompactProteinSequence{
 	public double computePercentX() {
 		return 0D;
 	}
+
+	@Override
+	public long getNumberOfXs() {
+		return 0;
+	}
+	
 	
 	
 

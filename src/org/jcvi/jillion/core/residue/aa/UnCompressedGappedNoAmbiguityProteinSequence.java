@@ -20,4 +20,8 @@ class UnCompressedGappedNoAmbiguityProteinSequence extends UnCompressedGappedPro
 	public double computePercentX() {
 		return 0D;
 	}
+	@Override
+	public long getNumberOfXs() {
+		return 0;
+	}
 }

@@ -21,4 +21,8 @@ class UnCompressedUnGappedNoAmbiguityProteinSequence extends UnCompressedUngappe
 		return 0D;
 	}
 
+	@Override
+	public long getNumberOfXs() {
+		return 0;
+	}
 }

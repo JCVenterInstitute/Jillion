@@ -24,7 +24,6 @@ import java.io.Serializable;
 import java.util.function.Function;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.ResidueSequence;
 
 /**
@@ -78,15 +77,29 @@ public interface ProteinSequence extends ResidueSequence<AminoAcid, ProteinSeque
 	default ProteinSequence trim(Range trimRange){
 		return toBuilder(trimRange).build();
 	}
-	
+	/**
+	 * Compute the percentage of Xs in the sequence.
+	 * @apiImpl by default the implementation is {@code ((double)getNumberOfXs())/getUngappedLength()}.
+	 * 
+	 * @return the percentage as a double [0..1].
+	 * @since 6.0
+	 */
 	default double computePercentX() {
-		long length = getUngappedLength();
-		double count=0D;
+		return ((double)getNumberOfXs())/getUngappedLength();
+	}
+	/**
+	 * Get the number of Xs in the sequence.
+	 * @return a number &ge; 0.
+	 * 
+	 * @since 6.0
+	 */
+	default long getNumberOfXs() {
+		long count=0L;
 		for(AminoAcid aa : this) {
 			if(aa == AminoAcid.Unknown_Amino_Acid) {
 				count++;
 			}
 		}
-		return count/length;
+		return count;
 	}
 }

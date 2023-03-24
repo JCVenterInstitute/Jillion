@@ -7,6 +7,11 @@ package org.jcvi.jillion.core.residue.aa;
  */
 class UngappedNoAmbiguityProteinSequence extends UngappedProteinSequence{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5225498501113831989L;
+	
 	public UngappedNoAmbiguityProteinSequence(AminoAcid[] aas) {
 		super(aas);
 	}
@@ -19,6 +24,10 @@ class UngappedNoAmbiguityProteinSequence extends UngappedProteinSequence{
 	@Override
 	public double computePercentX() {
 		return 0D;
+	}
+	@Override
+	public long getNumberOfXs() {
+		return 0;
 	}
 
 }
