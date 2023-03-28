@@ -147,6 +147,10 @@ to wrap a StreamingIterator into a DataStoreIterator
 
 44.  Added #getNumberOfXs() to ProteinSequence
 
+45. Added RangeCollectors class
+
+46
+
 API BREAKING CHANGES
 --------------------
 
