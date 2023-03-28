@@ -551,4 +551,48 @@ public class TestGrowableIntArray {
 		List<Integer> actual = sut.streamUntil(100).boxed().collect(Collectors.toList());
 		assertEquals(List.of(10, 20,30,30,35, 40, 50), actual);
 	}
+	
+	@Test
+	public void removeMiddleValueOddLength() {
+		GrowableIntArray sut = new GrowableIntArray(new int[]{1,2,3,4,5});
+		sut.remove(2);
+		assertArrayEquals(new int[] {1,2,4,5}, sut.toArray());
+	}
+	@Test
+	public void removeFirstValueOddLength() {
+		GrowableIntArray sut = new GrowableIntArray(new int[]{1,2,3,4,5});
+		sut.remove(0);
+		assertArrayEquals(new int[] {2,3,4,5}, sut.toArray());
+	}
+	@Test
+	public void removeLastValueOddLength() {
+		GrowableIntArray sut = new GrowableIntArray(new int[]{1,2,3,4,5});
+		sut.remove(4);
+		assertArrayEquals(new int[] {1,2,3,4}, sut.toArray());
+	}
+	@Test
+	public void removeMiddleValueEvenLength() {
+		GrowableIntArray sut = new GrowableIntArray(new int[]{1,2,3,4,5,6});
+		sut.remove(2);
+		assertArrayEquals(new int[] {1,2,4,5,6}, sut.toArray());
+	}
+	@Test
+	public void removeFirstValueEvenLength() {
+		GrowableIntArray sut = new GrowableIntArray(new int[]{1,2,3,4,5,6});
+		sut.remove(0);
+		assertArrayEquals(new int[] {2,3,4,5,6}, sut.toArray());
+	}
+	@Test
+	public void removeLastValueEvenLength() {
+		GrowableIntArray sut = new GrowableIntArray(new int[]{1,2,3,4,5,6});
+		sut.remove(5);
+		assertArrayEquals(new int[] {1,2,3,4,5}, sut.toArray());
+	}
+	@Test
+	public void removeMiddleValueTwoTimesEvenLength() {
+		GrowableIntArray sut = new GrowableIntArray(new int[]{1,2,3,4,5,6});
+		sut.remove(2);
+		sut.remove(2);
+		assertArrayEquals(new int[] {1,2,5,6}, sut.toArray());
+	}
 }
