@@ -8,8 +8,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.function.BiConsumer;
+import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.RangeCollectors;
 import org.jcvi.jillion.core.Rangeable;
 import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.util.streams.ThrowingTriConsumer;
@@ -44,6 +46,12 @@ public class RangeMap<T> {
 		return map.put(range, obj);
 	}
 	
+	public void putAll(RangeMap<T> other) {
+		for(Entry<Range, T> entry : other.map.entrySet()) {
+			map.put(entry.getKey(), entry.getValue());
+		}
+	}
+	
 	public T get(Range range) {
 		return map.get(range);
 	}
@@ -66,6 +74,9 @@ public class RangeMap<T> {
 	}
 	public <E extends Throwable> void getAllThatIntersect(Range range, ThrowingTriConsumer<Range, T, Callback, E> consumer) throws E{
 		getAllThatIntersect(IntersectionOptions.intersect(range), consumer);
+	}
+	public <E extends Throwable> void getAllThatIntersect(List<Range> ranges, ThrowingTriConsumer<Range, T, Callback, E> consumer) throws E{
+		getAllThatIntersect(IntersectionOptions.intersect(ranges), consumer);
 	}
 	public <E extends Throwable> void getAllThatIntersect(IntersectionOptions intersectionOptions, ThrowingTriConsumer<Range, T, Callback, E> consumer) throws E{
 		Objects.requireNonNull(consumer);
@@ -91,9 +102,23 @@ public class RangeMap<T> {
 		public static IntersectionOptions intersect(Range range) {
 			return new DefaultIntersectionOptions(Objects.requireNonNull(range));
 		}
+		public static IntersectionOptions intersect(Collection<Range> ranges) {
+			return new DefaultMultiIntersectionOptions(Objects.requireNonNull(ranges));
+		}
 		public static IntersectionOptions intersectEdgesAtMostOnceEach(Range range, int wiggleroomAtEdges) {
 			return new OnlyIntersectEdgesAtMostOnceEach(Range.of(range.getBegin(), range.getBegin()+wiggleroomAtEdges), 
 														Range.of(range.getEnd()-wiggleroomAtEdges, range.getEnd()));
+		}
+		public static IntersectionOptions abuts(Range range) {
+			return new OnlyIntersectEdgesAtMostOnceEach(Range.of(range.getBegin()-1, range.getBegin()), 
+														Range.of(range.getEnd(), range.getEnd()+1));
+		}
+		public static IntersectionOptions abuts(Collection<Range> ranges) {
+			List<Range> abuttingRanges = ranges.stream()
+					.flatMap(range -> Stream.of(Range.of(range.getBegin()-1, range.getBegin()), 
+							Range.of(range.getEnd(), range.getEnd()+1)))
+					.collect(RangeCollectors.mergeRanges());
+			return new DefaultMultiIntersectionOptions(abuttingRanges);
 		}
 	}
 	
@@ -107,6 +132,20 @@ public class RangeMap<T> {
 		@Override
 		public boolean intersects(Range range, Callback callback) {
 			return rangeOfInterest.intersects(range);
+		}
+	}
+	
+	private static class DefaultMultiIntersectionOptions implements IntersectionOptions{
+		private final List<Range> rangesOfInterest;
+
+		public DefaultMultiIntersectionOptions(Collection<Range> rangesOfInterest) {
+			this.rangesOfInterest = new ArrayList<>(rangesOfInterest);
+			this.rangesOfInterest.forEach(Objects::requireNonNull);
+		}
+
+		@Override
+		public boolean intersects(Range range, Callback callback) {
+			return Ranges.intersects(rangesOfInterest, range);
 		}
 	}
 	
