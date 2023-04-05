@@ -147,9 +147,10 @@ to wrap a StreamingIterator into a DataStoreIterator
 
 44.  Added #getNumberOfXs() to ProteinSequence
 
-45. Added RangeCollectors class
+45.  Added RangeCollectors class
 
-46
+46.  Added Sam and Bam parser visito options to visit multiple Ranges for a given reference.
+     Previously could only visit one Range at a time so multiple Ranges would have required multiple parses.
 
 API BREAKING CHANGES
 --------------------
@@ -176,6 +177,8 @@ API BREAKING CHANGES
 7.  AssemblyTransformationService#aligned() and #unaligned() methods now have additional parameter `Object readObject` which is the 
     actual read object the transformer is transforming for you in the event you need to query the object directly (by downcasting)
     to get additional information in your transformer.
+    
+8.  BamFileParser will now call visitHeader() even when just parsing a specified Range
     
 Bug Fixes
 ---------

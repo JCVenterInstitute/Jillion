@@ -98,8 +98,9 @@ final class SamFileParser extends AbstractSamFileParser{
 	               Predicate<SamRecord> predicate;
 	           if(options.getReferenceName().isPresent()){
 //	               verifyReferenceInHeader(options.getReferenceName().get());
-	               
-	               if(options.getReferenceRange().isPresent()){
+	        	   if(options.getReferenceRanges().isPresent()){
+	                   predicate = SamUtil.alignsToReference(options.getReferenceName().get(), options.getReferenceRanges().get());
+	               }else if(options.getReferenceRange().isPresent()){
 	                   predicate = SamUtil.alignsToReference(options.getReferenceName().get(), options.getReferenceRange().get());
 	               }else{
 	                   predicate = SamUtil.alignsToReference(options.getReferenceName().get());
