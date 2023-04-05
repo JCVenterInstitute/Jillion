@@ -39,12 +39,17 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
  *
  */
 public interface AssemblyTransformer {
+	
+	public interface AssemblyTransformerCallback{
+		void halt();
+	}
 	/**
 	 * The reference or consensus sequence used in the assembly.
 	 * @param id the reference or contig consensus id; can not be null.
 	 * @param gappedReference the gapped {@link NucleotideSequence}
+	 * @param callback the callback object
 	 */
-	void referenceOrConsensus(String id, NucleotideSequence gappedReference);
+	void referenceOrConsensus(String id, NucleotideSequence gappedReference, AssemblyTransformerCallback callback);
 	/**
 	 * The end of the assembly has been reached.
 	 */

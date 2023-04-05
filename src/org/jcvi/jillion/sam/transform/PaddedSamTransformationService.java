@@ -231,7 +231,7 @@ public final class PaddedSamTransformationService implements AssemblyTransformat
 					paddedReferenceSequences.put(name, gappedSequence);
 					gapOffsetMap.put(name, new GrowableIntArray(gappedSequence.gaps().toArray()));
 					
-					transformer.referenceOrConsensus(name, gappedSequence);
+					transformer.referenceOrConsensus(name, gappedSequence, ()-> callback.haltParsing());
 				}else{
 					transformer.notAligned(record.getQueryName(), record.getSequence(), record.getQualities(), null, null, record);
 					

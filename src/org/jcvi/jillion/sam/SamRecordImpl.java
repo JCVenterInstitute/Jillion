@@ -25,11 +25,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.internal.core.util.MemoizedSupplier;
 import org.jcvi.jillion.sam.attribute.ReservedSamAttributeKeys;
 import org.jcvi.jillion.sam.attribute.SamAttribute;
 import org.jcvi.jillion.sam.attribute.SamAttributeKey;
@@ -54,6 +56,7 @@ class SamRecordImpl implements SamRecord, Serializable {
 	private final int observedTemplateLength;
 	private final Map<SamAttributeKey, SamAttribute> attributes;
 	
+	private Supplier<Range> alignmentRangeCache = MemoizedSupplier.memoize(this::getAlignmentRangeSupplier);
 	
 	SamRecordImpl(SamRecordBuilder builder) {
 		this.header = builder.header;
@@ -369,6 +372,9 @@ class SamRecordImpl implements SamRecord, Serializable {
 	 */
 	@Override
 	public Range getAlignmentRange() {
+		return alignmentRangeCache.get();
+	}
+	private Range getAlignmentRangeSupplier() {
 		if(mapped()){
 			return new Range.Builder(cigar.getNumberOfReferenceBasesAligned())
 							.shift(startPosition -1)

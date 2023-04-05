@@ -20,16 +20,15 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.*;
 import static org.easymock.EasyMock.verify;
 
 import java.util.Collections;
 
+import org.jcvi.jillion.assembly.AssemblyTransformer.AssemblyTransformerCallback;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStore;
-import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.internal.assembly.DefaultContig;
@@ -61,7 +60,7 @@ public class TestContigDataStoreTransformationService {
 		
 		AssemblyTransformer transformer = createMock(AssemblyTransformer.class);
 		
-		transformer.referenceOrConsensus(contigId, consensus);
+		transformer.referenceOrConsensus(eq(contigId), eq(consensus), isA(AssemblyTransformerCallback.class));
 		transformer.aligned(readId, null, null, null, null, 
 				contigId, offset, Direction.FORWARD, 
 				new NucleotideSequenceBuilder(bases).build(),

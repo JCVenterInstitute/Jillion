@@ -2,6 +2,7 @@ package org.jcvi.jillion.assembly;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -45,8 +46,20 @@ public class MultipleAssemblyTransformer implements AssemblyTransformer{
 	}
 
 	@Override
-	public void referenceOrConsensus(String id, NucleotideSequence gappedReference) {
-		transformers.forEach(t-> t.referenceOrConsensus(id, gappedReference));
+	public void referenceOrConsensus(String id, NucleotideSequence gappedReference, AssemblyTransformerCallback callback) {
+		Iterator<AssemblyTransformer> iter = transformers.iterator();
+		AssemblyTransformerCallback wrappedCallback = ()->{
+			iter.remove();
+		};
+		
+		while(iter.hasNext()) {
+			AssemblyTransformer t = iter.next();
+			
+			t.referenceOrConsensus(id, gappedReference, wrappedCallback);
+		}
+		if(transformers.isEmpty()) {
+			callback.halt();
+		}
 		
 	}
 

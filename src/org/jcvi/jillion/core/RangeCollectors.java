@@ -23,6 +23,19 @@ public final class RangeCollectors {
 				l-> Ranges.merge(l));
 				
 	}
+	/**
+	 * Return a single
+     * Range that covers the entire span
+     * of the given Ranges collected.
+	 * @return
+	 */
+	public static Collector<Range, ?, Range> inclusiveRange(){
+		return Collector.of( ()-> new ArrayList<Range>(),
+				(l, r)-> l.add(r),
+				(a, b) -> {a.addAll(b); return a;},
+				l-> Ranges.createInclusiveRange(l));
+				
+	}
 	
 	public static Collector<Range, ?, List<Range>> mergeRanges(int maxDistance){
 		return Collector.of( ()-> new ArrayList<Range>(),

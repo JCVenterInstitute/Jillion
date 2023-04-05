@@ -130,7 +130,9 @@ class BamFileParser extends AbstractSamFileParser {
            Predicate<SamRecord> predicate;
            String referenceName = options.getReferenceName().get();
            verifyReferenceInHeader(referenceName);
-           if(options.getReferenceRange().isPresent()){
+           if(options.getReferenceRanges().isPresent()){
+        	   predicate = SamUtil.alignsToReference(options.getReferenceName().get(), options.getReferenceRanges().get());
+           }else if(options.getReferenceRange().isPresent()){
                predicate = SamUtil.alignsToReference(options.getReferenceName().get(), options.getReferenceRange().get());
            }else{
                predicate = SamUtil.alignsToReference(options.getReferenceName().get());
@@ -229,11 +231,23 @@ class BamFileParser extends AbstractSamFileParser {
 		
 		parseBamRecords(visitor, filter, keepParsingPredicate, in, keepParsing, callback);
 	}
+	protected void parseHeaderOnly(SamVisitor visitor, BgzfInputStream in) throws IOException {
+		verifyMagicNumber(in);
+		//have to keep parsing header again for now
+		//since it updates the file pointer in our bgzf stream
+		//probably not worth seeking/skipping for now...
+		SamHeaderBuilder headerBuilder = parseHeader(new TextLineParser(IOUtil.toInputStream(readPascalString(in))));
+		
+		parseReferenceNamesAndAddToHeader(in, headerBuilder);
+		AtomicBoolean keepParsing = new AtomicBoolean(true);
+		visitor.visitHeader(new MementoLessBamCallback(keepParsing), header);
+		
+	}
 	
 	protected void parseBamRecords(SamVisitor visitor, Predicate<SamRecord> filter, Predicate<VirtualFileOffset> keepParsingPredicate, BgzfInputStream in, AtomicBoolean keepParsing, AbstractBamCallback callback) throws IOException {
 		
 		boolean canceledByPredicate=false;
-		
+
 		try{
 			VirtualFileOffset start = in.getCurrentVirutalFileOffset();
 			while(keepParsing.get() && in.hasMoreData()){	

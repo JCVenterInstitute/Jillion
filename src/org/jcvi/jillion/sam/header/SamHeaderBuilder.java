@@ -31,10 +31,12 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.jcvi.jillion.internal.core.util.ArrayUtil;
 import org.jcvi.jillion.sam.SamRecord;
 import org.jcvi.jillion.sam.SamValidationException;
 import org.jcvi.jillion.sam.SortOrder;
@@ -285,7 +287,16 @@ public final class SamHeaderBuilder{
 	    		return new SamHeaderProxy(this);
 	    	}
 	        
-	        private static class SamHeaderProxy implements Serializable{
+	        @Override
+			public List<String> getReferenceNames() {
+				String[] names = new String[referenceSequences.size()];
+				for(Entry<String, Integer> entry : referenceIndexMap.entrySet()) {
+					names[entry.getValue().intValue()] = entry.getKey();
+				}
+				return Arrays.asList(names);
+			}
+
+			private static class SamHeaderProxy implements Serializable{
 	        	
 	        	
 				private static final long serialVersionUID = -1505982820259897532L;

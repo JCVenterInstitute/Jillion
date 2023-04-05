@@ -2,7 +2,6 @@ package org.jcvi.jillion.core.residue.nt;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import org.jcvi.jillion.core.Direction;
@@ -32,8 +31,6 @@ public interface UnderlyingCoverage {
 		Objects.requireNonNull(mapper);
 		return params-> {
 			UnderlyingCoverageParameters mapped = params.map(mapper);
-//			System.out.println("old params = " + params);
-//			System.out.println("new params = " + mapped);
 			return this.getCoverageFor(mapped);
 		};
 	}

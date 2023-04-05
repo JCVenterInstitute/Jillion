@@ -25,17 +25,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.internal.sam.SamUtil;
+import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.internal.sam.index.IndexUtil;
-import org.jcvi.jillion.sam.SamParser.SamParserOptions;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 import org.jcvi.jillion.sam.index.BamIndex;
+import org.jcvi.jillion.sam.index.Chunk;
 import org.jcvi.jillion.sam.index.ReferenceIndex;
 
 class IndexedBamFileParser extends BamFileParser{
@@ -62,16 +61,26 @@ class IndexedBamFileParser extends BamFileParser{
 		if(refIndex ==null){
 			throw new IllegalArgumentException("no reference with name '"+ referenceName +"'");
 		}
-		
-		if(options.getReferenceRange().isPresent()) {
+		if(options.getReferenceRanges().isPresent()) {
+			List<Range> alignmentRanges = options.getReferenceRanges().get();
+			VirtualFileOffset[] start= new VirtualFileOffset[1];
+			start[0] = refIndex.getHighestEndOffset();
+			VirtualFileOffset[] end = new VirtualFileOffset[1];
+			end[0] = refIndex.getLowestStartOffset();
 			
-			Range alignmentRange = options.getReferenceRange().get();
-			//alignment range
-			int[] overlappingBins = SamUtil.getCandidateOverlappingBins(alignmentRange);
 			
-			//TODO can probably do better filtering by specific bins...
-			VirtualFileOffset start = refIndex.getLowestStartOffset();
-			VirtualFileOffset end = refIndex.getHighestEndOffset();
+			refIndex.findBinsForAlignmentRange(alignmentRanges, (r,b)->{
+				for(Chunk chunk : b.getChunks()) {
+					if(chunk.getBegin().compareTo(start[0]) < 0) {
+						start[0] = chunk.getBegin();
+					}
+					if(chunk.getEnd().compareTo(end[0]) > 0) {
+						end[0] = chunk.getEnd();
+					}
+				}
+			});
+			AtomicBoolean keepParsing = new AtomicBoolean(true);
+			Range incluiveAlignmentRange = Ranges.createInclusiveRange(alignmentRanges);
 			Predicate<SamRecord> recordBinFilter = (record) -> {
 				if(!referenceName.equals(record.getReferenceName())){
 					return false;
@@ -81,22 +90,116 @@ class IndexedBamFileParser extends BamFileParser{
 				if(readAlignmentRange ==null) {
 					return false;
 				}
-				int bin = SamUtil.computeBinFor(readAlignmentRange);
-				if(Arrays.binarySearch(overlappingBins, bin) <0){
-					return false;
+//				int bin = SamUtil.computeBinFor(readAlignmentRange);
+				/*
+				 * int[] readBins = SamUtil.getCandidateOverlappingBins(readAlignmentRange);
+				 * boolean found=false; for(int i=0; i< readBins.length; i++) {
+				 * if(Arrays.binarySearch(overlappingBins, readBins[i]) <0){ found=true; break;
+				 * } } if(!found) { return false; }
+				 */
+				boolean intersects= Ranges.intersects(alignmentRanges, readAlignmentRange);
+				if(!intersects && readAlignmentRange.startsAfter(incluiveAlignmentRange)){
+					
+					keepParsing.set(false);
 				}
-				return readAlignmentRange.isSubRangeOf(alignmentRange);
+				return intersects;
 			};
 			if(options.getFilter().isPresent()) {
 				recordBinFilter = recordBinFilter.and(options.getFilter().get().asPredicate());
 			}
-			try(BgzfInputStream in = BgzfInputStream.create(bamFile, start)){
+			if(!BEGINING_OF_FILE.equals(start[0])) {
+				//parse the header
+				try(BgzfInputStream in = BgzfInputStream.create(bamFile)){
+					parseHeaderOnly(visitor, in);
+				}
+			}
+			try(BgzfInputStream in = BgzfInputStream.create(bamFile, start[0])){
 				//assume anything in this interval matches?
-				AtomicBoolean keepParsing = new AtomicBoolean(true);
+		
 				options.getFilter().ifPresent(f->f.begin());
+				
+				//parse the header
+				try(BgzfInputStream in2 = BgzfInputStream.create(bamFile)){
+					parseHeaderOnly(visitor, in2);
+				}
+				
 				this.parseBamRecords(visitor, 
 						recordBinFilter,
-						(vfs)-> vfs.compareTo(end) <=0,
+						(vfs)-> vfs.compareTo(end[0]) <=0,
+//						(vfs)-> true,
+						in,
+						keepParsing,
+						options.shouldCreateMementos() ? new BamCallback(keepParsing) :new MementoLessBamCallback(keepParsing));
+				options.getFilter().ifPresent(f->f.end());
+			}
+		}else if(options.getReferenceRange().isPresent()) {
+			
+			Range alignmentRange = options.getReferenceRange().get();
+			VirtualFileOffset[] start= new VirtualFileOffset[1];
+			start[0] = refIndex.getHighestEndOffset();
+			VirtualFileOffset[] end = new VirtualFileOffset[1];
+			end[0] = refIndex.getLowestStartOffset();
+			
+			refIndex.findBinsForAlignmentRange(alignmentRange, b->{
+				for(Chunk chunk : b.getChunks()) {
+					if(chunk.getBegin().compareTo(start[0]) < 0) {
+						start[0] = chunk.getBegin();
+					}
+					if(chunk.getEnd().compareTo(end[0]) > 0) {
+						end[0] = chunk.getEnd();
+					}
+				}
+			});
+
+			AtomicBoolean keepParsing = new AtomicBoolean(true);
+			Predicate<SamRecord> recordBinFilter = (record) -> {
+				if(!referenceName.equals(record.getReferenceName())){
+					return false;
+				}
+			
+				Range readAlignmentRange = record.getAlignmentRange();
+				if(readAlignmentRange ==null) {
+					return false;
+				}
+//				int bin = SamUtil.computeBinFor(readAlignmentRange);
+				/*
+				 * int[] readBins = SamUtil.getCandidateOverlappingBins(readAlignmentRange);
+				 * boolean found=false; for(int i=0; i< readBins.length; i++) {
+				 * if(Arrays.binarySearch(overlappingBins, readBins[i]) <0){ found=true; break;
+				 * } } if(!found) { return false; }
+				 */
+				boolean intersects= readAlignmentRange.intersects(alignmentRange);
+				if(intersects) {
+//					System.out.println(readAlignmentRange);
+				}else if(readAlignmentRange.startsAfter(alignmentRange)){
+					
+					keepParsing.set(false);
+				}
+				return intersects;
+			};
+			if(options.getFilter().isPresent()) {
+				recordBinFilter = recordBinFilter.and(options.getFilter().get().asPredicate());
+			}
+			if(!BEGINING_OF_FILE.equals(start[0])) {
+				//parse the header
+				try(BgzfInputStream in = BgzfInputStream.create(bamFile)){
+					parseHeaderOnly(visitor, in);
+				}
+			}
+			try(BgzfInputStream in = BgzfInputStream.create(bamFile, start[0])){
+				//assume anything in this interval matches?
+		
+				options.getFilter().ifPresent(f->f.begin());
+				
+				//parse the header
+				try(BgzfInputStream in2 = BgzfInputStream.create(bamFile)){
+					parseHeaderOnly(visitor, in2);
+				}
+				
+				this.parseBamRecords(visitor, 
+						recordBinFilter,
+						(vfs)-> vfs.compareTo(end[0]) <=0,
+//						(vfs)-> true,
 						in,
 						keepParsing,
 						options.shouldCreateMementos() ? new BamCallback(keepParsing) :new MementoLessBamCallback(keepParsing));
@@ -111,7 +214,7 @@ class IndexedBamFileParser extends BamFileParser{
 			if(options.getFilter().isPresent()) {
 				recordMatchPredicate = recordMatchPredicate.and(options.getFilter().get().asPredicate());
 			}
-			Predicate<VirtualFileOffset> endPredicate =(vfs) ->vfs.compareTo(end) <0;
+			Predicate<VirtualFileOffset> endPredicate =(vfs) ->vfs.compareTo(end) <=0;
 			try(BgzfInputStream in = BgzfInputStream.create(bamFile, start)){
 				options.getFilter().ifPresent(f->f.begin());
 				if(BEGINING_OF_FILE.equals(start)){

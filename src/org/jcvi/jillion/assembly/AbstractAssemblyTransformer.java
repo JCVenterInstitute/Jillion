@@ -39,7 +39,7 @@ public abstract class AbstractAssemblyTransformer implements AssemblyTransformer
 
 	@Override
 	public void referenceOrConsensus(String id,
-			NucleotideSequence gappedReference) {
+			NucleotideSequence gappedReference, AssemblyTransformerCallback callback) {
 		//no-op
 	}
 

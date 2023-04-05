@@ -60,7 +60,7 @@ final class AcgtnNucloetideCodec extends AbstractTwoBitEncodedNucleotideCodec{
 
 	@Override
     public Range toUngappedRange(byte[] encodedData, Range gappedRange) {
-	ensureWithinSequence(encodedData, gappedRange);
+		ensureWithinSequence(encodedData, gappedRange);
         return gappedRange;
     }
 

@@ -2,8 +2,8 @@ package org.jcvi.jillion.core.residue.aa;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
-import org.jcvi.jillion.core.util.MemoizedSupplier;
 import org.jcvi.jillion.core.util.iter.ArrayIterator;
+import org.jcvi.jillion.internal.core.util.MemoizedSupplier;
 
 import java.io.ObjectInputStream;
 import java.io.Serializable;

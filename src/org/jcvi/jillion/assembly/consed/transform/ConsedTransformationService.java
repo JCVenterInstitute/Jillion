@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jcvi.jillion.assembly.AssemblyTransformationService;
 import org.jcvi.jillion.assembly.AssemblyTransformer;
@@ -90,9 +91,10 @@ public class ConsedTransformationService implements AssemblyTransformationServic
 								return new AceContigVisitor() {
 									NucleotideSequenceBuilder consensusBuilder = new NucleotideSequenceBuilder();
 									boolean madeReferenceCallYet = false;
-									
+									boolean[] halt = new boolean[0];
 									Map<String, Integer> readStarts = new HashMap<>();
 									Map<String, Direction> readDirs = new HashMap<>();
+									
 									
 									@Override
 									public void visitEnd() {
@@ -114,9 +116,13 @@ public class ConsedTransformationService implements AssemblyTransformationServic
 										if(!madeReferenceCallYet){
 											makeReferenceCall();
 										}
+										if(halt[0]) {
+											return null;
+										}
 										return new AceContigReadVisitor() {
 											NucleotideSequenceBuilder fullLengthReadBuilder = new NucleotideSequenceBuilder();
 											Range gappedValidRange = null;
+											
 											
 											@Override
 											public void visitTraceDescriptionLine(String traceName, String phdName,
@@ -148,6 +154,8 @@ public class ConsedTransformationService implements AssemblyTransformationServic
 										        
 										       
 											}
+											
+											
 											
 											@Override
 											public void visitEnd() {
@@ -190,7 +198,15 @@ public class ConsedTransformationService implements AssemblyTransformationServic
 									private void makeReferenceCall() {
 										madeReferenceCallYet =true;
 										//TODO do we have to worry about contigLeft and right?
-										transformer.referenceOrConsensus(contigId, consensusBuilder.build());
+										transformer.referenceOrConsensus(contigId, consensusBuilder.build(), ()->{
+											callback.haltParsing();
+											halt();
+										});
+										
+									}
+
+									private void halt() {
+										halt[0]=true;
 										
 									}
 

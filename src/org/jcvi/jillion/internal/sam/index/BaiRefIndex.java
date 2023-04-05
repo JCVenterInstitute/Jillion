@@ -52,6 +52,7 @@ class BaiRefIndex implements ReferenceIndex {
 		
 	}
 
+	
 	@Override
 	public List<Bin> getBins() {
 		return bins;

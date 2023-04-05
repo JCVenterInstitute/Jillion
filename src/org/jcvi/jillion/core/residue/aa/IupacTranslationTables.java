@@ -27,33 +27,29 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.Frame;
 import org.jcvi.jillion.core.residue.aa.TranslationVisitor.FoundStartResult;
 import org.jcvi.jillion.core.residue.aa.TranslationVisitor.FoundStopResult;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.Triplet;
 import org.jcvi.jillion.core.residue.nt.VariantNucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.VariantTriplet;
 import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.core.util.MapValueComparator;
-import org.jcvi.jillion.core.util.SingleThreadAdder;
-
-import lombok.Builder;
-import lombok.Data;
-
+/**
+ * {@link TranslationTable} implementations
+ * of the IUPAC translation tables used by GenBank.
+ * 
+ * @author dkatzel
+ *
+ */
 public enum IupacTranslationTables implements TranslationTable{
 	
 	

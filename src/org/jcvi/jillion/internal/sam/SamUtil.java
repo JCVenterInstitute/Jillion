@@ -33,11 +33,13 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
@@ -738,6 +740,22 @@ public final class SamUtil {
 			if(referenceName.equals(record.getReferenceName())){
 				
 					return alignmentRegionOfInterest.intersects(record.getAlignmentRange());
+			}
+			return false;
+			
+		};
+	}
+	
+	public static Predicate<SamRecord> alignsToReference(String referenceName, List<Range> alignmentRegionsOfInterest){
+		Objects.requireNonNull(referenceName, "reference name can not be null");
+		Objects.requireNonNull(alignmentRegionsOfInterest, "alignment range can not be null");
+		
+		
+		List<Range> mergedRangesOfInterest = Ranges.merge(alignmentRegionsOfInterest);
+		return (record) -> {
+			if(referenceName.equals(record.getReferenceName())){
+				
+					return Ranges.intersects(mergedRangesOfInterest, record.getAlignmentRange());
 			}
 			return false;
 			

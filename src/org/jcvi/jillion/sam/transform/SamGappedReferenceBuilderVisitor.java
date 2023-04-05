@@ -24,12 +24,14 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.assembly.GappedReferenceBuilder;
+import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -70,17 +72,39 @@ public final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 		parser.parse(new SamParserOptions().filter(filter), visitor);
 		return visitor.buildGappedReferences();
 	}
+	public static NucleotideSequenceDataStore createGappedReferencesFrom(SamParser parser, 
+			NucleotideFastaDataStore ungappedReferenceDataStore,
+			SamRecordFilter filter, Map<String, List<Range>> rangesByRefId) throws IOException{
+		SamGappedReferenceBuilderVisitor visitor;
+		try {
+			visitor = new SamGappedReferenceBuilderVisitor(ungappedReferenceDataStore);
+		} catch (DataStoreException e) {
+			throw new IOException("error parsing reference datastore", e);
+		}
+		for(Entry<String, List<Range>> entry : rangesByRefId.entrySet()) {
+			for(Range r : entry.getValue()) {
+				parser.parse(new SamParserOptions()
+						.reference(entry.getKey(), r)
+						.filter(filter), visitor);
+			}
+		}
+		
+		return visitor.buildGappedReferences();
+	}
 	
 	private SamGappedReferenceBuilderVisitor(NucleotideFastaDataStore ungappedReferenceDataStore) throws DataStoreException {
-		StreamingIterator<NucleotideFastaRecord> iter =null;
-		try{
-			iter = ungappedReferenceDataStore.iterator();
-			while(iter.hasNext()){
-				NucleotideFastaRecord next = iter.next();
-				builders.put(next.getId(), new GappedReferenceBuilder(next.getSequence()));
+		//only load gapped references if we haven't seen them yet
+		if(builders.isEmpty()) {
+			StreamingIterator<NucleotideFastaRecord> iter =null;
+			try{
+				iter = ungappedReferenceDataStore.iterator();
+				while(iter.hasNext()){
+					NucleotideFastaRecord next = iter.next();
+					builders.put(next.getId(), new GappedReferenceBuilder(next.getSequence()));
+				}
+			}finally{
+				IOUtil.closeAndIgnoreErrors(iter);
 			}
-		}finally{
-			IOUtil.closeAndIgnoreErrors(iter);
 		}
 	}
 

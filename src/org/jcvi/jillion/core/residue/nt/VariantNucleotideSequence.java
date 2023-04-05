@@ -93,7 +93,14 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 	public Iterator<List<VariantTriplet>> getTriplets(Range range, Consumer<UnderlyingCoverageFeature> featureConsumer) {
 		List<List<VariantTriplet>> list = new ArrayList<>((int) range.getLength()/3);
 		
-		consumeTripletIterator(OffsetKnowingIterator.createFwd(iterator(range), (int) range.getBegin()),false, list::add, featureConsumer);
+		consumeTripletIterator(OffsetKnowingIterator.createFwd(iterator(range), (int) range.getBegin()),false,
+				l-> {
+					if(l==null) {
+						System.out.println("here!!");
+					}
+					list.add(l);
+				},
+				featureConsumer);
 		return list.iterator();
 	}
 	
@@ -171,9 +178,7 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 				if(va==null && vb==null && vc==null) {
 					consumer.accept(List.of(new VariantTriplet(Triplet.create(a, b, c), 1D, offsetA, offsetB, offsetC)));
 				}else{
-					List<VariantTriplet> list=null;
-					
-					list = new ArrayList<>();
+					List<VariantTriplet> list= new ArrayList<>();
 					List<VariantTriplet> innerList = list;
 					if(va !=null && vb==null && vc==null){
 						//simple case only 1 col is variant

@@ -2,11 +2,11 @@ package org.jcvi.jillion.core.residue.nt;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
-import org.jcvi.jillion.core.util.MemoizedSupplier;
 import org.jcvi.jillion.internal.core.io.StreamUtil;
 import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
 import org.jcvi.jillion.internal.core.util.GrowableByteArray;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
+import org.jcvi.jillion.internal.core.util.MemoizedSupplier;
 
 import java.util.*;
 import java.util.function.Supplier;

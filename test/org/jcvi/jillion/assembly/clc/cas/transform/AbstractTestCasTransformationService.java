@@ -27,6 +27,7 @@ import java.net.URI;
 
 import org.jcvi.jillion.assembly.AssembledRead;
 import org.jcvi.jillion.assembly.AssemblyTransformer;
+import org.jcvi.jillion.assembly.AssemblyTransformer.AssemblyTransformerCallback;
 import org.jcvi.jillion.assembly.clc.cas.CasContigPair;
 import org.jcvi.jillion.assembly.clc.cas.CasFileInfo;
 import org.jcvi.jillion.assembly.clc.cas.CasFileParser;
@@ -178,7 +179,7 @@ public abstract class AbstractTestCasTransformationService {
 				TigrContig contig = contigIter.next();
 				StreamingIterator<TigrContigRead> readIter = contig.getReadIterator();
 				
-				mock.referenceOrConsensus(contig.getId(), contig.getConsensusSequence());
+				mock.referenceOrConsensus(eq(contig.getId()), eq(contig.getConsensusSequence()), isA(AssemblyTransformerCallback.class));
 				while(readIter.hasNext()){
 					AssembledRead read = readIter.next();
 					mock.aligned(eq(read.getId()), eq(readDataStore.get(read.getId()).getSequence()), 

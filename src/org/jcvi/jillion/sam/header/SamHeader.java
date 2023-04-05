@@ -22,6 +22,7 @@ package org.jcvi.jillion.sam.header;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.jcvi.jillion.sam.SamRecord;
 import org.jcvi.jillion.sam.SamValidationException;
@@ -129,5 +130,17 @@ public interface SamHeader {
     void validateRecord(SamRecord record,
             SamAttributeValidator attributeValidator)
             throws SamValidationException;
+    
+    /**
+     * Get the list of Reference Names.
+     * @return a List, will never be null and shouldn't be empty.
+     * @implNote by default performs {@code getReferenceSequences().stream().map(SamReferenceSequence::getName).collect(Collectors.toList())}
+     * but implementations should override this to be more efficient.
+     * 
+     * @since 6.0
+     */
+	default List<String> getReferenceNames(){
+		return getReferenceSequences().stream().map(SamReferenceSequence::getName).collect(Collectors.toList());
+	}
 
 }

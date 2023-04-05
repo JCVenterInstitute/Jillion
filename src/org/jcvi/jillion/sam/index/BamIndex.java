@@ -34,7 +34,7 @@ import java.util.Map;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.internal.sam.index.IndexUtil;
-import org.jcvi.jillion.sam.AbstractSamVisitor;
+import org.jcvi.jillion.sam.SamHeaderParser;
 import org.jcvi.jillion.sam.SamParserFactory;
 import org.jcvi.jillion.sam.header.SamHeader;
 import org.jcvi.jillion.sam.header.SamReferenceSequence;
@@ -76,30 +76,6 @@ public final class BamIndex {
 		}finally{
 			IOUtil.closeAndIgnoreErrors(in);;
 		}
-	}
-	/**
-	 * {@link SamVisitor} that just gets the {@link SamHeader}
-	 * from the BAM file since that's all we need.
-	 * @author dkatzel
-	 *
-	 */
-	private static class SamHeaderParser extends AbstractSamVisitor{
-		private SamHeader header;
-		
-		@Override
-		public void visitHeader(SamVisitorCallback callback, SamHeader header) {
-			this.header = header;
-			//since we only need the header we can stop
-			//parsing the BAM now before we get 
-			//to any SAMRecords.
-			callback.haltParsing();
-			
-		}
-
-		public SamHeader getHeader() {
-			return header;
-		}
-		
 	}
 	/**
 	 * Convenience constructor with null total number of reads.

@@ -246,7 +246,7 @@ public class ConsedAssemblyTransformerBuilder {
 
 		@Override
 		public void referenceOrConsensus(String id,
-				NucleotideSequence gappedReference) {
+				NucleotideSequence gappedReference, AssemblyTransformerCallback callback) {
 			if(builderMap.containsKey(id)){
 				throw new IllegalStateException("reference with id " + id + " already exists");
 			}

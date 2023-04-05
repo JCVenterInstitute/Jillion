@@ -20,8 +20,17 @@
  ******************************************************************************/
 package org.jcvi.jillion.sam.index;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.internal.sam.SamUtil;
 import org.jcvi.jillion.sam.VirtualFileOffset;
 
 /**
@@ -111,4 +120,54 @@ public interface ReferenceIndex {
 	 */
 	@Override
 	boolean equals(Object obj);
+	/**
+	 * Find all {@link Bin}s that overlap with the given alignment Range and pass them
+	 * to the given consumer.
+	 * @param range the range to look for; can not be null.
+	 * @param consumer the consumer of Bins found; can not be null.
+	 * 
+	 * @throws NullPointerException if any parameter is null.
+	 * @since 6.0
+	 * @see #findBinsForAlignmentRange(List, BiConsumer)
+	 */
+	default void findBinsForAlignmentRange(Range range, Consumer<Bin> consumer) {
+		//range NPE is checked by overlapping bins method
+		Objects.requireNonNull(consumer);
+		int[] candidateBins = SamUtil.getCandidateOverlappingBins(range);
+		for(Bin bin: getBins()) {
+			if(Arrays.binarySearch(candidateBins, bin.getBinNumber()) >=0) {
+				consumer.accept(bin);
+			}
+		}
+	}
+	/**
+	 * Find all {@link Bin}s that overlap with the given alignment Ranges
+	 * and pass them to the given consumer.  It is possible that the same Bin
+	 * will be found for multiple ranges.
+	 * @param range the list ranges to look for; can not be null or contain any null ranges.
+	 * @param consumer the consumer of Bins found and the corresponding Range for that bin; can not be null.  
+	 * 
+	 * @throws NullPointerException if any parameter is null.
+	 * @since 6.0
+	 */
+	default void findBinsForAlignmentRange(List<Range> ranges, BiConsumer<Range, Bin> consumer) {
+		//range NPE is checked by overlapping bins method
+		Objects.requireNonNull(consumer);
+		Map<Integer, List<Range>> rangesByBins = new HashMap<Integer, List<Range>>();
+		for(Range r : ranges) {
+			int[] candidateBins = SamUtil.getCandidateOverlappingBins(r);
+			for(int i=0; i< candidateBins.length; i++) {
+				rangesByBins.computeIfAbsent(candidateBins[i], k-> new ArrayList<>()).add(r);
+			}
+		}
+		
+		for(Bin bin: getBins()) {
+			List<Range> mappedRanges = rangesByBins.get(bin.getBinNumber());
+			if(mappedRanges !=null) {
+				for(Range r : mappedRanges) {
+					consumer.accept(r, bin);
+				}
+			}
+		}
+	}
 }

@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.assembly;
 
+import org.jcvi.jillion.assembly.AssemblyTransformer.AssemblyTransformerCallback;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
@@ -48,12 +49,20 @@ public final class ContigDataStoreTransfomationService implements AssemblyTransf
 		}
 		
 		StreamingIterator<? extends Contig<?>> contigIter = null;
+		boolean[] halt = new boolean[1];
+		
+		AssemblyTransformerCallback callback = ()->{
+			halt[0]=true;
+		};
 		try{
 			contigIter = datastore.iterator();
-			while(contigIter.hasNext()){
+			while(!halt[0] && contigIter.hasNext()){
 				Contig<?> contig = contigIter.next();
 				String contigId = contig.getId();
-				transformer.referenceOrConsensus(contigId, contig.getConsensusSequence());
+				transformer.referenceOrConsensus(contigId, contig.getConsensusSequence(), callback);
+				if(halt[0]) {
+					continue;
+				}
 				StreamingIterator<? extends AssembledRead> readIter =contig.getReadIterator();
 				try{
 					while(readIter.hasNext()){

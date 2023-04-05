@@ -23,7 +23,7 @@ package org.jcvi.jillion.sam.transform;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -37,15 +37,13 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
 import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
-import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 import org.jcvi.jillion.sam.SamParser;
+import org.jcvi.jillion.sam.SamParser.SamParserOptions;
 import org.jcvi.jillion.sam.SamParserFactory;
 import org.jcvi.jillion.sam.SamRecord;
 import org.jcvi.jillion.sam.SamRecordFilter;
@@ -55,11 +53,8 @@ import org.jcvi.jillion.sam.SamVisitor;
 import org.jcvi.jillion.sam.VirtualFileOffset;
 import org.jcvi.jillion.sam.cigar.Cigar;
 import org.jcvi.jillion.sam.cigar.Cigar.ClipType;
-import org.jcvi.jillion.sam.cigar.CigarElement;
-import org.jcvi.jillion.sam.cigar.CigarOperation;
 import org.jcvi.jillion.sam.header.SamHeader;
 import org.jcvi.jillion.sam.header.SamReferenceSequence;
-import org.jcvi.jillion.sam.SamParser.SamParserOptions;
 /**
  * {@code SamTransformationService}
  * is a class that can parse a SAM file
@@ -129,6 +124,28 @@ public final class SamTransformationService implements AssemblyTransformationSer
 	 * 
 	 * @since 6.0
 	 */
+	public SamTransformationService(File samFile, File referenceFasta, Predicate<SamRecord> filter, Map<String, List<Range>> ungappedReferenceRanges) throws IOException {
+		
+		parser = SamParserFactory.create(samFile);
+		NucleotideFastaDataStore ungappedReferenceDataStore = new NucleotideFastaFileDataStoreBuilder(referenceFasta)
+																	.build();
+		this.filter = filter==null? null : SamRecordFilter.wrap(filter);
+		referenceDataStore = SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(parser, ungappedReferenceDataStore, this.filter);
+	}
+	/**
+	 * Create a new {@link SamTransformationService} using
+	 * the given SAM encoded file and a fasta file of the ungapped
+	 * references sequences referred to in the SAM.  The ids in the fasta file
+	 * must match the reference sequence names in the SAM file (@SQ SN:$ID) in the SAM header.
+	 * @param samFile the SAM file to parse and transform; can not be null
+	 * and must exist.
+	 * @param referenceFasta the reference fasta file; can not be null and must exist.
+	 * @param a filter of reads to include- if null, then no filter is applied.
+	 * @throws IOException if there is a problem parsing the input files.
+	 * @throws NullPointerException if either parameter is null.
+	 * 
+	 * @since 6.0
+	 */
 	public SamTransformationService(File samFile, File referenceFasta,SamRecordFilter filter) throws IOException {
 		
 		parser = SamParserFactory.create(samFile);
@@ -139,6 +156,31 @@ public final class SamTransformationService implements AssemblyTransformationSer
 			filter.ungappedReferenceDataStore(ungappedReferenceDataStore);
 		}
 		referenceDataStore = SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(parser, ungappedReferenceDataStore, filter);
+	}
+	/**
+	 * Create a new {@link SamTransformationService} using
+	 * the given SAM encoded file and a fasta file of the ungapped
+	 * references sequences referred to in the SAM.  The ids in the fasta file
+	 * must match the reference sequence names in the SAM file (@SQ SN:$ID) in the SAM header.
+	 * @param samFile the SAM file to parse and transform; can not be null
+	 * and must exist.
+	 * @param referenceFasta the reference fasta file; can not be null and must exist.
+	 * @param a filter of reads to include- if null, then no filter is applied.
+	 * @throws IOException if there is a problem parsing the input files.
+	 * @throws NullPointerException if either parameter is null.
+	 * 
+	 * @since 6.0
+	 */
+	public SamTransformationService(File samFile, File referenceFasta,SamRecordFilter filter,  Map<String, List<Range>> ungappedReferenceRanges) throws IOException {
+		
+		parser = SamParserFactory.create(samFile);
+		NucleotideFastaDataStore ungappedReferenceDataStore = new NucleotideFastaFileDataStoreBuilder(referenceFasta)
+																	.build();
+		this.filter = filter;
+		if(filter!=null) {
+			filter.ungappedReferenceDataStore(ungappedReferenceDataStore);
+		}
+		referenceDataStore = SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(parser, ungappedReferenceDataStore, filter, ungappedReferenceRanges);
 	}
 	/**
 	 * Parse the SAM file and call the appropriate methods on the given
@@ -173,6 +215,19 @@ public final class SamTransformationService implements AssemblyTransformationSer
 		parser.parse(new SamParserOptions().filter(filter).reference(referenceId, range), visitor);
 	}
 	
+	public void transform(String referenceId, List<Range> ranges, AssemblyTransformer transformer) throws IOException {
+		Objects.requireNonNull(referenceId);
+		Objects.requireNonNull(ranges);
+		Objects.requireNonNull(transformer);
+		ranges.forEach(Objects::requireNonNull);
+		
+		if(!referenceDataStore.contains(referenceId)) {
+			throw new IllegalArgumentException(referenceId+ " does not exist");
+		}
+		SamTransformerVisitor visitor = new SamTransformerVisitor(referenceDataStore, transformer);
+		parser.parse(new SamParserOptions().filter(filter).reference(referenceId, ranges), visitor);
+	}
+	
 	
 	private static final class SamTransformerVisitor implements SamVisitor{
 
@@ -199,7 +254,7 @@ public final class SamTransformationService implements AssemblyTransformationSer
 					}
 					gapOffsetMap.put(id,  new SamAlignmentGapInserter(ref));
 					
-					transformer.referenceOrConsensus(id, ref);
+					transformer.referenceOrConsensus(id, ref, callback::haltParsing);
 				} catch (DataStoreException e) {
 					throw new IllegalStateException("error getting reference sequence from fasta file", e);
 				}

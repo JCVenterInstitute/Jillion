@@ -27,6 +27,7 @@ import java.util.Objects;
 
 import org.jcvi.jillion.assembly.AssemblyTransformationService;
 import org.jcvi.jillion.assembly.AssemblyTransformer;
+import org.jcvi.jillion.assembly.AssemblyTransformer.AssemblyTransformerCallback;
 import org.jcvi.jillion.assembly.clc.cas.AbstractAlignedReadCasVisitor;
 import org.jcvi.jillion.assembly.clc.cas.CasFileInfo;
 import org.jcvi.jillion.assembly.clc.cas.CasFileParser;
@@ -128,14 +129,19 @@ public class CasFileTransformationService implements AssemblyTransformationServi
 		
 		casParser.parse(gappedRefVisitor);
 		 
-		 CasGappedReferenceDataStore gappedReferenceDataStore = gappedRefVisitor.build();
-	
+		CasGappedReferenceDataStore gappedReferenceDataStore = gappedRefVisitor.build();
+		boolean[] halt = new boolean[1];
+			
+		AssemblyTransformerCallback callback = ()->{
+			halt[0]=true;
+		};
+		
 		 StreamingIterator<DataStoreEntry<NucleotideSequence>> idIter =null;
 		 try{
 			 idIter = gappedReferenceDataStore.entryIterator();
-			 while(idIter.hasNext()){
+			 while(!halt[0] && idIter.hasNext()){
 				 DataStoreEntry<NucleotideSequence> entry = idIter.next();
-				 transformer.referenceOrConsensus(entry.getKey(), entry.getValue());
+				 transformer.referenceOrConsensus(entry.getKey(), entry.getValue(), callback);
 			 }
 			 
 		 }catch(DataStoreException e){
@@ -144,8 +150,9 @@ public class CasFileTransformationService implements AssemblyTransformationServi
 			 IOUtil.closeAndIgnoreErrors(idIter);
 		 }
 		 
-		 
-		 
+		 if(halt[0]) {
+			 return;
+		 }
 		 Visitor visitor = new Visitor(casParser.getWorkingDir(), gappedReferenceDataStore, 
 		         transformer,chromatDir, getFastqDataStoreSupplier());
 		 casParser.parse(wrapVisitor(visitor));

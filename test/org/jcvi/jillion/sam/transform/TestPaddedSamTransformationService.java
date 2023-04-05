@@ -27,6 +27,7 @@ import java.io.IOException;
 
 import org.jcvi.jillion.assembly.AssemblyTransformationService;
 import org.jcvi.jillion.assembly.AssemblyTransformer;
+import org.jcvi.jillion.assembly.AssemblyTransformer.AssemblyTransformerCallback;
 import org.jcvi.jillion.assembly.ReadInfo;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
@@ -56,7 +57,7 @@ public class TestPaddedSamTransformationService extends TestSamTransformationSer
 	protected AssemblyTransformer createExpectedTransformer(){
 		AssemblyTransformer transformer = createMock(AssemblyTransformer.class);
 		
-		transformer.referenceOrConsensus("ref", NucleotideSequenceTestUtil.create("AGCATGTTAGATAA**GATAGCTGTGCTAGTAGGCAGTCAGCGCCAT"));
+		transformer.referenceOrConsensus(eq("ref"), eq(NucleotideSequenceTestUtil.create("AGCATGTTAGATAA**GATAGCTGTGCTAGTAGGCAGTCAGCGCCAT")), isA(AssemblyTransformerCallback.class));
 		
 		transformer.aligned(eq("r001/1"),
 				eq(NucleotideSequenceTestUtil.create("TTAGATAAAGGATACTG"))
