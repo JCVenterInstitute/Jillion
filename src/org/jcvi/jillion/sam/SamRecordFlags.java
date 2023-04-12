@@ -149,7 +149,9 @@ public class SamRecordFlags implements Serializable{
      */
     public SamRecordFlags remove(SamRecordFlag flag){
         int newValue = setBits;
-        newValue ^= flag.getBitFlags();
+        if((newValue | flag.getBitFlags()) == newValue) {
+        	newValue ^= flag.getBitFlags();
+        }
         return valueOf(newValue);
     }
     /**
@@ -161,9 +163,13 @@ public class SamRecordFlags implements Serializable{
      */
     public SamRecordFlags remove(SamRecordFlag flag, SamRecordFlag...additionalFlags){
         int newValue = setBits;
-        newValue ^= flag.getBitFlags();
+        if((newValue | flag.getBitFlags()) == newValue) {
+        	newValue ^= flag.getBitFlags();
+        }
         for(SamRecordFlag f : additionalFlags){
-            newValue ^= f.getBitFlags();
+        	if((newValue | f.getBitFlags()) == newValue) {
+        		newValue ^= f.getBitFlags();
+        	}
         }
         return valueOf(newValue);
     }

@@ -196,6 +196,8 @@ Bug Fixes
 
 6. Fixed Serialization issues from caching performance improvements introduced in 5.3
 
+7. Fixed SamRecordFlags#remove() methods which would accidentally ADD the flag if it wasn't already present.
+
 ================
 Jillion 5.3
 ================
