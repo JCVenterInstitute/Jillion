@@ -853,9 +853,6 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
      * @since 6.0
      */
     public boolean intersects(long coordinate) {
-    	if(isEmpty()) {
-    		return false;
-    	}
     	return getBegin() <= coordinate && getEnd() >= coordinate;
     }
     /**
@@ -2631,6 +2628,31 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 		public boolean isEmpty() {
 			return true;
 		}
+		
+
+		@Override
+		public boolean intersects(Range target) {
+			Objects.requireNonNull(target);
+			return false;
+		}
+
+		@Override
+		public boolean intersectsOrAbuts(Range otherRange) {
+			Objects.requireNonNull(otherRange);
+			return false;
+		}
+		
+
+		@Override
+		public boolean intersects(Rangeable target) {
+			Objects.requireNonNull(target);
+			return false;
+		}
+
+		@Override
+		public boolean intersects(long coordinate) {
+			return false;
+		}
 
 		@Override
 		public int hashCode() {
@@ -2689,6 +2711,30 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 		}
 
 		@Override
+		public boolean intersects(Range target) {
+			Objects.requireNonNull(target);
+			return false;
+		}
+
+		@Override
+		public boolean intersectsOrAbuts(Range otherRange) {
+			Objects.requireNonNull(otherRange);
+			return false;
+		}
+		
+
+		@Override
+		public boolean intersects(Rangeable target) {
+			Objects.requireNonNull(target);
+			return false;
+		}
+
+		@Override
+		public boolean intersects(long coordinate) {
+			return false;
+		}
+		
+		@Override
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
@@ -2742,6 +2788,29 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 		@Override
 		public boolean isEmpty() {
 			return true;
+		}
+		@Override
+		public boolean intersects(Range target) {
+			Objects.requireNonNull(target);
+			return false;
+		}
+
+		@Override
+		public boolean intersectsOrAbuts(Range otherRange) {
+			Objects.requireNonNull(otherRange);
+			return false;
+		}
+		
+
+		@Override
+		public boolean intersects(Rangeable target) {
+			Objects.requireNonNull(target);
+			return false;
+		}
+
+		@Override
+		public boolean intersects(long coordinate) {
+			return false;
 		}
 
 		@Override
@@ -2799,7 +2868,29 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
 		public boolean isEmpty() {
 			return true;
 		}
+		@Override
+		public boolean intersects(Range target) {
+			Objects.requireNonNull(target);
+			return false;
+		}
 
+		@Override
+		public boolean intersectsOrAbuts(Range otherRange) {
+			Objects.requireNonNull(otherRange);
+			return false;
+		}
+		
+
+		@Override
+		public boolean intersects(Rangeable target) {
+			Objects.requireNonNull(target);
+			return false;
+		}
+
+		@Override
+		public boolean intersects(long coordinate) {
+			return false;
+		}
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -3288,6 +3379,20 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
     public Builder toBuilder() {
         return new Range.Builder(this);
     }
+    /**
+     * Checks to see if the given {@link Range} intersects or abuts this one.
+     * An empty range will never intersect or abut any other range
+     * (even itself)
+     * @param otherRange The {@link Range} to check.
+     * @return <code>true</code> if the coordinates of the two ranges overlap
+     * each other in at least one point or have adjacent start or end coordinates.
+     * @throws NullPointerException if otherRange is null.
+     * 
+     * @since 6.0
+     */
+	public boolean intersectsOrAbuts(Range otherRange) {
+		return intersects(otherRange) || this.getEnd() == otherRange.getBegin()-1 || otherRange.getEnd() == this.getBegin()-1;
+	}
 
  
     
