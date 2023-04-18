@@ -1312,4 +1312,15 @@ public class TestNucleotideSequenceBuilder {
     	assertEquals(  "VHDBWMRSYK-ACGTN", builder.toString());
     	assertEquals(  "VHDBWMRSYK-ACGTN", builder.build().toString());
     }
+    
+    @Test
+    public void referenceEncodedWithInsertion() {
+    	NucleotideSequence ref = NucleotideSequenceTestUtil.create("ACGTACGT");
+    	NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder(ref);
+    	builder.setReferenceHint(ref, 0);
+    	builder.insert(4, "N");
+    	
+    	assertEquals("ACGTNACGT", builder.build().toString());
+    	
+    }
 }

@@ -151,6 +151,8 @@ to wrap a StreamingIterator into a DataStoreIterator
 
 46.  Added Sam and Bam parser visito options to visit multiple Ranges for a given reference.
      Previously could only visit one Range at a time so multiple Ranges would have required multiple parses.
+     
+47.  Added Range#intersectsOrAbuts(Range) which returns a boolean.
 
 API BREAKING CHANGES
 --------------------
@@ -197,6 +199,9 @@ Bug Fixes
 6. Fixed Serialization issues from caching performance improvements introduced in 5.3
 
 7. Fixed SamRecordFlags#remove() methods which would accidentally ADD the flag if it wasn't already present.
+
+8.  NucleotideSequenceBuilder won't throw an exception when using a reference AND later inserting bases.  As of now inserting
+   bases will clear the reference field to make it a non-reference based sequence.
 
 ================
 Jillion 5.3

@@ -1062,7 +1062,6 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
 	}
 	private NucleotideSequenceBuilder insert(int offset, NewValues newValues) {
 		data.insert(offset, newValues.data);
-		
         this.codecDecider.insert(offset,newValues);
         return this;
 	}
@@ -2032,6 +2031,8 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
 			numberOfNonNAmbiguities += newValues.getnumberOfNonNAmiguities();
 			numUs += newValues.numUs;
             numTs +=newValues.numTs;
+            //dkatzel 2023: if we are inserting clear the alignedReference field because it won't align
+            alignedReference=null;
         }
         
         private GrowableIntArray prepend(GrowableIntArray src, GrowableIntArray original, int insertionLength){
