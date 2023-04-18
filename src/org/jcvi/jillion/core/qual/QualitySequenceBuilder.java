@@ -330,6 +330,15 @@ public final class QualitySequenceBuilder implements SequenceBuilder<PhredQualit
 
 
 	@Override
+	public QualitySequenceBuilder copy(Range range) {
+		byte[] array = new byte[(int) range.getLength()];
+		int delta = (int) range.getBegin();
+		builder.forEachIndexed(range, (i,v)->{
+			array[i-delta] = v;
+		});
+		return new QualitySequenceBuilder(array);
+	}
+	@Override
 	public QualitySequenceBuilder reverse() {
 		builder.reverse();
 		return this;

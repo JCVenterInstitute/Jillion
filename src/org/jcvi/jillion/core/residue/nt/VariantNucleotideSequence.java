@@ -972,6 +972,12 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 			copy.unadjustedBuilder = this.unadjustedBuilder==null?null:this.unadjustedBuilder.copy();
 			return copy;
 		}
+		
+		
+		@Override
+		public Builder copy(Range range) {
+			return copy().trim(range);
+		}
 		@Override
 		public Builder reverse() {
 			this.nucleotideSequence.reverse();

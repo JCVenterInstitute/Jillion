@@ -261,8 +261,20 @@ public final class PositionSequenceBuilder implements SequenceBuilder<Position, 
 	public PositionSequenceBuilder copy() {
 		return new PositionSequenceBuilder(this);
 	}
+	
+	
 
 
+	@Override
+	public PositionSequenceBuilder copy(Range range) {
+		short[] array = new short[(int) range.getLength()];
+		int delta= (int) range.getBegin();
+		builder.forEachIndexed(range, (i, v)->{
+			array[ i-delta] = v;
+		});
+
+		return new PositionSequenceBuilder(array);
+	}
 	@Override
 	public PositionSequenceBuilder reverse() {
 		builder.reverse();

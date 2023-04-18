@@ -21,7 +21,6 @@
 package org.jcvi.jillion.core;
 
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -197,6 +196,18 @@ public interface SequenceBuilder <T, S extends Sequence<T>, B extends SequenceBu
      * as this builder; will never be null.
 	 */
     B copy();
+    
+    /**
+	 * Create a new deep copy instance of the Builder.
+	 * Any downstream modifications to either this Builder or the returned one
+     * are independent of each other.
+     * 
+     * @return a new {@link SequenceBuilder} that contains the same state
+     * as this builder; will never be null.
+     * 
+     * @since 6.0
+	 */
+    B copy(Range range);
     
     /**
      * Get the current symbols as a String.
