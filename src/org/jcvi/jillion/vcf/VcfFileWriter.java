@@ -81,7 +81,7 @@ public class VcfFileWriter implements Closeable{
 		return f;
 	}
 	public void writeData(String chromId, int position, String id, String refBase, String altBase,
-			int quality, String filter, String info, String format, List<String> extraFields) throws IOException {
+			Integer quality, String filter, String info, String format, List<String> extraFields) throws IOException {
 		//TODO should we do any validation on info and format?
 		
 		StringBuilder builder = new StringBuilder(2000);
@@ -90,12 +90,14 @@ public class VcfFileWriter implements Closeable{
 				.append(handleBlank(id)).append('\t')
 				.append(refBase).append('\t')
 				.append(handleBlank(altBase)).append('\t')
-				.append(quality).append('\t')
+				.append(quality==null? "." : quality.intValue()).append('\t')
 				.append(handleBlank(filter)).append('\t')
 				.append(handleBlank(info)).append('\t')
 				.append(handleBlank(format));
-		for(String extra : extraFields) {
-			builder.append('\t').append(handleBlank(extra));
+		if(extraFields !=null) {
+			for(String extra : extraFields) {
+				builder.append('\t').append(handleBlank(extra));
+			}
 		}
 		builder.append(newLine);
 		out.write(builder.toString()); 

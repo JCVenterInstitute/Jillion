@@ -56,17 +56,18 @@ public class VcfDSL {
 		private VcfHeader header;
 		private Set<String> knownGenotypeNames;
 		private boolean addedGenotypes=false;
-		private Map<String, Map<Integer, LineDSL>> linesByCoord = new TreeMap<>();
+		private Map<String, Map<Integer, List<LineDSL>>> linesByCoord = new TreeMap<>();
 		public LineModeVcfDSL(VcfHeader header) {
 			this.header = header;
 			knownGenotypeNames = new LinkedHashSet<>(header.getExtraColumns());
 		}
 
-		public synchronized LineDSL line(String chromId, int position, String id, String refBase, String altBase, int quality) {
+		public synchronized LineDSL line(String chromId, int position, String id, String refBase, String altBase, Integer quality) {
 			
-			
-			return linesByCoord.computeIfAbsent(chromId, k-> new TreeMap<>())
-						.computeIfAbsent(position, p-> new LineDSL(this, header, chromId, position, id, refBase, altBase, quality));
+			LineDSL lineDsl = new LineDSL(this, header, chromId, position, id, refBase, altBase, quality);
+			linesByCoord.computeIfAbsent(chromId, k-> new TreeMap<>())
+						.computeIfAbsent(position,p-> new ArrayList<>()).add(lineDsl);
+			return lineDsl;
 			
 		}
 		
@@ -85,10 +86,13 @@ public class VcfDSL {
 			if(addedGenotypes) {
 				header = header.toBuilder().extraColumns(knownGenotypeNames).build();
 			}
-			return new VcfFile(header, 
-					linesByCoord.values().stream()
-									.flatMap(m-> m.values().stream())
-									.collect(Collectors.toList()));
+			List<LineDSL> lines = new ArrayList<>();
+			for(Map<Integer, List<LineDSL>> map : linesByCoord.values()) {
+				for(List<LineDSL> l : map.values()) {
+					lines.addAll(l);
+				}
+			}
+			return new VcfFile(header, lines);
 		}
 	}
 	public enum WriteMode{
@@ -121,11 +125,14 @@ public class VcfDSL {
 		private void writeVcf(PrintWriter out) throws IOException{
 			try(VcfFileWriter writer = new VcfFileWriter(header, out)){
 				for(LineDSL line : lines) {
-					
+					try {
 					//TODO refactor to support BCF
 					GenotypeData genotype = vcfEncodeGenotype(line);
 					writer.writeData(line.chromId, line.position, line.id, line.refBase, vcfEncodeAltBases(line.altBases), line.quality, 
 							vcfEncodeFilters(line), vcfEncodeInfo(line), genotype.formatField, genotype.extraLines);
+					}catch(Throwable t) {
+						t.printStackTrace();
+					}
 				}
 			}
 			
@@ -509,14 +516,14 @@ not been applied, then this field must be set to the MISSING value.
 		private final  int position;
 		private final String chromId, id, refBase;
 		private final Set<String> altBases =new LinkedHashSet<String>();
-		private final int quality;
+		private final Integer quality;
 		private boolean passedFiltering;
 		private List<VcfFilter> filters= new ArrayList<>();
 		private List<InfoRecord<?>> infos = new ArrayList<>();
 		private GenotypeDSL genotypes;
 		
 		
-		private  LineDSL(LineModeVcfDSL parent, VcfHeader header, String chromId, int position, String id, String refBase, String altBase, int quality) {
+		private  LineDSL(LineModeVcfDSL parent, VcfHeader header, String chromId, int position, String id, String refBase, String altBase, Integer quality) {
 			this.parent = parent;
 			this.header = header;
 			this.chromId= chromId;

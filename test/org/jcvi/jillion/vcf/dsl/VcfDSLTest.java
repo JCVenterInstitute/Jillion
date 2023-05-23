@@ -5,6 +5,10 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 import org.jcvi.jillion.vcf.VcfFormat;
 import org.jcvi.jillion.vcf.VcfInfo;
@@ -174,6 +178,7 @@ public class VcfDSLTest {
 				.doneAllGenotypes();
 				
 		beginLines.line("20", 14370, "rs6054257", "G", "A", 29)
+							.passed()
 							.genotypes(gt,gq,dp,hq)
 							.add("NA00003")
 							.set(gt,"1/1")
@@ -181,13 +186,16 @@ public class VcfDSLTest {
 							.set(gq, 43)
 							
 							.set(hq, null,null) // unset
-							.done();
-		
+							.done()
+							.doneAllGenotypes();
+			
 		VcfFile vcf = beginLines.done();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		vcf.writeVcf(out);
-		String lastLine = getLastLine(out.toByteArray());
-		assertEquals(EXPECTED_LINE, lastLine);
+		Set<String> infos = new HashSet<>();
+		getLinesThatMatch(out.toByteArray(), s-> s.contains("\t29\t"), s->infos.add(s.split("\t")[7]));
+//		System.out.println(new String(out.toByteArray()));
+		assertEquals(Set.of("NS=3;DP=14;AF=0.5;DB;H2",  "."), infos);
 	}
 	
 	@Test
@@ -244,18 +252,24 @@ public class VcfDSLTest {
 				.done();
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		vcf.writeVcf(out);
-		String lastLine = getLastLine(out.toByteArray());
+		String lastLine = getLastLine(out.toByteArray( ));
 		assertEquals(EXPECTED_LINE, lastLine);
 	}
 	
 	private static String getLastLine(byte[] bytes) throws IOException {
+		String[] last = new String[1];
+		
+		getLinesThatMatch(bytes, s-> true, s-> last[0]=s);
+		return last[0];
+	}
+	private static void getLinesThatMatch(byte[] bytes, Predicate<String> filter, Consumer<String> consumer) throws IOException {
 		try(BufferedReader reader = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes)))){
 			String line;
-			String lastLine=null;
 			while( (line=reader.readLine()) !=null) {
-				lastLine=line;
+				if(filter.test(line)) {
+					consumer.accept(line);
+				}
 			}
-			return lastLine;
 		}
 	}
 }
