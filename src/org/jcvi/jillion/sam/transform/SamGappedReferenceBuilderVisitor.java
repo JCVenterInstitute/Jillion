@@ -140,7 +140,6 @@ public final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 			try {
 			refBuilder.addReadByCigar(record.getStartPosition() - 1, record.getCigar());
 			}catch(NullPointerException e) {
-				System.out.println("here");
 				throw e;
 			}
 			
