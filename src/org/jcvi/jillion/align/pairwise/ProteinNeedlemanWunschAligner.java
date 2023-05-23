@@ -62,15 +62,23 @@ final class ProteinNeedlemanWunschAligner extends AbstractNeedlemanWunschAligner
 	public static ProteinPairwiseSequenceAlignment align(ProteinSequence query,
 			ProteinSequence subject, SubstitutionMatrix<AminoAcid> matrix,
 			float openGapPenalty, float extendGapPenalty){
-		ProteinNeedlemanWunschAligner aligner = new ProteinNeedlemanWunschAligner(query, subject, matrix, openGapPenalty, extendGapPenalty);
+		ProteinNeedlemanWunschAligner aligner = new ProteinNeedlemanWunschAligner(query, subject, matrix, openGapPenalty, extendGapPenalty, null,null);
+		return aligner.getPairwiseSequenceAlignment();
+	}
+	public static ProteinPairwiseSequenceAlignment align(ProteinSequence query,
+			ProteinSequence subject, SubstitutionMatrix<AminoAcid> matrix,
+			float openGapPenalty, float extendGapPenalty,
+			Integer subjectShift, Integer queryShift){
+		ProteinNeedlemanWunschAligner aligner = new ProteinNeedlemanWunschAligner(query, subject, matrix, openGapPenalty, extendGapPenalty, subjectShift, queryShift);
 		return aligner.getPairwiseSequenceAlignment();
 	}
 	
 	private ProteinNeedlemanWunschAligner(ProteinSequence query,
 	        ProteinSequence subject, SubstitutionMatrix<AminoAcid> matrix,
-			float openGapPenalty, float extendGapPenalty) {
+			float openGapPenalty, float extendGapPenalty,
+			Integer subjectShift, Integer queryShift) {
 		super(query, subject, matrix, openGapPenalty, extendGapPenalty,
-				ResiduePairwiseStrategy.getAminoAcidStrategy());
+				ResiduePairwiseStrategy.getAminoAcidStrategy(), subjectShift, queryShift);
 	}
 	
 

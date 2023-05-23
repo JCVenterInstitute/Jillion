@@ -46,7 +46,17 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      */
 	B  append(Iterable<R> sequence);
     
-    
+	 /**
+     * Appends the given sequence to the end
+     * of the builder's mutable sequence.
+     * @param sequence the residue sequence to be appended
+     * to the end our builder.
+     * @throws NullPointerException if sequence is null.
+     * 
+     * @return this.
+     * @since 6.0
+     */
+	B  append(R[] sequence);
     
    
     /**
@@ -107,6 +117,12 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      */
     @Override
     B replace(int offset, R replacement);
+    
+    B replace(Range offset, R[] replacement);
+    
+    B replace(Range offset, S replacement);
+    
+    B replace(Range offset, B replacement);
     /**
      * Deletes the nucleotides from the given range of this 
      * partially constructed residue sequence.  If the given

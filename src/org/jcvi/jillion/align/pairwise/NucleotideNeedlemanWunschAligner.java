@@ -61,16 +61,26 @@ final class NucleotideNeedlemanWunschAligner extends AbstractNeedlemanWunschAlig
 	public static NucleotidePairwiseSequenceAlignment align(NucleotideSequence query,
 			NucleotideSequence subject, SubstitutionMatrix<Nucleotide> matrix,
 			float openGapPenalty, float extendGapPenalty){
-		NucleotideNeedlemanWunschAligner aligner = new NucleotideNeedlemanWunschAligner(query, subject, matrix, openGapPenalty, extendGapPenalty);
+		NucleotideNeedlemanWunschAligner aligner = new NucleotideNeedlemanWunschAligner(query, subject, matrix, openGapPenalty, extendGapPenalty, null,null);
+		return aligner.getPairwiseSequenceAlignment();
+				
+	}
+	
+	public static NucleotidePairwiseSequenceAlignment align(NucleotideSequence query,
+			NucleotideSequence subject, SubstitutionMatrix<Nucleotide> matrix,
+			float openGapPenalty, float extendGapPenalty,
+			Integer subjectShift, Integer queryShift){
+		NucleotideNeedlemanWunschAligner aligner = new NucleotideNeedlemanWunschAligner(query, subject, matrix, openGapPenalty, extendGapPenalty, subjectShift,queryShift);
 		return aligner.getPairwiseSequenceAlignment();
 				
 	}
 	
 	private NucleotideNeedlemanWunschAligner(NucleotideSequence query,
 			NucleotideSequence subject, SubstitutionMatrix<Nucleotide> matrix,
-			float openGapPenalty, float extendGapPenalty) {
+			float openGapPenalty, float extendGapPenalty,
+			Integer subjectShift, Integer queryShift) {
 		super(query, subject, matrix, openGapPenalty, extendGapPenalty,
-				ResiduePairwiseStrategy.getNucleotideStrategy());
+				ResiduePairwiseStrategy.getNucleotideStrategy(), subjectShift, queryShift);
 	}
 
 }

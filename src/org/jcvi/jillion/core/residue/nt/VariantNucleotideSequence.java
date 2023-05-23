@@ -26,6 +26,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.Direction;
@@ -607,7 +608,10 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 			this.nucleotideSequence.append(n);
 			return this;
 		}
-		
+		@Override
+		public IntStream gaps() {
+			return this.nucleotideSequence.gaps();
+		}
 		public Builder append(Nucleotide n, Map<Nucleotide, Double> variants) {
 			Integer offset = (int)nucleotideSequence.getLength();
 			this.nucleotideSequence.append(n);
@@ -858,6 +862,11 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 				variants.add(copy);
 			});
 			return this;
+		}
+		@Override
+		public Builder replace(Range range, VariantNucleotideSequence replacement) {
+			// TODO improve performance
+			return replace(range, replacement.toBuilder());
 		}
 		@Override
 		public Builder delete(Range range) {
@@ -1168,6 +1177,7 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 		public Range toUngappedRange(Range gappedRange) {
 			return this.nucleotideSequence.toUngappedRange(gappedRange);
 		}
+		
 	}
 
 	@Override

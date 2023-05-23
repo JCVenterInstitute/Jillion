@@ -46,6 +46,12 @@ abstract class AbstractNeedlemanWunschAligner <R extends Residue, S extends Resi
 			float extendGapPenalty,ResiduePairwiseStrategy<R,S,B,A,P> pairwiseStrategy) {
 		super(query, subject, matrix, openGapPenalty, extendGapPenalty, pairwiseStrategy);
 	}
+	protected AbstractNeedlemanWunschAligner(S query,
+			S subject, SubstitutionMatrix<R> matrix, float openGapPenalty,
+			float extendGapPenalty,ResiduePairwiseStrategy<R,S,B,A,P> pairwiseStrategy,
+			Integer subjectShift, Integer queryShift) {
+		super(query, subject, matrix, openGapPenalty, extendGapPenalty, pairwiseStrategy, subjectShift, queryShift);
+	}
 	/**
 	 * The initial gap scores of NeedlemanWunsch are the values
 	 * returned by the affine gap penalty.

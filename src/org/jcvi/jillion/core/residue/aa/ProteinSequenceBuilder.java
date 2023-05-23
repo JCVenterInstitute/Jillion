@@ -197,6 +197,20 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 		}
 		return this;
 	}
+	/**
+     * Appends the given sequence to the end
+     * of the builder's mutable sequence.
+     * @param sequence the protein sequence to be appended
+     * to the end our builder.
+     * @throws NullPointerException if sequence is null.
+     */
+	@Override
+	public ProteinSequenceBuilder append(AminoAcid[] sequence) {
+		for(AminoAcid aa : sequence){
+			append(aa);
+		}
+		return this;
+	}
 
 	/**
      * Appends the current contents of the given {@link ProteinSequenceBuilder} to the end
@@ -260,8 +274,11 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	@Override
 	public ProteinSequenceBuilder replace(
 			int offset, AminoAcid replacement) {
-		if(AMINO_ACID_VALUES[builder.get(offset)] == AminoAcid.Gap){
+		byte v = builder.get(offset);
+		if(AMINO_ACID_VALUES[v] == AminoAcid.Gap){
 			numberOfGaps--;			
+		}else if(AMBIGUOUS_AMINO_ACIDS.binarySearch(v) >=0) {
+			numberOfAmbiguities--;
 		}
 		if(replacement == AminoAcid.Gap){
 			numberOfGaps++;
@@ -271,7 +288,75 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 		builder.replace(offset, replacement.getOrdinalAsByte());
 		return this;
 	}
+	
+	
 
+	@Override
+	public ProteinSequenceBuilder replace(Range range, AminoAcid[] replacement) {
+		GrowableByteArray temp = new GrowableByteArray(replacement.length);
+		for(AminoAcid aa :replacement){
+			if(aa == AminoAcid.Gap){
+				numberOfGaps++;
+			}else if(aa.isAmbiguity()) {
+				numberOfAmbiguities++;
+			}
+			temp.append(aa.getOrdinalAsByte());
+		}
+		builder.forEachIndexed(range, (i, v)->{
+			if(AMINO_ACID_VALUES[v] == AminoAcid.Gap){
+				numberOfGaps--;			
+			}else if(AMBIGUOUS_AMINO_ACIDS.binarySearch(v) >=0) {
+				numberOfAmbiguities--;
+			}
+		});
+		builder.remove(range);
+		builder.insert((int)range.getBegin(), temp);
+		return this;
+	}
+	@Override
+	public ProteinSequenceBuilder replace(Range range, ProteinSequence replacement) {
+		GrowableByteArray temp = new GrowableByteArray((int) replacement.getLength());
+		for(AminoAcid aa :replacement){
+			if(aa == AminoAcid.Gap){
+				numberOfGaps++;
+			}else if(aa.isAmbiguity()) {
+				numberOfAmbiguities++;
+			}
+			temp.append(aa.getOrdinalAsByte());
+		}
+		builder.forEachIndexed(range, (i, v)->{
+			if(AMINO_ACID_VALUES[v] == AminoAcid.Gap){
+				numberOfGaps--;			
+			}else if(AMBIGUOUS_AMINO_ACIDS.binarySearch(v) >=0) {
+				numberOfAmbiguities--;
+			}
+		});
+		builder.remove(range);
+		builder.insert((int)range.getBegin(), temp);
+		return this;
+	}
+	@Override
+	public ProteinSequenceBuilder replace(Range range, ProteinSequenceBuilder replacement) {
+		GrowableByteArray temp = new GrowableByteArray((int) replacement.getLength());
+		for(AminoAcid aa :replacement){
+			if(aa == AminoAcid.Gap){
+				numberOfGaps++;
+			}else if(aa.isAmbiguity()) {
+				numberOfAmbiguities++;
+			}
+			temp.append(aa.getOrdinalAsByte());
+		}
+		builder.forEachIndexed(range, (i, v)->{
+			if(AMINO_ACID_VALUES[v] == AminoAcid.Gap){
+				numberOfGaps--;			
+			}else if(AMBIGUOUS_AMINO_ACIDS.binarySearch(v) >=0) {
+				numberOfAmbiguities--;
+			}
+		});
+		builder.remove(range);
+		builder.insert((int)range.getBegin(), temp);
+		return this;
+	}
 	@Override
 	public ProteinSequenceBuilder delete(
 			Range range) {

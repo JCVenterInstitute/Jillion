@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.PrimitiveIterator;
 import java.util.function.Predicate;
+import java.util.stream.IntStream;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
@@ -716,8 +717,14 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
     	assertInsertionParametersValid(offset, sequence);
 		return insert(offset, decodingOptions.create(sequence));
     }
+
+   
     
-    /**
+    @Override
+	public IntStream gaps() {
+		return codecDecider.gapOffsets.stream();
+	}
+	/**
      * Replace the sequence currently located at the given
      * {@link Range} with the given replacementSequence.
      * 

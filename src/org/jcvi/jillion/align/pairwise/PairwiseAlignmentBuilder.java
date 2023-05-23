@@ -54,8 +54,8 @@ public final class PairwiseAlignmentBuilder<R extends Residue, S extends Residue
 	private float gapOpen=0;
 	private float gapExtension =0;
 	
-	private Long queryShift;
-	private Long subjectShift;
+	private Integer queryShift;
+	private Integer subjectShift;
 	
 	private boolean local=true;
 	/**
@@ -114,12 +114,12 @@ public final class PairwiseAlignmentBuilder<R extends Residue, S extends Residue
 		return gapPenalty(open, 0F);
 	}
 	
-	public PairwiseAlignmentBuilder<R,S,A> queryShift(long shiftAmount){
+	public PairwiseAlignmentBuilder<R,S,A> queryShift(int shiftAmount){
 		this.queryShift = shiftAmount;
 		return this;
 	}
 	
-	public PairwiseAlignmentBuilder<R,S,A> subjectShift(long shiftAmount){
+	public PairwiseAlignmentBuilder<R,S,A> subjectShift(int shiftAmount){
 		this.subjectShift = shiftAmount;
 		return this;
 	}
@@ -175,14 +175,14 @@ public final class PairwiseAlignmentBuilder<R extends Residue, S extends Residue
 		
 		if(query instanceof NucleotideSequence){
 			if(local){
-				 return (A)NucleotideSmithWatermanAligner.align((NucleotideSequence)query, (NucleotideSequence)subject, (NucleotideSubstitutionMatrix)matrix, gapOpen, gapExtension);
+				 return (A)NucleotideSmithWatermanAligner.align((NucleotideSequence)query, (NucleotideSequence)subject, (NucleotideSubstitutionMatrix)matrix, gapOpen, gapExtension, subjectShift, queryShift);
 			}
-			return (A) NucleotideNeedlemanWunschAligner.align((NucleotideSequence)query, (NucleotideSequence)subject, (NucleotideSubstitutionMatrix)matrix, gapOpen, gapExtension);
+			return (A) NucleotideNeedlemanWunschAligner.align((NucleotideSequence)query, (NucleotideSequence)subject, (NucleotideSubstitutionMatrix)matrix, gapOpen, gapExtension, subjectShift, queryShift);
 		}
 		if(local){
-			 return (A) ProteinSmithWatermanAligner.align((ProteinSequence)query, (ProteinSequence)subject, (AminoAcidSubstitutionMatrix)matrix, gapOpen, gapExtension);
+			 return (A) ProteinSmithWatermanAligner.align((ProteinSequence)query, (ProteinSequence)subject, (AminoAcidSubstitutionMatrix)matrix, gapOpen, gapExtension, subjectShift, queryShift);
 		}
-		return (A) ProteinNeedlemanWunschAligner.align((ProteinSequence)query, (ProteinSequence)subject, (AminoAcidSubstitutionMatrix)matrix, gapOpen, gapExtension);
+		return (A) ProteinNeedlemanWunschAligner.align((ProteinSequence)query, (ProteinSequence)subject, (AminoAcidSubstitutionMatrix)matrix, gapOpen, gapExtension, subjectShift, queryShift);
 
 	}
 	/**

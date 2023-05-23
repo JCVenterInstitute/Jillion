@@ -14,6 +14,13 @@ public interface UnAdjustedCoordinateMapper{
 	default Range unadjust(Range range) {
 		return Range.of(unadjust(range.getBegin()), unadjust(range.getEnd()));
 	}
+	
+	public default UnAdjustedCoordinateMapper andThen(UnAdjustedCoordinateMapper other) {
+		return c-> {
+			long tmp= unadjust(c);
+			return other.unadjust(tmp);
+		};
+	}
 	static UnAdjustedCoordinateMapper combine(List<UnAdjustedCoordinateMapper> mappers) {
 		return c->{
 			long current = c;
