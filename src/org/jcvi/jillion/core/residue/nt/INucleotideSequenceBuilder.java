@@ -1,5 +1,7 @@
 package org.jcvi.jillion.core.residue.nt;
 
+import java.util.stream.IntStream;
+
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder.DecodingOptions;
@@ -245,4 +247,10 @@ public interface INucleotideSequenceBuilder<S extends INucleotideSequence<S, B>,
     B replace(Range range, Nucleotide[] replacementSequence);
     
     B replace(Range range, NucleotideSequence replacementSequence);
+    /**
+     * Get an Instream of the gap offsets.
+     * @return an Instream; never null but might be empty.
+     * @since 6.0
+     */
+    IntStream gaps();
 }
