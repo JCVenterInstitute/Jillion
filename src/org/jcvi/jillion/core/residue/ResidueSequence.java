@@ -447,4 +447,7 @@ public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R,
     default boolean hasGaps() {
     	return getNumberOfGaps()>0;
     }
+    
+    @Override
+    T trim(Range range);
 }
