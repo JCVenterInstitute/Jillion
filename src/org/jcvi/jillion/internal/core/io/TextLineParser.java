@@ -20,15 +20,15 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.core.io;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.internal.core.util.FIFOQueue;
 import org.jcvi.jillion.internal.core.util.GrowableCharArray;
+
 /**
  * {@code TextLineParser} can read lines from on {@link InputStream}.  The main
  * difference between TextLineParser and other similar JDK classes is TextLineParser
@@ -48,8 +48,7 @@ public final class TextLineParser implements LineParser{
 	 * {@value} chars, is the initial
 	 * capacity since this is probably
 	 * going to be mostly used by 
-	 * human readable text files and
-	 * genomic file formats which often
+	 * human readable text files  which often
 	 * are < 100 characters per line.
 	 * If the line is longer, then the buffer
 	 * will grow accordingly.
@@ -75,7 +74,7 @@ public final class TextLineParser implements LineParser{
 	
 	private final InputStream in;
 	private final Object endOfFile = new Object();
-	private final FIFOQueue<Object> nextQueue = new FIFOQueue<Object>();
+	private final Deque<Object> nextQueue = new ArrayDeque<>();
 	boolean doneFile = false;
 	
 	private long position;
@@ -99,14 +98,38 @@ public final class TextLineParser implements LineParser{
 	 *  getLine() call instead of every read().
 	 */
 	private int pushedBackValue=NOT_SET;
-	
+
+    /**
+     * Parse the given InputStream into a single giant
+     * String including all end of line characters.
+     * @implNote This is the same as appending each call to {@link #nextLine()}
+     *          to a StringBuilder and then returning the built result.
+     *
+     * @param in the InputStream to parse; can not be null.
+     * @return a new String which will never be null but may be empty.
+     * @throws IOException if there is a problem reading from the inputStream.
+     * @throws NullPointerException if in is null.
+     */
+	public static String parseIntoString(InputStream in) throws IOException{
+	    try(TextLineParser parser = new TextLineParser(in)){
+	        StringBuilder builder = new StringBuilder(2048);
+	        while(true){
+	            String line = parser.nextLine();
+	            if(line ==null){
+	                break;
+                }
+	            builder.append(line);
+            }
+	        return builder.toString();
+        }
+    }
 	public TextLineParser(File f) throws IOException{
-		this(new BufferedInputStream(new FileInputStream(f)));
+		this(org.jcvi.jillion.core.io.InputStreamSupplier.forFile(f).get());
 	}
-	public TextLineParser(File samFile, long initialPosition) throws IOException {
+	public TextLineParser(File f, long initialPosition) throws IOException {
 		
 		this.position = initialPosition;
-		this.in = new RandomAccessFileInputStream(samFile, initialPosition);
+		this.in = org.jcvi.jillion.core.io.InputStreamSupplier.forFile(f).get(initialPosition);
 		getNextLine();
 	}
 	public TextLineParser(InputStream in) throws IOException{
@@ -241,6 +264,8 @@ public final class TextLineParser implements LineParser{
 	public String nextLine() throws IOException{
 		Object next= nextQueue.poll();
 		if(next == endOfFile){
+			//put eof back
+			nextQueue.add(endOfFile);
 			return null;
 		}
 		position+=numberOfBytesInNextLine;
