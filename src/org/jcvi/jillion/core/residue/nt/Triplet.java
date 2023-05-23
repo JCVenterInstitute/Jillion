@@ -239,4 +239,64 @@ public final class Triplet implements Comparable<Triplet>{
 		return Byte.compare(third, o.third);
 	}
 
+	/**
+	 * Get the number of bases in this triplet that are different than 
+	 * the other triplet.
+	 * @param other the other triplet to compare can not be null.
+	 * @param penalizeAmbiguties
+	 * @return the number of bases that are different in the triplet.
+	 * @since 6.0
+	 * @see #getNumChanges(Triplet, boolean)
+	 */
+	public int getNumChanges(Triplet other) {
+		return getNumChangesScore(other, false);
+		
+	}
+	/**
+	 * Compute a score based on the number of differences between this triplet
+	 * and the other triplet.  The difference between this method and {@link #getNumChanges(Triplet)}
+	 * is that this method penalizes mismatching ambiguities more.
+	 * @param other the other triplet to compare can not be null.
+	 * @param penalizeAmbiguties
+	 * @return the number of bases that are different in the triplet.
+	 * @since 6.0
+	 */
+	public int computeChangeScore(Triplet other) {
+		return getNumChangesScore(other, true);
+	}
+	/**
+	 * Get the number of bases in this triplet that are different than 
+	 * the other triplet.
+	 * @param other the other triplet to compare can not be null.
+	 * @param penalizeAmbiguties
+	 * @return the number of bases that are different in the triplet.
+	 * @since 6.0
+	 */
+	private int getNumChangesScore(Triplet other, boolean penalizeAmbiguties) {
+		int changes=0;
+		if(first!= other.first) {
+			if(penalizeAmbiguties && isAmbiguityCache[other.first]) {
+				changes+=4;
+			}else {
+				changes++;
+			}
+		}
+		if(second!= other.second) {
+			if(penalizeAmbiguties && isAmbiguityCache[other.second]) {
+				changes+=4;
+			}else {
+				changes++;
+			}
+		}
+		if(third!= other.third) {
+			if(penalizeAmbiguties && isAmbiguityCache[other.third]) {
+				changes+=4;
+			}else {
+				changes++;
+			}
+		}
+		return changes;
+		
+	}
+
 }

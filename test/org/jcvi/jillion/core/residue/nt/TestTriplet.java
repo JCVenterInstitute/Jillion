@@ -90,20 +90,29 @@ public class TestTriplet {
 		Triplet ref1 = Triplet.create('A','T','G');
 		Triplet ref2 = Triplet.create('A','T','G');
 		assertSame(ref1, ref2);
+		assertEquals(0, sut.getNumChanges(ref1));
+		assertEquals(0, sut.computeChangeScore(ref2));
 	}
 	@Test
 	public void differentFirstValueShouldNotBeEqual(){
 		Triplet diffValues = Triplet.create('G', 'T', 'G');
 		TestUtil.assertNotEqualAndHashcodeDifferent(sut, diffValues);
+		assertEquals(1, sut.getNumChanges(diffValues));
+		assertEquals(1, sut.computeChangeScore(diffValues));
 	}
 	@Test
 	public void differentSecondValueShouldNotBeEqual(){
 		Triplet diffValues = Triplet.create('A', 'C', 'G');
 		TestUtil.assertNotEqualAndHashcodeDifferent(sut, diffValues);
+		assertEquals(1, sut.getNumChanges(diffValues));
+		assertEquals(1, sut.computeChangeScore(diffValues));
 	}
 	@Test
 	public void differentThridValueShouldNotBeEqual(){
 		Triplet diffValues = Triplet.create('A', 'T', 'R');
 		TestUtil.assertNotEqualAndHashcodeDifferent(sut, diffValues);
+		assertEquals(1, sut.getNumChanges(diffValues));
+		assertEquals(4, sut.computeChangeScore(diffValues));
 	}
+	
 }
