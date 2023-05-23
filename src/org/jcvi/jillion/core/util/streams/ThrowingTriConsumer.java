@@ -27,7 +27,7 @@ package org.jcvi.jillion.core.util.streams;
  *
  * @param <T> the first parameter.
  * @param <U> the second parameter.
- * @param <V> the second parameter.
+ * @param <V> the third parameter.
  * @param <E> the exception that may be thrown.
  */
 @FunctionalInterface
@@ -36,7 +36,7 @@ public interface ThrowingTriConsumer<T,U, V, E extends Throwable> {
      * Consume the given 3 parameters and throw an exception if needed.
      * @param t the first parameter.
      * @param u the second parameter.
-     * @param v the thrid parameter.
+     * @param v the third parameter.
      * @throws E the exception to throw if there is a problem.
      */
      void accept(T t, U u, V v) throws E;
