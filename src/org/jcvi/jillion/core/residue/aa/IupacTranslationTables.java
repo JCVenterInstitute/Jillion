@@ -289,7 +289,7 @@ public enum IupacTranslationTables implements TranslationTable{
 			if(triplets.isEmpty()) {
 				continue;
 			}
-			Map<Codon, Double> codons = translateExplodedTriplets(triplets);
+			Map<Codon, Double> codons = translateExplodedTriplets(triplets, options.isExplodeNucleotides());
 			Codon codon = null;
 			if(codons.size()==1) {
 				codon = codons.keySet().iterator().next();
@@ -326,11 +326,15 @@ public enum IupacTranslationTables implements TranslationTable{
 		
 	}
 	
-	private Map<Codon, Double> translateExplodedTriplets(List<VariantTriplet> triplets){
+	private Map<Codon, Double> translateExplodedTriplets(List<VariantTriplet> triplets, boolean shouldExplode){
 		Map<Codon, Double> codons = new HashMap<>();
 		for(VariantTriplet variantTriplet: triplets) {
-			
-			Set<Triplet> exploded = variantTriplet.getTriplet().withThymine().explode();
+			Set<Triplet> exploded;
+			if(shouldExplode) {
+				exploded = variantTriplet.getTriplet().withThymine().explode();
+			}else {
+				exploded = Set.of(variantTriplet.getTriplet().withThymine());
+			}
 			double percentPer = variantTriplet.getPercent()/exploded.size();
 			for(Triplet triplet : exploded) {
 				codons.put(_translate(triplet), percentPer);

@@ -23,7 +23,7 @@ public class TranslationOptions{
 	private Frame frame= Frame.ONE;
 	private boolean substituteStart=true;
 	private boolean readThroughStops=true;
-	
+	private boolean explodeNucleotides=true;
 	private boolean mergeCodons = true;
 	private Integer numberOfBasesToTranslate=null;
 	private Consumer<UnderlyingCoverageFeature> featureConsumer;
@@ -33,6 +33,7 @@ public class TranslationOptions{
 						.frame(Frame.ONE)
 						.substituteStart(true)
 						.mergeCodons(true)
+						.explodeNucleotides(true)
 						.readThroughStops(true)
 						;
 	}
