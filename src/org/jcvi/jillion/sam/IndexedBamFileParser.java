@@ -65,6 +65,12 @@ class IndexedBamFileParser extends BamFileParser{
 			List<Range> alignmentRanges = options.getReferenceRanges().get();
 			VirtualFileOffset[] start= new VirtualFileOffset[1];
 			start[0] = refIndex.getHighestEndOffset();
+			
+			if(start[0]==null) {
+				//nothing matched this range
+				visitor.visitEnd();
+				return;
+			}
 			VirtualFileOffset[] end = new VirtualFileOffset[1];
 			end[0] = refIndex.getLowestStartOffset();
 			
@@ -137,6 +143,13 @@ class IndexedBamFileParser extends BamFileParser{
 			Range alignmentRange = options.getReferenceRange().get();
 			VirtualFileOffset[] start= new VirtualFileOffset[1];
 			start[0] = refIndex.getHighestEndOffset();
+			
+			if(start[0]==null) {
+				//nothing matched this range
+				visitor.visitEnd();
+				return;
+			}
+			
 			VirtualFileOffset[] end = new VirtualFileOffset[1];
 			end[0] = refIndex.getLowestStartOffset();
 			
@@ -207,7 +220,11 @@ class IndexedBamFileParser extends BamFileParser{
 			}
 		}else {
 			VirtualFileOffset start = refIndex.getLowestStartOffset();
-			
+			if(start==null) {
+				//nothing matched this range
+				visitor.visitEnd();
+				return;
+			}
 			VirtualFileOffset end = refIndex.getHighestEndOffset();
 			
 			Predicate<SamRecord> recordMatchPredicate =(record) ->referenceName.equals(record.getReferenceName());

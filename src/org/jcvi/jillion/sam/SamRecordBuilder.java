@@ -54,7 +54,7 @@ public class SamRecordBuilder implements SamAttributed{
 	String queryName= SamRecord.UNAVAILABLE;
 	String referenceName = null;
 	String nextReferenceName = null;
-	SamRecordFlags flags;
+	SamRecordFlags flags = SamRecordFlags.valueOf(0);
 	int startPosition =0;
 	int nextPosition= 0;
 	byte mappingQuality= -1;

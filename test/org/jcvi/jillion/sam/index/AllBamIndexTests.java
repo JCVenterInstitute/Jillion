@@ -28,7 +28,8 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses(
     {
     TestBamIndexParser.class,
-    TestBamIndexWriter.class
+    TestBamIndexWriter.class,
+    TestCorruptBamIndex.class
     }
     )
 public class AllBamIndexTests {

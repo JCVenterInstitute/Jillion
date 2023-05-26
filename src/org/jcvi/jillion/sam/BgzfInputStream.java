@@ -156,6 +156,9 @@ class BgzfInputStream extends InflaterInputStream {
      * @since 5.0
      */
     static BgzfInputStream create(File bamFile, VirtualFileOffset vfs) throws IOException{
+    	if(vfs==null) {
+    		System.out.println("here");
+    	}
     	long compressedBamBlockOffset = vfs.getCompressedBamBlockOffset();
     	InputStream in;
     	if(compressedBamBlockOffset>0){

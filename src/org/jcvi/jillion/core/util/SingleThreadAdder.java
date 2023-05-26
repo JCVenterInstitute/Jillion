@@ -98,6 +98,14 @@ public class SingleThreadAdder implements Comparable<SingleThreadAdder>{
 		SingleThreadAdder other = (SingleThreadAdder) obj;
 		return value == other.value;
 	}
-	
+	/**
+	 * Set to the given value.
+	 * @param value the value to set to.
+	 * 
+	 * @since 6.0
+	 */
+	public void set(long value) {
+		this.value=value;
+	}
 	
 }
