@@ -109,13 +109,8 @@ public class VirtualFileOffset implements Comparable<VirtualFileOffset>{
 
 	@Override
 	public int compareTo(VirtualFileOffset o) {
-		if( encodedValue < o.encodedValue){
-			return -1;
-		}
-		if(encodedValue == o.encodedValue){
-			return 0;
-		}
-		return 1;
+		return Long.compare(encodedValue, o.encodedValue);
+		
 	}
 
 	@Override

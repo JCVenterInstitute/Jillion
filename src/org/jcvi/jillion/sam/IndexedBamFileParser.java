@@ -34,6 +34,7 @@ import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.internal.sam.index.IndexUtil;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 import org.jcvi.jillion.sam.index.BamIndex;
+import org.jcvi.jillion.sam.index.Bin;
 import org.jcvi.jillion.sam.index.Chunk;
 import org.jcvi.jillion.sam.index.ReferenceIndex;
 
@@ -45,6 +46,16 @@ class IndexedBamFileParser extends BamFileParser{
 		super(bamFile, validator);
 		try(InputStream in = new BufferedInputStream(new FileInputStream(baiFile))){
 			index = IndexUtil.parseIndex(in, this.getHeader());
+//			System.out.println(index.getNumberOfReferenceIndexes());
+//			System.out.println(index.getTotalNumberOfUnmappedReads());
+//			System.out.println("\t"+index.getReferenceIndex(0).getNumberOfAlignedReads());
+//			System.out.println("\t"+index.getReferenceIndex(0).getNumberOfUnAlignedReads());
+//			System.out.println("\t"+index.getReferenceIndex(0).getNumberOfBins());
+//			for(int i=0; i<index.getReferenceIndex(0).getNumberOfBins(); i++ ) {
+//				Bin bin = index.getReferenceIndex(0).getBins().get(i);
+//				System.out.println("\t\t"+ bin);
+//				bin.getChunks().forEach(c-> System.out.println("\t\t\t"+ c));
+//			}
 		}
 	}
 
@@ -93,9 +104,11 @@ class IndexedBamFileParser extends BamFileParser{
 				}
 			
 				Range readAlignmentRange = record.getAlignmentRange();
+				
 				if(readAlignmentRange ==null) {
 					return false;
 				}
+//				System.out.println(readAlignmentRange);
 //				int bin = SamUtil.computeBinFor(readAlignmentRange);
 				/*
 				 * int[] readBins = SamUtil.getCandidateOverlappingBins(readAlignmentRange);
@@ -103,9 +116,14 @@ class IndexedBamFileParser extends BamFileParser{
 				 * if(Arrays.binarySearch(overlappingBins, readBins[i]) <0){ found=true; break;
 				 * } } if(!found) { return false; }
 				 */
-				boolean intersects= Ranges.intersects(alignmentRanges, readAlignmentRange);
+				boolean intersects= incluiveAlignmentRange.intersects(readAlignmentRange);
+				
+//				boolean intersects= Ranges.intersects(alignmentRanges, readAlignmentRange);
+//				if(intersects) {
+//					System.out.println(readAlignmentRange);
+//				}
 				if(!intersects && readAlignmentRange.startsAfter(incluiveAlignmentRange)){
-					
+					System.out.println("beyond alignment range " + readAlignmentRange);
 					keepParsing.set(false);
 				}
 				return intersects;
@@ -113,29 +131,33 @@ class IndexedBamFileParser extends BamFileParser{
 			if(options.getFilter().isPresent()) {
 				recordBinFilter = recordBinFilter.and(options.getFilter().get().asPredicate());
 			}
+			boolean parsedHeaderAlready=false;
 			if(!BEGINING_OF_FILE.equals(start[0])) {
 				//parse the header
 				try(BgzfInputStream in = BgzfInputStream.create(bamFile)){
 					parseHeaderOnly(visitor, in);
 				}
+				parsedHeaderAlready=true;
 			}
 			try(BgzfInputStream in = BgzfInputStream.create(bamFile, start[0])){
 				//assume anything in this interval matches?
 		
 				options.getFilter().ifPresent(f->f.begin());
-				
-				//parse the header
-				try(BgzfInputStream in2 = BgzfInputStream.create(bamFile)){
-					parseHeaderOnly(visitor, in2);
+				if(!parsedHeaderAlready) {
+					//parse the header
+					try(BgzfInputStream in2 = BgzfInputStream.create(bamFile)){
+						parseHeaderOnly(visitor, in2);
+					}
 				}
-				
+				System.out.println("end offset will be " + end[0]);
 				this.parseBamRecords(visitor, 
 						recordBinFilter,
 						(vfs)-> vfs.compareTo(end[0]) <=0,
 //						(vfs)-> true,
 						in,
 						keepParsing,
-						options.shouldCreateMementos() ? new BamCallback(keepParsing) :new MementoLessBamCallback(keepParsing));
+						options.shouldCreateMementos() ? new BamCallback(keepParsing) :new MementoLessBamCallback(keepParsing),
+						end[0]);
 				options.getFilter().ifPresent(f->f.end());
 			}
 		}else if(options.getReferenceRange().isPresent()) {
@@ -215,7 +237,8 @@ class IndexedBamFileParser extends BamFileParser{
 //						(vfs)-> true,
 						in,
 						keepParsing,
-						options.shouldCreateMementos() ? new BamCallback(keepParsing) :new MementoLessBamCallback(keepParsing));
+						options.shouldCreateMementos() ? new BamCallback(keepParsing) :new MementoLessBamCallback(keepParsing),
+						end[0]);
 				options.getFilter().ifPresent(f->f.end());
 			}
 		}else {
@@ -246,7 +269,8 @@ class IndexedBamFileParser extends BamFileParser{
 							recordMatchPredicate,
 							endPredicate,
 							in,
-							keepParsing, options.shouldCreateMementos() ? new BamCallback(keepParsing) :new MementoLessBamCallback(keepParsing));
+							keepParsing, options.shouldCreateMementos() ? new BamCallback(keepParsing) :new MementoLessBamCallback(keepParsing),
+							end);
 				}
 				options.getFilter().ifPresent(f->f.end());
 			}

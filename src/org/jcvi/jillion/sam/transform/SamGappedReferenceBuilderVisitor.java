@@ -82,11 +82,10 @@ public final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 			throw new IOException("error parsing reference datastore", e);
 		}
 		for(Entry<String, List<Range>> entry : rangesByRefId.entrySet()) {
-			for(Range r : entry.getValue()) {
-				parser.parse(new SamParserOptions()
-						.reference(entry.getKey(), r)
+			parser.parse(new SamParserOptions()
+						.reference(entry.getKey(), entry.getValue())
 						.filter(filter), visitor);
-			}
+			
 		}
 		
 		return visitor.buildGappedReferences();

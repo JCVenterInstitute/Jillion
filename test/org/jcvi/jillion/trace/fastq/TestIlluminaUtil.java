@@ -31,11 +31,14 @@ import static org.junit.Assert.*;
 public class TestIlluminaUtil {
 
     private static final String ID = "SOLEXA1:4:1:12:1489#0/1";
-    private static String NEW_ID = "SOLEXA3_0023_FC:4:8:17653:4072#TAGCTT/1";
+    private static final String CASAVA_ID = "SOLEXA3_0023_FC:4:8:17653:4072#TAGCTT/1";
+    private static final String NEW_ID ="SIM:1:FCX:1:15:6329:1045:GATTACT+GTCTTAAC 1:N:0:ATCCGA";
+    
     @Test
     public void instrumentName(){
         assertEquals("SOLEXA1", IlluminaUtil.getInstrumentName(ID));
-        assertEquals("SOLEXA3", IlluminaUtil.getInstrumentName(NEW_ID));
+        assertEquals("SOLEXA3", IlluminaUtil.getInstrumentName(CASAVA_ID));
+        assertEquals("SIM", IlluminaUtil.getInstrumentName(NEW_ID));
     }
     @Test(expected= NullPointerException.class)
     public void nullIdForInsrumentNameShouldThrowNPE(){
@@ -48,7 +51,8 @@ public class TestIlluminaUtil {
     @Test
     public void flowCell(){
         assertEquals("4", IlluminaUtil.getFlowcellId(ID));
-        assertEquals("4", IlluminaUtil.getFlowcellId(NEW_ID));
+        assertEquals("4", IlluminaUtil.getFlowcellId(CASAVA_ID));
+        assertEquals("FCX", IlluminaUtil.getFlowcellId(NEW_ID));
     }
     
     @Test(expected= NullPointerException.class)
@@ -62,7 +66,8 @@ public class TestIlluminaUtil {
     @Test
     public void xClusterCoordinate(){
         assertEquals(12, IlluminaUtil.getXClusterCoordinate(ID));
-        assertEquals(17653, IlluminaUtil.getXClusterCoordinate(NEW_ID));
+        assertEquals(17653, IlluminaUtil.getXClusterCoordinate(CASAVA_ID));
+        assertEquals(6329, IlluminaUtil.getXClusterCoordinate(NEW_ID));
     }
     @Test(expected= NullPointerException.class)
     public void nullIdForXClusterCoordinateShouldThrowNPE(){
@@ -76,7 +81,8 @@ public class TestIlluminaUtil {
     @Test
     public void yClusterCoordinate(){
         assertEquals(1489, IlluminaUtil.getYClusterCoordinate(ID));
-        assertEquals(4072, IlluminaUtil.getYClusterCoordinate(NEW_ID));
+        assertEquals(4072, IlluminaUtil.getYClusterCoordinate(CASAVA_ID));
+        assertEquals(1045, IlluminaUtil.getYClusterCoordinate(NEW_ID));
     }
     @Test(expected= NullPointerException.class)
     public void nullIdForYClusterCoordinateShouldThrowNPE(){
@@ -101,6 +107,7 @@ public class TestIlluminaUtil {
     @Test
     public void pairNumber(){
         assertEquals(1, IlluminaUtil.getPairNumber(ID));
+        assertEquals(1, IlluminaUtil.getPairNumber(CASAVA_ID));
     }
     @Test(expected= NullPointerException.class)
     public void nullIdForPairNumberShouldThrowNPE(){
@@ -114,6 +121,8 @@ public class TestIlluminaUtil {
     @Test
     public void tileNumber(){
         assertEquals(1, IlluminaUtil.getTileNumber(ID));
+        assertEquals(8, IlluminaUtil.getTileNumber(CASAVA_ID));
+        assertEquals(15, IlluminaUtil.getTileNumber(NEW_ID));
     }
     @Test(expected= NullPointerException.class)
     public void nullIdForTileNumberShouldThrowNPE(){

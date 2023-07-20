@@ -129,4 +129,13 @@ public class TestVirtualFileOffset {
 		assertTrue( sut.compareTo(other) < 0);
 		assertTrue( other.compareTo(sut) > 0);		
 	}
+	
+	@Test
+	public void compareOverflow() {
+		VirtualFileOffset a = VirtualFileOffset.create(0, 385);
+		VirtualFileOffset b = VirtualFileOffset.create(87844257, 6897);
+		
+		assertTrue(a.compareTo(b) < 0);
+		assertTrue(b.compareTo(a) > 0);
+	}
 }

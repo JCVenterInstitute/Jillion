@@ -28,6 +28,11 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.sam.attribute.ReservedAttributeValidator;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
+
 /**
  * {@code SamParserFactory} is a Factory class
  * for creating {@link SamParser}
@@ -53,6 +58,22 @@ import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
  */
 public final class SamParserFactory {
 
+	@Data
+	@Builder
+	public static class Parameters{
+		
+		public static Parameters createDefault() {
+			return builder().build();
+		}
+		@Getter(AccessLevel.NONE)
+		private boolean ignoreBai;
+		@Builder.Default
+		private SamAttributeValidator attributeValidator = ReservedAttributeValidator.INSTANCE;
+		
+		public boolean shouldIgnoreBai() {
+			return ignoreBai;
+		}
+	}
 	private SamParserFactory(){
 		//can not instantiate
 	}
@@ -103,19 +124,62 @@ public final class SamParserFactory {
 			return new SamFileParser(f,validator);
 		}
 		if("bam".equalsIgnoreCase(extension)){
-			return createFromBamFile(f, validator);			
+			return createFromBamFile(f, Parameters.builder().attributeValidator(validator).build());			
+		}
+		throw new IllegalArgumentException("unknown file format " + f.getName());
+	}
+	
+	/**
+	 * Create a new {@link SamParser}
+	 * instance for the given SAM or BAM file.
+	 * <p>
+	 * Since Jillion 5.0 if the given file is a coordinate sorted BAM file
+	 * and there is an accompanying BAI file in the same directory named <code>f.getName() + ".bai"</code>,
+	 * then a specialized {@link SamParser}
+	 * that uses the index will be returned as if the call to
+	 * {@link #createUsingIndex(File, File, SamAttributeValidator)} was used instead.
+	 * </p>
+	 * @param f the SAM or BAM file to be parsed;
+	 * can not be null, must exist and 
+	 * the file must end in either ".sam"
+	 * or ".bam" (ignoring case).
+	 * @param validator the {@link SamAttributeValidator}
+	 * to use to validate the {@link SamRecord}s being parsed;
+	 * can not be null.
+	 * @return a new {@link SamParser} instance
+	 * will never be null.
+	 * @throws IOException if the file does not exist.
+	 * @throws NullPointerException if any parameter is null.
+	 * @throws IllegalArgumentException if the file's extension
+	 * is not either ".sam" or ".bam" (ignoring case).
+	 * 
+	 * @see #createUsingIndex(File, File, SamAttributeValidator)
+	 */
+	public static SamParser create(File f, Parameters parameters) throws IOException{
+		
+		if(parameters.attributeValidator == null){
+			throw new NullPointerException("validator can not be null");
+		}
+		IOUtil.verifyIsReadable(f);
+		
+		String extension = FileUtil.getExtension(f);
+		if("sam".equalsIgnoreCase(extension)){
+			return new SamFileParser(f,parameters.attributeValidator);
+		}
+		if("bam".equalsIgnoreCase(extension)){
+			return createFromBamFile(f, parameters);			
 		}
 		throw new IllegalArgumentException("unknown file format " + f.getName());
 	}
 	
 	
-	private static SamParser createFromBamFile(File f, SamAttributeValidator validator) throws IOException {
-		SamParser unsortedBamParser= new BamFileParser(f, validator);
-		if(unsortedBamParser.getHeader().getSortOrder() == SortOrder.COORDINATE){
+	private static SamParser createFromBamFile(File f, Parameters parameters) throws IOException {
+		SamParser unsortedBamParser= new BamFileParser(f, parameters.attributeValidator);
+		if(!parameters.shouldIgnoreBai() && unsortedBamParser.getHeader().getSortOrder() == SortOrder.COORDINATE){
 			//is there an indexed bam file that goes with it?
 			File bai = new File(f.getParentFile(), f.getName() +".bai");
 			if(bai.exists()){
-				return createUsingIndex(f, bai, validator);
+				return createUsingIndex(f, bai, parameters.attributeValidator);
 			}
 		
 		}

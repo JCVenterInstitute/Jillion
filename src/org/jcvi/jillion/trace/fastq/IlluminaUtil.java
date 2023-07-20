@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace.fastq;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,7 +32,10 @@ import java.util.regex.Pattern;
  */
 public final class IlluminaUtil {
 
-    private static final Pattern NAME_PATTERN = Pattern.compile(
+	private static final Pattern NEW_NAME_PATTERN = Pattern.compile(
+			"^([A-Za-z0-9_]+):(\\d+):([A-Za-z0-9]+):(\\d+):(\\d+):(\\d+):(\\d+)((:[ACGTN]+\\+[ACGTN]+)? (\\d):([Y|N]):(\\d+):([ACGTN0-9]+))?$");
+
+	private static final Pattern NAME_PATTERN = Pattern.compile(
             "^(SOLEXA\\d+).*:(\\d+):(\\d+):(\\d+):(\\d+)#(\\D+)?(\\d+)?\\/(\\d+)$");
     /**
      * Name pattern for Casava 1.8 which has different format
@@ -44,6 +48,149 @@ public final class IlluminaUtil {
     private IlluminaUtil(){
     	//can not instantiate
     }
+    private static IlluminaMatcher createMatcherOrError(String readId) {
+    	IlluminaMatcher matcher = createMatcher(readId);
+    	if(matcher ==null) {
+    		throwNotValidReadId(readId);
+    	}
+    	return matcher;
+    }
+    private static IlluminaMatcher createMatcher(String readId) {
+    	Objects.requireNonNull(readId);
+    	Matcher m = NEW_NAME_PATTERN.matcher(readId);
+    	if(m.matches()) {
+    		return new NewMatcher(m);
+    	}
+    	m = NAME_PATTERN.matcher(readId);
+    	if(m.matches()) {
+    		return new LegacyMatcher(m);
+    	}
+    	m = CASAVA_1_8_PATTERN.matcher(readId);
+    	if(m.matches()) {
+    		return new CasavaMatcher(m);
+    	}
+    	
+    	
+    	return null;
+    }
+    public static interface IlluminaMatcher{
+    	String getFlowcellId();
+    	String getInstrumentName();
+    	int getMultiplexIndex();
+    	int getPairNumber();
+    	String getRunId();
+    	int getTileNumber();
+    	int getXClusterCoordinate();
+    	int getYClusterCoordinate();
+    }
+    private static class NewMatcher extends CasavaMatcher{
+
+		public NewMatcher(Matcher matcher) {
+			super(matcher);
+		}
+		@Override
+		public String getFlowcellId() {
+			return matcher.group(3);
+		}
+
+		@Override
+		public String getInstrumentName() {
+			 return matcher.group(1);
+		}
+
+		@Override
+		public int getMultiplexIndex() {
+			return Integer.parseInt(matcher.group(7));
+		}
+
+		@Override
+		public int getPairNumber() {
+			return Integer.parseInt(matcher.group(8));
+		}
+
+		@Override
+		public String getRunId() {
+			return matcher.group(2);
+		}
+
+		@Override
+		public int getTileNumber() {
+			return Integer.parseInt(matcher.group(5));
+		}
+
+		@Override
+		public int getXClusterCoordinate() {
+			return Integer.parseInt(matcher.group(6));
+		}
+
+		@Override
+		public int getYClusterCoordinate() {
+			return Integer.parseInt(matcher.group(7));
+		}
+    	
+    	
+    }
+    private static class CasavaMatcher extends LegacyMatcher{
+
+		public CasavaMatcher(Matcher matcher) {
+			super(matcher);
+		}
+		@Override
+		public String getFlowcellId() {
+			return matcher.group(3);
+		}
+    	
+    }
+    private static class LegacyMatcher implements IlluminaMatcher{
+    	protected final Matcher matcher;
+    	
+
+		public LegacyMatcher(Matcher matcher) {
+			this.matcher = matcher;
+		}
+
+		@Override
+		public String getFlowcellId() {
+			return matcher.group(2);
+		}
+
+		@Override
+		public String getInstrumentName() {
+			 return matcher.group(1);
+		}
+
+		@Override
+		public int getMultiplexIndex() {
+			return Integer.parseInt(matcher.group(7));
+		}
+
+		@Override
+		public int getPairNumber() {
+			return Integer.parseInt(matcher.group(8));
+		}
+
+		@Override
+		public String getRunId() {
+			return matcher.group(2);
+		}
+
+		@Override
+		public int getTileNumber() {
+			return Integer.parseInt(matcher.group(3));
+		}
+
+		@Override
+		public int getXClusterCoordinate() {
+			return Integer.parseInt(matcher.group(4));
+		}
+
+		@Override
+		public int getYClusterCoordinate() {
+			return Integer.parseInt(matcher.group(5));
+		}
+    	
+    }
+    
     /**
      * Tests to see if the given read id matches the 
      * illumina naming patterns.
@@ -53,15 +200,9 @@ public final class IlluminaUtil {
      * {@code false} otherwise.
      */
     public static boolean isIlluminaRead(String readId){
-        if(readId == null){
-            throw new NullPointerException();
-        }
-        Matcher matcher = NAME_PATTERN.matcher(readId);
-        if( matcher.matches()){
-            return true;
-        }
+    	IlluminaMatcher matcher = createMatcher(readId);
+    	return matcher !=null;
         
-        return isCasava18Read(readId);
     }
 	public static boolean isCasava18Read(String readId) {
 		return CASAVA_1_8_PATTERN.matcher(readId).matches();
@@ -75,11 +216,8 @@ public final class IlluminaUtil {
      * @throws NullPointerException if the given id is null.
      */
     public static String getRunId(String illuminaReadId){
-        Matcher matcher = CASAVA_1_8_PATTERN.matcher(illuminaReadId);
-        if(!matcher.matches()){
-                throwNotValidReadId(illuminaReadId);            
-        }
-        return matcher.group(2);
+    	return createMatcherOrError(illuminaReadId)
+    			.getRunId();
     }
     /**
      * Throw an unchecked exception that the given read is is not
@@ -102,14 +240,8 @@ public final class IlluminaUtil {
      * @throws NullPointerException if the given id is null.
      */
     public static final String getInstrumentName(String illuminaReadId){
-        if(illuminaReadId == null){
-            throw new NullPointerException();
-        }
-        Matcher matcher = NAME_PATTERN.matcher(illuminaReadId);
-        if(!matcher.matches()){
-            throwNotValidReadId(illuminaReadId);
-        }
-        return matcher.group(1);
+    	return createMatcherOrError(illuminaReadId)
+    			.getInstrumentName();
     }
     /**
      * Gets the flowcell lane from the given read id.
@@ -120,18 +252,9 @@ public final class IlluminaUtil {
      * @throws NullPointerException if the given id is null.
      */
     public static final String getFlowcellId(String illuminaReadId){
-        if(illuminaReadId == null){
-            throw new NullPointerException();
-        }
-        Matcher matcher = NAME_PATTERN.matcher(illuminaReadId);
-        if(matcher.matches()){
-            return getLegacyFlowCellId(matcher);
-        }
-        Matcher casava18Matcher = CASAVA_1_8_PATTERN.matcher(illuminaReadId);
-        if(casava18Matcher.matches()){
-            return getCasava18FlowCellId(casava18Matcher);
-        }
-        return throwNotValidReadId(illuminaReadId);
+    	return createMatcherOrError(illuminaReadId)
+    			.getFlowcellId();
+
         
     }
     
@@ -156,14 +279,8 @@ public final class IlluminaUtil {
      * @throws NullPointerException if the given id is null.
      */
     public static final int getTileNumber(String illuminaReadId){
-        if(illuminaReadId == null){
-            throw new NullPointerException();
-        }
-        Matcher matcher = NAME_PATTERN.matcher(illuminaReadId);
-        if(!matcher.matches()){
-            throwNotValidReadId(illuminaReadId);
-        }
-        return Integer.parseInt(matcher.group(3));
+    	return createMatcherOrError(illuminaReadId)
+    			.getTileNumber();
     }
     /**
      * Gets the x-coordinate of the cluster within the tile from the given read id.
@@ -174,14 +291,8 @@ public final class IlluminaUtil {
      * @throws NullPointerException if the given id is null.
      */
     public static final int getXClusterCoordinate(String illuminaReadId){
-        if(illuminaReadId == null){
-            throw new NullPointerException();
-        }
-        Matcher matcher = NAME_PATTERN.matcher(illuminaReadId);
-        if(!matcher.matches()){
-            throwNotValidReadId(illuminaReadId);
-        }
-        return Integer.parseInt(matcher.group(4));
+    	return createMatcherOrError(illuminaReadId)
+    			.getXClusterCoordinate();
     }
     
     /**
@@ -193,14 +304,8 @@ public final class IlluminaUtil {
      * @throws NullPointerException if the given id is null.
      */
     public static final int getYClusterCoordinate(String illuminaReadId){
-        if(illuminaReadId == null){
-            throw new NullPointerException();
-        }
-        Matcher matcher = NAME_PATTERN.matcher(illuminaReadId);
-        if(!matcher.matches()){
-            throwNotValidReadId(illuminaReadId);
-        }
-        return Integer.parseInt(matcher.group(5));
+    	return createMatcherOrError(illuminaReadId)
+    			.getYClusterCoordinate();
     }
     
     /**
@@ -213,14 +318,8 @@ public final class IlluminaUtil {
      * @throws NullPointerException if the given id is null.
      */
     public static final int getMultiplexIndex(String illuminaReadId){
-        if(illuminaReadId == null){
-            throw new NullPointerException();
-        }
-        Matcher matcher = NAME_PATTERN.matcher(illuminaReadId);
-        if(!matcher.matches()){
-            throwNotValidReadId(illuminaReadId);
-        }
-        return Integer.parseInt(matcher.group(7));
+    	return createMatcherOrError(illuminaReadId)
+    			.getMultiplexIndex();
     }
     /**
      * Gets the pair number if this read is paired-end or mate-paired.
@@ -231,13 +330,8 @@ public final class IlluminaUtil {
      * @throws NullPointerException if the given id is null.
      */
     public static final int getPairNumber(String illuminaReadId){
-        if(illuminaReadId == null){
-            throw new NullPointerException();
-        }
-        Matcher matcher = NAME_PATTERN.matcher(illuminaReadId);
-        if(!matcher.matches()){
-            throw new IllegalArgumentException("is not an illumina read id or member of a pair"+illuminaReadId);
-        }
-        return Integer.parseInt(matcher.group(8));
+    	return createMatcherOrError(illuminaReadId)
+    			.getPairNumber();
+
     }
 }

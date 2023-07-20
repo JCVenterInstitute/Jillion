@@ -156,6 +156,13 @@ to wrap a StreamingIterator into a DataStoreIterator
 
 48.  Added SingleThreadAdder#set(long)
 
+49.  Added new class MultipleNucleotideFastaFileDataStore
+
+50.  Added new IlluminaUtil#IlluminaName Matcher
+
+51.  Added SamParserFactory#Parameters class and builder for parsing options including whether to use an 
+     index file or not even if present (previously always used index which is now default).
+
 API BREAKING CHANGES
 --------------------
 
@@ -206,6 +213,10 @@ Bug Fixes
    bases will clear the reference field to make it a non-reference based sequence.
    
 9. SamRecordBuilder now initializes flags correctly. 
+
+10. Virtual Offsets inside indexed bam files is now correctly computed even when jumping to particular index.
+
+11. Truncated Bam files are now detected if file ends before index says it should.
 
 ================
 Jillion 5.3

@@ -156,8 +156,11 @@ class BgzfInputStream extends InflaterInputStream {
      * @since 5.0
      */
     static BgzfInputStream create(File bamFile, VirtualFileOffset vfs) throws IOException{
+    	if(bamFile==null) {
+    		throw new NullPointerException("bam file can not be null");
+    	}
     	if(vfs==null) {
-    		System.out.println("here");
+    		throw new NullPointerException("vfs can not be null");
     	}
     	long compressedBamBlockOffset = vfs.getCompressedBamBlockOffset();
     	InputStream in;
@@ -168,9 +171,9 @@ class BgzfInputStream extends InflaterInputStream {
     	}
 		
     	BgzfInputStream bgzfStream = new BgzfInputStream(in);
-    	
+
+    	bgzfStream.compressedBlockBytesReadSoFar= compressedBamBlockOffset;
     	IOUtil.blockingSkip(bgzfStream, vfs.getUncompressedOffset());
-    	
     	return bgzfStream;
     	
     }

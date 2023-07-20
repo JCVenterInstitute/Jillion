@@ -86,7 +86,7 @@ public final class SamTransformationService implements AssemblyTransformationSer
 	 */
 	public SamTransformationService(File samFile, File referenceFasta) throws IOException {
 		
-		this(samFile, referenceFasta, (SamRecordFilter) null);
+		this(samFile, referenceFasta, (SamRecordFilter) null, SamParserFactory.Parameters.builder().build());
 	}
 	/**
 	 * Create a new {@link SamTransformationService} using
@@ -102,9 +102,9 @@ public final class SamTransformationService implements AssemblyTransformationSer
 	 * 
 	 * @since 6.0
 	 */
-	public SamTransformationService(File samFile, File referenceFasta, Predicate<SamRecord> filter) throws IOException {
+	public SamTransformationService(File samFile, File referenceFasta, Predicate<SamRecord> filter, SamParserFactory.Parameters parameters) throws IOException {
 		
-		parser = SamParserFactory.create(samFile);
+		parser = SamParserFactory.create(samFile, parameters);
 		NucleotideFastaDataStore ungappedReferenceDataStore = new NucleotideFastaFileDataStoreBuilder(referenceFasta)
 																	.build();
 		this.filter = filter==null? null : SamRecordFilter.wrap(filter);
@@ -124,9 +124,11 @@ public final class SamTransformationService implements AssemblyTransformationSer
 	 * 
 	 * @since 6.0
 	 */
-	public SamTransformationService(File samFile, File referenceFasta, Predicate<SamRecord> filter, Map<String, List<Range>> ungappedReferenceRanges) throws IOException {
+	public SamTransformationService(File samFile, File referenceFasta, Predicate<SamRecord> filter,
+			Map<String, List<Range>> ungappedReferenceRanges,
+			SamParserFactory.Parameters parameters) throws IOException {
 		
-		parser = SamParserFactory.create(samFile);
+		parser = SamParserFactory.create(samFile, parameters);
 		NucleotideFastaDataStore ungappedReferenceDataStore = new NucleotideFastaFileDataStoreBuilder(referenceFasta)
 																	.build();
 		this.filter = filter==null? null : SamRecordFilter.wrap(filter);
@@ -146,9 +148,10 @@ public final class SamTransformationService implements AssemblyTransformationSer
 	 * 
 	 * @since 6.0
 	 */
-	public SamTransformationService(File samFile, File referenceFasta,SamRecordFilter filter) throws IOException {
+	public SamTransformationService(File samFile, File referenceFasta,SamRecordFilter filter,
+			SamParserFactory.Parameters parameters) throws IOException {
 		
-		parser = SamParserFactory.create(samFile);
+		parser = SamParserFactory.create(samFile, parameters);
 		NucleotideFastaDataStore ungappedReferenceDataStore = new NucleotideFastaFileDataStoreBuilder(referenceFasta)
 																	.build();
 		this.filter = filter;
@@ -171,9 +174,9 @@ public final class SamTransformationService implements AssemblyTransformationSer
 	 * 
 	 * @since 6.0
 	 */
-	public SamTransformationService(File samFile, File referenceFasta,SamRecordFilter filter,  Map<String, List<Range>> ungappedReferenceRanges) throws IOException {
+	public SamTransformationService(File samFile, File referenceFasta,SamRecordFilter filter,  Map<String, List<Range>> ungappedReferenceRanges, SamParserFactory.Parameters parameters) throws IOException {
 		
-		parser = SamParserFactory.create(samFile);
+		parser = SamParserFactory.create(samFile, parameters);
 		NucleotideFastaDataStore ungappedReferenceDataStore = new NucleotideFastaFileDataStoreBuilder(referenceFasta)
 																	.build();
 		this.filter = filter;
@@ -235,6 +238,8 @@ public final class SamTransformationService implements AssemblyTransformationSer
 		private final NucleotideSequenceDataStore referenceDataStore;
 		private final Map<String,SamAlignmentGapInserter> gapOffsetMap;
 		
+
+		VirtualFileOffset lowestSeen , highestSeen;
 		public SamTransformerVisitor(NucleotideSequenceDataStore referenceDataStore, AssemblyTransformer transformer) throws DataStoreException {
 			this.referenceDataStore = referenceDataStore;
 			this.transformer = transformer;
@@ -323,6 +328,12 @@ public final class SamTransformationService implements AssemblyTransformationSer
 							readName +="/2";
 						}
 						
+					}
+					if(lowestSeen ==null || start.compareTo(lowestSeen) <0) {
+						lowestSeen = start;
+					}
+					if(highestSeen ==null || highestSeen.compareTo(end) <0) {
+						highestSeen = end;
 					}
 					//update valid range?
 					transformer.aligned(readName, rawSequence, quals, null, null, 

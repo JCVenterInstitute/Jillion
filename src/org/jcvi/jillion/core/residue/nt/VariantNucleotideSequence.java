@@ -219,7 +219,7 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 						
 					}else {
 						if(underlyingCoverage!=null) {
-							list = underlyingCoverage.getCoverageFor(UnderlyingCoverageParameters.builder()
+							UnderlyingCoverageParameters build = UnderlyingCoverageParameters.builder()
 									.gappedOffsets(offsetA, offsetB, offsetC)
 									.dir(revComplement? Direction.REVERSE: Direction.FORWARD)
 									.variant1(va)
@@ -227,7 +227,14 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 									.variant3(vc)
 									.refs(a, b, c)
 									.featureConsumer(featureConsumer)
-									.build());
+									.build();
+
+							List<VariantTriplet> underlyingList = underlyingCoverage.getCoverageFor(build);
+							
+							if(underlyingList !=null) {
+								//TODO throw error if null ?
+								list = underlyingList;
+							}
 						}else {
 							List<Nucleotide> as = va==null? List.of(a): va.getOrderedAlleles();
 							List<Nucleotide> bs = vb==null? List.of(b): vb.getOrderedAlleles();

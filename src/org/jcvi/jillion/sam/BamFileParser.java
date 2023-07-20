@@ -195,9 +195,8 @@ class BamFileParser extends AbstractSamFileParser {
 		try(BgzfInputStream in = BgzfInputStream.create(bamFile, vfs)){
 			AtomicBoolean keepParsing = new AtomicBoolean(true);
 
-			parseBamRecords(visitor, (record)->true, (v)->true, in, keepParsing, new MementoLessBamCallback(keepParsing));
+			parseBamRecords(visitor, (record)->true, (v)->true, in, keepParsing, new MementoLessBamCallback(keepParsing), null);
 		}
-		
 	}
 	
 	
@@ -229,7 +228,7 @@ class BamFileParser extends AbstractSamFileParser {
 		AbstractBamCallback callback = enableMementos ? new BamCallback(keepParsing) : new MementoLessBamCallback(keepParsing);
 		visitor.visitHeader(callback, header);
 		
-		parseBamRecords(visitor, filter, keepParsingPredicate, in, keepParsing, callback);
+		parseBamRecords(visitor, filter, keepParsingPredicate, in, keepParsing, callback, null);
 	}
 	protected void parseHeaderOnly(SamVisitor visitor, BgzfInputStream in) throws IOException {
 		verifyMagicNumber(in);
@@ -244,7 +243,10 @@ class BamFileParser extends AbstractSamFileParser {
 		
 	}
 	
-	protected void parseBamRecords(SamVisitor visitor, Predicate<SamRecord> filter, Predicate<VirtualFileOffset> keepParsingPredicate, BgzfInputStream in, AtomicBoolean keepParsing, AbstractBamCallback callback) throws IOException {
+	protected void parseBamRecords(SamVisitor visitor, Predicate<SamRecord> filter,
+			Predicate<VirtualFileOffset> keepParsingPredicate, BgzfInputStream in, 
+			AtomicBoolean keepParsing, AbstractBamCallback callback,
+			VirtualFileOffset readUntilAtLeast) throws IOException {
 		
 		boolean canceledByPredicate=false;
 
@@ -271,6 +273,14 @@ class BamFileParser extends AbstractSamFileParser {
 			//ignore, we can't tell if we've hit
 			//EOF until after we hit it otherwise
 			//we will mess up the offset computations
+			
+			//but we need to know if the bam file is truncated 
+			//otherwise it will fail silently and we won't get the data we want.
+			if(readUntilAtLeast !=null && readUntilAtLeast.compareTo(in.getCurrentVirutalFileOffset()) >0) {
+				//we got early termination
+				throw new IOException("bam file ends " + in.getCurrentVirutalFileOffset() + " before expected end coordinate of index " + readUntilAtLeast, e);
+			}
+//			e.printStackTrace();
 		}
 		if(canceledByPredicate || keepParsing.get()){
 			visitor.visitEnd();
