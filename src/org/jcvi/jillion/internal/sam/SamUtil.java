@@ -460,7 +460,7 @@ public final class SamUtil {
 		for(int level = 0; level < BIN_TREE_LEVEL_OFFSETS.length; level++){
 			int shiftAmount = BIN_TREE_LEVEL_SHIFTS[level];
 			int initialK = BIN_TREE_LEVEL_OFFSETS[level];
-			for (k = initialK + (beg>>shiftAmount); k <= initialK + (end>>shiftAmount); ++k){
+			for (k = initialK + (beg>>shiftAmount); i< MAX_BIN && k <= initialK + (end>>shiftAmount); ++k){
 				list[i++] = k;
 			}
 		}		
@@ -750,6 +750,9 @@ public final class SamUtil {
 		Objects.requireNonNull(referenceName, "reference name can not be null");
 		Objects.requireNonNull(alignmentRegionsOfInterest, "alignment range can not be null");
 		
+		if(alignmentRegionsOfInterest.size()==1) {
+			return alignsToReference(referenceName, alignmentRegionsOfInterest.get(0));
+		}
 		
 		List<Range> mergedRangesOfInterest = Ranges.merge(alignmentRegionsOfInterest);
 		return (record) -> {

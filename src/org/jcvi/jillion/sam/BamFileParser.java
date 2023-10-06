@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteOrder;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -125,15 +126,18 @@ class BamFileParser extends AbstractSamFileParser {
 	@Override
     public void parse(SamParserOptions options, SamVisitor visitor)
             throws IOException {
-	    
+	    if(options.getMemento() !=null) {
+	    	parseMemento(visitor, options.getMemento(), options);
+	    	return;
+	    }
         if(options.getReferenceName().isPresent()){
            Predicate<SamRecord> predicate;
            String referenceName = options.getReferenceName().get();
            verifyReferenceInHeader(referenceName);
-           if(options.getReferenceRanges().isPresent()){
-        	   predicate = SamUtil.alignsToReference(options.getReferenceName().get(), options.getReferenceRanges().get());
-           }else if(options.getReferenceRange().isPresent()){
-               predicate = SamUtil.alignsToReference(options.getReferenceName().get(), options.getReferenceRange().get());
+           Optional<List<Range>> referenceRanges = options.getReferenceRanges();
+		
+           if(referenceRanges.isPresent()){
+        	   predicate = SamUtil.alignsToReference(options.getReferenceName().get(), referenceRanges.get());
            }else{
                predicate = SamUtil.alignsToReference(options.getReferenceName().get());
            }
@@ -157,20 +161,24 @@ class BamFileParser extends AbstractSamFileParser {
 	
     @Override
 	public void parse(String referenceName, SamVisitor visitor) throws IOException {
-		 parse(new SamParserOptions().reference(referenceName), visitor);
+		 parse(SamParserOptions.builder().reference(referenceName).build(), visitor);
 	}
 	@Override
 	public void parse(String referenceName, Range alignmentRange, SamVisitor visitor) throws IOException {
-	    parse(new SamParserOptions().reference(referenceName, alignmentRange), visitor);		
+	    parse(SamParserOptions.builder().reference(referenceName, alignmentRange).build(), visitor);		
 	}
 	
 	@Override
 	public void parse(SamVisitor visitor) throws IOException {
-		parse(new SamParserOptions(), visitor);
+		parse(SamParserOptions.DEFAULT, visitor);
 	}
 	
 	@Override
 	public void parse(SamVisitor visitor, SamVisitorMemento memento) throws IOException {
+		parseMemento(visitor, memento, SamParserOptions.DEFAULT);
+	}
+	
+	private void parseMemento(SamVisitor visitor, SamVisitorMemento memento, SamParserOptions options) throws IOException {
 		Objects.requireNonNull(visitor);
 		Objects.requireNonNull(memento);
 		
@@ -194,8 +202,8 @@ class BamFileParser extends AbstractSamFileParser {
 		
 		try(BgzfInputStream in = BgzfInputStream.create(bamFile, vfs)){
 			AtomicBoolean keepParsing = new AtomicBoolean(true);
-
-			parseBamRecords(visitor, (record)->true, (v)->true, in, keepParsing, new MementoLessBamCallback(keepParsing), null);
+			
+			parseBamRecords(visitor, options.filterAsPredicate(), (v)->true, in, keepParsing, options.shouldCreateMementos()?new BamCallback(keepParsing, vfs):new MementoLessBamCallback(keepParsing), null);
 		}
 	}
 	
@@ -249,13 +257,14 @@ class BamFileParser extends AbstractSamFileParser {
 			VirtualFileOffset readUntilAtLeast) throws IOException {
 		
 		boolean canceledByPredicate=false;
-
+		VirtualFileOffset end=null;
 		try{
 			VirtualFileOffset start = in.getCurrentVirutalFileOffset();
+			
 			while(keepParsing.get() && in.hasMoreData()){	
 				SamRecord record = parseNextSamRecord(in, refNames, header);
 				
-				VirtualFileOffset end = in.getCurrentVirutalFileOffset();
+				end = in.getCurrentVirutalFileOffset();
 				if(keepParsingPredicate.test(start)){
 					if(filter.test(record)){
 					    callback.updateCurrentPosition(start);
@@ -278,7 +287,7 @@ class BamFileParser extends AbstractSamFileParser {
 			//otherwise it will fail silently and we won't get the data we want.
 			if(readUntilAtLeast !=null && readUntilAtLeast.compareTo(in.getCurrentVirutalFileOffset()) >0) {
 				//we got early termination
-				throw new IOException("bam file ends " + in.getCurrentVirutalFileOffset() + " before expected end coordinate of index " + readUntilAtLeast, e);
+				throw new IOException("bam file ends " + in.getCurrentVirutalFileOffset() + " before expected end coordinate of index " + readUntilAtLeast + " old end was " + end, e);
 			}
 //			e.printStackTrace();
 		}
@@ -610,6 +619,13 @@ class BamFileParser extends AbstractSamFileParser {
 			this.parserInstance = parserInstance;
 			this.encodedFileOffset = position;
 		}
+		
+
+		@Override
+		public String toString() {
+			return "BamFileMemento [encodedFileOffset=" + encodedFileOffset + "]";
+		}
+
 
 		@Override
 		public int hashCode() {

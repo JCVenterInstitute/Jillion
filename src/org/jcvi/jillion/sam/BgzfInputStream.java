@@ -171,8 +171,8 @@ class BgzfInputStream extends InflaterInputStream {
     	}
 		
     	BgzfInputStream bgzfStream = new BgzfInputStream(in);
-
-    	bgzfStream.compressedBlockBytesReadSoFar= compressedBamBlockOffset;
+    	//we have already read the header of the current block so append the amout of bytes we skipped
+    	bgzfStream.compressedBlockBytesReadSoFar+= compressedBamBlockOffset;
     	IOUtil.blockingSkip(bgzfStream, vfs.getUncompressedOffset());
     	return bgzfStream;
     	

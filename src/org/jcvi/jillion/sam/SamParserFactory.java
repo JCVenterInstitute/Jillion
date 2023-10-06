@@ -67,6 +67,8 @@ public final class SamParserFactory {
 		}
 		@Getter(AccessLevel.NONE)
 		private boolean ignoreBai;
+		
+		
 		@Builder.Default
 		private SamAttributeValidator attributeValidator = ReservedAttributeValidator.INSTANCE;
 		

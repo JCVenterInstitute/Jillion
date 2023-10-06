@@ -199,7 +199,7 @@ public final class SamTransformationService implements AssemblyTransformationSer
 		}
 		try {
 			SamTransformerVisitor visitor = new SamTransformerVisitor(referenceDataStore, transformer);
-			parser.parse(new SamParserOptions().filter(filter), visitor);
+			parser.parse(SamParserOptions.builder().filter(filter).build(), visitor);
 			
 		} catch (Exception e) {
 			throw new IOException("error parsing sam file", e);
@@ -215,7 +215,7 @@ public final class SamTransformationService implements AssemblyTransformationSer
 			throw new IllegalArgumentException(referenceId+ " does not exist");
 		}
 		SamTransformerVisitor visitor = new SamTransformerVisitor(referenceDataStore, transformer);
-		parser.parse(new SamParserOptions().filter(filter).reference(referenceId, range), visitor);
+		parser.parse(SamParserOptions.builder().filter(filter).reference(referenceId, range).build(), visitor);
 	}
 	
 	public void transform(String referenceId, List<Range> ranges, AssemblyTransformer transformer) throws IOException {
@@ -228,7 +228,7 @@ public final class SamTransformationService implements AssemblyTransformationSer
 			throw new IllegalArgumentException(referenceId+ " does not exist");
 		}
 		SamTransformerVisitor visitor = new SamTransformerVisitor(referenceDataStore, transformer);
-		parser.parse(new SamParserOptions().filter(filter).reference(referenceId, ranges), visitor);
+		parser.parse(SamParserOptions.builder().filter(filter).reference(referenceId, ranges).build(), visitor);
 	}
 	
 	

@@ -122,10 +122,10 @@ class IndexedBamFileParser extends BamFileParser{
 //				if(intersects) {
 //					System.out.println(readAlignmentRange);
 //				}
-				if(!intersects && readAlignmentRange.startsAfter(incluiveAlignmentRange)){
-					System.out.println("beyond alignment range " + readAlignmentRange);
-					keepParsing.set(false);
-				}
+//				if(!intersects && readAlignmentRange.startsAfter(incluiveAlignmentRange)){
+//					System.out.println("beyond alignment range " + readAlignmentRange);
+//					keepParsing.set(false);
+//				}
 				return intersects;
 			};
 			if(options.getFilter().isPresent()) {
@@ -149,88 +149,7 @@ class IndexedBamFileParser extends BamFileParser{
 						parseHeaderOnly(visitor, in2);
 					}
 				}
-				System.out.println("end offset will be " + end[0]);
-				this.parseBamRecords(visitor, 
-						recordBinFilter,
-						(vfs)-> vfs.compareTo(end[0]) <=0,
-//						(vfs)-> true,
-						in,
-						keepParsing,
-						options.shouldCreateMementos() ? new BamCallback(keepParsing) :new MementoLessBamCallback(keepParsing),
-						end[0]);
-				options.getFilter().ifPresent(f->f.end());
-			}
-		}else if(options.getReferenceRange().isPresent()) {
-			
-			Range alignmentRange = options.getReferenceRange().get();
-			VirtualFileOffset[] start= new VirtualFileOffset[1];
-			start[0] = refIndex.getHighestEndOffset();
-			
-			if(start[0]==null) {
-				//nothing matched this range
-				visitor.visitEnd();
-				return;
-			}
-			
-			VirtualFileOffset[] end = new VirtualFileOffset[1];
-			end[0] = refIndex.getLowestStartOffset();
-			
-			refIndex.findBinsForAlignmentRange(alignmentRange, b->{
-				for(Chunk chunk : b.getChunks()) {
-					if(chunk.getBegin().compareTo(start[0]) < 0) {
-						start[0] = chunk.getBegin();
-					}
-					if(chunk.getEnd().compareTo(end[0]) > 0) {
-						end[0] = chunk.getEnd();
-					}
-				}
-			});
 
-			AtomicBoolean keepParsing = new AtomicBoolean(true);
-			Predicate<SamRecord> recordBinFilter = (record) -> {
-				if(!referenceName.equals(record.getReferenceName())){
-					return false;
-				}
-			
-				Range readAlignmentRange = record.getAlignmentRange();
-				if(readAlignmentRange ==null) {
-					return false;
-				}
-//				int bin = SamUtil.computeBinFor(readAlignmentRange);
-				/*
-				 * int[] readBins = SamUtil.getCandidateOverlappingBins(readAlignmentRange);
-				 * boolean found=false; for(int i=0; i< readBins.length; i++) {
-				 * if(Arrays.binarySearch(overlappingBins, readBins[i]) <0){ found=true; break;
-				 * } } if(!found) { return false; }
-				 */
-				boolean intersects= readAlignmentRange.intersects(alignmentRange);
-				if(intersects) {
-//					System.out.println(readAlignmentRange);
-				}else if(readAlignmentRange.startsAfter(alignmentRange)){
-					
-					keepParsing.set(false);
-				}
-				return intersects;
-			};
-			if(options.getFilter().isPresent()) {
-				recordBinFilter = recordBinFilter.and(options.getFilter().get().asPredicate());
-			}
-			if(!BEGINING_OF_FILE.equals(start[0])) {
-				//parse the header
-				try(BgzfInputStream in = BgzfInputStream.create(bamFile)){
-					parseHeaderOnly(visitor, in);
-				}
-			}
-			try(BgzfInputStream in = BgzfInputStream.create(bamFile, start[0])){
-				//assume anything in this interval matches?
-		
-				options.getFilter().ifPresent(f->f.begin());
-				
-				//parse the header
-				try(BgzfInputStream in2 = BgzfInputStream.create(bamFile)){
-					parseHeaderOnly(visitor, in2);
-				}
-				
 				this.parseBamRecords(visitor, 
 						recordBinFilter,
 						(vfs)-> vfs.compareTo(end[0]) <=0,
@@ -238,7 +157,9 @@ class IndexedBamFileParser extends BamFileParser{
 						in,
 						keepParsing,
 						options.shouldCreateMementos() ? new BamCallback(keepParsing) :new MementoLessBamCallback(keepParsing),
-						end[0]);
+//						end[0],
+								null
+						);
 				options.getFilter().ifPresent(f->f.end());
 			}
 		}else {

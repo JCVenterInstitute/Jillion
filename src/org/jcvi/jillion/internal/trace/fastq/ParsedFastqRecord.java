@@ -20,14 +20,26 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.trace.fastq;
 
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalDouble;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
 import org.jcvi.jillion.trace.fastq.FastqRecord;
 import org.jcvi.jillion.trace.fastq.FastqRecordBuilder;
@@ -276,5 +288,223 @@ public class ParsedFastqRecord implements FastqRecord {
             }
         }
 	    
+	}
+	
+	private static class StringProcessingNucleotideSequence implements NucleotideSequence{
+		
+		
+		private final String ntString;
+
+		public StringProcessingNucleotideSequence(String ntString) {
+			this.ntString = ntString;
+		}
+
+		
+
+		@Override
+		public Stream<Range> findMatches(Pattern pattern) {
+			
+			return findHitsInString(pattern, ntString,0);
+		}
+
+		
+
+
+		@Override
+		public Nucleotide get(long offset) {
+			return Nucleotide.parse(ntString.charAt((int) offset));
+		}
+
+
+
+		@Override
+		public long getLength() {
+			return ntString.length();
+		}
+
+
+
+		@Override
+		public Iterator<Nucleotide> iterator() {
+			return new NucIter();
+		}
+
+
+
+		@Override
+		public NucleotideSequence toNucleotideSequence() {
+			return this;
+		}
+
+
+
+		@Override
+		public NucleotideSequence trim(Range trimRange) {
+			return new StringProcessingNucleotideSequence(ntString.substring((int)trimRange.getBegin(), (int)trimRange.getEnd()+1));
+		}
+
+
+
+		private Stream<Range> findHitsInString(Pattern pattern, String s, int shiftAmount) {
+			Matcher m = pattern.matcher(s);
+			List<Range> hits = new ArrayList<>();
+			while(m.find()) {
+				hits.add(Range.of(m.start()+shiftAmount, m.end()-1+shiftAmount));
+			}
+			return hits.stream();
+		}
+
+		@Override
+		public Stream<Range> findMatches(Pattern pattern, Range subSequenceRange) {
+			int shift = (int) subSequenceRange.getBegin();
+			String sub = ntString.substring(shift,(int) subSequenceRange.getEnd()+1);
+			return findHitsInString(pattern, sub, shift);
+			
+		}
+ 
+
+		private class NucIter implements Iterator<Nucleotide>{
+			private int offset;
+
+			@Override
+			public boolean hasNext() {
+				return offset< StringProcessingNucleotideSequence.this.ntString.length();
+			}
+
+			@Override
+			public Nucleotide next() {
+				if(!hasNext()) {
+					throw new NoSuchElementException();
+				}
+				return get( ++offset);
+			}
+			
+		}
+
+
+		@Override
+		public NucleotideSequenceBuilder toBuilder(List<Range> ranges) {
+			
+			return new NucleotideSequenceBuilder(this, ranges);
+		}
+
+
+
+		@Override
+		public boolean isDna() {
+			// TODO assume DNA
+			return true;
+		}
+
+
+
+		@Override
+		public List<Range> getRangesOfNs() {
+			int firstN = ntString.indexOf('N');
+			if(firstN <0) {
+				return Collections.emptyList();
+			}
+			BitSet bs = new BitSet();
+			bs.set(firstN);
+			for(int i = firstN+1; i>=0; i=ntString.indexOf('N', i)) {
+				bs.set(i);
+			}
+			
+			return Ranges.asRanges(bs);
+		}
+
+
+
+		@Override
+		public List<Integer> getGapOffsets() {
+			// TODO for now assume no gaps
+			return Collections.emptyList();
+		}
+
+
+
+		@Override
+		public List<Range> getRangesOfGaps() {
+			// TODO for now assume no gaps
+			return Collections.emptyList();
+		}
+
+
+
+		@Override
+		public int getNumberOfGaps() {
+			// TODO assume no gaps
+			return 0;
+		}
+
+
+
+		@Override
+		public boolean isGap(int gappedOffset) {
+			// TODO assume no gaps
+			return false;
+		}
+
+
+
+		@Override
+		public long getUngappedLength() {
+			return ntString.length();
+		}
+
+
+
+		@Override
+		public int getNumberOfGapsUntil(int gappedOffset) {
+			// TODO assume no gaps
+			return 0;
+		}
+
+
+
+		@Override
+		public int getUngappedOffsetFor(int gappedOffset) {
+			// TODO assume no gaps
+			return gappedOffset;
+		}
+
+
+
+		@Override
+		public int getGappedOffsetFor(int ungappedOffset) {
+			// TODO assume no gaps
+			return ungappedOffset;
+		}
+
+
+
+		@Override
+		public NucleotideSequenceBuilder toBuilder(Range range) {
+			return new NucleotideSequenceBuilder(ntString.substring((int) range.getBegin(), (int) range.getEnd()+1));
+		}
+
+
+
+		@Override
+		public NucleotideSequence asSubtype() {
+			return this;
+		}
+
+
+
+		@Override
+		public Iterator<Nucleotide> iterator(Range range) {
+			// since we're just doing strings this should be the fastest...
+			return trim(range).iterator();
+		}
+
+
+
+		@Override
+		public NucleotideSequenceBuilder toBuilder() {
+			return new NucleotideSequenceBuilder(ntString);
+		}
+		
+		
 	}
 }

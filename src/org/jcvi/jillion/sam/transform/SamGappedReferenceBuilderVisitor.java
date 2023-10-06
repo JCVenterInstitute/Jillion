@@ -69,7 +69,7 @@ public final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 			throw new IOException("error parsing reference datastore", e);
 		}
 		
-		parser.parse(new SamParserOptions().filter(filter), visitor);
+		parser.parse(SamParserOptions.builder().filter(filter).build(), visitor);
 		return visitor.buildGappedReferences();
 	}
 	public static NucleotideSequenceDataStore createGappedReferencesFrom(SamParser parser, 
@@ -82,9 +82,10 @@ public final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 			throw new IOException("error parsing reference datastore", e);
 		}
 		for(Entry<String, List<Range>> entry : rangesByRefId.entrySet()) {
-			parser.parse(new SamParserOptions()
+			parser.parse(SamParserOptions.builder()
 						.reference(entry.getKey(), entry.getValue())
-						.filter(filter), visitor);
+						.filter(filter)
+						.build(), visitor);
 			
 		}
 		

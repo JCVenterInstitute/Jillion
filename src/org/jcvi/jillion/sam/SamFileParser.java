@@ -100,8 +100,6 @@ final class SamFileParser extends AbstractSamFileParser{
 //	               verifyReferenceInHeader(options.getReferenceName().get());
 	        	   if(options.getReferenceRanges().isPresent()){
 	                   predicate = SamUtil.alignsToReference(options.getReferenceName().get(), options.getReferenceRanges().get());
-	               }else if(options.getReferenceRange().isPresent()){
-	                   predicate = SamUtil.alignsToReference(options.getReferenceName().get(), options.getReferenceRange().get());
 	               }else{
 	                   predicate = SamUtil.alignsToReference(options.getReferenceName().get());
 	               }
@@ -178,15 +176,15 @@ final class SamFileParser extends AbstractSamFileParser{
 	}
 	@Override
 	public void parse(String referenceName, SamVisitor visitor) throws IOException {
-	    parse(new SamParserOptions().reference(referenceName), visitor);	
+	    parse(SamParserOptions.builder().reference(referenceName).build(), visitor);	
 	}
 	@Override
 	public void parse(String referenceName, Range alignmentRange, SamVisitor visitor) throws IOException {
-	    parse(new SamParserOptions().reference(referenceName, alignmentRange), visitor);		
+	    parse(SamParserOptions.builder().reference(referenceName, alignmentRange).build(), visitor);		
 	}
 	@Override
 	public void parse(SamVisitor visitor) throws IOException {
-		parse(new SamParserOptions(), visitor);
+		parse(SamParserOptions.DEFAULT, visitor);
 	}
 	
 	

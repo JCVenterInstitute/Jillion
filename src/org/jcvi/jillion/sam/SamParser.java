@@ -28,6 +28,13 @@ import java.util.function.Predicate;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.sam.SamVisitor.SamVisitorCallback.SamVisitorMemento;
 import org.jcvi.jillion.sam.header.SamHeader;
+
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Singular;
 /**
  * {@code SamParser}
  * is an interface that can parse
@@ -156,43 +163,29 @@ public interface SamParser {
 	 */
 	SamHeader getHeader() throws IOException;
 	
-
+		@Data
+		@Builder(toBuilder = true)
         public static class SamParserOptions{
+			
+			public static SamParserOptions DEFAULT = SamParserOptions.builder().build();
+			
+			@Getter(AccessLevel.NONE)
             private final boolean createMementos;
+			
             private final String referenceName;
-            private final Range referenceRange;
-            private final List<Range> referenceRanges;
+            @Singular
+            private final List<@NonNull Range> referenceRanges;
             
             private final SamRecordFilter filter;
+            private final SamVisitorMemento memento;
             
-            public SamParserOptions(){
-                this(false, null, null, null,null);
-            }
             
-            private SamParserOptions(boolean createMementos, String referenceName, Range range, List<Range> referenceRanges, SamRecordFilter filter){
-                this.createMementos = createMementos;
-                this.referenceName = referenceName;
-                this.referenceRange = range;
-                this.filter = filter;
-                this.referenceRanges = referenceRanges;
-            }
-            public SamParserOptions reference(String referenceName){
-                return new SamParserOptions(createMementos, referenceName,null, null,filter);
-             }
-            public SamParserOptions reference(String referenceName, Range referenceRange){
-                return new SamParserOptions(createMementos, referenceName,referenceRange,null, filter);
-             }
-            public SamParserOptions reference(String referenceName, List<Range> referenceRanges){
-                return new SamParserOptions(createMementos, referenceName,null,referenceRanges, filter);
-             }
-            public SamParserOptions createMementos(boolean createMementos){
-               return new SamParserOptions(createMementos, referenceName, referenceRange,referenceRanges, filter);
-            }
-            public SamParserOptions filter(Predicate<SamRecord> filter){
-                return new SamParserOptions(createMementos, referenceName, referenceRange, referenceRanges,filter==null? null: SamRecordFilter.wrap(filter));
-            }
-            public SamParserOptions filter(SamRecordFilter filter){
-                return new SamParserOptions(createMementos, referenceName, referenceRange, referenceRanges, filter);
+            
+            Predicate<SamRecord> filterAsPredicate(){
+            	if(filter==null) {
+            		return r-> true;
+            	}
+            	return filter.asPredicate();
             }
             public boolean shouldCreateMementos() {
                 return createMementos;
@@ -201,10 +194,10 @@ public interface SamParser {
             public Optional<String> getReferenceName() {
                 return Optional.ofNullable(referenceName);
             }
-            public Optional<Range> getReferenceRange() {
-                return Optional.ofNullable(referenceRange);
-            }
             public Optional<List<Range>> getReferenceRanges() {
+            	if(referenceRanges==null || referenceRanges.isEmpty()) {
+            		return Optional.empty();
+            	}
                 return Optional.ofNullable(referenceRanges);
             }
             
@@ -212,5 +205,19 @@ public interface SamParser {
             	return Optional.ofNullable(filter);
             }
             
+            public static class SamParserOptionsBuilder{
+            	public SamParserOptionsBuilder reference(String referenceName, Range referenceRange) {
+            		return referenceName(referenceName)
+            				.referenceRange(referenceRange);
+            	}
+            	public SamParserOptionsBuilder reference(String referenceName, List<Range> referenceRange) {
+            		referenceName(referenceName);
+            		referenceRange.forEach(this::referenceRange);
+            		return this;
+            	}
+            	public SamParserOptionsBuilder reference(String referenceName) {
+            		return referenceName(referenceName);
+            	}
+            }
         }
 }

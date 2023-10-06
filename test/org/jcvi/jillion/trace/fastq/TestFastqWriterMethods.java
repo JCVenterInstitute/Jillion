@@ -5,6 +5,8 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.IOException;
 import java.util.function.Predicate;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.io.OutputStreams;
@@ -170,6 +172,81 @@ File actual = tmpDir.newFile();
 									.build()));
 	}
 	
+	@Test
+	public void copyToGZFileWithCodecAndPredicate() throws IOException{
+		File in = helper.getFile("files/giv_XX_15050.fastq");
+		File out = tmpDir.newFile();
+		
+		FastqParser parser = new FastqFileParserBuilder(in)
+									.hasComments(true)
+									.build();
+		FastqWriter.copy(parser, FastqQualityCodec.SANGER,
+				OutputStreams.gzip(out),
+				record -> record.getId().endsWith("F")
+				);
+		
+		FastqFileDataStore expected = FastqFileReader.read(parser)
+										.records()
+										.filter(record -> record.getId().endsWith("F"))
+										.collect(JillionCollectors.toDataStore(FastqFileDataStore.class, FastqRecord::getId));
+		
+		assertSameRecords(expected, FastqFileDataStore.from(new FastqFileParserBuilder(out)
+									.hasComments(true)
+									.build()));
+	}
+	
+	@Test
+	public void copyToGZSplitToMultipleChunksFileWithCodecAndPredicate() throws IOException{
+		File in = helper.getFile("files/giv_XX_15050.fastq");
+		File out = tmpDir.newFile();
+		
+		FastqParser parser = new FastqFileParserBuilder(in)
+									.hasComments(true)
+									.build();
+		FastqWriter.copy(parser, FastqQualityCodec.SANGER,
+				OutputStreams.gzip(out),
+				record -> record.getId().endsWith("F")
+				);
+		FastqWriter.copy(parser, FastqQualityCodec.SANGER,
+				OutputStreams.gzip(out, 8096, true),
+				record -> !record.getId().endsWith("F")
+				);
+		
+		
+		FastqFileDataStore expected = FastqFileReader.read(parser)
+										.records()
+										.collect(JillionCollectors.toDataStore(FastqFileDataStore.class, FastqRecord::getId));
+		
+		assertSameRecordsDifferentOrder(expected, FastqFileDataStore.from(new FastqFileParserBuilder(out)
+									.hasComments(true)
+									.build()));
+	}
+	
+	@Test
+	public void copyToZipFileWithCodecAndPredicate() throws IOException{
+		File in = helper.getFile("files/giv_XX_15050.fastq");
+		File out = tmpDir.newFile();
+		
+		FastqParser parser = new FastqFileParserBuilder(in)
+									.hasComments(true)
+									.build();
+		ZipOutputStream zipStream = OutputStreams.zip(out);
+		zipStream.putNextEntry(new ZipEntry(in.getName()));
+		FastqWriter.copy(parser, FastqQualityCodec.SANGER,
+				zipStream,
+				record -> record.getId().endsWith("F")
+				);
+		
+		FastqFileDataStore expected = FastqFileReader.read(parser)
+										.records()
+										.filter(record -> record.getId().endsWith("F"))
+										.collect(JillionCollectors.toDataStore(FastqFileDataStore.class, FastqRecord::getId));
+		
+		assertSameRecords(expected, FastqFileDataStore.from(new FastqFileParserBuilder(out)
+									.hasComments(true)
+									.build()));
+	}
+	
 	private void assertSameRecords(File expected, File actual) throws IOException{
 		assertSameRecords(FastqFileDataStore.fromFile(expected),
 				FastqFileDataStore.fromFile(actual));
@@ -184,6 +261,14 @@ File actual = tmpDir.newFile();
 			while(eIter.hasNext()){
 				assertEquals(eIter.next(), aIter.next());
 			}
+		}
+	}
+	private void assertSameRecordsDifferentOrder(FastqFileDataStore expected, FastqFileDataStore actual) throws IOException{
+		assertEquals(expected.getNumberOfRecords(), actual.getNumberOfRecords());
+		try(StreamingIterator<FastqRecord> eIter = expected.iterator();
+			){
+			FastqRecord record = eIter.next();
+			assertEquals(record, actual.get(record.getId()));
 		}
 	}
 }

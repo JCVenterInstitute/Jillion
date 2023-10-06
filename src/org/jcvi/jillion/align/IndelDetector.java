@@ -13,7 +13,14 @@ public interface IndelDetector<R extends ResidueSequence> {
 
 	enum IndelType{
 		INSERTION,
-		DELETION
+		DELETION;
+
+		public boolean isOpposite(IndelType type) {
+			if(type !=null && type !=this) {
+				return true;
+			}
+			return false;
+		}
 	}
 	@Data
 	public static class Indel implements Comparable<Indel>, Rangeable{

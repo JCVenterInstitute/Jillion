@@ -20,8 +20,10 @@
  ******************************************************************************/
 package org.jcvi.jillion.experimental.primer;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.jillion.align.NucleotideSubstitutionMatrix;
@@ -105,9 +107,16 @@ public class PrimerDetector {
     	}
     	
         List<DirectedRange> ranges = new ArrayList<DirectedRange>();
-        StreamingIterator<NucleotideSequence> iter =null; 
-        try{
-        	iter =primersDataStore.iterator();
+        List<NucleotideSequence> reverseSequences = new ArrayList<>();
+        if(alsoCheckReverseCompliment) {
+        	try {
+				primersDataStore.forEach((id, seq)-> reverseSequences.add(seq.reverseComplement()));
+			} catch (Exception e) {
+				throw new IllegalStateException("error iterating over nucleotide sequences",e);
+			}
+        }
+        try(StreamingIterator<NucleotideSequence> iter = primersDataStore.iterator()){
+        	Iterator<NucleotideSequence> reverseIterator = reverseSequences.iterator();
         while(iter.hasNext()){
         	NucleotideSequence primer = iter.next();
             if(primer.getLength()>=minLength){
@@ -117,10 +126,8 @@ public class PrimerDetector {
 																					.build();
             	
                 final NucleotidePairwiseSequenceAlignment reverseAlignment;
-                if(alsoCheckReverseCompliment){
-                	NucleotideSequence reversePrimer = new NucleotideSequenceBuilder(primer)
-												.reverseComplement()
-												.build();
+                if(reverseIterator.hasNext()){
+                	NucleotideSequence reversePrimer = reverseIterator.next();
 					reverseAlignment =  PairwiseAlignmentBuilder.createNucleotideAlignmentBuilder(reversePrimer, sequence, MATRIX)
 																.gapPenalty(gapOpenPenalty, gapExtendPenalty)
 																.build();
@@ -128,10 +135,10 @@ public class PrimerDetector {
                     reverseAlignment = NullAlignment.INSTANCE;
                 }
                 if(maxNumMismatches ==null){
-                	boolean forwardValid = forwardAlignment.getPercentIdentity() > minPercentIdentity
+                	boolean forwardValid = forwardAlignment.getPercentIdentity() >= minPercentIdentity
                 					&& forwardAlignment.getAlignmentLength() >= minLength;
 					
-                	boolean reverseValid = reverseAlignment.getPercentIdentity() > minPercentIdentity
+                	boolean reverseValid = reverseAlignment.getPercentIdentity() >= minPercentIdentity
         					&& reverseAlignment.getAlignmentLength() >= minLength;	
         					
       	           if(forwardValid || reverseValid){
@@ -189,9 +196,7 @@ public class PrimerDetector {
         return ranges;
         } catch (DataStoreException e) {
 			throw new IllegalStateException("error iterating over nucleotide sequences",e);
-		}finally{
-        	IOUtil.closeAndIgnoreErrors(iter);
-        }
+		}
     }
     
     public List<PrimerHit> detect(NucleotideSequence sequence,
