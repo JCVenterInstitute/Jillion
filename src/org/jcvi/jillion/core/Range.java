@@ -1155,6 +1155,19 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
                         coordinateSystem);
     }
     /**
+     * Create a new Range with the begin and end coordinates
+     * shifted by the given amount.  A negative shiftAmount will
+     * subtract from the coordinates.
+     * @param shiftAmount the amount to shift the coordinates by.
+     * @return a new Range.
+     * 
+     * @since 6.0
+     */
+    public Range shift(long shiftAmount) {
+    	return Range.of(getBegin()+shiftAmount, getEnd()+shiftAmount);
+	}
+    
+    /**
      * Functional interface to generate a toString() string
      * for the given range coordinates only.
      * 

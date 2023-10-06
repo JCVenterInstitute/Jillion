@@ -32,6 +32,7 @@ import java.util.function.Supplier;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.testUtil.SlowTests;
 import org.jcvi.jillion.internal.ResourceHelper;
+import org.jcvi.jillion.sam.SamParser.SamParserOptions;
 import org.jcvi.jillion.sam.SamVisitor.SamVisitorCallback.SamVisitorMemento;
 import org.jcvi.jillion.sam.header.SamHeader;
 import org.jcvi.jillion.sam.header.SamReferenceSequence;
@@ -129,7 +130,7 @@ public class TestBamParserImplementations {
 		SamVisitorMemento[] memento = new SamVisitorMemento[1];
 		//have to use actual parser both for expectations and replay
 		//because memento has to be the same instance
-		actualParser.parse(new SamParser.SamParserOptions().createMementos(true), new FilteredSamVisitor(mock){
+		actualParser.parse(SamParserOptions.builder().createMementos(true).build(), new FilteredSamVisitor(mock){
 
 			@Override
 			public void visitHeader(SamVisitorCallback callback, SamHeader header) {
@@ -156,7 +157,7 @@ public class TestBamParserImplementations {
 		SamVisitorMemento[] memento = new SamVisitorMemento[1];
 		//have to use actual parser both for expectations and replay
 		//because memento has to be the same instance
-		actualParser.parse(new SamParser.SamParserOptions().createMementos(true), new FilteredSamVisitor(mock){
+		actualParser.parse(SamParserOptions.builder().createMementos(true).build(), new FilteredSamVisitor(mock){
 			private int recordCounter=0;
 			
 			@Override

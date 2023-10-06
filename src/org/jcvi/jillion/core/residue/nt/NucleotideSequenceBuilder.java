@@ -1413,10 +1413,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
    
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + Arrays.hashCode(data.toArray());
-		return result;
+		return data.hashCode();
 	}
 	/**
 	 * Two {@link NucleotideSequenceBuilder}s are equal
@@ -1438,7 +1435,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
 		NucleotideSequenceBuilder other = (NucleotideSequenceBuilder) obj;
 		
 		
-		return Arrays.equals(data.toArray(),other.data.toArray());
+		return data.equals(other.data);
 	}
 	/**
 	 * Convenience equality check against a {@link NucleotideSequence}

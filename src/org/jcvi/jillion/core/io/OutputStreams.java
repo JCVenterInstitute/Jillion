@@ -71,6 +71,24 @@ public final class OutputStreams {
      * @throws IllegalArgumentException if bufferSize is less than 1.
      */
     public static GZIPOutputStream gzip(File out, int bufferSize) throws IOException{
+        return new GZIPOutputStream(new FileOutputStream(out), bufferSize, false);
+    }
+    /**
+     * Create a GZIPOutputStream for the given file
+     * using the given buffersize.
+     * 
+     * @param out the file to write.
+     * @param bufferSize the size of the buffer to use.
+     * 
+     * @return a new GZIPOutputStream; will never be null.
+     * @throws IOException if there is a problem creating the outputstream.
+     * @throws IllegalArgumentException if bufferSize is less than 1.
+     */
+    public static GZIPOutputStream gzip(File out, int bufferSize, boolean append) throws IOException{
+    	if(append) {
+    		//this should be safe... GZIP should support new GZIP blocks concatenated together
+    		return new GZIPOutputStream(new FileOutputStream(out, true), bufferSize);
+    	}
         return new GZIPOutputStream(new FileOutputStream(out), bufferSize);
     }
     

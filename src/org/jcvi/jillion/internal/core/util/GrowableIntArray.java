@@ -609,8 +609,12 @@ public final class GrowableIntArray implements Iterable<Integer>{
 
 	@Override
 	public int hashCode() {
-		int result = Objects.hash(currentLength);
-		result = 31 * result + Arrays.hashCode(data);
+		//only compute has up to current length
+		//since delete doesn't always remove elements from the end.
+		int result = 1;
+        for (int i=0; i< currentLength; i++) {
+            result = 31 * result + data[i];
+        }
 		return result;
 	}
 }

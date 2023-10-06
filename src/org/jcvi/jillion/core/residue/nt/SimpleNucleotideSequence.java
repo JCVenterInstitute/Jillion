@@ -16,9 +16,10 @@ import java.util.stream.Stream;
 
 class SimpleNucleotideSequence extends AbstractSimpleNucleotideSequence{
 
-   
 
-    public SimpleNucleotideSequence(GrowableByteArray data) {
+	private static final long serialVersionUID = -7401239136846991303L;
+
+	public SimpleNucleotideSequence(GrowableByteArray data) {
        super(data);
     }
     public SimpleNucleotideSequence(Nucleotide[] data) {

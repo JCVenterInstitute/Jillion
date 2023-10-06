@@ -146,6 +146,7 @@ public interface NucleotideSequence extends INucleotideSequence<NucleotideSequen
     default Stream<Range> findMatches(String regex, Range subSequenceRange,boolean nested){
     	return findMatches(Pattern.compile(regex),subSequenceRange,nested);
     }
+    
     /**
      * Find all the Ranges in this sequence that match the given regular expression {@link Pattern}.
      * @param pattern the pattern to look for.  All bases must be in uppercase.
@@ -285,20 +286,25 @@ public interface NucleotideSequence extends INucleotideSequence<NucleotideSequen
         return toBuilder(trimRange).build();
     }
     /**
-     * Is this sequence only contain Ns.
+     * Is this sequence only contain Ns and is not empty.
      * 
      * @since 6.0
-     * @return {@code true} if this sequence only contains Ns;
+     * @return {@code true} if this sequence is not empty and only contains Ns;
      * {@code false} otherwise.
      * 
-     * @implNote the default implementation is
-     * <pre>
-     * {@code 
-     * getPercentN()==1D;
-     * </pre>
+     * @implNote the default implementation will iterate through the non-empty sequence 
+     * and return {@code false}, if it encounters a non-N; otherwise returns {@code true}.
      */
 	default boolean isAllNs() {
-		return computePercentN()==1D;
+		if(isEmpty()) {
+			return false;
+		}
+		for(Nucleotide n : this) {
+			if(n != Nucleotide.Unknown) {
+				return false;
+			}
+		}
+		return true;
 	}
 	/**
 	 * Compute the percentage of Ns compared to other non-gapped bases in the sequence.

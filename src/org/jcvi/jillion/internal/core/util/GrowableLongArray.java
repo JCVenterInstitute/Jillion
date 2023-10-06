@@ -536,8 +536,14 @@ public final class GrowableLongArray implements Iterable<Long>{
 
 	@Override
 	public int hashCode() {
-		int result = Objects.hash(currentLength);
-		result = 31 * result + Arrays.hashCode(data);
+		//only compute has up to current length
+		//since delete doesn't always remove elements from the end.
+		int result = 1;
+        for (int i=0; i< currentLength; i++) {
+        	long element = data[i];
+        	int elementHash = (int)(element ^ (element >>> 32));
+            result = 31 * result + elementHash;
+        }
 		return result;
 	}
 }

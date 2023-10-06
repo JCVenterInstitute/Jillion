@@ -208,7 +208,7 @@ abstract class AbstractSimpleNucleotideSequence extends AbstractResidueSequence<
 	}
 	@Override
     public int hashCode() {
-        return Objects.hash(data);
+        return Arrays.hashCode(data);
     }
 
     @Override
