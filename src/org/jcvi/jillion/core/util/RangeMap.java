@@ -95,7 +95,7 @@ public class RangeMap<T> {
 	public List<Range> computeMergedRanges() {
 		return Ranges.merge(map.keySet());
 	}
-	
+	@FunctionalInterface
 	public interface IntersectionOptions{
 		boolean intersects(Range range, Callback callback);
 		
@@ -120,6 +120,11 @@ public class RangeMap<T> {
 					.collect(RangeCollectors.mergeRanges());
 			return new DefaultMultiIntersectionOptions(abuttingRanges);
 		}
+		
+		public static IntersectionOptions superRangeOf(Range range) {
+			return (r, callback)-> range.isSubRangeOf(r);
+			
+		}
 	}
 	
 	private static class DefaultIntersectionOptions implements IntersectionOptions{
@@ -134,6 +139,8 @@ public class RangeMap<T> {
 			return rangeOfInterest.intersects(range);
 		}
 	}
+	
+	
 	
 	private static class DefaultMultiIntersectionOptions implements IntersectionOptions{
 		private final List<Range> rangesOfInterest;
