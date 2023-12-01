@@ -207,7 +207,7 @@ public final class Triplet implements Comparable<Triplet>{
 	}
 	
 	public Set<Triplet> explode(){
-		if(isAmbiguityCache[first] || isAmbiguityCache[second] || isAmbiguityCache[third]) {
+		if(hasAmiguities()) {
         	//handle ambiguities
         	Set<Triplet> triplets = new LinkedHashSet<Triplet>();
         	for(Nucleotide f : getFirst().getBasesFor()) {
@@ -296,6 +296,14 @@ public final class Triplet implements Comparable<Triplet>{
 			}
 		}
 		return changes;
+		
+	}
+	/**
+	 * Are any of these bases an ambiguity;
+	 * @since 6.0
+	 */
+	public boolean hasAmiguities() {
+		return isAmbiguityCache[first] || isAmbiguityCache[second] || isAmbiguityCache[third];
 		
 	}
 
