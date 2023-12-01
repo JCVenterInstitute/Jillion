@@ -71,10 +71,14 @@ public final class OutputStreamFactory {
      * </ul>
      * 
      * Anything else will return a normal buffered outputStream.
-     * @param file the file to write to; can not be null. 
+     * Please Note: that depending on the combination of file extension and other fields such as {@link OutputStreamParameters#shouldAppend()}
+     * Jillion might not be able to create a valid output stream (for example, appending to a ZIP stream) and will therefore
+     * throw an IOException.
+     *  
+     * @param parameters {@link OutputStreamParameters} explaining how to create the output stream; can not be null. 
      * @return a new outputStream.
      * @throws IOException if there is a problem creating any intermediate directories or the output stream.
-     * @throws NullPointerException if file is null.
+     * @throws NullPointerException if parameters is null.
      */
     public static OutputStream create(OutputStreamParameters parameters) throws IOException{
     	File file = parameters.getOutputFile();
@@ -87,6 +91,9 @@ public final class OutputStreamFactory {
             return OutputStreams.gzip(file, bufferSize, parameters.shouldAppend());
         }
         if("zip".equalsIgnoreCase(extension)){
+        	if(parameters.shouldAppend()) {
+        		throw new IOException("single zip file append not supported");
+        	}
             return OutputStreams.zip(file, bufferSize);
         }
         return new BufferedOutputStream(new FileOutputStream(file, parameters.shouldAppend()), bufferSize);
@@ -125,17 +132,11 @@ public final class OutputStreamFactory {
      * @throws NullPointerException if file is null.
      */
     public static OutputStream create(File file, int bufferSize) throws IOException{
-        IOUtil.mkdirs(file.getParentFile());
-        
-        String extension = FileUtil.getExtension(file);
-        
-        if("gz".equalsIgnoreCase(extension)){
-            //gzip
-            return OutputStreams.gzip(file, bufferSize);
-        }
-        if("zip".equalsIgnoreCase(extension)){
-            return OutputStreams.zip(file, bufferSize);
-        }
-        return new BufferedOutputStream(new FileOutputStream(file), bufferSize);
+    	
+    	return create(OutputStreamParameters.builder()
+    			.bufferSize(bufferSize)
+    			.outputFile(file)
+    			.build());
+       
     }
 }
