@@ -1,3 +1,7 @@
+# Jillion
+
+Jillion 6 requires Java 11+
+
 Jillion 5 requires Java 8 and uses new Java 8 language features such as default methods, lambda expressions and the new `Stream` and `Collector` API.
 
 # How to install
