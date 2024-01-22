@@ -9,7 +9,7 @@ in your package manager.  Jillion is available on Maven Central
 <dependency>
   <groupId>org.jcvi.jillion</groupId>
   <artifactId>jillion</artifactId>
-  <version>5.3.3</version>
+  <version>6.0</version>
 </dependency>
 ```
 
@@ -18,9 +18,19 @@ Jillion 5+ uses Maven to build and package a jar file.  From the root folder whe
 ```
 % mvn clean install
 ```
-This will build jillion, run all the unit and integration tests and install it in your local repository.
+
+This will build Jillion, run all the unit and integration tests and install it in your local repository.
 
 Jillion is now ready to use.
+
+### Building Without Running Tests
+Some of the integration tests take several minutes.  To Build without re-running those tests, use
+
+```
+ %mvn clean install -DskipTests
+```
+
+
 
 
  
@@ -37,6 +47,20 @@ Jillion is now ready to use.
  
  Danny Katzel
  
+ 
+ 
+# 6.0 Release Notes
+There are too many to list here, see `change_log.txt` for the complete set of changes
+
+## API Changes
+1.  Jillion requires Java 11+
+1.  fasta and fastq parsers will now seamlessly work on tar.gz files
+1. Performance improvements
+
+## Bug Fixes
+1. Bug fixes for seeking and parsing BAM files
+
+
 # 5.3.3 Release Notes
 
 ## API Changes
