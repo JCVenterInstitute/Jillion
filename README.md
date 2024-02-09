@@ -9,6 +9,7 @@ Jillion 5 requires Java 8 and uses new Java 8 language features such as default 
 ##Maven Central
 The easiest way to use Jillion is including it as a dependency 
 in your package manager.  Jillion is available on Maven Central
+
 ```
 <dependency>
   <groupId>org.jcvi.jillion</groupId>
