@@ -6,7 +6,18 @@ often be many more source code changes that aren't listed if they don't
 change the behavior in any public API classes.  The order of changes is mostly
 chronological so the most important changes may not always be ordered first.
 
+================
+Jillion 6.0.1
+================
 
+Bug Fixes
+---------
+
+1. Changed VariantNucleotideSequence#getTriplets() to examine the underlying read combinations even
+   if only one slice has variants.  6.0 would only do this possibly more computationally intensive operation if
+   multiple slices had variants.  This fixes a bug where a mis-assembled read that doesn't span the whole codon
+   should not be included as a variant triplet.
+   
 ================
 Jillion 6.0
 ================

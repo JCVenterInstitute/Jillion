@@ -44,6 +44,8 @@ import org.jcvi.jillion.internal.core.util.ArrayUtil;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 import org.jcvi.jillion.internal.core.util.iter.PrimitiveArrayIterators;
 
+import lombok.Data;
+
 public class VariantNucleotideSequence implements INucleotideSequence<VariantNucleotideSequence, VariantNucleotideSequence.Builder>{
 
 	private final NucleotideSequence nucleotideSequence;
@@ -117,143 +119,131 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 	}
 	
 	
+	private SliceInfo handleNextNonGapSlice(OffsetKnowingIterator iter, boolean revComplement) {
+		Nucleotide a=null;
+		Variant va=null;
+		int offsetA=0;
+		while((a==null && va==null) && iter.hasNext()) {
+			int nextOffset = iter.getNextOffset();
+			if(variantOffsets.binarySearch(nextOffset) >=0){
+				//is variant
+				va = variants.get(nextOffset);
+				if(revComplement) {
+					va= va.complement();
+				}
+			}
+			Nucleotide n = iter.next();
+			if(n.isGap()) {
+				va = null;
+			}else{
+				a=n;
+				offsetA=iter.nextOffset-1;
+			}
+		}
+		if(a==null && va==null) {
+			return null;
+		}
+		return new SliceInfo(offsetA, a, va);
+	}
+	@Data
+	private static class SliceInfo{
+		private final int offset;
+		private final Nucleotide n;
+		private final Variant variant;
+		
+		public List<Nucleotide> getOrderedAlleles(){
+			if(variant==null) {
+				return List.of(n);
+			}
+			return variant.getOrderedAlleles();
+		}
+		
+	}
 	
-	private void consumeTripletIterator(OffsetKnowingIterator iter, boolean revComplement, 
+	private void handleConsumer(SliceInfo aInfo, SliceInfo bInfo, SliceInfo cInfo, boolean revComplement,
 			Consumer<List<VariantTriplet>> consumer, Consumer<UnderlyingCoverageFeature> featureConsumer) {
-		while(iter.hasNext()) {
-			
-			Nucleotide a=null, b=null,c=null;
-			Variant va=null, vb=null,vc=null;
-			//set to 0 to make compiler happy but if they get used they should be set by if statements below
-			int offsetA=0, offsetB=0, offsetC=0;
-			while((a==null && va==null) && iter.hasNext()) {
-				int nextOffset = iter.getNextOffset();
-				if(variantOffsets.binarySearch(nextOffset) >=0){
-					//is variant
-					va = variants.get(nextOffset);
-					if(revComplement) {
-						va= va.complement();
-					}
-				}
-				Nucleotide n = iter.next();
-				if(n.isGap()) {
-					va = null;
-				}else{
-					a=n;
-					offsetA=iter.nextOffset-1;
-				}
-			}
-			while((b==null && vb==null) && iter.hasNext()) {
-				if(variantOffsets.binarySearch(iter.getNextOffset()) >=0){
-					//is variant
-					vb = variants.get(iter.getNextOffset());
-					if(revComplement) {
-						vb= vb.complement();
-					}
-				}
-				Nucleotide n = iter.next();
-				if(n.isGap()) {
-					vb = null;
-				}else{
-					b=n;
-					offsetB=iter.nextOffset-1;
-				}
-			}
-			while((c==null && vc==null) && iter.hasNext()) {
-				if(variantOffsets.binarySearch(iter.getNextOffset()) >=0){
-					//is variant
-					vc = variants.get(iter.getNextOffset());
-					if(revComplement) {
-						vc= vc.complement();
-					}
-				}
-				Nucleotide n = iter.next();
-				if(n.isGap()) {
-					vc = null;
-				}else {
-					c=n;
-					offsetC=iter.nextOffset-1;
-				}
-			}
-			if(c !=null) {
-				if(va==null && vb==null && vc==null) {
-					consumer.accept(List.of(new VariantTriplet(Triplet.create(a, b, c), 1D, offsetA, offsetB, offsetC)));
-				}else{
-					List<VariantTriplet> list= new ArrayList<>();
-					List<VariantTriplet> innerList = list;
-					if(va !=null && vb==null && vc==null){
-						//simple case only 1 col is variant
-						Nucleotide majority = va.getMajorityAllele();
-						list.add(new VariantTriplet(Triplet.create(majority, b, c), va.getMajorityPercentage(), offsetA, offsetB, offsetC));
-						Nucleotide finalB=b;
-						Nucleotide finalC =c;
-						final int finalOffsetA=offsetA;
-						final int finalOffsetB=offsetB;
-						final int finalOffsetC=offsetC;
-						va.minorityAlleles()
-							.forEach(ma -> innerList.add(new VariantTriplet(Triplet.create(ma.getBase(), finalB, finalC), ma.getPercent(), finalOffsetA, finalOffsetB, finalOffsetC)));
-						
-					}else if(va ==null && vb!=null && vc==null){
-						//simple case only 1 col is variant
-						Nucleotide majority = vb.getMajorityAllele();
-						list.add(new VariantTriplet(Triplet.create(a, majority, c), vb.getMajorityPercentage(), offsetA, offsetB, offsetC));
-						Nucleotide finalA=a;
-						Nucleotide finalC =c;
-						final int finalOffsetA=offsetA;
-						final int finalOffsetB=offsetB;
-						final int finalOffsetC=offsetC;
-						vb.minorityAlleles()
-							.forEach(mb -> innerList.add(new VariantTriplet(Triplet.create(finalA, mb.getBase(), finalC), mb.getPercent(), finalOffsetA, finalOffsetB, finalOffsetC)));
-						
-					}else if(va ==null && vb==null && vc!=null){
-						//simple case only 1 col is variant
-						Nucleotide majority = vc.getMajorityAllele();
-						list.add(new VariantTriplet(Triplet.create(a, b,majority), vc.getMajorityPercentage(), offsetA, offsetB, offsetC));
-						Nucleotide finalA=a;
-						Nucleotide finalB =b;
-						final int finalOffsetA=offsetA;
-						final int finalOffsetB=offsetB;
-						final int finalOffsetC=offsetC;
-						vc.minorityAlleles()
-							.forEach(mc -> innerList.add(new VariantTriplet(Triplet.create(finalA, finalB, mc.getBase()), mc.getPercent(), finalOffsetA, finalOffsetB, finalOffsetC)));
-						
-					}else {
-						if(underlyingCoverage!=null) {
-							UnderlyingCoverageParameters build = UnderlyingCoverageParameters.builder()
-									.gappedOffsets(offsetA, offsetB, offsetC)
-									.dir(revComplement? Direction.REVERSE: Direction.FORWARD)
-									.variant1(va)
-									.variant2(vb)
-									.variant3(vc)
-									.refs(a, b, c)
-									.featureConsumer(featureConsumer)
-									.build();
+		if(cInfo !=null) {
+			if(aInfo.variant==null && bInfo.variant==null && cInfo.variant==null) {
+				consumer.accept(List.of(new VariantTriplet(Triplet.create(aInfo.n, bInfo.n, cInfo.n), 1D, aInfo.offset, bInfo.offset, cInfo.offset)));
+			}else{
+				List<VariantTriplet> list= new ArrayList<>();
+				
+					if(underlyingCoverage!=null) {
+						UnderlyingCoverageParameters build = UnderlyingCoverageParameters.builder()
+								.gappedOffsets(aInfo.offset, bInfo.offset, cInfo.offset)
+								.dir(revComplement? Direction.REVERSE: Direction.FORWARD)
+								.variant1(aInfo.variant)
+								.variant2(bInfo.variant)
+								.variant3(cInfo.variant)
+								.refs(aInfo.n, bInfo.n, cInfo.n)
+								.featureConsumer(featureConsumer)
+								.build();
 
-							List<VariantTriplet> underlyingList = underlyingCoverage.getCoverageFor(build);
+						List<VariantTriplet> underlyingList = underlyingCoverage.getCoverageFor(build);
+						
+						if(underlyingList !=null) {
+							//TODO throw error if null ?
+							list = underlyingList;
+						}
+					}else {
+						List<VariantTriplet> innerList = list;
+						if(aInfo.variant !=null && bInfo.variant==null && cInfo.variant==null){
+							//simple case only 1 col is variant
+							Nucleotide majority = aInfo.variant.getMajorityAllele();
+							list.add(new VariantTriplet(Triplet.create(majority, bInfo.n, cInfo.n), aInfo.variant.getMajorityPercentage(), aInfo.offset, bInfo.offset, cInfo.offset));
 							
-							if(underlyingList !=null) {
-								//TODO throw error if null ?
-								list = underlyingList;
-							}
+
+							aInfo.variant.minorityAlleles()
+								.forEach(ma -> innerList.add(new VariantTriplet(Triplet.create(ma.getBase(), bInfo.n, cInfo.n), ma.getPercent(), aInfo.offset, bInfo.offset, cInfo.offset)));
+							
+						}else if(aInfo.variant ==null && bInfo.variant!=null && cInfo.variant==null){
+							//simple case only 1 col is variant
+							
+							
+							Nucleotide majority = bInfo.variant.getMajorityAllele();
+							list.add(new VariantTriplet(Triplet.create(aInfo.n, majority, cInfo.n), bInfo.variant.getMajorityPercentage(), aInfo.offset, bInfo.offset, cInfo.offset));
+							
+							bInfo.variant.minorityAlleles()
+								.forEach(mb -> innerList.add(new VariantTriplet(Triplet.create(aInfo.n, mb.getBase(), cInfo.n), mb.getPercent(), aInfo.offset, bInfo.offset, cInfo.offset)));
+							
+						}else if(aInfo.variant ==null && bInfo.variant==null && cInfo.variant!=null){
+							//simple case only 1 col is variant
+							Nucleotide majority = cInfo.variant.getMajorityAllele();
+							list.add(new VariantTriplet(Triplet.create(aInfo.n, bInfo.n,majority), cInfo.variant.getMajorityPercentage(), aInfo.offset, bInfo.offset, cInfo.offset));
+							
+							cInfo.variant.minorityAlleles()
+								.forEach(mc -> innerList.add(new VariantTriplet(Triplet.create(aInfo.n, bInfo.n, mc.getBase()), mc.getPercent(), aInfo.offset, bInfo.offset, cInfo.offset)));
+							
 						}else {
-							List<Nucleotide> as = va==null? List.of(a): va.getOrderedAlleles();
-							List<Nucleotide> bs = vb==null? List.of(b): vb.getOrderedAlleles();
-							List<Nucleotide> cs = vc==null? List.of(c): vc.getOrderedAlleles();
+							List<Nucleotide> as =aInfo.getOrderedAlleles();
+							List<Nucleotide> bs = bInfo.getOrderedAlleles();
+							List<Nucleotide> cs = cInfo.getOrderedAlleles();
 							for(Nucleotide aentry: as) {
 								for(Nucleotide bEntry: bs) {
 									for(Nucleotide cEntry: cs) {
-										list.add(new VariantTriplet(Triplet.create(aentry, bEntry, cEntry), 1, offsetA, offsetB, offsetC));
+										list.add(new VariantTriplet(Triplet.create(aentry, bEntry, cEntry), 1, aInfo.offset, bInfo.offset, cInfo.offset));
 									}
 								}
 							}
 						}
-						
 					}
-					//consume all
-					consumer.accept(list);
-				}
-				
+				consumer.accept(list);
 			}
+			
+		}
+	}
+	private void consumeTripletIterator(OffsetKnowingIterator iter, boolean revComplement, 
+			Consumer<List<VariantTriplet>> consumer, Consumer<UnderlyingCoverageFeature> featureConsumer) {
+		while(iter.hasNext()) {
+			
+			SliceInfo aInfo = handleNextNonGapSlice(iter, revComplement);
+			SliceInfo bInfo = handleNextNonGapSlice(iter, revComplement);
+			SliceInfo cInfo = handleNextNonGapSlice(iter, revComplement);
+			
+			handleConsumer(aInfo, bInfo, cInfo, revComplement, consumer, featureConsumer);
+			
+				
+			
 		}
 	}
 	
