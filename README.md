@@ -14,7 +14,7 @@ in your package manager.  Jillion is available on Maven Central
 <dependency>
   <groupId>org.jcvi.jillion</groupId>
   <artifactId>jillion</artifactId>
-  <version>6.0</version>
+  <version>6.0.1</version>
 </dependency>
 ```
 
