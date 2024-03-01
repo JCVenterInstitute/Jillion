@@ -1206,6 +1206,10 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 		return nucleotideSequence.getUngappedOffsetFor(gappedOffset);
 	}
 	@Override
+	public int getUngappedOffsetForSafe(int gappedOffset) {
+		return nucleotideSequence.getUngappedOffsetForSafe(gappedOffset);
+	}
+	@Override
 	public int getGappedOffsetFor(int ungappedOffset) {
 		return nucleotideSequence.getGappedOffsetFor(ungappedOffset);
 	}

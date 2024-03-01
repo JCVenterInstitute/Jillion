@@ -100,6 +100,13 @@ public abstract class AbstractResidueSequence<R extends Residue, T extends Resid
         }
         return gappedOffset - getNumberOfGapsUntil(gappedOffset);
     }
+    
+    @Override
+    public int getUngappedOffsetForSafe(int gappedOffset) {
+    	checkPositiveOffset(gappedOffset);
+    	long length = getLength();
+        return Math.min((int) length-1, gappedOffset) - getNumberOfGapsUntil(gappedOffset);
+    }
     /**
     * {@inheritDoc}
     */

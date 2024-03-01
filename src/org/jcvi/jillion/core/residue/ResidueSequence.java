@@ -110,6 +110,24 @@ public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R,
      * is negative or beyond the sequence length.
      */
     int getUngappedOffsetFor(int gappedOffset);
+    
+    /**
+     * Get the corresponding ungapped offset into
+     * this sequence but if the offset is out of bounds, return the closest valid value 
+     * and not throw an exception. For example
+     * calling this method passing in a value beyond the length
+     * of this sequence will return the last ungapped offset.
+     * @param gappedOffset gappedOffset the offset into the gapped coordinate
+     * system of the desired nucleotide.
+     * 
+     * @return the corresponding offset for the equivalent
+     * location in the ungapped sequence.
+     * 
+     * @since 6.0.2
+     * 
+     * @see #getUngappedOffsetFor(int)
+     */
+    int getUngappedOffsetForSafe(int gappedOffset);
     /**
      * Get the corresponding gapped offset into
      * this sequence for the given
@@ -127,6 +145,7 @@ public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R,
      */
     int getGappedOffsetFor(int ungappedOffset);
     
+   
     /**
      * Get the corresponding ungapped Range (where the start and end values
      * of the range are in ungapped coordinate space) for the given
@@ -147,6 +166,26 @@ public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R,
         return Range.of(
                 getUngappedOffsetFor((int)gappedRange.getBegin()),
                 getUngappedOffsetFor((int)gappedRange.getEnd())
+                );
+    }
+    /**
+     * Get the corresponding ungapped Range (where the start and end values
+     * of the range are in ungapped coordinate space) for the given
+     * gapped {@link Range}.
+     * @param gappedRange the Range of gapped coordinates; can not be null.
+     * @return a new Range never null.
+     * @throws NullPointerException if the gappedRange is null.
+     * 
+     * @since 6.0.2
+     */
+    default Range toUngappedRangeSafe(Range gappedRange){
+       
+        if(gappedRange ==null){
+            throw new NullPointerException("gappedRange can not be null");
+        }
+        return Range.of(
+                getUngappedOffsetForSafe((int)gappedRange.getBegin()),
+                getUngappedOffsetForSafe((int)gappedRange.getEnd())
                 );
     }
     

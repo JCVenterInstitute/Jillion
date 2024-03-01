@@ -31,6 +31,11 @@ class ACGTNOnlySimpleNucleotideSequence extends AbstractSimpleNucleotideSequence
     
 
     @Override
+	public int getUngappedOffsetForSafe(int gappedOffset) {
+		return gappedOffset;
+	}
+    
+	@Override
 	public Range toUngappedRange(Range gappedRange) {
 		return gappedRange;
 	}

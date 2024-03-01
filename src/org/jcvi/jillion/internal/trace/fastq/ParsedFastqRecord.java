@@ -504,6 +504,14 @@ public class ParsedFastqRecord implements FastqRecord {
 		public NucleotideSequenceBuilder toBuilder() {
 			return new NucleotideSequenceBuilder(ntString);
 		}
+
+
+
+		@Override
+		public int getUngappedOffsetForSafe(int gappedOffset) {
+			// TODO assume no gaps
+			return gappedOffset;
+		}
 		
 		
 	}

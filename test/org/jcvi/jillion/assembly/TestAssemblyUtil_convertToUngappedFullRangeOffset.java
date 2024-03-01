@@ -190,6 +190,10 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
 		public int getUngappedOffsetFor(int gappedOffset) {
 			return delegate.getUngappedOffsetFor(gappedOffset);
 		}
+		@Override
+		public int getUngappedOffsetForSafe(int gappedOffset) {
+			return delegate.getUngappedOffsetForSafe(gappedOffset);
+		}
 
 		@Override
 		public int getGappedOffsetFor(int ungappedOffset) {

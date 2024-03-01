@@ -23,9 +23,11 @@ package org.jcvi.jillion.core.residue.nt;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.PrimitiveIterator.OfInt;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.util.iter.SingleElementIterator;
+import org.jcvi.jillion.core.util.streams.BiIntConsumer;
 import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
@@ -46,6 +48,8 @@ import org.jcvi.jillion.internal.core.util.GrowableIntArray;
  *
  */
 abstract class AbstractNucleotideCodec implements NucleotideCodec{
+	
+
 	private static final int END_OF_ITER = Integer.MIN_VALUE;
         private static final ValueSizeStrategy[] VALUE_SIZE_STRATEGIES = ValueSizeStrategy.values();
 		/*
@@ -101,9 +105,14 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
 	    @Override
 	    public int getUngappedOffsetFor(byte[] encodedGlyphs, int gappedOffset) {
 	        int numGaps=getNumberOfGapsUntil(encodedGlyphs,gappedOffset);
+//	        return Math.min(gappedOffset, (int) getLength(encodedGlyphs) -1) -numGaps;
 	        return gappedOffset-numGaps;
 	    }
-	    /**
+	    
+	    
+	    
+
+		/**
 	    * {@inheritDoc}
 	    */
 	    @Override
@@ -237,8 +246,127 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
             }
 	    }
 	    
+	    
+	    private static class GapIterator implements OfInt{
+
+	    	private static final GapIterator EMPTY = new GapIterator(0, null,null);
+	    	static {
+	    		EMPTY.i = 0;
+	    	}
+	    	private int numberOfSentinels;
+	    	private ValueSizeStrategy strategy;
+	    	private ByteBuffer buf;
+	    	
+	    	private int i=-1;
+	    	
+	    	private GapIterator(int numberOfSentinels, ValueSizeStrategy strategy, ByteBuffer buf) {
+				this.numberOfSentinels = numberOfSentinels;
+				this.strategy = strategy;
+				this.buf = buf;
+			}
+
+			public static GapIterator create(byte[] encodedGlyphs) {
+	    		ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
+				ValueSizeStrategy offsetStrategy = ValueSizeStrategy.values()[buf.get()];
+		        //need to skip length since we don't care about it
+				//but need to read it to advance pointer in buffer
+				offsetStrategy.getNext(buf);
+		        ValueSizeStrategy sentinelStrategy = VALUE_SIZE_STRATEGIES[buf.get()];
+	            if(sentinelStrategy == ValueSizeStrategy.NONE){
+	            	//no gaps
+	            	return EMPTY;
+	            }
+	            int numberOfSentinels = sentinelStrategy.getNext(buf);
+	            return new GapIterator(numberOfSentinels, offsetStrategy, buf);
+	    	}
+	    	
+			@Override
+			public boolean hasNext() {
+				return strategy!=null && i< numberOfSentinels;
+			}
+
+			@Override
+			public int nextInt() {
+				if(!hasNext()) {
+					throw new NoSuchElementException();
+				}
+				i++;
+				return strategy.getNext(buf);
+			}
+			
+			public int getNumberOfGapsSoFar() {
+				return i;
+			}
+			
+			public void stopWhen(StopCondition condition) {
+				ConditionResponse[] response = new ConditionResponse[1];
+				if(!hasNext()) {
+					return;
+				}
+				for(; i< numberOfSentinels; ) {
+					boolean halt=false;
+					consumeNext((a,b) -> {
+						response[0] = condition.shouldStop(a, b);
+					});
+					switch(response[0]) {
+					case HALT_AND_INCREMENT:
+					case HALT:
+						halt=true;
+						break;
+					default:
+						break;
+					}
+					if(halt) {
+						break;
+					}
+					
+				}
+				
+				
+			}
+			public void consumeNext(BiIntConsumer gapAndIConsumer) {
+				int ithGap = i;
+				gapAndIConsumer.accept(nextInt(), ithGap);
+			}
+	    	
+	    }
+	    private enum ConditionResponse{
+	    	HALT,
+	    	INCREMENT,
+	    	HALT_AND_INCREMENT
+	    	;
+	    }
+	    private static interface StopCondition {
+	    	
+	    	
+	    	ConditionResponse shouldStop(int gapOffset, int ithGap);
+	    	
+	    	public static StopCondition GoUntilGapOffset(int gappedOffset, boolean inclusive) {
+	    		if(inclusive) {
+	    		return (a,b)-> {
+	    			if(a > gappedOffset) {
+	    				return ConditionResponse.HALT;
+	    			}
+	    			return ConditionResponse.INCREMENT;
+	    		};
+	    		}else {
+	    			return (a,b)-> {
+		    			if(a >= gappedOffset) {
+		    				return ConditionResponse.HALT;
+		    			}
+		    			return ConditionResponse.INCREMENT;
+		    		};
+	    		}
+	    	}
+		}
 		@Override
 		public int getNumberOfGapsUntil(byte[] encodedGlyphs, int gappedOffset) {
+			
+			GapIterator iter = GapIterator.create(encodedGlyphs);
+			iter.stopWhen(StopCondition.GoUntilGapOffset(gappedOffset, true));
+			return iter.getNumberOfGapsSoFar();
+		
+			/*
 			ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
 			ValueSizeStrategy offsetStrategy = ValueSizeStrategy.values()[buf.get()];
 	        //need to skip length since we don't care about it
@@ -259,6 +387,7 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
             	}
             }
 			return numberOfSentinels;
+			*/
 		}
         
        

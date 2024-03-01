@@ -110,6 +110,14 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
         return codec.toUngappedRange(data, gappedRange);
     }
     @Override
+    public Range toUngappedRangeSafe(Range gappedRange){
+    	long length = getLength();
+    	if(gappedRange.getEnd() >length) {
+    		return codec.toUngappedRange(data, gappedRange.toBuilder().setEnd(length-1).build());
+    	}
+        return codec.toUngappedRange(data, gappedRange);
+    }
+    @Override
     public Range toGappedRange(Range ungappedRange){
         ensureRangeWithinSequence(ungappedRange, this::getUngappedLength);
         return codec.toGappedRange(data, ungappedRange);

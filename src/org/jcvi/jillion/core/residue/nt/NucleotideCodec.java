@@ -110,6 +110,7 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
      * offset; will always be >=0.
      */
     int getUngappedOffsetFor(byte[] encodedData,int gappedOffset);
+    
     /**
      * Get the gapped offset equivalent of the 
      * given ungapped offset.
