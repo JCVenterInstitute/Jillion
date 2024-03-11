@@ -7,6 +7,20 @@ change the behavior in any public API classes.  The order of changes is mostly
 chronological so the most important changes may not always be ordered first.
 
 ================
+Jillion 6.0.2
+================
+
+API Changes
+-----------
+1. Added ResidueSequence#getUngappedOffsetForSafe() and ResidueSequence#toUngappedRangeSafe()
+which will not throw index out of bounds exceptions if given parameters go beyond sequence length. 
+1. Added new class SamVisitorFunctions which has Factory Methods for easy visitor implementations.
+
+Performance Improvements
+------------------------
+1. Some internal methods implementations were rewritten to be easier to maintain and improve performance.
+
+================
 Jillion 6.0.1
 ================
 
