@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.jcvi.jillion.assembly.AssemblyUtil;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.ResidueSequence;
 /**
@@ -350,4 +351,42 @@ public interface NucleotideSequence extends INucleotideSequence<NucleotideSequen
 		return ((double)gc)/ungappedLength;
 	}
 
+	 /**
+     * Get the first non-gap {@link org.jcvi.jillion.core.residue.nt.Nucleotide} from the left side of the given
+     * gappedReadIndex on the given {@link NucleotideSequence}.  If the given base is not a gap, 
+     * then that is the value returned.
+     * @param gappedNucleotides the gapped nucleotides to search 
+     * @param gappedReadIndex the gapped offset (0-based) to start the search from.
+     * @return the first non-gap position on the placedRead that is {@code <= gappedReadIndex};
+     * may be negative if the sequence starts with gaps.
+     * 
+     * @since 6.0.2
+     */
+	default int getLeftFlankingNonGapOffsetFor(int gappedOffset) {
+		return AssemblyUtil.getLeftFlankingNonGapIndex(this, gappedOffset);
+	}
+	 /**
+     * Get the first non-gap {@link org.jcvi.jillion.core.residue.nt.Nucleotide} from the right side of the given
+     * gappedOffset on the given {@link NucleotideSequence}.  If the given base is not a gap, 
+     * then that is the value returned.
+     * @param sequence the gapped {@link NucleotideSequence} to search 
+     * @param gappedOffset the gapped offset (0-based) to start the search from.
+     * @return the first non-gap position on the placedRead that is {@code >= gappedReadIndex}
+     * 
+     * @since 6.0.2
+     */
+	default int getRightFlankingNonGapOffsetFor(int gappedOffset) {
+		return AssemblyUtil.getRightFlankingNonGapIndex(this, gappedOffset);
+	}
+	
+	default Range getExpandingFlankingNonGapRangeFor(Range gappedRange) {
+		return Range.of(getLeftFlankingNonGapOffsetFor((int) gappedRange.getBegin()),
+				getRightFlankingNonGapOffsetFor((int) gappedRange.getEnd())
+		);
+	}
+	default Range getContractingFlankingNonGapRangeFor(Range gappedRange) {
+		return Range.of(getRightFlankingNonGapOffsetFor((int) gappedRange.getBegin()),
+						getLeftFlankingNonGapOffsetFor((int) gappedRange.getEnd())
+				);
+	}
 }

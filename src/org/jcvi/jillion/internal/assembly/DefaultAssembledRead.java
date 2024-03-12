@@ -462,9 +462,10 @@ public final class DefaultAssembledRead implements AssembledRead {
 		@Override
 		public AssembledReadBuilder<AssembledRead> trim(Range trimRange) {
 			NucleotideSequence untrimmed = getCurrentNucleotideSequence();
-			int nonGapStart = AssemblyUtil.getRightFlankingNonGapIndex(untrimmed, (int)trimRange.getBegin());
+			int nonGapStart = untrimmed.getRightFlankingNonGapOffsetFor((int)trimRange.getBegin());
 			
-			int nonGapEnd =AssemblyUtil.getLeftFlankingNonGapIndex(untrimmed, (int)trimRange.getEnd());
+			int nonGapEnd =untrimmed.getLeftFlankingNonGapOffsetFor((int)trimRange.getEnd());
+			
 			int numLeft =untrimmed.getUngappedOffsetFor(nonGapStart);
 			int numRight =(int)(untrimmed.getUngappedLength()-1  -untrimmed.getUngappedOffsetFor(nonGapEnd));
 			

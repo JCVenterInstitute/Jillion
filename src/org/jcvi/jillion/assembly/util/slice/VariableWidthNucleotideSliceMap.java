@@ -224,7 +224,7 @@ public final class VariableWidthNucleotideSliceMap implements VariableWidthSlice
 			
 			//because our slices may start with gaps, we need to get the right flanking non-gap
 			//offset to find the correct first builder bin to use
-			int flankingGappedRefOffset =	AssemblyUtil.getRightFlankingNonGapIndex(trimmedGappedReferenceSequence, splicedStartOffset);
+			int flankingGappedRefOffset =	trimmedGappedReferenceSequence.getRightFlankingNonGapOffsetFor(splicedStartOffset);
 
 			int ungappedStartOffset = trimmedGappedReferenceSequence.getUngappedOffsetFor(flankingGappedRefOffset);
 			int currentOffset = ungappedStartOffset/widthPerSlice;

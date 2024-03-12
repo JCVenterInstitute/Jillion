@@ -824,8 +824,6 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
             	//doesn't start or end in gaps.
             	//if so trim more.
             	NucleotideSequence untrimmedReadSequence = readBuilder.getCurrentNucleotideSequence();
-            	int firstNonGapTrimOffset =AssemblyUtil.getRightFlankingNonGapIndex(untrimmedReadSequence, (int) readTrimRangeBuilder.getBegin());
-            	int lastNonGapTrimOffset =AssemblyUtil.getLeftFlankingNonGapIndex(untrimmedReadSequence, (int) readTrimRangeBuilder.getEnd());
             	
             	
             	
@@ -844,7 +842,8 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
             	//so we can just use the returned values
             	//when adding this adjusted read to the split
             	//contig.
-        		readBuilder.trim(Range.of(firstNonGapTrimOffset, lastNonGapTrimOffset));
+        		readBuilder.trim(untrimmedReadSequence.getContractingFlankingNonGapRangeFor(readTrimRangeBuilder.build()));
+        				
             	
             	
             	splitContig.addRead(readId, 

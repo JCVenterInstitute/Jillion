@@ -308,5 +308,6 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
         return nestedMatches;
     }
 
-    
+    int getLeftFlankingNonGapOffsetFor(byte[] encodedData, int gappedOffset);
+    int getRightFlankingNonGapOffsetFor(byte[] encodedData, int gappedOffset);
 }

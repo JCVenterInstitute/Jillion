@@ -13,12 +13,16 @@ Jillion 6.0.2
 API Changes
 -----------
 1. Added ResidueSequence#getUngappedOffsetForSafe() and ResidueSequence#toUngappedRangeSafe()
-which will not throw index out of bounds exceptions if given parameters go beyond sequence length. 
-1. Added new class SamVisitorFunctions which has Factory Methods for easy visitor implementations.
+which will not throw index out of bounds exceptions if given parameters go beyond sequence length.
+ 
+2. Added new class SamVisitorFunctions which has Factory Methods for easy visitor implementations.
+3. added NucleotideSequence#getLeftFlankingNonGapOffset() and Right flanking offset and new expanding and contracting flanking Range. 
 
 Performance Improvements
 ------------------------
 1. Some internal methods implementations were rewritten to be easier to maintain and improve performance.
+2.  performance improvements as well to calculate flank
+
 
 ================
 Jillion 6.0.1

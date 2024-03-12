@@ -126,6 +126,17 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
 
 
     @Override
+	public int getLeftFlankingNonGapOffsetFor(int gappedOffset) {
+		return codec.getLeftFlankingNonGapOffsetFor(data, gappedOffset);
+	}
+    
+	@Override
+	public int getRightFlankingNonGapOffsetFor(int gappedOffset) {
+		return codec.getRightFlankingNonGapOffsetFor(data, gappedOffset);
+	}
+
+
+	@Override
     public Stream<Range> findMatches(Pattern pattern) {
         return codec.matches(data, pattern);
     }

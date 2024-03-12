@@ -26,6 +26,7 @@ import java.util.NoSuchElementException;
 import java.util.PrimitiveIterator.OfInt;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.util.SingleThreadAdder;
 import org.jcvi.jillion.core.util.iter.SingleElementIterator;
 import org.jcvi.jillion.core.util.streams.BiIntConsumer;
 import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
@@ -224,7 +225,121 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
 	        return sentinelStrategy.getNext(buf);
 	    }
         
+	    @Override
+		public int getLeftFlankingNonGapOffsetFor(byte[] encodedGlyphs, int gappedOffset) {
+	    	GapIterator iter = GapIterator.create(encodedGlyphs);
+			if(!iter.hasNext()) {
+				//no gaps
+				return gappedOffset;
+			}
+			GrowableIntArray gaps = new GrowableIntArray();
+			
+			iter.stopWhen(StopCondition.spy(StopCondition.GoUntilGapOffset(gappedOffset, true),
+					(gapOffset, ignored) ->{
+						gaps.append(gapOffset);
+					}
+					));
+			int current = gappedOffset;
+			while(current >0) {
+				if(gaps.binarySearch(current) >=0) {
+					current--;
+				}else {
+					break;
+				}
+			}
+	        //todo walk backwards
+			return current;
+		}
+
+		@Override
+		public int getRightFlankingNonGapOffsetFor(byte[] encodedGlyphs, int gappedOffset) {
+			GapIterator iter = GapIterator.create(encodedGlyphs);
+			if(!iter.hasNext()) {
+				//no gaps
+				return gappedOffset;
+			}
+			TwoIntStack stack = new TwoIntStack();
+			SingleThreadAdder numFlankingGaps = new SingleThreadAdder();
+			
+			iter.stopWhen(StopCondition.spy(StopCondition.GoUntilGapOffset(gappedOffset, false),
+					(lastGap, ignore)-> stack.push(lastGap)));
+			if(iter.currentGapOffset == gappedOffset) {
+				numFlankingGaps.increment();
+				
+			}
+			stack.clear();
+			stack.push(gappedOffset);
+			iter.stopWhen(StopCondition.spy(StopCondition.GoToNextNonGap(iter.currentGapOffset),
+					(a, ignore2)-> {
+						numFlankingGaps.increment();
+						stack.push(a);
+					}
+						
+					
+					));
+			//check if stack has consecutive values, if not then minus one
+			if(stack.size() ==2) {
+				
+				int a1 = stack.pop();
+				int a2 = stack.pop();
+				if(a1-a2 >1) {
+					//consecutive gaps
+					return gappedOffset + numFlankingGaps.intValue()-1;
+				}
+			}
+			return gappedOffset + numFlankingGaps.intValue();
+			
+		}
 		
+		
+		private static class TwoIntStack{
+			private int a,b;
+			private int size=0;
+			
+			public void push(int v) {
+				if(size==0) {
+					a=v;
+				}else if(size==1) {
+					b=v;
+				}else {
+					a=b;
+					b=v;
+				}
+				size++;
+			}
+			public void clear() {
+				size=0;
+				
+			}
+			public boolean isEmpty() {
+				return size==0;
+			}
+			public int size() {
+				return size;
+			}
+			
+			public int pop() {
+				if(size>1) {
+					size--;
+					return b;
+				}
+				if(size==1) {
+					size--;
+					return a;
+				}
+				throw new NoSuchElementException();
+			}
+			
+			public boolean contains(int v) {
+				if(size==0) {
+					return false;
+				}
+				if(size==1) {
+					return a==v;
+				}
+				return a==v || b==v;
+			}
+		}
 		
 	    protected GrowableIntArray getSentinelOffsets(byte[] encodedGlyphs){
 	    	ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
@@ -256,6 +371,7 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
 	    	private int numberOfSentinels;
 	    	private ValueSizeStrategy strategy;
 	    	private ByteBuffer buf;
+	    	private int currentGapOffset;
 	    	
 	    	private int i=-1;
 	    	
@@ -291,7 +407,8 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
 					throw new NoSuchElementException();
 				}
 				i++;
-				return strategy.getNext(buf);
+				currentGapOffset =  strategy.getNext(buf);
+				return currentGapOffset;
 			}
 			
 			public int getNumberOfGapsSoFar() {
@@ -310,6 +427,7 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
 					});
 					switch(response[0]) {
 					case HALT_AND_INCREMENT:
+						
 					case HALT:
 						halt=true;
 						break;
@@ -341,9 +459,21 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
 	    	
 	    	ConditionResponse shouldStop(int gapOffset, int ithGap);
 	    	
+	    	
+	    	public static StopCondition spy(StopCondition condition, BiIntConsumer spy) {
+	    		return (a,b)->{
+	    			ConditionResponse resp = condition.shouldStop(a, b);
+	    			if(resp !=ConditionResponse.HALT) {
+	    				spy.accept(a, b);
+	    			}
+	    			return resp;
+	    		};
+	    	}
+	    	
 	    	public static StopCondition GoUntilGapOffset(int gappedOffset, boolean inclusive) {
 	    		if(inclusive) {
 	    		return (a,b)-> {
+	    			
 	    			if(a > gappedOffset) {
 	    				return ConditionResponse.HALT;
 	    			}
@@ -358,36 +488,46 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
 		    		};
 	    		}
 	    	}
+	    	
+	    	public static StopCondition GoToNextNonGap(int startOffset) {
+	    		int[] prevOffset = new int[1];
+	    		prevOffset[0]=startOffset;
+	    		
+	    		return (a,b)->{
+	    			if(a -1 > prevOffset[0]) {
+	    				return ConditionResponse.HALT;
+	    			}
+	    			prevOffset[0] = a;
+	    			return ConditionResponse.INCREMENT;
+	    		};
+	    	}
 		}
 		@Override
 		public int getNumberOfGapsUntil(byte[] encodedGlyphs, int gappedOffset) {
 			
 			GapIterator iter = GapIterator.create(encodedGlyphs);
-			iter.stopWhen(StopCondition.GoUntilGapOffset(gappedOffset, true));
-			return iter.getNumberOfGapsSoFar();
+			TwoIntStack stack = new TwoIntStack();
+			TwoIntStack numGapsStack = new TwoIntStack();
+			iter.stopWhen(StopCondition.spy(StopCondition.GoUntilGapOffset(gappedOffset, true),
+					(a,b)-> {
+						stack.push(a);
+						numGapsStack.push(b);
+					}
+					));
+			int i = iter.getNumberOfGapsSoFar();
+			boolean seenGreater=false;
+			while(!stack.isEmpty()) {
+				int pop = stack.pop();
+				if(pop > gappedOffset) {
+					seenGreater=true;
+				}else if(pop==gappedOffset && seenGreater) {
+			
+					i--;
+				}
+			}
+			
+			return i;
 		
-			/*
-			ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
-			ValueSizeStrategy offsetStrategy = ValueSizeStrategy.values()[buf.get()];
-	        //need to skip length since we don't care about it
-			//but need to read it to advance pointer in buffer
-			offsetStrategy.getNext(buf);
-	        ValueSizeStrategy sentinelStrategy = VALUE_SIZE_STRATEGIES[buf.get()];
-            if(sentinelStrategy == ValueSizeStrategy.NONE){
-            	//no gaps
-            	return 0;
-            }
-            int numberOfSentinels = sentinelStrategy.getNext(buf);
-
-            for(int i = 0; i< numberOfSentinels; i++){
-            	int currentGapOffset =offsetStrategy.getNext(buf);
-            	if(currentGapOffset >gappedOffset){
-            		//we found 
-            		return i;
-            	}
-            }
-			return numberOfSentinels;
-			*/
 		}
         
        
@@ -680,5 +820,8 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
 			}
 			
 		}
+		
+		
+		
         
 }
