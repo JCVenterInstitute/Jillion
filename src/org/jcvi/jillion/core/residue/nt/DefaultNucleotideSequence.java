@@ -31,12 +31,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.PrimitiveIterator.OfInt;
 import java.util.function.LongSupplier;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Rangeable;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
 
@@ -131,8 +133,41 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
 	}
     
 	@Override
+	public OfInt createLeftFlankingNonGapIterator(int startingGapOffset) {
+		return codec.createLeftFlankingNonGapIterator(data, startingGapOffset);
+	}
+	@Override
+	public OfInt createRightFlankingNonGapIterator(int startingGapOffset) {
+		return codec.createRightFlankingNonGapIterator(data, startingGapOffset);
+	}
+
+	@Override
 	public int getRightFlankingNonGapOffsetFor(int gappedOffset) {
 		return codec.getRightFlankingNonGapOffsetFor(data, gappedOffset);
+	}
+
+
+	@Override
+	public Range getExpandingFlankingNonGapRangeFor(Rangeable gappedRange) {
+		return codec.getExpandingFlankingNonGapRangeFor(data,gappedRange);
+	}
+
+
+	@Override
+	public Range getContractingFlankingNonGapRangeFor(Rangeable gappedRange) {
+		return codec.getContractingFlankingNonGapRangeFor(data, gappedRange);
+	}
+
+
+	@Override
+	public Range getExpandingFlankingNonGapRangeFor(int gappedBeginOffset, int gappedEndOffset) {
+		return codec.getExpandingFlankingNonGapRangeFor(data, gappedBeginOffset, gappedEndOffset);
+	}
+
+
+	@Override
+	public Range getContractingFlankingNonGapRangeFor(int gappedBeginOffset, int gappedEndOffset) {
+		return codec.getContractingFlankingNonGapRangeFor(data, gappedBeginOffset, gappedEndOffset);
 	}
 
 

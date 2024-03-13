@@ -1,10 +1,11 @@
 package org.jcvi.jillion.core.residue.nt;
 
 import org.jcvi.jillion.core.Range;
-
+import org.jcvi.jillion.core.Rangeable;
 import org.jcvi.jillion.internal.core.util.GrowableByteArray;
 
 import java.util.*;
+import java.util.PrimitiveIterator.OfInt;
 import java.util.stream.IntStream;
 
 /**
@@ -20,7 +21,9 @@ class ACGTNOnlySimpleNucleotideSequence extends AbstractSimpleNucleotideSequence
 
    
 
-    public ACGTNOnlySimpleNucleotideSequence(GrowableByteArray data) {
+    private static final long serialVersionUID = 7577069593805742567L;
+
+	public ACGTNOnlySimpleNucleotideSequence(GrowableByteArray data) {
        super(data);
     }
     public ACGTNOnlySimpleNucleotideSequence(Nucleotide[] data) {
@@ -29,8 +32,61 @@ class ACGTNOnlySimpleNucleotideSequence extends AbstractSimpleNucleotideSequence
     }
     
     
+    private static class NoGapsLeftIterator implements OfInt{
+
+    	private int current;
+    	
+    	public NoGapsLeftIterator(int gappedOffset) {
+    		this.current = gappedOffset;
+    	}
+		@Override
+		public boolean hasNext() {
+			return current>=0;
+		}
+
+		@Override
+		public int nextInt() {
+			if(!hasNext()) {
+				throw new NoSuchElementException();
+			}
+			return current--;
+		}
+    	
+    }
 
     @Override
+	public NucleotideSequence computeUngappedSequence() {
+		return this;
+	}
+	@Override
+	public int getLeftFlankingNonGapOffsetFor(int gappedOffset) {
+		return gappedOffset;
+	}
+	@Override
+	public OfInt createLeftFlankingNonGapIterator(int startingGapOffset) {
+		return new NoGapsLeftIterator(startingGapOffset);
+	}
+	@Override
+	public int getRightFlankingNonGapOffsetFor(int gappedOffset) {
+		return gappedOffset;
+	}
+	@Override
+	public Range getExpandingFlankingNonGapRangeFor(Rangeable gappedRange) {
+		return gappedRange.asRange();
+	}
+	@Override
+	public Range getContractingFlankingNonGapRangeFor(Rangeable gappedRange) {
+		return gappedRange.asRange();
+	}
+	@Override
+	public Range getExpandingFlankingNonGapRangeFor(int gappedBeginOffset, int gappedEndOffset) {
+		return Range.of(gappedBeginOffset, gappedEndOffset);
+	}
+	@Override
+	public Range getContractingFlankingNonGapRangeFor(int gappedBeginOffset, int gappedEndOffset) {
+		return Range.of(gappedBeginOffset, gappedEndOffset);
+	}
+	@Override
 	public int getUngappedOffsetForSafe(int gappedOffset) {
 		return gappedOffset;
 	}

@@ -16,12 +16,17 @@ API Changes
 which will not throw index out of bounds exceptions if given parameters go beyond sequence length.
  
 2. Added new class SamVisitorFunctions which has Factory Methods for easy visitor implementations.
-3. added NucleotideSequence#getLeftFlankingNonGapOffset() and Right flanking offset and new expanding and contracting flanking Range. 
+3. added INucleotideSequence#getLeftFlankingNonGapOffset() and Right flanking 
+   offset and new expanding and contracting flanking Range. 
+   
+4. added INucleotideSequence#createRightFlankingNonGapIterator(start) 
+   and INucleotideSequence#createLeftFlankingNonGapIterator(start)
 
 Performance Improvements
 ------------------------
 1. Some internal methods implementations were rewritten to be easier to maintain and improve performance.
-2.  performance improvements as well to calculate flank
+2.  performance improvements to calculate flank offsets. This improves performance of applications
+    that use Jillion with general assembly/gap heavy calculations by about 10%.
 
 
 ================

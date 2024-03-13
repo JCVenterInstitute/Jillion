@@ -23,6 +23,7 @@ package org.jcvi.jillion.core.residue.nt;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.PrimitiveIterator.OfInt;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -30,6 +31,7 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Rangeable;
 import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.internal.core.GlyphCodec;
 import org.jcvi.jillion.internal.core.io.StreamUtil;
@@ -310,4 +312,17 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
 
     int getLeftFlankingNonGapOffsetFor(byte[] encodedData, int gappedOffset);
     int getRightFlankingNonGapOffsetFor(byte[] encodedData, int gappedOffset);
+    
+   
+	Range getExpandingFlankingNonGapRangeFor(byte[] encodedData, Rangeable gappedRange);
+
+	Range getContractingFlankingNonGapRangeFor(byte[] encodedData, Rangeable gappedRange);
+	
+	Range getExpandingFlankingNonGapRangeFor(byte[] encodedData, int gappedBegin, int gappedEnd );
+
+	Range getContractingFlankingNonGapRangeFor(byte[] encodedData, int gappedBegin, int gappedEnd);
+	
+	OfInt createLeftFlankingNonGapIterator(byte[] encodedGlyphs, int startingGapOffset);
+	
+	OfInt createRightFlankingNonGapIterator(byte[] encodedGlyphs, int startingGapOffset);
 }

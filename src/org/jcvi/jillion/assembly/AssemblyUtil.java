@@ -210,9 +210,10 @@ public final class AssemblyUtil {
      * @return the first non-gap position on the placedRead that is {@code >= gappedReadIndex}
      */
     public static int getRightFlankingNonGapIndex(NucleotideSequence sequence, int gappedOffset) {
-        if(gappedOffset > sequence.getLength() -1){
+        if(gappedOffset > sequence.getLength() -1 || gappedOffset < 0){
             return gappedOffset;
         }
+
         if(sequence.isGap(gappedOffset)){
             return getRightFlankingNonGapIndex(sequence,gappedOffset+1);
         }

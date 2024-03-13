@@ -14,6 +14,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.PrimitiveIterator.OfInt;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.PrimitiveIterator;
@@ -31,6 +32,7 @@ import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Rangeable;
 import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder.DecodingOptions;
@@ -1261,7 +1263,39 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 			}
 		});
 	}
+	@Override
+	public int getLeftFlankingNonGapOffsetFor(int gappedOffset) {
+		return nucleotideSequence.getLeftFlankingNonGapOffsetFor(gappedOffset);
+	}
+	@Override
+	public int getRightFlankingNonGapOffsetFor(int gappedOffset) {
+		return nucleotideSequence.getRightFlankingNonGapOffsetFor(gappedOffset);
+	}
+	@Override
+	public Range getExpandingFlankingNonGapRangeFor(Rangeable gappedRange) {
+		return nucleotideSequence.getExpandingFlankingNonGapRangeFor(gappedRange);
+	}
+	@Override
+	public Range getContractingFlankingNonGapRangeFor(Rangeable gappedRange) {
+		return nucleotideSequence.getContractingFlankingNonGapRangeFor(gappedRange);
+	}
+	@Override
+	public Range getExpandingFlankingNonGapRangeFor(int gappedBeginOffset, int gappedEndOffset) {
+		return nucleotideSequence.getExpandingFlankingNonGapRangeFor(gappedBeginOffset, gappedEndOffset);
+	}
+	@Override
+	public Range getContractingFlankingNonGapRangeFor(int gappedBeginOffset, int gappedEndOffset) {
+		return nucleotideSequence.getContractingFlankingNonGapRangeFor(gappedBeginOffset, gappedEndOffset);
+	}
 	
+	@Override
+	public OfInt createLeftFlankingNonGapIterator(int startingGapOffset) {
+		return nucleotideSequence.createLeftFlankingNonGapIterator(startingGapOffset);
+	}
+	@Override
+	public OfInt createRightFlankingNonGapIterator(int startingGapOffset) {
+		return nucleotideSequence.createRightFlankingNonGapIterator(startingGapOffset);
+	}
 	
 
 	

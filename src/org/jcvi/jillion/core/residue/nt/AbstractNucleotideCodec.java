@@ -26,10 +26,13 @@ import java.util.NoSuchElementException;
 import java.util.PrimitiveIterator.OfInt;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Rangeable;
 import org.jcvi.jillion.core.util.SingleThreadAdder;
 import org.jcvi.jillion.core.util.iter.SingleElementIterator;
 import org.jcvi.jillion.core.util.streams.BiIntConsumer;
 import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
+import org.jcvi.jillion.internal.core.residue.nt.DefaultLeftFlankingNoGapIterator;
+import org.jcvi.jillion.internal.core.residue.nt.DefaultRightFlankingNoGapIterator;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
 
@@ -111,7 +114,15 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
 	    }
 	    
 	    
-	    
+	    private static boolean _encodingHasGaps(byte[] encodedGlyphs) {
+    		ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
+			ValueSizeStrategy offsetStrategy = ValueSizeStrategy.values()[buf.get()];
+	        //need to skip length since we don't care about it
+			//but need to read it to advance pointer in buffer
+			offsetStrategy.getNext(buf);
+	        ValueSizeStrategy sentinelStrategy = VALUE_SIZE_STRATEGIES[buf.get()];
+            return sentinelStrategy != ValueSizeStrategy.NONE;
+    }
 
 		/**
 	    * {@inheritDoc}
@@ -225,13 +236,148 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
 	        return sentinelStrategy.getNext(buf);
 	    }
         
-	    @Override
+	    private static class NonGapsRightIterator implements OfInt{
+	    	private int nextNonGap;
+	    	private int lastNonGapOffset;
+	    	private final GapIterator gapIterator;
+	    	private Integer nextGap;
+	    	
+	    	public NonGapsRightIterator(int startOffset, GapIterator gapIterator, int lastNonGapOffset) {
+	    		this.gapIterator = gapIterator;
+	    		iterateUntilCorrectGapPosition(startOffset);
+	    		this.lastNonGapOffset = lastNonGapOffset;
+	    		nextNonGap=startOffset;
+//	    		update();
+	    	}
+	    	
+	    	@Override
+			public boolean hasNext() {
+				return nextNonGap<=lastNonGapOffset;
+			}
+
+			@Override
+			public int nextInt() {
+				if(!hasNext()) {
+					throw new NoSuchElementException();
+				}
+				if(nextGap==null || nextNonGap < nextGap) {
+					
+					return nextNonGap++;
+				}
+				//we are past the next gap need to update
+				
+				nextNonGap++;
+				update();
+				return nextNonGap++;
+			}
+
+			private void update() {
+				nextGap=null;
+				
+	    		while(gapIterator.hasNext()) {
+	    			int ng = gapIterator.nextInt();
+	    			if(ng==nextNonGap) {
+	    				nextNonGap++;
+	    			}else {
+	    				nextGap=ng;
+	    				break;
+	    			}
+	    		}
+			}
+
+			private void iterateUntilCorrectGapPosition(int startOffset){
+	    		nextGap=null;
+	    		while(gapIterator.hasNext()) {
+	    			int ng = gapIterator.nextInt();
+	    			if(ng>=startOffset) {
+	    				nextGap=ng;
+	    				break;
+	    			}
+	    		}
+	    	}
+	    }
+	    
+	    private static class NonGapsLeftIterator implements OfInt{
+
+	    	private int nextNonGap;
+	    	private final GrowableIntArray gaps;
+	    	
+	    	public NonGapsLeftIterator(int gappedOffset, GrowableIntArray gaps) {
+	    		
+	    		this.gaps = gaps;
+	    		computeNextNonGap(gappedOffset);
+	    	}
+	    	private void computeNextNonGap(int start) {
+	    		nextNonGap=start;
+	    		while(nextNonGap>=0) {
+	    			if(gaps.binarySearch(nextNonGap) <0) {
+	    				//not a gap
+	    				break;
+	    			}
+	    			nextNonGap--;
+	    		}
+	    	}
+	    	
+			@Override
+			public boolean hasNext() {
+				return nextNonGap>=0;
+			}
+
+			@Override
+			public int nextInt() {
+				if(!hasNext()) {
+					throw new NoSuchElementException();
+				}
+				int ret = nextNonGap;
+				computeNextNonGap(nextNonGap-1);
+				return ret;
+			}
+	    	
+	    }
+	    
+	 @Override
+	 public OfInt createLeftFlankingNonGapIterator(byte[] encodedGlyphs, int startingGapOffset) {
+		GapIterator iter = GapIterator.create(encodedGlyphs);
+		if(!iter.hasNext()) {
+			return new DefaultLeftFlankingNoGapIterator(startingGapOffset);
+		}
+		//iterate to the farthest gap position and then walk back through all of our gap offsets
+		GrowableIntArray gaps = new GrowableIntArray();
+		
+		iter.stopWhen(StopCondition.spy(StopCondition.GoUntilGapOffset(startingGapOffset, true),
+				(gapOffset, ignored) ->{
+					gaps.append(gapOffset);
+				}
+				));
+		if(gaps.getCurrentLength() ==0) {
+			//no gaps yet
+			return new DefaultLeftFlankingNoGapIterator(startingGapOffset);
+		}
+		return new NonGapsLeftIterator(startingGapOffset, gaps);
+	 }
+	 @Override
+	 public OfInt createRightFlankingNonGapIterator(byte[] encodedGlyphs, int startingGapOffset) {
+		GapIterator iter = GapIterator.create(encodedGlyphs);
+		if(!iter.hasNext()) {
+			return new DefaultRightFlankingNoGapIterator(startingGapOffset, (int) getLength(encodedGlyphs) -1);
+		}
+		return new NonGapsRightIterator(startingGapOffset, iter,getLeftFlankingNonGapOffsetFor(encodedGlyphs, (int) getLength(encodedGlyphs) -1));
+	 }
+	  
+
+		@Override
 		public int getLeftFlankingNonGapOffsetFor(byte[] encodedGlyphs, int gappedOffset) {
 	    	GapIterator iter = GapIterator.create(encodedGlyphs);
 			if(!iter.hasNext()) {
 				//no gaps
 				return gappedOffset;
 			}
+			return getLeftFlankingNonGapOffset(gappedOffset, iter);
+		}
+	    
+	    
+
+		private int getLeftFlankingNonGapOffset(int gappedOffset, GapIterator iter) {
 			GrowableIntArray gaps = new GrowableIntArray();
 			
 			iter.stopWhen(StopCondition.spy(StopCondition.GoUntilGapOffset(gappedOffset, true),
@@ -240,15 +386,65 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
 					}
 					));
 			int current = gappedOffset;
-			while(current >0) {
+			int lengthWalked=0;
+			while(current >0 && lengthWalked < gaps.getCurrentLength()) {
+				
 				if(gaps.binarySearch(current) >=0) {
 					current--;
+					lengthWalked++;
 				}else {
 					break;
 				}
 			}
-	        //todo walk backwards
 			return current;
+		}
+
+		@Override
+		public Range getExpandingFlankingNonGapRangeFor(byte[] encodedGlyphs,Rangeable gappedRange) {
+			if(!_encodingHasGaps(encodedGlyphs)) {
+				//no gaps
+				return gappedRange.asRange();
+			}
+			
+			return Range.of( getLeftFlankingNonGapOffsetFor(encodedGlyphs, (int) gappedRange.getBegin()),
+					getRightFlankingNonGapOffsetFor(encodedGlyphs, (int) gappedRange.getEnd()));
+		}
+		
+		@Override
+		public Range getExpandingFlankingNonGapRangeFor(byte[] encodedGlyphs,int gappedBegin, int gappedEnd) {
+			if(!_encodingHasGaps(encodedGlyphs)) {
+				//no gaps
+				return Range.of(gappedBegin, gappedEnd);
+			}
+			
+			return Range.of( getLeftFlankingNonGapOffsetFor(encodedGlyphs, gappedBegin),
+							getRightFlankingNonGapOffsetFor(encodedGlyphs, gappedEnd));
+		}
+
+		@Override
+		public Range getContractingFlankingNonGapRangeFor(byte[] encodedGlyphs,int gappedBegin, int gappedEnd) {
+			if(!_encodingHasGaps(encodedGlyphs)) {
+				//no gaps
+				return Range.of(gappedBegin, gappedEnd);
+			}
+			
+			return Range.of(  getRightFlankingNonGapOffsetFor(encodedGlyphs, gappedBegin),
+					getLeftFlankingNonGapOffsetFor(encodedGlyphs, gappedEnd));
+					
+		}
+		@Override
+		public Range getContractingFlankingNonGapRangeFor(byte[] encodedGlyphs,Rangeable gappedRange) {
+			if(!_encodingHasGaps(encodedGlyphs)) {
+				//no gaps
+				return gappedRange.asRange();
+			}
+			//we can't delegate because we lose the intermediate stack
+			//there are edge cases where the left side iterates to a gap we need to consider for the right side
+			
+			
+			return Range.of(  getRightFlankingNonGapOffsetFor(encodedGlyphs, (int)gappedRange.getBegin()),
+					getLeftFlankingNonGapOffsetFor(encodedGlyphs, (int)gappedRange.getEnd()));
+					
 		}
 
 		@Override
@@ -258,88 +454,26 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
 				//no gaps
 				return gappedOffset;
 			}
-			TwoIntStack stack = new TwoIntStack();
+			return getRightFlankingNonGapOffset(gappedOffset, iter);
+			
+		}
+		private int getRightFlankingNonGapOffset(int gappedOffset, GapIterator iter) {
+			
 			SingleThreadAdder numFlankingGaps = new SingleThreadAdder();
 			
-			iter.stopWhen(StopCondition.spy(StopCondition.GoUntilGapOffset(gappedOffset, false),
-					(lastGap, ignore)-> stack.push(lastGap)));
-			if(iter.currentGapOffset == gappedOffset) {
-				numFlankingGaps.increment();
-				
-			}
-			stack.clear();
-			stack.push(gappedOffset);
-			iter.stopWhen(StopCondition.spy(StopCondition.GoToNextNonGap(iter.currentGapOffset),
-					(a, ignore2)-> {
-						numFlankingGaps.increment();
-						stack.push(a);
-					}
-						
-					
-					));
-			//check if stack has consecutive values, if not then minus one
-			if(stack.size() ==2) {
-				
-				int a1 = stack.pop();
-				int a2 = stack.pop();
-				if(a1-a2 >1) {
-					//consecutive gaps
-					return gappedOffset + numFlankingGaps.intValue()-1;
+			iter.stopWhen(StopCondition.GoUntilGapOffset(gappedOffset, false));
+			if(iter.currentGapOffset <=gappedOffset) {
+				if(iter.currentGapOffset == gappedOffset) {
+					numFlankingGaps.increment();				
 				}
+				iter.stopWhen(StopCondition.spy(StopCondition.GoToNextNonGap(iter.currentGapOffset),
+												(ignore1, ignore2)-> 	numFlankingGaps.increment()));
 			}
 			return gappedOffset + numFlankingGaps.intValue();
-			
 		}
 		
 		
-		private static class TwoIntStack{
-			private int a,b;
-			private int size=0;
-			
-			public void push(int v) {
-				if(size==0) {
-					a=v;
-				}else if(size==1) {
-					b=v;
-				}else {
-					a=b;
-					b=v;
-				}
-				size++;
-			}
-			public void clear() {
-				size=0;
-				
-			}
-			public boolean isEmpty() {
-				return size==0;
-			}
-			public int size() {
-				return size;
-			}
-			
-			public int pop() {
-				if(size>1) {
-					size--;
-					return b;
-				}
-				if(size==1) {
-					size--;
-					return a;
-				}
-				throw new NoSuchElementException();
-			}
-			
-			public boolean contains(int v) {
-				if(size==0) {
-					return false;
-				}
-				if(size==1) {
-					return a==v;
-				}
-				return a==v || b==v;
-			}
-		}
+		
 		
 	    protected GrowableIntArray getSentinelOffsets(byte[] encodedGlyphs){
 	    	ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
@@ -362,6 +496,8 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
 	    }
 	    
 	    
+	   
+	   
 	    private static class GapIterator implements OfInt{
 
 	    	private static final GapIterator EMPTY = new GapIterator(0, null,null);
@@ -373,13 +509,14 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
 	    	private ByteBuffer buf;
 	    	private int currentGapOffset;
 	    	
-	    	private int i=-1;
+	    	private int i=0;
 	    	
 	    	private GapIterator(int numberOfSentinels, ValueSizeStrategy strategy, ByteBuffer buf) {
 				this.numberOfSentinels = numberOfSentinels;
 				this.strategy = strategy;
 				this.buf = buf;
 			}
+	    	
 
 			public static GapIterator create(byte[] encodedGlyphs) {
 	    		ByteBuffer buf = ByteBuffer.wrap(encodedGlyphs);
@@ -406,8 +543,10 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
 				if(!hasNext()) {
 					throw new NoSuchElementException();
 				}
-				i++;
+				
 				currentGapOffset =  strategy.getNext(buf);
+				i++;
+				
 				return currentGapOffset;
 			}
 			
@@ -426,8 +565,8 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
 						response[0] = condition.shouldStop(a, b);
 					});
 					switch(response[0]) {
-					case HALT_AND_INCREMENT:
-						
+					case HALT_AND_DECREMENT:
+						i--;
 					case HALT:
 						halt=true;
 						break;
@@ -451,7 +590,7 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
 	    private enum ConditionResponse{
 	    	HALT,
 	    	INCREMENT,
-	    	HALT_AND_INCREMENT
+	    	HALT_AND_DECREMENT
 	    	;
 	    }
 	    private static interface StopCondition {
@@ -463,7 +602,7 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
 	    	public static StopCondition spy(StopCondition condition, BiIntConsumer spy) {
 	    		return (a,b)->{
 	    			ConditionResponse resp = condition.shouldStop(a, b);
-	    			if(resp !=ConditionResponse.HALT) {
+	    			if(resp ==ConditionResponse.INCREMENT) {
 	    				spy.accept(a, b);
 	    			}
 	    			return resp;
@@ -475,13 +614,16 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
 	    		return (a,b)-> {
 	    			
 	    			if(a > gappedOffset) {
-	    				return ConditionResponse.HALT;
+	    				return ConditionResponse.HALT_AND_DECREMENT;
 	    			}
 	    			return ConditionResponse.INCREMENT;
 	    		};
 	    		}else {
 	    			return (a,b)-> {
-		    			if(a >= gappedOffset) {
+		    			if(a > gappedOffset) {
+		    				return ConditionResponse.HALT_AND_DECREMENT;
+		    			}
+		    			if(a == gappedOffset) {
 		    				return ConditionResponse.HALT;
 		    			}
 		    			return ConditionResponse.INCREMENT;
@@ -506,27 +648,9 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
 		public int getNumberOfGapsUntil(byte[] encodedGlyphs, int gappedOffset) {
 			
 			GapIterator iter = GapIterator.create(encodedGlyphs);
-			TwoIntStack stack = new TwoIntStack();
-			TwoIntStack numGapsStack = new TwoIntStack();
-			iter.stopWhen(StopCondition.spy(StopCondition.GoUntilGapOffset(gappedOffset, true),
-					(a,b)-> {
-						stack.push(a);
-						numGapsStack.push(b);
-					}
-					));
-			int i = iter.getNumberOfGapsSoFar();
-			boolean seenGreater=false;
-			while(!stack.isEmpty()) {
-				int pop = stack.pop();
-				if(pop > gappedOffset) {
-					seenGreater=true;
-				}else if(pop==gappedOffset && seenGreater) {
+			iter.stopWhen(StopCondition.GoUntilGapOffset(gappedOffset, true));
+			return iter.getNumberOfGapsSoFar();
 			
-					i--;
-				}
-			}
-			
-			return i;
 		
 		}
         

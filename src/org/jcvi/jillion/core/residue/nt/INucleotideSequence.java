@@ -4,10 +4,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.PrimitiveIterator.OfInt;
 import java.util.function.Consumer;
 
+import org.jcvi.jillion.assembly.AssemblyUtil;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Rangeable;
 import org.jcvi.jillion.core.residue.ResidueSequence;
+import org.jcvi.jillion.internal.core.residue.nt.DefaultLeftFlankingNoGapIterator;
+import org.jcvi.jillion.internal.core.residue.nt.DefaultLeftFlankingNucleotideIterator;
+import org.jcvi.jillion.internal.core.residue.nt.DefaultRightFlankingNoGapIterator;
+import org.jcvi.jillion.internal.core.residue.nt.DefaultRightFlankingNucleotideIterator;
 
 public interface INucleotideSequence<S extends INucleotideSequence<S,B>, B extends INucleotideSequenceBuilder<S, B>> extends ResidueSequence<Nucleotide, S, B>{
 
@@ -166,4 +173,140 @@ public interface INucleotideSequence<S extends INucleotideSequence<S,B>, B exten
      * @since 5.3
      */
     List<Range> getRangesOfNs();
+    
+    /**
+     * Get the first non-gap {@link org.jcvi.jillion.core.residue.nt.Nucleotide} from the left side of the given
+     * gappedReadIndex on the given {@link NucleotideSequence}.  If the given base is not a gap, 
+     * then that is the value returned.
+     * @param gappedNucleotides the gapped nucleotides to search 
+     * @param gappedReadIndex the gapped offset (0-based) to start the search from.
+     * @return the first non-gap position on the sequence that is {@code <= gappedOffset}.
+     * 
+     * @since 6.0.2
+     */
+	default int getLeftFlankingNonGapOffsetFor(int gappedOffset) {
+		return AssemblyUtil.getLeftFlankingNonGapIndex(toNucleotideSequence(), gappedOffset);
+	}
+	/**
+	 * Create a new primitive int iterator {@link java.util.PrimitiveIterator.OfInt} 
+	 * that will iterate offsets of the non-gap positions starting at the given gapped 
+	 * start offset and move across the sequence towards the left (to lower numbers).
+	 * 
+	 * This will produce the same results as consecutive calls to {@link #getLeftFlankingNonGapOffsetFor(int)}
+	 * but passing in the computed values each time.  Some sequence implementations
+	 * may produce more efficient ways of computing that.
+	 * @param startingGapOffset the offset to start iterating from.
+	 * @return a new iterator; will never be null.
+	 * 
+	 * @since 6.0.2
+	 */
+	default OfInt createLeftFlankingNonGapIterator(int startingGapOffset) {
+		if(this.hasGaps()) {
+			return new DefaultLeftFlankingNucleotideIterator(this, startingGapOffset);
+		}
+		return new DefaultLeftFlankingNoGapIterator(startingGapOffset);
+	}
+	/**
+	 * Create a new primitive int iterator {@link java.util.PrimitiveIterator.OfInt} 
+	 * that will iterate offsets of the non-gap positions starting at the given gapped 
+	 * start offset and move across the sequence towards the right (to higher numbers).
+	 * 
+	 * This will produce the same results as consecutive calls to {@link #getRightFlankingNonGapOffsetFor(int)}
+	 * but passing in the computed values each time.  Some sequence implementations
+	 * may produce more efficient ways of computing that.
+	 * @param startingGapOffset the offset to start iterating from.
+	 * @return a new iterator; will never be null.
+	 * 
+	 * @since 6.0.2
+	 */
+	default OfInt createRightFlankingNonGapIterator(int startingGapOffset) {
+		if(this.hasGaps()) {
+			return new DefaultRightFlankingNucleotideIterator(this, startingGapOffset);
+		}
+		return new DefaultRightFlankingNoGapIterator(startingGapOffset, (int) getLength()-1);
+	}
+	 /**
+     * Get the first non-gap {@link org.jcvi.jillion.core.residue.nt.Nucleotide} from the right side of the given
+     * gappedOffset on the given {@link NucleotideSequence}.  If the given base is not a gap, 
+     * then that is the value returned.
+     * @param sequence the gapped {@link NucleotideSequence} to search 
+     * @param gappedOffset the gapped offset (0-based) to start the search from.
+     * @return the first non-gap position on the sequence that is {@code >= gappedOffset}
+     * 
+     * @since 6.0.2
+     */
+	default int getRightFlankingNonGapOffsetFor(int gappedOffset) {
+		return AssemblyUtil.getRightFlankingNonGapIndex(toNucleotideSequence(), gappedOffset);
+	}
+	/**
+	 * Get the first non-gap {@link Nucleotide} coordinates expanding the given range.
+	 * If the input coordinates are already non-gaps, then the coordinate will not change.
+	 * @apiNote This should be identical but possibly more efficient than
+	 * {@code Range.of(getLeftFlankingNonGapOffsetFor((int) gappedRange.getBegin()),
+				getRightFlankingNonGapOffsetFor((int) gappedRange.getEnd()))}.
+	 *
+	 * @param gappedRange the gapped {@link Range} to expand; can not be null.
+	 * @return a Range
+	 * @throws NullPointerException if gappedRange is null.
+	 * 
+	 * @since 6.0.2
+	 */
+	default Range getExpandingFlankingNonGapRangeFor(Rangeable gappedRange) {
+		return getExpandingFlankingNonGapRangeFor((int) gappedRange.getBegin(), (int) gappedRange.getEnd());
+	}
+	/**
+	 * Get the first non-gap {@link Nucleotide} coordinates contracting the given range.
+	 * If the input coordinates are already non-gaps, then the coordinate will not change.
+	 * @apiNote This should be identical but possibly more efficient than
+	 * {@code Range.of(getRightFlankingNonGapOffsetFor((int) gappedRange.getBegin()),
+						getLeftFlankingNonGapOffsetFor((int) gappedRange.getEnd())
+				)}.
+	 *
+	 * @param gappedRange the gapped {@link Range} to contract; can not be null.
+	 * @return a Range
+	 * @throws NullPointerException if gappedRange is null.
+	 * 
+	 * @since 6.0.2
+	 */
+	default Range getContractingFlankingNonGapRangeFor(Rangeable gappedRange) {
+		return getContractingFlankingNonGapRangeFor((int) gappedRange.getBegin(),(int) gappedRange.getEnd());
+	}
+	/**
+	 * Get the first non-gap {@link Nucleotide} coordinates expanding the given range.
+	 * If the input coordinates are already non-gaps, then the coordinate will not change.
+	 * 
+	 * @param gappedBeginOffset the begin coordinate
+	 * @param gappedEndOffset the end coordinate
+	 * @return a Range
+	 * 
+	 * @apiNote This should be identical but more efficient than
+	 * {{@link #getExpandingFlankingNonGapRangeFor(Range) getExpandingFlankingNonGapRangeFor(Range.of(gappedBeginOffset, gappedEndOffset))}.
+	 * 
+	 * 
+	 * @since 6.0.2
+	 */
+	default Range getExpandingFlankingNonGapRangeFor(int gappedBeginOffset, int gappedEndOffset) {
+		return Range.of(getLeftFlankingNonGapOffsetFor(gappedBeginOffset),
+				getRightFlankingNonGapOffsetFor(gappedEndOffset)
+		);
+	}
+	/**
+	 * Get the first non-gap {@link Nucleotide} coordinates contracting the given range.
+	 * If the input coordinates are already non-gaps, then the coordinate will not change.
+	 * 
+	 * @param gappedBeginOffset the begin coordinate
+	 * @param gappedEndOffset the end coordinate
+	 * @return a Range
+	 * 
+	 * @apiNote This should be identical but more efficient than
+	 * {{@link #getContractingFlankingNonGapRangeFor(Range) getContractingFlankingNonGapRangeFor(Range.of(gappedBeginOffset, gappedEndOffset))}.
+	 * 
+	 * 
+	 * @since 6.0.2
+	 */
+	default Range getContractingFlankingNonGapRangeFor(int gappedBeginOffset, int gappedEndOffset) {
+		return Range.of(getRightFlankingNonGapOffsetFor(gappedBeginOffset),
+						getLeftFlankingNonGapOffsetFor(gappedEndOffset)
+				);
+	}
 }

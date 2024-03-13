@@ -842,7 +842,7 @@ public final class  AceContigBuilder implements ContigBuilder<AceAssembledRead,A
             	//so we can just use the returned values
             	//when adding this adjusted read to the split
             	//contig.
-        		readBuilder.trim(untrimmedReadSequence.getContractingFlankingNonGapRangeFor(readTrimRangeBuilder.build()));
+        		readBuilder.trim(untrimmedReadSequence.getContractingFlankingNonGapRangeFor(readTrimRangeBuilder));
         				
             	
             	
