@@ -62,11 +62,11 @@ public interface FastqWriter extends Closeable{
      *
      * @implNote by default this just does
      * <pre>
-     * {@code
+     * <code>
      * for(FastqRecord r : fastqs){
      *     write(r);
      * }
-     * }
+     * </code>
      * </pre>
      * implementations should override this to provide a more efficient version.
      * @since 5.3.2
@@ -74,6 +74,56 @@ public interface FastqWriter extends Closeable{
     default void write(Collection<FastqRecord> fastqs) throws IOException{
         for(FastqRecord r : fastqs){
             write(r);
+        }
+    }
+    
+    /**
+     * Write all the records in the given array.
+     * @param fastqs the fastqs to write; can not be {@code null}.
+     * @throws IOException if there is a problem writing any records.
+     * @throws NullPointerException if array is null or any element in the map is null.
+     *
+     * @implNote by default this just does
+     * <pre>
+     * <code>
+     * for(FastqRecord r : fastqs){
+     *     write(r);
+     * }
+     * </code>
+     * </pre>
+     * implementations should override this to provide a more efficient version.
+     * @since 6.0.2
+     */
+    default void write(FastqRecord[] fastqs) throws IOException{
+        for(FastqRecord r : fastqs){
+            write(r);
+        }
+    }
+    /**
+     * Write all the records in the given array.
+     * @param fastqs the fastqs to write; can not be {@code null}.
+     * @param fromIndex the index of the first element, inclusive.
+     * @param toIndex the index of the last element, exclusive.
+     * 
+     * @throws IOException if there is a problem writing any records.
+     * @throws NullPointerException if array is null or any element between {@code fromIndex} through
+     * {@code toIndex -1} is null.
+     *
+     * @implNote by default this just does
+     * <pre>
+     * <code>
+     for(int i=fromIndex; i< toIndex; i++) {
+            write(fastqs[i]);
+     
+     }
+     </code>
+     * </pre>
+     * implementations should override this to provide a more efficient version.
+     * @since 6.0.2
+     */
+    default void write(FastqRecord[] fastqs, int fromIndex, int toIndex ) throws IOException{
+        for(int i=fromIndex; i< toIndex; i++) {
+            write(fastqs[i]);
         }
     }
 	

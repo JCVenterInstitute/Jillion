@@ -86,6 +86,9 @@ import org.junit.runners.Suite.SuiteClasses;
         TestFastqReader.class,
         TestFastqWriterMethods.class,
             TestFastqCollector.class,
+            
+            TestReservoirDownsampler.class,
+            TestSLeapDownsampler.class,
     }
     )
 public class AllFastqUnitTests {

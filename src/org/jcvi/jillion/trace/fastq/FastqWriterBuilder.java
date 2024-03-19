@@ -413,7 +413,7 @@ public final class FastqWriterBuilder implements Builder<FastqWriter>{
                     builder.setLength(0);
                 }
             }
-		    if(builder.length() ==0){
+		    if(builder.length() !=0){
                 writer.write(builder.toString());
             }
         }

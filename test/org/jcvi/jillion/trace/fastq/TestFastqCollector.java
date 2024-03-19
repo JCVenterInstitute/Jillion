@@ -19,8 +19,11 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.IntSummaryStatistics;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -39,27 +42,14 @@ public class TestFastqCollector {
 
         private static Map<String, FastqRecord> map;
 
-        private static Random random = new Random();
+        
 
         @BeforeClass
         public static void createDataSet(){
-            map = new ConcurrentHashMap<>(MapUtil.computeMinHashMapSizeWithoutRehashing(100_000));
-            for(int i=0; i<2_000; i++){
-                String id = "seq_" +i;
-                map.put(id, FastqRecordBuilder.create(id,
-                        NucleotideSequenceTestUtil.createRandom(100),
-
-                        createRandom(100)).build());
-            }
+        	 map = TestFastqDatasetUtil.createRandomFastqDataset(2_000, 100);
         }
 
-        private static QualitySequence createRandom(int length){
-            byte[] quals = new byte[length];
-            for(int i=0; i< length; i++){
-                quals[i] = (byte)(random.nextInt(50) + 10);
-            }
-            return  new QualitySequenceBuilder(quals).build();
-        }
+		
 
     private <T> T fakeCPUIntensiveOp(T in){
         try {
@@ -73,17 +63,20 @@ public class TestFastqCollector {
         return assertFileWrittenContainsAllRecordsInMap(fastqFile, 0);
     }
 
-        private FastqDataStore assertFileWrittenContainsAllRecordsInMap(File fastqFile, int numExtra) throws IOException{
-        FastqDataStore datastore = FastqFileDataStore.fromFile(fastqFile);
+    private FastqDataStore assertFileWrittenContainsAllRecordsInMap(Map<String, FastqRecord> expectedMap, File fastqFile, int numExtra) throws IOException{
+    	 FastqDataStore datastore = FastqFileDataStore.fromFile(fastqFile);
 
-        assertEquals(map.size() + numExtra, datastore.getNumberOfRecords());
-        for(FastqRecord f : map.values()){
-            FastqRecord actual = datastore.get(f.getId());
-//            System.out.println(f);
-//            System.out.println(actual);
-            assertEquals(f, actual);
-        }
-        return datastore;
+         assertEquals(expectedMap.size() + numExtra, datastore.getNumberOfRecords());
+         for(FastqRecord f : expectedMap.values()){
+             FastqRecord actual = datastore.get(f.getId());
+//             System.out.println(f);
+//             System.out.println(actual);
+             assertEquals(f, actual);
+         }
+         return datastore;
+    }
+    private FastqDataStore assertFileWrittenContainsAllRecordsInMap(File fastqFile, int numExtra) throws IOException{
+       return assertFileWrittenContainsAllRecordsInMap(map, fastqFile, numExtra);
     }
 
         @Test
@@ -160,6 +153,23 @@ public class TestFastqCollector {
 
             assertFileWrittenContainsAllRecordsInMap(fastqFile);
         }
+        @Test
+        public void writeSmallerCollectionWithoutDelay() throws IOException {
+
+            File fastqFile = tmpDir.newFile();
+
+            //map has 2000 records test with smaller not-round number
+            Map<String, FastqRecord> smallerMap = map.entrySet().stream()
+            										.limit(1337)
+            										.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
+           
+            try(FastqWriter writer = new FastqWriterBuilder(fastqFile)
+                    .build()){
+                writer.write(smallerMap.values());
+            }
+
+            assertFileWrittenContainsAllRecordsInMap(smallerMap, fastqFile, 0);
+        }
 
         @Test
         public void executorService() throws Throwable {
@@ -187,7 +197,7 @@ public class TestFastqCollector {
 
         FastqRecord extra =  FastqRecordBuilder.create("extra",
                                                         NucleotideSequenceTestUtil.createRandom(200),
-                                                        createRandom(200))
+                                                        TestFastqDatasetUtil.createRandomQualitySequence(200))
                                                         .build();
         try(FastqWriter writer = new FastqWriterBuilder(fastqFile).build()) {
             map.values().parallelStream().map(this::fakeCPUIntensiveOp)

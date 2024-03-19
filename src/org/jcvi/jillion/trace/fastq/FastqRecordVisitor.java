@@ -53,13 +53,13 @@ public interface FastqRecordVisitor {
     void visitEncodedQualities(String encodedQualities);
     /**
      * Visit the the actual quality values
-     * (not encodedc) for the current
+     * (not encoded) for the current
      * fastq record. This method will only be called
      * if the fastq implementation does not encode the quality values.
      * This method is only called
      * on specific fastq formatted files
      * (for example MAQ encoded bfq files) 
-     * and method will only be called in {@link #visitEncodedQualities(String)}
+     * and method will only be called if {@link #visitEncodedQualities(String)}
      * is NOT called.
      * @param qualities the actual non-encoded quality values;
      * will never be null.

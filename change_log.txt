@@ -13,7 +13,7 @@ Jillion 6.0.2
 API Changes
 -----------
 1. Added ResidueSequence#getUngappedOffsetForSafe() and ResidueSequence#toUngappedRangeSafe()
-which will not throw index out of bounds exceptions if given parameters go beyond sequence length.
+   which will not throw index out of bounds exceptions if given parameters go beyond sequence length.
  
 2. Added new class SamVisitorFunctions which has Factory Methods for easy visitor implementations.
 3. added INucleotideSequence#getLeftFlankingNonGapOffset() and Right flanking 
@@ -21,6 +21,11 @@ which will not throw index out of bounds exceptions if given parameters go beyon
    
 4. added INucleotideSequence#createRightFlankingNonGapIterator(start) 
    and INucleotideSequence#createLeftFlankingNonGapIterator(start)
+   
+5. Added new FastqDownsampler interface to downsample fastq files and FastqDownsamplers class
+   with various algorithm implementations.
+   
+6.  FastqWriter#write(FastqRecord[]) and FastqWriter#write(FastqRecord[], begin, end) methods to bulk write arrays.
 
 Performance Improvements
 ------------------------
