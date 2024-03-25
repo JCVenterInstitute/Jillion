@@ -8,7 +8,9 @@ import java.util.OptionalInt;
 import java.util.Random;
 import java.util.function.IntFunction;
 
+import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback;
+import org.jcvi.jillion.trace.fastq.PairedFastqVisitor.PairedFastqVisitorCallback;
 
 import lombok.Data;
 /**
@@ -249,6 +251,76 @@ public final class FastqDownsamplers {
 		}
 	}
 	
+	private static class PairedDownsampleVisitor implements PairedFastqVisitor{
+
+		private final FastqWriter delegate1, delegate2;
+
+		private int arraySizePopulated=0;
+		
+		private final FastqRecord[][] reservoir;
+		
+		private DownsampleImpl downsampler;
+		private FastqQualityCodec codec;
+		
+		public PairedDownsampleVisitor(int reservoirSize, FastqQualityCodec codec,
+				FastqWriter delegate1, FastqWriter delegate2,IntFunction<DownsampleImpl> downSamplerFactory) {
+
+			this.codec= codec;
+			this.delegate1 = delegate1;
+			this.delegate2 = delegate2;
+			
+			this.reservoir = new FastqRecord[2][reservoirSize];
+			this.downsampler = downSamplerFactory.apply(reservoirSize);
+			
+		}
+	
+		@Override
+		public PairedFastqRecordVisitor visitDefline(PairedFastqVisitorCallback callback, String id,
+				String optionalComment) {
+			PairedFastqRecordVisitor visitor[] = new PairedFastqRecordVisitor[1];
+			downsampler.getNextReservoir().ifPresent(r->{
+				visitor[0] = new AbstractPairedFastqRecordVisitor(id, optionalComment, codec, true){
+
+					@Override
+					protected void visitRecordPair(FastqRecord read1Record, FastqRecord read2Record) {
+						reservoir[0][r]=read1Record;
+						reservoir[1][r]=read2Record;
+						
+					}
+				};
+			}
+				
+				
+			);
+			return visitor[0];
+		}
+
+		
+		@Override
+		public void visitEnd() {
+			int length = Math.min(reservoir.length, arraySizePopulated);
+			try {
+				delegate1.write(reservoir[0], 0, length);
+			} catch (IOException e) {
+				//no-op
+			}
+			try {
+				delegate2.write(reservoir[1], 0, length);
+			} catch (IOException e) {
+				//no-op
+			}
+			Arrays.fill(reservoir[0], null);
+			Arrays.fill(reservoir[1], null);
+		}
+
+		@Override
+		public void halted() {
+			//no-op ? should we close?  
+			
+		}
+	}
+	
+	
 	interface DownsampleImpl{
 		OptionalInt getNextReservoir();
 	}
@@ -331,10 +403,6 @@ public final class FastqDownsamplers {
 			private boolean reComputeLambda=false;
 			public SLeapState() {
 				recordsVisitedSoFar= 2*reservoirSize;
-				//p = (reservoirSize)/(double)(i+(leapSize>>1)+1);
-				//nextSteps = (UINT)(log(getNextUnitUniformRandomExcl())/lambda) + (UINT)1;
-//				p = reservoir.length/ (double)(recordsVisitedSoFar+(leapSize*2)+1);
-//				lambda = Math.log(1.0 - p);
 				reComputeLambda=true;
 			}
 			
@@ -399,11 +467,7 @@ public final class FastqDownsamplers {
 
 		
 		
-		@Override
-		public void downsample(File fastqFile, FastqQualityCodec codec, FastqWriter delegate) throws IOException {
-			downsample(FastqFileParser.create(fastqFile),codec, delegate);
-			
-		}
+		
 		@Override
 		public void downsample(FastqParser parser, FastqQualityCodec codec, FastqWriter delegate) throws IOException {
 			Objects.requireNonNull(delegate);
@@ -411,6 +475,19 @@ public final class FastqDownsamplers {
 					size -> new AlgorithmR(size, random)));
 			
 		}
+
+
+
+
+		@Override
+		public void downsamplePair(FastqParser read1FastqParser, FastqParser read2FastqParser, FastqQualityCodec codec,
+				FastqWriter read1OutputWriter, FastqWriter read2OutputWriter) throws IOException {
+			new PairedFastqFileParser((FastqFileParser)read1FastqParser, (FastqFileParser) read2FastqParser)
+				.parse(new PairedDownsampleVisitor(reserviorSize, Objects.requireNonNull(codec), 
+						read1OutputWriter, read2OutputWriter, size -> new AlgorithmR(size, random)));
+			
+		}
+		
 		
 	}
 	
@@ -435,19 +512,20 @@ public final class FastqDownsamplers {
 		}
 
 		
-		
-		@Override
-		public void downsample(File fastqFile, FastqQualityCodec codec, FastqWriter delegate) throws IOException {
-			downsample(FastqFileParser.create(fastqFile),codec, delegate);
-			
-		}
 		@Override
 		public void downsample(FastqParser parser, FastqQualityCodec codec, FastqWriter delegate) throws IOException {
 			Objects.requireNonNull(delegate);
-			parser.parse(new DownsampleVisitor(reserviorSize, Objects.requireNonNull(codec), delegate, size -> new SLeap(size, skipSize, random)));
+			parser.parse(new DownsampleVisitor(reserviorSize, Objects.requireNonNull(codec), delegate, size -> new SLeap(size, skipSize, random) ));
 			
 		}
-		
+		@Override
+		public void downsamplePair(FastqParser read1FastqParser, FastqParser read2FastqParser, FastqQualityCodec codec,
+				FastqWriter read1OutputWriter, FastqWriter read2OutputWriter) throws IOException {
+			new PairedFastqFileParser((FastqFileParser)read1FastqParser, (FastqFileParser) read2FastqParser)
+				.parse(new PairedDownsampleVisitor(reserviorSize, Objects.requireNonNull(codec), 
+						read1OutputWriter, read2OutputWriter, size -> new SLeap(size, skipSize, random)));
+			
+		}
 
 		
 		

@@ -89,6 +89,7 @@ import org.junit.runners.Suite.SuiteClasses;
             
             TestReservoirDownsampler.class,
             TestSLeapDownsampler.class,
+            TestFastqFileIterator.class
     }
     )
 public class AllFastqUnitTests {

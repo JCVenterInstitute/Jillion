@@ -110,4 +110,33 @@ public interface FastqParser {
 	 */
 	Optional<File> getFile();
 	
+	/**
+	 * Create a new {@link FastqSingleVisitIterator} instance
+	 * starting at the beginning of this fastq file.
+	 * 
+	 * @return a new {@link FastqSingleVisitIterator}; never null.
+	 * @throws IOException if there is a problem creating the iterator.
+	 * @throws NullPointerException if memento is null.
+	 * @throws UnsupportedOperationException if mementos are not supported by this
+	 * parser implementation (for example when parsing an {@link InputStream}
+	 * instead of a {@link File}).
+	 * 
+	 * @since 6.0.2
+	 */
+	FastqSingleVisitIterator iterator() throws IOException;
+	/**
+	 * Create a new {@link FastqSingleVisitIterator} instance
+	 * starting at the specified memento.
+	 * 
+	 * @param memento the {@link FastqVisitorMemento} instance
+	 * to tell the parser where to start parsing from;
+	 * can not be null.
+	 * 
+	 * @return a new {@link FastqSingleVisitIterator}; never null.
+	 * @throws IOException if there is a problem creating the iterator.
+	 * 
+	 * @since 6.0.2
+	 */
+	FastqSingleVisitIterator iterator(FastqVisitorMemento memento) throws IOException;
+	
 }

@@ -34,8 +34,10 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.internal.core.io.OpenAwareInputStream;
+import org.jcvi.jillion.internal.core.util.Sneak;
 import org.jcvi.jillion.trace.fastq.FastqParser;
 import org.jcvi.jillion.trace.fastq.FastqRecordVisitor;
+import org.jcvi.jillion.trace.fastq.FastqSingleVisitIterator;
 import org.jcvi.jillion.trace.fastq.FastqVisitor;
 import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback;
 import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback.FastqVisitorMemento;
@@ -147,72 +149,115 @@ public abstract class BfqFileParser implements FastqParser{
 		if(visitor ==null){
 			throw new NullPointerException("visitor can not be null");
 		}
-		OpenAwareInputStream in =null;
-		try{
-			in = createInputStream();		
+		try(OpenAwareInputStream in = createInputStream()){
+			
 			parseBqfData(visitor, in, 0);
-		}finally{
-			IOUtil.closeAndIgnoreErrors(in);
 		}
 		
 	}
 
+	
+	private class BfqIterator implements FastqSingleVisitIterator{
+
+		private final OpenAwareInputStream in;
+		long currentOffset;
+		private final Callback callback;
+		
+		BfqIterator(OpenAwareInputStream in, long currentOffset){
+			callback = createCallback(currentOffset);
+			this.in = in;
+			this.currentOffset = currentOffset;
+		}
+		@Override
+		public void close() throws IOException {
+			in.close();
+			
+		}
+
+		@Override
+		public boolean hasNext() {
+			return callback.keepParsing() && in.isOpen();
+		}
+
+		@Override
+		public void next(FastqVisitor visitor) {
+			while(in.isOpen() && callback.keepParsing()){
+				try {
+					currentOffset = parseSingleRecord(visitor, in, currentOffset, callback);
+				} catch (IOException e) {
+					Sneak.sneakyThrow(e);
+				}
+			}
+			if(!callback.keepParsing()){
+				
+				visitor.halted();
+			}
+			visitor.visitEnd();
+			
+		}
+		
+	}
 	private void parseBqfData(FastqVisitor visitor, OpenAwareInputStream in, long offset) throws IOException {
-		FastqRecordVisitor recordVisitor =null;
+		
 		long currentOffset = offset;
 		Callback callback = createCallback(currentOffset);
 		while(in.isOpen() && callback.keepParsing()){
-			callback.updateCurrentOffset(currentOffset);
-			int nameLength =IOUtil.readSignedInt(in, endian);
-			String name = readNullTerminatedString(in, nameLength);
-			int numBases =IOUtil.readSignedInt(in, endian);
-			recordVisitor =visitor.visitDefline(callback, name, null);
-			//each record is 8 bytes for the length fields
-			//plus the number of bases 
-			//plus the name length (which includes null terminal)
-			currentOffset += 8 + numBases + nameLength;
-			if(recordVisitor ==null){
-				//skip
-				IOUtil.blockingSkip(in, numBases);
-			}else{				
-				byte[] basesAndQualities= IOUtil.readByteArray(in, numBases);
-				
-				StringBuilder basesBuilder = new StringBuilder(numBases);
-				QualitySequenceBuilder qualitiesBuilder = new QualitySequenceBuilder(numBases)
-																.turnOffDataCompression(true);
-				for(int i=0; i<basesAndQualities.length; i++){
-					int value = basesAndQualities[i];
-					if(value ==0){
-						//this is how MAQ encodes
-						//not an ACGT 
-						//should be converted into an N
-						//with quality 0
-						basesBuilder.append(Nucleotide.Unknown);
-						qualitiesBuilder.append(0);
-					}else{
-						int qv = value & 0x3F;
-						int base = value>>6 & 0x3;
-						basesBuilder.append(getBaseFromInt(base));
-						qualitiesBuilder.append(qv);
-					}
-				}
-				
-				recordVisitor.visitNucleotides(basesBuilder.toString());
-				if(callback.keepParsing()){
-					recordVisitor.visitQualities(qualitiesBuilder.build());
-				}
-				if(callback.keepParsing()){
-					recordVisitor.visitEnd();
-				}
-			}
+			currentOffset = parseSingleRecord(visitor, in, currentOffset, callback);
 		}
 		if(!callback.keepParsing()){
-			if(recordVisitor !=null){
-				recordVisitor.halted();
-			}
+			
 			visitor.halted();
 		}
 		visitor.visitEnd();
+	}
+	private long parseSingleRecord(FastqVisitor visitor, OpenAwareInputStream in, long currentOffset, Callback callback)
+			throws IOException {
+		callback.updateCurrentOffset(currentOffset);
+		int nameLength =IOUtil.readSignedInt(in, endian);
+		String name = readNullTerminatedString(in, nameLength);
+		int numBases =IOUtil.readSignedInt(in, endian);
+		FastqRecordVisitor recordVisitor =visitor.visitDefline(callback, name, null);
+		//each record is 8 bytes for the length fields
+		//plus the number of bases 
+		//plus the name length (which includes null terminal)
+		currentOffset += 8 + numBases + nameLength;
+		if(recordVisitor ==null){
+			//skip
+			IOUtil.blockingSkip(in, numBases);
+		}else{				
+			byte[] basesAndQualities= IOUtil.readByteArray(in, numBases);
+			
+			StringBuilder basesBuilder = new StringBuilder(numBases);
+			QualitySequenceBuilder qualitiesBuilder = new QualitySequenceBuilder(numBases)
+															.turnOffDataCompression(true);
+			for(int i=0; i<basesAndQualities.length; i++){
+				int value = basesAndQualities[i];
+				if(value ==0){
+					//this is how MAQ encodes
+					//not an ACGT 
+					//should be converted into an N
+					//with quality 0
+					basesBuilder.append(Nucleotide.Unknown);
+					qualitiesBuilder.append(0);
+				}else{
+					int qv = value & 0x3F;
+					int base = value>>6 & 0x3;
+					basesBuilder.append(getBaseFromInt(base));
+					qualitiesBuilder.append(qv);
+				}
+			}
+			
+			recordVisitor.visitNucleotides(basesBuilder.toString());
+			if(callback.keepParsing()){
+				recordVisitor.visitQualities(qualitiesBuilder.build());
+			}
+			if(callback.keepParsing()){
+				recordVisitor.visitEnd();
+			}else {
+				recordVisitor.halted();
+			}
+		}
+		return currentOffset;
 	}
 	
 	private static Nucleotide getBaseFromInt(int b){
@@ -249,20 +294,40 @@ public abstract class BfqFileParser implements FastqParser{
 		if(bfqMemento.parserInstance != this){
 			throw new IllegalArgumentException("invalid memento, must be created by this parser instance");
 		}
-		OpenAwareInputStream in =null;
-		try{
-			in = createInputStream();
+		try(OpenAwareInputStream in =createInputStream()){
 			long startOffset = bfqMemento.startOffset;
-			IOUtil.blockingSkip(in, startOffset);
-			
+			IOUtil.blockingSkip(in, startOffset);			
 			
 			parseBqfData(visitor, in, startOffset);
-		}finally{
-			IOUtil.closeAndIgnoreErrors(in);
 		}
 		
 	}
 	
+	
+	
+	@Override
+	public FastqSingleVisitIterator iterator() throws IOException {
+		return new BfqIterator(createInputStream(), 0);
+	}
+	@Override
+	public FastqSingleVisitIterator iterator(FastqVisitorMemento memento) throws IOException {
+		if(!(memento instanceof BfqMemento)){
+			throw new IllegalArgumentException("invalid memento type, must be created by this class");
+		}
+		BfqMemento bfqMemento = (BfqMemento) memento;
+		if(bfqMemento.parserInstance != this){
+			throw new IllegalArgumentException("invalid memento, must be created by this parser instance");
+		}
+		OpenAwareInputStream in =createInputStream();
+		long startOffset = bfqMemento.startOffset;
+		try {
+			IOUtil.blockingSkip(in, startOffset);	
+		}catch(IOException e) {
+			IOUtil.closeAndIgnoreErrors(in);
+			throw e;
+		}
+		return new BfqIterator(createInputStream(), startOffset);
+	}
 	abstract OpenAwareInputStream createInputStream() throws IOException;
 	
 	abstract Callback createCallback(long startOffset);
@@ -389,6 +454,13 @@ public abstract class BfqFileParser implements FastqParser{
 		protected Callback createCallback(long startOffset) {
 			return new NoMementoCallback(startOffset);
 		}
+
+		@Override
+		public FastqSingleVisitIterator iterator(FastqVisitorMemento memento) throws IOException {
+			throw new UnsupportedOperationException("mementos not supported");
+		}
+		
+		
 
 		
 	}

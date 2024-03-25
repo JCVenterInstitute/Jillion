@@ -8,10 +8,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.jcvi.jillion.core.datastore.DataStoreUtil;
+import org.jcvi.jillion.core.testUtil.SlowTests;
 import org.jcvi.jillion.core.util.ThrowingStream;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.rules.TemporaryFolder;
 
 import static org.junit.Assert.*;
@@ -88,6 +90,7 @@ public abstract class AbstractTestDownsampler {
      }
      
      @Test
+     @Category(SlowTests.class)
      public void downSampleHuge() throws IOException {
     	 File fastq = tmpDir.newFile();
     	 FastqQualityCodec codec = FastqQualityCodec.SANGER;

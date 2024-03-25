@@ -27,6 +27,15 @@ API Changes
    
 6.  FastqWriter#write(FastqRecord[]) and FastqWriter#write(FastqRecord[], begin, end) methods to bulk write arrays.
 
+7. Added FastqParser.iterator() and FastqParser.iterator(FastqVisitorMemento) which returns 
+   new class FastqSingleVisitIterator.
+   
+8. FastqSingleVisitIterator a new Iterator that lets user visit fastq record one record at a time controlling
+   when the next call to visit will occur.
+   
+9. New FastqDownSampler interface with implementations in FastqDownSamplers. 
+   Works on single fastq files and paired-ends fastq files.
+   
 Performance Improvements
 ------------------------
 1. Some internal methods implementations were rewritten to be easier to maintain and improve performance.
