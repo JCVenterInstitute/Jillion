@@ -275,11 +275,14 @@ public final class FastqDownsamplers {
 		}
 	
 		@Override
-		public PairedFastqRecordVisitor visitDefline(PairedFastqVisitorCallback callback, String id,
-				String optionalComment) {
+		public PairedFastqRecordVisitor visitDefline(PairedFastqVisitorCallback callback,
+				String read1Id, String read1OptionalComment,
+				String read2Id, String read2OptionalComment) {
 			PairedFastqRecordVisitor visitor[] = new PairedFastqRecordVisitor[1];
 			downsampler.getNextReservoir().ifPresent(r->{
-				visitor[0] = new AbstractPairedFastqRecordVisitor(id, optionalComment, codec, true){
+				visitor[0] = new AbstractPairedFastqRecordVisitor(read1Id, read1OptionalComment,
+						read2Id, read2OptionalComment,
+						codec, true){
 
 					@Override
 					protected void visitRecordPair(FastqRecord read1Record, FastqRecord read2Record) {

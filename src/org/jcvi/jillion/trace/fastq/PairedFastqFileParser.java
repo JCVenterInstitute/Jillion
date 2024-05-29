@@ -94,7 +94,8 @@ public class PairedFastqFileParser{
 						String optionalComment) {
 					PairedVisitorCallback pairedCallback = new PairedVisitorCallback(read1Callback, callback);
 					
-					PairedFastqRecordVisitor pairedRecordVisitor = delegate.visitDefline(pairedCallback, read1Id, read1OptionalComment);
+					PairedFastqRecordVisitor pairedRecordVisitor = delegate.visitDefline(pairedCallback, read1Id, read1OptionalComment,
+							id, optionalComment);
 					
 					currentRecordVisitor[0]=pairedRecordVisitor==null?null : new SwitchingPairedVisitor(pairedRecordVisitor); 
 					return currentRecordVisitor[0];

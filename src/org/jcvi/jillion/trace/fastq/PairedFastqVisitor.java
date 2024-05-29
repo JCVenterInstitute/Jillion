@@ -106,7 +106,10 @@ public interface PairedFastqVisitor {
      * if this method returns null, then that means
      * to skip the current record.
      */
-	PairedFastqRecordVisitor visitDefline(PairedFastqVisitorCallback callback, String id, String optionalComment);
+	PairedFastqRecordVisitor visitDefline(PairedFastqVisitorCallback callback, 
+			String read1Id, String read1OptionalComment,
+			String read2Id, String read2OptionalComment
+			);
 	/**
 	 * Visit the end of the fastq file.
 	 */

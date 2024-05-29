@@ -33,8 +33,10 @@ import org.jcvi.jillion.internal.trace.fastq.ParsedFastqRecord;
  */
 public abstract class AbstractPairedFastqRecordVisitor implements PairedFastqRecordVisitor{
 
-	private final String id;
-	private final String optionalComment;
+	private final String read1Id;
+	private final String read1OptionalComment;
+	private final String read2Id;
+	private final String read2OptionalComment;
 	private final FastqQualityCodec qualityCodec;
 	
 	private String currentBasecalls;
@@ -48,14 +50,19 @@ public abstract class AbstractPairedFastqRecordVisitor implements PairedFastqRec
 	
 	private boolean turnOffCompression;
 	
-	public AbstractPairedFastqRecordVisitor(String id, String optionalComment,
+	public AbstractPairedFastqRecordVisitor(String read1Id, String read1OptionalComment,
+			String read2Id, String read2OptionalComment,
 			FastqQualityCodec qualityCodec){
-		this(id,optionalComment, qualityCodec, false);
+		this(read1Id, read1OptionalComment, read2Id, read2OptionalComment, qualityCodec, false);
 	}
-	public AbstractPairedFastqRecordVisitor(String id, String optionalComment,
+	public AbstractPairedFastqRecordVisitor(String read1Id, String read1OptionalComment,
+			String read2Id, String read2OptionalComment,
 			FastqQualityCodec qualityCodec, boolean turnOffCompression) {
-		this.id = id;
-		this.optionalComment = optionalComment;
+		this.read1Id = read1Id;
+		this.read1OptionalComment = read1OptionalComment;
+		this.read2Id = read2Id;
+		this.read2OptionalComment = read2OptionalComment;
+		
 		this.qualityCodec = qualityCodec;
 		this.turnOffCompression = turnOffCompression;
 	}
@@ -97,34 +104,34 @@ public abstract class AbstractPairedFastqRecordVisitor implements PairedFastqRec
 	    FastqRecord fastqRecord;
 	    
 	    if(currentQualities ==null){
-	    	if(optionalComment ==null){
-	    		fastqRecord = new ParsedFastqRecord(id, currentBasecalls , encodedQualities, qualityCodec, turnOffCompression);
+	    	if(read1OptionalComment ==null){
+	    		fastqRecord = new ParsedFastqRecord(read1Id, currentBasecalls , encodedQualities, qualityCodec, turnOffCompression);
 	        }else{
-	            fastqRecord = new CommentedParsedFastqRecord(id, currentBasecalls , encodedQualities, qualityCodec, turnOffCompression, optionalComment);
+	            fastqRecord = new CommentedParsedFastqRecord(read1Id, currentBasecalls , encodedQualities, qualityCodec, turnOffCompression, read1OptionalComment);
 	        }       	
 	    }else{
-	    	 fastqRecord = FastqRecordBuilder.create(id, new NucleotideSequenceBuilder(currentBasecalls)
+	    	 fastqRecord = FastqRecordBuilder.create(read1Id, new NucleotideSequenceBuilder(currentBasecalls)
 															.turnOffDataCompression(turnOffCompression)
 															.build(), 
 													currentQualities)
-											.comment(optionalComment)
+											.comment(read1OptionalComment)
 											.build();
 	    }
 	    
 	    FastqRecord fastq2Record;
 	    
 	    if(currentRead2Qualities ==null){
-	    	if(optionalComment ==null){
-	    		fastq2Record = new ParsedFastqRecord(id, currentRead2Basecalls , encodedRead2Qualities, qualityCodec, turnOffCompression);
+	    	if(read2OptionalComment ==null){
+	    		fastq2Record = new ParsedFastqRecord(read2Id, currentRead2Basecalls , encodedRead2Qualities, qualityCodec, turnOffCompression);
 	        }else{
-	            fastq2Record = new CommentedParsedFastqRecord(id, currentRead2Basecalls , encodedRead2Qualities, qualityCodec, turnOffCompression, optionalComment);
+	            fastq2Record = new CommentedParsedFastqRecord(read2Id, currentRead2Basecalls , encodedRead2Qualities, qualityCodec, turnOffCompression, read2OptionalComment);
 	        }       	
 	    }else{
-	    	 fastq2Record = FastqRecordBuilder.create(id, new NucleotideSequenceBuilder(currentRead2Basecalls)
+	    	 fastq2Record = FastqRecordBuilder.create(read2Id, new NucleotideSequenceBuilder(currentRead2Basecalls)
 															.turnOffDataCompression(turnOffCompression)
 															.build(), 
 													currentRead2Qualities)
-											.comment(optionalComment)
+											.comment(read2OptionalComment)
 											.build();
 	    }
 	    
