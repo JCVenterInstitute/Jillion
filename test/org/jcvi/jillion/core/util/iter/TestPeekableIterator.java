@@ -56,6 +56,8 @@ public class TestPeekableIterator {
 			assertEquals(next, actual.next());
 		}
 		assertFalse(actual.hasNext());
+		assertFalse(actual.advanceIf(e-> true));
+		assertFalse(actual.advanceWhile(e-> true));
 	}
 	
 	@Test
@@ -72,4 +74,39 @@ public class TestPeekableIterator {
 		}
 		assertFalse(actual.hasNext());
 	}
+
+	@Test
+	public void advanceIfDoNotAdvance(){
+		PeekableIterator<String> actual = IteratorUtil.createPeekableIterator(dwarfs.iterator());
+		assertFalse(actual.advanceIf(name-> name.startsWith("S")));
+		assertEquals(dwarfs.get(0), actual.peek());
+	}
+	@Test
+	public void advanceWhileDoNotAdvance(){
+		PeekableIterator<String> actual = IteratorUtil.createPeekableIterator(dwarfs.iterator());
+		assertFalse(actual.advanceWhile(name-> name.startsWith("S")));
+		assertEquals(dwarfs.get(0), actual.peek());
+	}
+	@Test
+	public void advanceIf(){
+		PeekableIterator<String> actual = IteratorUtil.createPeekableIterator(dwarfs.iterator());
+		assertTrue(actual.advanceIf(name-> true));
+		assertEquals(dwarfs.get(1), actual.peek());
+	}
+
+	@Test
+	public void advanceWhileAllTheWayToEnd(){
+		PeekableIterator<String> actual = IteratorUtil.createPeekableIterator(dwarfs.iterator());
+		assertTrue(actual.advanceWhile(name-> true));
+		assertFalse(actual.hasNext());
+	}
+	@Test
+	public void advanceWhile(){
+		PeekableIterator<String> actual = IteratorUtil.createPeekableIterator(dwarfs.iterator());
+		assertTrue(actual.advanceWhile(name-> name.length()>3));
+		assertTrue(actual.hasNext());
+		assertEquals("Doc", actual.peek());
+
+	}
+
 }

@@ -21,6 +21,9 @@
 package org.jcvi.jillion.core.util.iter;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.function.Predicate;
 
 public interface PeekableIterator<T> extends Iterator<T> {
 	/**
@@ -35,7 +38,7 @@ public interface PeekableIterator<T> extends Iterator<T> {
 	 * @return T
 	 * @throws NoSuchElementException if there are no more elements
 	 */
-	T peek();
+	T peek() throws NoSuchElementException;
 	/**
 	 * Remove is not supported.
 	 * Will always throw {@link UnsupportedOperationException}.
@@ -44,5 +47,46 @@ public interface PeekableIterator<T> extends Iterator<T> {
 	@Override
 	default void remove(){
 		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * If the given condition is true, advance the iterator
+	 * by one element.
+	 * @param condition the condition to evaluate passing in the peeked value.
+	 * @return {@code true} if the iterator was advanced; {@code false} otherwise.
+	 * Will return {@code false} if there are no elements left to iterate.
+	 *
+	 * @throws NullPointerException if condition is null.
+	 *
+	 * @since 6.0.2
+	 */
+	default boolean advanceIf(Predicate<T> condition){
+		if(!hasNext()){
+			return false;
+		}
+		if(condition.test(peek())){
+			next();
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Keep advancing the iterator, as long as the given condition is true.
+	 * @param condition the condition to evaluate passing in the peeked value.
+	 * @return {@code true} if the iterator was advanced; {@code false} otherwise.
+	 * Will return {@code false} if there are no elements left to iterate.
+	 *
+	 * @throws NullPointerException if condition is null.
+	 *
+	 * @since 6.0.2
+	 */
+	default boolean advanceWhile(Predicate<T> condition){
+		Objects.requireNonNull(condition);
+		boolean advanced=false;
+		while(advanceIf(condition)){
+			advanced=true;
+		}
+		return advanced;
 	}
 }
