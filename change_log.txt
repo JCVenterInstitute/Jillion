@@ -35,6 +35,12 @@ API Changes
    
 9. New FastqDownSampler interface with implementations in FastqDownSamplers. 
    Works on single fastq files and paired-ends fastq files.
+
+10. added PeekableIterator#advanceIf( predicate) and PeekableIterator#advanceWhile( predicate)
+
+11. SamTransformationService and SamGappedReferenceBuilderVisitor now can take provided NucleotideDataStores
+    for the references and will lazy load making the gapped refererences when it first encounters a read that
+    aligns to that reference.  This allows mapping parts of the human genome without haivng to load the whole thing!
    
 Performance Improvements
 ------------------------

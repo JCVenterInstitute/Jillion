@@ -185,6 +185,24 @@ public final class SamTransformationService implements AssemblyTransformationSer
 		}
 		referenceDataStore = SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(parser, ungappedReferenceDataStore, filter, ungappedReferenceRanges);
 	}
+	public SamTransformationService(SamParser parser, NucleotideFastaDataStore referenceFastaDatastore,
+									SamRecordFilter filter,  Map<String, List<Range>> ungappedReferenceRanges) throws IOException {
+		this(parser, referenceFastaDatastore, filter, ungappedReferenceRanges, true);
+	}
+	public SamTransformationService(SamParser parser, NucleotideFastaDataStore referenceFastaDatastore,
+									SamRecordFilter filter,  Map<String, List<Range>> ungappedReferenceRanges,
+									boolean validateReferences) throws IOException {
+
+		this.parser = Objects.requireNonNull(parser);
+		NucleotideFastaDataStore ungappedReferenceDataStore = Objects.requireNonNull(referenceFastaDatastore);
+		this.filter = filter;
+		if(filter!=null) {
+			filter.ungappedReferenceDataStore(ungappedReferenceDataStore);
+		}
+		referenceDataStore = SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(parser, ungappedReferenceDataStore,
+				filter, ungappedReferenceRanges,
+				validateReferences);
+	}
 	/**
 	 * Parse the SAM file and call the appropriate methods on the given
 	 * {@link AssemblyTransformer}.
@@ -249,22 +267,23 @@ public final class SamTransformationService implements AssemblyTransformationSer
 
 		@Override
 		public void visitHeader(SamVisitorCallback callback, SamHeader header) {
-			
-			for(SamReferenceSequence refSeq : header.getReferenceSequences()){
-				String id = refSeq.getName();
-				try {
-					NucleotideSequence ref = referenceDataStore.get(id);
-					if(ref ==null){
-						throw new IllegalStateException("error could not find reference sequence in fasta file with id " + id);
-					}
-					gapOffsetMap.put(id,  new SamAlignmentGapInserter(ref));
-					
-					transformer.referenceOrConsensus(id, ref, callback::haltParsing);
-				} catch (DataStoreException e) {
-					throw new IllegalStateException("error getting reference sequence from fasta file", e);
-				}
-				
-			}
+			//lazy load references since 6.0.2
+
+//			for(SamReferenceSequence refSeq : header.getReferenceSequences()){
+//				String id = refSeq.getName();
+//				try {
+//					NucleotideSequence ref = referenceDataStore.get(id);
+//					if(ref ==null){
+//						throw new IllegalStateException("error could not find reference sequence in fasta file with id " + id);
+//					}
+//					gapOffsetMap.put(id,  new SamAlignmentGapInserter(ref));
+//
+//					transformer.referenceOrConsensus(id, ref, callback::haltParsing);
+//				} catch (DataStoreException e) {
+//					throw new IllegalStateException("error getting reference sequence from fasta file", e);
+//				}
+//
+//			}
 		}
 	
 
@@ -303,9 +322,23 @@ public final class SamTransformationService implements AssemblyTransformationSer
 						}
 						validRange = AssemblyUtil.reverseComplementValidRange(cigar.getValidRange(), rawLength);
 					}
-					SamAlignmentGapInserter samAlignmentGapInserter = gapOffsetMap.get(refName);
-					if(samAlignmentGapInserter==null) {
-						throw new IllegalStateException("unknown reference " + refName);
+					boolean[] halt = new boolean[]{false};
+					SamAlignmentGapInserter samAlignmentGapInserter = gapOffsetMap.computeIfAbsent(refName,
+							k-> {
+                                try {
+									NucleotideSequence gappedReference = referenceDataStore.get(k);
+									transformer.referenceOrConsensus(k, gappedReference, ()->{
+										halt[0]=true;
+										callback.haltParsing();
+									});
+									return new SamAlignmentGapInserter(gappedReference);
+                                } catch (DataStoreException e) {
+                                    throw new IllegalStateException("unknown reference "+ k, e);
+                                }
+                            });
+					if(halt[0]){
+						//called halt when new reference encountered
+						return;
 					}
 					SamAlignmentGapInserter.Result insertedResult = samAlignmentGapInserter.computeExtraInsertions(cigar, rawSequence, record.getStartPosition()-1, dir);
 					
