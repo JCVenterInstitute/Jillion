@@ -2,6 +2,8 @@ package org.jcvi.jillion.sam;
 
 import java.util.function.Predicate;
 
+import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.residue.nt.INucleotideSequence;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 import org.jcvi.jillion.sam.header.SamHeader;
 
@@ -34,7 +36,7 @@ final class WrappedPredicateFilter implements SamRecordFilter {
 	}
 
 	@Override
-	public void ungappedReferenceDataStore(NucleotideFastaDataStore ungappedReferenceDataStore) {
+	public void ungappedReferenceDataStore(DataStore<? extends INucleotideSequence<?,?>> ungappedReferenceDataStore) {
 		//no-op
 		
 	}

@@ -3,6 +3,8 @@ package org.jcvi.jillion.sam;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.residue.nt.INucleotideSequence;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 
 public class MultiSamRecordFilter implements SamRecordFilter{
@@ -67,7 +69,7 @@ public class MultiSamRecordFilter implements SamRecordFilter{
 	}
 
 	@Override
-	public void ungappedReferenceDataStore(NucleotideFastaDataStore ungappedReferenceDataStore) {
+	public void ungappedReferenceDataStore(DataStore<? extends INucleotideSequence<?,?>> ungappedReferenceDataStore) {
 		a.ungappedReferenceDataStore(ungappedReferenceDataStore);
 		b.ungappedReferenceDataStore(ungappedReferenceDataStore);
 		

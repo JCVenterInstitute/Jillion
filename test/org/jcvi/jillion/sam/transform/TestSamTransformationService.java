@@ -44,7 +44,7 @@ public class TestSamTransformationService {
 		
 		File samFile = helper.getFile("example.sam");
 		
-		return new SamTransformationService(samFile, refFasta);
+		return  SamTransformationService.create(samFile, refFasta);
 	}
 	@Test
 	public void assertGappedAlignmentsCorrect() throws IOException{

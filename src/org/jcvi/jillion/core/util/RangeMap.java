@@ -1,12 +1,7 @@
 package org.jcvi.jillion.core.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
@@ -26,20 +21,20 @@ import org.jcvi.jillion.core.util.streams.ThrowingTriConsumer;
  */
 public class RangeMap<T> {
 
-	private final Map<Range, T> map;
+	private final NavigableMap<Range, T> map;
 	
 	public static RangeMap<Boolean> setOf(Collection<? extends Rangeable> rangeables) {
-		RangeMap<Boolean> map = new RangeMap<>(rangeables.size());
+		RangeMap<Boolean> map = new RangeMap<>();
 		for(Rangeable r : rangeables) {
 			map.put(r.asRange(), Boolean.TRUE);
 		}
 		return map;
 	}
 	public RangeMap() {
-		map = new HashMap<Range, T>();
+		map = new TreeMap<>(Range.Comparators.ARRIVAL);
 	}
 	public RangeMap(int initialCapacity) {
-		map = new HashMap<Range, T>(initialCapacity);
+		map = new TreeMap<>(Range.Comparators.ARRIVAL);
 	}
 	
 	public T put(Range range, T obj) {
@@ -47,11 +42,20 @@ public class RangeMap<T> {
 	}
 	
 	public void putAll(RangeMap<T> other) {
-		for(Entry<Range, T> entry : other.map.entrySet()) {
-			map.put(entry.getKey(), entry.getValue());
-		}
+		map.putAll(other.map);
+
 	}
-	
+
+	/**
+	 * Iterate over each of the Ranges in this map.
+	 * @param consumer the consumer; can not be null.
+	 *
+	 * @since 6.0.2
+	 */
+	public void forEach(BiConsumer<Range, T> consumer){
+		Objects.requireNonNull(consumer);
+		map.forEach(consumer);
+	}
 	public T get(Range range) {
 		return map.get(range);
 	}

@@ -30,9 +30,9 @@ import org.jcvi.jillion.assembly.GappedReferenceBuilder;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.datastore.DataStoreUtil;
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
+import org.jcvi.jillion.core.residue.nt.*;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaRecord;
@@ -48,10 +48,10 @@ import org.jcvi.jillion.sam.cigar.CigarOperation;
 import org.jcvi.jillion.sam.header.SamHeader;
 import org.jcvi.jillion.sam.header.SamReferenceSequence;
 import org.jcvi.jillion.sam.SamParser.SamParserOptions;
-public final class SamGappedReferenceBuilderVisitor implements SamVisitor{
+public final class SamGappedReferenceBuilderVisitor<S extends INucleotideSequence<S, B>, B extends INucleotideSequenceBuilder<S,B>> implements SamVisitor{
 
-	private final Map<String, GappedReferenceBuilder> builders = new LinkedHashMap<String, GappedReferenceBuilder>();
-	private final NucleotideFastaDataStore ungappedReferenceDataStore;
+	private final Map<String, GappedReferenceBuilder<S,B>> builders = new LinkedHashMap<>();
+	private final DataStore<S> ungappedReferenceDataStore;
 
 	private boolean validateReferences=true;
 
@@ -59,26 +59,26 @@ public final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 		return validateReferences;
 	}
 
-	public SamGappedReferenceBuilderVisitor validateReferences(boolean validateReferences) {
+	public SamGappedReferenceBuilderVisitor<S,B> validateReferences(boolean validateReferences) {
 		this.validateReferences = validateReferences;
 		return this;
 	}
 
-	public static NucleotideSequenceDataStore createGappedReferencesFrom(SamParser parser,
+	public static DataStore<NucleotideSequence> createGappedReferencesFrom(SamParser parser,
 																		 NucleotideFastaDataStore ungappedReferenceDataStore) throws IOException{
 		return createGappedReferencesFrom(parser,ungappedReferenceDataStore, null);
 	}
-	public static NucleotideSequenceDataStore createGappedReferencesFrom(SamParser parser,
+	public static DataStore<NucleotideSequence> createGappedReferencesFrom(SamParser parser,
 																		 NucleotideFastaDataStore ungappedReferenceDataStore,
 																		 SamRecordFilter filter) throws IOException{
 		return createGappedReferencesFrom(parser, ungappedReferenceDataStore, filter, true);
 	}
-	public static NucleotideSequenceDataStore createGappedReferencesFrom(SamParser parser, 
+	public static DataStore<NucleotideSequence> createGappedReferencesFrom(SamParser parser,
 			NucleotideFastaDataStore ungappedReferenceDataStore,
 			SamRecordFilter filter, boolean validateReferences) throws IOException{
-		SamGappedReferenceBuilderVisitor visitor;
+		SamGappedReferenceBuilderVisitor<NucleotideSequence, NucleotideSequenceBuilder> visitor;
 		try {
-			visitor = new SamGappedReferenceBuilderVisitor(ungappedReferenceDataStore)
+			visitor = new SamGappedReferenceBuilderVisitor<>(ungappedReferenceDataStore.asSequenceDataStore())
 								.validateReferences(validateReferences);
 		} catch (DataStoreException e) {
 			throw new IOException("error parsing reference datastore", e);
@@ -87,7 +87,7 @@ public final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 		parser.parse(SamParserOptions.builder().filter(filter).build(), visitor);
 		return visitor.buildGappedReferences();
 	}
-	public static NucleotideSequenceDataStore createGappedReferencesFrom(SamParser parser,
+	public static DataStore<NucleotideSequence> createGappedReferencesFrom(SamParser parser,
 																		 NucleotideFastaDataStore ungappedReferenceDataStore,
 																		 SamRecordFilter filter, Map<String, List<Range>> rangesByRefId
 																		 ) throws IOException {
@@ -98,9 +98,9 @@ public final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 			SamRecordFilter filter, Map<String, List<Range>> rangesByRefId,
 			boolean validateReferences) throws IOException{
 
-		SamGappedReferenceBuilderVisitor visitor;
+		SamGappedReferenceBuilderVisitor<NucleotideSequence, NucleotideSequenceBuilder> visitor;
 		try {
-			visitor = new SamGappedReferenceBuilderVisitor(ungappedReferenceDataStore)
+			visitor = new SamGappedReferenceBuilderVisitor<>(ungappedReferenceDataStore.asSequenceDataStore())
 					.validateReferences(validateReferences);
 		} catch (DataStoreException e) {
 			throw new IOException("error parsing reference datastore", e);
@@ -113,10 +113,31 @@ public final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 			
 		}
 		
+		return DataStoreUtil.adapt(NucleotideSequenceDataStore.class, visitor.buildGappedReferences());
+	}
+	public static <S extends INucleotideSequence<S, B>, B extends INucleotideSequenceBuilder<S,B>>  DataStore<S> createGappedReferencesFrom(SamParser parser,
+																		 DataStore<S> ungappedReferenceDataStore,
+																		 SamRecordFilter filter, Map<String, List<Range>> rangesByRefId,
+																		 boolean validateReferences) throws IOException{
+
+		SamGappedReferenceBuilderVisitor<S, B> visitor;
+		try {
+			visitor = new SamGappedReferenceBuilderVisitor<>(ungappedReferenceDataStore)
+					.validateReferences(validateReferences);
+		} catch (DataStoreException e) {
+			throw new IOException("error parsing reference datastore", e);
+		}
+		for(Entry<String, List<Range>> entry : rangesByRefId.entrySet()) {
+			parser.parse(SamParserOptions.builder()
+					.reference(entry.getKey(), entry.getValue())
+					.filter(filter)
+					.build(), visitor);
+
+		}
+
 		return visitor.buildGappedReferences();
 	}
-	
-	private SamGappedReferenceBuilderVisitor(NucleotideFastaDataStore ungappedReferenceDataStore) throws DataStoreException {
+	private SamGappedReferenceBuilderVisitor(DataStore<S> ungappedReferenceDataStore) throws DataStoreException {
 
 		this.ungappedReferenceDataStore = Objects.requireNonNull(ungappedReferenceDataStore);
 
@@ -153,10 +174,10 @@ public final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 		if(record.isPrimary() && record.mapped()){
 			
 			String refName = record.getReferenceName();
-			GappedReferenceBuilder refBuilder = builders.computeIfAbsent(refName,
+			GappedReferenceBuilder<S,B> refBuilder = builders.computeIfAbsent(refName,
 							k-> {
                                 try {
-                                    return new GappedReferenceBuilder(ungappedReferenceDataStore.get(k).getSequence());
+                                    return new GappedReferenceBuilder<>(ungappedReferenceDataStore.get(k));
                                 } catch (DataStoreException e) {
 									//shouldn't happen as we already checked the reference names
 									//but to make compiler happy it's here
@@ -186,12 +207,12 @@ public final class SamGappedReferenceBuilderVisitor implements SamVisitor{
 		
 	}
 
-	private NucleotideSequenceDataStore buildGappedReferences(){
-		Map<String, NucleotideSequence> map = new LinkedHashMap<String, NucleotideSequence>();
+	private DataStore<S> buildGappedReferences(){
+		Map<String, S> map = new LinkedHashMap<>();
 		
-		for(Entry<String, GappedReferenceBuilder> entry : builders.entrySet()){
+		for(Entry<String, GappedReferenceBuilder<S,B>> entry : builders.entrySet()){
 			map.put(entry.getKey(), entry.getValue().build());
 		}
-		return DataStore.of(map, NucleotideSequenceDataStore.class);
+		return DataStore.of(map);
 	}
 }

@@ -25,6 +25,7 @@ import java.net.URI;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.INucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
  * {@code AbstractAssemblyTransformer} is an abstract class
@@ -39,7 +40,7 @@ public abstract class AbstractAssemblyTransformer implements AssemblyTransformer
 
 	@Override
 	public void referenceOrConsensus(String id,
-			NucleotideSequence gappedReference, AssemblyTransformerCallback callback) {
+                                     INucleotideSequence<?, ?> gappedReference, AssemblyTransformerCallback callback) {
 		//no-op
 	}
 

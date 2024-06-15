@@ -34,11 +34,11 @@ import org.jcvi.jillion.assembly.AssemblyUtil;
 import org.jcvi.jillion.assembly.ReadInfo;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
+import org.jcvi.jillion.core.residue.nt.*;
 import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
@@ -67,12 +67,12 @@ import org.jcvi.jillion.sam.header.SamReferenceSequence;
  * @author dkatzel
  *
  */
-public final class SamTransformationService implements AssemblyTransformationService{
+public final class SamTransformationService<S extends INucleotideSequence<S, B>, B extends INucleotideSequenceBuilder<S,B>> implements AssemblyTransformationService{
 
-	private final NucleotideSequenceDataStore referenceDataStore;
+	private final DataStore<S> referenceDataStore;
 	private final SamParser parser;
 	private final SamRecordFilter filter;
-	
+
 	/**
 	 * Create a new {@link SamTransformationService} using
 	 * the given SAM encoded file and a fasta file of the ungapped
@@ -83,8 +83,116 @@ public final class SamTransformationService implements AssemblyTransformationSer
 	 * @param referenceFasta the reference fasta file; can not be null and must exist.
 	 * @throws IOException if there is a problem parsing the input files.
 	 * @throws NullPointerException if either parameter is null.
+	 *
+	 * @since 6.0.2
 	 */
-	public SamTransformationService(File samFile, File referenceFasta) throws IOException {
+	public static SamTransformationService<NucleotideSequence, NucleotideSequenceBuilder> create(File samFile, File referenceFasta) throws IOException{
+		return new SamTransformationService<>(samFile, referenceFasta);
+	}
+
+	/**
+	 * Create a new {@link SamTransformationService} using
+	 * the given SAM encoded file and a fasta file of the ungapped
+	 * references sequences referred to in the SAM.  The ids in the fasta file
+	 * must match the reference sequence names in the SAM file (@SQ SN:$ID) in the SAM header.
+	 * @param samFile the SAM file to parse and transform; can not be null
+	 * and must exist.
+	 * @param referenceFasta the reference fasta file; can not be null and must exist.
+	 * @param filter filter of reads to include- if null, then no filter is applied.
+	 * @throws IOException if there is a problem parsing the input files.
+	 * @throws NullPointerException if either parameter is null.
+	 *
+	 * @since 6.0
+	 */
+	public static SamTransformationService<NucleotideSequence, NucleotideSequenceBuilder> create(File samFile, File referenceFasta, Predicate<SamRecord> filter, SamParserFactory.Parameters parameters) throws IOException {
+		return new SamTransformationService<>(samFile, referenceFasta, filter, parameters);
+	}
+
+	/**
+	 * Create a new {@link SamTransformationService} using
+	 * the given SAM encoded file and a fasta file of the ungapped
+	 * references sequences referred to in the SAM.  The ids in the fasta file
+	 * must match the reference sequence names in the SAM file (@SQ SN:$ID) in the SAM header.
+	 * @param samFile the SAM file to parse and transform; can not be null
+	 * and must exist.
+	 * @param referenceFasta the reference fasta file; can not be null and must exist.
+	 * @param filter filter of reads to include- if null, then no filter is applied.
+	 * @throws IOException if there is a problem parsing the input files.
+	 * @throws NullPointerException if either parameter is null.
+	 *
+	 * @since 6.0
+	 */
+	public static SamTransformationService<NucleotideSequence, NucleotideSequenceBuilder> create(File samFile, File referenceFasta, Predicate<SamRecord> filter,
+									Map<String, List<Range>> ungappedReferenceRanges,
+									SamParserFactory.Parameters parameters) throws IOException {
+		return new SamTransformationService<>(samFile, referenceFasta, filter, ungappedReferenceRanges, parameters);
+	}
+
+
+	/**
+	 * Create a new {@link SamTransformationService} using
+	 * the given SAM encoded file and a fasta file of the ungapped
+	 * references sequences referred to in the SAM.  The ids in the fasta file
+	 * must match the reference sequence names in the SAM file (@SQ SN:$ID) in the SAM header.
+	 * @param samFile the SAM file to parse and transform; can not be null
+	 * and must exist.
+	 * @param referenceFasta the reference fasta file; can not be null and must exist.
+	 * @param filter filter of reads to include- if null, then no filter is applied.
+	 * @throws IOException if there is a problem parsing the input files.
+	 * @throws NullPointerException if either parameter is null.
+	 *
+	 * @since 6.0
+	 */
+	public static SamTransformationService<NucleotideSequence, NucleotideSequenceBuilder> create(File samFile, File referenceFasta,SamRecordFilter filter,
+									SamParserFactory.Parameters parameters) throws IOException {
+		return new SamTransformationService<>(samFile, referenceFasta, filter, parameters);
+	}
+
+	/**
+	 * Create a new {@link SamTransformationService} using
+	 * the given SAM encoded file and a fasta file of the ungapped
+	 * references sequences referred to in the SAM.  The ids in the fasta file
+	 * must match the reference sequence names in the SAM file (@SQ SN:$ID) in the SAM header.
+	 * @param samFile the SAM file to parse and transform; can not be null
+	 * and must exist.
+	 * @param referenceFasta the reference fasta file; can not be null and must exist.
+	 * @param filter filter of reads to include- if null, then no filter is applied.
+	 * @throws IOException if there is a problem parsing the input files.
+	 * @throws NullPointerException if either parameter is null.
+	 *
+	 * @since 6.0
+	 */
+	public static SamTransformationService<NucleotideSequence, NucleotideSequenceBuilder> create(File samFile, File referenceFasta,SamRecordFilter filter,  Map<String, List<Range>> ungappedReferenceRanges, SamParserFactory.Parameters parameters) throws IOException {
+		return new SamTransformationService<>(samFile, referenceFasta, filter, ungappedReferenceRanges, parameters);
+	}
+
+	public static SamTransformationService<NucleotideSequence, NucleotideSequenceBuilder> create(SamParser parser, NucleotideFastaDataStore referenceFastaDatastore,
+																								 SamRecordFilter filter,  Map<String, List<Range>> ungappedReferenceRanges) throws IOException {
+		return create(parser,referenceFastaDatastore, filter, ungappedReferenceRanges, true);
+	}
+	public static SamTransformationService<NucleotideSequence, NucleotideSequenceBuilder> create(SamParser parser, NucleotideFastaDataStore referenceFastaDatastore,
+									SamRecordFilter filter,  Map<String, List<Range>> ungappedReferenceRanges,
+									boolean validateReferences) throws IOException {
+		return new SamTransformationService<>(parser,referenceFastaDatastore, filter, ungappedReferenceRanges, validateReferences);
+	}
+
+	public static <S extends INucleotideSequence<S, B>, B extends INucleotideSequenceBuilder<S,B>> SamTransformationService<S,B> create(SamParser parser, DataStore<S> referenceFastaDatastore,
+									SamRecordFilter filter, Map<String, List<Range>> ungappedReferenceRanges,
+									boolean validateReferences) throws IOException {
+		return new SamTransformationService<>(parser,referenceFastaDatastore, filter, ungappedReferenceRanges, validateReferences);
+	}
+		/**
+         * Create a new {@link SamTransformationService} using
+         * the given SAM encoded file and a fasta file of the ungapped
+         * references sequences referred to in the SAM.  The ids in the fasta file
+         * must match the reference sequence names in the SAM file (@SQ SN:$ID) in the SAM header.
+         * @param samFile the SAM file to parse and transform; can not be null
+         * and must exist.
+         * @param referenceFasta the reference fasta file; can not be null and must exist.
+         * @throws IOException if there is a problem parsing the input files.
+         * @throws NullPointerException if either parameter is null.
+         */
+	private SamTransformationService(File samFile, File referenceFasta) throws IOException {
 		
 		this(samFile, referenceFasta, (SamRecordFilter) null, SamParserFactory.Parameters.builder().build());
 	}
@@ -96,19 +204,19 @@ public final class SamTransformationService implements AssemblyTransformationSer
 	 * @param samFile the SAM file to parse and transform; can not be null
 	 * and must exist.
 	 * @param referenceFasta the reference fasta file; can not be null and must exist.
-	 * @param a filter of reads to include- if null, then no filter is applied.
+	 * @param filter filter of reads to include- if null, then no filter is applied.
 	 * @throws IOException if there is a problem parsing the input files.
 	 * @throws NullPointerException if either parameter is null.
 	 * 
 	 * @since 6.0
 	 */
-	public SamTransformationService(File samFile, File referenceFasta, Predicate<SamRecord> filter, SamParserFactory.Parameters parameters) throws IOException {
+	private SamTransformationService(File samFile, File referenceFasta, Predicate<SamRecord> filter, SamParserFactory.Parameters parameters) throws IOException {
 		
 		parser = SamParserFactory.create(samFile, parameters);
 		NucleotideFastaDataStore ungappedReferenceDataStore = new NucleotideFastaFileDataStoreBuilder(referenceFasta)
 																	.build();
 		this.filter = filter==null? null : SamRecordFilter.wrap(filter);
-		referenceDataStore = SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(parser, ungappedReferenceDataStore, this.filter);
+		referenceDataStore = (DataStore<S>) SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(parser, ungappedReferenceDataStore, this.filter);
 	}
 	/**
 	 * Create a new {@link SamTransformationService} using
@@ -118,13 +226,13 @@ public final class SamTransformationService implements AssemblyTransformationSer
 	 * @param samFile the SAM file to parse and transform; can not be null
 	 * and must exist.
 	 * @param referenceFasta the reference fasta file; can not be null and must exist.
-	 * @param a filter of reads to include- if null, then no filter is applied.
+	 * @param filter filter of reads to include- if null, then no filter is applied.
 	 * @throws IOException if there is a problem parsing the input files.
 	 * @throws NullPointerException if either parameter is null.
 	 * 
 	 * @since 6.0
 	 */
-	public SamTransformationService(File samFile, File referenceFasta, Predicate<SamRecord> filter,
+	private SamTransformationService(File samFile, File referenceFasta, Predicate<SamRecord> filter,
 			Map<String, List<Range>> ungappedReferenceRanges,
 			SamParserFactory.Parameters parameters) throws IOException {
 		
@@ -132,7 +240,7 @@ public final class SamTransformationService implements AssemblyTransformationSer
 		NucleotideFastaDataStore ungappedReferenceDataStore = new NucleotideFastaFileDataStoreBuilder(referenceFasta)
 																	.build();
 		this.filter = filter==null? null : SamRecordFilter.wrap(filter);
-		referenceDataStore = SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(parser, ungappedReferenceDataStore, this.filter);
+		referenceDataStore = (DataStore<S>) SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(parser, ungappedReferenceDataStore, this.filter ,ungappedReferenceRanges);
 	}
 	/**
 	 * Create a new {@link SamTransformationService} using
@@ -142,13 +250,13 @@ public final class SamTransformationService implements AssemblyTransformationSer
 	 * @param samFile the SAM file to parse and transform; can not be null
 	 * and must exist.
 	 * @param referenceFasta the reference fasta file; can not be null and must exist.
-	 * @param a filter of reads to include- if null, then no filter is applied.
+	 * @param filter filter of reads to include- if null, then no filter is applied.
 	 * @throws IOException if there is a problem parsing the input files.
 	 * @throws NullPointerException if either parameter is null.
 	 * 
 	 * @since 6.0
 	 */
-	public SamTransformationService(File samFile, File referenceFasta,SamRecordFilter filter,
+	private SamTransformationService(File samFile, File referenceFasta,SamRecordFilter filter,
 			SamParserFactory.Parameters parameters) throws IOException {
 		
 		parser = SamParserFactory.create(samFile, parameters);
@@ -156,9 +264,9 @@ public final class SamTransformationService implements AssemblyTransformationSer
 																	.build();
 		this.filter = filter;
 		if(filter!=null) {
-			filter.ungappedReferenceDataStore(ungappedReferenceDataStore);
+			filter.ungappedReferenceDataStore(ungappedReferenceDataStore.asSequenceDataStore());
 		}
-		referenceDataStore = SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(parser, ungappedReferenceDataStore, filter);
+		referenceDataStore = (DataStore<S>) SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(parser, ungappedReferenceDataStore, filter);
 	}
 	/**
 	 * Create a new {@link SamTransformationService} using
@@ -168,33 +276,47 @@ public final class SamTransformationService implements AssemblyTransformationSer
 	 * @param samFile the SAM file to parse and transform; can not be null
 	 * and must exist.
 	 * @param referenceFasta the reference fasta file; can not be null and must exist.
-	 * @param a filter of reads to include- if null, then no filter is applied.
+	 * @param filter filter of reads to include- if null, then no filter is applied.
 	 * @throws IOException if there is a problem parsing the input files.
 	 * @throws NullPointerException if either parameter is null.
 	 * 
 	 * @since 6.0
 	 */
-	public SamTransformationService(File samFile, File referenceFasta,SamRecordFilter filter,  Map<String, List<Range>> ungappedReferenceRanges, SamParserFactory.Parameters parameters) throws IOException {
+	private SamTransformationService(File samFile, File referenceFasta,SamRecordFilter filter,  Map<String, List<Range>> ungappedReferenceRanges, SamParserFactory.Parameters parameters) throws IOException {
 		
 		parser = SamParserFactory.create(samFile, parameters);
 		NucleotideFastaDataStore ungappedReferenceDataStore = new NucleotideFastaFileDataStoreBuilder(referenceFasta)
 																	.build();
 		this.filter = filter;
 		if(filter!=null) {
-			filter.ungappedReferenceDataStore(ungappedReferenceDataStore);
+			filter.ungappedReferenceDataStore(ungappedReferenceDataStore.asSequenceDataStore());
 		}
-		referenceDataStore = SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(parser, ungappedReferenceDataStore, filter, ungappedReferenceRanges);
+		referenceDataStore = (DataStore<S>) SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(parser, ungappedReferenceDataStore, filter, ungappedReferenceRanges);
 	}
-	public SamTransformationService(SamParser parser, NucleotideFastaDataStore referenceFastaDatastore,
+	private SamTransformationService(SamParser parser, NucleotideFastaDataStore referenceFastaDatastore,
 									SamRecordFilter filter,  Map<String, List<Range>> ungappedReferenceRanges) throws IOException {
 		this(parser, referenceFastaDatastore, filter, ungappedReferenceRanges, true);
 	}
-	public SamTransformationService(SamParser parser, NucleotideFastaDataStore referenceFastaDatastore,
+	private SamTransformationService(SamParser parser, NucleotideFastaDataStore referenceFastaDatastore,
 									SamRecordFilter filter,  Map<String, List<Range>> ungappedReferenceRanges,
 									boolean validateReferences) throws IOException {
 
 		this.parser = Objects.requireNonNull(parser);
 		NucleotideFastaDataStore ungappedReferenceDataStore = Objects.requireNonNull(referenceFastaDatastore);
+		this.filter = filter;
+		if(filter!=null) {
+			filter.ungappedReferenceDataStore(ungappedReferenceDataStore.asSequenceDataStore());
+		}
+		referenceDataStore = (DataStore<S>) SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(parser, ungappedReferenceDataStore,
+				filter, ungappedReferenceRanges,
+				validateReferences);
+	}
+	public SamTransformationService(SamParser parser, DataStore<S> referenceFastaDatastore,
+																													SamRecordFilter filter, Map<String, List<Range>> ungappedReferenceRanges,
+																													boolean validateReferences) throws IOException {
+
+		this.parser = Objects.requireNonNull(parser);
+		DataStore<S> ungappedReferenceDataStore = Objects.requireNonNull(referenceFastaDatastore);
 		this.filter = filter;
 		if(filter!=null) {
 			filter.ungappedReferenceDataStore(ungappedReferenceDataStore);
@@ -250,15 +372,15 @@ public final class SamTransformationService implements AssemblyTransformationSer
 	}
 	
 	
-	private static final class SamTransformerVisitor implements SamVisitor{
+	private static final class SamTransformerVisitor<S extends INucleotideSequence<S, B>, B extends INucleotideSequenceBuilder<S,B>> implements SamVisitor{
 
 		private final AssemblyTransformer transformer;
-		private final NucleotideSequenceDataStore referenceDataStore;
+		private final DataStore<S> referenceDataStore;
 		private final Map<String,SamAlignmentGapInserter> gapOffsetMap;
 		
 
 		VirtualFileOffset lowestSeen , highestSeen;
-		public SamTransformerVisitor(NucleotideSequenceDataStore referenceDataStore, AssemblyTransformer transformer) throws DataStoreException {
+		public SamTransformerVisitor(DataStore<S> referenceDataStore, AssemblyTransformer transformer) throws DataStoreException {
 			this.referenceDataStore = referenceDataStore;
 			this.transformer = transformer;
 			gapOffsetMap = new HashMap<>(MapUtil.computeMinHashMapSizeWithoutRehashing(referenceDataStore.getNumberOfRecords()));
@@ -326,7 +448,7 @@ public final class SamTransformationService implements AssemblyTransformationSer
 					SamAlignmentGapInserter samAlignmentGapInserter = gapOffsetMap.computeIfAbsent(refName,
 							k-> {
                                 try {
-									NucleotideSequence gappedReference = referenceDataStore.get(k);
+									S gappedReference = referenceDataStore.get(k);
 									transformer.referenceOrConsensus(k, gappedReference, ()->{
 										halt[0]=true;
 										callback.haltParsing();

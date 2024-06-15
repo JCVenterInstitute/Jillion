@@ -9,6 +9,9 @@ chronological so the most important changes may not always be ordered first.
 ================
 Jillion 6.0.2
 ================
+Bug Fixes
+---------
+1. ACGTN and ACGT Only NucleotideSequence#getNumberOfGapsUtil was returning wrong value.
 
 API Changes
 -----------
@@ -41,12 +44,39 @@ API Changes
 11. SamTransformationService and SamGappedReferenceBuilderVisitor now can take provided NucleotideDataStores
     for the references and will lazy load making the gapped refererences when it first encounters a read that
     aligns to that reference.  This allows mapping parts of the human genome without haivng to load the whole thing!
-   
+
+12. Added RangeMap#forEach
+
+13. Moved NucleotideSequence#findMatches() method to new `MatchableSequence` interface
+
+13. AssemblyTransformer#refOrConsensus() now passes an `INucleotideSequence<?,?>` instead of `NucleotideSequence`
+
+14. added INucleotideSequenceBuilder#toBuilder(initialCapacity) for when you want to create
+    a new builder with the same sequence but with larger capacity then the current seq length.
+
+14. GappedReferenceBuilder, SamAlignmentGapInserter and related classes now use INucleotideSequence interface
+    instead of NucleotideSequence class
+
+15.  Added Some Jackson annotations to NuclotideSequence and Direction so Jillion can be used
+to read and write JSON and YAML formatted data with Jackson without needing additional software.
+
+16. SamTransformationService now has INucleotideSequence and INucleotideSequenceBuilder generics added to the class
+    signature.  These generics refer to the type of the REFERENCE used.  Constructors made private and new equivalent #create() factory methods
+    should now be used which handle the creation of the new generics added.
+
+ 17. Added additional factory methods to SamTransformationService to use different reference Datastores other than
+ normal fasta files.
+
+ 18.  SamRecordFilter#ungappedReferenceDataStore() now takes a DataStore<INucleotideSequence> instead of NucleotideFastaDataStore
+
 Performance Improvements
 ------------------------
 1. Some internal methods implementations were rewritten to be easier to maintain and improve performance.
 2.  performance improvements to calculate flank offsets. This improves performance of applications
     that use Jillion with general assembly/gap heavy calculations by about 10%.
+3. GappedReferenceBuilder which is used by Sam and Cas Assembly Transformer and Gapped Reference Builders
+   will now use a sparse matrix to keep track of gap insertions if the input reference is very large
+   (currently > 1Mbps)
 
 
 ================

@@ -37,6 +37,7 @@ import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.MapUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
@@ -80,7 +81,7 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
 
 	private String[] refIndexToIdMap;
 	
-	private GappedReferenceBuilder[] gappedReferenceBuilders ;
+	private GappedReferenceBuilder<NucleotideSequence, NucleotideSequenceBuilder>[] gappedReferenceBuilders ;
 	private volatile boolean halted=false;
 	
 	private volatile CasGappedReferenceDataStore builtDataStore=null;
@@ -162,7 +163,7 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
             			
             			refIndexToIdMap[refCounter]= id;
             			if(refIdFilter.test(id)){
-	            			gappedReferenceBuilders[refCounter]= new GappedReferenceBuilder(next.getSequence());
+	            			gappedReferenceBuilders[refCounter]= new GappedReferenceBuilder<>(next.getSequence());
             			}
             			refCounter++;
             		}
@@ -275,7 +276,7 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
 
 		private void addInsertionsToReference(CasAlignment alignment, Long referenceIndex) {
 			
-			GappedReferenceBuilder builder = gappedReferenceBuilders[referenceIndex.intValue()];
+			GappedReferenceBuilder<NucleotideSequence, NucleotideSequenceBuilder> builder = gappedReferenceBuilders[referenceIndex.intValue()];
 			if(builder ==null){
 				//skip read
 				return;
@@ -334,7 +335,7 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
 				String[] refIndexToIdMap) {
 			this.delegate = delegate;
 			this.refIndexToIdMap = refIndexToIdMap;
-			id2IndexMap = new HashMap<String, Long>(MapUtil.computeMinHashMapSizeWithoutRehashing(refIndexToIdMap.length));
+			id2IndexMap = new HashMap<>(MapUtil.computeMinHashMapSizeWithoutRehashing(refIndexToIdMap.length));
 			for(int i=0; i< refIndexToIdMap.length; i++){
 				String id = refIndexToIdMap[i];
 				if(id !=null){

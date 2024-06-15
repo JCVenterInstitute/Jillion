@@ -3,6 +3,8 @@ package org.jcvi.jillion.sam;
 import java.util.Objects;
 import java.util.function.Predicate;
 
+import org.jcvi.jillion.core.datastore.DataStore;
+import org.jcvi.jillion.core.residue.nt.INucleotideSequence;
 import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 import org.jcvi.jillion.sam.header.SamHeader;
 
@@ -19,7 +21,7 @@ public interface SamRecordFilter {
 		Objects.requireNonNull(filter);
 		return new WrappedPredicateFilter(filter);
 	}
-	void ungappedReferenceDataStore(NucleotideFastaDataStore ungappedReferenceDataStore);
+	void ungappedReferenceDataStore(DataStore<? extends INucleotideSequence<?,?>> ungappedReferenceDataStore);
 	
 	default SamRecordFilter and(SamRecordFilter other) {
 		return new MultiSamRecordFilter(this, MultiSamRecordFilter.Operation.AND, other);

@@ -144,7 +144,32 @@ public interface INucleotideSequence<S extends INucleotideSequence<S,B>, B exten
      * @since 6.0
      */
     B toBuilder(List<Range> ranges);
-    
+
+	/**
+	 * Creates a new Builder
+	 * object with the capacity set either this sequence's length
+	 * or the given capacity whichever is larger.
+	 *
+	 * @param initialCapacity the initial capacity; can not be &le; 0.
+	 * @return a new Builder
+	 * instance initialized to this Sequence which may have
+	 * additional capacity.;
+	 * will never be null but may be empty.
+	 * @implSpec
+	 *  The default implementation is the same as
+	 * <pre>
+	 * return {@code newEmptyBuilder(initialCapacity).append(this)}
+	 * but classes should implement more memory efficient versions if desired.
+	 * </pre>
+	 *
+	 * @since 6.0.2
+	 *
+	 * @throws IllegalArgumentException if initialCapacity is less than 1.
+	 */
+	default B toBuilder(int initialCapacity){
+		return newEmptyBuilder(initialCapacity)
+				.append(this);
+	}
     /**
      * Is this sequence RNA.
      * @return {@code true} if DNA, otherwise false.
@@ -178,8 +203,7 @@ public interface INucleotideSequence<S extends INucleotideSequence<S,B>, B exten
      * Get the first non-gap {@link org.jcvi.jillion.core.residue.nt.Nucleotide} from the left side of the given
      * gappedReadIndex on the given {@link NucleotideSequence}.  If the given base is not a gap, 
      * then that is the value returned.
-     * @param gappedNucleotides the gapped nucleotides to search 
-     * @param gappedReadIndex the gapped offset (0-based) to start the search from.
+     * @param gappedOffset the gapped offset (0-based) to start the search from.
      * @return the first non-gap position on the sequence that is {@code <= gappedOffset}.
      * 
      * @since 6.0.2
@@ -229,7 +253,6 @@ public interface INucleotideSequence<S extends INucleotideSequence<S,B>, B exten
      * Get the first non-gap {@link org.jcvi.jillion.core.residue.nt.Nucleotide} from the right side of the given
      * gappedOffset on the given {@link NucleotideSequence}.  If the given base is not a gap, 
      * then that is the value returned.
-     * @param sequence the gapped {@link NucleotideSequence} to search 
      * @param gappedOffset the gapped offset (0-based) to start the search from.
      * @return the first non-gap position on the sequence that is {@code >= gappedOffset}
      * 

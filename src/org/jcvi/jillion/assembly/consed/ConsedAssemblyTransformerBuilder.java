@@ -57,6 +57,7 @@ import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.INucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
  * {@code ConsedAssemblyTransformerBuilder}
@@ -246,11 +247,11 @@ public class ConsedAssemblyTransformerBuilder {
 
 		@Override
 		public void referenceOrConsensus(String id,
-				NucleotideSequence gappedReference, AssemblyTransformerCallback callback) {
+                                         INucleotideSequence<?, ?> gappedReference, AssemblyTransformerCallback callback) {
 			if(builderMap.containsKey(id)){
 				throw new IllegalStateException("reference with id " + id + " already exists");
 			}
-			builderMap.put(id, new AceContigBuilder(id, gappedReference));
+			builderMap.put(id, new AceContigBuilder(id, gappedReference.toNucleotideSequence()));
 			
 		}
 

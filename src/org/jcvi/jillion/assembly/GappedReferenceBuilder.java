@@ -21,11 +21,15 @@
 package org.jcvi.jillion.assembly;
 
 
-import java.util.Arrays;
-import java.util.Iterator;
+import java.util.*;
 
+import org.jcvi.jillion.core.residue.nt.INucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.INucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.util.streams.ThrowingIndexedConsumer;
+import org.jcvi.jillion.core.util.streams.ThrowingIntIndexedConsumer;
+import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 import org.jcvi.jillion.sam.cigar.Cigar;
 import org.jcvi.jillion.sam.cigar.CigarElement;
 import org.jcvi.jillion.sam.cigar.CigarOperation;
@@ -41,10 +45,92 @@ import org.jcvi.jillion.sam.cigar.CigarOperation;
  * @author dkatzel
  *
  */
-public final class GappedReferenceBuilder {
+public final class GappedReferenceBuilder<S extends INucleotideSequence<S, B>, B extends INucleotideSequenceBuilder<S,B>> {
 
-	private final NucleotideSequence ungappedReference;
-	private final Insertion[] insertions;
+	/**
+	 * The length of the sequence to start using
+	 * a sparse matrix to keep track of insertions.
+	 *
+	 */
+	private static final long LENGTH_TO_SWITCH_TO_SPARSE = 1_000_000;
+	private interface Insertions{
+
+		void addReadInsertion(int offset, int insertionSize);
+		int computeTotalNumberOfGaps();
+
+		<E extends Throwable> void forEach(ThrowingIntIndexedConsumer<Insertion, E> consumer) throws E;
+
+		static Insertions create(INucleotideSequence<?,?> seq){
+			if(seq.getLength() < LENGTH_TO_SWITCH_TO_SPARSE){
+				return new ArrayInsertions((int) seq.getLength());
+			}
+			return new SparseInsertions();
+		}
+	}
+
+	private static class SparseInsertions implements Insertions{
+		//so we iterate backwards
+		NavigableMap<Integer, Insertion> map = new TreeMap<>(Collections.reverseOrder());
+
+		@Override
+		public void addReadInsertion(int offset, int insertionSize) {
+			map.computeIfAbsent(offset, k-> new Insertion(insertionSize)).updateSize(insertionSize);
+		}
+
+		@Override
+		public int computeTotalNumberOfGaps() {
+			return map.values().stream().mapToInt(Insertion::getSize).sum();
+		}
+
+		@Override
+		public <E extends Throwable> void forEach(ThrowingIntIndexedConsumer<Insertion, E> consumer) throws E {
+			for(Map.Entry<Integer, Insertion> entry : map.entrySet()) {
+				consumer.accept(entry.getKey(), entry.getValue());
+			};
+
+		}
+	}
+	private static class ArrayInsertions implements Insertions{
+		private final Insertion[] insertions;
+
+		public ArrayInsertions(int capacity){
+			insertions = new Insertion[capacity];
+		}
+
+		@Override
+		public void addReadInsertion(int offset, int insertionSize) {
+			if(insertions[offset] ==null){
+				insertions[offset] = new Insertion(insertionSize);
+			}else{
+				insertions[offset].updateSize(insertionSize);
+			}
+		}
+
+		public int computeTotalNumberOfGaps() {
+			int numberOfGaps = 0;
+			for(int i=0; i<insertions.length; i++){
+				Insertion insertion = insertions[i];
+				if(insertion !=null){
+					numberOfGaps += insertion.getSize();
+				}
+			}
+			return numberOfGaps;
+		}
+
+		@Override
+		public <E extends Throwable> void forEach(ThrowingIntIndexedConsumer<Insertion, E> consumer) throws E{
+			Objects.requireNonNull(consumer);
+			//iterates in reverse to keep offsets in sync
+			for(int i= insertions.length-1; i>=0; i--){
+				Insertion insertion = insertions[i];
+				if(insertion !=null){
+					consumer.accept(i, insertion);
+				}
+			}
+		}
+	}
+	private final S ungappedReference;
+	private final Insertions insertions;
 	
 	/**
 	 * Create a new instance using the given initial
@@ -56,7 +142,7 @@ public final class GappedReferenceBuilder {
 	 * @throws IllegalArgumentException if ungappedReference is gapped or if
 	 * the length &gt; Integer.MAX_VALUE
 	 */
-	public GappedReferenceBuilder(NucleotideSequence ungappedReference){
+	public GappedReferenceBuilder(S ungappedReference){
 		if(ungappedReference ==null){
 			throw new NullPointerException("ungapped reference can not be null");
 		}
@@ -68,7 +154,7 @@ public final class GappedReferenceBuilder {
 			throw new IllegalArgumentException("reference too big > int MAX");
 		}
 		this.ungappedReference = ungappedReference;
-		insertions = new Insertion[(int)length];
+		insertions = Insertions.create(ungappedReference);
 	}
 	/**
 	 * Add an insertion at the given ungapped offset
@@ -79,11 +165,8 @@ public final class GappedReferenceBuilder {
 	 * @throws IllegalArgumentException if insertionSize is negative.
 	 */
 	public GappedReferenceBuilder addReadInsertion(int offset, int insertionSize){
-		if(insertions[offset] ==null){
-        	insertions[offset] = new Insertion(insertionSize);
-        }else{
-        	insertions[offset].updateSize(insertionSize);
-        }
+
+		insertions.addReadInsertion(offset, insertionSize);
 		return this;
 	}
 	/**
@@ -115,32 +198,20 @@ public final class GappedReferenceBuilder {
 		return this;
 	}
 	
-	public NucleotideSequence build(){
+	public S build(){
 		//compute total number of gaps
 		//first so we don't have to keep resizing builder
-		int numberOfGaps = computeTotalNumberOfGaps();		
-		NucleotideSequenceBuilder gappedSequenceBuilder = new NucleotideSequenceBuilder(numberOfGaps+ insertions.length);
-		gappedSequenceBuilder.append(ungappedReference);
-		//iterates in reverse to keep offsets in sync
-		for(int i= insertions.length-1; i>=0; i--){
-    		Insertion insertion = insertions[i];
-			if(insertion !=null){
-    			gappedSequenceBuilder.insert(i, createGapStringOf(insertion.getSize()));
-    		}    		
-    	}
+		int numberOfGaps = insertions.computeTotalNumberOfGaps();
+
+		B gappedSequenceBuilder =ungappedReference.toBuilder((int)(ungappedReference.getLength() + numberOfGaps));
+		insertions.forEach((i, insertion)->{
+			gappedSequenceBuilder.insert( i, createGapStringOf(insertion.getSize()));
+		});
+
 		return gappedSequenceBuilder.build();
 	}
 
-	private int computeTotalNumberOfGaps() {
-		int numberOfGaps = 0;
-		for(int i=0; i<insertions.length; i++){
-			Insertion insertion = insertions[i];
-			if(insertion !=null){
-				numberOfGaps += insertion.getSize();
-			}
-		}
-		return numberOfGaps;
-	}
+
 	
 	
 	private char[] createGapStringOf(int maxGapSize) {

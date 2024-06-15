@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import org.jcvi.jillion.assembly.AssemblyUtil;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.ResidueSequence;
@@ -55,7 +56,7 @@ import org.jcvi.jillion.core.residue.ResidueSequence;
  * to the sequence that was serialized.
  * @author dkatzel
  */
-public interface NucleotideSequence extends INucleotideSequence<NucleotideSequence, NucleotideSequenceBuilder>, Serializable{
+public interface NucleotideSequence extends INucleotideSequence<NucleotideSequence, NucleotideSequenceBuilder>, Serializable, MatchableSequence {
 	/**
      * Two {@link NucleotideSequence}s are equal
      * if they contain the same {@link Nucleotide}s 
@@ -96,6 +97,8 @@ public interface NucleotideSequence extends INucleotideSequence<NucleotideSequen
      */
     @Override
     NucleotideSequenceBuilder toBuilder();
+
+
     
     @Override
     default NucleotideSequenceBuilder newEmptyBuilder(){
@@ -120,10 +123,12 @@ public interface NucleotideSequence extends INucleotideSequence<NucleotideSequen
      * 
      * @see #findMatches(Pattern)
      */
+    @Override
     default Stream<Range> findMatches(String regex){
         return findMatches(Pattern.compile(regex));
     }
-    default Stream<Range> findMatches(String regex,boolean nested){
+    @Override
+    default Stream<Range> findMatches(String regex, boolean nested){
     	return findMatches(Pattern.compile(regex),nested);
     }
     
@@ -141,47 +146,22 @@ public interface NucleotideSequence extends INucleotideSequence<NucleotideSequen
      * 
      * @see #findMatches(Pattern, Range)
      */
+    @Override
     default Stream<Range> findMatches(String regex, Range subSequenceRange){
         return findMatches(Pattern.compile(regex), subSequenceRange);
     }
-    default Stream<Range> findMatches(String regex, Range subSequenceRange,boolean nested){
+    @Override
+    default Stream<Range> findMatches(String regex, Range subSequenceRange, boolean nested){
     	return findMatches(Pattern.compile(regex),subSequenceRange,nested);
     }
-    
-    /**
-     * Find all the Ranges in this sequence that match the given regular expression {@link Pattern}.
-     * @param pattern the pattern to look for.  All bases must be in uppercase.
-     * @return a {@link Stream} of {@link Range} objects of the matches on this sequence.
-     * 
-     * @since 5.3
-     */
-    Stream<Range> findMatches(Pattern pattern);
-    /**
-     * Find the Ranges in this sequence within the specified sub sequence range
-     *  that match the given regular expression {@link Pattern}.  
-     *   <strong>NOTE</strong> All the Range
-     *  coordinates returned in the Stream will be relative to the entire sequence.
-     *  @apiNote This should return the same result as :
-     *  <pre>
-     *  sut.findMatches(pattern)
-     *     .filter(r-> r.isSubRangeOf(subSequenceRange))
-                   
-     *  </pre>
-     *  But will be more efficient.
-     *  
-     * @param pattern the pattern to look for.  All bases must be in uppercase.
-     * @param subSequenceRange the Range in the sequence to look for matches in.
-     * @return a {@link Stream} of {@link Range} objects of the matches on this sequence.
-     * 
-     * @since 5.3
-     */
-    Stream<Range> findMatches(Pattern pattern, Range subSequenceRange);
 
+    @Override
     default Stream<Range> findMatches(Pattern pattern, boolean nested) {
 
         return findMatches(pattern, Range.ofLength(getLength()), nested);
     }
 
+    @Override
     @SuppressWarnings("resource")
 	default Stream<Range> findMatches(Pattern pattern, Range subSequenceRange, boolean nested) {
 
@@ -243,6 +223,7 @@ public interface NucleotideSequence extends INucleotideSequence<NucleotideSequen
      * 
      * @since 5.3
      */
+    @JsonCreator
     static NucleotideSequence of(String sequence) {
         return new NucleotideSequenceBuilder(sequence)
                 .turnOffDataCompression(true)

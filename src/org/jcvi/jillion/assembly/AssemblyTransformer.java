@@ -25,6 +25,7 @@ import java.net.URI;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.INucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 /**
@@ -40,7 +41,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
  */
 public interface AssemblyTransformer {
 	
-	public interface AssemblyTransformerCallback{
+	interface AssemblyTransformerCallback{
 		void halt();
 	}
 	/**
@@ -49,7 +50,7 @@ public interface AssemblyTransformer {
 	 * @param gappedReference the gapped {@link NucleotideSequence}
 	 * @param callback the callback object
 	 */
-	void referenceOrConsensus(String id, NucleotideSequence gappedReference, AssemblyTransformerCallback callback);
+	void referenceOrConsensus(String id, INucleotideSequence<?,?> gappedReference, AssemblyTransformerCallback callback);
 	/**
 	 * The end of the assembly has been reached.
 	 */

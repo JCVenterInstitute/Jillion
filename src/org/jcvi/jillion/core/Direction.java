@@ -20,6 +20,8 @@
  ******************************************************************************/
 package org.jcvi.jillion.core;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -98,6 +100,7 @@ public enum Direction
      * one of the specified values.
      * 
      */
+    @JsonCreator
     public static Direction parseSequenceDirection(String dirString){
     	if(dirString ==null){
     		throw new NullPointerException("dirString can not be null");

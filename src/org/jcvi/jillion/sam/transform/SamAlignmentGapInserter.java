@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.nt.INucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
@@ -24,11 +25,11 @@ import lombok.Data;
  * @since 6.0
  */
 public class SamAlignmentGapInserter {
-	private final NucleotideSequence gappedReference;
+	private final INucleotideSequence<?,?> gappedReference;
 
 	private final GrowableIntArray gapOffsets;
 	
-	public SamAlignmentGapInserter(NucleotideSequence gappedReference) {
+	public SamAlignmentGapInserter(INucleotideSequence<?,?> gappedReference) {
 		this.gappedReference = gappedReference;
 		this.gapOffsets = new GrowableIntArray(gappedReference.gaps().toArray());
 	}

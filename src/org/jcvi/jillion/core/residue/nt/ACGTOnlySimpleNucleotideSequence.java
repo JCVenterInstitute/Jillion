@@ -48,7 +48,7 @@ class ACGTOnlySimpleNucleotideSequence extends AbstractSimpleNucleotideSequence{
 	}
 	@Override
 	public int getNumberOfGapsUntil(int gappedValidRangeIndex) {
-		return gappedValidRangeIndex;
+		return 0;
 	}
 	@Override
 	public int getUngappedOffsetFor(int gappedOffset) {

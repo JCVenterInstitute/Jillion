@@ -9,6 +9,7 @@ import java.util.Objects;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.pos.PositionSequence;
 import org.jcvi.jillion.core.qual.QualitySequence;
+import org.jcvi.jillion.core.residue.nt.INucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 /**
  * Wrapper around multiple {@link AssemblyTransformer}s
@@ -46,7 +47,7 @@ public class MultipleAssemblyTransformer implements AssemblyTransformer{
 	}
 
 	@Override
-	public void referenceOrConsensus(String id, NucleotideSequence gappedReference, AssemblyTransformerCallback callback) {
+	public void referenceOrConsensus(String id, INucleotideSequence<?, ?> gappedReference, AssemblyTransformerCallback callback) {
 		Iterator<AssemblyTransformer> iter = transformers.iterator();
 		AssemblyTransformerCallback wrappedCallback = ()->{
 			iter.remove();
