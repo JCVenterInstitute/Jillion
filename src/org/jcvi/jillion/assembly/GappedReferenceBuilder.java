@@ -65,7 +65,7 @@ public final class GappedReferenceBuilder<R extends Residue, S extends ResidueSe
 
 		static Insertions create(ResidueSequence<?,?,?> seq){
 			if(seq.getLength() < LENGTH_TO_SWITCH_TO_SPARSE){
-				return new ArrayInsertions((int) seq.getLength());
+				return new ArrayInsertions((int) seq.getLength()+1);
 			}
 			return new SparseInsertions();
 		}
@@ -94,7 +94,7 @@ public final class GappedReferenceBuilder<R extends Residue, S extends ResidueSe
 		}
 	}
 	private static class ArrayInsertions implements Insertions{
-		private final Insertion[] insertions;
+		private Insertion[] insertions;
 
 		public ArrayInsertions(int capacity){
 			insertions = new Insertion[capacity];
@@ -102,6 +102,7 @@ public final class GappedReferenceBuilder<R extends Residue, S extends ResidueSe
 
 		@Override
 		public void addReadInsertion(int offset, int insertionSize) {
+
 			if(insertions[offset] ==null){
 				insertions[offset] = new Insertion(insertionSize);
 			}else{

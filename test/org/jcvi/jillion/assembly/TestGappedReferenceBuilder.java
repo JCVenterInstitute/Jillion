@@ -29,6 +29,22 @@ public class TestGappedReferenceBuilder {
         sut.addReadInsertion(4, 1);
         seqStartsWith("ACGT-ACGT",sut.build());
     }
+
+    @Test
+    public void oneGapBeyondReference(){
+
+        GappedReferenceBuilder sut = createSut("ACGTACGT");
+        sut.addReadInsertion(8, 1);
+        seqStartsWith("ACGTACGT-",sut.build());
+    }
+    @Test
+    public void twoGapsBeyondReference(){
+
+        GappedReferenceBuilder sut = createSut("ACGTACGT");
+        sut.addReadInsertion(8, 2);
+        seqStartsWith("ACGTACGT--",sut.build());
+    }
+
     @Test
     public void twoGaps(){
 
