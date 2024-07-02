@@ -57,7 +57,19 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * @since 6.0
      */
 	B  append(R[] sequence);
-    
+
+    /**
+     * Append a Gap;
+     * @return this
+     *
+     * @since 6.0.3
+     *
+     * @implNote by default this is the same as {@code append("-")} but
+     * implementations might override this to be more efficient.
+     */
+    default B appendGap(){
+        return append("-");
+    }
    
     /**
      * Appends the given sequence to the end
@@ -70,6 +82,23 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * @throws NullPointerException if sequence is null.
      */
 	B append(String sequence);
+
+    /**
+     * Appends the given sequence to the end
+     * of the builder's mutable sequence.
+     * @param sequence the residue sequence to be appended
+     * to the end our builder.
+     *
+     * @return this.
+     *
+     * @throws NullPointerException if sequence is null.
+     *
+     * @since 6.0.2
+     * @implNote by default, same as {@code append(new String(sequence))}.
+     */
+    default B append(char[] sequence){
+        return append(new String(sequence));
+    }
     /**
      * Inserts the given sequence to the builder's mutable sequence
      * starting at the given offset.  If any residues existed
@@ -89,7 +118,35 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * @throws IllegalArgumentException if offset is invalid.
      */
 	B insert(int offset, String sequence);
-   
+
+    /**
+     * Inserts the given sequence to the builder's mutable sequence
+     * starting at the given offset.  If any residues existed
+     * downstream of this offset before this insert method
+     * was executed, then those residues will be shifted by n
+     * bases where n is the length of the given sequence to insert.
+     * If the offset = the current length then this insertion
+     * is treated as an append.
+     * @param offset the GAPPED offset into this mutable sequence
+     * to begin insertion.
+     * @param sequence the nucleotide sequence to be
+     * inserted at the given offset.
+     *
+     * @return this.
+     *
+     * @throws NullPointerException if sequence is null.
+     * @throws IllegalArgumentException if offset is invalid.
+     *
+     * @since 6.0.3
+     *
+     * @implNote  by default same as {@code  insert(offset, new String(sequence))}.
+     */
+    default B insert(int offset, char[] sequence){
+        return insert(offset, new String(sequence));
+    }
+
+
+
     /**
      * Get the current length of the mutable
      * sequence. 
@@ -157,6 +214,24 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * @see #insert(int, String)
      */
     B prepend(String sequence);
+
+    /**
+     * Inserts the given sequence the beginning
+     * of the builder's mutable sequence.
+     * This is the same as calling
+     * {@link #insert(int, String) insert(0,sequence)}
+     * @param sequence the residue sequence to be
+     * inserted at the beginning.
+     * @return this.
+     * @throws NullPointerException if sequence is null.
+     * @see #insert(int, String)
+     *
+     * @implNote by default same as {@code prepend(new String(sequence))}.
+     * @since 6.0.3
+     */
+    default B prepend(char[] sequence){
+        return prepend(new String(sequence));
+    }
     /**
      * Inserts the given sequence to the builder's mutable sequence
      * starting at the given offset.  If any residues existed

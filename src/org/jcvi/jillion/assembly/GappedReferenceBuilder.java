@@ -23,6 +23,9 @@ package org.jcvi.jillion.assembly;
 
 import java.util.*;
 
+import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.residue.ResidueSequence;
+import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.INucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.INucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -45,7 +48,7 @@ import org.jcvi.jillion.sam.cigar.CigarOperation;
  * @author dkatzel
  *
  */
-public final class GappedReferenceBuilder<S extends INucleotideSequence<S, B>, B extends INucleotideSequenceBuilder<S,B>> {
+public final class GappedReferenceBuilder<R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S,B>> {
 
 	/**
 	 * The length of the sequence to start using
@@ -60,7 +63,7 @@ public final class GappedReferenceBuilder<S extends INucleotideSequence<S, B>, B
 
 		<E extends Throwable> void forEach(ThrowingIntIndexedConsumer<Insertion, E> consumer) throws E;
 
-		static Insertions create(INucleotideSequence<?,?> seq){
+		static Insertions create(ResidueSequence<?,?,?> seq){
 			if(seq.getLength() < LENGTH_TO_SWITCH_TO_SPARSE){
 				return new ArrayInsertions((int) seq.getLength());
 			}
@@ -164,7 +167,7 @@ public final class GappedReferenceBuilder<S extends INucleotideSequence<S, B>, B
 	 * @return this
 	 * @throws IllegalArgumentException if insertionSize is negative.
 	 */
-	public GappedReferenceBuilder addReadInsertion(int offset, int insertionSize){
+	public GappedReferenceBuilder<R,S,B> addReadInsertion(int offset, int insertionSize){
 
 		insertions.addReadInsertion(offset, insertionSize);
 		return this;
@@ -178,7 +181,7 @@ public final class GappedReferenceBuilder<S extends INucleotideSequence<S, B>, B
 	 * @throws IndexOutOfBoundsException if offset is negative or larger than the reference sequence.
 	 * @since 6.0
 	 */
-	public GappedReferenceBuilder addReadByCigar(int offset, Cigar cigar) {
+	public GappedReferenceBuilder<R,S,B> addReadByCigar(int offset, Cigar cigar) {
 		int currentOffset = offset;
 		
 		Iterator<CigarElement> iter =cigar.getElementIterator();

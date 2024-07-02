@@ -31,6 +31,7 @@ import java.util.stream.Stream;
 
 import org.jcvi.jillion.align.pairwise.PairwiseSequenceAlignment;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
@@ -138,16 +139,29 @@ public final class Cigar implements Iterable<CigarElement>, Serializable{
 	public static <R extends Residue, S extends ResidueSequence<R,S,?>> Cigar createFrom(PairwiseSequenceAlignment<R, S> alignment){
 		S query =alignment.getGappedQueryAlignment();
 		S subject = alignment.getGappedSubjectAlignment();
-
-		//let's consider the query to be the read and the subject is the ref?
 		Builder builder = new Builder();
-		Iterator<R> queryIter = query.iterator();
-		Iterator<R> subjectIter = subject.iterator();
-
 		int softClipLength = (int) alignment.getQueryRange().getBegin();
 		if(softClipLength > 0) {
 			builder.addElement(CigarOperation.SOFT_CLIP, softClipLength);
 		}
+		return _create(query.iterator(), subject.iterator(), builder);
+
+	}
+
+	public static <R extends Residue, S extends ResidueSequence<R,S,?>> Cigar createFromAlignment(Sequence<R> query, Sequence<R> subject) {
+		//let's consider the query to be the read and the subject is the ref?
+		if(query.getLength()!=subject.getLength()){
+			throw new IllegalArgumentException("sequences must be the same length");
+		}
+		Builder builder = new Builder();
+		Iterator<R> queryIter = query.iterator();
+		Iterator<R> subjectIter = subject.iterator();
+
+
+		return _create(queryIter, subjectIter, builder);
+	}
+
+	private static <R extends Residue> Cigar _create(Iterator<R> queryIter, Iterator<R> subjectIter, Builder builder) {
 		//aligned so should be same length
 		int currentLength=0;
 		CigarOperation currentOp=null;
@@ -185,9 +199,8 @@ public final class Cigar implements Iterable<CigarElement>, Serializable{
 		}
 
 		return builder.build();
-
 	}
-	
+
 	private static boolean isDigit(char c){
 		return c >='0' && c<= '9';
 	}

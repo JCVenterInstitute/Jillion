@@ -29,6 +29,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
+import org.jcvi.jillion.core.residue.Complementable;
 import org.jcvi.jillion.core.residue.Residue;
 /**
  * {@code Nucleotide} is a {@link Residue}
@@ -37,7 +38,7 @@ import org.jcvi.jillion.core.residue.Residue;
  *
  *
  */
-public enum Nucleotide implements Residue {
+public enum Nucleotide implements Residue, Complementable<Nucleotide> {
     //order is in ambiguity traversal order that is most efficient.
     Unknown(Character.valueOf('N')),
     NotThymine(Character.valueOf('V')),
@@ -208,6 +209,7 @@ public enum Nucleotide implements Residue {
      * Get the complement this {@link Nucleotide}.
      * @return the complement of this.
      */
+    @Override
     public Nucleotide complement() {
     	Nucleotide ret=null;
     	switch(this){

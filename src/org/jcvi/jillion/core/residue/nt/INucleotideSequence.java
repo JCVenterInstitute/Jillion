@@ -11,12 +11,13 @@ import org.jcvi.jillion.assembly.AssemblyUtil;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Rangeable;
 import org.jcvi.jillion.core.residue.ResidueSequence;
+import org.jcvi.jillion.core.residue.ReverseComplementable;
 import org.jcvi.jillion.internal.core.residue.nt.DefaultLeftFlankingNoGapIterator;
 import org.jcvi.jillion.internal.core.residue.nt.DefaultLeftFlankingNucleotideIterator;
 import org.jcvi.jillion.internal.core.residue.nt.DefaultRightFlankingNoGapIterator;
 import org.jcvi.jillion.internal.core.residue.nt.DefaultRightFlankingNucleotideIterator;
 
-public interface INucleotideSequence<S extends INucleotideSequence<S,B>, B extends INucleotideSequenceBuilder<S, B>> extends ResidueSequence<Nucleotide, S, B>{
+public interface INucleotideSequence<S extends INucleotideSequence<S,B>, B extends INucleotideSequenceBuilder<S, B>> extends ResidueSequence<Nucleotide, S, B>, ReverseComplementable<Nucleotide> {
 
 	/**
 	 * Create an Iterator that iterates over the reverse complement
@@ -27,6 +28,7 @@ public interface INucleotideSequence<S extends INucleotideSequence<S,B>, B exten
 	 * then reverses it and returns the iterator to that list
 	 * @since 6.0
 	 */
+	@Override
 	default Iterator<Nucleotide> reverseComplementIterator(){
 		List<Nucleotide> list = new ArrayList<>((int) getLength());
 		Iterator<Nucleotide> iter = iterator();
@@ -37,6 +39,8 @@ public interface INucleotideSequence<S extends INucleotideSequence<S,B>, B exten
 		return list.iterator();
 		
 	}
+
+
 	/**
 	 * Create an Iterator that iterates over the reverse complement
 	 * of this sequence.
@@ -145,31 +149,7 @@ public interface INucleotideSequence<S extends INucleotideSequence<S,B>, B exten
      */
     B toBuilder(List<Range> ranges);
 
-	/**
-	 * Creates a new Builder
-	 * object with the capacity set either this sequence's length
-	 * or the given capacity whichever is larger.
-	 *
-	 * @param initialCapacity the initial capacity; can not be &le; 0.
-	 * @return a new Builder
-	 * instance initialized to this Sequence which may have
-	 * additional capacity.;
-	 * will never be null but may be empty.
-	 * @implSpec
-	 *  The default implementation is the same as
-	 * <pre>
-	 * return {@code newEmptyBuilder(initialCapacity).append(this)}
-	 * but classes should implement more memory efficient versions if desired.
-	 * </pre>
-	 *
-	 * @since 6.0.2
-	 *
-	 * @throws IllegalArgumentException if initialCapacity is less than 1.
-	 */
-	default B toBuilder(int initialCapacity){
-		return newEmptyBuilder(initialCapacity)
-				.append(this);
-	}
+
     /**
      * Is this sequence RNA.
      * @return {@code true} if DNA, otherwise false.

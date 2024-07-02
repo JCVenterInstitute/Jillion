@@ -50,7 +50,7 @@ import org.jcvi.jillion.sam.header.SamReferenceSequence;
 import org.jcvi.jillion.sam.SamParser.SamParserOptions;
 public final class SamGappedReferenceBuilderVisitor<S extends INucleotideSequence<S, B>, B extends INucleotideSequenceBuilder<S,B>> implements SamVisitor{
 
-	private final Map<String, GappedReferenceBuilder<S,B>> builders = new LinkedHashMap<>();
+	private final Map<String, GappedReferenceBuilder<Nucleotide,S,B>> builders = new LinkedHashMap<>();
 	private final DataStore<S> ungappedReferenceDataStore;
 
 	private boolean validateReferences=true;
@@ -174,7 +174,7 @@ public final class SamGappedReferenceBuilderVisitor<S extends INucleotideSequenc
 		if(record.isPrimary() && record.mapped()){
 			
 			String refName = record.getReferenceName();
-			GappedReferenceBuilder<S,B> refBuilder = builders.computeIfAbsent(refName,
+			GappedReferenceBuilder<Nucleotide, S,B> refBuilder = builders.computeIfAbsent(refName,
 							k-> {
                                 try {
                                     return new GappedReferenceBuilder<>(ungappedReferenceDataStore.get(k));
@@ -210,7 +210,7 @@ public final class SamGappedReferenceBuilderVisitor<S extends INucleotideSequenc
 	private DataStore<S> buildGappedReferences(){
 		Map<String, S> map = new LinkedHashMap<>();
 		
-		for(Entry<String, GappedReferenceBuilder<S,B>> entry : builders.entrySet()){
+		for(Entry<String, GappedReferenceBuilder<Nucleotide,S,B>> entry : builders.entrySet()){
 			map.put(entry.getKey(), entry.getValue().build());
 		}
 		return DataStore.of(map);

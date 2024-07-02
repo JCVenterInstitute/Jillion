@@ -7,6 +7,20 @@ change the behavior in any public API classes.  The order of changes is mostly
 chronological so the most important changes may not always be ordered first.
 
 ================
+Jillion 6.0.3
+================
+API Changes
+-----------
+1. ResidueSequenceBuilder - added extra insert/append/prepend methods that were on sub-interfaces
+2. GappedSequenceBuilder now works on any `ResidueSequence` not just `NucleotideSequence`s.
+3. Added interface ReverseComplementable to NucleotideSequence
+4. added interface Complementable to Nucleotide
+5. added ResidueSequence#reverseIterator() and ResidueSequence#computeUngappedSequence()
+6. added ResidueSequenceBuilder#appendGap()
+7. GappedReferenceBuilder changed to use any ResidueSequence not just NucleotideSequence.
+
+
+================
 Jillion 6.0.2
 ================
 Bug Fixes

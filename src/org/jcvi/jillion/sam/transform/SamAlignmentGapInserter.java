@@ -4,6 +4,10 @@ import java.util.Iterator;
 
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.residue.ResidueSequence;
+import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
+import org.jcvi.jillion.core.residue.ReverseComplementable;
 import org.jcvi.jillion.core.residue.nt.INucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -25,34 +29,42 @@ import lombok.Data;
  * @since 6.0
  */
 public class SamAlignmentGapInserter {
-	private final INucleotideSequence<?,?> gappedReference;
+	private final ResidueSequence<?,?,?> gappedReference;
 
 	private final GrowableIntArray gapOffsets;
 	
-	public SamAlignmentGapInserter(INucleotideSequence<?,?> gappedReference) {
+	public SamAlignmentGapInserter(ResidueSequence<?,?,?> gappedReference) {
 		this.gappedReference = gappedReference;
 		this.gapOffsets = new GrowableIntArray(gappedReference.gaps().toArray());
 	}
 	
 	@Data
-	public static class Result{
+	public static class Result<R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R,S,B>> {
 		private final int gappedStartOffset;
-		private final NucleotideSequenceBuilder gappedSequence;
+		private final B gappedSequence;
 	}
-	public Result computeExtraInsertions(Cigar cigar, NucleotideSequence rawUngappedSequence, int ungappedReferenceStartOffset, Direction dir) {
+
+	public <R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R,S,B>> Result<R,S,B> computeExtraInsertions(Cigar cigar, S rawUngappedSequence) {
+		return computeExtraInsertions(cigar, rawUngappedSequence, 0, Direction.FORWARD);
+	}
+	public <R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R,S,B>> Result<R,S,B> computeExtraInsertions(Cigar cigar, S rawUngappedSequence, int ungappedReferenceStartOffset, Direction dir) {
 		if(rawUngappedSequence.getNumberOfGaps() !=0){
 			throw new IllegalArgumentException("rawUngapped Sequence can not have gaps");
 		}
 		//give some wiggle room for inserting gaps
-		NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder((int)rawUngappedSequence.getLength()+20)
+		B builder = rawUngappedSequence.newEmptyBuilder((int)rawUngappedSequence.getLength()+20)
 												.turnOffDataCompression(true);
 		int gappedReferenceOffset = gappedReference.getGappedOffsetFor(ungappedReferenceStartOffset);
 		int currentOffset = gappedReferenceOffset;
-		Iterator<Nucleotide> ungappedBasesIter;
+		Iterator<R> ungappedBasesIter;
 		if(dir == Direction.FORWARD){
 			ungappedBasesIter= rawUngappedSequence.iterator();
 		}else{
-			ungappedBasesIter= rawUngappedSequence.reverseComplementIterator();
+			if(rawUngappedSequence instanceof ReverseComplementable) {
+				ungappedBasesIter = (Iterator<R>)(((ReverseComplementable)rawUngappedSequence).reverseComplementIterator());
+			}else{
+				ungappedBasesIter = rawUngappedSequence.reverseIterator();
+			}
 		}
 		for(CigarElement e : cigar){
 			if(e.getOp().isClip() ){
@@ -66,10 +78,10 @@ public class SamAlignmentGapInserter {
 			
 		}
 		
-		return new Result(gappedReferenceOffset, builder);
+		return new Result<>(gappedReferenceOffset, builder);
 	}
 	
-	private int appendBases(NucleotideSequenceBuilder builder, Iterator<Nucleotide> ungappedReadBaseIterator, int refOffset, CigarElement e){
+	private <R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R,S,B>> int appendBases(B builder, Iterator<R> ungappedReadBaseIterator, int refOffset, CigarElement e){
 		
 		int ret = refOffset;
 		for(int i=0; i<e.getLength(); i++){
@@ -77,7 +89,7 @@ public class SamAlignmentGapInserter {
 			if(e.getOp() != CigarOperation.INSERTION){
 				while(gapOffsets.binarySearch(ret) >=0){
 					//insert gap
-					builder.append(Nucleotide.Gap);
+					builder.appendGap();
 					ret++;
 				}
 			}
@@ -89,7 +101,7 @@ public class SamAlignmentGapInserter {
 			}
 			else if(e.getOp() ==CigarOperation.DELETION ||e.getOp() == CigarOperation.SKIPPED){
 				//insert gap
-				builder.append(Nucleotide.Gap);
+				builder.appendGap();
 				
 			}else{
 				builder.append(ungappedReadBaseIterator.next());			

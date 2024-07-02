@@ -253,4 +253,9 @@ public interface INucleotideSequenceBuilder<S extends INucleotideSequence<S, B>,
      * @since 6.0
      */
     IntStream gaps();
+
+    @Override
+    default B appendGap() {
+        return append(Nucleotide.Gap);
+    }
 }

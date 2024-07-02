@@ -1,6 +1,7 @@
 package org.jcvi.jillion.assembly;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.ResidueSequence;
 import org.jcvi.jillion.core.residue.nt.INucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.sam.cigar.Cigar;
@@ -12,7 +13,7 @@ public class TestGappedReferenceBuilder {
     protected GappedReferenceBuilder createSut(String seqPrefix){
         return new GappedReferenceBuilder(NucleotideSequence.of(seqPrefix));
     }
-    private static void seqStartsWith(String prefix, INucleotideSequence<?,?> seq){
+    private static void seqStartsWith(String prefix, ResidueSequence<?,?,?> seq){
         assertEquals(prefix, seq.trim(Range.ofLength(prefix.length())).toString());
     }
     @Test

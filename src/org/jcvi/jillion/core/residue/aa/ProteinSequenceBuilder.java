@@ -146,7 +146,12 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 			}
 		});
 	}
-	
+
+	@Override
+	public ProteinSequenceBuilder appendGap() {
+		return append(AminoAcid.Gap);
+	}
+
 	private static List<AminoAcid> parse(String aminoAcids){
 		List<AminoAcid> result = new ArrayList<AminoAcid>(aminoAcids.length());
         for(int i=0; i<aminoAcids.length(); i++){

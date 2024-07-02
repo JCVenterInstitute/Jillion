@@ -20,15 +20,15 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+
 /**
  * {@code ResidueSequence} is a {@link Sequence}
  * of {@link Residue} that may contain gaps.  There are extra
@@ -333,7 +333,31 @@ public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R,
      * 
      */
     B newEmptyBuilder(int initialCapacity);
-    
+    /**
+     * Creates a new Builder
+     * object with the capacity set either this sequence's length
+     * or the given capacity whichever is larger.
+     *
+     * @param initialCapacity the initial capacity; can not be &le; 0.
+     * @return a new Builder
+     * instance initialized to this Sequence which may have
+     * additional capacity.;
+     * will never be null but may be empty.
+     * @implSpec
+     *  The default implementation is the same as
+     * <pre>
+     * return {@code newEmptyBuilder(initialCapacity).append(this)}
+     * but classes should implement more memory efficient versions if desired.
+     * </pre>
+     *
+     * @since 6.0.3
+     *
+     * @throws IllegalArgumentException if initialCapacity is less than 1.
+     */
+    default B toBuilder(int initialCapacity){
+        return newEmptyBuilder(initialCapacity)
+                .append(this);
+    }
     /**
      * Get the actual subtype of this implementation.
      * Ideally, this method should not have been public
@@ -489,4 +513,52 @@ public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R,
     
     @Override
     T trim(Range range);
+
+
+    /**
+     * Create an Iterator that iterates over the reverse
+     * of this sequence.
+     * @return a new Iterator.
+     *
+     * @implNote the default implementation uses copies all the residues into a List
+     * then reverses it and returns the iterator to that list
+     * @since 6.0.3
+     */
+    default Iterator<R> reverseIterator(){
+        List<R> list = new ArrayList<>((int) getLength());
+        Iterator<R> iter = iterator();
+        while(iter.hasNext()) {
+            list.add(iter.next());
+        }
+        Collections.reverse(list);
+        return list.iterator();
+
+    }
+
+    /**
+     * Construct a {@link ResidueSequence} with the same sequence as this sequence,
+     * but without any gaps.
+     *
+     * @return a ResidueSequence which may be this or a new ResidueSequence,
+     * will never be null but may be empty.
+     *
+     * @implNote by default this is implemented as:
+     *
+     * <pre>
+     * {@code
+     * if(getNumberOfGaps()==0) {
+     *   return asSubtype();
+     * }
+     * return toBuilder().ungap().build();
+     * }
+     * </pre>
+     *
+     * @since 6.0.3
+     */
+    default T computeUngappedSequence() {
+        if(getNumberOfGaps()==0) {
+            return asSubtype();
+        }
+        return toBuilder().ungap().build();
+    }
 }

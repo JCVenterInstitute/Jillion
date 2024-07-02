@@ -36,6 +36,7 @@ import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.MapUtil;
@@ -81,7 +82,7 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
 
 	private String[] refIndexToIdMap;
 	
-	private GappedReferenceBuilder<NucleotideSequence, NucleotideSequenceBuilder>[] gappedReferenceBuilders ;
+	private GappedReferenceBuilder<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder>[] gappedReferenceBuilders ;
 	private volatile boolean halted=false;
 	
 	private volatile CasGappedReferenceDataStore builtDataStore=null;
@@ -276,7 +277,7 @@ public final class CasGappedReferenceDataStoreBuilderVisitor implements CasFileV
 
 		private void addInsertionsToReference(CasAlignment alignment, Long referenceIndex) {
 			
-			GappedReferenceBuilder<NucleotideSequence, NucleotideSequenceBuilder> builder = gappedReferenceBuilders[referenceIndex.intValue()];
+			GappedReferenceBuilder<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder> builder = gappedReferenceBuilders[referenceIndex.intValue()];
 			if(builder ==null){
 				//skip read
 				return;

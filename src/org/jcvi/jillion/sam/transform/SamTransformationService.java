@@ -462,7 +462,7 @@ public final class SamTransformationService<S extends INucleotideSequence<S, B>,
 						//called halt when new reference encountered
 						return;
 					}
-					SamAlignmentGapInserter.Result insertedResult = samAlignmentGapInserter.computeExtraInsertions(cigar, rawSequence, record.getStartPosition()-1, dir);
+					SamAlignmentGapInserter.Result<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder> insertedResult = samAlignmentGapInserter.computeExtraInsertions(cigar, rawSequence, record.getStartPosition()-1, dir);
 					
 					
 				
