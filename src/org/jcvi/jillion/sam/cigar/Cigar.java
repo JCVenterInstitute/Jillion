@@ -198,7 +198,7 @@ public final class Cigar implements Iterable<CigarElement>, Serializable{
 			builder.addElement(new CigarElement(currentOp, currentLength));
 		}
 
-		return builder.build();
+		return builder.buildMerged();
 	}
 
 	private static boolean isDigit(char c){
@@ -211,7 +211,7 @@ public final class Cigar implements Iterable<CigarElement>, Serializable{
 
 	@Override
 	public Iterator<CigarElement> iterator() {
-		return new ArrayIterator<CigarElement>(elements);
+		return new ArrayIterator<>(elements);
 	}
 
 	/**
@@ -867,6 +867,28 @@ public final class Cigar implements Iterable<CigarElement>, Serializable{
 			validate(array);
 			return new Cigar(array);
 		}
+		/**
+		 * Create a new {@link Cigar} object using
+		 * the current contents of the builder but merge consecutive
+		 * {@link CigarOperation}s together.  For example {@code 15M15M} will
+		 * be merged into {@code 30M}.
+		 *
+		 * @return a new {@link Cigar}; will never be null.
+		 *
+		 * @throws IllegalStateException if the builder built a cigar
+		 * with an illegal combination of {@link CigarElement}s.
+		 * For example, {@link CigarOperation#HARD_CLIP}s if present,
+		 * must be the first/and or last elements and {@link CigarOperation#SOFT_CLIP}
+		 * must be immediately inside a {@link CigarOperation#HARD_CLIP}s.
+		 */
+		public Cigar buildMerged(){
+
+			CigarElement[] array = elements.toArray(new CigarElement[elements.size()]);
+			validate(array);
+			List<CigarElement> merged =mergeClipsOps(Arrays.asList(array));
+			return new Cigar(merged.toArray(CigarElement[]::new));
+		}
+
 		private void validate(CigarElement[] array) {
 			//only first and last ops may be hard_clips
 			GrowableIntArray softClipPoints = new GrowableIntArray(2);

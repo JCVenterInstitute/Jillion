@@ -310,6 +310,20 @@ public class TestCigar {
 		Cigar copy = cigar.toBuilder().build();
 		assertEquals(cigarString, copy.toCigarString());
 	}
+
+	@Test
+	public void buildMergeNoMerge(){
+		String cigarString = "20H3S50M75H";
+
+		Cigar cigar = Cigar.parse(cigarString);
+		assertEquals(cigarString, cigar.toBuilder().buildMerged().toCigarString());
+	}
+	@Test
+	public void buildMerge(){
+
+		Cigar cigar = Cigar.parse("15M15M");
+		assertEquals("30M", cigar.toBuilder().buildMerged().toCigarString());
+	}
 	
 	
 }
