@@ -9,6 +9,10 @@ chronological so the most important changes may not always be ordered first.
 ================
 Jillion 6.0.3
 ================
+Bug Fixes
+-----------
+1. GappedSequenceBuilder now allows insertions at the end of reference sequences
+
 API Changes
 -----------
 1. ResidueSequenceBuilder - added extra insert/append/prepend methods that were on sub-interfaces
@@ -18,7 +22,8 @@ API Changes
 5. added ResidueSequence#reverseIterator() and ResidueSequence#computeUngappedSequence()
 6. added ResidueSequenceBuilder#appendGap()
 7. GappedReferenceBuilder changed to use any ResidueSequence not just NucleotideSequence.
-
+8. Cigar.Builder now has a buildMerged() method which combines consecutive CigarOperations.
+   For example `3M3M` will be built into a Cigar String of `6M` using buildMerged.
 
 ================
 Jillion 6.0.2
