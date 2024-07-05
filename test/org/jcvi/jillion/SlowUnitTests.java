@@ -32,11 +32,13 @@ import org.jcvi.jillion.core.testUtil.SlowTests;
 import org.jcvi.jillion.experimental.AllExperimentalTests;
 import org.jcvi.jillion.fasta.AllFastaUnitTests;
 import org.jcvi.jillion.maq.AllMaqTests;
+import org.jcvi.jillion.orf.AllOrfTests;
 import org.jcvi.jillion.profile.AllProfileUnitTests;
 import org.jcvi.jillion.sam.AllSamTests;
 import org.jcvi.jillion.testutils.AllTestUtilsTests;
 import org.jcvi.jillion.trace.AllTraceUnitTests;
 import org.jcvi.jillion.trim.AllTrimmerUnitTests;
+import org.jcvi.jillion.vcf.AllVcfTests;
 import org.junit.experimental.categories.Categories;
 import org.junit.experimental.categories.Categories.IncludeCategory;
 import org.junit.runner.RunWith;
@@ -51,19 +53,20 @@ import org.junit.runners.Suite.SuiteClasses;
 @IncludeCategory(SlowTests.class)
 @SuiteClasses(
     {
-        
-        
-    	 AllCoreUnitTests.class,         
-        AllFastaUnitTests.class,
-        AllTraceUnitTests.class,
-        AllAssemblyUnitTests.class,
-        AllSamTests.class,
-        AllMaqTests.class,
-        AllProfileUnitTests.class,
-        AllTestUtilsTests.class,
-        AllTrimmerUnitTests.class,
-        AllAlignmentTests.class,
-        AllExperimentalTests.class
+            AllCoreUnitTests.class,
+            AllFastaUnitTests.class,
+            AllTraceUnitTests.class,
+            AllAssemblyUnitTests.class,
+            AllSamTests.class,
+            AllMaqTests.class,
+            AllProfileUnitTests.class,
+            AllTestUtilsTests.class,
+            AllTrimmerUnitTests.class,
+            AllOrfTests.class,
+
+            AllVcfTests.class,
+            AllAlignmentTests.class,
+            AllExperimentalTests.class
    
     }
 )

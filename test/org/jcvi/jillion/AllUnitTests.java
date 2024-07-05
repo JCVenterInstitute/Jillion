@@ -37,6 +37,7 @@ import org.jcvi.jillion.sam.AllSamTests;
 import org.jcvi.jillion.testutils.AllTestUtilsTests;
 import org.jcvi.jillion.trace.AllTraceUnitTests;
 import org.jcvi.jillion.trim.AllTrimmerUnitTests;
+import org.jcvi.jillion.vcf.AllVcfTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -51,20 +52,20 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses(
     {
-        
-        
-    	 AllCoreUnitTests.class,         
-        AllFastaUnitTests.class,
-        AllTraceUnitTests.class,
-        AllAssemblyUnitTests.class,
-        AllSamTests.class,
-        AllMaqTests.class,
-        AllProfileUnitTests.class,
-        AllTestUtilsTests.class,
-        AllTrimmerUnitTests.class,
-        AllOrfTests.class,
-        AllAlignmentTests.class,
-        AllExperimentalTests.class
+            AllCoreUnitTests.class,
+            AllFastaUnitTests.class,
+            AllTraceUnitTests.class,
+            AllAssemblyUnitTests.class,
+            AllSamTests.class,
+            AllMaqTests.class,
+            AllProfileUnitTests.class,
+            AllTestUtilsTests.class,
+            AllTrimmerUnitTests.class,
+            AllOrfTests.class,
+
+            AllVcfTests.class,
+            AllAlignmentTests.class,
+            AllExperimentalTests.class
    
     }
 )
