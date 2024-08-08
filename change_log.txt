@@ -25,6 +25,11 @@ API Changes
 8. Cigar.Builder now has a buildMerged() method which combines consecutive CigarOperations.
    For example `3M3M` will be built into a Cigar String of `6M` using buildMerged.
 
+Performance Improvements
+------------------------
+1. SplitFastaWriter.deconvolve() factories now internally use ConcurrentHashMap instead of synchronized HashMap
+  so performance of deconvolving many fastas in multiple concurrent threads will be faster
+
 ================
 Jillion 6.0.2
 ================

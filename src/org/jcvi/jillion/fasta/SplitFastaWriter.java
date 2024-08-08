@@ -25,11 +25,14 @@ import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.internal.core.util.Sneak;
+
 /**
  * Utility class that creates {@link FastaWriter} instances
  * that split the {@link FastaRecord} objects being written out
@@ -302,7 +305,7 @@ public final class SplitFastaWriter{
 
 		private volatile boolean closed = false;
 		
-		private final Map<K, W> writers = new HashMap<>();
+		private final Map<K, W> writers = new ConcurrentHashMap<>();
 		
 		private final Function<FastaRecord<S, T>, K> deconvolutionFunction;
 		private final DeconvolveFastaRecordWriterFactory<K, W> supplier;
@@ -339,7 +342,7 @@ public final class SplitFastaWriter{
 			privateWrite(record);
 		}
 
-		private synchronized void privateWrite(FastaRecord<S,T> record) throws IOException {
+		private void privateWrite(FastaRecord<S,T> record) throws IOException {
 			checkNotClosed();
 			Objects.requireNonNull(record);
 			K key = deconvolutionFunction.apply(record);
@@ -347,26 +350,26 @@ public final class SplitFastaWriter{
 			    //skip record
 			    return;
 			}
-			//since we might throw an IOException
-			//if we call the supplier
-			//we do a check then act
-			//which is not threadsafe
-			//but this writer isn't threadsafe anyway
-			//so I don't think it matters.
-			//if we used computIfAbsent(key, supplier)
-			//we would have to wrap any exception thrown by supplier
-			//in a runtime exception
-			W writer = writers.get(key);
-			if(writer==null){
-			    writer = supplier.create(key);
-			    writers.put(key, writer);
-			}
+
+			W writer = writers.computeIfAbsent(key,
+				k-> {
+				try{
+					return supplier.create(k);
+				}catch(IOException e){
+					return Sneak.sneakyThrow(e);
+				}
+
+			});
+			//every Fasta Writer implementation that comes with Jillion
+			//should be threadsafe for writing... so this should be fine
+			//without additional locking?
+			writer.write(record.getId(), record.getSequence(), record.getComment());
 			//use this version of write()
 			//so we don't have to create a mock
 			//implementation of fastaRecord type F
 			//which adds a lot of  by requiring
 			//Proxy classes and reflection calls
-			writer.write(record.getId(), record.getSequence(), record.getComment());
+
 		}
 		
 	
