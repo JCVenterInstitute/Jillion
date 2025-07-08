@@ -24,6 +24,7 @@ API Changes
 7. GappedReferenceBuilder changed to use any ResidueSequence not just NucleotideSequence.
 8. Cigar.Builder now has a buildMerged() method which combines consecutive CigarOperations.
    For example `3M3M` will be built into a Cigar String of `6M` using buildMerged.
+9. Cigar now has new factory methods to build from alignments
 
 Performance Improvements
 ------------------------
