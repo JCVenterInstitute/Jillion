@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import org.jcvi.jillion.align.SequenceAlignment;
 import org.jcvi.jillion.align.pairwise.PairwiseSequenceAlignment;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
@@ -136,7 +137,7 @@ public final class Cigar implements Iterable<CigarElement>, Serializable{
 		
 	}
 	
-	public static <R extends Residue, S extends ResidueSequence<R,S,?>> Cigar createFrom(PairwiseSequenceAlignment<R, S> alignment){
+	public static <R extends Residue, S extends ResidueSequence<R,S,?>> Cigar createFrom(SequenceAlignment<R, S> alignment){
 		S query =alignment.getGappedQueryAlignment();
 		S subject = alignment.getGappedSubjectAlignment();
 		Builder builder = new Builder();
