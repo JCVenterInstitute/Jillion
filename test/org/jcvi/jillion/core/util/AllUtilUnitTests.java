@@ -103,7 +103,8 @@ import org.junit.runners.Suite.SuiteClasses;
         
         TestBoundedPriorityQueue.class,
         TestRangeMap.class,
-        TestRangeIntersectOrAbut.class
+        TestRangeIntersectOrAbut.class,
+			TestOffsets.class
         
     }
     )

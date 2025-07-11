@@ -59,6 +59,37 @@ public class TestGrowableIntArray {
 		int[] expected = new int[]{10,15,30,40};
 		assertArrayEquals(expected, sut.toArray());
 	}
+
+	@Test
+	public void replaceIf(){
+		GrowableIntArray sut = new GrowableIntArray(new int[]{10,20,30,40,50});
+		sut.replaceIf(i-> i > 30, 100);
+
+		int[] expected = new int[]{10,20,30, 100,100};
+		assertArrayEquals(expected, sut.toArray());
+	}
+	@Test
+	public void replaceIfFunction(){
+		GrowableIntArray sut = new GrowableIntArray(new int[]{10,20,30,40,50});
+		sut.replaceIf(i-> i > 30, i-> i-1);
+
+		int[] expected = new int[]{10,20,30,39,49};
+		assertArrayEquals(expected, sut.toArray());
+	}
+	@Test(expected = NullPointerException.class)
+	public void replaceIfFunctionNullFunctionShouldThrowNPE(){
+		GrowableIntArray sut = new GrowableIntArray(new int[]{10,20,30,40,50});
+		sut.replaceIf(i-> i > 30, null);
+
+
+	}
+	@Test(expected = NullPointerException.class)
+	public void replaceIfFunctionNullPredicateShouldThrowNPE(){
+		GrowableIntArray sut = new GrowableIntArray(new int[]{10,20,30,40,50});
+		sut.replaceIf(null,  i-> i-1);
+
+
+	}
 	@Test
 	public void appendBeyondCapacityShouldGrowArray(){
 		GrowableIntArray sut = new GrowableIntArray(5);

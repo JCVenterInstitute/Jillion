@@ -7,6 +7,16 @@ change the behavior in any public API classes.  The order of changes is mostly
 chronological so the most important changes may not always be ordered first.
 
 ================
+Jillion 6.0.4
+================
+
+API Changes
+-----------
+1. Growable Arrays new method to removeIf(Predicate, UnaryOperator) to compute the replacement. Previous methods were static replacement values.
+2. new class Offsets which handles a list of offset values and will correctly adjust coordinates when values are added or removed.
+
+
+================
 Jillion 6.0.3
 ================
 Bug Fixes

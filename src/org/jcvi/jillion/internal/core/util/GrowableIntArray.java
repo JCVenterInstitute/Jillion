@@ -21,7 +21,9 @@
 package org.jcvi.jillion.internal.core.util;
 
 import java.util.*;
+import java.util.function.IntBinaryOperator;
 import java.util.function.IntPredicate;
+import java.util.function.IntUnaryOperator;
 import java.util.stream.IntStream;
 
 import org.jcvi.jillion.core.Range;
@@ -541,7 +543,7 @@ public final class GrowableIntArray implements Iterable<Integer>{
 	 * @param <E> the Throwable that might be thrown by the consumer.
 	 * @throws E the Throwable from the consumer.
 	 *
-	 * @throws NullPointer exception if either range or consumer are null.
+	 * @throws NullPointerException exception if either range or consumer are null.
 	 * @since 5.3
 	 */
 	public <E extends Throwable> void forEachIndexed(Range range, ThrowingIntIndexedIntConsumer<E> consumer) throws E{
@@ -569,6 +571,26 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		return this;
 	}
 	/**
+	 * Replace any values that pass the given predicate with the given replacement value.
+	 * @param predicate the predicate to test; can not be null.
+	 * @param replacementFunction the function to replace the value given the previous value.
+	 * @throws NullPointerException if predicate is null.
+	 *
+	 * @return this
+	 *
+	 * @since 6.0.4
+	 */
+	public GrowableIntArray replaceIf(IntPredicate predicate, IntUnaryOperator replacementFunction){
+		Objects.requireNonNull(replacementFunction);
+		Objects.requireNonNull(predicate);
+		for(int i=0; i< currentLength; i++) {
+			if(predicate.test(data[i])) {
+				data[i] = replacementFunction.applyAsInt(data[i]);
+			}
+		}
+		return this;
+	}
+	/**
 	 * Replace any values within the given offset range that pass the given predicate with the given replacement value.
 	 * @param range the offset range to check over; can not be null.
 	 * @param predicate the predicate to test; can not be null.
@@ -583,6 +605,28 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		for(int i=(int) range.getBegin(); i< end; i++){
 			if(predicate.test(data[i])) {
 				data[i] = replacementValue;
+			}
+		}
+		return this;
+	}
+	/**
+	 * Replace any values within the given offset range that pass the given predicate with the given replacement value.
+	 * @param range the offset range to check over; can not be null.
+	 * @param predicate the predicate to test; can not be null.
+	 * @param replacementFunction the function to replace the value given the previous value.
+	 * @throws NullPointerException if predicate is null.
+	 *
+	 * @return this
+	 *
+	 * @since 6.0.4
+	 */
+	public GrowableIntArray replaceIf(Range range, IntPredicate predicate, IntUnaryOperator replacementFunction){
+		Objects.requireNonNull(replacementFunction);
+		Objects.requireNonNull(predicate);
+		int end = (int) Math.min(currentLength, range.getEnd()+1);
+		for(int i=(int) range.getBegin(); i< end; i++){
+			if(predicate.test(data[i])) {
+				data[i] = replacementFunction.applyAsInt(data[i]);
 			}
 		}
 		return this;
