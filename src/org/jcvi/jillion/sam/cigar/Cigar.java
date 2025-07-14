@@ -22,13 +22,14 @@ package org.jcvi.jillion.sam.cigar;
 
 import java.io.ObjectInputStream;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import lombok.*;
 import org.jcvi.jillion.align.SequenceAlignment;
 import org.jcvi.jillion.align.pairwise.PairwiseSequenceAlignment;
 import org.jcvi.jillion.core.Range;
@@ -40,6 +41,8 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.ArrayIterator;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.PeekableIterator;
+import org.jcvi.jillion.core.util.streams.IndexedConsumer;
+import org.jcvi.jillion.core.util.streams.ThrowingBiConsumer;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 /**
  * {@code Cigar} is an Object for a single
@@ -213,6 +216,183 @@ public final class Cigar implements Iterable<CigarElement>, Serializable{
 	@Override
 	public Iterator<CigarElement> iterator() {
 		return new ArrayIterator<>(elements);
+	}
+
+	public ListIterator<CigarElement> listIterator() {
+		return listIterator(0);
+	}
+	public ListIterator<CigarElement> listIterator(int startIndex) {
+		return new ArrayIterator<>(elements, startIndex);
+	}
+	@Data
+	private static class CigarElementInfo implements CigarTraversalCallback{
+		CigarElement cigarElement;
+		int cigarIndex;
+		int validRangeReadStartOffset;
+        int readStartOffset;
+
+		int relativeReferenceStartOffset;
+
+        @Setter(AccessLevel.NONE)
+		@Getter(AccessLevel.NONE)
+		boolean halt;
+
+		public void halt(){
+			this.halt=true;
+		}
+	}
+
+    /**
+     * Callback to {@link #consumeElements(Predicate, ThrowingBiConsumer)}
+	 * that contains extra metadata about the current {@link CigarElement}
+	 * being traversed as well as a {@link #halt()} method to stop traversal
+     * prematurely.
+	 *
+	 * @since 6.0.4
+     */
+	public interface CigarTraversalCallback{
+		/**
+		 * Halt iterating over the {@link CigarElement}s.
+		 * If this method is called then any downstream elements that
+		 * meet the predicate test will not be called.
+		 *
+		 */
+		void halt();
+
+		/**
+		 * The index of this current {@link CigarElement} in the Cigar
+		 * with the first element being {@code 0}.
+		 * @return the index from 0 until cigar length -1.
+		 */
+		int getCigarIndex();
+        /**
+         * Get the read offset (0-based) for the beginning of this {@link CigarElement}.
+         * The difference between this value and the one returned by {@link #getRelativeReferenceStartOffset()}
+         * is that this one include INSERTIONS but not DELETIONS or Clipped bases.
+         * @return the offset.
+         *
+         * @see #getRelativeReferenceStartOffset()
+         */
+		int getValidRangeReadStartOffset();
+
+        /**
+         * Get the read offset (0-based) for the beginning of this {@link CigarElement}.
+		 * The difference between this value and the one returned by {@link #getRelativeReferenceStartOffset()}
+		 * is that this one includes INSERTIONS and Clipped bases (if any) but not DELETIONS.
+         * @return the offset.
+		 *
+		 * @see #getRelativeReferenceStartOffset()
+		 * @see #getValidRangeReadStartOffset()
+         */
+		int getReadStartOffset();
+
+		/**
+		 * Get the read offset (0-based) for the beginning of this {@link CigarElement}.
+		 * The difference between this value and the one returned by {@link #getValidRangeReadStartOffset()}
+		 * is that this one include DELETIONS but not INSERTIONS.
+		 * @return the offset.
+		 *
+		 * @see #getRelativeReferenceStartOffset()
+		 */
+		int getRelativeReferenceStartOffset();
+	}
+
+
+    /**
+     *  Traverse the CigarElements and for any that pass the given Predicate,
+	 *  pass on to the given Consumer along with a {@link CigarTraversalCallback}
+	 *  to get additional metadata or to halt the traversal.
+     * @param predicate the predicate to use to filter which {@link CigarElement}s
+	 *                  are passed to the consumer.
+     * @param consumer the consumer for all CigarElements that pass the predicate.
+     * @param <T> the Exception type (if any)  that is thrown by the consumer.
+     * @throws T if consumer throws an Exception/Throwable.
+	 * @throws NullPointerException if either predicate or consumer are null.
+	 *
+	 * @since 6.0.4
+     */
+	public <T extends Throwable> void consumeElements(Predicate<CigarElement> predicate, ThrowingBiConsumer<CigarElement, CigarTraversalCallback, T> consumer) throws T{
+		Objects.requireNonNull(predicate);
+		Objects.requireNonNull(consumer);
+
+
+		Iterator<CigarElement> iter = iterator();
+		CigarElementInfo callback = new CigarElementInfo();
+		while(!callback.halt && iter.hasNext()){
+			CigarElement element=iter.next();
+
+			if(predicate.test(element)){
+				consumer.accept(element, callback);
+			}
+
+			switch(element.getOp()){
+
+				case HARD_CLIP:
+				case SOFT_CLIP:
+					callback.readStartOffset+=element.getLength();
+					break;
+				case INSERTION:
+				case SKIPPED:
+					callback.readStartOffset+=element.getLength();
+					callback.validRangeReadStartOffset+=element.getLength();
+					break;
+				case DELETION:
+					callback.relativeReferenceStartOffset+=element.getLength();
+					break;
+                default:
+					callback.readStartOffset+=element.getLength();
+					callback.validRangeReadStartOffset+=element.getLength();
+					callback.relativeReferenceStartOffset+=element.getLength();
+
+			}
+			callback.cigarIndex++;
+		}
+	}
+
+    /**
+     * Traverse the CigarElements and consume only the deletions.
+	 * @apiNote This should be the same as calling {@code consumeElements(e-> e.getOp()==CigarOperation.DELETION, consumer)}.
+	 *
+     * @param consumer the consumer for all CigarElements that pass the predicate.
+     * @param <T> the Exception type (if any)  that is thrown by the consumer.
+     * @throws T if consumer throws an Exception/Throwable.
+     * @throws NullPointerException if either predicate or consumer are null.
+     *
+     * @since 6.0.4
+     */
+	public <T extends Throwable> void deletions(ThrowingBiConsumer<CigarElement, CigarTraversalCallback, T> consumer) throws T{
+		consumeElements(e-> e.getOp()==CigarOperation.DELETION, consumer);
+	}
+
+	/**
+	 * Traverse the CigarElements and consume only the insertions.
+	 * @apiNote This should be the same as calling {@code consumeElements(e-> e.getOp()==CigarOperation.INSERTION, consumer)}.
+	 *
+	 * @param consumer the consumer for all CigarElements that pass the predicate.
+	 * @param <T> the Exception type (if any)  that is thrown by the consumer.
+	 * @throws T if consumer throws an Exception/Throwable.
+	 * @throws NullPointerException if either predicate or consumer are null.
+	 *
+	 * @since 6.0.4
+	 */
+	public <T extends Throwable> void insertions(ThrowingBiConsumer<CigarElement, CigarTraversalCallback, T> consumer) throws T{
+		consumeElements(e-> e.getOp()==CigarOperation.INSERTION, consumer);
+	}
+
+    /**
+     * Traverse the CigarElements and consume only the insertions and deletions.
+     * @apiNote This should be the same as calling {@code consumeElements(e-> e.getOp()==CigarOperation.INSERTION || e.getOp()==CigarOperation.DELETION, consumer)}.
+     *
+     * @param consumer the consumer for all CigarElements that pass the predicate.
+     * @param <T> the Exception type (if any)  that is thrown by the consumer.
+     * @throws T if consumer throws an Exception/Throwable.
+     * @throws NullPointerException if either predicate or consumer are null.
+     *
+     * @since 6.0.4
+     */
+
+	public <T extends Throwable> void indels(ThrowingBiConsumer<CigarElement, CigarTraversalCallback, T> consumer) throws T{
+		consumeElements(e-> e.getOp()==CigarOperation.INSERTION || e.getOp()==CigarOperation.DELETION, consumer);
 	}
 
 	/**
@@ -981,6 +1161,31 @@ public final class Cigar implements Iterable<CigarElement>, Serializable{
 				}
 			}
 		}
+		/**
+		 * Remove the {@link CigarOperation#INSERTION} at the
+		 * edges of this builder.  Will only remove the
+		 * {@link CigarOperation#INSERTION}s that are already present.
+		 * Calling this method will not affect any new {@link CigarOperation#INSERTION}s
+		 * that are added later.
+		 *
+		 * @return this.
+		 * @since 6.0.4
+		 */
+		public Builder removeEdgeInsertions() {
+
+			//there might be multiple consecutive insertions if the elements aren't merged
+			ListIterator<CigarElement> listIterator = elements.listIterator(elements.size());
+			while(listIterator.hasPrevious() && listIterator.previous().getOp()==CigarOperation.INSERTION){
+				listIterator.remove();
+			}
+			Iterator<CigarElement> fwdIterator = elements.iterator();
+			while(fwdIterator.hasNext() && fwdIterator.next().getOp()==CigarOperation.INSERTION){
+				fwdIterator.remove();
+			}
+
+			return this;
+		}
+
 		/**
 		 * Remove the {@link CigarOperation#HARD_CLIP} at the
 		 * edges of this builder.  Will only remove the 

@@ -24,6 +24,8 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.SequenceBuilder;
 
+import java.util.Arrays;
+
 public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>, B extends ResidueSequenceBuilder<R,S,B>> extends SequenceBuilder<R,S, B> {
 
 	 /**
@@ -69,6 +71,59 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      */
     default B appendGap(){
         return append("-");
+    }
+    /**
+     * Append a multiple gaps;
+     *
+     * @param numberOfGaps the number of gaps to append; must be &gt; 0.
+     * @return this
+     *
+     * @since 6.0.4
+     *
+     * @throws IllegalArgumentException if numberOfGaps is &lt; 1.
+     * @implNote by default this is the same as {@code append(char[])} but
+     * implementations might override this to be more efficient.
+     */
+    default B appendGap(int numberOfGaps){
+        if(numberOfGaps < 1){
+            throw new IllegalArgumentException("number of gaps must be > 0");
+        }
+       char[] gaps =  new char[numberOfGaps];
+       Arrays.fill( gaps, '-');
+       return append(gaps);
+    }
+
+    /**
+     * Prepend a Gap;
+     * @return this
+     *
+     * @since 6.0.4
+     *
+     * @implNote by default this is the same as {@code prepend("-")} but
+     * implementations might override this to be more efficient.
+     */
+    default B prependGap(){
+        return prepend("-");
+    }
+    /**
+     * Prepend a multiple gaps;
+     *
+     * @param numberOfGaps the number of gaps to append; must be &gt; 0.
+     * @return this
+     *
+     * @since 6.0.4
+     *
+     * @throws IllegalArgumentException if numberOfGaps is &lt; 1.
+     * @implNote by default this is the same as {@code prepend(char[])} but
+     * implementations might override this to be more efficient.
+     */
+    default B prependGap(int numberOfGaps){
+        if(numberOfGaps < 1){
+            throw new IllegalArgumentException("number of gaps must be > 0");
+        }
+        char[] gaps =  new char[numberOfGaps];
+        Arrays.fill( gaps, '-');
+        return prepend(gaps);
     }
    
     /**

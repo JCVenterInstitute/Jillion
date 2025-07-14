@@ -24,10 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.function.Function;
 
 import org.junit.Test;
@@ -50,6 +47,23 @@ public class TestArrayIterator {
 			assertEquals(expected.next(), actual.next());
 		}
 		assertFalse(actual.hasNext());
+	}
+	@Test
+	public void reverseIterate(){
+		List<Integer> list = Arrays.asList(1,2,3,4,5,6,7,8,9);
+
+		Integer[] array = list.toArray(new Integer[list.size()]);
+
+		ListIterator<Integer> actual = new ArrayIterator<>(array, list.size());
+		ListIterator<Integer> expected = list.listIterator(list.size());
+
+		assertTrue(actual.hasPrevious());
+		assertTrue(expected.hasPrevious());
+
+		while(expected.hasPrevious()){
+			assertEquals(expected.previous(), actual.previous());
+		}
+		assertFalse(actual.hasPrevious());
 	}
 	
 	@Test(expected= NullPointerException.class)

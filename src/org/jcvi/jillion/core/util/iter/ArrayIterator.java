@@ -22,11 +22,17 @@ package org.jcvi.jillion.core.util.iter;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-public class ArrayIterator<T> implements Iterator<T> {
+/**
+ * A ListIterator wrapping an Array but does
+ * not support optional methods such as remove(), add() or set().
+ * @param <T> the type of element returned in each next() or previous() call.
+ */
+public class ArrayIterator<T> implements ListIterator<T> {
 
 	private final T[] array;
 	private int count;
@@ -40,12 +46,45 @@ public class ArrayIterator<T> implements Iterator<T> {
 	 * 
 	 * @throws NullPointerException if array is null.
 	 * 
-	 * @apiNote this is the same as {@code new ArrayIterator<>(array, true) }
+	 * @apiNote this is the same as {@code new ArrayIterator<>(array,0, true) }
 	 * 
-	 * @see #ArrayIterator(Object[], boolean)
+	 * @see #ArrayIterator(Object[], int, boolean)
 	 */
 	public ArrayIterator(T[] array) {
-		this(array, true);
+		this(array, 0);
+	}
+	/**
+	 * Create a new ArrayInterator instance
+	 * that will iterate over a defensive copy
+	 * of the input array.
+	 *
+	 * @param array the array to iterate over; can not be null.
+	 * @param makeDefensiveCopy should a defensive copy of the input array.
+	 * @throws NullPointerException if array is null.
+	 *
+	 * @apiNote this is the same as {@code new ArrayIterator<>(array,0, true) }
+	 *
+	 * @see #ArrayIterator(Object[], int, boolean)
+	 */
+	public ArrayIterator(T[] array, boolean makeDefensiveCopy) {
+		this(array, 0, makeDefensiveCopy);
+	}
+
+	/**
+	 * Create a new ArrayInterator instance
+	 * that will iterate over a defensive copy
+	 * of the input array.
+	 *
+	 * @param array the array to iterate over; can not be null.
+	 *
+	 * @throws NullPointerException if array is null.
+	 *
+	 * @apiNote this is the same as {@code new ArrayIterator<>(array,0, true) }
+	 *
+	 * @see #ArrayIterator(Object[], int, boolean)
+	 */
+	public ArrayIterator(T[] array, int initialStartIndex) {
+		this(array, initialStartIndex, true);
 	}
 	
 	/**
@@ -58,16 +97,21 @@ public class ArrayIterator<T> implements Iterator<T> {
 	 * @throws NullPointerException if array is null.
 	 */
 	@SuppressFBWarnings("EI_EXPOSE_REP2") //FindBugs expose array reference which we want to sometimes for speed
-	public ArrayIterator(T[] array, boolean makeDefensiveCopy) {
+	public ArrayIterator(T[] array,int initialStartIndex, boolean makeDefensiveCopy) {
 		if(array==null){
 			throw new NullPointerException("array can not be null");
 		}
+		if(initialStartIndex <0 || initialStartIndex > array.length){
+			throw new IllegalArgumentException("initial start index must be within array bounds");
+		}
+		this.count = initialStartIndex;
 		if(makeDefensiveCopy){
 			this.array = Arrays.copyOf(array, array.length);
 		}else{
 			
 			this.array = array;
 		}
+
 		
 	}
 
@@ -85,9 +129,42 @@ public class ArrayIterator<T> implements Iterator<T> {
 	}
 
 	@Override
+	public boolean hasPrevious() {
+		return count>0;
+	}
+
+	@Override
+	public T previous() {
+		if(!hasPrevious()){
+			throw new NoSuchElementException();
+		}
+		return array[--count];
+	}
+
+	@Override
+	public int nextIndex() {
+		return count+1;
+	}
+
+	@Override
+	public int previousIndex() {
+		return count-1;
+	}
+
+	@Override
 	public void remove() {
 		throw new UnsupportedOperationException("remove not supported");
 		
+	}
+
+	@Override
+	public void set(T t) {
+
+	}
+
+	@Override
+	public void add(T t) {
+
 	}
 
 }

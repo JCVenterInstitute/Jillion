@@ -13,8 +13,15 @@ Jillion 6.0.4
 API Changes
 -----------
 1. Growable Arrays new method to removeIf(Predicate, UnaryOperator) to compute the replacement. Previous methods were static replacement values.
-2. new class Offsets which handles a list of offset values and will correctly adjust coordinates when values are added or removed.
+2. New class Offsets which handles a list of offset values and will correctly adjust coordinates when values are added or removed.
+3. internal ArrayIterator class now implements ListIterator so we can iterate backwards with #previous() and #hasPrevious()
+4. Cigar.Builder has new method to trim Insertion Operations at the edges
+5. Cigar#listIterator() and Cigar#listIterator(int) methods added so you can iterate over elements forward or backwards
+6. Cigar#traverseElements(Predicate, BiConsumer<CigarElement, Callback>) allows you to filter on CigarElements and consume those that
+pass the given predicate along with a Callback that can prematurely halt the traversal and get extra metadata on it such as where that element is along the read or Cigar String.
+7. Cigar#deletions, #insertions, #indels are helper methods that delegate to traverse with built in predicate to filter by insertion, deletion or both.
 
+8. ResidueSequenceBuilder has new append/prependGap methods that take a parameter to add that number of gaps. (previous helper method only added 1 gap).
 
 ================
 Jillion 6.0.3

@@ -24,6 +24,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
@@ -323,6 +327,143 @@ public class TestCigar {
 
 		Cigar cigar = Cigar.parse("15M15M");
 		assertEquals("30M", cigar.toBuilder().buildMerged().toCigarString());
+	}
+
+	@Test
+    public void testDeletionConsumer1Deletion(){
+		Cigar cigar = Cigar.parse("15M1D15M");
+		AtomicInteger count= new AtomicInteger();
+		cigar.deletions((element, callback)->{
+			count.incrementAndGet();
+			assertEquals(element.getOp(),CigarOperation.DELETION);
+			assertEquals(1, element.getLength());
+			assertEquals(1, callback.getCigarIndex());
+			assertEquals(15, callback.getReadStartOffset());
+
+		});
+
+		assertEquals(1, count.get());
+	}
+	@Test
+	public void testInsertionConsumer1Insertion(){
+		Cigar cigar = Cigar.parse("15M1I15M");
+		AtomicInteger count= new AtomicInteger();
+		cigar.insertions((element, callback)->{
+			count.incrementAndGet();
+			assertEquals(element.getOp(),CigarOperation.INSERTION);
+			assertEquals(1, element.getLength());
+			assertEquals(1, callback.getCigarIndex());
+			assertEquals(15, callback.getReadStartOffset());
+
+		});
+
+		assertEquals(1, count.get());
+	}
+	@Test
+	public void testDeletionConsumer2DeletionsButHalt(){
+		Cigar cigar = Cigar.parse("15M1D20M3D6M");
+		AtomicInteger count= new AtomicInteger();
+		cigar.deletions((element, callback)->{
+			count.incrementAndGet();
+			assertEquals(element.getOp(),CigarOperation.DELETION);
+			assertEquals(1, element.getLength());
+			assertEquals(1, callback.getCigarIndex());
+			assertEquals(15, callback.getReadStartOffset());
+
+			callback.halt();
+		});
+
+		assertEquals(1, count.get());
+	}
+
+	@Test
+	public void testDeletionConsumer2Deletions(){
+		Cigar cigar = Cigar.parse("15M1D20M3D6M");
+
+
+		List<BiConsumer<CigarElement, Cigar.CigarTraversalCallback>> tests = List.of(
+				(e, callback)->{
+					assertEquals(e.getOp(),CigarOperation.DELETION);
+					assertEquals(1, e.getLength());
+					assertEquals(1, callback.getCigarIndex());
+					assertEquals(15, callback.getReadStartOffset());
+					assertEquals(15, callback.getRelativeReferenceStartOffset());
+		},
+				(e, callback)->{
+					assertEquals(e.getOp(),CigarOperation.DELETION);
+					assertEquals(3, e.getLength());
+					assertEquals(3, callback.getCigarIndex());
+					assertEquals(35, callback.getReadStartOffset());
+					assertEquals(36, callback.getRelativeReferenceStartOffset());
+				}
+		);
+		AtomicInteger index = new AtomicInteger();
+		cigar.deletions((element, callback)->{
+			tests.get(index.getAndIncrement()).accept(element, callback);
+
+		});
+
+		assertEquals(2, index.get());
+	}
+
+	@Test
+	public void testindels2Deletions(){
+		Cigar cigar = Cigar.parse("15M1D20M3D6M");
+
+
+		List<BiConsumer<CigarElement, Cigar.CigarTraversalCallback>> tests = List.of(
+				(e, callback)->{
+					assertEquals(e.getOp(),CigarOperation.DELETION);
+					assertEquals(1, e.getLength());
+					assertEquals(1, callback.getCigarIndex());
+					assertEquals(15, callback.getReadStartOffset());
+					assertEquals(15, callback.getRelativeReferenceStartOffset());
+				},
+				(e, callback)->{
+					assertEquals(e.getOp(),CigarOperation.DELETION);
+					assertEquals(3, e.getLength());
+					assertEquals(3, callback.getCigarIndex());
+					assertEquals(35, callback.getReadStartOffset());
+					assertEquals(36, callback.getRelativeReferenceStartOffset());
+				}
+		);
+		AtomicInteger index = new AtomicInteger();
+		cigar.indels((element, callback)->{
+			tests.get(index.getAndIncrement()).accept(element, callback);
+
+		});
+
+		assertEquals(2, index.get());
+	}
+
+	@Test
+	public void testindels1Insertion1Deletion(){
+		Cigar cigar = Cigar.parse("15M1D20M3I6M");
+
+
+		List<BiConsumer<CigarElement, Cigar.CigarTraversalCallback>> tests = List.of(
+				(e, callback)->{
+					assertEquals(e.getOp(),CigarOperation.DELETION);
+					assertEquals(1, e.getLength());
+					assertEquals(1, callback.getCigarIndex());
+					assertEquals(15, callback.getReadStartOffset());
+					assertEquals(15, callback.getRelativeReferenceStartOffset());
+				},
+				(e, callback)->{
+					assertEquals(e.getOp(),CigarOperation.INSERTION);
+					assertEquals(3, e.getLength());
+					assertEquals(3, callback.getCigarIndex());
+					assertEquals(35, callback.getReadStartOffset());
+					assertEquals(36, callback.getRelativeReferenceStartOffset());
+				}
+		);
+		AtomicInteger index = new AtomicInteger();
+		cigar.indels((element, callback)->{
+			tests.get(index.getAndIncrement()).accept(element, callback);
+
+		});
+
+		assertEquals(2, index.get());
 	}
 	
 	
