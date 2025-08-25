@@ -38,7 +38,7 @@ import org.jcvi.jillion.core.residue.Residue;
  *
  *
  */
-public enum Nucleotide implements Residue, Complementable<Nucleotide> {
+public enum Nucleotide implements Residue<Nucleotide>, Complementable<Nucleotide> {
     //order is in ambiguity traversal order that is most efficient.
     Unknown(Character.valueOf('N')),
     NotThymine(Character.valueOf('V')),
@@ -408,6 +408,12 @@ public enum Nucleotide implements Residue, Complementable<Nucleotide> {
         return !isGap() && this !=Adenine  
          && this !=Cytosine && this != Guanine && this != Thymine && this != Uracil;
     }
+
+    @Override
+    public Set<Nucleotide> getNonAmbiguousBases() {
+        return getBasesFor();
+    }
+
     /**
      * Is this A, C, G, T or N ?
      * @return {@code true} if A, C, G, T or N; {@code false} otherwise.

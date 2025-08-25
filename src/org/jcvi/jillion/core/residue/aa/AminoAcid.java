@@ -24,6 +24,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.util.MapUtil;
 
 /**
@@ -36,7 +37,7 @@ import org.jcvi.jillion.core.util.MapUtil;
  *
  *
  */
-public enum AminoAcid implements Residue{
+public enum AminoAcid implements Residue<AminoAcid>{
     
     Isoleucine("Isolucine","Ile",'I'),
     Leucine("Leucine","Leu",'L'),
@@ -90,6 +91,10 @@ public enum AminoAcid implements Residue{
     private static final Map<String, AminoAcid> NAME_MAP;
     
     private static final Map<Set<AminoAcid>, AminoAcid> AMBIGIOUS_MAP;
+
+    private static final Map<AminoAcid,Set<AminoAcid>> AMBIGUITY_TO_CONSTIUENT;
+
+
     static{
     	int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(AminoAcid.values().length *3);
         NAME_MAP = new HashMap<>(mapSize);
@@ -113,21 +118,39 @@ public enum AminoAcid implements Residue{
         CLEAN_PATTERN = Pattern.compile(validBuilder.toString());
         
         AMBIGIOUS_MAP = new HashMap<>();
+        AMBIGUITY_TO_CONSTIUENT = new HashMap<>();
         
         AMBIGIOUS_MAP.put(EnumSet.of(Isoleucine, Leucine), AminoAcid.Leucine_or_Isoleucine);
+        AMBIGUITY_TO_CONSTIUENT.put(AminoAcid.Leucine_or_Isoleucine, EnumSet.of(Isoleucine, Leucine));
+
         AMBIGIOUS_MAP.put(EnumSet.of(Leucine_or_Isoleucine, Leucine), AminoAcid.Leucine_or_Isoleucine);
         AMBIGIOUS_MAP.put(EnumSet.of(Leucine_or_Isoleucine, Isoleucine), AminoAcid.Leucine_or_Isoleucine);
         
         AMBIGIOUS_MAP.put(EnumSet.of(Aspartic_Acid, Asparagine), AminoAcid.Aspartate_or_Asparagine);
+        AMBIGUITY_TO_CONSTIUENT.put(AminoAcid.Aspartate_or_Asparagine, EnumSet.of(Aspartic_Acid, Asparagine));
+
         AMBIGIOUS_MAP.put(EnumSet.of(Aspartate_or_Asparagine, Asparagine), AminoAcid.Aspartate_or_Asparagine);
         AMBIGIOUS_MAP.put(EnumSet.of(Aspartate_or_Asparagine, Aspartic_Acid), AminoAcid.Aspartate_or_Asparagine);
         
         AMBIGIOUS_MAP.put(EnumSet.of(Glutamic_Acid, Glutamine), AminoAcid.Glutamate_or_Glutamine);
+        AMBIGUITY_TO_CONSTIUENT.put(AminoAcid.Glutamate_or_Glutamine, EnumSet.of(Glutamic_Acid, Glutamine));
+
         AMBIGIOUS_MAP.put(EnumSet.of(Glutamate_or_Glutamine, Glutamine), AminoAcid.Glutamate_or_Glutamine);
         AMBIGIOUS_MAP.put(EnumSet.of(Glutamate_or_Glutamine, Glutamic_Acid), AminoAcid.Glutamate_or_Glutamine);
-        
-    
-    
+
+
+        AMBIGUITY_TO_CONSTIUENT.put(Unknown_Amino_Acid, EnumSet.complementOf(
+                EnumSet.of(Leucine_or_Isoleucine,
+                        Aspartate_or_Asparagine,
+                        Glutamate_or_Glutamine ,
+                        Gap,
+                        Unknown_Amino_Acid,
+                        STOP)));
+    }
+
+    @Override
+    public Set<AminoAcid> getNonAmbiguousBases(){
+        return AMBIGUITY_TO_CONSTIUENT.getOrDefault(this, EnumSet.of(this));
     }
     /**
      * Get the AminoAcid that best represents the given group of amino acids.

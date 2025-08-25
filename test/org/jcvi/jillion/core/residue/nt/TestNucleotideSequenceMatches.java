@@ -37,10 +37,9 @@ public class TestNucleotideSequenceMatches {
 
 	@Test
     public void nestedMultipleMatches(){
-        NucleotideSequence sut = new NucleotideSequenceBuilder("CCCCCAGG").turnOffDataCompression(true).build()
-                ;
-        Set<Range> expected = new HashSet<>();
-        expected.addAll(Arrays.asList(Range.of(4,6), Range.of(3,6),Range.of(2,6),Range.of(1,6),Range.of(0,6)));
+        NucleotideSequence sut = new NucleotideSequenceBuilder("CCCCCAGG").turnOffDataCompression(true).build();
+
+        Set<Range> expected = Set.of(Range.of(4, 6), Range.of(3, 6), Range.of(2, 6), Range.of(1, 6), Range.of(0, 6));
         assertEquals(expected,
                      sut.findMatches(Pattern.compile("C+AG"),true).collect(Collectors.toSet()));
 
@@ -68,6 +67,7 @@ public class TestNucleotideSequenceMatches {
     @Test
     public void nestedMultipleMatchesMultipleWildcardsSubRange(){
         NucleotideSequence sut = NucleotideSequence.of("CCCCCAGG");
+
 
         Set<Range> actual = sut.findMatches(Pattern.compile("C+AG*"), Range.of(3,7), true)
                 .collect(Collectors.toSet());
@@ -197,7 +197,25 @@ public class TestNucleotideSequenceMatches {
         NucleotideSequence sut = NucleotideSequence.of("ACGTACGTNNNACGTACGTNNNNAAAAAAANNNNNNNAAAAAAANNNNN");
         List<Range> expected = sut.getRangesOfNs();
         
-        assertEquals(expected, sut.findMatches("[N]+").collect(Collectors.toList()));
+        assertEquals(expected, sut.findMatches(NucleotideSequence.NucleotideSequenceMatcherParameters.builder()
+                .stringPattern("[N]+")
+                        .explodeAmbiguities(false)
+                        .build())
+                .collect(Collectors.toList()));
+    }
+    @Test
+    public void sameAsRangesOfNsExplodeAmbiguites(){
+        NucleotideSequence sut = NucleotideSequence.of("ACGTACGTNNNACGTACGTNNNNAAAAAAANNNNNNNAAAAAAANNNNN");
+
+
+        assertEquals(List.of(Range.ofLength(sut.getLength())),
+                sut.findMatches(NucleotideSequence.NucleotideSequenceMatcherParameters.builder()
+                                .stringPattern("[N]+")
+                                .explodePatternAmbiguities(true)
+                                .explodeAmbiguities(false)
+                                        .build()
+                                )
+                        .collect(Collectors.toList()));
     }
     
     

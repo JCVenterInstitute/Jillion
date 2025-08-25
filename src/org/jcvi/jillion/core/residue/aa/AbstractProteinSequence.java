@@ -230,4 +230,6 @@ abstract class AbstractProteinSequence extends AbstractResidueSequence<AminoAcid
 		}
 	}
 
+
+
 }

@@ -21,12 +21,15 @@
 package org.jcvi.jillion.core.residue;
 
 
+
+import java.util.Set;
+
 /**
  * @author dkatzel
  *
  *
  */
-public interface Residue{
+public interface Residue<R extends Residue<R>>{
 
 	byte getOrdinalAsByte();
 	
@@ -44,10 +47,24 @@ public interface Residue{
     boolean isGap();
 
     /**
-     * Is this residue ambigiuous (a representation of multiple residues)
-     * @return {@code true} if it's ambgious; {@code false} if not.
+     * Is this residue ambiguous (a representation of multiple residues)
+     * @return {@code true} if it's ambiguous; {@code false} if not.
      *
      * @since 5.3.3
      */
     boolean isAmbiguity();
+
+    /**
+     * Get the non-ambiguous bases that make up this Residue.
+     * For example, for the Nucleotide `N` this method would return the set of
+     * `A`, `C`, `G` and `T`.
+     *
+     * @return a Set of non-ambiguous residues.  If this Residue itself
+     * is not ambiguous, then the return value is a set containing just
+     * this residue. otherwise contains the set of all the residues that
+     * could make this ambiguous residue.
+     *
+     * @since 6.1
+     */
+    Set<R> getNonAmbiguousBases();
 }

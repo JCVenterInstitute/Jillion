@@ -7,6 +7,19 @@ change the behavior in any public API classes.  The order of changes is mostly
 chronological so the most important changes may not always be ordered first.
 
 ================
+Jillion 6.1
+================
+
+API Changes
+-----------
+1. Moved `MatchableSequence` interface to residue level package
+2. `ResidueSequence` now implements `MatchableSequence` so there are #findMatches() methods in `ProteinSequence` like there are already on `NucleotideSequence`.
+3. Improved MatchableSequence method parameters to take new `SequenceMatcherParameters` object.
+The Nucleotide and Protein Sequence classes now have builders for them.
+4. new `SequenceMatcherParameters` object has new parameters like explode Ambiguities flags on both the pattern sequence and the input sequence
+  that will permute all combinations of ambiguity values for better matching.  These flags are off by default for performance reasons.
+
+================
 Jillion 6.0.4
 ================
 
