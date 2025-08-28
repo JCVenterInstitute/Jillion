@@ -19,6 +19,9 @@
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
 package org.jcvi.jillion.internal.fasta;
+
+import java.util.stream.Stream;
+
 /**
  * Object representation of a single
  * record in a {@code fai} index file
@@ -29,6 +32,18 @@ package org.jcvi.jillion.internal.fasta;
  * @since 5.1
  */
 public interface FastaIndex {
-
+	/**
+	 * Get the {@link FastaIndexRecord} for the given id.
+	 * @param id the id to look up.
+	 * @return the {@link FastaIndexRecord} for this id or {@code null} if no index
+	 * exists for this id.
+	 */
 	FastaIndexRecord getIndexFor(String id);
+
+	/**
+	 * Get all the IDs in this index.
+	 * @return a Stream of Ids
+	 * @since 6.1
+	 */
+	Stream<String> ids();
 }

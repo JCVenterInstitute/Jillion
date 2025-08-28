@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.OptionalLong;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
@@ -108,7 +109,7 @@ public final class QualityFastaFileDataStoreBuilder extends AbstractFastaFileDat
 	@Override
 	protected QualityFastaDataStore createNewInstance(FastaParser parser,
 			DataStoreProviderHint hint,Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter,
-			OptionalLong maxNumberOfRecords
+			OptionalLong maxNumberOfRecords, Function<String,String> idConverter
 			)
 			throws IOException {
 		if(parser.isReadOnceOnly()){

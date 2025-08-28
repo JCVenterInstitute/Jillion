@@ -25,8 +25,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
@@ -58,11 +61,13 @@ class FaiNucleotideFastaFileDataStore implements NucleotideFastaFileDataStore{
 	
 	private final NucleotideFastaDataStore delegate;
 
-	
-	public static FaiNucleotideFastaFileDataStore create(File fastaFile, File faiFile,  NucleotideFastaDataStore delegate) throws IOException{
-		return new FaiNucleotideFastaFileDataStore(fastaFile, DefaultFastaIndex.parse(faiFile), delegate);
+	private final Function<String,String> idConverter;
+	private final Map<String,String> reverseIdConverterMap;
+
+	public static FaiNucleotideFastaFileDataStore create(File fastaFile, File faiFile,  NucleotideFastaDataStore delegate, Function<String,String> idConverter) throws IOException{
+		return new FaiNucleotideFastaFileDataStore(fastaFile, DefaultFastaIndex.parse(faiFile), delegate, idConverter);
 	}
-	public FaiNucleotideFastaFileDataStore(File fastaFile, FastaIndex index, NucleotideFastaDataStore delegate) throws IOException {
+	public FaiNucleotideFastaFileDataStore(File fastaFile, FastaIndex index, NucleotideFastaDataStore delegate, Function<String,String> idConverter) throws IOException {
 		
 		Objects.requireNonNull(delegate);
 		Objects.requireNonNull(index);
@@ -71,7 +76,19 @@ class FaiNucleotideFastaFileDataStore implements NucleotideFastaFileDataStore{
 		this.fastaFileSupplier = InputStreamSupplier.forFile(fastaFile);		
 		this.delegate = delegate;		
 		this.index = index;
-		
+		if(idConverter==null){
+			this.idConverter = Function.identity();
+			this.reverseIdConverterMap =null;
+		}else{
+
+			//we need to make a reverse map of the conversion for lookups by new id
+			//into the index
+			this.reverseIdConverterMap = index.ids()
+					.collect(Collectors.toMap(idConverter, Function.identity()));
+			this.idConverter = reverseIdConverterMap::get;
+		}
+
+
 		
 		
 	}
@@ -94,7 +111,11 @@ class FaiNucleotideFastaFileDataStore implements NucleotideFastaFileDataStore{
 
 	private NucleotideSequence getSequence(String id, InputStreamFactory inputStreamFactory) throws DataStoreException {
 		throwExceptionIfClosed();
-		FastaIndexRecord record = index.getIndexFor(id);
+		String convertedId = idConverter.apply(id);
+		if(convertedId==null){
+			return null;
+		}
+		FastaIndexRecord record = index.getIndexFor(convertedId);
 		if(record ==null){
 			return null;
 		}

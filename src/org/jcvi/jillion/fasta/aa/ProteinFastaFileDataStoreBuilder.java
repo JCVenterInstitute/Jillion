@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.OptionalLong;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
@@ -111,7 +112,7 @@ public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDat
 	 */
 	@Override
 	protected ProteinFastaFileDataStore createNewInstance(FastaParser parser, DataStoreProviderHint hint, Predicate<String> filter, 
-			Predicate<ProteinFastaRecord> recordFilter, OptionalLong maxNumberofRecords)
+			Predicate<ProteinFastaRecord> recordFilter, OptionalLong maxNumberofRecords, Function<String,String> idConverter)
 			throws IOException {
 		if(parser.isReadOnceOnly()){
 			return DefaultProteinFastaDataStore.create(parser,filter, recordFilter);

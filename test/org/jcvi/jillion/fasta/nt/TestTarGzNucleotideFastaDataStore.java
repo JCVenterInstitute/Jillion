@@ -26,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.function.Function;
 
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveOutputStream;
@@ -40,13 +41,14 @@ import org.junit.rules.TemporaryFolder;
 
 public class TestTarGzNucleotideFastaDataStore extends AbstractTestSequenceFastaDataStore {
 
-   
+	//counter is because some tests call parse multiple times so we make unique fasta files this way
+   private int counter=1;
 
     @Override
-    protected NucleotideFastaDataStore parseFile(File file,  DecodingOptions decodingOptions)
+    protected NucleotideFastaDataStore parseFile(File file,  DecodingOptions decodingOptions, Function<String,String> idConverter)
             throws IOException {
  
-    	File t = tmpDir.newFile("fasta.tar.gz");
+    	File t = tmpDir.newFile("fasta"+(counter++) + ".tar.gz");
     	try(InputStream in = new BufferedInputStream(new FileInputStream(file));
     		ArchiveOutputStream o = new TarArchiveOutputStream(new GzipCompressorOutputStream(Files.newOutputStream(t.toPath())));
     			){
@@ -56,7 +58,7 @@ public class TestTarGzNucleotideFastaDataStore extends AbstractTestSequenceFasta
     		o.closeArchiveEntry();
     	}
     	
-    	return DefaultNucleotideFastaFileDataStore.create(t, DataStoreFilters.alwaysAccept(), null, decodingOptions);
+    	return DefaultNucleotideFastaFileDataStore.create(t, DataStoreFilters.alwaysAccept(), null, decodingOptions, idConverter);
     	
         
     }

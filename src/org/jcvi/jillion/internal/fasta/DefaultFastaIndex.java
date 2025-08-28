@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.io.IOUtil;
 /**
@@ -43,6 +44,11 @@ public class DefaultFastaIndex implements FastaIndex{
 	
 	DefaultFastaIndex(Map<String, FastaIndexRecord> map) {
 		this.map = map;
+	}
+
+	@Override
+	public Stream<String> ids() {
+		return map.keySet().stream();
 	}
 
 	@Override

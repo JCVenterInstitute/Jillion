@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.OptionalLong;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
@@ -96,13 +97,13 @@ public final class LargeProteinFastaFileDataStore extends AbstractLargeFastaFile
 	}
    
     protected LargeProteinFastaFileDataStore(FastaParser parser, Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter, OptionalLong maxNumberOfRecords) {
-		super(parser, filter, recordFilter, maxNumberOfRecords);
+		super(parser, filter, recordFilter, maxNumberOfRecords,null);
 	}
 
 
 	@Override
 	protected StreamingIterator<ProteinFastaRecord> createNewIterator(
-			FastaParser parser, Predicate<String> filter,  Predicate<ProteinFastaRecord> recordFilter) {
+			FastaParser parser, Predicate<String> filter,  Predicate<ProteinFastaRecord> recordFilter, Function<String,String> idConverter) {
 		return DataStoreStreamingIterator.create(this,LargeProteinFastaIterator.createNewIteratorFor(parser, filter, recordFilter));
 	       
 	}

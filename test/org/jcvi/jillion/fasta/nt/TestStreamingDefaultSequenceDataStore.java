@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.function.Function;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.io.IOUtil;
@@ -40,12 +41,12 @@ import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
 public class TestStreamingDefaultSequenceDataStore extends TestDefaultSequenceFastaDataStore{
 
     @Override
-    protected NucleotideFastaDataStore parseFile(File file,  DecodingOptions decodingOptions)
+    protected NucleotideFastaDataStore parseFile(File file, DecodingOptions decodingOptions, Function<String,String> idConverter)
             throws IOException {
         InputStream in =null;
         try{
             in = new FileInputStream(file);
-            return DefaultNucleotideFastaFileDataStore.create(in, DataStoreFilters.alwaysAccept(), null, decodingOptions);
+            return DefaultNucleotideFastaFileDataStore.create(in, DataStoreFilters.alwaysAccept(), null, decodingOptions,idConverter);
         }finally{
             IOUtil.closeAndIgnoreErrors(in);
         }

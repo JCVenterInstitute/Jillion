@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.OptionalLong;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
@@ -148,30 +149,31 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	@Override
 	protected NucleotideFastaFileDataStore createNewInstance(
 			FastaParser parser, DataStoreProviderHint providerHint, Predicate<String> filter,
-			Predicate<NucleotideFastaRecord> recordFilter, OptionalLong maxNumberOfRecords)
+			Predicate<NucleotideFastaRecord> recordFilter, OptionalLong maxNumberOfRecords,
+			Function<String,String> idConverter)
 			throws IOException {
 		if(parser.isReadOnceOnly()){
-			return DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter, decodingOptions);	
+			return DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter, decodingOptions, idConverter);
 		}else{
 		    NucleotideFastaFileDataStore delegate;
 			switch(providerHint){
 				case RANDOM_ACCESS_OPTIMIZE_SPEED: 
-							delegate= DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter, decodingOptions);
+							delegate= DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter, decodingOptions, idConverter);
 							break;
 				case RANDOM_ACCESS_OPTIMIZE_MEMORY: 
 							delegate = parser.canCreateMemento()?
 										IndexedNucleotideSequenceFastaFileDataStore.create(parser,filter, recordFilter, decodingOptions)
 										:
-										DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter, decodingOptions);
+										DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter, decodingOptions, idConverter);
 							break;
-				case ITERATION_ONLY: delegate= LargeNucleotideSequenceFastaFileDataStore.create(parser,filter, recordFilter, maxNumberOfRecords, decodingOptions);
+				case ITERATION_ONLY: delegate= LargeNucleotideSequenceFastaFileDataStore.create(parser,filter, recordFilter, maxNumberOfRecords, decodingOptions, idConverter);
 								break;
 				default:
 					throw new IllegalArgumentException("unknown provider hint : "+ providerHint);
 			}
 			
 			if(faiFile !=null && faiFile.exists()){
-				return FaiNucleotideFastaFileDataStore.create(fastaFile, faiFile, delegate);
+				return FaiNucleotideFastaFileDataStore.create(fastaFile, faiFile, delegate, idConverter);
 			}
 			return delegate;
 			

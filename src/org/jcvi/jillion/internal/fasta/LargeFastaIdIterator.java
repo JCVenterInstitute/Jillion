@@ -21,6 +21,7 @@
 package org.jcvi.jillion.internal.fasta;
 
 import java.io.IOException;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
@@ -41,33 +42,37 @@ public final class LargeFastaIdIterator extends AbstractBlockingStreamingIterato
     private final FastaParser parser;
     private final Predicate<String> filter;
     private final Long maxNumberOfIds;
-    
+    private final Function<String,String> idConverter;
    
-    public static LargeFastaIdIterator createNewIteratorFor(FastaParser parser, Predicate<String> filter, Long maxNumberofIds){
+    public static LargeFastaIdIterator createNewIteratorFor(FastaParser parser, Predicate<String> filter, Long maxNumberofIds, Function<String,String> idConverter){
     	if(parser ==null){
     		throw new NullPointerException("fasta file can not be null");
     	}
     	if(filter ==null){
     		throw new NullPointerException("filter can not be null");
     	}
-    	LargeFastaIdIterator iter= new LargeFastaIdIterator(parser,filter, maxNumberofIds);
+    	LargeFastaIdIterator iter= new LargeFastaIdIterator(parser,filter, maxNumberofIds, idConverter);
 		iter.start();
     	
     	return iter;
     }
-    
+
     public static LargeFastaIdIterator createNewIteratorFor(FastaParser parser){
-    	return createNewIteratorFor(parser, DataStoreFilters.alwaysAccept(), null);
+        return createNewIteratorFor(parser, null);
+    }
+    public static LargeFastaIdIterator createNewIteratorFor(FastaParser parser,  Function<String,String> idConverter){
+    	return createNewIteratorFor(parser, DataStoreFilters.alwaysAccept(), null, null);
     }
 	
     /**
-     * @param fastaFile
+     * @param parser
      */
-    private LargeFastaIdIterator(FastaParser parser, Predicate<String> filter, Long maxNumberOfIds) {
+    private LargeFastaIdIterator(FastaParser parser, Predicate<String> filter, Long maxNumberOfIds, Function<String,String> idConverter ) {
     	super(10_000);// these are just ids so we can buffer a lot of them
         this.parser = parser;
         this.filter = filter;
         this.maxNumberOfIds = maxNumberOfIds;
+        this.idConverter = idConverter==null? Function.identity(): idConverter;
     }
 
 
@@ -82,8 +87,9 @@ public final class LargeFastaIdIterator extends AbstractBlockingStreamingIterato
                         public FastaRecordVisitor visitDefline(
                                 FastaVisitorCallback callback, String id,
                                 String optionalComment) {
-                            if (filter.test(id)) {
-                                LargeFastaIdIterator.this.blockingPut(id);
+                            String convertedId = idConverter.apply(id);
+                            if (convertedId !=null && filter.test(id)) {
+                                LargeFastaIdIterator.this.blockingPut(convertedId);
                             }
                             return null;
                         }

@@ -23,6 +23,7 @@ package org.jcvi.jillion.fasta.pos;
 import java.io.IOException;
 import java.util.OptionalLong;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreException;
@@ -72,12 +73,12 @@ final class LargePositionFastaFileDataStore extends AbstractLargeFastaFileDataSt
     
     public LargePositionFastaFileDataStore(FastaParser parser,
             Predicate<String> filter, Predicate<PositionFastaRecord> recordFilter) {
-		super(parser, filter, recordFilter, OptionalLong.empty());
+		super(parser, filter, recordFilter, OptionalLong.empty(),null);
 	}
 	
 	@Override
 	protected StreamingIterator<PositionFastaRecord> createNewIterator(
-			FastaParser parser, Predicate<String> filter, Predicate<PositionFastaRecord> recordIterator) throws DataStoreException {
+			FastaParser parser, Predicate<String> filter, Predicate<PositionFastaRecord> recordIterator, Function<String,String> idConverter) throws DataStoreException {
 		 try {
 			return DataStoreStreamingIterator.create(this,
 			    		LargePositionFastaIterator.createNewIteratorFor(parser,filter,recordIterator));

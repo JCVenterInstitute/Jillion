@@ -1,5 +1,6 @@
 package org.jcvi.jillion.fasta.nt;
 
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler;
@@ -22,13 +23,17 @@ class LargeNucleotideFastaVisitor implements FastaVisitor{
 	NucleotideFastaRecordVisitor recordVisitor;
 	
 	private final org.jcvi.jillion.core.util.streams.ThrowingBiConsumer<String, NucleotideFastaRecord, ? extends Throwable> consumer;
-	
+
+	private final Function<String,String> idConverter;
+
 	public LargeNucleotideFastaVisitor( Predicate<String> idFilter, Predicate<NucleotideFastaRecord> recordFilter, 
 			DecodingOptions decodingOptions,
-			org.jcvi.jillion.core.util.streams.ThrowingBiConsumer<String, NucleotideFastaRecord, ? extends Throwable> consumer) {
+			org.jcvi.jillion.core.util.streams.ThrowingBiConsumer<String, NucleotideFastaRecord, ? extends Throwable> consumer,
+										Function<String,String> idConverter) {
 		filter = idFilter;
 		this.consumer = consumer;
 		recordVisitor = new NucleotideFastaRecordVisitor(recordFilter, decodingOptions);
+		this.idConverter = idConverter==null? Function.identity() : idConverter;
 		
 	}
 	
@@ -36,10 +41,12 @@ class LargeNucleotideFastaVisitor implements FastaVisitor{
 	public FastaRecordVisitor visitDefline(
 			final FastaVisitorCallback callback, String id,
 			String optionalComment) {
-		if(!filter.test(id)){
+		String convertedId = idConverter.apply(id);
+
+		if(convertedId ==null || !filter.test(convertedId)){
 			return null;
 		}
-		recordVisitor.prepareNewRecord(callback, id, optionalComment);
+		recordVisitor.prepareNewRecord(callback, convertedId, optionalComment);
 		return recordVisitor;
 	}
 
