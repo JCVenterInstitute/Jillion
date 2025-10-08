@@ -36,6 +36,7 @@ import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.internal.core.GlyphCodec;
 import org.jcvi.jillion.internal.core.io.StreamUtil;
+import org.jcvi.jillion.internal.core.util.Offsets;
 
 /**
  * @author dkatzel
@@ -44,7 +45,8 @@ import org.jcvi.jillion.internal.core.io.StreamUtil;
  */
 interface NucleotideCodec extends GlyphCodec<Nucleotide>{
 
-	
+    byte[] encode(int numberOfNucleotides, Offsets gapOffsets, Iterator<Nucleotide> nucleotides);
+
     byte[] encode(int numberOfNucleotides,int[] gapOffsets, Iterator<Nucleotide> nucleotides);
 
     /**

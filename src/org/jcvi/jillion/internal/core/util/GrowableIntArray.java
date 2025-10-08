@@ -21,7 +21,6 @@
 package org.jcvi.jillion.internal.core.util;
 
 import java.util.*;
-import java.util.function.IntBinaryOperator;
 import java.util.function.IntPredicate;
 import java.util.function.IntUnaryOperator;
 import java.util.stream.IntStream;
@@ -30,6 +29,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.util.IntList;
+import org.jcvi.jillion.core.util.ReplacementFunction;
 import org.jcvi.jillion.core.util.streams.ThrowingIntIndexedIntConsumer;
 import org.jcvi.jillion.internal.core.util.iter.PrimitiveArrayIterators;
 /**
@@ -45,6 +45,7 @@ import org.jcvi.jillion.internal.core.util.iter.PrimitiveArrayIterators;
  *
  */
 public final class GrowableIntArray implements Iterable<Integer>{
+
 	/**
 	 * The current length of valid data
 	 * this is not the same as the length
@@ -270,9 +271,32 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		System.arraycopy(values, 0, data, currentLength, values.length);
 		currentLength+=values.length;
 	}
+	public void append(int[] values, ReplacementFunction replacementFunction){
+		if(replacementFunction==null){
+			append(values);
+			return;
+		}
+		ensureCapacity(currentLength+values.length);
+		for(int i=0; i< values.length; i++){
+			data[i+currentLength] = replacementFunction.applyAsInt(values[i]);
+		}
+		currentLength+=values.length;
+	}
 	public void append(GrowableIntArray other){
 		ensureCapacity(currentLength+other.currentLength);
 		System.arraycopy(other.data, 0, data, currentLength, other.currentLength);
+		currentLength+=other.currentLength;
+	}
+	public void append(GrowableIntArray other, ReplacementFunction replacementFunction){
+		if(replacementFunction==null){
+			append(other);
+			return;
+		}
+		ensureCapacity(currentLength+other.currentLength);
+		other.forEachIndexed((i, v)->{
+			data[i+currentLength]= replacementFunction.applyAsInt(v);
+		});
+
 		currentLength+=other.currentLength;
 	}
 	public int get(int offset){
@@ -314,6 +338,24 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		System.arraycopy(other.data, 0, data, offset, other.currentLength);
 		currentLength+=other.currentLength;
 		
+	}
+	public void insert(int offset, GrowableIntArray other, ReplacementFunction replacementFunction){
+		if(replacementFunction==null){
+			insert(offset, other);
+			return;
+		}
+		assertValidInsertOffset(offset);
+		ensureCapacity(currentLength+other.currentLength);
+		System.arraycopy(data, offset, data, offset + other.currentLength,
+				currentLength - offset);
+
+		other.forEachIndexed((i, v)->{
+			data[i+offset] = replacementFunction.applyAsInt(v);
+		});
+
+
+		currentLength+=other.currentLength;
+
 	}
 	public void insert(int offset, int value){
 		assertValidInsertOffset(offset);
@@ -685,6 +727,24 @@ public final class GrowableIntArray implements Iterable<Integer>{
 			if(predicate.test(data[i])) {
 				data[i] = replacementFunction.applyAsInt(data[i]);
 			}
+		}
+		return this;
+	}
+	/**
+	 * Replace all values with the given replacement value.
+	 * @param replacementFunction the function to replace the value given the previous value.
+	 * @throws NullPointerException if replacementFunction is null.
+	 *
+	 * @return this
+	 *
+	 * @since 6.1
+	 */
+	public GrowableIntArray replaceAll(IntUnaryOperator replacementFunction){
+		Objects.requireNonNull(replacementFunction);
+
+		for(int i=0; i< currentLength; i++) {
+			data[i] = replacementFunction.applyAsInt(data[i]);
+
 		}
 		return this;
 	}

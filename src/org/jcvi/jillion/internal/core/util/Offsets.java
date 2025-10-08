@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.PrimitiveIterator;
 import java.util.function.IntConsumer;
+import java.util.function.IntFunction;
 import java.util.function.IntPredicate;
 import java.util.function.IntUnaryOperator;
 import java.util.stream.IntStream;
@@ -30,7 +31,27 @@ import java.util.stream.IntStream;
  */
 public class Offsets {
 
-   @Value
+    public static Offsets fromSortedArray(int[] sortedOffsets) {
+        return new Offsets(new GrowableIntArray(sortedOffsets));
+    }
+
+    public int[] toArray() {
+        return delegate.toArray();
+    }
+
+    public PrimitiveIterator.OfInt iterator() {
+        return delegate.iterator();
+    }
+
+    public Offsets copy() {
+        return new Offsets(delegate.copy());
+    }
+
+    public void clear() {
+        delegate.clear();
+    }
+
+    @Value
    @Builder
     public static class XorOptions{
        @Getter(AccessLevel.NONE)
@@ -251,6 +272,12 @@ public class Offsets {
     public static Offsets fromUnsortedList(IntList offsets){
         return new Offsets(offsets, true,true);
     }
+    public static Offsets withInitialCapacity(int initialCapacity){
+        return new Offsets(initialCapacity);
+    }
+    private Offsets(int initialCapacity){
+        this(new GrowableIntArray(initialCapacity));
+    }
     private Offsets(GrowableIntArray array){
         this.delegate = array;
     }
@@ -309,6 +336,68 @@ public class Offsets {
          return delegate.binarySearch(offset)>=0;
     }
 
+    public int computeInsertionPointOf(int gappedOffset){
+        int insertionPoint = delegate.binarySearch(gappedOffset);
+        if(insertionPoint >=0){
+            //if we landed on a gap, then
+            //the we want the length of the array
+            //up until that offset so that's why it's +1
+            return insertionPoint +1;
+        }
+        return -insertionPoint -1;
+    }
+
+    public boolean isEmpty(){
+        return delegate.getCurrentLength()==0;
+    }
+
+    /**
+     * Append the given offsets to the end these offsets
+     * shifting their values by the current Offset length
+     * @param other
+     */
+    public void appendAndShift(Offsets other){
+        appendAndShift(other, delegate.getCurrentLength());
+
+    }
+    /**
+     * Append the given offsets to the end these offsets
+     * shifting their values by the current Offset length
+     * @param other
+     */
+    public void appendAndShift(Offsets other, int shiftAmount){
+
+        delegate.append(other.delegate, i-> i+shiftAmount);
+
+    }
+    public void prependAndShift(Offsets other){
+        prependAndShift(other, other.size());
+
+    }
+    public void prependAndShift(Offsets other, int shiftAmount){
+        delegate.replaceAll(i-> i+shiftAmount);
+        delegate.prepend(other.delegate);
+
+    }
+    public void insertAndShift(Offsets other, int startOffset){
+        insertAndShift(other, other.size(), startOffset);
+
+    }
+    public void insertAndShift(Offsets other, int shiftAmount, int startOffset){
+        int insertionPoint = computeInsertionPointOf(startOffset);
+        delegate.replaceIf(i-> i>= startOffset, i-> i+shiftAmount);
+        delegate.insert(insertionPoint, other.delegate, i-> i+startOffset);
+
+    }
+
+
+
+    public void reverseCoordinates(int sequenceLength){
+        int delta = sequenceLength-1;
+        delegate.replaceAll(i-> delta-i);
+        delegate.reverse();
+    }
+
     public void addAndShift(int value){
         if(contains(value)){
             return;
@@ -346,6 +435,20 @@ public class Offsets {
 
     }
 
+    /**
+     * Appends the given value to the end of the offset list.
+     * WARNING: this does not checking for sorted-ness
+     * and is only provided for use when you know that values are safe
+     * to append to the end of the offsets.  This is mostly used
+     * in performance focused code when data to append is known to be pre-sorted.
+     * 
+     * @param value the value to append
+     * @see #add(int) 
+     * @see #addAndShift(int)
+     */
+    public void appendUnsafe(int value){
+        delegate.append(value);
+    }
     public void add(int value){
         if(contains(value)){
             return;
@@ -363,6 +466,39 @@ public class Offsets {
 
         delegate.sortedRemove(offset);
         delegate.replaceIf(i-> i> offset, i-> i-1);
+
+    }
+    public void removeAllAndShift(Offsets valuesToRemove, int startOffset, int otherSequenceLength){
+
+        int[] valuesToRemoveArray = valuesToRemove.stream()
+                .map(i-> i+ startOffset)
+                .filter(i-> delegate.binarySearch(i) >=0)
+                .sorted()
+                .toArray();
+
+
+
+        for(int j = valuesToRemoveArray.length-1; j>=0; j--){
+            int v = valuesToRemoveArray[j];
+            delegate.sortedRemove(v);
+
+        }
+        delegate.replaceIf(i-> i >= startOffset, i-> i-otherSequenceLength);
+
+    }
+    public void removeAllAndShift(Offsets valuesToRemove){
+
+        int[] valuesToRemoveArray = valuesToRemove.stream()
+                .filter(i-> delegate.binarySearch(i) >=0)
+                .sorted()
+                .toArray();
+
+
+        for(int j = valuesToRemoveArray.length-1; j>=0; j--){
+            int v = valuesToRemoveArray[j];
+            delegate.sortedRemove(v);
+            delegate.replaceIf(i-> i> v, i-> i-1);
+        }
 
     }
     public void removeAllAndShift(IntList valuesToRemove){

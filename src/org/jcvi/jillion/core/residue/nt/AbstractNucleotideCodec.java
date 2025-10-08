@@ -34,6 +34,7 @@ import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
 import org.jcvi.jillion.internal.core.residue.nt.DefaultLeftFlankingNoGapIterator;
 import org.jcvi.jillion.internal.core.residue.nt.DefaultRightFlankingNoGapIterator;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
+import org.jcvi.jillion.internal.core.util.Offsets;
 
 
 /**
@@ -593,7 +594,7 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
 	    	HALT_AND_DECREMENT
 	    	;
 	    }
-	    private static interface StopCondition {
+	    private interface StopCondition {
 	    	
 	    	
 	    	ConditionResponse shouldStop(int gapOffset, int ithGap);
@@ -712,6 +713,11 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
 				Iterator<Nucleotide> nucleotides) {
         	 return encodeNucleotides(nucleotides, gapOffsets, numberOfNucleotides);
 		}
+	@Override
+	public byte[] encode(int numberOfNucleotides, Offsets gapOffsets,
+						 Iterator<Nucleotide> nucleotides) {
+		return encodeNucleotides(nucleotides, gapOffsets, numberOfNucleotides);
+	}
 		
         /**
          * Convenience method to encode a single basecall.
@@ -742,7 +748,34 @@ abstract class AbstractNucleotideCodec implements NucleotideCodec{
 					numBasesSizeStrategy, numberOfSentinelValues,
 					sentinelSizeStrategy);
         }
-        
+	private byte[] encodeNucleotides(Iterator<Nucleotide> iterator, Offsets sentienelOffsets,
+									 final int unEncodedSize) {
+		int encodedBasesSize = computeHeaderlessEncodedSize(unEncodedSize);
+		ByteBuffer encodedBases = ByteBuffer.allocate(encodedBasesSize);
+		encodeAll(iterator, unEncodedSize, encodedBases);
+		encodedBases.flip();
+		ValueSizeStrategy numBasesSizeStrategy = ValueSizeStrategy.getStrategyFor(unEncodedSize);
+		int numberOfSentinels = sentienelOffsets.size();
+		ValueSizeStrategy sentinelSizeStrategy = numberOfSentinels==0
+				?	ValueSizeStrategy.NONE
+				:	ValueSizeStrategy.getStrategyFor(numberOfSentinels);
+
+		int bufferSize = computeEncodedBufferSize(encodedBasesSize,
+				numBasesSizeStrategy, numberOfSentinels,
+				sentinelSizeStrategy);
+
+		ByteBuffer result = ByteBuffer.allocate(bufferSize);
+		result.put((byte)numBasesSizeStrategy.ordinal());
+		numBasesSizeStrategy.put(result, unEncodedSize);
+		result.put((byte)sentinelSizeStrategy.ordinal());
+		if(sentinelSizeStrategy != ValueSizeStrategy.NONE){
+			sentinelSizeStrategy.put(result, numberOfSentinels);
+			sentienelOffsets.forEach(v-> numBasesSizeStrategy.put(result,v));
+
+		}
+		result.put(encodedBases);
+		return result.array();
+	}
         private byte[] encodeNucleotides(Iterator<Nucleotide> iterator, int[] sentienelOffsetArray,
                 final int unEncodedSize) {
             int encodedBasesSize = computeHeaderlessEncodedSize(unEncodedSize);

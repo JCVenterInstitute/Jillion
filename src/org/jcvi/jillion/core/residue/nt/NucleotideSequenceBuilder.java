@@ -49,6 +49,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import org.jcvi.jillion.internal.core.util.Offsets;
 
 /**
  * {@code NucleotideSequenceBuilder}  is a way to
@@ -194,7 +195,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
     /**
      * Creates a new NucleotideSequenceBuilder instance
      * which currently contains no nucleotides.
-     * @param InvalidCharacterHandler an {@link org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler}
+     * @param invalidCharacterHandler an {@link org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler}
      * for how to handle parsing invalid nucleotide characters, set to {@code null}, then use the default handler
      * which will throw an IllegalArgumentException.
      * 
@@ -301,7 +302,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
      *  This method is able to parse both
      * '*' (consed) and '-' (TIGR) as gap characters. 
      * @param sequence the initial nucleotide sequence.
-     *  @param InvalidCharacterHandler an {@link org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler}
+     *  @param invalidCharacterHandler an {@link org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler}
      * for how to handle parsing invalid nucleotide characters, set to {@code null}, then use the default handler
      * which will throw an IllegalArgumentException.
      * 
@@ -323,7 +324,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
      *  This method is able to parse both
      * '*' (consed) and '-' (TIGR) as gap characters. 
      * @param sequence the initial nucleotide sequence.
-     *  @param InvalidCharacterHandler an {@link org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler}
+     *  @param decodingOptions an {@link DecodingOptions}
      * for how to handle parsing invalid nucleotide characters, set to {@code null}, then use the default handler
      * which will throw an IllegalArgumentException.
      * 
@@ -931,7 +932,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
         return codecDecider.getNumberOfGaps();
     }
 	public int[] getGapOffsets() {
-		return codecDecider.gapOffsets.toArray();		
+		return codecDecider.gapOffsets.toArray();
 	}
 
 	
@@ -1177,12 +1178,12 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
      * to the beginning
      * of this builder's mutable sequence.
      * This is the same as calling 
-     * {@link #insert(int, ResidueSequenceBuilder) insert(0,otherBuilder)}
+     * {@link #insert(int, NucleotideSequenceBuilder) insert(0,otherBuilder)}
      * @param otherBuilder {@link NucleotideSequenceBuilder} whose current
      * nucleotides are to be inserted at the beginning.
      * @return this.
      * @throws NullPointerException if otherBuilder is null.
-     * @see #insert(int, ResidueSequenceBuilder)
+     * @see #insert(int, NucleotideSequenceBuilder)
      */
     public NucleotideSequenceBuilder prepend(NucleotideSequenceBuilder otherBuilder){
         return insert(0, otherBuilder);
@@ -1696,7 +1697,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
 		}
 		
 
-		byte[] newBytes = new byte[data.getCurrentLength()-codecDecider.gapOffsets.getCurrentLength()];
+		byte[] newBytes = new byte[data.getCurrentLength()-codecDecider.gapOffsets.size()];
 		// bulk copy all bits that aren't
 		// for the gaps
 		PrimitiveIterator.OfInt gapIterator = codecDecider.gapOffsets.iterator();
@@ -1760,28 +1761,18 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
             throw new IndexOutOfBoundsException("gapped Range of " + gappedRange +" is beyond the gapped sequence length of " + currentLength);
         }
         
-        GrowableIntArray gaps = codecDecider.gapOffsets;
-        if(gaps.getCurrentLength() == 0){
+
+        if(codecDecider.gapOffsets.isEmpty()){
             //no gaps
             return gappedRange;
         }
         
-        long ungappedStart = gappedBegin - numGapsUntil(gaps, (int)gappedBegin);
-        long ungappedEnd = gappedEnd - numGapsUntil(gaps, (int)gappedEnd);
+        long ungappedStart = gappedBegin - codecDecider.gapOffsets.computeInsertionPointOf((int)gappedBegin);
+        long ungappedEnd = gappedEnd - codecDecider.gapOffsets.computeInsertionPointOf((int)gappedEnd);
        
         return Range.of(ungappedStart, ungappedEnd); 
     }
-    
-    private int numGapsUntil(GrowableIntArray gaps, int gappedOffset){
-        int insertionPoint = gaps.binarySearch(gappedOffset);
-        if(insertionPoint >=0){
-            //if we landed on a gap, then
-            //the we want the length of the array
-            //up until that offset so that's why it's +1
-            return insertionPoint +1;
-        }
-        return -insertionPoint -1;
-    }
+
     
     public int getGappedOffsetFor(int ungappedOffset){
     	SingleThreadAdder currentOffset = new SingleThreadAdder(ungappedOffset);
@@ -1849,15 +1840,15 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
        // private int numberOfNs=0;
         private int currentLength=0;
         private AlignedReference alignedReference=null;
-        private GrowableIntArray gapOffsets;
-        private GrowableIntArray nOffsets;
+        private Offsets gapOffsets;
+        private Offsets nOffsets;
         
         private boolean forceBasicCodec = false;
         
         CodecDecider(){
         	//needs to be initialized
-        	gapOffsets = new GrowableIntArray(12);
-        	nOffsets = new GrowableIntArray(12);
+        	gapOffsets =  Offsets.withInitialCapacity(12);
+        	nOffsets = Offsets.withInitialCapacity(12);
         }
         /**
          * Based on the current counts and metadata associated with the sequence
@@ -1877,11 +1868,10 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
         	}
         	//force Us to go through encoding
         	if(numUs ==0 && forceBasicCodec) {
-        		int numberOfGaps = gapOffsets.getCurrentLength();
+
                 
-                if(numberOfGaps==0) {
-                	int numberOfNs = nOffsets.getCurrentLength();
-                	if(numberOfNs==0) {
+                if(gapOffsets.isEmpty()) {
+                	if(nOffsets.isEmpty()) {
                 		return new ACGTOnlySimpleNucleotideSequence(nucleotideSequenceBuilder.data.copy());
                             	
                 	}
@@ -1900,12 +1890,12 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
 		}
 		public NucleotideSequence encode(Iterator<Nucleotide> iterator) {
         	
-        	int numberOfGaps = gapOffsets.getCurrentLength();
-            int numberOfNs = nOffsets.getCurrentLength();
+        	int numberOfGaps = gapOffsets.size();
+            int numberOfNs = nOffsets.size();
             boolean hasUs = numUs >0;
             boolean hasTs = numTs >0;
 			if(forceBasicCodec || numberOfNonNAmbiguities>0 || (numberOfGaps>0 && numberOfNs >0) || (hasUs && hasTs)){
-                byte[] encodedBytes= BasicNucleotideCodec.INSTANCE.encode(currentLength, gapOffsets.toArray(), iterator);
+                byte[] encodedBytes= BasicNucleotideCodec.INSTANCE.encode(currentLength, gapOffsets, iterator);
                 return new DefaultNucleotideSequence(BasicNucleotideCodec.INSTANCE, encodedBytes, hasUs, (hasUs && !hasTs));
 			}
 			//if we get this far then we don't have any non-N ambiguities
@@ -1914,15 +1904,15 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
             int twoBitBufferSize = AcgtnNucloetideCodec.INSTANCE.getNumberOfEncodedBytesFor(currentLength,
             		Math.max(numberOfGaps, numberOfNs));
             if(fourBitBufferSize < twoBitBufferSize){
-                byte[] encodedBytes= BasicNucleotideCodec.INSTANCE.encode(currentLength, gapOffsets.toArray(), iterator);
+                byte[] encodedBytes= BasicNucleotideCodec.INSTANCE.encode(currentLength, gapOffsets, iterator);
                 return new DefaultNucleotideSequence(BasicNucleotideCodec.INSTANCE, encodedBytes,hasUs, (hasUs && !hasTs));
             }
             if(numberOfGaps==0 ){
-                byte[] encodedBytes= AcgtnNucloetideCodec.INSTANCE.encode(currentLength, nOffsets.toArray(), iterator);
+                byte[] encodedBytes= AcgtnNucloetideCodec.INSTANCE.encode(currentLength, nOffsets, iterator);
                 return new DefaultNucleotideSequence(AcgtnNucloetideCodec.INSTANCE, encodedBytes,hasUs, (hasUs && !hasTs));
             }
             
-            byte[] encodedBytes= AcgtGapNucleotideCodec.INSTANCE.encode(currentLength, gapOffsets.toArray(), iterator);
+            byte[] encodedBytes= AcgtGapNucleotideCodec.INSTANCE.encode(currentLength, gapOffsets, iterator);
             return new DefaultNucleotideSequence(AcgtGapNucleotideCodec.INSTANCE, encodedBytes, hasUs, (hasUs && !hasTs));
        
 		}
@@ -1982,19 +1972,20 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
         }
         public void append(NucleotideSequenceBuilder other) {
         	CodecDecider otherDecider = other.codecDecider;
-        	
-        	append(otherDecider.gapOffsets, gapOffsets);
-        	append(otherDecider.nOffsets, nOffsets);
+        	gapOffsets.appendAndShift(otherDecider.gapOffsets, currentLength);
+			nOffsets.appendAndShift(otherDecider.nOffsets,currentLength);
+
         
-			currentLength += other.getLength();
+			currentLength += (int) other.getLength();
 			numberOfNonNAmbiguities += otherDecider.numberOfNonNAmbiguities;
             numUs+=otherDecider.numUs;
             numTs+=otherDecider.numTs;
 
         }
         public void append(NewValues newValues) {
-        	append(newValues.getGapOffsets(), gapOffsets);
-        	append(newValues.getNOffsets(), nOffsets);
+			gapOffsets.appendAndShift(newValues.getGapOffsets(), currentLength);
+			nOffsets.appendAndShift(newValues.getNOffsets(), currentLength);
+
         
 			currentLength += newValues.getLength();
 			numberOfNonNAmbiguities += newValues.getnumberOfNonNAmiguities();
@@ -2025,11 +2016,11 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
         	int insertLength = newValues.getLength();
         	if(startOffset ==0){
         		//use optimized prepend
-        		gapOffsets = prepend(newValues.getGapOffsets(), gapOffsets, insertLength);
-        		nOffsets = prepend(newValues.getNOffsets(), nOffsets, insertLength);
-        	}else{        	
-	        	insert(newValues.getGapOffsets(), gapOffsets, startOffset, insertLength);
-	        	insert(newValues.getNOffsets(), nOffsets, startOffset, insertLength);
+				gapOffsets.prependAndShift(newValues.getGapOffsets(), newValues.getLength());
+				nOffsets.prependAndShift(newValues.getNOffsets(),newValues.getLength());
+        	}else{
+				gapOffsets.insertAndShift(newValues.getGapOffsets(), newValues.getLength(), startOffset);
+				nOffsets.insertAndShift(newValues.getNOffsets(),newValues.getLength(),startOffset);
         	}
 
 			currentLength += insertLength;
@@ -2057,8 +2048,8 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
         
         public void reverse(){
         	
-        	gapOffsets = reverseCoordinates(gapOffsets);
-        	nOffsets = reverseCoordinates(nOffsets);
+        	gapOffsets.reverseCoordinates(currentLength);
+        	nOffsets.reverseCoordinates(currentLength);
         	
         }
 		private GrowableIntArray reverseCoordinates(GrowableIntArray array) {
@@ -2098,8 +2089,8 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
         }
         
         public void delete(int startOffset, NewValues newValues) {
-        	delete(gapOffsets, startOffset, newValues.getGapOffsets().toArray(), newValues.getLength());
-        	delete(nOffsets, startOffset, newValues.getNOffsets().toArray(),newValues.getLength());
+			gapOffsets.removeAllAndShift(newValues.getGapOffsets(), startOffset, newValues.getLength());
+			nOffsets.removeAllAndShift(newValues.getNOffsets(), startOffset, newValues.getLength());
         	
 			currentLength -= newValues.getLength();
 			numberOfNonNAmbiguities -= newValues.getnumberOfNonNAmiguities();
@@ -2126,12 +2117,12 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
             }
         }
 
-        private void replaceValue(GrowableIntArray array, int offset, boolean insert){
+        private void replaceValue(Offsets array, int offset, boolean insert){
         	if(insert){
-        		array.sortedInsert(offset);
+        		array.add(offset);
          	  
             }else{
-            	array.sortedRemove(offset);         	   
+            	array.remove(offset);
             }
         }
         
@@ -2147,7 +2138,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
         
         void ungap(){
         	//first we have to shift the N's
-        	int[] newNOffsets = new int[nOffsets.getCurrentLength()];
+        	int[] newNOffsets = new int[nOffsets.size()];
         	
         	PeekableOfIntIterator gapOffsetIter = IteratorUtil.createPeekableIterator(gapOffsets.iterator());
         	PrimitiveIterator.OfInt nOffsetIter = nOffsets.iterator();
@@ -2168,9 +2159,9 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
         		newNOffsets[i] = currentNOffset - shiftSize;
         		i++;
         	}
-        	nOffsets = new GrowableIntArray(newNOffsets);
+        	nOffsets = Offsets.fromSortedArray(newNOffsets);
         	//now we can remove the gaps
-            currentLength-=gapOffsets.getCurrentLength();
+            currentLength-=gapOffsets.size();
             gapOffsets.clear();
             
         }
@@ -2178,7 +2169,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
          * @return the numberOfGaps
          */
         int getNumberOfGaps() {
-            return gapOffsets.getCurrentLength();
+            return gapOffsets.size();
         }
         /**
          * @return the numberOfNonNAmbiguities
@@ -2190,7 +2181,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
          * @return the numberOfNs
          */
         int getNumberOfNs() {
-            return nOffsets.getCurrentLength();
+            return nOffsets.size();
         }
         /**
          * @return the currentLength
@@ -2406,13 +2397,13 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
     	private int numUs;
         private int numTs;
 
-    	private final GrowableIntArray nOffsets;
-    	private final GrowableIntArray gapOffsets;
+    	private final Offsets nOffsets;
+    	private final Offsets gapOffsets;
 
     	public NewValues(GrowableByteArray data){
     		this.data = data.copy();
-    		nOffsets = new GrowableIntArray(12);
-			gapOffsets = new GrowableIntArray(12);
+    		nOffsets = Offsets.withInitialCapacity(12);
+			gapOffsets = Offsets.withInitialCapacity(12);
 			
     		
     		data.forEachIndexed((offset, i)-> handleOrdinal(i, offset));
@@ -2420,8 +2411,8 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
     	}
     	
     	public NewValues(Nucleotide nucleotide){
-    		nOffsets = new GrowableIntArray(12);
-			gapOffsets = new GrowableIntArray(12);
+    		nOffsets = Offsets.withInitialCapacity(12);
+			gapOffsets = Offsets.withInitialCapacity(12);
     		data = new GrowableByteArray(1);
     		
             handle(nucleotide, 0);
@@ -2430,8 +2421,8 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
     	}
     	
         public NewValues(Nucleotide[] sequence) {
-            nOffsets = new GrowableIntArray();
-            gapOffsets = new GrowableIntArray();
+            nOffsets = Offsets.withInitialCapacity(12);
+            gapOffsets = Offsets.withInitialCapacity(12);
             data = new GrowableByteArray(sequence.length);
 
             int offset = 0;
@@ -2444,8 +2435,8 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
             }
         }
     	public NewValues(String sequence, Nucleotide.InvalidCharacterHandler invalidCharacterHandler){
-    		nOffsets = new GrowableIntArray(12);
-			gapOffsets = new GrowableIntArray(12);
+    		nOffsets = Offsets.withInitialCapacity(12);
+			gapOffsets = Offsets.withInitialCapacity(12);
 			data = new GrowableByteArray(sequence.length());
 			
     		int offset=0;
@@ -2464,8 +2455,8 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
     		
     	}
     	public NewValues(char[] sequence, Nucleotide.InvalidCharacterHandler invalidCharacterHandler){
-    		nOffsets = new GrowableIntArray(12);
-			gapOffsets = new GrowableIntArray(12);
+    		nOffsets = Offsets.withInitialCapacity(12);
+			gapOffsets = Offsets.withInitialCapacity(12);
 			data = new GrowableByteArray(sequence.length);
 			
     		int offset=0;
@@ -2491,8 +2482,8 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
     	 * 
     	 */
     	public NewValues(NucleotideSequence sequence){
-    		nOffsets = new GrowableIntArray(12);
-    		gapOffsets = new GrowableIntArray(sequence.getNumberOfGaps());
+    		nOffsets = Offsets.withInitialCapacity(12);
+    		gapOffsets = Offsets.withInitialCapacity(12);
     		data = new GrowableByteArray((int)sequence.getLength());
     		
             int offset=0;
@@ -2502,8 +2493,8 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
             }
     	}
     	public NewValues(Iterator<Nucleotide> iter){
-    		nOffsets = new GrowableIntArray(12);
-			gapOffsets = new GrowableIntArray(12);
+    		nOffsets = Offsets.withInitialCapacity(12);
+			gapOffsets = Offsets.withInitialCapacity(12);
     		data = new GrowableByteArray(100);
             int offset=0;
             while(iter.hasNext()){
@@ -2513,8 +2504,8 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
             }
     	}
     	public NewValues(Iterator<Nucleotide> iter, int length){
-    		nOffsets = new GrowableIntArray(12);
-			gapOffsets = new GrowableIntArray(12);
+    		nOffsets = Offsets.withInitialCapacity(12);
+			gapOffsets = Offsets.withInitialCapacity(12);
     		data = new GrowableByteArray(length);
             int offset=0;
             while(iter.hasNext()){
@@ -2523,9 +2514,10 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
             	offset++;            	
             }
     	}
+
     	public NewValues(Iterable<Nucleotide> nucleotides){
-    		nOffsets = new GrowableIntArray(12);
-			gapOffsets = new GrowableIntArray(12);
+    		nOffsets = Offsets.withInitialCapacity(12);
+			gapOffsets = Offsets.withInitialCapacity(12);
     		data = new GrowableByteArray(100);
             int offset=0;
             for(Nucleotide n : nucleotides){
@@ -2551,7 +2543,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
 			data.append(value);
 			
 			switch(value){
-				case 0:nOffsets.append(offset);  break;
+				case 0:nOffsets.appendUnsafe(offset);  break;
 				case 1:
 				case 2: 
 				case 3:
@@ -2562,7 +2554,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
 				case 8:
 				case 9:
 				case 10: break;
-				case 11: gapOffsets.append(offset);
+				case 11: gapOffsets.appendUnsafe(offset);
 							break;
 				case 12:
 				case 13:
@@ -2588,7 +2580,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
 			//which is is an O(1) lookup instead of an
 			//o(n) lookupswitch opcode
 			switch(ordinal){
-			case 0 :nOffsets.append(offset); break;
+			case 0 :nOffsets.appendUnsafe(offset); break;
 			case 1:
 			case 2:
 			case 3:
@@ -2599,7 +2591,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
 			case 8:
 			case 9:
 			case 10:break;
-			case 11:gapOffsets.append(offset); break;
+			case 11:gapOffsets.appendUnsafe(offset); break;
 			case 12:
 			case 13:
 			case 14:numberOfACGTs++; break;
@@ -2633,16 +2625,16 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
 		}
 
 		public int getNumberOfGaps() {
-			return gapOffsets.getCurrentLength();
+			return gapOffsets.size();
 		}
 
 		public int getNumberOfNs() {
-			return nOffsets.getCurrentLength();
+			return nOffsets.size();
 		}
-		public GrowableIntArray getGapOffsets() {
+		public Offsets getGapOffsets() {
 			return gapOffsets;
 		}
-		public GrowableIntArray getNOffsets() {
+		public Offsets getNOffsets() {
 			return nOffsets;
 		}
     	
