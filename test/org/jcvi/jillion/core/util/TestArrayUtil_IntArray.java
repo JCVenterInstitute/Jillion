@@ -43,6 +43,25 @@ public class TestArrayUtil_IntArray {
 		assertFalse(sut.contains(FIVE));
 		assertEquals(-1, sut.indexOf(FIVE));
 	}
+
+	@Test
+	public void createEmptyList(){
+		List<Integer> sut = ArrayUtil.newIntList(10);
+		assertEquals(0, sut.size());
+	}
+	@Test(expected = NegativeArraySizeException.class)
+	public void createNegativeSizeShouldThrowException(){
+		ArrayUtil.newIntList(-10);
+	}
+
+	@Test
+	public void createEmptyImmutableList(){
+		IntList empty = ArrayUtil.immutableEmptyIntList();
+		assertTrue(empty.isEmpty());
+		assertEquals(0, empty.size());
+		assertFalse(empty.intIterator().hasNext());
+		assertFalse(empty.iterator().hasNext());
+	}
 	
 	@Test
 	public void oneElementArray(){
@@ -72,6 +91,83 @@ public class TestArrayUtil_IntArray {
 		assertEquals(-1, sut.indexOf(NINE));
 		
 		TestUtil.assertEqualAndHashcodeSame(Arrays.asList(FIVE,TEN), sut);
+	}
+
+	@Test
+	public void addElement(){
+		List<Integer> sut = ArrayUtil.asList(new int[]{5,10});
+
+		sut.add(NINE);
+
+
+		assertFalse(sut.isEmpty());
+		assertEquals(3, sut.size());
+		assertTrue(sut.contains(FIVE));
+		assertEquals(0, sut.indexOf(FIVE));
+		assertTrue(sut.contains(TEN));
+		assertEquals(1, sut.indexOf(TEN));
+
+		assertTrue(sut.contains(NINE));
+		assertEquals(2, sut.indexOf(NINE));
+
+		TestUtil.assertEqualAndHashcodeSame(Arrays.asList(FIVE,TEN, NINE), sut);
+	}
+	@Test
+	public void insertAndShiftElement(){
+		List<Integer> sut = ArrayUtil.asList(new int[]{5,10});
+
+		sut.add(1,NINE);
+
+
+		assertFalse(sut.isEmpty());
+		assertEquals(3, sut.size());
+		assertTrue(sut.contains(FIVE));
+		assertEquals(0, sut.indexOf(FIVE));
+		assertTrue(sut.contains(TEN));
+		assertEquals(2, sut.indexOf(TEN));
+
+		assertTrue(sut.contains(NINE));
+		assertEquals(1, sut.indexOf(NINE));
+
+		TestUtil.assertEqualAndHashcodeSame(Arrays.asList(FIVE, NINE, TEN), sut);
+	}
+
+	@Test
+	public void removeLastElement(){
+		List<Integer> sut = ArrayUtil.asList(new int[]{5,10});
+
+		sut.remove(TEN);
+
+
+		assertFalse(sut.isEmpty());
+		assertEquals(1, sut.size());
+		assertTrue(sut.contains(FIVE));
+		assertEquals(0, sut.indexOf(FIVE));
+		assertFalse(sut.contains(TEN));
+		assertEquals(-1, sut.indexOf(TEN));
+
+
+
+		TestUtil.assertEqualAndHashcodeSame(Arrays.asList(FIVE), sut);
+	}
+
+	@Test
+	public void removeFirstElement(){
+		List<Integer> sut = ArrayUtil.asList(new int[]{5,10});
+
+		sut.remove(FIVE);
+
+
+		assertFalse(sut.isEmpty());
+		assertEquals(1, sut.size());
+		assertFalse(sut.contains(FIVE));
+		assertEquals(-1, sut.indexOf(FIVE));
+		assertTrue(sut.contains(TEN));
+		assertEquals(0, sut.indexOf(TEN));
+
+
+
+		TestUtil.assertEqualAndHashcodeSame(Arrays.asList(TEN), sut);
 	}
 	
 	

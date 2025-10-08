@@ -93,6 +93,16 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
        return append(gaps);
     }
 
+    default B insertGap(int offset){
+        return insert(offset, "-");
+    }
+
+    default B insertGap(Range gapRange){
+        char[] gaps =  new char[(int) gapRange.getLength()];
+        Arrays.fill( gaps, '-');
+        return insert((int) gapRange.getBegin(), gaps);
+    }
+
     /**
      * Prepend a Gap;
      * @return this
@@ -448,4 +458,6 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * @since 5.3
      */
     B turnOffDataCompression(boolean turnOffDataCompression);
+
+
 }

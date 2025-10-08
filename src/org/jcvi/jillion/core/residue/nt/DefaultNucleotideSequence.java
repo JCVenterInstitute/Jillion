@@ -39,6 +39,7 @@ import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Rangeable;
+import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
 
@@ -197,7 +198,7 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
     }
 
 	@Override
-    public List<Integer> getGapOffsets() {
+    public IntList getGapOffsets() {
     	return codec.getGapOffsets(data);
     }
 	

@@ -44,6 +44,7 @@ import java.util.stream.Stream;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.core.util.iter.ArrayIterator;
 import org.jcvi.jillion.internal.core.io.StreamUtil;
 import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
@@ -431,7 +432,7 @@ final class DefaultReferenceEncodedNucleotideSequence extends AbstractResidueSeq
 	}
 
 	@Override
-	public List<Integer> getGapOffsets() {
+	public IntList getGapOffsets() {
 		GrowableIntArray referenceGapOffsets = shiftReferenceGaps();
 		if(encodedSnpsInfo !=null){
 			 modifyForSnps(referenceGapOffsets);

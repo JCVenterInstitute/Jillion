@@ -39,7 +39,9 @@ import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
+import org.jcvi.jillion.internal.core.util.ArrayUtil;
 import org.jcvi.jillion.trace.fastq.FastqQualityCodec;
 import org.jcvi.jillion.trace.fastq.FastqRecord;
 import org.jcvi.jillion.trace.fastq.FastqRecordBuilder;
@@ -416,9 +418,9 @@ public class ParsedFastqRecord implements FastqRecord {
 
 
 		@Override
-		public List<Integer> getGapOffsets() {
+		public IntList getGapOffsets() {
 			// TODO for now assume no gaps
-			return Collections.emptyList();
+			return ArrayUtil.immutableEmptyIntList();
 		}
 
 

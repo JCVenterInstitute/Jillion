@@ -27,6 +27,8 @@ import org.jcvi.jillion.assembly.ca.asm.AsmVisitor.UnitigLayoutType;
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.IntList;
+
 /**
  * {@code AsmContigVisitor} is a visitor interface
  * to visit a single contig in an ASM file.
@@ -75,6 +77,27 @@ public interface AsmContigVisitor{
      */
     void visitReadLayout(char readType, String externalReadId, 
             DirectedRange readRange, List<Integer> gapOffsets);
+
+    /**
+     * Visit one read layout onto the the current contig.
+     * @param readType the type of the read, usually 'R' for
+     * random read.  This is the same type as from the frg file.
+     *
+     * @param externalReadId the read id.
+     * @param readRange the {@link DirectedRange} which has the gapped
+     * range on the contig that this read
+     * aligns to and the {@link org.jcvi.jillion.core.Direction} of the read on this contig.
+     * @param gapOffsets the gap offsets of this read onto the frg sequence.
+     *
+     * @implNote This is the same as {@link #visitReadLayout(char, String, DirectedRange, List)}
+     * but with a more efficient List implementation.
+     *
+     * @since 6.1
+     */
+    default void visitReadLayout(char readType, String externalReadId,
+                         DirectedRange readRange, IntList gapOffsets){
+        visitReadLayout(readType, externalReadId, readRange, (List<Integer>)  gapOffsets);
+    }
     /**
      * Visiting this contig has been halted
      * by a call to {@link org.jcvi.jillion.assembly.ca.asm.AsmVisitor.AsmVisitorCallback#haltParsing()}.

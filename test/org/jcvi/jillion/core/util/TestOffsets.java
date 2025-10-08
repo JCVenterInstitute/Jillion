@@ -4,6 +4,7 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.core.util.Offsets;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 import static org.junit.Assert.*;
 
@@ -16,6 +17,53 @@ public class TestOffsets {
         assertArrayEquals(new int[]{1,2,3,4,5}, sut.stream().toArray());
 
         assertEquals(List.of(1,2,3,4,5), sut.asList());
+
+        List<Integer> actualforEachList = new ArrayList<>();
+        sut.forEach(actualforEachList::add);
+        assertEquals(List.of(1,2,3,4,5), actualforEachList);
+
+    }
+
+    @Test
+    public void or(){
+        Offsets sut = Offsets.fromSortedList(List.of(1,2,3,4,5));
+
+        Offsets other = Offsets.fromSortedList(List.of(3,4,5,6,7,8,9));
+
+        Offsets and = sut.or(other);
+
+        assertArrayEquals(new int[]{1,2,3,4,5,6,7,8,9}, and.stream().toArray());
+
+
+
+    }
+
+    @Test
+    public void and(){
+        Offsets sut = Offsets.fromSortedList(List.of(1,2,3,4,5));
+
+        Offsets other = Offsets.fromSortedList(List.of(3,4,5,6,7,8,9));
+
+        Offsets and = sut.and(other);
+
+        assertArrayEquals(new int[]{3,4,5}, and.stream().toArray());
+
+    }
+
+
+
+    @Test
+    public void xor(){
+        Offsets sut = Offsets.fromSortedList(List.of(1,2,3,4,5));
+
+        Offsets other = Offsets.fromSortedList(List.of(3,4,5,6,7,8,9));
+
+        Offsets and = sut.xor(other);
+
+        assertArrayEquals(new int[]{1,2,6,7,8,9}, and.stream().toArray());
+
+
+
     }
 
     @Test
@@ -25,6 +73,9 @@ public class TestOffsets {
         assertArrayEquals(new int[]{1,2,3,4,5}, sut.stream().toArray());
 
         assertEquals(List.of(1,2,3,4,5), sut.asList());
+        List<Integer> actualforEachList = new ArrayList<>();
+        sut.forEach(actualforEachList::add);
+        assertEquals(List.of(1,2,3,4,5), actualforEachList);
     }
 
     @Test(expected = IllegalArgumentException.class)

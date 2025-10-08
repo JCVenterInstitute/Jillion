@@ -209,7 +209,7 @@ public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>
 	 */
 	protected AbstractFastaFileDataStoreBuilder<T, S, F, SD, D> idConverter(Function<String,String> idConverter) {
 
-		this.idConverter = null;
+		this.idConverter = idConverter;
 		return this;
 	}
 	

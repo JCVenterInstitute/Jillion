@@ -25,6 +25,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.util.streams.ThrowingIntIndexedCharConsumer;
 import org.jcvi.jillion.internal.core.util.iter.PrimitiveArrayIterators;
@@ -114,6 +116,7 @@ public final class GrowableCharArray implements Iterable<Character>{
 	 * to the backing array.
 	 * @throws NullPointerException if chars is null.
 	 */
+	@JsonCreator
 	public GrowableCharArray(char[] chars){
 		data = Arrays.copyOf(chars, chars.length);
 		currentLength=data.length;
@@ -147,7 +150,18 @@ public final class GrowableCharArray implements Iterable<Character>{
 			"range: "+range+", array size: "+currentLength);
 	    }
 	}
-	
+	/**
+	 * Copy data from this array into the destination array.
+	 * @implNote This should be the same as <code>System.arraycopy(data,srcOffset, destArray,destOffset, length )</code>
+	 * @param srcOffset the offset into THIS growable array.
+	 * @param destArray the destination array to copy into.
+	 * @param destOffset the offset to start copy data into the destination array.
+	 * @param length the number of values to copy.
+	 * @since 6.1
+	 */
+	public void arrayCopy(int srcOffset, char[] destArray, int destOffset, int length) {
+		System.arraycopy(data,srcOffset, destArray,destOffset, length );
+	}
 	public void reverse(){
 		int pivotPoint = currentLength/2;
 		for(int i=0; i<pivotPoint;i++){
@@ -285,7 +299,7 @@ public final class GrowableCharArray implements Iterable<Character>{
             data = Arrays.copyOf(data, newCapacity);
 		}
     }
-	
+	@JsonValue
 	public char[] toArray(){
 		return Arrays.copyOf(data,currentLength);
 	}

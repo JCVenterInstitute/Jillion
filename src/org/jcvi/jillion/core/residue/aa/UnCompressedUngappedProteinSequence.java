@@ -2,7 +2,9 @@ package org.jcvi.jillion.core.residue.aa;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
+import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.core.util.iter.ArrayIterator;
+import org.jcvi.jillion.internal.core.util.ArrayUtil;
 import org.jcvi.jillion.internal.core.util.MemoizedSupplier;
 
 import java.io.ObjectInputStream;
@@ -48,8 +50,8 @@ class UnCompressedUngappedProteinSequence implements ProteinSequence{
 	}
 
     @Override
-    public List<Integer> getGapOffsets() {
-        return Collections.emptyList();
+    public IntList getGapOffsets() {
+        return ArrayUtil.immutableEmptyIntList();
     }
 
     @Override

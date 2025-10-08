@@ -2,7 +2,9 @@ package org.jcvi.jillion.core.residue.nt;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
+import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.core.util.iter.ArrayIterator;
+import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.internal.core.io.StreamUtil;
 import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
 import org.jcvi.jillion.internal.core.util.ArrayUtil;
@@ -113,7 +115,7 @@ abstract class AbstractSimpleNucleotideSequence extends AbstractResidueSequence<
     }
 
     @Override
-    public List<Integer> getGapOffsets() {
+    public IntList getGapOffsets() {
         return gapSupplier.get().toBoxedList();
     }
     @Override
@@ -147,8 +149,7 @@ abstract class AbstractSimpleNucleotideSequence extends AbstractResidueSequence<
 
     @Override
     public Iterator<Nucleotide> iterator(Range range) {
-        return Arrays.stream(data, (int) range.getBegin(), (int) range.getEnd()+1)
-                    .iterator();
+        return IteratorUtil.createIteratorFromArray(data, range);
 
     }
 
@@ -177,7 +178,7 @@ abstract class AbstractSimpleNucleotideSequence extends AbstractResidueSequence<
 
     @Override
     public Iterator<Nucleotide> iterator() {
-        return Arrays.stream(data).iterator();
+        return IteratorUtil.createIteratorFromArray(data);
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.jcvi.jillion.core.residue.aa;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.core.util.iter.ArrayIterator;
 import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
@@ -56,7 +57,7 @@ class UnCompressedGappedProteinSequence extends AbstractResidueSequence<AminoAci
     }
 
     @Override
-    public List<Integer> getGapOffsets() {
+    public IntList getGapOffsets() {
         return gapSupplier.get().toBoxedList();
     }
     @Override

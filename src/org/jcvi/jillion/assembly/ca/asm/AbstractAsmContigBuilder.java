@@ -32,6 +32,8 @@ import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.util.IntList;
+
 /**
  * {@code AbstractAsmContigBuilder} is a {@link AsmContigVisitor}
  * that will populate an {@link AsmContigBuilder} instance
@@ -105,6 +107,34 @@ public abstract class AbstractAsmContigBuilder implements AsmContigVisitor{
                     + " from frg file", e);
         }
 		
+	}
+	@Override
+	public void visitReadLayout(char readType, String externalReadId,
+								DirectedRange readRange, IntList gapOffsets) {
+		try {
+			NucleotideSequence fullLengthSequence = fullLengthSequenceDatastore.get(externalReadId);
+			Range clearRange = validRanges.get(externalReadId);
+			if(clearRange==null){
+				throw new IllegalStateException("do not have clear range information for read "+ externalReadId);
+			}
+
+			NucleotideSequenceBuilder validBases = new NucleotideSequenceBuilder(fullLengthSequence)
+					.trim(clearRange);
+			if(readRange.getDirection() == Direction.REVERSE){
+				validBases.reverseComplement();
+			}
+			validBases = AsmUtil.computeGappedSequence(validBases, gapOffsets);
+			builder.addRead(externalReadId, validBases.toString(),
+					(int)readRange.asRange().getBegin(),readRange.getDirection(),
+					clearRange,
+					(int)fullLengthSequence.getLength(),
+					false);
+		} catch (DataStoreException e) {
+			throw new IllegalStateException(
+					"error getting read id "+ externalReadId
+							+ " from frg file", e);
+		}
+
 	}
 	/**
 	 * Ignored by default since this class

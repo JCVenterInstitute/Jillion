@@ -28,6 +28,7 @@ import java.util.stream.IntStream;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.internal.core.EncodedSequence;
 import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
@@ -91,7 +92,7 @@ abstract class AbstractProteinSequence extends AbstractResidueSequence<AminoAcid
          return encodedAminoAcids.iterator(range);
      }
 	@Override
-	public List<Integer> getGapOffsets() {
+	public IntList getGapOffsets() {
 		return getGapArray().toBoxedList();
 	}
 	@Override

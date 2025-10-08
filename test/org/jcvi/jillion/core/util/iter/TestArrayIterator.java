@@ -61,6 +61,7 @@ public class TestArrayIterator {
 		assertTrue(expected.hasPrevious());
 
 		while(expected.hasPrevious()){
+			assertTrue(actual.hasPrevious());
 			assertEquals(expected.previous(), actual.previous());
 		}
 		assertFalse(actual.hasPrevious());

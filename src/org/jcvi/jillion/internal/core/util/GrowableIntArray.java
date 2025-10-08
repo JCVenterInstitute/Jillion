@@ -26,7 +26,10 @@ import java.util.function.IntPredicate;
 import java.util.function.IntUnaryOperator;
 import java.util.stream.IntStream;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.core.util.streams.ThrowingIntIndexedIntConsumer;
 import org.jcvi.jillion.internal.core.util.iter.PrimitiveArrayIterators;
 /**
@@ -97,6 +100,31 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		}
 		currentLength=data.length;
 	}
+
+	/**
+	 * Creates a new Growable array
+	 * where the backing array contains
+	 * the contents of the given Collection
+	 * stored as primitives.  The order in the array
+	 * is the determined by the Collection's iteration order.
+	 * The capacity and length of this growable array
+	 * are set to the collection's size.
+	 * @param ints the Collection of Integers to
+	 * create into a growable array from.
+	 * @throws NullPointerException if the given
+	 * collection is null or any elements in the collection
+	 * are null.
+	 */
+	public GrowableIntArray(IntList ints){
+		data = new int[ints.size()];
+		int index=0;
+		PrimitiveIterator.OfInt iter = ints.intIterator();
+		while(iter.hasNext()){
+			data[index++]=iter.nextInt();
+		}
+
+		currentLength=data.length;
+	}
 	/**
 	 * Creates a new Growable array
 	 * where the backing int array is an exact
@@ -113,10 +141,75 @@ public final class GrowableIntArray implements Iterable<Integer>{
 	 * to the backing array.
 	 * @throws NullPointerException if ints is null.
 	 */
+	@JsonCreator
 	public GrowableIntArray(int[] ints){
 		data = Arrays.copyOf(ints, ints.length);
 		currentLength=data.length;
 	}
+
+	/**
+	 * Copy data from this array into the destination array.
+	 * @implNote This should be the same as <code>System.arraycopy(data,srcOffset, destArray,destOffset, length )</code>
+	 * @param srcOffset the offset into THIS growable array.
+	 * @param destArray the destination array to copy into.
+	 * @param destOffset the offset to start copy data into the destination array.
+	 * @param length the number of values to copy.
+	 * @since 6.1
+	 */
+	public void arrayCopy(int srcOffset, int[] destArray, int destOffset, int length) {
+		System.arraycopy(data,srcOffset, destArray,destOffset, length );
+	}
+
+	@Override
+	public String toString() {
+		//copy of relevant code from Arrays#toString() but adding current length
+		int iMax = currentLength - 1;
+		if (iMax == -1) {
+			return "[]";
+		}
+
+		StringBuilder b = new StringBuilder(currentLength);
+		b.append('[');
+		for (int i = 0; ; i++) {
+			b.append(data[i]);
+			if (i == iMax)
+				return b.append(']').toString();
+			b.append(", ");
+		}
+	}
+
+	/**
+	 * Creates a new {@link GrowableIntArray}
+	 * with the given initial capacity.
+	 * @param range the initial Ranges to populate backing long array.
+	 *
+	 */
+	public GrowableIntArray(Range range){
+
+
+		data = new int[(int) range.getLength()];
+
+		range.forEachValue(l-> this.append((int)l));
+
+	}
+	/**
+	 * Creates a new {@link GrowableIntArray}
+	 * with the given initial capacity.
+	 * @param ranges the initial List of Ranges to populate backing long array.
+	 *
+	 */
+	public GrowableIntArray(List<Range> ranges){
+		Objects.requireNonNull(ranges);
+		int initialCapacity = (int) ranges.stream()
+				.mapToLong(Range::getLength)
+				.sum();
+
+		data = new int[initialCapacity];
+		for(Range r : ranges){
+			r.forEachValue(l-> this.append((int)l));
+		}
+	}
+
 	private GrowableIntArray(GrowableIntArray copy){
 		data = Arrays.copyOf(copy.data, copy.data.length);
 		currentLength = copy.currentLength;
@@ -284,7 +377,7 @@ public final class GrowableIntArray implements Iterable<Integer>{
             data = Arrays.copyOf(data, newCapacity);
 		}
     }
-	
+	@JsonValue
 	public int[] toArray(){
 		return Arrays.copyOf(data,currentLength);
 	}
@@ -452,6 +545,11 @@ public final class GrowableIntArray implements Iterable<Integer>{
 	public PrimitiveIterator.OfInt iterator() {
 		return PrimitiveArrayIterators.create(data, currentLength);
 	}
+
+
+	public PrimitiveIterator.OfInt reverseIterator() {
+		return PrimitiveArrayIterators.createReverse(data, currentLength);
+	}
 	
 	/**
 	 * Get the number of values
@@ -509,10 +607,10 @@ public final class GrowableIntArray implements Iterable<Integer>{
 	 * 
 	 * @since 5.3
 	 */
-	public List<Integer> toBoxedList() {
+	public IntList toBoxedList() {
 		if(currentLength ==0){
 			//return new list to make it mutable
-			return new ArrayList<>();
+			return ArrayUtil.asList(new int[0]);
 		}
 		return ArrayUtil.asList(toArray());
 	}

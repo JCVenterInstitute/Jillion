@@ -2,6 +2,8 @@ package org.jcvi.jillion.core.residue.nt;
 
 import org.jcvi.jillion.core.Range;
 
+import org.jcvi.jillion.core.util.IntList;
+import org.jcvi.jillion.internal.core.util.ArrayUtil;
 import org.jcvi.jillion.internal.core.util.GrowableByteArray;
 
 import java.util.*;
@@ -77,8 +79,8 @@ class ACGTOnlySimpleNucleotideSequence extends AbstractSimpleNucleotideSequence{
 		return false;
 	}
 	@Override
-	public List<Integer> getGapOffsets() {
-		return Collections.emptyList();
+	public IntList getGapOffsets() {
+		return ArrayUtil.immutableEmptyIntList();
 	}
 	@Override
 	public IntStream gaps() {

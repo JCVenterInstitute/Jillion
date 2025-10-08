@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
+import org.jcvi.jillion.internal.core.util.GrowableLongArray;
 import org.junit.Test;
 
 public class TestGrowableIntArray {
@@ -90,6 +91,29 @@ public class TestGrowableIntArray {
 
 
 	}
+
+	@Test
+	public void constructorWithSingleRange(){
+		GrowableIntArray sut = new GrowableIntArray(Range.of(11,20));
+
+		int[] expected = new int[10];
+		for(int i=0; i< 10; i++){
+			expected[i]= 11+i;
+		}
+		assertArrayEquals(expected, sut.toArray());
+	}
+
+	@Test
+	public void constructorWithListOfRanges(){
+		GrowableIntArray sut = new GrowableIntArray(List.of(Range.of(0,10), Range.of(11,20)));
+
+		int[] expected = new int[21];
+		for(int i=0; i< 21; i++){
+			expected[i]= i;
+		}
+		assertArrayEquals(expected, sut.toArray());
+	}
+
 	@Test
 	public void appendBeyondCapacityShouldGrowArray(){
 		GrowableIntArray sut = new GrowableIntArray(5);

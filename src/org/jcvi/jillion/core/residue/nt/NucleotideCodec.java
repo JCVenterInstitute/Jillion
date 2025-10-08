@@ -33,6 +33,7 @@ import java.util.stream.Stream;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Rangeable;
 import org.jcvi.jillion.core.Ranges;
+import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.internal.core.GlyphCodec;
 import org.jcvi.jillion.internal.core.io.StreamUtil;
 
@@ -54,7 +55,7 @@ interface NucleotideCodec extends GlyphCodec<Nucleotide>{
      * 
      * @return a List of gap offsets as Integers.
      */
-    List<Integer> getGapOffsets(byte[] encodedData);
+    IntList getGapOffsets(byte[] encodedData);
     /**
      * Get a List of all the offsets into this
      * sequence which are gaps.  This list SHOULD be

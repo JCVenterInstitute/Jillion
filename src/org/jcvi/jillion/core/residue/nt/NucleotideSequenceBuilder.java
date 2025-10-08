@@ -39,6 +39,7 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandlers;
 import org.jcvi.jillion.core.util.SingleThreadAdder;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.PeekableIterator;
+import org.jcvi.jillion.core.util.iter.PeekableOfIntIterator;
 import org.jcvi.jillion.internal.core.util.GrowableByteArray;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
@@ -1694,26 +1695,26 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
 			return this;
 		}
 		
-		byte[] oldBytes = data.toArray();
-		byte[] newBytes = new byte[oldBytes.length-codecDecider.gapOffsets.getCurrentLength()];
+
+		byte[] newBytes = new byte[data.getCurrentLength()-codecDecider.gapOffsets.getCurrentLength()];
 		// bulk copy all bits that aren't
 		// for the gaps
-		Iterator<Integer> gapIterator = codecDecider.gapOffsets.iterator();
+		PrimitiveIterator.OfInt gapIterator = codecDecider.gapOffsets.iterator();
 		
 		int oldOffset = 0;
 		int newOffset = 0;
 		while (gapIterator.hasNext()) {
-			int nextGapOffset = gapIterator.next().intValue();
-			for (; oldOffset < nextGapOffset; oldOffset++,newOffset++) {
-				newBytes[newOffset] = oldBytes[oldOffset];
-			}
+			int nextGapOffset = gapIterator.nextInt();
+			int numOfBasesToCopy = nextGapOffset-oldOffset;
+			data.arrayCopy(oldOffset, newBytes,newOffset, numOfBasesToCopy);
+
+			newOffset+=numOfBasesToCopy;
 			// skip gap
-			oldOffset ++;
+			oldOffset +=numOfBasesToCopy+1;
 		}
 		// fill in rest of bits after the gaps
-		for (; oldOffset < oldBytes.length; oldOffset++,newOffset++) {
-			newBytes[newOffset] = oldBytes[oldOffset];
-		}
+		data.arrayCopy(oldOffset, newBytes,newOffset, data.getCurrentLength()- oldOffset);
+
 		data = new GrowableByteArray(newBytes);
 		codecDecider.ungap();
 		return this;
@@ -2146,16 +2147,15 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
         
         void ungap(){
         	//first we have to shift the N's
-        	int[] gaps =gapOffsets.toArray();
         	int[] newNOffsets = new int[nOffsets.getCurrentLength()];
         	
-        	PeekableIterator<Integer> gapOffsetIter = IteratorUtil.createPeekableIterator(gapOffsets.iterator());
-        	Iterator<Integer> nOffsetIter = nOffsets.iterator();
+        	PeekableOfIntIterator gapOffsetIter = IteratorUtil.createPeekableIterator(gapOffsets.iterator());
+        	PrimitiveIterator.OfInt nOffsetIter = nOffsets.iterator();
         	
         	int shiftSize=0;
         	int i=0;
         	while(nOffsetIter.hasNext()){
-        		int currentNOffset = nOffsetIter.next();
+        		int currentNOffset = nOffsetIter.nextInt();
         		while(gapOffsetIter.hasNext()){
         			int nextGapOffset =gapOffsetIter.peek();
         			if(nextGapOffset < currentNOffset){
@@ -2170,7 +2170,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
         	}
         	nOffsets = new GrowableIntArray(newNOffsets);
         	//now we can remove the gaps
-            currentLength-=gaps.length;
+            currentLength-=gapOffsets.getCurrentLength();
             gapOffsets.clear();
             
         }

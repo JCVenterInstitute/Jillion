@@ -59,6 +59,41 @@ public final class PrimitiveArrayIterators {
 	public static PrimitiveIterator.OfInt create(int[] array){
 		return new IntIterator(array,0, array.length-1);
 	}
+
+	/**
+	 * Create a new Iterator that will
+	 * iterate over all the elements
+	 * of the given array in reverse order.  The iterator
+	 * does NOT copy the array so any changes
+	 * to the array while iterating
+	 * will be reflected in the array.
+	 * @param array the array of primitives
+	 * to iterate over; can not be null.
+	 * @return a new Iterator will never be null.
+	 * @throws NullPointerException if array is null.
+	 * @since 6.1
+	 */
+	public static PrimitiveIterator.OfInt createReverse(int[] array){
+		return new ReverseIntIterator(array,array.length-1, 0);
+	}
+	/**
+	 * Create a new Iterator that will
+	 * iterate over all the elements
+	 * of the given array in reverse order.  The iterator
+	 * does NOT copy the array so any changes
+	 * to the array while iterating
+	 * will be reflected in the array.
+	 * @param array the array of primitives
+	 * to iterate over; can not be null.
+	 * @param length the number of items to iterate over (assuming offsets 0 to length -1).
+	 *
+	 * @return a new Iterator will never be null.
+	 * @throws NullPointerException if array is null.
+	 * @since 6.1
+	 */
+	public static PrimitiveIterator.OfInt createReverse(int[] array, int length){
+		return new ReverseIntIterator(array,length-1, 0);
+	}
 	/**
 	 * Create a new Iterator that will
 	 * iterate over {@code length} elements
@@ -365,12 +400,7 @@ public final class PrimitiveArrayIterators {
 
 		@Override
 		public Integer next() {
-			if(!hasNext()){
-				throw new NoSuchElementException();
-			}
-			Integer next =array[currentOffset];
-			currentOffset++;
-			return next;
+			return nextInt();
 		}
 
 		@Override
@@ -388,6 +418,45 @@ public final class PrimitiveArrayIterators {
 			return next;
 		}
 		
+	}
+
+	private static class ReverseIntIterator implements PrimitiveIterator.OfInt{
+
+		private final int[] array;
+		private int currentOffset;
+		private final int endOffset;
+
+		public ReverseIntIterator(int[] array, int start, int end){
+			this.array = array;
+			this.endOffset = end;
+			this.currentOffset = start;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return currentOffset>=endOffset;
+		}
+
+		@Override
+		public Integer next() {
+			return nextInt();
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public int nextInt() {
+			if(!hasNext()){
+				throw new NoSuchElementException();
+			}
+			int next =array[currentOffset];
+			currentOffset--;
+			return next;
+		}
+
 	}
 
 	private static class ByteIterator implements Iterator<Byte>{

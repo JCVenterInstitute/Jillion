@@ -1,6 +1,7 @@
 package org.jcvi.jillion.core.residue.nt;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
 import java.nio.ByteBuffer;
@@ -90,7 +91,7 @@ final class UandTNucleotideCodec  extends AbstractNucleotideCodec{
     }
 
     @Override
-    public List<Integer> getGapOffsets(byte[] encodedData) {
+    public IntList getGapOffsets(byte[] encodedData) {
         GrowableIntArray array = this.getSentinelOffsets(encodedData);
 
         return array.toBoxedList();

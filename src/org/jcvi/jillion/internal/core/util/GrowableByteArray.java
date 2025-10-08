@@ -27,6 +27,8 @@ import java.util.Objects;
 import java.util.function.IntPredicate;
 import java.util.stream.IntStream;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.util.streams.BytePredicate;
 import org.jcvi.jillion.core.util.streams.ThrowingIntIndexedByteConsumer;
@@ -122,6 +124,7 @@ public final class GrowableByteArray implements Iterable<Byte>{
 	 * to the backing array.
 	 * @throws NullPointerException if bytes is null.
 	 */
+	@JsonCreator
 	public GrowableByteArray(byte[] bytes){
 		data = Arrays.copyOf(bytes, bytes.length);
 		currentLength=data.length;
@@ -286,7 +289,7 @@ public final class GrowableByteArray implements Iterable<Byte>{
             data = Arrays.copyOf(data, newCapacity);
 		}
     }
-	
+	@JsonValue
 	public byte[] toArray(){
 		return Arrays.copyOf(data,currentLength);
 	}
@@ -624,4 +627,17 @@ public final class GrowableByteArray implements Iterable<Byte>{
         }
 		return result;
 	}
+
+	/**
+	 * Copy data from this array into the destination array.
+	 * @implNote This should be the same as <code>System.arraycopy(data,srcOffset, destArray,destOffset, length )</code>
+	 * @param srcOffset the offset into THIS growable array.
+	 * @param destArray the destination array to copy into.
+	 * @param destOffset the offset to start copy data into the destination array.
+	 * @param length the number of values to copy.
+	 * @since 6.1
+	 */
+    public void arrayCopy(int srcOffset, byte[] destArray, int destOffset, int length) {
+		System.arraycopy(data,srcOffset, destArray,destOffset, length );
+    }
 }

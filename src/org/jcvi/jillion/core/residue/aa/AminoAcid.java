@@ -323,12 +323,12 @@ public enum AminoAcid implements Residue<AminoAcid>{
     }
     /**
      * Append the list of amino acids into one long string.
-     * @param glyphs the amino acids to convert into a string.
+     * @param aminoAcids the amino acids to convert into a string.
      * @return a new String.
      */
-    public static String convertToString(List<AminoAcid> glyphs){
-    	StringBuilder result = new StringBuilder(glyphs.size());
-    	for(AminoAcid g: glyphs){
+    public static String convertToString(List<AminoAcid> aminoAcids){
+    	StringBuilder result = new StringBuilder(aminoAcids.size());
+    	for(AminoAcid g: aminoAcids){
      		result.append(g.getCharacter());
     	}
     	return result.toString();

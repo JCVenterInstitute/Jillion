@@ -39,6 +39,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.ReferenceMappedNucleotideSequence;
 import org.jcvi.jillion.core.util.Builder;
+import org.jcvi.jillion.core.util.IntList;
 import org.junit.Test;
 /**
  * @author dkatzel
@@ -136,7 +137,7 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
 		}
 
 		@Override
-		public List<Integer> getGapOffsets() {
+		public IntList getGapOffsets() {
 			return delegate.getGapOffsets();
 		}
 		

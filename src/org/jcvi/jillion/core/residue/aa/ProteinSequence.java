@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
@@ -87,7 +88,8 @@ public interface ProteinSequence extends ResidueSequence<AminoAcid, ProteinSeque
 	default String toString(Function<AminoAcid, String> toStringFunction){
 	    return ResidueSequence.super.toString(toStringFunction);
 	}
-     static ProteinSequence of(String seq) {
+	@JsonCreator
+	static ProteinSequence of(String seq) {
         return new ProteinSequenceBuilder(seq).turnOffDataCompression(true).build();
     }
 

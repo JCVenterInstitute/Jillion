@@ -260,6 +260,19 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 		super.onlyIncludeIds(ids);
 		return this;
 	}
+
+	/**
+	 *
+	 * {@inheritDoc}
+	 */
+	@Override
+	public NucleotideFastaFileDataStoreBuilder idConverter(
+			Function<String, String> idConverter) {
+		super.idConverter(idConverter);
+		return this;
+	}
+
+
 	
 	
 }

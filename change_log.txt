@@ -19,6 +19,28 @@ The Nucleotide and Protein Sequence classes now have builders for them.
 4. new `SequenceMatcherParameters` object has new parameters like explode Ambiguities flags on both the pattern sequence and the input sequence
   that will permute all combinations of ambiguity values for better matching.  These flags are off by default for performance reasons.
 5. NucleotideFastaDataStores now have an optional `idConverter` which is a `Function<String,String>` to allow you to change the ids in the DataStore or iterator from what's parsed in the fasta files.
+
+6. Added starts/ends before/after methods to both Range and Range.Builder that take single offset instead of a Range.
+7. Added Range Jackson JSON support
+8. Added Range#toSimpleString() which returns `$begin..$end` used in JSON serialization.
+9. Added Jackson JSON support for ProteinSequences
+10. GrowableArrays are now annotated with Jackson for serializing and deserializing.
+11. Exposed internal `IntList` class which is an List<Integer> of primitives.
+
+
+Performance Improvements
+------------------------
+1. NucleotideSequenceBuilder.ungap() should be faster
+2. Various functions that iterated over integers have been improved by using new IntList
+
+Mild API Breaking Changes
+------------------------
+1. Several methods that used to return `List<Integer>` now return `IntList`.  This is a source compatible change
+and while a recompile might be necessary when upgrading to Jillion 6.1 no code changes should be required.
+2. Similarly some methods that took as a parameter now have an overloaded version that takes `IntList`.  This should be fully compatible
+unless your dependent code also overrode those methods so it's getting listed here just in case.
+
+
 ================
 Jillion 6.0.4
 ================

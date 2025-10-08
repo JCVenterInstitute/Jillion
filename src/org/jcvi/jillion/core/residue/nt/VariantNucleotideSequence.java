@@ -40,6 +40,7 @@ import org.jcvi.jillion.core.residue.nt.UnderlyingCoverage.UnderlyingCoverageFea
 import org.jcvi.jillion.core.residue.nt.UnderlyingCoverage.UnderlyingCoverageParameters;
 import org.jcvi.jillion.core.residue.nt.VariantNucleotideSequence.Builder;
 import org.jcvi.jillion.core.residue.nt.VariantNucleotideSequence.Variant.VariantBuilder;
+import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.core.util.SingleThreadAdder;
 import org.jcvi.jillion.core.util.UnAdjustedCoordinateMapper;
 import org.jcvi.jillion.internal.core.util.ArrayUtil;
@@ -1180,7 +1181,7 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 	}
 
 	@Override
-	public List<Integer> getGapOffsets() {
+	public IntList getGapOffsets() {
 		return nucleotideSequence.getGapOffsets();
 	}
 	@Override
