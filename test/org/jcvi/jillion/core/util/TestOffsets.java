@@ -1,7 +1,7 @@
 package org.jcvi.jillion.core.util;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.internal.core.util.Offsets;
+import org.jcvi.jillion.internal.core.util.ArrayUtil;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -247,7 +247,73 @@ public class TestOffsets {
         assertArrayEquals(new int[]{1,8}, sut.stream().toArray());
 
         assertEquals(2, sut.size());
+        assertFalse(sut.isEmpty());
     }
+
+    @Test
+    public void clear(){
+        Offsets sut  = Offsets.fromSortedList(List.of(1,4,7,10));
+        sut.clear();
+
+        assertEquals(0, sut.size());
+        assertTrue(sut.isEmpty());
+       assertArrayEquals(new int[]{}, sut.toArray());
+    }
+
+    @Test
+    public void ungap(){
+        Offsets sut  = Offsets.fromSortedList(List.of(1,4,7,10));
+        Offsets gaps = Offsets.fromSortedList(List.of(5));
+
+        sut.ungap(gaps);
+
+
+        assertArrayEquals(new int[]{1,4,6,9}, sut.toArray());
+    }
+
+    @Test
+    public void ungapEmptyGaps(){
+        Offsets sut  = Offsets.fromSortedList(List.of(1,4,7,10));
+
+
+        sut.ungap(Offsets.withInitialCapacity(10));
+
+
+        assertArrayEquals(new int[]{1,4,7,10}, sut.toArray());
+    }
+    @Test
+    public void ungapOnlyDownstreamGaps(){
+        Offsets sut  = Offsets.fromSortedList(List.of(1,4,7,10));
+        Offsets gaps = Offsets.fromSortedList(List.of(11,12));
+
+
+        sut.ungap(gaps);
+
+
+        assertArrayEquals(new int[]{1,4,7,10}, sut.toArray());
+    }
+    @Test
+    public void allUpstreamGaps(){
+        Offsets sut  = Offsets.fromSortedList(List.of(1,4,7,10));
+        Offsets gaps = Offsets.fromSortedList(List.of(0));
+
+
+        sut.ungap(gaps);
+
+
+        assertArrayEquals(new int[]{0,3,6,9}, sut.toArray());
+    }
+
+    @Test
+    public void insertAndShift(){
+        Offsets sut  = Offsets.fromSortedList(List.of(1,4,7,10));
+        Offsets insertion = Offsets.fromSortedList(ArrayUtil.asList(0,1));
+
+        sut.insertAndShift(insertion, 4, 5);
+
+        assertArrayEquals(new int[]{1,4,5,6,11,14}, sut.toArray());
+    }
+
 
 
 }

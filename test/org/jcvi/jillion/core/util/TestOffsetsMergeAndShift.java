@@ -1,6 +1,5 @@
 package org.jcvi.jillion.core.util;
 
-import org.jcvi.jillion.internal.core.util.Offsets;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

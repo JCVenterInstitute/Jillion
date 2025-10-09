@@ -48,13 +48,14 @@ public final class ArrayUtil {
 	 * penalty for boxing/unboxing until
 	 * users perform a {@link List#get(int)}.
 	 * 
-	 * @param array the array to wrap in a List.
+	 * @param values the array to wrap in a List.
 	 * 
 	 * @return a new List of int.
 	 */
-	public static IntArrayList asList(int[] array){
-		return new IntArrayList(array);
+	public static IntArrayList asList(int... values){
+		return new IntArrayList(values);
 	}
+
 
 	/**
 	 * Create a new {@link IntList} of the given initial capacity

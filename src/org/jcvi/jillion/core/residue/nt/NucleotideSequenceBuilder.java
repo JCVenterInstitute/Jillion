@@ -22,7 +22,6 @@ package org.jcvi.jillion.core.residue.nt;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -33,13 +32,9 @@ import java.util.stream.IntStream;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
-import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler;
 import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandlers;
 import org.jcvi.jillion.core.util.SingleThreadAdder;
-import org.jcvi.jillion.core.util.iter.IteratorUtil;
-import org.jcvi.jillion.core.util.iter.PeekableIterator;
-import org.jcvi.jillion.core.util.iter.PeekableOfIntIterator;
 import org.jcvi.jillion.internal.core.util.GrowableByteArray;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
@@ -48,8 +43,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
-import org.jcvi.jillion.internal.core.util.Offsets;
+import org.jcvi.jillion.core.util.Offsets;
 
 /**
  * {@code NucleotideSequenceBuilder}  is a way to
@@ -1553,27 +1547,38 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
      * @return this.
      */
     public NucleotideSequenceBuilder reverseComplement(){
-    	byte[] bytes = data.toArray();
-        int currentLength = bytes.length;
+
+        int currentLength = data.getCurrentLength();
         int pivotOffset = currentLength/2;
         
         
         for(int i=0; i<pivotOffset; i++){
             int compOffset = currentLength-1-i;
-            
-            Nucleotide tmp = Nucleotide.getDnaValues().get(bytes[i]).complement();
-           
-            byte complementOrdinal = Nucleotide.getDnaValues().get(bytes[compOffset]).complement().getOrdinalAsByte();
-            bytes[i] = complementOrdinal;
-            bytes[compOffset] = tmp.getOrdinalAsByte();
+
+            byte complementOrdinal = COMPLEMENT_ARRAY[data.getUnsafe(compOffset)];
+			data.replaceUnsafe(compOffset, COMPLEMENT_ARRAY[data.getUnsafe(i)]);
+			data.replaceUnsafe(i, complementOrdinal);
+
         }
         if(currentLength%2!=0){
-        	bytes[pivotOffset] = Nucleotide.getDnaValues().get(bytes[pivotOffset]).complement().getOrdinalAsByte();
+			data.replaceUnsafe(pivotOffset, COMPLEMENT_ARRAY[data.getUnsafe(pivotOffset)]);
+
         }
-        data = new GrowableByteArray(bytes);
+
         codecDecider.reverse();
         return this;
     }
+
+	private static byte[] COMPLEMENT_ARRAY ;
+	static{
+		List<Nucleotide> nucleotides = Nucleotide.getDnaValues();
+
+		COMPLEMENT_ARRAY = new byte[nucleotides.size()];
+		for(Nucleotide n : nucleotides){
+			Nucleotide complement = n.complement();
+			COMPLEMENT_ARRAY[n.ordinal()] = complement.getOrdinalAsByte();
+		}
+	}
     /**
      * Complements all the nucleotides currently in this builder
      * but does not reverse the sequence.
@@ -1591,13 +1596,9 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
      * @return this.
      */
     public NucleotideSequenceBuilder complement(){
-        int currentLength = codecDecider.getCurrentLength();
-        byte[] complementedData = new byte[currentLength];
-        byte[] originalData = data.toArray();
-        for(int i=0; i<originalData.length; i++){
-        	complementedData[i]=Nucleotide.getDnaValues().get(originalData[i]).complement().getOrdinalAsByte();
-        }
-        this.data = new GrowableByteArray(complementedData);
+
+		data.replaceAll(i->COMPLEMENT_ARRAY[i] );
+
         //codec decider shouldn't change since number
         //of ambiguities, Ns and gaps wont change
         //and the offsets of N's and gaps won't change
@@ -1917,12 +1918,12 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
        
 		}
 		CodecDecider(NewValues newValues){
-        	nOffsets = newValues.getNOffsets().copy();
+        	nOffsets = newValues.getNOffsets();
 			currentLength = newValues.getLength();
 			numberOfNonNAmbiguities = newValues.getnumberOfNonNAmiguities();
 			numUs = newValues.numUs;
             numTs = newValues.numTs;
-			gapOffsets = newValues.getGapOffsets().copy();
+			gapOffsets = newValues.getGapOffsets();
         }
         CodecDecider copy(){
         	CodecDecider copy = new CodecDecider();
@@ -1961,15 +1962,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
         	return alignedReference!=null;
         }
         
-        private void append(GrowableIntArray src, GrowableIntArray dest){
-        	int[] newGaps =src.toArray();        	
-        	for(int i=0; i< newGaps.length; i++){
-        		newGaps[i] +=currentLength;
-        	}
-        	//should already be in sorted order
-        	//so we don't have to re-sort        	
-        	dest.append(newGaps);
-        }
+
         public void append(NucleotideSequenceBuilder other) {
         	CodecDecider otherDecider = other.codecDecider;
         	gapOffsets.appendAndShift(otherDecider.gapOffsets, currentLength);
@@ -2014,14 +2007,10 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
         
         public void insert(int startOffset, NewValues newValues){
         	int insertLength = newValues.getLength();
-        	if(startOffset ==0){
-        		//use optimized prepend
-				gapOffsets.prependAndShift(newValues.getGapOffsets(), newValues.getLength());
-				nOffsets.prependAndShift(newValues.getNOffsets(),newValues.getLength());
-        	}else{
-				gapOffsets.insertAndShift(newValues.getGapOffsets(), newValues.getLength(), startOffset);
-				nOffsets.insertAndShift(newValues.getNOffsets(),newValues.getLength(),startOffset);
-        	}
+
+			gapOffsets.insertAndShift(newValues.getGapOffsets(), newValues.getLength(), startOffset);
+			nOffsets.insertAndShift(newValues.getNOffsets(),newValues.getLength(),startOffset);
+
 
 			currentLength += insertLength;
 			numberOfNonNAmbiguities += newValues.getnumberOfNonNAmiguities();
@@ -2031,19 +2020,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
             alignedReference=null;
         }
         
-        private GrowableIntArray prepend(GrowableIntArray src, GrowableIntArray original, int insertionLength){
-        	int oldGaps[] =original.toArray();
-        	for(int i=0; i< oldGaps.length; i++){
-        		oldGaps[i] +=insertionLength;
-        	}
-        	//should already be in sorted order
-        	//so we don't have to re-sort        	
-        	GrowableIntArray newOffsets= new GrowableIntArray(insertionLength + original.getCurrentCapacity());
-        	newOffsets.append(src);
-        	newOffsets.append(oldGaps);
-        	
-        	return newOffsets;
-        }
+
         
         
         public void reverse(){
@@ -2052,41 +2029,9 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
         	nOffsets.reverseCoordinates(currentLength);
         	
         }
-		private GrowableIntArray reverseCoordinates(GrowableIntArray array) {
-			int gaps[] =array.toArray();
-        	int delta = currentLength-1;
-        	for(int i=0; i<gaps.length; i++){
-        		gaps[i]= delta-gaps[i];
-        	}
-        	GrowableIntArray newArray = new GrowableIntArray(array.getCurrentCapacity());
-        	newArray.append(gaps);
-        	newArray.reverse();
-			return newArray;
-		}
+
         
-        private void delete(GrowableIntArray array, int startOffset, int[] gapsToDelete, int lengthDeleted){
-        	
-			for(int i=0; i<gapsToDelete.length; i++){
-				array.sortedRemove(gapsToDelete[i]+startOffset);				
-			}
-			
-			//shift all downstream offsets accordingly
-			int lastGap = startOffset+lengthDeleted-1;
-			int remainingGapLength = array.getCurrentLength();
-			//we know that we won't have to shift any offsets
-			//upstream of the deleted region
-			//return of binarySearch is guaranteed to be
-			//negative (because we would have deleted it above
-			for(int i=-array.binarySearch(lastGap) -1; i<remainingGapLength; i++){
-				try{
-				if(array.get(i)> lastGap){
-					array.replace(i, array.get(i) - lengthDeleted);
-				}
-				}catch(Throwable t){
-					throw new RuntimeException(t);
-				}
-			}
-        }
+
         
         public void delete(int startOffset, NewValues newValues) {
 			gapOffsets.removeAllAndShift(newValues.getGapOffsets(), startOffset, newValues.getLength());
@@ -2137,32 +2082,10 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
       
         
         void ungap(){
-        	//first we have to shift the N's
-        	int[] newNOffsets = new int[nOffsets.size()];
-        	
-        	PeekableOfIntIterator gapOffsetIter = IteratorUtil.createPeekableIterator(gapOffsets.iterator());
-        	PrimitiveIterator.OfInt nOffsetIter = nOffsets.iterator();
-        	
-        	int shiftSize=0;
-        	int i=0;
-        	while(nOffsetIter.hasNext()){
-        		int currentNOffset = nOffsetIter.nextInt();
-        		while(gapOffsetIter.hasNext()){
-        			int nextGapOffset =gapOffsetIter.peek();
-        			if(nextGapOffset < currentNOffset){
-        				shiftSize++;
-        				gapOffsetIter.next();
-        			}else{
-        				break;
-        			}
-        		}
-        		newNOffsets[i] = currentNOffset - shiftSize;
-        		i++;
-        	}
-        	nOffsets = Offsets.fromSortedArray(newNOffsets);
-        	//now we can remove the gaps
-            currentLength-=gapOffsets.size();
-            gapOffsets.clear();
+			nOffsets.ungap(gapOffsets);
+			currentLength-=gapOffsets.size();
+			gapOffsets.clear();
+
             
         }
         /**
@@ -2648,22 +2571,4 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
 	public NucleotideSequenceBuilder getSelf() {
 		return this;
 	}
-
-
-
-    
-
-
-
-	
-
-
-
-
-
-	
-
-
-
-	
 }

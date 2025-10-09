@@ -20,16 +20,16 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonValue;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.util.IntList;
+
 import java.util.*;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
-import com.fasterxml.jackson.annotation.JsonValue;
-import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.Sequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.util.IntList;
 
 /**
  * {@code ResidueSequence} is a {@link Sequence}
@@ -50,6 +50,7 @@ public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R,
      * the same as the value returned by {@link #getNumberOfGaps()}.
      * @return a List of gap offsets as Integers.
      */
+     @JsonIgnore
     IntList getGapOffsets();
     /**
      * Get a List of all the offsets into this

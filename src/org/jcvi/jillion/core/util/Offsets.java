@@ -1,22 +1,22 @@
-package org.jcvi.jillion.internal.core.util;
+package org.jcvi.jillion.core.util;
 
 import lombok.*;
+import lombok.Builder;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequence;
 import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
-import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.core.util.iter.PeekableOfIntIterator;
 import org.jcvi.jillion.core.util.streams.ThrowingIntIndexedIntConsumer;
+import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.List;
 import java.util.PrimitiveIterator;
 import java.util.function.IntConsumer;
-import java.util.function.IntFunction;
 import java.util.function.IntPredicate;
 import java.util.function.IntUnaryOperator;
 import java.util.stream.IntStream;
@@ -78,7 +78,7 @@ public class Offsets {
     }
 
     public static final XorOptions DEFAULT_XOR_OPTIONS = XorOptions.builder().build();
-    private final GrowableIntArray delegate;
+    private GrowableIntArray delegate;
 
     public Offsets or(Offsets b){
 
@@ -335,14 +335,16 @@ public class Offsets {
     public boolean contains(int offset){
          return delegate.binarySearch(offset)>=0;
     }
-
     public int computeInsertionPointOf(int gappedOffset){
+        return computeInsertionPointOf(gappedOffset, true);
+    }
+    public int computeInsertionPointOf(int gappedOffset, boolean afterCollision){
         int insertionPoint = delegate.binarySearch(gappedOffset);
         if(insertionPoint >=0){
             //if we landed on a gap, then
             //the we want the length of the array
             //up until that offset so that's why it's +1
-            return insertionPoint +1;
+            return afterCollision? insertionPoint +1 : insertionPoint;
         }
         return -insertionPoint -1;
     }
@@ -370,23 +372,34 @@ public class Offsets {
         delegate.append(other.delegate, i-> i+shiftAmount);
 
     }
-    public void prependAndShift(Offsets other){
-        prependAndShift(other, other.size());
 
-    }
     public void prependAndShift(Offsets other, int shiftAmount){
-        delegate.replaceAll(i-> i+shiftAmount);
-        delegate.prepend(other.delegate);
+        GrowableIntArray newDelegate = new GrowableIntArray(other.delegate.getCurrentLength() + delegate.getCurrentLength());
+        newDelegate.append(other.delegate);
+        newDelegate.append(delegate, i-> i+shiftAmount);
+
+        delegate = newDelegate;
+
 
     }
-    public void insertAndShift(Offsets other, int startOffset){
-        insertAndShift(other, other.size(), startOffset);
 
-    }
-    public void insertAndShift(Offsets other, int shiftAmount, int startOffset){
-        int insertionPoint = computeInsertionPointOf(startOffset);
-        delegate.replaceIf(i-> i>= startOffset, i-> i+shiftAmount);
-        delegate.insert(insertionPoint, other.delegate, i-> i+startOffset);
+    public void insertAndShift(Offsets other, int shiftAmount, int startOffset) {
+        if(startOffset ==0){
+            prependAndShift(other,shiftAmount);
+            return;
+        }
+        int insertionPoint = computeInsertionPointOf(startOffset, false);
+
+        GrowableIntArray newDelegate = new GrowableIntArray(other.delegate.getCurrentLength() + delegate.getCurrentLength());
+
+
+        delegate.arrayCopy(0, newDelegate, 0, insertionPoint);
+        newDelegate.append(other.delegate, i -> i + startOffset);
+        newDelegate.append(delegate, insertionPoint, delegate.getCurrentLength()-insertionPoint, i -> i + shiftAmount);
+
+       delegate = newDelegate;
+
+
 
     }
 
@@ -407,9 +420,13 @@ public class Offsets {
         delegate.sortedInsert(value);
     }
 
+    private void replaceIfUnsafe(IntPredicate predicate, IntUnaryOperator replacementFunction) {
+        delegate.replaceIf(predicate, replacementFunction);
+    }
     public void replaceIf(IntPredicate predicate, IntUnaryOperator replacementFunction){
 
-        delegate.replaceIf(predicate, replacementFunction);
+        replaceIfUnsafe(predicate, replacementFunction);
+
         delegate.sort();
         GrowableIntArray dups = new GrowableIntArray();
         PrimitiveIterator.OfInt iter = delegate.iterator();
@@ -430,7 +447,7 @@ public class Offsets {
         if(dups.getCurrentLength() > 0) {
             dups.reverse();
 
-            dups.forEach(k -> delegate.remove(k));
+            dups.forEach(delegate::remove);
         }
 
     }
@@ -462,6 +479,50 @@ public class Offsets {
         delegate.sortedRemove(offset);
 
     }
+
+    /**
+     * Adjusts this Offset coordinates to shift to the left all set values
+     * to adjust for the removal of the gap offsets which are provided.
+     *
+     * For example if this Offsets has a value of {@code { 1, 4}} and we want
+     * to ungap it and there is a gap at {@code {2}} then the result is our
+     * adjusted Offsets will now be {@code {1, 3}} since the offset at 4 will be
+     * shifted one to the left after the gap is removed.
+     *
+     * @param gapOffsets the gaps that will be removed; can not be null
+     *
+     * @throws NullPointerException if gapOffsets is null.
+     *
+     * @implNote This should produce the same result as repeated
+     * calls to {@link #removeAndShift(int)} for all gap positions
+     * but this should be more efficient.
+     */
+    public void ungap(Offsets gapOffsets){
+        if(gapOffsets.isEmpty()){
+            //no gaps to remove
+            return;
+        }
+        //first we have to shift the N's
+        PeekableOfIntIterator gapOffsetIter = IteratorUtil.createPeekableIterator(gapOffsets.iterator());
+
+        int shiftSize=0;
+        int i=0;
+        while(i< delegate.getCurrentLength()){
+            int currentNOffset = delegate.get(i);
+            while(gapOffsetIter.hasNext()){
+                int nextGapOffset =gapOffsetIter.peek();
+                if(nextGapOffset < currentNOffset){
+                    shiftSize++;
+                    gapOffsetIter.next();
+                }else{
+                    break;
+                }
+            }
+            delegate.replaceUnsafe(i, currentNOffset - shiftSize);
+            i++;
+        }
+
+    }
     public void removeAndShift(int offset){
 
         delegate.sortedRemove(offset);
@@ -470,17 +531,29 @@ public class Offsets {
     }
     public void removeAllAndShift(Offsets valuesToRemove, int startOffset, int otherSequenceLength){
 
-        int[] valuesToRemoveArray = valuesToRemove.stream()
-                .map(i-> i+ startOffset)
-                .filter(i-> delegate.binarySearch(i) >=0)
-                .sorted()
-                .toArray();
 
 
+        if(!valuesToRemove.isEmpty()) {
+            int downStreamOffset = computeInsertionPointOf(startOffset + otherSequenceLength);
+            if (downStreamOffset >= delegate.getCurrentLength()) {
+                //nothing to shift downstream of whole other offsets
+                //check if we have anything that will remain
+                int lastValueToRemove = valuesToRemove.delegate.get(valuesToRemove.delegate.getCurrentLength() - 1) + startOffset;
+                int lastValueInsertionPoint = computeInsertionPointOf(lastValueToRemove, false);
+                if (lastValueInsertionPoint > delegate.getCurrentLength()) {
 
-        for(int j = valuesToRemoveArray.length-1; j>=0; j--){
-            int v = valuesToRemoveArray[j];
-            delegate.sortedRemove(v);
+                    int insertionPoint = computeInsertionPointOf(startOffset, false);
+                    //check if there is anything to remove at all?
+                    if (insertionPoint < delegate.getCurrentLength()) {
+                        delegate.truncate(insertionPoint);
+                    }
+                    return;
+                }
+
+            }
+            valuesToRemove.forEach(v->{
+                delegate.sortedRemove(v+startOffset);
+            });
 
         }
         delegate.replaceIf(i-> i >= startOffset, i-> i-otherSequenceLength);

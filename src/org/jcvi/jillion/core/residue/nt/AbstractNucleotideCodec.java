@@ -34,7 +34,7 @@ import org.jcvi.jillion.internal.core.io.ValueSizeStrategy;
 import org.jcvi.jillion.internal.core.residue.nt.DefaultLeftFlankingNoGapIterator;
 import org.jcvi.jillion.internal.core.residue.nt.DefaultRightFlankingNoGapIterator;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
-import org.jcvi.jillion.internal.core.util.Offsets;
+import org.jcvi.jillion.core.util.Offsets;
 
 
 /**

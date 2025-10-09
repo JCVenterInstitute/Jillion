@@ -30,7 +30,7 @@ The Nucleotide and Protein Sequence classes now have builders for them.
 
 Performance Improvements
 ------------------------
-1. NucleotideSequenceBuilder.ungap() should be faster
+1. NucleotideSequenceBuilder internal functions changed to use Offsets internally this should be a 1-2% performance boost.
 2. Various functions that iterated over integers have been improved by using new IntList
 
 Mild API Breaking Changes
@@ -39,6 +39,8 @@ Mild API Breaking Changes
 and while a recompile might be necessary when upgrading to Jillion 6.1 no code changes should be required.
 2. Similarly some methods that took as a parameter now have an overloaded version that takes `IntList`.  This should be fully compatible
 unless your dependent code also overrode those methods so it's getting listed here just in case.
+3. Offsets class first introduced in 6.0.4 moved from internal package to core package.  This should only break code
+ that referenced it from the internal package which shouldn't happen.
 
 
 ================

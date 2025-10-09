@@ -25,11 +25,14 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.function.IntPredicate;
+import java.util.function.IntUnaryOperator;
 import java.util.stream.IntStream;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.util.ReplacementByteFunction;
+import org.jcvi.jillion.core.util.ReplacementIntFunction;
 import org.jcvi.jillion.core.util.streams.BytePredicate;
 import org.jcvi.jillion.core.util.streams.ThrowingIntIndexedByteConsumer;
 import org.jcvi.jillion.internal.core.util.iter.PrimitiveArrayIterators;
@@ -189,7 +192,29 @@ public final class GrowableByteArray implements Iterable<Byte>{
 	}
 	public byte get(int offset){
 		assertValidOffset(offset);
+		return getUnsafe(offset);
+	}
+	public byte getUnsafe(int offset){
 		return data[offset];
+	}
+
+	/**
+	 * Replace all values with the given replacement value.
+	 * @param replacementFunction the function to replace the value given the previous value.
+	 * @throws NullPointerException if replacementFunction is null.
+	 *
+	 * @return this
+	 *
+	 * @since 6.1
+	 */
+	public GrowableByteArray replaceAll(ReplacementByteFunction replacementFunction){
+		Objects.requireNonNull(replacementFunction);
+
+		for(int i=0; i< currentLength; i++) {
+			data[i] = replacementFunction.applyAsByte(data[i]);
+
+		}
+		return this;
 	}
 	
 	public void prepend(byte value){
@@ -204,6 +229,9 @@ public final class GrowableByteArray implements Iterable<Byte>{
 	}
 	public void replace(int offset, byte value){
 		assertValidOffset(offset);
+		replaceUnsafe(offset, value);
+	}
+	public void replaceUnsafe(int offset, byte value) {
 		data[offset]=value;
 	}
 	public void insert(int offset, byte[] values){
@@ -640,4 +668,6 @@ public final class GrowableByteArray implements Iterable<Byte>{
     public void arrayCopy(int srcOffset, byte[] destArray, int destOffset, int length) {
 		System.arraycopy(data,srcOffset, destArray,destOffset, length );
     }
+
+
 }

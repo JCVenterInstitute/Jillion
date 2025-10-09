@@ -29,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.util.IntList;
-import org.jcvi.jillion.core.util.ReplacementFunction;
+import org.jcvi.jillion.core.util.ReplacementIntFunction;
 import org.jcvi.jillion.core.util.streams.ThrowingIntIndexedIntConsumer;
 import org.jcvi.jillion.internal.core.util.iter.PrimitiveArrayIterators;
 /**
@@ -160,6 +160,19 @@ public final class GrowableIntArray implements Iterable<Integer>{
 	public void arrayCopy(int srcOffset, int[] destArray, int destOffset, int length) {
 		System.arraycopy(data,srcOffset, destArray,destOffset, length );
 	}
+	/**
+	 * Copy data from this array into the destination array.
+	 * @implNote This should be the same as <code>System.arraycopy(data,srcOffset, destArray,destOffset, length )</code>
+	 * @param srcOffset the offset into THIS growable array.
+	 * @param destArray the destination array to copy into.
+	 * @param destOffset the offset to start copy data into the destination array.
+	 * @param length the number of values to copy.
+	 * @since 6.1
+	 */
+	public void arrayCopy(int srcOffset, GrowableIntArray destArray, int destOffset, int length) {
+		System.arraycopy(data,srcOffset, destArray.data,destOffset, length );
+		destArray.currentLength+=length;
+	}
 
 	@Override
 	public String toString() {
@@ -271,7 +284,7 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		System.arraycopy(values, 0, data, currentLength, values.length);
 		currentLength+=values.length;
 	}
-	public void append(int[] values, ReplacementFunction replacementFunction){
+	public void append(int[] values, ReplacementIntFunction replacementFunction){
 		if(replacementFunction==null){
 			append(values);
 			return;
@@ -287,9 +300,10 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		System.arraycopy(other.data, 0, data, currentLength, other.currentLength);
 		currentLength+=other.currentLength;
 	}
-	public void append(GrowableIntArray other, ReplacementFunction replacementFunction){
+	public void append(GrowableIntArray other, ReplacementIntFunction replacementFunction){
 		if(replacementFunction==null){
 			append(other);
+
 			return;
 		}
 		ensureCapacity(currentLength+other.currentLength);
@@ -298,6 +312,25 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		});
 
 		currentLength+=other.currentLength;
+
+	}
+	public void append(GrowableIntArray other, int start, int length, ReplacementIntFunction replacementFunction){
+		if(replacementFunction==null){
+			if(start==0 && length ==other.currentLength) {
+				append(other);
+			}else {
+				Range range = new Range.Builder(length).shift(start).build();
+				append(other.toArray(range));
+			}
+			return;
+		}
+		ensureCapacity(currentLength+length);
+		Range range = new Range.Builder(length).shift(start).build();
+		other.forEachIndexed(range, (i, v)->{
+			data[i+currentLength- (int) range.getBegin()]= replacementFunction.applyAsInt(v);
+		});
+
+		currentLength+=length;
 	}
 	public int get(int offset){
 		assertValidOffset(offset);
@@ -314,9 +347,12 @@ public final class GrowableIntArray implements Iterable<Integer>{
 	public void prepend(GrowableIntArray other){
 		insert(0,other);
 	}
+	public void replaceUnsafe(int offset, int value){
+		data[offset]=value;
+	}
 	public void replace(int offset, int value){
 		assertValidOffset(offset);
-		data[offset]=value;
+		replaceUnsafe(offset, value);
 	}
 	public void insert(int offset, int[] values){
 		assertValidInsertOffset(offset);
@@ -339,7 +375,7 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		currentLength+=other.currentLength;
 		
 	}
-	public void insert(int offset, GrowableIntArray other, ReplacementFunction replacementFunction){
+	public void insert(int offset, GrowableIntArray other, ReplacementIntFunction replacementFunction){
 		if(replacementFunction==null){
 			insert(offset, other);
 			return;
@@ -422,6 +458,9 @@ public final class GrowableIntArray implements Iterable<Integer>{
 	@JsonValue
 	public int[] toArray(){
 		return Arrays.copyOf(data,currentLength);
+	}
+	public int[] toArray(Range range){
+		return Arrays.copyOfRange(data, (int) range.getBegin(), (int) range.getEnd()+1);
 	}
 	/**
 	 * Searches the current values in this growable array
@@ -789,6 +828,27 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		}
 		return this;
 	}
+
+	/**
+	 * Replace any values within from the given offset, to the end of the array that pass the given predicate with the given replacement value.
+	 * @param startOffset the offset to start from
+	 * @param predicate the predicate to test; can not be null.
+	 * @param replacementFunction the function to replace the value given the previous value.
+	 * @throws NullPointerException if predicate is null.
+	 *
+	 * @return this
+	 *
+	 * @since 6.0.4
+	 */
+	public GrowableIntArray replaceDownstream(int startOffset, IntUnaryOperator replacementFunction){
+		Objects.requireNonNull(replacementFunction);
+
+		for(int i=startOffset; i< currentLength; i++){
+			data[i] = replacementFunction.applyAsInt(data[i]);
+
+		}
+		return this;
+	}
 	
 	@Override
 	public boolean equals(Object o) {
@@ -818,5 +878,22 @@ public final class GrowableIntArray implements Iterable<Integer>{
             result = 31 * result + data[i];
         }
 		return result;
+	}
+
+	/**
+	 * Set this array to the newer smaller length.
+	 * This is a way to "remove" downstream positions without having to do any
+	 * array operations.
+	 *
+	 * @param newLength the new length of the array; must be &ge; 0 and &lt; the current length.
+	 */
+	public void truncate(int newLength) {
+		if(newLength > currentLength){
+			throw new IllegalArgumentException("truncated length can not be greater than current length");
+		}
+		if(newLength < 0){
+			throw new IllegalArgumentException("new length must be >= 0");
+		}
+		currentLength = newLength;
 	}
 }
