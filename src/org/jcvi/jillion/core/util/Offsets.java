@@ -1,5 +1,7 @@
 package org.jcvi.jillion.core.util;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.*;
 import lombok.Builder;
 import org.jcvi.jillion.core.Range;
@@ -12,10 +14,7 @@ import org.jcvi.jillion.core.util.iter.PeekableOfIntIterator;
 import org.jcvi.jillion.core.util.streams.ThrowingIntIndexedIntConsumer;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
-import java.util.BitSet;
-import java.util.Collections;
-import java.util.List;
-import java.util.PrimitiveIterator;
+import java.util.*;
 import java.util.function.IntConsumer;
 import java.util.function.IntPredicate;
 import java.util.function.IntUnaryOperator;
@@ -31,10 +30,11 @@ import java.util.stream.IntStream;
  */
 public class Offsets {
 
+    @JsonCreator
     public static Offsets fromSortedArray(int[] sortedOffsets) {
         return new Offsets(new GrowableIntArray(sortedOffsets));
     }
-
+    @JsonValue
     public int[] toArray() {
         return delegate.toArray();
     }
@@ -75,6 +75,32 @@ public class Offsets {
        public static class XorOptionsBuilder {
 
        }
+    }
+
+    @Value
+    @Builder
+    public static class AddOptions{
+        @Getter(AccessLevel.NONE)
+        boolean shift;
+        @Getter(AccessLevel.NONE)
+        boolean include;
+
+        public boolean shouldShift(){
+            return shift;
+        }
+        public boolean shouldInclude(){
+            return include;
+        }
+
+        public static AddOptionsBuilder builder(){
+            return new AddOptionsBuilder()
+                    .shift(false)
+                    .include(true);
+        }
+        //required for javadoc
+        public static class AddOptionsBuilder {
+
+        }
     }
 
     public static final XorOptions DEFAULT_XOR_OPTIONS = XorOptions.builder().build();
@@ -149,7 +175,7 @@ public class Offsets {
 
     @Override
     public String toString() {
-        return delegate.toString();
+        return delegate.toString('{', '}');
     }
 
     private Offsets _xorWithoutShifting(Offsets b, boolean include){
@@ -173,13 +199,50 @@ public class Offsets {
 
     }
 
-    public <R extends Residue<R>, T extends ResidueSequence<R, T, B>, B extends ResidueSequenceBuilder<R,T,B>> T computeGaps(T sequence){
+    /**
+     * Build a gapped sequence where all the values in this Offsets are gaps.
+     * @param sequence the sequence to use, any gaps in this sequence are ignored/removed before adding
+     *                 the new gap offsets.
+     * @return a new gapped sequence
+     * @param <R>
+     * @param <T>
+     * @param <B>
+     * @implNote this is the same as calling {@link #computeGaps(ResidueSequence, boolean) computeGaps(sequence, false)}
+     * @see #computeGaps(ResidueSequence, boolean)
+     */
+    public <R extends Residue<R>, T extends ResidueSequence<R, T, B>, B extends ResidueSequenceBuilder<R,T,B>> T computeGaps(T sequence) {
+        return computeGaps(sequence, false);
+    }
+    /**
+     * Build a gapped sequence where all the values in this Offsets are gaps.
+     * @param sequence the sequence to use, any gaps in this sequence are ignored/removed before adding
+     *                 the new gap offsets.
+     * @param preShifted {@code true} if these offsets are already "preshifted" to account for adding the gaps, {@code false} otherwise.
+     *
+     * @apiNote For example, if the sequence is {@code ACGTACGT} and our offsets are {@code {4,6}}
+     * if preShifted was set to {@code false} then the 2nd offset {6} would get shifted by 1 to {7}
+     * to account for the new gap added at {4} to be {@code ACGT-AC-GT}, but if preShifted was set to {@code true},
+     * then the sequence would be {@code ACGT-A-CGT} as the gap offset of {6} would not be shifted.
+     *
+     * @return a new gapped sequence
+     * @param <R>
+     * @param <T>
+     * @param <B>
+     * @implNote this is the same as calling {@link #computeGaps(ResidueSequence, boolean) computeGaps(sequence, false)}
+     * @see #computeGaps(ResidueSequence, boolean)
+     */
+    public <R extends Residue<R>, T extends ResidueSequence<R, T, B>, B extends ResidueSequenceBuilder<R,T,B>> T computeGaps(T sequence, boolean preShifted){
 
         if(delegate.getCurrentLength()==0){
             return sequence.computeUngappedSequence();
         }
         List<Range> ranges = Ranges.asRanges(delegate.toArray());
-        Collections.reverse(ranges);
+
+        if(!preShifted){
+            Collections.reverse(ranges);
+
+        }
+
 
         B builder = sequence.toBuilder()
                 .ungap();
@@ -335,6 +398,9 @@ public class Offsets {
     public boolean contains(int offset){
          return delegate.binarySearch(offset)>=0;
     }
+    public int getNumberOfValuesUntil( int offset){
+        return computeInsertionPointOf(offset, false);
+    }
     public int computeInsertionPointOf(int gappedOffset){
         return computeInsertionPointOf(gappedOffset, true);
     }
@@ -419,6 +485,31 @@ public class Offsets {
         delegate.replaceIf(i-> i>value, i-> i+1);
         delegate.sortedInsert(value);
     }
+
+    public void add(Offsets offsetsToAdd, AddOptions options){
+        PrimitiveIterator.OfInt iter = offsetsToAdd.delegate.reverseIterator();
+        IntConsumer function = options.shouldShift()? this::addAndShift : this::add;
+
+        while(iter.hasNext()){
+            function.accept(iter.nextInt());
+        }
+    }
+    @Value
+    public static class UniqueOffsets{
+        Offsets a, b;
+    }
+
+    public static UniqueOffsets unique(Offsets a, Offsets b){
+        XorOptions split = XorOptions.builder()
+                .include(false)
+                .shift(false)
+                .build();
+
+        return new UniqueOffsets(
+                a.xor(b, split),
+                b.xor(a, split));
+    }
+
 
     private void replaceIfUnsafe(IntPredicate predicate, IntUnaryOperator replacementFunction) {
         delegate.replaceIf(predicate, replacementFunction);
@@ -591,6 +682,20 @@ public class Offsets {
         }
 
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Offsets)) return false;
+        Offsets offsets = (Offsets) o;
+        return Objects.equals(delegate, offsets.delegate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(delegate);
+    }
+
     public void removeAllAndShift(List<Integer> valuesToRemove){
 
         int[] valuesToRemoveArray = valuesToRemove.stream().mapToInt(Integer::intValue)

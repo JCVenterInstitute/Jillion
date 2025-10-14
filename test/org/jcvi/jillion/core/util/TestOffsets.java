@@ -1,10 +1,15 @@
 package org.jcvi.jillion.core.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.jcvi.jillion.internal.core.util.ArrayUtil;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import static org.junit.Assert.*;
 
@@ -22,6 +27,35 @@ public class TestOffsets {
         sut.forEach(actualforEachList::add);
         assertEquals(List.of(1,2,3,4,5), actualforEachList);
 
+    }
+
+    @Test
+    public void equalsAndHashCodeSameRef(){
+        Offsets sut = Offsets.fromSortedList(List.of(1,2,3,4,5));
+        TestUtil.assertEqualAndHashcodeSame(sut, sut);
+    }
+    @Test
+    public void equalsAndHashCodeSameValues(){
+        Offsets a = Offsets.fromSortedList(List.of(1,2,3,4,5));
+        Offsets b = Offsets.fromSortedList(List.of(1,2,3,4,5));
+        TestUtil.assertEqualAndHashcodeSame(a, b);
+    }
+    @Test
+    public void equalsAndHashCodeSameValuesDifferentCapacity(){
+        Offsets a = Offsets.fromSortedList(List.of(1,2,3,4,5));
+        Offsets b = Offsets.fromSortedList(List.of(1,2,3,4,5,6,7,8));
+
+        b.remove(8);
+        b.remove(7);
+        b.remove(6);
+        TestUtil.assertEqualAndHashcodeSame(a, b);
+    }
+    @Test
+    public void equalsAndHashCodeDifferentValues(){
+        Offsets a = Offsets.fromSortedList(List.of(1,2,3,4,5));
+        Offsets b = Offsets.fromSortedList(List.of(1,2,3,4,5,6,7,8));
+
+        TestUtil.assertNotEqualAndHashcodeDifferent(a, b);
     }
 
     @Test
@@ -58,11 +92,40 @@ public class TestOffsets {
 
         Offsets other = Offsets.fromSortedList(List.of(3,4,5,6,7,8,9));
 
-        Offsets and = sut.xor(other);
+        Offsets xor = sut.xor(other);
 
-        assertArrayEquals(new int[]{1,2,6,7,8,9}, and.stream().toArray());
+        assertArrayEquals(new int[]{1,2,6,7,8,9}, xor.toArray());
+
+    }
+
+    @Test
+    public void computeGapOffsetsPreShifted(){
+        Offsets sut = Offsets.fromSortedArray(new int[]{4,6});
+        assertEquals("ACGT-A-CGT", sut.computeGaps(NucleotideSequence.of("ACGTACGT"), true).toString());
+    }
+    @Test
+    public void computeGapOffsetsNotPreShifted(){
+        Offsets sut = Offsets.fromSortedArray(new int[]{4,6});
+        assertEquals("ACGT-AC-GT", sut.computeGaps(NucleotideSequence.of("ACGTACGT"), false).toString());
+    }
+
+    @Test
+    public void unique(){
+        Offsets sut = Offsets.fromSortedList(List.of(1,2,3,4,5));
+
+        Offsets other = Offsets.fromSortedList(List.of(3,4,5,6,7,8,9));
+
+        Offsets.UniqueOffsets unique = Offsets.unique(sut, other);
 
 
+        assertArrayEquals(new int[]{1,2}, unique.getA().toArray());
+        assertArrayEquals(new int[]{6,7,8,9}, unique.getB().toArray());
+
+        Offsets.UniqueOffsets unique2 = Offsets.unique(other, sut);
+
+
+        assertArrayEquals(new int[]{1,2}, unique2.getB().toArray());
+        assertArrayEquals(new int[]{6,7,8,9}, unique2.getA().toArray());
 
     }
 
@@ -208,10 +271,39 @@ public class TestOffsets {
     }
 
     @Test
+    public void addAndShiftMultiIndividualCalls(){
+        Offsets sut = Offsets.fromSortedList(List.of(1,4,7,10));
+
+        sut.addAndShift(5);
+        sut.addAndShift(3);
+
+        assertArrayEquals(new int[]{1,3,5, 6,9,12}, sut.stream().toArray());
+    }
+    @Test
+    public void addAndShiftAsOtherOffset(){
+        Offsets sut = Offsets.fromSortedList(List.of(1,4,7,10));
+
+        sut.add(Offsets.fromSortedArray(new int[]{3,5}), Offsets.AddOptions.builder()
+                .shift(true)
+                .include(true)
+                .build());
+
+        assertArrayEquals(new int[]{1,3,5, 6,9,12}, sut.stream().toArray());
+    }
+
+    @Test
     public void removeWithShiftDoesNotContainValueDoesNothing(){
         Offsets sut = Offsets.fromSortedList(List.of(1,4,7,10));
 
         sut.removeAllAndShift(List.of(5,8));
+
+        assertArrayEquals(new int[]{1,4,7,10}, sut.stream().toArray());
+    }
+    @Test
+    public void removeWithShiftIntListDoesNotContainValueDoesNothing(){
+        Offsets sut = Offsets.fromSortedList(List.of(1,4,7,10));
+
+        sut.removeAllAndShift(Arrays.asList(5, 8));
 
         assertArrayEquals(new int[]{1,4,7,10}, sut.stream().toArray());
     }
@@ -243,6 +335,17 @@ public class TestOffsets {
         Offsets sut = Offsets.fromSortedList(List.of(1,4,7,10));
 
         sut.removeAllAndShift(List.of(4,6,7));
+
+        assertArrayEquals(new int[]{1,8}, sut.stream().toArray());
+
+        assertEquals(2, sut.size());
+        assertFalse(sut.isEmpty());
+    }
+    @Test
+    public void removeMultipleWithShiftIntListSomePresentSomeNotOnlyRemovePresent(){
+        Offsets sut = Offsets.fromSortedList(List.of(1,4,7,10));
+
+        sut.removeAllAndShift(Arrays.asList(4,6,7));
 
         assertArrayEquals(new int[]{1,8}, sut.stream().toArray());
 
@@ -315,5 +418,15 @@ public class TestOffsets {
     }
 
 
+
+    @Test
+    public void toFromJson() throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Offsets sut  = Offsets.fromSortedList(List.of(1,4,7,10));
+        String json = mapper.writeValueAsString(sut);
+
+        Offsets reParsed = mapper.readValue(json, Offsets.class);
+        assertEquals(reParsed, sut);
+    }
 
 }

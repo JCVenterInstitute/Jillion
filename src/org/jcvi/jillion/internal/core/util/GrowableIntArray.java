@@ -174,22 +174,53 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		destArray.currentLength+=length;
 	}
 
-	@Override
-	public String toString() {
+	private static final String[][] EMPTY_CACHE_TO_STRING;
+
+	static{
+		EMPTY_CACHE_TO_STRING =  new String[128][128];
+		//prefill
+		EMPTY_CACHE_TO_STRING['['][']'] = "[]";
+		EMPTY_CACHE_TO_STRING['{']['}'] = "{}";
+
+
+	}
+
+	private static String getFromCache(char a, char b){
+		String s = EMPTY_CACHE_TO_STRING[a][b];
+		if(s==null){
+			synchronized (EMPTY_CACHE_TO_STRING){
+				s = EMPTY_CACHE_TO_STRING[a][b];
+				if(s==null){
+					String ret = new StringBuilder(2).append(a).append(b).toString();
+					EMPTY_CACHE_TO_STRING[a][b] = ret;
+					return ret;
+				}
+
+			}
+		}
+		return s;
+
+	}
+
+	public String toString(char prefix, char suffix) {
 		//copy of relevant code from Arrays#toString() but adding current length
 		int iMax = currentLength - 1;
 		if (iMax == -1) {
-			return "[]";
+			return getFromCache(prefix, suffix);
 		}
 
 		StringBuilder b = new StringBuilder(currentLength);
-		b.append('[');
+		b.append(prefix);
 		for (int i = 0; ; i++) {
 			b.append(data[i]);
 			if (i == iMax)
-				return b.append(']').toString();
+				return b.append(suffix).toString();
 			b.append(", ");
 		}
+	}
+	@Override
+	public String toString() {
+		return toString('[', ']');
 	}
 
 	/**
@@ -860,13 +891,8 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		if(currentLength != bytes.currentLength){
 			return false;
 		}
-		for (int i=0; i<currentLength; i++) {
-			if (data[i] != bytes.data[i]) {
-				return false;
-			}
-		}
+		return Arrays.equals(data,0, currentLength, bytes.data, 0, currentLength);
 
-		return true;
 	}
 
 	@Override

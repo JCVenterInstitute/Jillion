@@ -105,7 +105,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestRangeMap.class,
         TestRangeIntersectOrAbut.class,
 			TestOffsets.class,
-
+			TestOffsetsGetValuesUntil.class,
 			TestGrowableLongArrayJson.class,
 			TestGrowableIntArrayJson.class,
 			TestGrowableShortArrayJson.class,
