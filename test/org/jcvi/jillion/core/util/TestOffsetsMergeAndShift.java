@@ -28,8 +28,13 @@ public class TestOffsetsMergeAndShift {
                 new Object[]{List.of(1,2), List.of(1,2,3), List.of(1,2,3), List.of(1,2)},
                 //with shifts
                 new Object[]{List.of(1,3), List.of(1,2), List.of(1,2,4), List.of(1,4)},
-                new Object[]{List.of(1,3), List.of(1,2,3), List.of(1,2,4), List.of(1,4)}
-
+                new Object[]{List.of(1,3), List.of(1,2,3), List.of(1,2,4), List.of(1,4)},
+                //consecutive shifts
+                new Object[]{List.of(7), List.of(1,2,3), List.of(1,2,3,10), List.of(10)},
+                new Object[]{List.of(7,10), List.of(1,2,3), List.of(1,2,3,10,13), List.of(10,13)},
+                new Object[]{List.of(7,8,9,10), List.of(1,2,3), List.of(1,2,3,10,11,12,13), List.of(10,11,12,13)},
+                new Object[]{List.of(7,8,9,10), List.of(1,2,3,7,8), List.of(1,2,3,10,11,12,13), List.of(10,11,12,13)},
+                new Object[]{List.of(9,10), List.of(1,2,3,7,8), List.of(1,2,3,7,8,14,15), List.of(14,15)}
         );
     }
 

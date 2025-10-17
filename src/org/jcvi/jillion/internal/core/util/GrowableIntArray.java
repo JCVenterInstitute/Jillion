@@ -28,6 +28,7 @@ import java.util.stream.IntStream;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.core.util.ReplacementIntFunction;
 import org.jcvi.jillion.core.util.streams.ThrowingIntIndexedIntConsumer;
@@ -921,5 +922,9 @@ public final class GrowableIntArray implements Iterable<Integer>{
 			throw new IllegalArgumentException("new length must be >= 0");
 		}
 		currentLength = newLength;
+	}
+
+	public List<Range> asRanges() {
+		return Ranges.asRanges(data,0,currentLength);
 	}
 }

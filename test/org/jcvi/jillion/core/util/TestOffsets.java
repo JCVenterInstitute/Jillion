@@ -99,6 +99,12 @@ public class TestOffsets {
     }
 
     @Test
+    public void computeGapOffsetsBeyondSeqLengthShouldBeIgnoredPreShifted(){
+        Offsets sut = Offsets.fromSortedArray(new int[]{4,6, 99});
+        assertEquals("ACGT-A-CGT", sut.computeGaps(NucleotideSequence.of("ACGTACGT"), true).toString());
+    }
+
+    @Test
     public void computeGapOffsetsPreShifted(){
         Offsets sut = Offsets.fromSortedArray(new int[]{4,6});
         assertEquals("ACGT-A-CGT", sut.computeGaps(NucleotideSequence.of("ACGTACGT"), true).toString());
@@ -106,6 +112,11 @@ public class TestOffsets {
     @Test
     public void computeGapOffsetsNotPreShifted(){
         Offsets sut = Offsets.fromSortedArray(new int[]{4,6});
+        assertEquals("ACGT-AC-GT", sut.computeGaps(NucleotideSequence.of("ACGTACGT"), false).toString());
+    }
+    @Test
+    public void computeGapOffsetsNotPreShiftedBeyondSeqLengthShouldBeIgnored(){
+        Offsets sut = Offsets.fromSortedArray(new int[]{4,6,99});
         assertEquals("ACGT-AC-GT", sut.computeGaps(NucleotideSequence.of("ACGTACGT"), false).toString());
     }
 

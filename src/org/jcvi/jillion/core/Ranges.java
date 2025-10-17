@@ -174,32 +174,96 @@ public final class Ranges {
      * <li>if maxDistanceBetweenAdjacentRanges <2, then the Ranges [0-2] and [4-5] will be returned</li>
      * <li>if maxDistanceBetweenAdjacentRanges >=2 then one Range [0-5] is returned</li>
      * </ol>
-     * 
+     *
      * @param sortedOffsets the array of SORTED values to convert into Ranges; can not be null but may be empty.
      * The array must be sorted from smallest to largest.
-     * 
+     *
      * @param maxDistance the maximum distance between the end of one range
      * and the start of another in order to be merged.
-     * 
+     *
      * @return a new list of Ranges; will never be null but may be empty.
-     * 
+     *
      * @throws IllegalArgumentException if maxDistance &lt; 0.
      * @throws NullPointerException if array is null
      * @throws IllegalArgumentException if sortedOffsets is not sorted from smallest to largest.
      * @since 5.3
      */
-    public static List<Range> asRanges(int[] sortedOffsets, int maxDistance){
+    public static List<Range> asRanges(int[] sortedOffsets, int maxDistance) {
+        return asRanges(sortedOffsets, 0, sortedOffsets.length, maxDistance);
+    }
+    /**
+     * Convert all offsets in the <strong>sorted</strong> array into contiguous ranges.
+     * For example if the array is <tt> {0,1,2,4,5}</tt> then:
+     * <ol>
+     * <li>if maxDistanceBetweenAdjacentRanges <2, then the Ranges [0-2] and [4-5] will be returned</li>
+     * <li>if maxDistanceBetweenAdjacentRanges >=2 then one Range [0-5] is returned</li>
+     * </ol>
+     *
+     * @param sortedOffsets the array of SORTED values to convert into Ranges; can not be null but may be empty.
+     * The array must be sorted from smallest to largest.
+     * @param begin the array start offset (inclusive)
+     * @param length the number of elements to read from the array starting with begin.
+     *
+     *
+     * @return a new list of Ranges; will never be null but may be empty.
+     *
+     * @throws IllegalArgumentException if maxDistance &lt; 0.
+     * @throws NullPointerException if array is null
+     * @throws IllegalArgumentException if sortedOffsets is not sorted from smallest to largest.
+     * @throws IllegalArgumentException if begin or length are negative.
+     * @throws IllegalArgumentException if begin and length computations would extend past the array end.
+     * @since 6.1
+     */
+    public static List<Range> asRanges(int[] sortedOffsets, int begin, int length) {
+        return asRanges(sortedOffsets, begin, length, 0);
+    }
+        /**
+         * Convert all offsets in the <strong>sorted</strong> array into contiguous ranges.
+         * For example if the array is <tt> {0,1,2,4,5}</tt> then:
+         * <ol>
+         * <li>if maxDistanceBetweenAdjacentRanges <2, then the Ranges [0-2] and [4-5] will be returned</li>
+         * <li>if maxDistanceBetweenAdjacentRanges >=2 then one Range [0-5] is returned</li>
+         * </ol>
+         *
+         * @param sortedOffsets the array of SORTED values to convert into Ranges; can not be null but may be empty.
+         * The array must be sorted from smallest to largest.
+         * @param begin the array start offset (inclusive)
+         * @param length the number of elements to read from the array starting with begin.
+         *
+         * @param maxDistance the maximum distance between the end of one range
+         * and the start of another in order to be merged.
+         *
+         * @return a new list of Ranges; will never be null but may be empty.
+         *
+         * @throws IllegalArgumentException if maxDistance &lt; 0.
+         * @throws NullPointerException if array is null
+         * @throws IllegalArgumentException if sortedOffsets is not sorted from smallest to largest.
+         * @throws IllegalArgumentException if maxDistance is negative.
+         * @throws IllegalArgumentException if begin or length are negative.
+         * @throws IllegalArgumentException if begin and length computations would extend past the array end.
+         * @since 6.1
+         */
+    public static List<Range> asRanges(int[] sortedOffsets, int begin, int length, int maxDistance){
         if(maxDistance < 0){
             throw new IllegalArgumentException("maxDistance can not be negative: " + maxDistance);
         }
-        if(sortedOffsets.length ==0){
+        if(length < 0){
+            throw new IllegalArgumentException("length can not be negative: " + length);
+        }
+        if(begin < 0){
+            throw new IllegalArgumentException("begin can not be negative: " + begin);
+        }
+        if(length > sortedOffsets.length+begin){
+            throw new IllegalArgumentException("begin and length can not extend beyond array: begin = " + begin + " length = " + length + "  array length = " + sortedOffsets.length);
+        }
+        if(length==0){
             return Collections.emptyList();
         }
-        int lastOffset = sortedOffsets[0];
+        int lastOffset = sortedOffsets[begin];
         Range.Builder currentBuilder = new Range.Builder(lastOffset,lastOffset);
         
         List<Range> ret = new ArrayList<>();
-        for (int i=1; i<sortedOffsets.length; i++) {
+        for (int i=begin+1; i<length; i++) {
             lastOffset = sortedOffsets[i];
             int delta = lastOffset - (int) currentBuilder.getEnd();
             if(delta <0){

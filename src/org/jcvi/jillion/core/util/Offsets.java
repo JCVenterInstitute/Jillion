@@ -5,20 +5,24 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.*;
 import lombok.Builder;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.RangeCollectors;
 import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequence;
 import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
+import org.jcvi.jillion.core.util.iter.PeekableIterator;
 import org.jcvi.jillion.core.util.iter.PeekableOfIntIterator;
 import org.jcvi.jillion.core.util.streams.ThrowingIntIndexedIntConsumer;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.IntConsumer;
 import java.util.function.IntPredicate;
 import java.util.function.IntUnaryOperator;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * Offsets stores a list of sorted offets indexes,
@@ -211,7 +215,21 @@ public class Offsets {
      * @see #computeGaps(ResidueSequence, boolean)
      */
     public <R extends Residue<R>, T extends ResidueSequence<R, T, B>, B extends ResidueSequenceBuilder<R,T,B>> T computeGaps(T sequence) {
-        return computeGaps(sequence, false);
+        return computeGapsBuilder(sequence).build();
+    }
+    /**
+     * Build a gapped sequence BUILDER where all the values in this Offsets are gaps.
+     * @param sequence the sequence to use, any gaps in this sequence are ignored/removed before adding
+     *                 the new gap offsets.
+     * @return a new gapped sequence
+     * @param <R>
+     * @param <T>
+     * @param <B>
+     * @implNote this is the same as calling {@link #computeGaps(ResidueSequence, boolean) computeGaps(sequence, false)}
+     * @see #computeGaps(ResidueSequence, boolean)
+     */
+    public <R extends Residue<R>, T extends ResidueSequence<R, T, B>, B extends ResidueSequenceBuilder<R,T,B>> B computeGapsBuilder(T sequence) {
+        return computeGapsBuilder(sequence, false);
     }
     /**
      * Build a gapped sequence where all the values in this Offsets are gaps.
@@ -233,8 +251,30 @@ public class Offsets {
      */
     public <R extends Residue<R>, T extends ResidueSequence<R, T, B>, B extends ResidueSequenceBuilder<R,T,B>> T computeGaps(T sequence, boolean preShifted){
 
+        return computeGapsBuilder(sequence, preShifted).build();
+    }
+    /**
+     * Build a gapped sequence where all the values in this Offsets are gaps.
+     * @param sequence the sequence to use, any gaps in this sequence are ignored/removed before adding
+     *                 the new gap offsets.
+     * @param preShifted {@code true} if these offsets are already "preshifted" to account for adding the gaps, {@code false} otherwise.
+     *
+     * @apiNote For example, if the sequence is {@code ACGTACGT} and our offsets are {@code {4,6}}
+     * if preShifted was set to {@code false} then the 2nd offset {6} would get shifted by 1 to {7}
+     * to account for the new gap added at {4} to be {@code ACGT-AC-GT}, but if preShifted was set to {@code true},
+     * then the sequence would be {@code ACGT-A-CGT} as the gap offset of {6} would not be shifted.
+     *
+     * @return a new gapped sequence
+     * @param <R>
+     * @param <T>
+     * @param <B>
+     * @implNote this is the same as calling {@link #computeGaps(ResidueSequence, boolean) computeGaps(sequence, false)}
+     * @see #computeGaps(ResidueSequence, boolean)
+     */
+    public <R extends Residue<R>, T extends ResidueSequence<R, T, B>, B extends ResidueSequenceBuilder<R,T,B>> B computeGapsBuilder(T sequence, boolean preShifted){
+
         if(delegate.getCurrentLength()==0){
-            return sequence.computeUngappedSequence();
+            return sequence.toBuilder();
         }
         List<Range> ranges = Ranges.asRanges(delegate.toArray());
 
@@ -246,9 +286,14 @@ public class Offsets {
 
         B builder = sequence.toBuilder()
                 .ungap();
-        ranges.forEach(builder::insertGap);
 
-        return builder.build();
+        ranges.forEach( r->{
+            if(builder.getLength() >= r.getBegin()){
+                builder.insertGap(r);
+            }
+                });
+
+        return builder;
     }
     public Offsets and(Offsets b){
 
@@ -276,39 +321,94 @@ public class Offsets {
         return mergeAndShift(b, true);
     }
     public Offsets mergeAndShift(Offsets b, boolean include){
-        PeekableOfIntIterator aIter = IteratorUtil.createPeekableIterator(delegate.iterator());
-        PeekableOfIntIterator bIter = IteratorUtil.createPeekableIterator(b.delegate.iterator());
+
+        //this range math is so we don't have overlapping range positions
+        //which will simplify merging down below
+
+        List<Range> aRanges = delegate.asRanges();
+        List<Range> bRanges = b.delegate.asRanges();
+
+        List<Range> aExclusive = Ranges.complement(aRanges, bRanges);
+        List<Range> bExclusive = Ranges.complement(bRanges, aRanges);
+        List<Range> inBoth = Ranges.union(aRanges, bRanges);
+
+        List<Range> merged = Stream.concat(aExclusive.stream(), inBoth.stream())
+                                    .collect(RangeCollectors.mergeRanges());
+
+
+        //at this point, everything in a is in merged and stuff we have to shift is in bExclusive
+
+
+        PeekableIterator<Range> aIter = IteratorUtil.createPeekableIterator(merged);
+
+        PeekableIterator<Range> bIter = IteratorUtil.createPeekableIterator(bExclusive);
 
         int shift=0;
         GrowableIntArray array = new GrowableIntArray(delegate.getCurrentLength());
 
         int aNext;
         int bNext;
+        //this allows us to add multiple B ranges in a row without shifting
+        int bShiftedSinceLastA=0;
         while(aIter.hasNext() && bIter.hasNext()){
-            aNext = aIter.peek()+shift;
-            bNext = bIter.peek()+shift;
+            aNext = (int) aIter.peek().getBegin() +shift;
+            bNext = (int) bIter.peek().getBegin() +shift-bShiftedSinceLastA;
             if(aNext ==bNext){
-                //same value just add
-                array.append(aNext);
+                //both ranges start at same position but might be different lengths
+                int aLength = (int)aIter.peek().getLength();
+                int bLength = (int) bIter.peek().getLength();
+                //either way we add all of A
+                for(int i=0; i< aIter.peek().getLength(); i++) {
+                    array.append(aNext+i);
+                }
+
+
+                if(aLength < bLength) {
+                    //B is bigger
+                    // we have to deal with shifting
+                    // because we did the Range math above
+                    // we don't have to do extra checking like "does the next A also intersect this B ?"
+                    // because we handled that already by splitting A and B ranges into non-overlapping
+                    int shiftAmount = bLength - aLength;
+                    if(include) {
+                        for(int i=0; i< shiftAmount; i++) {
+                            array.append(aNext+aLength +i);
+                        }
+                    }
+                    shift+=shiftAmount;
+                }
                 aIter.next();
                 bIter.next();
             }else if(aNext < bNext){
-                array.append(aNext);
+                for(int i=0; i< aIter.peek().getLength(); i++) {
+                    array.append(aNext+i);
+                }
                 aIter.next();
+                bShiftedSinceLastA=0;
             }else{
                 if(include) {
-                    array.append(bNext);
+                    for(int i=0; i< bIter.peek().getLength(); i++) {
+                        array.append(bNext+i);
+                    }
+
                 }
-                bIter.next();
-                shift++;
+                int shiftThisRange = (int) bIter.next().getLength();
+                bShiftedSinceLastA +=shiftThisRange;
+                shift+=shiftThisRange;
+
             }
         }
         int effectivelyFinalShift = shift;
-        IntConsumer andAndShiftRemaining = v-> array.append(v+effectivelyFinalShift);
+        Consumer<Range> rangeConsumer =r->{
+            int begin = (int) r.getBegin();
+            for(int i=0; i< r.getLength(); i++) {
+                array.append(begin+i + effectivelyFinalShift);
+            }
+        };
 
-        aIter.forEachRemaining(andAndShiftRemaining);
+        aIter.forEachRemaining(rangeConsumer);
         if(include) {
-            bIter.forEachRemaining(andAndShiftRemaining);
+            bIter.forEachRemaining(rangeConsumer);
         }
 
         return new Offsets(array);
