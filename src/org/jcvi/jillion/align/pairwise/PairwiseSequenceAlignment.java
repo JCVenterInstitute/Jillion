@@ -32,7 +32,7 @@ import org.jcvi.jillion.core.residue.ResidueSequence;
  * @param <R> the type of {@link Residue} in the sequence.
  * @param <S> the type of {@link org.jcvi.jillion.core.Sequence} in this alignment.
  */
-public interface PairwiseSequenceAlignment<R extends Residue, S extends ResidueSequence<R, S, ?>> extends SequenceAlignment<R, S> {
+public interface PairwiseSequenceAlignment<R extends Residue<R>, S extends ResidueSequence<R, S, ?>> extends SequenceAlignment<R, S> {
 	/**
 	 * Get the score of this alignment that 
 	 * was computed from the {@link org.jcvi.jillion.align.SubstitutionMatrix}

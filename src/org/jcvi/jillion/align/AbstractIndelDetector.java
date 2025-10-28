@@ -8,7 +8,7 @@ import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.ResidueSequence;
 
-public abstract class AbstractIndelDetector<R extends Residue,  T extends ResidueSequence<R, ?,?> > implements IndelDetector<T> {
+public abstract class AbstractIndelDetector<R extends Residue<R>,  T extends ResidueSequence<R, ?,?> > implements IndelDetector<T> {
 
 	@Override
 	public List<Indel> findIndels(T subject, T query) {

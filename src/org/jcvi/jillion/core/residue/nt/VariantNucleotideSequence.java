@@ -41,6 +41,7 @@ import org.jcvi.jillion.core.residue.nt.UnderlyingCoverage.UnderlyingCoveragePar
 import org.jcvi.jillion.core.residue.nt.VariantNucleotideSequence.Builder;
 import org.jcvi.jillion.core.residue.nt.VariantNucleotideSequence.Variant.VariantBuilder;
 import org.jcvi.jillion.core.util.IntList;
+import org.jcvi.jillion.core.util.Offsets;
 import org.jcvi.jillion.core.util.SingleThreadAdder;
 import org.jcvi.jillion.core.util.UnAdjustedCoordinateMapper;
 import org.jcvi.jillion.internal.core.util.ArrayUtil;
@@ -622,6 +623,17 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 			this.variants.add(new VariantAndOffset(offset, variantBuilder));
 			return this;
 		}
+
+		@Override
+		public IntList getGapOffsets() {
+			return null;
+		}
+
+		@Override
+		public List<Range> getRangesOfGaps() {
+			return List.of();
+		}
+
 		public Builder ungap() {
 			if(nucleotideSequence.getNumGaps()==0) {
 				return this;
@@ -629,31 +641,32 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 			//need to do this in 2 passes:
 			//first pass remove variants at gap offsets
 			//second pass adjust upstream variant offsets accordingly
-			int gapOffsets[] = nucleotideSequence.getGapOffsets();
+			Offsets gapOffsets = Offsets.fromSortedList(nucleotideSequence.getGapOffsets());
 			//copy of array since it will be modified below and we don't want to use the modified version
-			int copyOfGapOffsets[] = Arrays.copyOf(gapOffsets, gapOffsets.length);
-			this.unadjustedBuilder.add(c->{
-				PrimitiveIterator.OfInt iter =  PrimitiveArrayIterators.create(copyOfGapOffsets);
-				while(iter.hasNext()) {
+
+
+			this.unadjustedBuilder.add(c-> {
+				PrimitiveIterator.OfInt iter = gapOffsets.iterator();
+				while (iter.hasNext()) {
 					int nextOffset = iter.nextInt();
-					if(c >= nextOffset) {
+					if (c >= nextOffset) {
 						c++;
-					}else {
+					} else {
 						break;
 					}
 				}
 				return c;
 			});
-			variants.removeIf(vo -> Arrays.binarySearch(gapOffsets, vo.getOffset()) >=0);
+			variants.removeIf(vo -> gapOffsets.contains(vo.getOffset()));
 			
 			//only do 2nd pass if we have any variants left
 			if(!variants.isEmpty()) {
 				
 				
 				//reverse gap offsets for easier time shifting things
-				ArrayUtil.reverse(gapOffsets);
+
 				
-				PrimitiveIterator.OfInt iter =  PrimitiveArrayIterators.create(gapOffsets);
+				PrimitiveIterator.OfInt iter =  PrimitiveArrayIterators.createReverse(gapOffsets.toArray());
 				while(iter.hasNext()) {
 					int gapOffset = iter.nextInt();
 					Iterator<VariantAndOffset> adderIter = variants.iterator();

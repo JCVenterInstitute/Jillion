@@ -23,6 +23,7 @@ package org.jcvi.jillion.assembly.util.slice;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.function.IntConsumer;
 
 import org.jcvi.jillion.core.DirectedRange;
 import org.jcvi.jillion.core.Range;
@@ -30,6 +31,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.util.IntList;
 
 
 public class CodonSliceMapBuilder{
@@ -158,15 +160,14 @@ public class CodonSliceMapBuilder{
 			//ignoring gaps
 			if(seq.isEqualToIgnoringGaps(inputSequence)){
 				
-				int[] gaps =seq.getGapOffsets();
+				IntList gaps =seq.getGapOffsets();
 				seq.clear()
 					.append(editedSequence);
 				//add the gaps back in
 				//in the same locations
 				//to keep alignment
-				for(int i=0; i<gaps.length; i++){
-					seq.insert(gaps[i], Nucleotide.Gap);
-				}
+				gaps.forEach((IntConsumer)  (i-> seq.insert(i, Nucleotide.Gap)));
+
 			}else{
 				//all gaps in this edit region
 				//just add more gaps to account for
@@ -175,9 +176,8 @@ public class CodonSliceMapBuilder{
 				//so we can add gaps here without worry
 				//and maintain the alignment if we have more seq
 				//in this read beyond edit region
-				char[] gaps = new char[numberOfBasesAdded];
-				Arrays.fill(gaps, '-');
-				seq.append(gaps);		
+
+				seq.appendGap(numberOfBasesAdded);
 				
 			}
 			

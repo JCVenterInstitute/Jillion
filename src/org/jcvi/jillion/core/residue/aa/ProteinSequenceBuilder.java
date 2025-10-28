@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
+import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.internal.core.util.GrowableByteArray;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 /**
@@ -591,20 +592,22 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 		if(numberOfGaps==0) {
 			return this;
 		}
-		GrowableIntArray gaps = new GrowableIntArray();
-		builder.forEachIndexed((i, b)->{
-//			if(AMBIGUOUS_AMINO_ACIDS.binarySearch(b) >=0) {
-//				//is ambiguous
-//			}
-			if(b == GAP_ORDINAL) {
-				gaps.append(i);
-			}
-		});
+		GrowableIntArray gaps = computeGapsAsGrowableArray();
 		gaps.reverse();
 		gaps.forEachIndexed((i, offset)-> builder.remove(offset));
 		
 		numberOfGaps=0;
 		return this;
+	}
+
+	private GrowableIntArray computeGapsAsGrowableArray() {
+		GrowableIntArray gaps = new GrowableIntArray();
+		builder.forEachIndexed((i, b)->{
+			if(b == GAP_ORDINAL) {
+				gaps.append(i);
+			}
+		});
+		return gaps;
 	}
 
 	@Override
@@ -675,5 +678,15 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	@Override
 	public ProteinSequenceBuilder getSelf() {
 		return this;
+	}
+
+	@Override
+	public List<Range> getRangesOfGaps() {
+		return computeGapsAsGrowableArray().asRanges();
+	}
+
+	@Override
+	public IntList getGapOffsets() {
+		return computeGapsAsGrowableArray().toBoxedList();
 	}
 }

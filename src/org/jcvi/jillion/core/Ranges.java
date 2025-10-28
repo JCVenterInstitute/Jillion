@@ -33,6 +33,8 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.jcvi.jillion.core.util.IntList;
+import org.jcvi.jillion.core.util.Offsets;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.internal.core.util.GrowableLongArray;
 /**
@@ -167,6 +169,7 @@ public final class Ranges {
     public static List<Range> asRanges(int[] sortedOffsets){
         return asRanges(sortedOffsets, 0);
     }
+
     /**
      * Convert all offsets in the <strong>sorted</strong> array into contiguous ranges.
      * For example if the array is <tt> {0,1,2,4,5}</tt> then:

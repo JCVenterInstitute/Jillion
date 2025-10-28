@@ -820,6 +820,26 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		return this;
 	}
 	/**
+	 * Replace all values with the given replacement value.
+	 * @param range the offset range to check over; can not be null.
+	 * @param replacementFunction the function to replace the value given the previous value.
+	 * @throws NullPointerException if replacementFunction is null.
+	 *
+	 * @return this
+	 *
+	 * @since 6.1
+	 */
+	public GrowableIntArray replaceAll(Range range, IntUnaryOperator replacementFunction){
+		Objects.requireNonNull(replacementFunction);
+
+		int end = (int) Math.min(currentLength, range.getEnd()+1);
+		for(int i=(int) range.getBegin(); i< end; i++){
+			data[i] = replacementFunction.applyAsInt(data[i]);
+
+		}
+		return this;
+	}
+	/**
 	 * Replace any values within the given offset range that pass the given predicate with the given replacement value.
 	 * @param range the offset range to check over; can not be null.
 	 * @param predicate the predicate to test; can not be null.

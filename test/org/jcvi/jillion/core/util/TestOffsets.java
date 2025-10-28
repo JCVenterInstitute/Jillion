@@ -83,7 +83,33 @@ public class TestOffsets {
         assertArrayEquals(new int[]{3,4,5}, and.stream().toArray());
 
     }
+    @Test
+    public void shift(){
+        Offsets sut = Offsets.fromSortedList(List.of(1,2,3,4,5));
 
+        sut.shift(10);
+
+        assertArrayEquals(new int[]{11,12,13,14,15}, sut.toArray());
+
+    }
+    @Test
+    public void shift0(){
+        Offsets sut = Offsets.fromSortedList(List.of(1,2,3,4,5));
+
+        sut.shift(0);
+
+        assertArrayEquals(new int[]{1,2,3,4,5}, sut.toArray());
+
+    }
+    @Test
+    public void shiftNegative(){
+        Offsets sut = Offsets.fromSortedList(List.of(1,2,3,4,5));
+
+        sut.shift(-5);
+
+        assertArrayEquals(new int[]{-4,-3,-2,-1,0}, sut.toArray());
+
+    }
 
 
     @Test
@@ -339,6 +365,28 @@ public class TestOffsets {
         assertArrayEquals(new int[]{1,8}, sut.stream().toArray());
 
         assertEquals(2, sut.size());
+    }
+
+    @Test
+    public void removeMultipleWithShiftMultipleInARow(){
+        Offsets sut = Offsets.fromSortedList(List.of(1,4,7,8,9,10,16));
+
+        sut.removeAllAndShift(List.of(7,8,9));
+
+        assertArrayEquals(new int[]{1,4,7, 13}, sut.stream().toArray());
+
+        assertEquals(4, sut.size());
+    }
+
+    @Test
+    public void removeMultipleWithShiftMultipleInARow2(){
+        Offsets sut = Offsets.fromSortedList(List.of(1,4,7,8,9,10,15,16,17,22));
+
+        sut.removeAllAndShift(List.of(7,8,9, 16,17));
+
+        assertArrayEquals(new int[]{1,4,7,12, 17}, sut.stream().toArray());
+
+        assertEquals(5, sut.size());
     }
 
     @Test

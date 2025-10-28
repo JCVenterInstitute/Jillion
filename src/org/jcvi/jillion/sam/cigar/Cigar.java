@@ -140,7 +140,7 @@ public final class Cigar implements Iterable<CigarElement>, Serializable{
 		
 	}
 	
-	public static <R extends Residue, S extends ResidueSequence<R,S,?>> Cigar createFrom(SequenceAlignment<R, S> alignment){
+	public static <R extends Residue<R>, S extends ResidueSequence<R,S,?>> Cigar createFrom(SequenceAlignment<R, S> alignment){
 		S query =alignment.getGappedQueryAlignment();
 		S subject = alignment.getGappedSubjectAlignment();
 		Builder builder = new Builder();
@@ -152,7 +152,7 @@ public final class Cigar implements Iterable<CigarElement>, Serializable{
 
 	}
 
-	public static <R extends Residue, S extends ResidueSequence<R,S,?>> Cigar createFromAlignment(Sequence<R> query, Sequence<R> subject) {
+	public static <R extends Residue<R>, S extends ResidueSequence<R,S,?>> Cigar createFromAlignment(Sequence<R> query, Sequence<R> subject) {
 		//let's consider the query to be the read and the subject is the ref?
 		if(query.getLength()!=subject.getLength()){
 			throw new IllegalArgumentException("sequences must be the same length");

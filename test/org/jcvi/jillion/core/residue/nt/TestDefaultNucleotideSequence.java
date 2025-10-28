@@ -263,5 +263,51 @@ public class TestDefaultNucleotideSequence {
     public void toBuilder(){
     	assertEquals(sut, sut.toBuilder().build());
     }
+
+    @Test
+    public void trimSimple(){
+        NucleotideSequence seq = new NucleotideSequenceBuilder("ACGTACGT").build();
+
+        assertEquals("GTACG", seq.trim(Range.of(2,6)).toString());
+    }
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void trimSimpleOutOfBoundsThrowError(){
+        NucleotideSequence seq = new NucleotideSequenceBuilder("ACGTACGT").build();
+
+       seq.trim(Range.of(2,10));
+    }
+
+    @Test
+    public void trimAndPadd(){
+        NucleotideSequence seq = new NucleotideSequenceBuilder("ACGTACGT").build();
+
+        assertEquals("GTACGT---", seq.trimAndPaddWithGaps(Range.of(2,10)).toString());
+    }
+    @Test
+    public void trimAndPaddFullSeq(){
+        NucleotideSequence seq = new NucleotideSequenceBuilder("ACGTACGT").build();
+
+        assertEquals("ACGTACGT---", seq.trimAndPaddWithGaps(Range.of(0,10)).toString());
+    }
+
+    @Test
+    public void trimAndPaddFullSeqWithOtherGaps(){
+        NucleotideSequence seq = new NucleotideSequenceBuilder("ACGT-ACGT").build();
+
+        assertEquals("ACGT-ACGT--", seq.trimAndPaddWithGaps(Range.of(0,10)).toString());
+    }
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void trimAndPaddNegStartShouldThrowException(){
+        NucleotideSequence seq = new NucleotideSequenceBuilder("ACGTACGT").build();
+
+        seq.trimAndPaddWithGaps(Range.of(-1,10));
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void trimNullShouldThrowNPE(){
+        NucleotideSequence seq = new NucleotideSequenceBuilder("ACGTACGT").build();
+
+        seq.trim(null);
+    }
     
 }

@@ -24,7 +24,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.SequenceBuilder;
 import org.jcvi.jillion.core.util.IntList;
+import org.jcvi.jillion.core.util.streams.ThrowingIntIndexedConsumer;
 
 import java.util.*;
 import java.util.stream.IntStream;
@@ -41,7 +43,7 @@ import java.util.stream.StreamSupport;
  * @param <R> the Type of {@link Residue} in this {@link Sequence}.
  * @param <T> the ResidueSequence implementation, needed for some of the return types to make sure it returns "this" type.
  */
-public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R, T, B>, B extends ResidueSequenceBuilder<R, T,B>> extends Sequence<R>, Comparable<T> {
+public interface ResidueSequence<R extends Residue<R>, T extends ResidueSequence<R, T, B>, B extends ResidueSequenceBuilder<R, T,B>> extends Sequence<R>, Comparable<T> {
 
 	 /**
      * Get a List of all the offsets into this
@@ -564,5 +566,58 @@ public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R,
             return asSubtype();
         }
         return toBuilder().ungap().build();
+    }
+
+    /**
+     * Create a new Sequence that is only the part of this
+     * sequence within the given trim range.
+     *
+     * @param trimRange the subRange to use; can not be null.
+     * @return a new Builder instance, will never be null.
+     *
+     * @param consumerOfExcess a Consumer that takes a SequenceBuilder
+     *                         and the number of bases extra that were beyond
+     *                         the current sequence to trim.  Users can use this information
+     *                         to append gaps or Ns or throw an exception to handle
+     *                         the usecase of too big an input Range.
+     * @since 6.1
+     *
+     * @throws NullPointerException if trimRange is null.
+     * @throws E the exception thrown by consumer (if any)
+     */
+    default <E extends Throwable > T trim(Range trimRange, ThrowingIntIndexedConsumer<B,E> consumerOfExcess) throws E{
+        if(trimRange.getBegin() <0){
+            throw new IndexOutOfBoundsException(trimRange +" starts before offset 0");
+        }
+        Range intersection = Range.ofLength(getLength()).intersection(trimRange);
+
+        B builder = toBuilder(intersection);
+        int extraBasesAtEnd = (int)(trimRange.getEnd() - intersection.getEnd());
+
+        if(extraBasesAtEnd > 0){
+            if(consumerOfExcess==null){
+                throw new IndexOutOfBoundsException(trimRange +" extends beyond sequence length " + getLength());
+            }
+            consumerOfExcess.accept(extraBasesAtEnd, builder);
+        }
+        return builder.build();
+    }
+
+    /**
+     * Trim to the given Range, if the range is larger than the current sequence,
+     * append the returned sequence with the appropriate number of gaps.
+     *
+     * @param trimRange the range to trim; can not be {@code null}.
+     * @return a new Sequence
+     * @since 6.1
+     * @implNote  this is the same as {@code return trim(trimRange, (size, builder) ->{
+     *             builder.appendGap(size);
+     *         });}.
+     *
+     */
+    default T trimAndPaddWithGaps(Range trimRange){
+        return trim(trimRange, (size, builder) ->{
+            builder.appendGap(size);
+        });
     }
 }

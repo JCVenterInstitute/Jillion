@@ -34,6 +34,7 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler;
 import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandlers;
+import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.core.util.SingleThreadAdder;
 import org.jcvi.jillion.internal.core.util.GrowableByteArray;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
@@ -925,9 +926,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
 	public int getNumGaps(){
         return codecDecider.getNumberOfGaps();
     }
-	public int[] getGapOffsets() {
-		return codecDecider.gapOffsets.toArray();
-	}
+
 
 	
     int[] getNOffsets(){
@@ -2570,5 +2569,15 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
 	@Override
 	public NucleotideSequenceBuilder getSelf() {
 		return this;
+	}
+
+	@Override
+	public List<Range> getRangesOfGaps() {
+		return Ranges.asRanges(codecDecider.gapOffsets.toArray());
+	}
+
+	@Override
+	public IntList getGapOffsets() {
+		return codecDecider.gapOffsets.asList();
 	}
 }

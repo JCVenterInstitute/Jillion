@@ -767,6 +767,12 @@ public class Offsets {
     }
     public void removeAllAndShift(IntList valuesToRemove){
 
+        _removeAll(valuesToRemove, true);
+
+    }
+
+    private void _removeAll(IntList valuesToRemove, boolean shift){
+
         int[] valuesToRemoveArray = valuesToRemove.intStream()
                 .filter(i-> delegate.binarySearch(i) >=0)
                 .sorted()
@@ -777,11 +783,15 @@ public class Offsets {
         }
         for(int j = valuesToRemoveArray.length-1; j>=0; j--){
             int v = valuesToRemoveArray[j];
-            delegate.sortedRemove(v);
-            delegate.replaceIf(i-> i> v, i-> i-1);
+            delegate.remove(v);
+            if(shift) {
+                delegate.replaceIf(i -> i > v, i -> i - 1);
+            }
         }
 
     }
+
+
 
     @Override
     public boolean equals(Object o) {
@@ -796,21 +806,46 @@ public class Offsets {
         return Objects.hashCode(delegate);
     }
 
-    public void removeAllAndShift(List<Integer> valuesToRemove){
+    public void removeAllNoShift(IntList valuesToRemove){
+        _removeAll(valuesToRemove, false);
+    }
+    private void _removeAll(IntStream intStream, boolean shift){
 
-        int[] valuesToRemoveArray = valuesToRemove.stream().mapToInt(Integer::intValue)
-                        .filter(i-> delegate.binarySearch(i) >=0)
-                        .sorted()
-                        .toArray();
+        int[] valuesToRemoveArray = intStream
+                .map(delegate::binarySearch)
+                .filter(i-> i >=0)
+                .sorted()
+                .toArray();
 
         if(valuesToRemoveArray.length ==0){
             return;
         }
-        for(int j = valuesToRemoveArray.length-1; j>=0; j--){
-            int v = valuesToRemoveArray[j];
-            delegate.sortedRemove(v);
-            delegate.replaceIf(i-> i> v, i-> i-1);
+        List<Range> ranges = Ranges.asRanges(valuesToRemoveArray);
+        Collections.reverse(ranges);
+        for(Range r : ranges){
+
+            int begin = (int) r.getBegin();
+            int end = (int) r.getEnd();
+            int length = end - begin+1;
+
+            if(shift && end < delegate.getCurrentLength()) {
+                Range downstreamRange = Range.of(end + 1, delegate.getCurrentLength() - 1);
+                delegate.replaceIf(downstreamRange, i -> i > end, i -> i - length);
+            }
+            delegate.remove(Range.of(begin, end));
         }
 
+    }
+    public void removeAllAndShift(List<Integer> valuesToRemove){
+        _removeAll(valuesToRemove.stream().mapToInt(Integer::intValue), true);
+
+    }
+
+    public void shift(int shiftAmount){
+        if(shiftAmount==0){
+            //no-op
+            return;
+        }
+        delegate.replaceAll(i-> i+ shiftAmount);
     }
 }

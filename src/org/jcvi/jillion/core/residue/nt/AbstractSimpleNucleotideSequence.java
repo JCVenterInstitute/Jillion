@@ -214,8 +214,12 @@ abstract class AbstractSimpleNucleotideSequence extends AbstractResidueSequence<
 
     @Override
     public NucleotideSequence trim(Range trimRange) {
+        int end = (int) trimRange.getEnd();
+        if(data.length <= end){
+            throw new IndexOutOfBoundsException(end);
+        }
     	return createNewInstance(Arrays.copyOfRange(data,
-                (int)trimRange.getBegin(), (int) trimRange.getEnd()+1));
+                (int)trimRange.getBegin(), end+1));
         
     }
     protected abstract NucleotideSequence createNewInstance(Nucleotide[] dataArray);

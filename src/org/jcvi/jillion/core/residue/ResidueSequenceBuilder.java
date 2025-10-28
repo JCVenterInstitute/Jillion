@@ -23,10 +23,12 @@ package org.jcvi.jillion.core.residue;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.SequenceBuilder;
+import org.jcvi.jillion.core.util.IntList;
 
 import java.util.Arrays;
+import java.util.List;
 
-public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>, B extends ResidueSequenceBuilder<R,S,B>> extends SequenceBuilder<R,S, B> {
+public interface ResidueSequenceBuilder<R extends Residue<R>, S extends Sequence<R>, B extends ResidueSequenceBuilder<R,S,B>> extends SequenceBuilder<R,S, B> {
 
 	 /**
      * Appends the given residue to the end
@@ -459,5 +461,28 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      */
     B turnOffDataCompression(boolean turnOffDataCompression);
 
+    /**
+     * Does this builder have any gaps.
+     * @return {@code true} if there are gaps; {@code false} otherwise.
+     * @since 6.1
+     */
+    default boolean hasGaps(){
+        return getNumGaps()>0;
+    }
+
+    /**
+     * Get the gap offsets as Ranges
+     * @return a List of Ranges; will never be null but may be empty
+     * if there are no gaps.
+     * @since 6.1
+     */
+    List<Range> getRangesOfGaps();
+    /**
+     * Get the gap offsets as an {@link IntList}
+     * @return a List of gap offsets; will never be null but may be empty
+     * if there are no gaps.
+     * @since 6.1
+     */
+    IntList getGapOffsets();
 
 }
