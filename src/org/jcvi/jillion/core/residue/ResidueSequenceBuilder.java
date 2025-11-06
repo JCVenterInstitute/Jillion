@@ -471,6 +471,18 @@ public interface ResidueSequenceBuilder<R extends Residue<R>, S extends Sequence
     }
 
     /**
+     * Does this builder have any gaps that intersect
+     * the given range.
+     * @param range the range to check.
+     * @return {@code true} if there are gaps; {@code false} otherwise.
+     * @since 6.1
+     * @implNote this is the same as {@code getGapOffsets().intStream().anyMatch(range::intersects)}.
+     */
+    default boolean hasGaps(Range range){
+        return getGapOffsets().intStream().anyMatch(range::intersects);
+    }
+
+    /**
      * Get the gap offsets as Ranges
      * @return a List of Ranges; will never be null but may be empty
      * if there are no gaps.

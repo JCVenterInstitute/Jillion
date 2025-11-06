@@ -272,9 +272,11 @@ public class Offsets {
      * @see #computeGaps(ResidueSequence, boolean)
      */
     public <R extends Residue<R>, T extends ResidueSequence<R, T, B>, B extends ResidueSequenceBuilder<R,T,B>> B computeGapsBuilder(T sequence, boolean preShifted){
-
+        B builder = sequence.toBuilder()
+                .ungap();
         if(delegate.getCurrentLength()==0){
-            return sequence.toBuilder();
+
+            return builder;
         }
         List<Range> ranges = Ranges.asRanges(delegate.toArray());
 
@@ -284,8 +286,7 @@ public class Offsets {
         }
 
 
-        B builder = sequence.toBuilder()
-                .ungap();
+
 
         ranges.forEach( r->{
             if(builder.getLength() >= r.getBegin()){

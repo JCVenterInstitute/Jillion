@@ -118,6 +118,7 @@ abstract class AbstractSimpleNucleotideSequence extends AbstractResidueSequence<
     public IntList getGapOffsets() {
         return gapSupplier.get().toBoxedList();
     }
+
     @Override
     public IntStream gaps() {
         return gapSupplier.get().stream();

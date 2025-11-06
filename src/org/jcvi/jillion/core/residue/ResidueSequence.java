@@ -516,6 +516,20 @@ public interface ResidueSequence<R extends Residue<R>, T extends ResidueSequence
     default boolean hasGaps() {
     	return getNumberOfGaps()>0;
     }
+
+    /**
+     * Does this Sequence contain any gaps within the given range.
+     *
+     * @param range the Range to check; must be within bounds
+     * @return {@code true} if it does; {@code false} otherwise.
+     *
+     * @since 6.1
+     *
+     * @implNote by default this returns {@code gaps().anyMatch(range::intersects)} but some implementations may override this for a more efficient method.
+     */
+    default boolean hasGaps(Range range) {
+        return gaps().anyMatch(range::intersects);
+    }
     
     @Override
     T trim(Range range);

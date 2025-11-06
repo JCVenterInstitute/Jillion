@@ -271,7 +271,7 @@ public final class Ranges {
             int delta = lastOffset - (int) currentBuilder.getEnd();
             if(delta <0){
                 //not sorted!
-                throw new IllegalArgumentException("input array must be sorted from smallest to largest");
+                throw new IllegalArgumentException("input array must be sorted from smallest to largest: " + lastOffset + " , " +  currentBuilder.getEnd());
             }
             if( delta -1 > maxDistance){
                 ret.add(currentBuilder.build());
