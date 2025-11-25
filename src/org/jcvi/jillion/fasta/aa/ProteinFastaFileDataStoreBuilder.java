@@ -32,14 +32,17 @@ import java.util.function.Predicate;
 import org.jcvi.jillion.core.Defline;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.InputStreamSupplier;
+import org.jcvi.jillion.core.residue.DecodingOptions;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 import org.jcvi.jillion.core.residue.aa.ProteinSequenceDataStore;
 import org.jcvi.jillion.fasta.FastaParser;
+import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
 import org.jcvi.jillion.internal.fasta.aa.DefaultProteinFastaDataStore;
 import org.jcvi.jillion.internal.fasta.aa.IndexedProteinFastaFileDataStore;
 import org.jcvi.jillion.internal.fasta.aa.LargeProteinFastaFileDataStore;
 import org.jcvi.jillion.shared.fasta.AbstractFastaFileDataStoreBuilder;
+import org.jcvi.jillion.spi.InvalidCharacterHandler;
 
 
 /**
@@ -51,7 +54,14 @@ import org.jcvi.jillion.shared.fasta.AbstractFastaFileDataStoreBuilder;
  *
  */
 public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDataStoreBuilder<AminoAcid, ProteinSequence, ProteinFastaRecord, ProteinSequenceDataStore, ProteinFastaFileDataStore> {
-    /**
+
+	/**
+	 * Handler for what to do when we get an invalid character
+	 * @since 6.1
+	 */
+	private DecodingOptions decodingOptions = DecodingOptions.DEFAULT;
+
+	/**
      * Create a new Builder instance
      * that will build a {@link ProteinFastaDataStore} using
      * the {@link FastaParser} object that will be parsing 
@@ -117,18 +127,48 @@ public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDat
 			Predicate<ProteinFastaRecord> recordFilter, OptionalLong maxNumberofRecords, BiFunction<String,String, Defline> idConverter)
 			throws IOException {
 		if(parser.isReadOnceOnly()){
-			return DefaultProteinFastaDataStore.create(parser,filter, recordFilter, idConverter);
+			return DefaultProteinFastaDataStore.create(parser,filter, recordFilter, idConverter, decodingOptions);
 		}
 		switch(hint){
-			case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultProteinFastaDataStore.create(parser,filter, recordFilter, idConverter);
+			case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultProteinFastaDataStore.create(parser,filter, recordFilter, idConverter, decodingOptions);
 			case RANDOM_ACCESS_OPTIMIZE_MEMORY:
 				return parser.canCreateMemento() ?						
-						IndexedProteinFastaFileDataStore.create(parser,filter, recordFilter, idConverter)
-					:	DefaultProteinFastaDataStore.create(parser,filter, recordFilter, idConverter);
-			case ITERATION_ONLY: return LargeProteinFastaFileDataStore.create(parser,filter, recordFilter, maxNumberofRecords, idConverter);
+						IndexedProteinFastaFileDataStore.create(parser,filter, recordFilter, idConverter, decodingOptions)
+					:	DefaultProteinFastaDataStore.create(parser,filter, recordFilter, idConverter, decodingOptions);
+			case ITERATION_ONLY: return LargeProteinFastaFileDataStore.create(parser,filter, recordFilter, maxNumberofRecords, idConverter, decodingOptions);
 			default:
 				throw new IllegalArgumentException("unknown provider hint :"+ hint);
 		}
+	}
+
+	/**
+	 * Set the {@link InvalidCharacterHandler} to use
+	 * when parsing sequences for this Datastore.  If set to {@code null}
+	 * then the default handler is used.
+	 * @param invalidCharacterHandler the handler to use; if set to {@code null}
+	 * then the default handler is used.
+	 *
+	 * @return this
+	 *
+	 * @since 6.1
+	 */
+	public ProteinFastaFileDataStoreBuilder invalidCharacterHandler(InvalidCharacterHandler invalidCharacterHandler) {
+		return decoderOptions(this.decodingOptions.toBuilder().invalidCharacterHandler(invalidCharacterHandler).build());
+	}
+	/**
+	 * Set the {@link DecodingOptions} to use
+	 * when parsing sequences for this Datastore.  If set to {@code null}
+	 * then the default decoder is used.
+	 * @param decodingOptions the options to use; if set to {@code null}
+	 * then the default is used.
+	 *
+	 * @return this
+	 *
+	 * @since 6.1
+	 */
+	public ProteinFastaFileDataStoreBuilder decoderOptions(DecodingOptions decodingOptions) {
+		this.decodingOptions = decodingOptions==null? DecodingOptions.DEFAULT: decodingOptions;
+		return this;
 	}
 	/**
 	 * 

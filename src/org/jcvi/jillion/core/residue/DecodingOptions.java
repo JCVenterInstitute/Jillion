@@ -39,7 +39,19 @@ public class DecodingOptions {
     @Getter(value = AccessLevel.PRIVATE)
     boolean replaceAllAmbiguitiesWithNs;
 
+    /**
+     * Change the {@link InvalidCharacterHandler}
+     * to use {@link InvalidCharacterHandlers#REPLACE_WITH_UNKNOWN}
+     * @return this
+     *
+     * @since 6.1
+     */
+    @Deprecated
     public boolean replaceAllAmbiguitiesWithNs() {
+        return replaceAllAmbiguitiesWithNs;
+    }
+
+    public boolean replaceAllAmbiguitiesWithUnknown() {
         return replaceAllAmbiguitiesWithNs;
     }
 

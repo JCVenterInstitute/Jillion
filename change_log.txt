@@ -47,7 +47,7 @@ API Breaking Changes
  Consumer<NucleotideFastaDataStoreBuilder> to let you perform any additional configuration
 
  3. InvalidCharacterHandler used to be just for Nucleotide but has now been refactored out to the residue package
- and implementations can support any Residue implementation.  
+ and implementations can support any Residue implementation.
 
 Mild API Breaking Changes
 ------------------------

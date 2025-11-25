@@ -32,6 +32,7 @@ import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreEntry;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
+import org.jcvi.jillion.core.residue.DecodingOptions;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaFileParser;
@@ -105,7 +106,7 @@ public final class IndexedProteinFastaFileDataStore{
 	 */
 	public static ProteinFastaFileDataStore create(FastaParser parser, Predicate<String> filter,  Predicate<ProteinFastaRecord> recordFilter) throws IOException{
 
-		IndexedProteinFastaDataStoreBuilderVisitor builder = new IndexedProteinFastaDataStoreBuilderVisitor(parser, filter, recordFilter, null);
+		IndexedProteinFastaDataStoreBuilderVisitor builder = new IndexedProteinFastaDataStoreBuilderVisitor(parser, filter, recordFilter, null, null);
 		builder.initialize();
 		return builder.build();
 	}
@@ -141,12 +142,31 @@ public final class IndexedProteinFastaFileDataStore{
 	 */
 	public static ProteinFastaFileDataStore create(FastaParser parser, Predicate<String> filter,  Predicate<ProteinFastaRecord> recordFilter, BiFunction<String, String, Defline> idConverter) throws IOException{
 
-		IndexedProteinFastaDataStoreBuilderVisitor builder = new IndexedProteinFastaDataStoreBuilderVisitor(parser, filter, recordFilter, idConverter);
+		IndexedProteinFastaDataStoreBuilderVisitor builder = new IndexedProteinFastaDataStoreBuilderVisitor(parser, filter, recordFilter, idConverter,null);
 		builder.initialize();
 		return builder.build();
 	}
-	
-	
+
+	/**
+	 * Creates a new {@link IndexedProteinFastaFileDataStore}
+	 * instance using the given fastaFile.
+	 * @param parser the {@link FastaParser} instance to create an {@link IndexedProteinFastaFileDataStore}
+	 * for.
+	 * @param filter the {@link DataStoreFilter} instance used to filter out the fasta records;
+	 * can not be null.
+	 * @return a new instance of {@link IndexedProteinFastaFileDataStore};
+	 * never null.
+	 * @throws IOException if the input fasta file does not exist or could not be read.
+	 * @throws NullPointerException if the input fasta file is null.
+	 */
+	public static ProteinFastaFileDataStore create(FastaParser parser, Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter,
+												   BiFunction<String, String, Defline> idConverter,
+												   DecodingOptions decodingOptions) throws IOException{
+
+		IndexedProteinFastaDataStoreBuilderVisitor builder = new IndexedProteinFastaDataStoreBuilderVisitor(parser, filter, recordFilter, idConverter,decodingOptions);
+		builder.initialize();
+		return builder.build();
+	}
 	
 	private static final class IndexedProteinFastaDataStoreBuilderVisitor implements FastaVisitor, Builder<ProteinFastaFileDataStore> {
 	
@@ -157,13 +177,16 @@ public final class IndexedProteinFastaFileDataStore{
 		private final Map<String, FastaVisitorCallback.FastaVisitorMemento> mementos = new LinkedHashMap<String, FastaVisitorCallback.FastaVisitorMemento>();
 		private final BiFunction<String, String, Defline> idConverter;
 
+		private final DecodingOptions decodingOptions;
 		private IndexedProteinFastaDataStoreBuilderVisitor(FastaParser parser, Predicate<String> filter,
 														   Predicate<ProteinFastaRecord> recordFilter,
-														   BiFunction<String, String, Defline> idConverter) throws IOException {
+														   BiFunction<String, String, Defline> idConverter,
+														   DecodingOptions decodingOptions) throws IOException {
 			this.filter = filter;
 			this.parser = parser;
 			this.recordFilter = recordFilter;
 			this.idConverter = idConverter==null? Defline::of: idConverter;
+			this.decodingOptions = decodingOptions==null? DecodingOptions.DEFAULT: decodingOptions;
 
 		}
 
@@ -184,7 +207,7 @@ public final class IndexedProteinFastaFileDataStore{
 				if(recordFilter ==null){
 					mementos.put(convertedDefline.getId(), memento);
 				}else{
-					return new AbstractProteinFastaRecordVisitor(convertedDefline.getId(), convertedDefline.getComment()){
+					return new AbstractProteinFastaRecordVisitor(convertedDefline.getId(), convertedDefline.getComment(), true,  decodingOptions){
 
 						@Override
 						protected void visitRecord(
@@ -215,12 +238,12 @@ public final class IndexedProteinFastaFileDataStore{
 
 		@Override
 		public ProteinFastaFileDataStore build() {
-			return new Impl(parser, filter, recordFilter, mementos, idConverter);
+			return new Impl(parser, filter, recordFilter, mementos, idConverter, decodingOptions);
 		}
 	
 	}
 	
-	public static final class Impl implements ProteinFastaFileDataStore {
+	 public static final class Impl implements ProteinFastaFileDataStore {
 		private volatile boolean closed =false;
 		private final FastaParser parser;
 		private final Predicate<String> filter;
@@ -228,15 +251,18 @@ public final class IndexedProteinFastaFileDataStore{
 		
 		private final Map<String, FastaVisitorCallback.FastaVisitorMemento> mementos;
 		private final BiFunction<String, String, Defline> idConverter;
-		
+		private final DecodingOptions decodingOptions;
+
 		public Impl(FastaParser parser, Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter,
 					Map<String, FastaVisitorMemento> mementos,
-					BiFunction<String, String, Defline> idConverter) {
+					BiFunction<String, String, Defline> idConverter,
+					DecodingOptions decodingOptions) {
 			this.parser = parser;
 			this.mementos = mementos;
 			this.filter = filter;
 			this.recordFilter = recordFilter;
 			this.idConverter = idConverter;
+			this.decodingOptions = decodingOptions;
 		}
 
 		@Override
@@ -252,7 +278,7 @@ public final class IndexedProteinFastaFileDataStore{
 			if(!mementos.containsKey(id)){
 				return null;
 			}
-			SingleRecordVisitor visitor = new SingleRecordVisitor(idConverter);
+			SingleRecordVisitor visitor = new SingleRecordVisitor(idConverter, decodingOptions);
 			try {
 				parser.parse(visitor, mementos.get(id));
 				return visitor.fastaRecord;
@@ -265,7 +291,7 @@ public final class IndexedProteinFastaFileDataStore{
 		public StreamingIterator<ProteinFastaRecord> iterator() throws DataStoreException {
 			throwExceptionIfClosed();
 			return DataStoreStreamingIterator.create(this,
-					LargeProteinFastaIterator.createNewIteratorFor(parser,filter, recordFilter, idConverter));
+					LargeProteinFastaIterator.createNewIteratorFor(parser,filter, recordFilter, idConverter, decodingOptions));
 		}
 		
 		
@@ -273,8 +299,8 @@ public final class IndexedProteinFastaFileDataStore{
 		public StreamingIterator<DataStoreEntry<ProteinFastaRecord>> entryIterator()
 				throws DataStoreException {
 			throwExceptionIfClosed();
-			StreamingIterator<DataStoreEntry<ProteinFastaRecord>> entryIter = new StreamingIterator<DataStoreEntry<ProteinFastaRecord>>(){
-				StreamingIterator<ProteinFastaRecord> iter = LargeProteinFastaIterator.createNewIteratorFor(parser,filter, recordFilter, idConverter);
+			StreamingIterator<DataStoreEntry<ProteinFastaRecord>> entryIter = new StreamingIterator<>(){
+				StreamingIterator<ProteinFastaRecord> iter = LargeProteinFastaIterator.createNewIteratorFor(parser,filter, recordFilter, idConverter, decodingOptions);
 
 				@Override
 				public boolean hasNext() {
@@ -336,8 +362,11 @@ public final class IndexedProteinFastaFileDataStore{
 		private final BiFunction<String, String, Defline> idConverter;
 		private ProteinFastaRecord fastaRecord=null;
 
-		public SingleRecordVisitor(BiFunction<String, String, Defline> idConverter) {
+		private final DecodingOptions decodingOptions;
+
+		public SingleRecordVisitor(BiFunction<String, String, Defline> idConverter, DecodingOptions decodingOptions) {
 			this.idConverter = idConverter;
+			this.decodingOptions = decodingOptions;
 		}
 
 		@Override
@@ -348,7 +377,7 @@ public final class IndexedProteinFastaFileDataStore{
 				return null;
 			}
 			Defline convertedId = idConverter.apply(id, optionalComment);
-			return new AbstractProteinFastaRecordVisitor(convertedId.getId(), convertedId.getComment()) {
+			return new AbstractProteinFastaRecordVisitor(convertedId.getId(), convertedId.getComment(), true, decodingOptions) {
 				
 				@Override
 				protected void visitRecord(ProteinFastaRecord fastaRecord) {

@@ -31,6 +31,7 @@ import java.util.function.Predicate;
 import org.jcvi.jillion.core.Defline;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
+import org.jcvi.jillion.core.residue.DecodingOptions;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 import org.jcvi.jillion.core.residue.aa.ProteinSequenceDataStore;
@@ -71,10 +72,11 @@ public final class DefaultProteinFastaDataStore{
 		DefaultProteinFastaDataStoreBuilder builder = createBuilder(filter, recordFilter, idConverter);
 		return parseFile(fastaFile, builder);
 	}
-	public static ProteinFastaFileDataStore create(FastaParser parser, Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter, BiFunction<String, String, Defline> idConverter) throws IOException{
-		DefaultProteinFastaDataStoreBuilder builder = createBuilder(filter, recordFilter, idConverter);
+	public static ProteinFastaFileDataStore create(FastaParser parser, Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter, BiFunction<String, String, Defline> idConverter, DecodingOptions decodingOptions) throws IOException{
+		DefaultProteinFastaDataStoreBuilder builder = createBuilder(filter, recordFilter, idConverter, decodingOptions);
 		return create(parser, builder);
 	}
+
 	public static ProteinFastaFileDataStore create(FastaParser parser) throws IOException{
 		DefaultProteinFastaDataStoreBuilder builder = createBuilder();
 		return create(parser, builder);
@@ -100,20 +102,33 @@ public final class DefaultProteinFastaDataStore{
 		return createBuilder(DataStoreFilters.alwaysAccept(),null,null);
 	}
 	private static DefaultProteinFastaDataStoreBuilder createBuilder(Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter,BiFunction<String, String, Defline> idConverter){
-		return new DefaultProteinFastaDataStoreBuilder(filter, recordFilter,idConverter);
+		return new DefaultProteinFastaDataStoreBuilder(filter, recordFilter,idConverter,null);
+	}
+	private static DefaultProteinFastaDataStoreBuilder createBuilder(Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter,
+																	 BiFunction<String, String, Defline> idConverter,
+																	 DecodingOptions decodingOptions){
+		return new DefaultProteinFastaDataStoreBuilder(filter, recordFilter,idConverter,decodingOptions);
 	}
 	private static final class DefaultProteinFastaDataStoreBuilder implements FastaVisitor, Builder<ProteinFastaFileDataStore>{
 
-		private final Map<String, ProteinFastaRecord> fastaRecords = new LinkedHashMap<String, ProteinFastaRecord>();
+		private final Map<String, ProteinFastaRecord> fastaRecords = new LinkedHashMap<>();
 		
 		private final Predicate<String> filter;
 		private final Predicate<ProteinFastaRecord> recordFilter;
 		private final BiFunction<String, String, Defline> idConverter;
+		/**
+		 * Handler for what to do when we get an invalid character
+		 * @since 6.1
+		 */
+		private final DecodingOptions decodingOptions;
 
-		public DefaultProteinFastaDataStoreBuilder(Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter, BiFunction<String, String, Defline> idConverter){
+		public DefaultProteinFastaDataStoreBuilder(Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter,
+												   BiFunction<String, String, Defline> idConverter,
+												   DecodingOptions decodingOptions){
 			this.filter = filter;
 			this.recordFilter = recordFilter;
 			this.idConverter = idConverter==null? Defline::of: idConverter;
+			this.decodingOptions = decodingOptions==null? DecodingOptions.DEFAULT: decodingOptions;
 		}
 		@Override
 		public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
@@ -122,7 +137,7 @@ public final class DefaultProteinFastaDataStore{
 			if(!filter.test(convertedDefline.getId())){
 				return null;
 			}
-			return new AbstractProteinFastaRecordVisitor(convertedDefline.getId(),convertedDefline.getComment()){
+			return new AbstractProteinFastaRecordVisitor(convertedDefline.getId(),convertedDefline.getComment(), false, decodingOptions){
 
 				@Override
 				protected void visitRecord(

@@ -26,10 +26,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.DecodingOptions;
 import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
 import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.internal.core.util.GrowableByteArray;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
+import org.jcvi.jillion.spi.InvalidCharacterHandler;
+
 /**
  * {@code ProteinSequenceBuilder}  is a way to
  * construct a {@link ProteinSequence}
@@ -63,12 +66,71 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	private boolean turnOffCompression=false;
 	
 	private boolean includeStopCodon = true;
-	 /**
+
+	private DecodingOptions decodingOptions = DecodingOptions.DEFAULT;
+
+	/**
+	 * Sets the {@link DecodingOptions}
+	 * used to help parse {@link AminoAcid}s from a String or char[].
+	 * @param decodingOptions the options to use; if {@code null}
+	 * use the default options which will throw an IllegalArgumentException on invalid characters.
+	 *
+	 * @since 6.1
+	 */
+	public ProteinSequenceBuilder setDecodingOptions(DecodingOptions decodingOptions) {
+		this.decodingOptions = decodingOptions==null? DecodingOptions.DEFAULT: decodingOptions;
+		return this;
+	}
+	/**
+	 * Sets the {@link InvalidCharacterHandler}
+	 * used to help parse {@link AminoAcid}s from a String or char[].
+	 * @param invalidCharacterHandler the options to use; if {@code null}
+	 * use the default options which will throw an IllegalArgumentException on invalid characters.
+	 *
+	 * @since 6.1
+	 */
+	public ProteinSequenceBuilder setInvalidCharacterHandler(InvalidCharacterHandler invalidCharacterHandler) {
+		this.decodingOptions = invalidCharacterHandler==null? DecodingOptions.DEFAULT: DecodingOptions.builder()
+				.invalidCharacterHandler(invalidCharacterHandler)
+				.build();
+		return this;
+	}
+
+	/**
      * Creates a new ProteinSequenceBuilder instance
      * which currently contains no amino acids.
      */
 	public ProteinSequenceBuilder(){
+		this((DecodingOptions) null);
+	}
+
+	/**
+	 * Creates a new ProteinSequenceBuilder instance
+	 * which currently contains no amino acids.
+	 *
+	 * @param decodingOptions the {@link DecodingOptions} to use;
+	 *                        if set to {@code null}, then the default will be used which
+	 *                        will throw an error for any invalid characters.
+	 *
+	 * @since 6.1
+	 */
+	public ProteinSequenceBuilder(DecodingOptions decodingOptions){
 		builder = new GrowableByteArray(DEFAULT_CAPACITY);
+		this.setDecodingOptions(decodingOptions);
+	}
+	/**
+	 * Creates a new ProteinSequenceBuilder instance
+	 * which currently contains no amino acids.
+	 *
+	 * @param invalidCharacterHandler the {@link InvalidCharacterHandler} to use;
+	 *                        if set to {@code null}, then the default will be used which
+	 *                        will throw an error for any invalid characters.
+	 *
+	 * @since 6.1
+	 */
+	public ProteinSequenceBuilder(InvalidCharacterHandler invalidCharacterHandler){
+		builder = new GrowableByteArray(DEFAULT_CAPACITY);
+		this.setInvalidCharacterHandler(invalidCharacterHandler);
 	}
 	/**
      * Creates a new ProteinSequenceBuilder instance
@@ -95,6 +157,50 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
      */
 	public ProteinSequenceBuilder(CharSequence sequence){
 		builder = new GrowableByteArray(sequence.length());
+		append(parse(sequence.toString()));
+	}
+
+	/**
+	 * Creates a new ProteinSequenceBuilder instance
+	 * which currently contains the given sequence.
+	 *  Any whitespace in the input string will be ignored.
+	 * @param sequence the initial nucleotide sequence.
+	 * @throws NullPointerException if sequence is null.
+	 * @throws IllegalArgumentException if any non-whitespace
+	 * in character in the sequence can not be converted
+	 * into an {@link AminoAcid}.
+	 *
+	 * @param invalidCharacterHandler the {@link InvalidCharacterHandler} to use;
+	 *                        if set to {@code null}, then the default will be used which
+	 *                        will throw an error for any invalid characters.
+	 *
+	 * @since 6.1
+	 */
+	public ProteinSequenceBuilder(CharSequence sequence, InvalidCharacterHandler invalidCharacterHandler){
+		builder = new GrowableByteArray(sequence.length());
+		setInvalidCharacterHandler(invalidCharacterHandler);
+		append(parse(sequence.toString()));
+	}
+
+	/**
+	 * Creates a new ProteinSequenceBuilder instance
+	 * which currently contains the given sequence.
+	 *  Any whitespace in the input string will be ignored.
+	 * @param sequence the initial nucleotide sequence.
+	 * @throws NullPointerException if sequence is null.
+	 * @throws IllegalArgumentException if any non-whitespace
+	 * in character in the sequence can not be converted
+	 * into an {@link AminoAcid}.
+	 *
+	 * @param decodingOptions the {@link DecodingOptions} to use;
+	 *                        if set to {@code null}, then the default will be used which
+	 *                        will throw an error for any invalid characters.
+	 *
+	 * @since 6.1
+	 */
+	public ProteinSequenceBuilder(CharSequence sequence, DecodingOptions decodingOptions){
+		builder = new GrowableByteArray(sequence.length());
+		setDecodingOptions(decodingOptions);
 		append(parse(sequence.toString()));
 	}
 	/**
@@ -153,12 +259,16 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 		return append(AminoAcid.Gap);
 	}
 
-	private static List<AminoAcid> parse(String aminoAcids){
-		List<AminoAcid> result = new ArrayList<AminoAcid>(aminoAcids.length());
+	private List<AminoAcid> parse(String aminoAcids){
+		InvalidCharacterHandler invalidCharacterHandler = decodingOptions.getInvalidCharacterHandler();
+		List<AminoAcid> result = new ArrayList<>(aminoAcids.length());
         for(int i=0; i<aminoAcids.length(); i++){
             char charAt = aminoAcids.charAt(i);
             if(!Character.isWhitespace(charAt)){
-            	result.add(AminoAcid.parse(charAt));
+				AminoAcid aa = AminoAcid.parse(charAt, invalidCharacterHandler);
+				if(aa!=null){
+					result.add(aa);
+				}
             }
         }
         return result;

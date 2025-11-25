@@ -26,6 +26,7 @@ import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.Defline;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
+import org.jcvi.jillion.core.residue.DecodingOptions;
 import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 import org.jcvi.jillion.fasta.FastaVisitor;
@@ -41,6 +42,8 @@ final class LargeProteinFastaIterator extends AbstractBlockingStreamingIterator<
 	private final  Predicate<ProteinFastaRecord> recordFilter;
 	private final BiFunction<String,String, Defline> idConverter;
 
+	private final DecodingOptions decodingOptions;
+
 	public static LargeProteinFastaIterator createNewIteratorFor(FastaParser parser){
 		return createNewIteratorFor(parser, DataStoreFilters.alwaysAccept(),null);
 	}
@@ -48,17 +51,22 @@ final class LargeProteinFastaIterator extends AbstractBlockingStreamingIterator<
 		return createNewIteratorFor(parser, filter, recordFilter, null);
 	}
 	public static LargeProteinFastaIterator createNewIteratorFor(FastaParser parser, Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter, BiFunction<String,String, Defline> idConverter){
-	 LargeProteinFastaIterator iter = new LargeProteinFastaIterator(parser, filter, recordFilter,idConverter);
-											iter.start();
+		return createNewIteratorFor(parser, filter, recordFilter, idConverter, null);
+	}
+
+	public static LargeProteinFastaIterator createNewIteratorFor(FastaParser parser, Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter, BiFunction<String,String, Defline> idConverter, DecodingOptions decodingOptions){
+		LargeProteinFastaIterator iter = new LargeProteinFastaIterator(parser, filter, recordFilter,idConverter, decodingOptions);
+		iter.start();
 
 		return iter;
 	}
 	 
-	 private LargeProteinFastaIterator(FastaParser parser,Predicate<String> filter,  Predicate<ProteinFastaRecord> recordFilter, BiFunction<String,String, Defline> idConverter){
+	 private LargeProteinFastaIterator(FastaParser parser,Predicate<String> filter,  Predicate<ProteinFastaRecord> recordFilter, BiFunction<String,String, Defline> idConverter, DecodingOptions decodingOptions){
 		 this.parser = parser;
 		 this.filter = filter;
 		 this.recordFilter = recordFilter;
 		 this.idConverter = idConverter==null? Defline::of: idConverter;
+		 this.decodingOptions = decodingOptions==null? DecodingOptions.DEFAULT: decodingOptions;
 	 }
 	 /**
 	    * {@inheritDoc}
@@ -76,7 +84,7 @@ final class LargeProteinFastaIterator extends AbstractBlockingStreamingIterator<
 						return null;
 					}
 					
-					return new AbstractProteinFastaRecordVisitor(defline.getId(), defline.getComment()) {
+					return new AbstractProteinFastaRecordVisitor(defline.getId(), defline.getComment(), true, decodingOptions) {
 						
 						@Override
 						protected void visitRecord(ProteinFastaRecord fastaRecord) {

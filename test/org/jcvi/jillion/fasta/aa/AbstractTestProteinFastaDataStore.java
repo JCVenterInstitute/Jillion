@@ -22,28 +22,37 @@ package org.jcvi.jillion.fasta.aa;
 
 import static org.junit.Assert.*;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Iterator;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.core.residue.InvalidCharacterHandlers;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 import org.jcvi.jillion.core.residue.aa.ProteinSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.internal.fasta.aa.UnCommentedProteinFastaRecord;
+import org.jcvi.jillion.spi.InvalidCharacterHandler;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.rules.TemporaryFolder;
+
 public abstract class AbstractTestProteinFastaDataStore {
 
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
-	
+
+	@Rule
+	public TemporaryFolder tempDir = new TemporaryFolder();
+
 	private final ProteinFastaRecord firstRecord = new UnCommentedProteinFastaRecord(
 			"ABN50481.1",
 			new ProteinSequenceBuilder("MKAIIVLLLVVTSNADRICTGITSSNSPHVVKTATQGEVNVTGAIPLTTTPTKSHFANLKGTKTRGKLCPTCFN" +
@@ -85,6 +94,7 @@ public abstract class AbstractTestProteinFastaDataStore {
 	}
 	
 	protected abstract ProteinFastaDataStore create(File fastaFile) throws Exception;
+	protected abstract ProteinFastaDataStore create(File fastaFile, InvalidCharacterHandler invalidCharacterHandler) throws Exception;
 	
 	@Test
 	public void numberOfRecords() throws DataStoreException{
@@ -241,4 +251,62 @@ public abstract class AbstractTestProteinFastaDataStore {
 	    	}
 	    	return builder.build();
 		}
+
+		@Test
+		public void withInvalidCharacterError() throws Exception {
+			File fasta = tempDir.newFile("foo.fasta");
+
+			try(PrintWriter writer = new PrintWriter(fasta)){
+
+				writer.println(">foo");
+				writer.println("MIJKT0W");
+			}
+
+			//some implementations might delay parsing the sequences until they are needed
+			//so actually check for error on fetch
+			assertThrows(IllegalArgumentException.class, ()->{
+			try(ProteinFastaDataStore datastore = create(fasta, InvalidCharacterHandlers.ERROR_OUT)) {
+
+				 datastore.get("foo").getSequence().toString();
+			}
+			});
+		}
+
+	@Test
+	public void withInvalidCharacterIgnore() throws Exception {
+		File fasta = tempDir.newFile("foo.fasta");
+
+		try(PrintWriter writer = new PrintWriter(fasta)){
+
+			writer.println(">foo");
+			writer.println("MIJKT0W");
+		}
+
+		try(ProteinFastaDataStore datastore = create(fasta, InvalidCharacterHandlers.IGNORE)){
+			assertEquals(1, datastore.getNumberOfRecords());
+			assertEquals("MIJKTW", datastore.get("foo").getSequence().toString());
+
+			assertEquals("MIJKTW", datastore.iterator().next().getSequence().toString());
+
+		}
+	}
+
+	@Test
+	public void withInvalidCharacterChangeToX() throws Exception {
+		File fasta = tempDir.newFile("foo.fasta");
+
+		try(PrintWriter writer = new PrintWriter(fasta)){
+
+			writer.println(">foo");
+			writer.println("MIJKT0W");
+		}
+
+		try(ProteinFastaDataStore datastore = create(fasta, InvalidCharacterHandlers.REPLACE_WITH_UNKNOWN)){
+			assertEquals(1, datastore.getNumberOfRecords());
+			assertEquals("MIJKTXW", datastore.get("foo").getSequence().toString());
+
+			assertEquals("MIJKTXW", datastore.iterator().next().getSequence().toString());
+
+		}
+	}
 }

@@ -27,6 +27,8 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.DecodingOptions;
+import org.jcvi.jillion.core.residue.InvalidCharacterHandlers;
 import org.junit.Test;
 public class TestProteinSequenceBuilder {
 
@@ -45,7 +47,56 @@ public class TestProteinSequenceBuilder {
 		assertEquals(0, sut.getNumGaps());
 		assertEquals(5L, sut.getLength());
 	}
-	
+	@Test
+	public void decoderIgnoreInvalid(){
+		String expected = "IK0TW";
+		ProteinSequenceBuilder sut = new ProteinSequenceBuilder()
+					.setDecodingOptions(DecodingOptions.builder().invalidCharacterHandler(InvalidCharacterHandlers.IGNORE).build())
+				.append(expected);
+		assertEquals("IKTW", AminoAcidUtil.asString(sut.build()));
+		assertEquals(0, sut.getNumGaps());
+		assertEquals(4L, sut.getLength());
+	}
+
+	@Test
+	public void invalidCharHandlerIgnoreInvalid(){
+		String expected = "IK0TW";
+		ProteinSequenceBuilder sut = new ProteinSequenceBuilder()
+				.setInvalidCharacterHandler(InvalidCharacterHandlers.IGNORE)
+				.append(expected);
+		assertEquals("IKTW", AminoAcidUtil.asString(sut.build()));
+		assertEquals(0, sut.getNumGaps());
+		assertEquals(4L, sut.getLength());
+	}
+
+	@Test
+	public void decoderConstructorIgnoreInvalid(){
+		String expected = "IK0TW";
+		ProteinSequenceBuilder sut = new ProteinSequenceBuilder(InvalidCharacterHandlers.IGNORE)
+				.append(expected);
+		assertEquals("IKTW", AminoAcidUtil.asString(sut.build()));
+		assertEquals(0, sut.getNumGaps());
+		assertEquals(4L, sut.getLength());
+	}
+	@Test
+	public void decoderConstructorUnknownInvalid(){
+		String expected = "IK0TW";
+		ProteinSequenceBuilder sut = new ProteinSequenceBuilder(InvalidCharacterHandlers.REPLACE_WITH_UNKNOWN)
+				.append(expected);
+		assertEquals("IKXTW", AminoAcidUtil.asString(sut.build()));
+		assertEquals(0, sut.getNumGaps());
+		assertEquals(5L, sut.getLength());
+	}
+
+	@Test
+	public void invalidCharHandlerConstructorIgnoreInvalid(){
+		String expected = "IK0TW";
+		ProteinSequenceBuilder sut = new ProteinSequenceBuilder(InvalidCharacterHandlers.IGNORE)
+				.append(expected);
+		assertEquals("IKTW", AminoAcidUtil.asString(sut.build()));
+		assertEquals(0, sut.getNumGaps());
+		assertEquals(4L, sut.getLength());
+	}
 	@Test
 	public void testToStringShouldPrintSequence(){
 		ProteinSequenceBuilder sut = new ProteinSequenceBuilder("IKFTW");

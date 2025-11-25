@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 import org.jcvi.jillion.core.residue.Residue;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.util.MapUtil;
+import org.jcvi.jillion.spi.InvalidCharacterHandler;
 
 /**
  * {@code AminoAcid} is a {@link Residue} representation 
@@ -280,6 +281,52 @@ public enum AminoAcid implements Residue<AminoAcid>{
         AminoAcid result = NAME_MAP.get(aminoAcid.toUpperCase(Locale.US));
         if(result ==null){
             throw new IllegalArgumentException(String.format("%s is not a valid Amino Acid", aminoAcid));
+        }
+        return result;
+    }
+
+    /**
+     * Get the single AminoAcid which is represented by the given String.
+     * the String can be the full name (with spaces if multiple words),
+     * the 3 letter abbreviation or the 1 letter abbreviation, case is
+     * insensitive.
+     * @param aminoAcid a single AminoAcid represented by a String.
+     * @return an {@link AminoAcid} (not null).
+     * @throws NullPointerException if aminoAcid is null.
+     * @throws IllegalArgumentException if the given String is not
+     * an AminoAcid.
+     */
+    public static AminoAcid parse(String aminoAcid, InvalidCharacterHandler invalidCharacterHandler){
+        AminoAcid result = NAME_MAP.get(aminoAcid.toUpperCase(Locale.US));
+        if(result ==null){
+            if(invalidCharacterHandler==null) {
+                throw new IllegalArgumentException(String.format("%s is not a valid Amino Acid", aminoAcid));
+            }
+            return invalidCharacterHandler.handle(AminoAcid.class, aminoAcid.charAt(0));
+        }
+        return result;
+    }
+    /**
+     * Get the single AminoAcid which is represented by the given String.
+     * the String can be the full name (with spaces if multiple words),
+     * the 3 letter abbreviation or the 1 letter abbreviation, case is
+     * insensitive.
+     * @param aminoAcid a single AminoAcid represented by a String.
+     * @param invalidCharacterHandler the {@link InvalidCharacterHandler}
+     *                                to use if the passed in character is not a valid amino acid.
+     * @return an {@link AminoAcid} (not null).
+     * @throws NullPointerException if aminoAcid is null.
+     * @throws IllegalArgumentException if the given String is not
+     * an AminoAcid.
+     * @since 6.1
+     */
+    public static AminoAcid parse(char aminoAcid, InvalidCharacterHandler invalidCharacterHandler){
+        AminoAcid result = NAME_MAP.get(Character.toString(aminoAcid));
+        if(result ==null){
+            if(invalidCharacterHandler==null) {
+                throw new IllegalArgumentException(String.format("%s is not a valid Amino Acid", aminoAcid));
+            }
+            return invalidCharacterHandler.handle(AminoAcid.class, aminoAcid);
         }
         return result;
     }
