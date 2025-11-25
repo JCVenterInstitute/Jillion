@@ -25,8 +25,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
+import org.jcvi.jillion.core.Defline;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
@@ -58,11 +60,19 @@ public final class DefaultProteinFastaDataStore{
 		return parseFile(in, builder);
 	}
 	public static ProteinFastaFileDataStore create(File fastaFile, Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter) throws IOException{
-		DefaultProteinFastaDataStoreBuilder builder = createBuilder(filter, recordFilter);
+		DefaultProteinFastaDataStoreBuilder builder = createBuilder(filter, recordFilter,null);
 		return parseFile(fastaFile, builder);
 	}
 	public static ProteinFastaFileDataStore create(FastaParser parser, Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter) throws IOException{
-		DefaultProteinFastaDataStoreBuilder builder = createBuilder(filter, recordFilter);
+		DefaultProteinFastaDataStoreBuilder builder = createBuilder(filter, recordFilter,null);
+		return create(parser, builder);
+	}
+	public static ProteinFastaFileDataStore create(File fastaFile, Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter, BiFunction<String, String, Defline> idConverter) throws IOException{
+		DefaultProteinFastaDataStoreBuilder builder = createBuilder(filter, recordFilter, idConverter);
+		return parseFile(fastaFile, builder);
+	}
+	public static ProteinFastaFileDataStore create(FastaParser parser, Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter, BiFunction<String, String, Defline> idConverter) throws IOException{
+		DefaultProteinFastaDataStoreBuilder builder = createBuilder(filter, recordFilter, idConverter);
 		return create(parser, builder);
 	}
 	public static ProteinFastaFileDataStore create(FastaParser parser) throws IOException{
@@ -70,7 +80,7 @@ public final class DefaultProteinFastaDataStore{
 		return create(parser, builder);
 	}
 	public static ProteinFastaFileDataStore create(InputStream in, Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter) throws IOException{
-		DefaultProteinFastaDataStoreBuilder builder = createBuilder(filter, recordFilter);
+		DefaultProteinFastaDataStoreBuilder builder = createBuilder(filter, recordFilter,null);
 		return parseFile(in, builder);
 	}
 	private static ProteinFastaFileDataStore parseFile(InputStream in, DefaultProteinFastaDataStoreBuilder visitor) throws IOException{
@@ -87,10 +97,10 @@ public final class DefaultProteinFastaDataStore{
 		return create(parser, visitor);
 	}
 	private static DefaultProteinFastaDataStoreBuilder createBuilder(){
-		return createBuilder(DataStoreFilters.alwaysAccept(),null);
+		return createBuilder(DataStoreFilters.alwaysAccept(),null,null);
 	}
-	private static DefaultProteinFastaDataStoreBuilder createBuilder(Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter){
-		return new DefaultProteinFastaDataStoreBuilder(filter, recordFilter);
+	private static DefaultProteinFastaDataStoreBuilder createBuilder(Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter,BiFunction<String, String, Defline> idConverter){
+		return new DefaultProteinFastaDataStoreBuilder(filter, recordFilter,idConverter);
 	}
 	private static final class DefaultProteinFastaDataStoreBuilder implements FastaVisitor, Builder<ProteinFastaFileDataStore>{
 
@@ -98,24 +108,27 @@ public final class DefaultProteinFastaDataStore{
 		
 		private final Predicate<String> filter;
 		private final Predicate<ProteinFastaRecord> recordFilter;
-		
-		public DefaultProteinFastaDataStoreBuilder(Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter){
+		private final BiFunction<String, String, Defline> idConverter;
+
+		public DefaultProteinFastaDataStoreBuilder(Predicate<String> filter, Predicate<ProteinFastaRecord> recordFilter, BiFunction<String, String, Defline> idConverter){
 			this.filter = filter;
 			this.recordFilter = recordFilter;
+			this.idConverter = idConverter==null? Defline::of: idConverter;
 		}
 		@Override
 		public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
 				final String id, String optionalComment) {
-			if(!filter.test(id)){
+			Defline convertedDefline = idConverter.apply(id, optionalComment);
+			if(!filter.test(convertedDefline.getId())){
 				return null;
 			}
-			return new AbstractProteinFastaRecordVisitor(id,optionalComment){
+			return new AbstractProteinFastaRecordVisitor(convertedDefline.getId(),convertedDefline.getComment()){
 
 				@Override
 				protected void visitRecord(
 						ProteinFastaRecord fastaRecord) {
 				    if(recordFilter ==null || recordFilter.test(fastaRecord)){
-					fastaRecords.put(id, fastaRecord);
+					fastaRecords.put(convertedDefline.getId(), fastaRecord);
 				    }
 					
 				}

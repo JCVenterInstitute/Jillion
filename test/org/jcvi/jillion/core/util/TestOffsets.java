@@ -152,23 +152,37 @@ public class TestOffsets {
 
         Offsets other = Offsets.fromSortedList(List.of(3,4,5,6,7,8,9));
 
-        Offsets.UniqueOffsets unique = Offsets.unique(sut, other);
+        UniqueOffsets unique = UniqueOffsets.between(sut, other);
 
 
         assertArrayEquals(new int[]{1,2}, unique.getA().toArray());
         assertArrayEquals(new int[]{6,7,8,9}, unique.getB().toArray());
+        assertArrayEquals(new int[]{3,4,5}, unique.getCommon().toArray());
 
-        Offsets.UniqueOffsets unique2 = Offsets.unique(other, sut);
+        UniqueOffsets unique2 = UniqueOffsets.between(other, sut);
 
 
         assertArrayEquals(new int[]{1,2}, unique2.getB().toArray());
         assertArrayEquals(new int[]{6,7,8,9}, unique2.getA().toArray());
+        assertArrayEquals(new int[]{3,4,5}, unique.getCommon().toArray());
 
     }
 
     @Test
     public void fromUnSortedList(){
         Offsets sut = Offsets.fromUnsortedList(List.of(5,4,3,2,1));
+
+        assertArrayEquals(new int[]{1,2,3,4,5}, sut.stream().toArray());
+
+        assertEquals(List.of(1,2,3,4,5), sut.asList());
+        List<Integer> actualforEachList = new ArrayList<>();
+        sut.forEach(actualforEachList::add);
+        assertEquals(List.of(1,2,3,4,5), actualforEachList);
+    }
+
+    @Test
+    public void fromUnSortedIntList(){
+        Offsets sut = Offsets.fromUnsortedList(ArrayUtil.asList(5,4,3,2,1));
 
         assertArrayEquals(new int[]{1,2,3,4,5}, sut.stream().toArray());
 
@@ -487,5 +501,7 @@ public class TestOffsets {
         Offsets reParsed = mapper.readValue(json, Offsets.class);
         assertEquals(reParsed, sut);
     }
+
+
 
 }

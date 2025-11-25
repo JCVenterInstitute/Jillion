@@ -30,15 +30,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
+import org.jcvi.jillion.core.Defline;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.io.IOUtil;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.DecodingOptions;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder.DecodingOptions;
 import org.jcvi.jillion.core.util.Builder;
 import org.jcvi.jillion.fasta.FastaFileParser;
 import org.jcvi.jillion.fasta.FastaParser;
@@ -61,8 +61,8 @@ final class DefaultNucleotideFastaFileDataStore{
 		//can not instantiate.
 	}
 
-	private static NucleotideFastaDataStoreBuilderVisitorImpl2 createBuilder(Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter, 
-			DecodingOptions decodingOptions, Function<String,String> idConverter){
+	private static NucleotideFastaDataStoreBuilderVisitorImpl2 createBuilder(Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter,
+																			 DecodingOptions decodingOptions, BiFunction<String, String, Defline> idConverter){
 		return new NucleotideFastaDataStoreBuilderVisitorImpl2(filter, recordFilter, decodingOptions, idConverter);
 	}
 	
@@ -72,15 +72,15 @@ final class DefaultNucleotideFastaFileDataStore{
 	public static NucleotideFastaFileDataStore create(File fastaFile, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter,  DecodingOptions decodingOptions) throws IOException {
 		return create(fastaFile, filter,recordFilter, decodingOptions, null);
 	}
-	public static NucleotideFastaFileDataStore create(File fastaFile, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter,  DecodingOptions decodingOptions, Function<String,String> idConverter) throws IOException{
+	public static NucleotideFastaFileDataStore create(File fastaFile, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter, DecodingOptions decodingOptions, BiFunction<String, String, Defline> idConverter) throws IOException{
 		
 		FastaParser parser = FastaFileParser.create(fastaFile);
 		
 		return create(parser, filter, recordFilter, decodingOptions,idConverter);
 	}
 
-	public static NucleotideFastaFileDataStore create(FastaParser parser,Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter,
-													  DecodingOptions decodingOptions, Function<String,String> idConverter) throws IOException {
+	public static NucleotideFastaFileDataStore create(FastaParser parser, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter,
+													  DecodingOptions decodingOptions, BiFunction<String, String, Defline> idConverter) throws IOException {
 		NucleotideFastaDataStoreBuilderVisitorImpl2 builder = createBuilder(filter, recordFilter, decodingOptions, idConverter);
 		if(parser instanceof FastaFileParser){
 		    ((FastaFileParser)parser).getFile().ifPresent(builder::setSourceFile);
@@ -92,9 +92,9 @@ final class DefaultNucleotideFastaFileDataStore{
 	public static NucleotideFastaFileDataStore create(InputStream in) throws IOException{
 		return create(in,DataStoreFilters.alwaysAccept(), null, null,null);
 	}
-	public static NucleotideFastaFileDataStore create(InputStream in, DataStoreFilter filter, 
-			Predicate<NucleotideFastaRecord> recordFilter, 
-			DecodingOptions decodingOptions, Function<String,String> idConverter) throws IOException{
+	public static NucleotideFastaFileDataStore create(InputStream in, DataStoreFilter filter,
+													  Predicate<NucleotideFastaRecord> recordFilter,
+													  DecodingOptions decodingOptions, BiFunction<String, String, Defline> idConverter) throws IOException{
 		try{
 			NucleotideFastaDataStoreBuilderVisitorImpl2 builder = createBuilder(filter, recordFilter, decodingOptions, idConverter);
 			FastaFileParser.create(in).parse(builder);
@@ -114,22 +114,22 @@ final class DefaultNucleotideFastaFileDataStore{
 		private final ReusableNucleotideFastaRecordVisitor currentVisitor;
 		
 		private File fastaFile =null;
-		private Function<String,String> idConverter;
+		private BiFunction<String, String, Defline> idConverter;
 
-		public NucleotideFastaDataStoreBuilderVisitorImpl2(Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter, 
-				DecodingOptions decodingOptions, Function<String,String> idConverter){
+		public NucleotideFastaDataStoreBuilderVisitorImpl2(Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter,
+														   DecodingOptions decodingOptions, BiFunction<String, String, Defline> idConverter){
 			this.filter = filter;
 			this.currentVisitor = new ReusableNucleotideFastaRecordVisitor(recordFilter, decodingOptions);
-			this.idConverter = idConverter==null? Function.identity() : idConverter;
+			this.idConverter = idConverter==null? Defline::of : idConverter;
 		}
 		@Override
 		public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
 				final String id, String optionalComment) {
-			String convertedId = idConverter.apply(id);
-			if(convertedId==null || !filter.test(convertedId)){
+			Defline defline = idConverter.apply(id, optionalComment);
+			if(defline==null || !filter.test(defline.getId())){
 				return null;
 			}
-			currentVisitor.initialize(convertedId, optionalComment);
+			currentVisitor.initialize(defline.getId(), defline.getComment());
 			return currentVisitor;
 			
 		}
@@ -172,7 +172,7 @@ final class DefaultNucleotideFastaFileDataStore{
 			 * Default constructor needs to have it's data
 			 * initialized.
 			 */
-			public ReusableNucleotideFastaRecordVisitor(Predicate<NucleotideFastaRecord> recordFilter,DecodingOptions decodingOptions){
+			public ReusableNucleotideFastaRecordVisitor(Predicate<NucleotideFastaRecord> recordFilter, DecodingOptions decodingOptions){
 				this.recordFilter = recordFilter;
 				this.builder.setDecodingOptions(decodingOptions);
 			}

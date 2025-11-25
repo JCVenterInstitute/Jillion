@@ -53,19 +53,21 @@ public interface Defline {
      * 
      * @throws NullPointerException if id is null.
      */
-    public static Defline of(String id){
+    static Defline of(String id){
         return of(id, null);
     }
     
     /**
      * Create a new Defline instance with the given id and comment.
-     * @param id the id; can not be null.
+     * @param id the id; if the Id is null, then the returned defline is also null.
      * @param comment the optional comment; set to null if a comment is not present.
-     * @return a new Defline instance.
-     * 
-     * @throws NullPointerException if id is null.
+     * @return a new Defline instance or null.
+     *
      */
-    public static Defline of(String id, String comment){
+    static Defline of(String id, String comment){
+        if(id==null){
+            return null;
+        }
         return new DeflineImpl(id, comment);
     }
 

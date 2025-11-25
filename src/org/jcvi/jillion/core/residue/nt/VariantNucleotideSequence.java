@@ -1,31 +1,22 @@
 package org.jcvi.jillion.core.residue.nt;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.PrimitiveIterator.OfInt;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.PrimitiveIterator;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -33,22 +24,18 @@ import java.util.stream.Stream;
 import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Rangeable;
-import org.jcvi.jillion.core.Ranges;
-import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder.DecodingOptions;
+import org.jcvi.jillion.core.residue.DecodingOptions;
 import org.jcvi.jillion.core.residue.nt.UnderlyingCoverage.UnderlyingCoverageFeature;
 import org.jcvi.jillion.core.residue.nt.UnderlyingCoverage.UnderlyingCoverageParameters;
-import org.jcvi.jillion.core.residue.nt.VariantNucleotideSequence.Builder;
 import org.jcvi.jillion.core.residue.nt.VariantNucleotideSequence.Variant.VariantBuilder;
 import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.core.util.Offsets;
-import org.jcvi.jillion.core.util.SingleThreadAdder;
 import org.jcvi.jillion.core.util.UnAdjustedCoordinateMapper;
-import org.jcvi.jillion.internal.core.util.ArrayUtil;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 import org.jcvi.jillion.internal.core.util.iter.PrimitiveArrayIterators;
 
 import lombok.Data;
+import org.jcvi.jillion.spi.InvalidCharacterHandler;
 
 public class VariantNucleotideSequence implements INucleotideSequence<VariantNucleotideSequence, VariantNucleotideSequence.Builder>{
 

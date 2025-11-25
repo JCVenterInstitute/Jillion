@@ -25,9 +25,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.OptionalLong;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.jcvi.jillion.core.Defline;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.InputStreamSupplier;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
@@ -112,18 +114,18 @@ public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDat
 	 */
 	@Override
 	protected ProteinFastaFileDataStore createNewInstance(FastaParser parser, DataStoreProviderHint hint, Predicate<String> filter, 
-			Predicate<ProteinFastaRecord> recordFilter, OptionalLong maxNumberofRecords, Function<String,String> idConverter)
+			Predicate<ProteinFastaRecord> recordFilter, OptionalLong maxNumberofRecords, BiFunction<String,String, Defline> idConverter)
 			throws IOException {
 		if(parser.isReadOnceOnly()){
-			return DefaultProteinFastaDataStore.create(parser,filter, recordFilter);
+			return DefaultProteinFastaDataStore.create(parser,filter, recordFilter, idConverter);
 		}
 		switch(hint){
-			case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultProteinFastaDataStore.create(parser,filter, recordFilter);
+			case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultProteinFastaDataStore.create(parser,filter, recordFilter, idConverter);
 			case RANDOM_ACCESS_OPTIMIZE_MEMORY:
 				return parser.canCreateMemento() ?						
-						IndexedProteinFastaFileDataStore.create(parser,filter, recordFilter)
-					:	DefaultProteinFastaDataStore.create(parser,filter, recordFilter);
-			case ITERATION_ONLY: return LargeProteinFastaFileDataStore.create(parser,filter, recordFilter, maxNumberofRecords);
+						IndexedProteinFastaFileDataStore.create(parser,filter, recordFilter, idConverter)
+					:	DefaultProteinFastaDataStore.create(parser,filter, recordFilter, idConverter);
+			case ITERATION_ONLY: return LargeProteinFastaFileDataStore.create(parser,filter, recordFilter, maxNumberofRecords, idConverter);
 			default:
 				throw new IllegalArgumentException("unknown provider hint :"+ hint);
 		}

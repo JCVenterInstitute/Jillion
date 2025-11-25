@@ -60,7 +60,12 @@ public enum AminoAcid implements Residue<AminoAcid>{
     Aspartic_Acid("Aspartic Acid", "Asp",'D'),
     Glutamic_Acid("Glutamic Acid","Glu",'E'),
     //ambiguities
-    Unknown_Amino_Acid("Unknown Amino Acid", "Unk", 'X'),
+    Unknown_Amino_Acid("Unknown Amino Acid", "Unk", 'X'){
+        @Override
+        public boolean isUnknown() {
+            return true;
+        }
+    },
     Aspartate_or_Asparagine("Aspartate or Asparagine", "Asx", 'B'),
     Glutamate_or_Glutamine("Glutamate or Glutamine", "Glx", 'Z'),
     //Selenocysteine - inserted as a post-translational modification
@@ -152,6 +157,11 @@ public enum AminoAcid implements Residue<AminoAcid>{
     public Set<AminoAcid> getNonAmbiguousBases(){
         return AMBIGUITY_TO_CONSTIUENT.getOrDefault(this, EnumSet.of(this));
     }
+    @Override
+    public boolean isUnknown() {
+        return false;
+    }
+
     /**
      * Get the AminoAcid that best represents the given group of amino acids.
      * @param aas the amino acids to consider; can not be null or contain any null elements;

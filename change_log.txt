@@ -19,19 +19,35 @@ The Nucleotide and Protein Sequence classes now have builders for them.
 4. new `SequenceMatcherParameters` object has new parameters like explode Ambiguities flags on both the pattern sequence and the input sequence
   that will permute all combinations of ambiguity values for better matching.  These flags are off by default for performance reasons.
 5. NucleotideFastaDataStores now have an optional `idConverter` which is a `Function<String,String>` to allow you to change the ids in the DataStore or iterator from what's parsed in the fasta files.
-
 6. Added starts/ends before/after methods to both Range and Range.Builder that take single offset instead of a Range.
 7. Added Range Jackson JSON support
 8. Added Range#toSimpleString() which returns `$begin..$end` used in JSON serialization.
 9. Added Jackson JSON support for ProteinSequences
 10. GrowableArrays are now annotated with Jackson for serializing and deserializing.
 11. Exposed internal `IntList` class which is an List<Integer> of primitives.
-
+12. Fasta DataStores and their Builders now have an optional IdConverter function that takes an fasta id and comment and returns a new `Defline` object.
+    This lets you reformat the id and comments in the datastore.  These transformations occur before the filtering is applied
+    so for example if you want to concatenate the comment to the id part to make the new id, any filters
+    to check will see the concatenated id.
+13. Created DeflineConverter interface and DeflineConverters constant class with some common implementations.
 
 Performance Improvements
 ------------------------
 1. NucleotideSequenceBuilder internal functions changed to use Offsets internally this should be a 1-2% performance boost.
 2. Various functions that iterated over integers have been improved by using new IntList
+
+API Breaking Changes
+------------------------
+1. Residue is now `Residue<R extends Residue<R>>` so we can reference the type in some methods such as
+  the new `Set<R> getNonAmbiguousBases()`.  All Jillion classes that use Residue such as Sequence have been
+  updated accordingly but if your client makes use of generics with the Residue type (opposed to Nucleotide or Amino Acid)
+  you will have to change your code from `<R extends Residue>` to `<R extends Residue<R>>``
+
+2. Removed several NucleotideFastaRecord.createStreamingIterator() methods and replaced it with one that takes a
+ Consumer<NucleotideFastaDataStoreBuilder> to let you perform any additional configuration
+
+ 3. InvalidCharacterHandler used to be just for Nucleotide but has now been refactored out to the residue package
+ and implementations can support any Residue implementation.  
 
 Mild API Breaking Changes
 ------------------------

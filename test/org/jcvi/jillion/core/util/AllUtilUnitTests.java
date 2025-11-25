@@ -111,7 +111,10 @@ import org.junit.runners.Suite.SuiteClasses;
 			TestGrowableShortArrayJson.class,
 			TestGrowableByteArrayJson.class,
 			TestGrowableCharArrayJson.class,
-			TestGrowableBitArrayJson.class
+			TestGrowableBitArrayJson.class,
+
+			TestOffsetComplement.class,
+			TestOffsetIntersection.class
     }
     )
 public class AllUtilUnitTests {

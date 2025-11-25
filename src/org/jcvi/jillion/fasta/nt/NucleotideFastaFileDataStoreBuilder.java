@@ -25,17 +25,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.OptionalLong;
 import java.util.Set;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
+import org.jcvi.jillion.core.Defline;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.InputStreamSupplier;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
+import org.jcvi.jillion.core.residue.DecodingOptions;
+import org.jcvi.jillion.core.residue.nt.*;
 import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.shared.fasta.AbstractFastaFileDataStoreBuilder;
+import org.jcvi.jillion.spi.InvalidCharacterHandler;
+
 /**
  * {@code NucleotideFastaFileDataStoreBuilder}
  * is a factory class that can create new instances
@@ -60,7 +61,7 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	 * Handler for what to do when we get an invalid character
 	 * @since 6.0
 	 */
-	private NucleotideSequenceBuilder.DecodingOptions decodingOptions = NucleotideSequenceBuilder.DecodingOptions.DEFAULT;
+	private DecodingOptions decodingOptions = DecodingOptions.DEFAULT;
 	
 	/**
 	 * Create a new Builder instance of 
@@ -150,7 +151,7 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	protected NucleotideFastaFileDataStore createNewInstance(
 			FastaParser parser, DataStoreProviderHint providerHint, Predicate<String> filter,
 			Predicate<NucleotideFastaRecord> recordFilter, OptionalLong maxNumberOfRecords,
-			Function<String,String> idConverter)
+			BiFunction<String, String, Defline> idConverter)
 			throws IOException {
 		if(parser.isReadOnceOnly()){
 			return DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter, decodingOptions, idConverter);
@@ -191,7 +192,7 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 		return this;
 	}
 	/**
-	 * Set the {@link org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler} to use
+	 * Set the {@link InvalidCharacterHandler} to use
 	 * when parsing sequences for this Datastore.  If set to {@code null}
 	 * then the default handler is used.
 	 * @param invalidCharacterHandler the handler to use; if set to {@code null}
@@ -201,11 +202,11 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	 * 
 	 * @since 6.0
 	 */
-	public NucleotideFastaFileDataStoreBuilder invalidCharacterHandler(Nucleotide.InvalidCharacterHandler invalidCharacterHandler) {
+	public NucleotideFastaFileDataStoreBuilder invalidCharacterHandler(InvalidCharacterHandler invalidCharacterHandler) {
 		return decoderOptions(this.decodingOptions.toBuilder().invalidCharacterHandler(invalidCharacterHandler).build());
 	}
 	/**
-	 * Set the {@link org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder.DecodingOptions} to use
+	 * Set the {@link DecodingOptions} to use
 	 * when parsing sequences for this Datastore.  If set to {@code null}
 	 * then the default decoder is used.
 	 * @param decodingOptions the options to use; if set to {@code null}
@@ -215,8 +216,8 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	 * 
 	 * @since 6.0
 	 */
-	public NucleotideFastaFileDataStoreBuilder decoderOptions(NucleotideSequenceBuilder.DecodingOptions decodingOptions) {
-		this.decodingOptions = decodingOptions==null? NucleotideSequenceBuilder.DecodingOptions.DEFAULT: decodingOptions;
+	public NucleotideFastaFileDataStoreBuilder decoderOptions(DecodingOptions decodingOptions) {
+		this.decodingOptions = decodingOptions==null? DecodingOptions.DEFAULT: decodingOptions;
 		return this;
 	}
 	/**
@@ -267,7 +268,7 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	 */
 	@Override
 	public NucleotideFastaFileDataStoreBuilder idConverter(
-			Function<String, String> idConverter) {
+			BiFunction<String, String, Defline> idConverter) {
 		super.idConverter(idConverter);
 		return this;
 	}

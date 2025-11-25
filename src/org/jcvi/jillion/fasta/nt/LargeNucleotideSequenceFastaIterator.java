@@ -22,13 +22,11 @@ package org.jcvi.jillion.fasta.nt;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
-import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder.DecodingOptions;
+import org.jcvi.jillion.core.Defline;
+import org.jcvi.jillion.core.residue.DecodingOptions;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.fasta.FastaFileParser;
 import org.jcvi.jillion.fasta.FastaParser;
@@ -48,7 +46,7 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 	private final Predicate<String> filter;
 	private final Predicate<NucleotideFastaRecord> recordFilter;
 	private final DecodingOptions decodingOptions;
-	private final Function<String,String> idConverter;
+	private final BiFunction<String,String, Defline> idConverter;
 
 	 public static LargeNucleotideSequenceFastaIterator createNewIteratorFor(File fastaFile, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter) throws IOException{
 		 return createNewIteratorFor(FastaFileParser.create(fastaFile), filter, recordFilter, null,null);
@@ -59,7 +57,7 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 	 public static LargeNucleotideSequenceFastaIterator createNewIteratorFor(FastaParser parser, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter) throws IOException{
 		 return createNewIteratorFor(parser, filter, recordFilter, null,null);
 	 }
-	 public static LargeNucleotideSequenceFastaIterator createNewIteratorFor(FastaParser parser, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter, DecodingOptions decodingOptions, Function<String,String> idConverter) throws IOException{
+	 public static LargeNucleotideSequenceFastaIterator createNewIteratorFor(FastaParser parser, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter, DecodingOptions decodingOptions, BiFunction<String,String, Defline> idConverter) throws IOException{
 		 LargeNucleotideSequenceFastaIterator iter = new LargeNucleotideSequenceFastaIterator(parser, filter, recordFilter, decodingOptions, idConverter);
 				                                iter.start();			
 	    	
@@ -67,7 +65,7 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 	 }
 	 
 	 private LargeNucleotideSequenceFastaIterator(FastaParser parser, Predicate<String> filter, Predicate<NucleotideFastaRecord> recordFilter,
-			 DecodingOptions decodingOptions, Function<String,String> idConverter){
+												  DecodingOptions decodingOptions, BiFunction<String,String, Defline> idConverter){
 		 super(5_000); // fasta records shouldn't be that big...
 		 
 		 if(!parser.canParse()){
@@ -77,7 +75,7 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 		 this.filter = filter;
 		 this.recordFilter = recordFilter;
 		 this.decodingOptions = decodingOptions;
-		 this.idConverter = idConverter==null? Function.identity(): idConverter;
+		 this.idConverter = idConverter==null? Defline::of: idConverter;
 	 }
 	 /**
 	    * {@inheritDoc}
@@ -91,11 +89,11 @@ final class LargeNucleotideSequenceFastaIterator extends AbstractBlockingStreami
 				public FastaRecordVisitor visitDefline(
 						final FastaVisitorCallback callback, String id,
 						String optionalComment) {
-					String convertedId = idConverter.apply(id);
-					if(convertedId==null || !filter.test(convertedId)){
+					Defline convertedId = idConverter.apply(id, optionalComment);
+					if(convertedId==null || !filter.test(convertedId.getId())){
 						return null;
 					}
-					recordVisitor.prepareNewRecord(callback, convertedId, optionalComment);
+					recordVisitor.prepareNewRecord(callback, convertedId.getId(), convertedId.getComment());
 					return recordVisitor;
 				}
 

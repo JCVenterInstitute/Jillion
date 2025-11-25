@@ -22,10 +22,12 @@ package org.jcvi.jillion.internal.fasta;
 
 import java.io.IOException;
 import java.util.OptionalLong;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.jcvi.jillion.core.Defline;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
@@ -51,7 +53,7 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
     private Long size;
     private volatile boolean closed=false;
     private final Long maxNumberOfRecords;
-    private final Function<String,String> idConverter;
+    private final BiFunction<String,String, Defline> idConverter;
     
     /**
      * Construct a {@link AbstractLargeFastaFileDataStore} using
@@ -65,7 +67,7 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
      */
     protected AbstractLargeFastaFileDataStore(FastaParser parser, Predicate<String> filter, 
     		Predicate<F> recordFilter, OptionalLong maxNumberOfRecords,
-            Function<String,String> idConverter) {
+                                              BiFunction<String,String, Defline> idConverter) {
         if(parser ==null){
             throw new NullPointerException("fasta parser can not be null");
         }
@@ -76,7 +78,7 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
         this.parser = parser;
         this.recordFilter = recordFilter;
         this.maxNumberOfRecords = maxNumberOfRecords.isEmpty()? null: maxNumberOfRecords.getAsLong();
-        this.idConverter = idConverter==null? Function.identity() : idConverter;
+        this.idConverter = idConverter==null? Defline::of : idConverter;
     }
 
     
@@ -86,7 +88,7 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
         }
     }
 
-    protected Function<String, String> getIdConverter() {
+    protected BiFunction<String,String, Defline> getIdConverter() {
         return idConverter;
     }
 
@@ -263,7 +265,7 @@ public abstract class AbstractLargeFastaFileDataStore<T,S extends Sequence<T>, F
        
     }
 
-	protected abstract StreamingIterator<F> createNewIterator(FastaParser parser ,Predicate<String> filter, Predicate<F> recordIterator, Function<String,String> idConverter) throws DataStoreException;
+	protected abstract StreamingIterator<F> createNewIterator(FastaParser parser ,Predicate<String> filter, Predicate<F> recordIterator, BiFunction<String,String, Defline> idConverter) throws DataStoreException;
    
 
 	@Override

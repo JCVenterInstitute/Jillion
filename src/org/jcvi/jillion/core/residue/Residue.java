@@ -67,4 +67,15 @@ public interface Residue<R extends Residue<R>>{
      * @since 6.1
      */
     Set<R> getNonAmbiguousBases();
+
+    /**
+     * Is this Residue the special value to represent
+     * "unknown" such as Nucleotide's N or Amino Acid's X for example.
+     *  Only 1 residue per class type should
+     * return {@code true} for this.
+     * @return {@code true} if this residue is the value for UNKNWON.
+     *
+     * @since 6.1
+     */
+    boolean isUnknown();
 }

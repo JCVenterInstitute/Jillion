@@ -32,7 +32,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder.DecodingOptions;
+import org.jcvi.jillion.core.residue.DecodingOptions;
+import org.jcvi.jillion.core.residue.InvalidCharacterHandlers;
 import org.jcvi.jillion.core.testUtil.TestUtil;
 import org.jcvi.jillion.testutils.NucleotideSequenceTestUtil;
 import org.junit.Test;
@@ -291,6 +292,36 @@ public class TestNucleotideSequenceBuilder {
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGT");
         sut.insert(2, Nucleotides.parse("-N-"));
         assertBuiltDnaSequenceEquals("AC-N-GT",sut);
+    }
+    @Test(expected = NullPointerException.class)
+    public void hasGapsNullRangeShouldThrowNPE(){
+        new NucleotideSequenceBuilder("AC-GT").hasGaps(null);
+    }
+    @Test
+    public void hasGaps(){
+        assertTrue(new NucleotideSequenceBuilder("AC-GT").hasGaps());
+        assertFalse(new NucleotideSequenceBuilder("ACGT").hasGaps());
+    }
+    @Test
+    public void hasGapsRange(){
+        assertTrue(new NucleotideSequenceBuilder("AC-GT").hasGaps(Range.ofLength(4)));
+        assertFalse(new NucleotideSequenceBuilder("ACGT").hasGaps(Range.ofLength(4)));
+        assertFalse(new NucleotideSequenceBuilder("ACG-T").hasGaps(Range.of(0,2)));
+    }
+    @Test(expected = NullPointerException.class)
+    public void builtHasGapsNullRangeShouldThrowNPE(){
+        new NucleotideSequenceBuilder("AC-GT").build().hasGaps(null);
+    }
+    @Test
+    public void builtHasGaps(){
+        assertTrue(new NucleotideSequenceBuilder("AC-GT").build().hasGaps());
+        assertFalse(new NucleotideSequenceBuilder("ACGT").build().hasGaps());
+    }
+    @Test
+    public void builtHasGapsRange(){
+        assertTrue(new NucleotideSequenceBuilder("AC-GT").build().hasGaps(Range.ofLength(4)));
+        assertFalse(new NucleotideSequenceBuilder("ACGT").build().hasGaps(Range.ofLength(4)));
+        assertFalse(new NucleotideSequenceBuilder("ACG-T").build().hasGaps(Range.of(0,2)));
     }
     @Test
     public void insertContentsOfOtherBuilder(){
@@ -1252,27 +1283,27 @@ public class TestNucleotideSequenceBuilder {
     
     @Test
     public void setInvalidCharacterHandlerIgnore() {
-    	assertEquals("ACGACG",  new NucleotideSequenceBuilder("ACGZ", Nucleotide.InvalidCharacterHandlers.IGNORE)
+    	assertEquals("ACGACG",  new NucleotideSequenceBuilder("ACGZ", InvalidCharacterHandlers.IGNORE)
     			.append("ACGZ")
     			.toString());
 	}
     @Test
     public void setInvalidCharacterHandlerNs() {
-    	assertEquals("ACGNACGN",  new NucleotideSequenceBuilder("ACGZ", Nucleotide.InvalidCharacterHandlers.REPLACE_WITH_N)
+    	assertEquals("ACGNACGN",  new NucleotideSequenceBuilder("ACGZ", InvalidCharacterHandlers.REPLACE_WITH_UNKNOWN)
     			.append("ACGZ")
     			.toString());
 	}
     @Test
     public void setDifferentInvalidCharacterHandlers() {
-    	assertEquals("ACGACGN",  new NucleotideSequenceBuilder("ACGZ", Nucleotide.InvalidCharacterHandlers.IGNORE)
-    			.setInvalidCharacterHandler(Nucleotide.InvalidCharacterHandlers.REPLACE_WITH_N)
+    	assertEquals("ACGACGN",  new NucleotideSequenceBuilder("ACGZ", InvalidCharacterHandlers.IGNORE)
+    			.setInvalidCharacterHandler(InvalidCharacterHandlers.REPLACE_WITH_UNKNOWN)
     			.append("ACGZ")
     			.toString());
 	}
     
     @Test
     public void setInvalidCharsToNullWillUseDefaultThrowIllegalArgException() {
-    	NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder("ACGZ", Nucleotide.InvalidCharacterHandlers.IGNORE);
+    	NucleotideSequenceBuilder builder = new NucleotideSequenceBuilder("ACGZ", InvalidCharacterHandlers.IGNORE);
     	assertThrows(IllegalArgumentException.class, ()-> builder.setInvalidCharacterHandler(null).append("ACGZ"));
     }
     

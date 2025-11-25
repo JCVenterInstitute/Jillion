@@ -28,10 +28,12 @@ package org.jcvi.jillion.internal.fasta.qual;
 import java.io.File;
 import java.io.IOException;
 import java.util.OptionalLong;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.jcvi.jillion.core.Defline;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
@@ -67,23 +69,26 @@ public final class LargeQualityFastaFileDataStore extends AbstractLargeFastaFile
     }
     public static QualityFastaDataStore create(File fastaFile, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter) throws IOException{
     	FastaParser parser = FastaFileParser.create(fastaFile);
-    	return new LargeQualityFastaFileDataStore(parser,filter, recordFilter, OptionalLong.empty());
+    	return new LargeQualityFastaFileDataStore(parser,filter, recordFilter, OptionalLong.empty(),null);
     }
     
     public static QualityFastaDataStore create(FastaParser parser){
     	return create(parser, DataStoreFilters.alwaysAccept(), null, OptionalLong.empty());
     }
     public static QualityFastaDataStore create(FastaParser parser, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter,  OptionalLong maxNumberofRecords){
-    	return new LargeQualityFastaFileDataStore(parser,filter, recordFilter, maxNumberofRecords);
+    	return new LargeQualityFastaFileDataStore(parser,filter, recordFilter, maxNumberofRecords, null);
     }
-	protected LargeQualityFastaFileDataStore(FastaParser parser, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter, OptionalLong maxNumberofRecords) {
-		super(parser, filter, recordFilter, maxNumberofRecords,null);
+    public static QualityFastaDataStore create(FastaParser parser, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter,  OptionalLong maxNumberofRecords, BiFunction<String, String, Defline> idConverter){
+        return new LargeQualityFastaFileDataStore(parser,filter, recordFilter, maxNumberofRecords, idConverter);
+    }
+	protected LargeQualityFastaFileDataStore(FastaParser parser, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter, OptionalLong maxNumberofRecords, BiFunction<String, String, Defline> idConverter) {
+		super(parser, filter, recordFilter, maxNumberofRecords,idConverter);
 	}
 
 	@Override
 	protected StreamingIterator<QualityFastaRecord> createNewIterator(
-			FastaParser parser, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter, Function<String,String> idConverter) {
-		StreamingIterator<QualityFastaRecord> iter = QualitySequenceFastaDataStoreIteratorImpl.createIteratorFor(parser, filter, recordFilter);
+			FastaParser parser, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter, BiFunction<String,String, Defline> idConverter) {
+		StreamingIterator<QualityFastaRecord> iter = QualitySequenceFastaDataStoreIteratorImpl.createIteratorFor(parser, filter, recordFilter, idConverter);
         
         return DataStoreStreamingIterator.create(this,iter);
 	}

@@ -26,7 +26,10 @@ import java.util.stream.Stream;
 
 /**
  * Offsets stores a list of sorted offets indexes,
- * removing will adjust downstream values accordingly.
+ * adding or removing values will adjust downstream values accordingly.
+ * The primary use of this class is to keep track of offsets
+ * of interest (such as gap offsets) and how sequence edits change those
+ * values.
  *
  * This class is not Threadsafe.
  *
@@ -47,10 +50,18 @@ public class Offsets {
         return delegate.iterator();
     }
 
+    /**
+     * Create a new copy of this; future changes to this object
+     * or the copy do NOT affect the other.
+     * @return a new Offsets object; will never be null.
+     */
     public Offsets copy() {
         return new Offsets(delegate.copy());
     }
 
+    /**
+     * Remove all values.
+     */
     public void clear() {
         delegate.clear();
     }
@@ -110,6 +121,21 @@ public class Offsets {
     public static final XorOptions DEFAULT_XOR_OPTIONS = XorOptions.builder().build();
     private GrowableIntArray delegate;
 
+    /**
+     * Create a NEW {@link Offsets}
+     * object that contains all the values of this
+     * Offset Logically OR'ed with the the other {@link Offsets}.
+     * Downstream values are NOT shifted.
+     *
+     * For example: if this offsets is {@code {1,3,6}} and the other
+     * Offsets is {@code {2,3,7}} then the returned new Offsets
+     * is {@code {1,2,3,6,7}}.
+     *
+     * @param b the other Offsets to OR with; can not be null.
+     * @return a new Offsets.
+     *
+     * @throws NullPointerException if b is null.
+     */
     public Offsets or(Offsets b){
 
         GrowableIntArray newArray = delegate.copy();
@@ -125,6 +151,20 @@ public class Offsets {
     public Offsets xor(Offsets b){
         return xor(b, DEFAULT_XOR_OPTIONS);
     }
+
+    /**
+     * Create a new {@code Offsets} object
+     * that contains only the values that are in THIS
+     * Offset and not the other and vice versa (exclusive OR).
+     * The 2nd parameter {@link XorOptions}
+     * has extra options for if the values should be shifted
+     * or not etc.
+     * @param b the other {@link Offsets} object; can not be null.
+     * @param options the {@link XorOptions}; can not be null.
+     * @return a new Offsets
+     *
+     * @throws NullPointerException if either parameter is null.
+     */
     public Offsets xor(Offsets b, XorOptions options){
 
         if(options.shouldShift()){
@@ -296,6 +336,71 @@ public class Offsets {
 
         return builder;
     }
+
+    /**
+     * Create a new {@link Offsets} that only contains
+     * the values that are NOT in the given offsetRange.
+     * @param offsetRange the range to complement; can not be null.
+     * @return a new {@link Offsets} which may be empty.
+     *
+     * @throws NullPointerException if offsetRange
+     */
+    public Offsets complement(Range offsetRange){
+        int beginOffset = delegate.binarySearch((int) offsetRange.getBegin());
+        if(beginOffset <0){
+            beginOffset = -beginOffset-1;
+        }
+
+        int endOffset = delegate.binarySearch((int) offsetRange.getEnd());
+        if(endOffset <0){
+            endOffset = -endOffset-1;
+        }else{
+            endOffset++;
+        }
+
+
+        GrowableIntArray intersection = new GrowableIntArray();
+        if(beginOffset >0) {
+            delegate.arrayCopy(0, intersection, 0, beginOffset);
+        }
+        delegate.arrayCopy(endOffset, intersection, intersection.getCurrentLength(), delegate.getCurrentLength()-endOffset);
+
+        return new Offsets(intersection);
+    }
+
+    /**
+     * Create a new {@link Offsets} that only contains
+     * the values that are in the given offsetRange.
+     * @param offsetRange the range to complement; can not be null.
+     * @return a new {@link Offsets} which may be empty.
+     *
+     * @throws NullPointerException if offsetRange
+     */
+    public Offsets intersection(Range offsetRange){
+        int beginOffset = delegate.binarySearch((int) offsetRange.getBegin());
+        if(beginOffset <0){
+            beginOffset = -beginOffset-1;
+        }
+        int endOffset = delegate.binarySearch((int) offsetRange.getEnd());
+        if(endOffset <0){
+            endOffset = -endOffset-2;
+        }
+        endOffset = Math.min(endOffset, delegate.getCurrentLength()-1);
+
+        GrowableIntArray intersection = new GrowableIntArray();
+        delegate.arrayCopy(beginOffset, intersection, 0, endOffset - beginOffset +1);
+
+        return new Offsets(intersection);
+    }
+
+    /**
+     * Create a new {@link Offsets} that only contains
+     * the values that are in this offsets AND the other.
+     * @param b the other {@link Offsets}; can not be null.
+     * @return a new {@link Offsets} which may be empty.
+     *
+     * @throws NullPointerException if b is null.
+     */
     public Offsets and(Offsets b){
 
         GrowableIntArray newArray = new GrowableIntArray();
@@ -311,16 +416,58 @@ public class Offsets {
 
     }
 
-
+    /**
+     * Iterate over each value and call the given consumer
+     * which captures the offset and the value.
+     * @param consumer the consumer of each element; can not be null.
+     * @param <E> the Throwable that might be thrown by the consumer.
+     * @throws E the Throwable from the consumer.
+     *
+     * @throws NullPointerException if consumer is null.
+     */
     public <E extends Throwable> void forEachIndexed(ThrowingIntIndexedIntConsumer<E> consumer) throws E{
         delegate.forEachIndexed(consumer);
     }
+    /**
+     * Iterate over each value and call the given consumer.
+     * @param consumer the consumer of each element; can not be null.
+     *
+     * @throws NullPointerException if consumer is null.
+     */
     public void forEach(IntConsumer consumer){
         forEachIndexed((index, value) -> consumer.accept(value));
     }
+
+    /**
+     * Create a new {@link Offsets} that combines these values AND
+     * the other {@link Offsets} BUT unlike
+     * {@link #and(Offsets)} merge will shift downstream values
+     * if both Offsets have the "same" value.
+     * @implNote  this is the same as {@link #mergeAndShift(Offsets, boolean) mergeAndShift(b, true)}.
+     *
+     * @see #mergeAndShift(Offsets, boolean)
+     */
     public Offsets mergeAndShift(Offsets b){
         return mergeAndShift(b, true);
     }
+
+    /**
+     * Create a new {@link Offsets} that combines these values AND
+     * the other {@link Offsets} (if include is true) BUT unlike
+     * {@link #and(Offsets)} merge will shift downstream values
+     * if both Offsets have the "same" value.
+     *
+     * For example if this Offsets is {@code {1,3}} and
+     * other is {@code {1,2}}, then merging will
+     * create a new Offsets {@code {1,2,4}} if {@code include}
+     * is set to true; and {@code {1,4}} if {@code false}
+     * because both objects contained {@code 2}.
+     * @param b the other Offsets; can not be null.
+     * @param include whether to include the values from the other
+     *                Offsets in the new one or not.
+     * @return a new Offets.
+     * @throws NullPointerException if the other Offsets is null.
+     */
     public Offsets mergeAndShift(Offsets b, boolean include){
 
         //this range math is so we don't have overlapping range positions
@@ -415,6 +562,13 @@ public class Offsets {
         return new Offsets(array);
     }
 
+    /**
+     * Create a new {@link Offsets} whose values
+     * are those that are in the given Ranges.
+     * @param ranges the list of ranges; List can not be null
+     *               or have null Ranges.
+     * @return a new Offsets.
+     */
     public static Offsets fromRanges(List<Range> ranges){
         BitSet bits = new BitSet();
         for(Range r : ranges){
@@ -422,20 +576,64 @@ public class Offsets {
         }
         return new Offsets(new GrowableIntArray(bits.stream().toArray()));
     }
+    /**
+     * Create a new {@link Offsets} whose values
+     * are those that are in the given Ranges.
+     * @param offsets the list of ints; List can not be null
+     *               or have null values and MUST be sorted.
+     * @return a new Offsets.
+     * @throws NullPointerException if list or values are null.
+     * @throws IllegalArgumentException if the values are not sorted or if
+     * there are duplicate values.
+     */
     public static Offsets fromSortedList(List<Integer> offsets){
         return new Offsets(offsets, false,true);
     }
-
+    /**
+     * Create a new {@link Offsets} whose values
+     * are those that are in the given Ranges.
+     * @param offsets the list of ints; List can not be null
+     *               or have null values.
+     * @return a new Offsets.
+     * @throws NullPointerException if list or values are null.
+     * @throws IllegalArgumentException if
+     * there are duplicate values.
+     */
     public static Offsets fromUnsortedList(List<Integer> offsets){
         return new Offsets(offsets, true,true);
     }
+    /**
+     * Create a new {@link Offsets} whose values
+     * are those that are in the given Ranges.
+     * @param offsets the list of ints; List can not be null
+     *               or have null values and MUST be sorted.
+     * @return a new Offsets.
+     * @throws NullPointerException if list or values are null.
+     * @throws IllegalArgumentException if the values are not sorted or if
+     * there are duplicate values.
+     */
     public static Offsets fromSortedList(IntList offsets){
         return new Offsets(offsets, false,true);
     }
-
+    /**
+     * Create a new {@link Offsets} whose values
+     * are those that are in the given Ranges.
+     * @param offsets the list of ints; List can not be null
+     *               or have null values.
+     * @return a new Offsets.
+     * @throws NullPointerException if list or values are null.
+     * @throws IllegalArgumentException if
+     * there are duplicate values.
+     */
     public static Offsets fromUnsortedList(IntList offsets){
         return new Offsets(offsets, true,true);
     }
+
+    /**
+     * Create a new empty Offsets with initial capacity. (will grow if needed)
+     * @param initialCapacity the initial capacity of backing array; can not be &lt; 0.
+     * @return a new Offsets
+     */
     public static Offsets withInitialCapacity(int initialCapacity){
         return new Offsets(initialCapacity);
     }
@@ -484,21 +682,39 @@ public class Offsets {
         }
     }
 
-
+    /**
+     * Get the current number of values stored.
+     * @return an int which might be 0.
+     */
     public int size(){
         return delegate.getCurrentLength();
     }
+
+    /**
+     * Get all the values as an {@link IntStream}.
+     * @return a new IntStream which may be empty.
+     */
     public IntStream stream(){
         return delegate.stream();
     }
 
+    /**
+     * Get all the values as an {@link IntList}.
+     * @return a new IntList which may be empty.
+     */
     public IntList asList(){
        return delegate.toBoxedList();
     }
 
+    /**
+     * Does this Offsets contain the given value.
+     * @param offset the offset to check.
+     * @return {@code true} if contained; {@code false} otherwise.
+     */
     public boolean contains(int offset){
          return delegate.binarySearch(offset)>=0;
     }
+
     public int getNumberOfValuesUntil( int offset){
         return computeInsertionPointOf(offset, false);
     }
@@ -516,6 +732,10 @@ public class Offsets {
         return -insertionPoint -1;
     }
 
+    /**
+     * Is the size zero.
+     * @return {@code true} if {@link #size()}==0.
+     */
     public boolean isEmpty(){
         return delegate.getCurrentLength()==0;
     }
@@ -531,8 +751,16 @@ public class Offsets {
     }
     /**
      * Append the given offsets to the end these offsets
-     * shifting their values by the current Offset length
-     * @param other
+     * shifting their shiftAmount.
+     * The most common use case for this method
+     * is when concatenating 2 sequences together and using Offsets
+     * to keep track of their gap positions.  You would want to shift
+     * the 2nd sequence amount by this sequence's length so the
+     * new gap positions are correctly computed.
+     *
+     * @param other the other Offsets to append.
+     * @param shiftAmount the amount to shift each value in other
+     *                    while appending.
      */
     public void appendAndShift(Offsets other, int shiftAmount){
 
@@ -540,6 +768,19 @@ public class Offsets {
 
     }
 
+    /**
+     * Prepend the given offsets to the beginning these offsets
+     * shifting the previous offsets by shiftAmount.
+     * The most common use case for this method
+     * is when concatenating 2 sequences together and using Offsets
+     * to keep track of their gap positions.  You would want to shift
+     * the by the prepended sequence's length so the
+     * new gap positions are correctly computed.
+     *
+     * @param other the other Offsets to append.
+     * @param shiftAmount the amount to shift each value in other
+     *                    while appending.
+     */
     public void prependAndShift(Offsets other, int shiftAmount){
         GrowableIntArray newDelegate = new GrowableIntArray(other.delegate.getCurrentLength() + delegate.getCurrentLength());
         newDelegate.append(other.delegate);
@@ -550,6 +791,13 @@ public class Offsets {
 
     }
 
+    /**
+     * Insert the other Offsets into the middle of this Offset and shift any downstream
+     * values by shift amount.
+     * @param other the other Offsets to add.
+     * @param shiftAmount the amount to shift downstream offsets.
+     * @param startOffset the starting  value to insert the new Offsets
+     */
     public void insertAndShift(Offsets other, int shiftAmount, int startOffset) {
         if(startOffset ==0){
             prependAndShift(other,shiftAmount);
@@ -571,13 +819,23 @@ public class Offsets {
     }
 
 
-
+    /**
+     * Reverse the offset values using the given sequence length.
+     * This is needed to update the offsets of a sequence if that
+     * sequence is reversed or reverse complemented.
+     * @param sequenceLength the length of the sequence.
+     */
     public void reverseCoordinates(int sequenceLength){
         int delta = sequenceLength-1;
         delegate.replaceAll(i-> delta-i);
         delegate.reverse();
     }
 
+    /**
+     * Add the given value to this Offsets and shift any downstream offsets by 1.
+     * If the value already exists, no values are changed.
+     * @param value the offset value to add.
+     */
     public void addAndShift(int value){
         if(contains(value)){
             return;
@@ -594,21 +852,6 @@ public class Offsets {
         while(iter.hasNext()){
             function.accept(iter.nextInt());
         }
-    }
-    @Value
-    public static class UniqueOffsets{
-        Offsets a, b;
-    }
-
-    public static UniqueOffsets unique(Offsets a, Offsets b){
-        XorOptions split = XorOptions.builder()
-                .include(false)
-                .shift(false)
-                .build();
-
-        return new UniqueOffsets(
-                a.xor(b, split),
-                b.xor(a, split));
     }
 
 

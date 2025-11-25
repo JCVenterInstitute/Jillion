@@ -3,8 +3,9 @@ package org.jcvi.jillion.core.residue.nt;
 import java.util.stream.IntStream;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.DecodingOptions;
 import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder.DecodingOptions;
+import org.jcvi.jillion.spi.InvalidCharacterHandler;
 
 public interface INucleotideSequenceBuilder<S extends INucleotideSequence<S, B>, B extends INucleotideSequenceBuilder<S,B>> extends ResidueSequenceBuilder<Nucleotide,S, B>{
 	/**
@@ -156,16 +157,16 @@ public interface INucleotideSequenceBuilder<S extends INucleotideSequence<S, B>,
     B append(NucleotideSequenceBuilder otherBuilder);
     
     /**
-     * Sets the {@link org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler}
+     * Sets the {@link InvalidCharacterHandler}
      * used to help parse {@link Nucleotide}s from a String or char[].
      * @param invalidCharacterHandler the handler to use; if {@code null}
      * use the default handler which will throw an IllegalArgumentException on invalid characters.
      * 
      * @since 6.0
      */
-    B setInvalidCharacterHandler(Nucleotide.InvalidCharacterHandler invalidCharacterHandler);
+    B setInvalidCharacterHandler(InvalidCharacterHandler invalidCharacterHandler);
     /**
-     * Sets the {@link org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder.DecodingOptions}
+     * Sets the {@link DecodingOptions}
      * used to help parse {@link Nucleotide}s from a String or char[].
      * @param decodingOptions the options to use; if {@code null}
      * use the default options which will throw an IllegalArgumentException on invalid characters.
@@ -178,12 +179,12 @@ public interface INucleotideSequenceBuilder<S extends INucleotideSequence<S, B>,
      * Inserts the given sequence the beginning
      * of the builder's mutable sequence.
      * This is the same as calling 
-     * {@link #insert(int, Nucleotide) insert(0,n)}
+     * {@link #insert(int, B) insert(0,n)}
      * @param n the nucleotide to be 
      * inserted at the beginning.
      * @return this.
      * @throws NullPointerException if n is null.
-     * @see #insert(int, Nucleotide)
+     * @see #insert(int, B)
      * @since 6.0
      */
     B prepend(Nucleotide n);

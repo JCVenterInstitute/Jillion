@@ -30,7 +30,10 @@ import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import org.jcvi.jillion.core.residue.Complementable;
+import org.jcvi.jillion.core.residue.InvalidCharacterHandlers;
 import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.spi.InvalidCharacterHandler;
+
 /**
  * {@code Nucleotide} is a {@link Residue}
  * implementation for DNA Nucleotides.
@@ -40,7 +43,12 @@ import org.jcvi.jillion.core.residue.Residue;
  */
 public enum Nucleotide implements Residue<Nucleotide>, Complementable<Nucleotide> {
     //order is in ambiguity traversal order that is most efficient.
-    Unknown(Character.valueOf('N')),
+    Unknown(Character.valueOf('N')){
+        @Override
+        public boolean isUnknown() {
+            return true;
+        }
+    },
     NotThymine(Character.valueOf('V')),
     NotGuanine(Character.valueOf('H')),
     NotCytosine(Character.valueOf('D')),
@@ -156,33 +164,9 @@ public enum Nucleotide implements Residue<Nucleotide>, Complementable<Nucleotide
     public static final List<Nucleotide> RNA_VALUES = Collections.unmodifiableList(Arrays.asList(RNA_VALUES_ARRAY));
     public static final List<Nucleotide> ALL_VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
 
-    @FunctionalInterface
-    public interface InvalidCharacterHandler{
-    	Nucleotide handle(char invalidCharacter);
-    }
+
     
-    public enum InvalidCharacterHandlers implements InvalidCharacterHandler{
-    	ERROR_OUT{
-    		public Nucleotide handle(char invalidCharacter) {
-    			throw new IllegalArgumentException("invalid character '" + invalidCharacter + "' ascii value " + (int)invalidCharacter);
-    		}
-    	},
-    	REPLACE_WITH_N{
-    		public Nucleotide handle(char invalidCharacter) {
-    			return Nucleotide.Unknown;
-    		}
-    	},
-    	IGNORE{
-    		public Nucleotide handle(char invalidCharacter) {
-    			return null;
-    		}
-    	}
-    	;
-    }
-    
-    public static InvalidCharacterHandler defaultInvalidCharacterHandler() {
-    	return InvalidCharacterHandlers.ERROR_OUT;
-    }
+
     private static int computeOffsetFor(char c){
     	return c-42;
     }
@@ -203,6 +187,11 @@ public enum Nucleotide implements Residue<Nucleotide>, Complementable<Nucleotide
     @Override
     public Character getCharacter() {
         return c;
+    }
+
+    @Override
+    public boolean isUnknown() {
+        return false;
     }
 
     /**
@@ -332,12 +321,12 @@ public enum Nucleotide implements Residue<Nucleotide>, Complementable<Nucleotide
      * if the char does not represent a valid nucleotide.
      *
      */
-	protected static Nucleotide parseOrNull(char base) {
-        return parseOrNull(base, InvalidCharacterHandlers.ERROR_OUT);
+    static Nucleotide parseOrNull(char base) {
+        return parseOrNull(base, org.jcvi.jillion.core.residue.InvalidCharacterHandlers.ERROR_OUT);
 	}
-	protected static Nucleotide parseOrNull(char base, InvalidCharacterHandler handler) {
+    static Nucleotide parseOrNull(char base, org.jcvi.jillion.spi.InvalidCharacterHandler handler) {
 		if(handler==null) {
-			handler = InvalidCharacterHandlers.ERROR_OUT;
+			handler = org.jcvi.jillion.core.residue.InvalidCharacterHandlers.ERROR_OUT;
 		}
 		if(base == 32 || (base >=0 && base <=13)){
             return null;
@@ -349,7 +338,7 @@ public enum Nucleotide implements Residue<Nucleotide>, Complementable<Nucleotide
         }
 		//if we're still null then it's invalid character
     	if(ret==null){
-    		ret = handler.handle(base);
+    		ret = handler.handle(Nucleotide.class, base);
         }
 		return ret;
 	}

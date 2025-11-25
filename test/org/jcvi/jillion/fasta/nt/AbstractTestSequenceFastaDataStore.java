@@ -28,24 +28,21 @@ package org.jcvi.jillion.fasta.nt;
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Iterator;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
-import org.hamcrest.Matchers;
+import org.jcvi.jillion.core.Defline;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreClosedException;
 import org.jcvi.jillion.core.datastore.DataStoreException;
+import org.jcvi.jillion.core.residue.DecodingOptions;
+import org.jcvi.jillion.core.residue.InvalidCharacterHandlers;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder.DecodingOptions;
-import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler;
-import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandlers;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Rule;
@@ -236,7 +233,7 @@ public abstract class AbstractTestSequenceFastaDataStore {
         iter.close();
         assertFalse(iter.hasNext());
     }
-    protected abstract NucleotideFastaDataStore parseFile(File file,DecodingOptions decodingOptions, Function<String,String> idConverter) throws IOException;
+    protected abstract NucleotideFastaDataStore parseFile(File file, DecodingOptions decodingOptions, BiFunction<String,String, Defline> idConverter) throws IOException;
     
     private NucleotideFastaDataStore parseFile(File f) throws IOException {
     	return parseFile(f, null,null);
@@ -244,7 +241,7 @@ public abstract class AbstractTestSequenceFastaDataStore {
 
     @Test
     public void convertIds() throws IOException {
-       try( NucleotideFastaDataStore sut = parseFile(getFile(), null, id-> "foo_"+id);
+       try( NucleotideFastaDataStore sut = parseFile(getFile(), null, (id, comment)-> Defline.of("foo_"+id));
             NucleotideFastaDataStore unconverted = parseFile(getFile())) {
 
            try (StreamingIterator<NucleotideFastaRecord> unconvertedIter = unconverted.iterator();
@@ -380,7 +377,7 @@ public abstract class AbstractTestSequenceFastaDataStore {
     		writer.println("ACGTZ");
     	}
     	//depending on implementation might throw in either creating datastore or getting()
-    	NucleotideFastaDataStore sut = parseFile(fasta, DecodingOptions.builder().invalidCharacterHandler( InvalidCharacterHandlers.REPLACE_WITH_N).build(),null);
+    	NucleotideFastaDataStore sut = parseFile(fasta, DecodingOptions.builder().invalidCharacterHandler( InvalidCharacterHandlers.REPLACE_WITH_UNKNOWN).build(),null);
     	assertEquals("ACGTN", sut.get("foo").getSequence().toString());  	
     }
     @Test

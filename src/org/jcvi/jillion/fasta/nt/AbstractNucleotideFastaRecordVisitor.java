@@ -20,9 +20,8 @@
  ******************************************************************************/
 package org.jcvi.jillion.fasta.nt;
 
-import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler;
+import org.jcvi.jillion.core.residue.DecodingOptions;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder.DecodingOptions;
 import org.jcvi.jillion.fasta.AbstractFastaRecordVisitor;
 /**
  * Abstract
