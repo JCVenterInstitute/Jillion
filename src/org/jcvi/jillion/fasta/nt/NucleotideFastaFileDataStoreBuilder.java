@@ -35,6 +35,7 @@ import org.jcvi.jillion.core.residue.DecodingOptions;
 import org.jcvi.jillion.core.residue.nt.*;
 import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.shared.fasta.AbstractFastaFileDataStoreBuilder;
+import org.jcvi.jillion.shared.fasta.Filterable;
 import org.jcvi.jillion.spi.InvalidCharacterHandler;
 
 /**
@@ -45,7 +46,8 @@ import org.jcvi.jillion.spi.InvalidCharacterHandler;
  * @author dkatzel
  *
  */
-public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFileDataStoreBuilder<Nucleotide, NucleotideSequence, NucleotideFastaRecord, NucleotideSequenceDataStore, NucleotideFastaFileDataStore>{
+public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFileDataStoreBuilder<Nucleotide, NucleotideSequence, NucleotideFastaRecord, NucleotideSequenceDataStore, NucleotideFastaFileDataStore>
+		implements Filterable<NucleotideFastaRecord, NucleotideFastaFileDataStoreBuilder> {
 	/**
 	 * File for fai encoded file
 	 * which may be null or point to non-existent file.

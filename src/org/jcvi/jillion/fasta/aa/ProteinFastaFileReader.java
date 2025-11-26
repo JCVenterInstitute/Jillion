@@ -22,6 +22,7 @@ package org.jcvi.jillion.fasta.aa;
 
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.util.ThrowingStream;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.core.util.streams.ThrowingBiConsumer;
 
 
@@ -174,6 +175,65 @@ public class ProteinFastaFileReader {
         return builder.hint(DataStoreProviderHint.ITERATION_ONLY)
                 .build()
                 .records();
+
+    }
+
+    /**
+     * Get a {@link StreamingIterator} of all the {@link ProteinFastaRecord}s
+     * that passes the given filters.
+     *
+     *
+     *
+     * @param fastaFile the fasta file to parse; can not be null.
+     * @param extraBuilderOptions Consumer of the builder used to parse the fasta file
+     *                            to add any extra filters or defline converters, decoding options etc.
+     *                            If {@code null}, then no extra options will be set.
+     *
+     *
+     *
+     * @throws IOException if there is a problem parsing the fasta file.
+     *
+     * @throws NullPointerException if either fastaFile or consumer are null.
+     *
+     * @see ProteinFastaFileDataStoreBuilder
+     * @since 6.1
+     */
+    public static StreamingIterator<ProteinFastaRecord> iterator(File fastaFile, Consumer<ProteinFastaFileDataStoreBuilder> extraBuilderOptions) throws IOException{
+
+
+        ProteinFastaFileDataStoreBuilder builder = new ProteinFastaFileDataStoreBuilder(fastaFile);
+
+        if(extraBuilderOptions !=null){
+            extraBuilderOptions.accept(builder);
+        }
+
+        return builder.hint(DataStoreProviderHint.ITERATION_ONLY)
+                .build()
+                .iterator();
+
+    }
+
+    /**
+     * Get a {@link StreamingIterator} of all the {@link ProteinFastaRecord}s
+     * that passes the given filters.
+     *
+     *
+     *
+     * @param fastaFile the fasta file to parse; can not be null.
+     *
+     *
+     *
+     * @throws IOException if there is a problem parsing the fasta file.
+     *
+     * @throws NullPointerException if either fastaFile or consumer are null.
+     *
+     * @see ProteinFastaFileDataStoreBuilder
+     * @since 6.1
+     */
+    public static StreamingIterator<ProteinFastaRecord> iterator(File fastaFile) throws IOException{
+
+
+        return iterator(fastaFile, null);
 
     }
 }

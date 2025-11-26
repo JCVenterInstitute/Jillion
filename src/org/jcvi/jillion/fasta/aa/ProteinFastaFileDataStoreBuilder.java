@@ -42,6 +42,7 @@ import org.jcvi.jillion.internal.fasta.aa.DefaultProteinFastaDataStore;
 import org.jcvi.jillion.internal.fasta.aa.IndexedProteinFastaFileDataStore;
 import org.jcvi.jillion.internal.fasta.aa.LargeProteinFastaFileDataStore;
 import org.jcvi.jillion.shared.fasta.AbstractFastaFileDataStoreBuilder;
+import org.jcvi.jillion.shared.fasta.Filterable;
 import org.jcvi.jillion.spi.InvalidCharacterHandler;
 
 
@@ -53,7 +54,8 @@ import org.jcvi.jillion.spi.InvalidCharacterHandler;
  * @author dkatzel
  *
  */
-public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDataStoreBuilder<AminoAcid, ProteinSequence, ProteinFastaRecord, ProteinSequenceDataStore, ProteinFastaFileDataStore> {
+public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDataStoreBuilder<AminoAcid, ProteinSequence, ProteinFastaRecord, ProteinSequenceDataStore, ProteinFastaFileDataStore>
+ implements Filterable<ProteinFastaRecord, ProteinFastaFileDataStoreBuilder> {
 
 	/**
 	 * Handler for what to do when we get an invalid character
@@ -114,12 +116,12 @@ public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDat
 	}
 	
 	/**
-	 * Create a new {@link FastaDataStore} instance.
-	 * @param fastaFile the fasta file to make the datastore for;
+	 * Create a new {@link ProteinFastaFileDataStore} instance.
+	 * @param parser the parser to parse the fasta file to make the datastore for;
 	 * can not be null and should exist.
 	 * @param hint a {@link DataStoreProviderHint}; will never be null.
-	 * @param filter a {@link DataStoreFilter}; will never be null.
-	 * @return a new {@link FastaDataStore} instance; should never be null.
+	 * @param filter a {@link Predicate}; will never be null.
+	 * @return a new {@link ProteinFastaFileDataStore} instance; should never be null.
 	 * @throws IOException if there is a problem creating the datastore from the file.
 	 */
 	@Override
