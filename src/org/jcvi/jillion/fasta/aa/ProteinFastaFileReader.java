@@ -18,7 +18,12 @@
  * Contributors:
  *     Danny Katzel - initial API and implementation
  ******************************************************************************/
-package org.jcvi.jillion.fasta.nt;
+package org.jcvi.jillion.fasta.aa;
+
+import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
+import org.jcvi.jillion.core.util.ThrowingStream;
+import org.jcvi.jillion.core.util.streams.ThrowingBiConsumer;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -26,36 +31,32 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
-import org.jcvi.jillion.core.util.ThrowingStream;
-import org.jcvi.jillion.core.util.streams.ThrowingBiConsumer;
-
 /**
  * Helper class which can
  * to iterate over the records contained in a fasta file.
  */
-public class NucleotideFastaFileReader {
+public class ProteinFastaFileReader {
     /**
-     * Get a {@link ThrowingStream} of all the {@link NucleotideFastaRecord}s
+     * Get a {@link ThrowingStream} of all the {@link ProteinFastaRecord}s
      * in the given fasta file. 
      * @param fastaFile the fasta file to parse; can not be null.
-     * @return a new {@link ThrowingStream} of {@link NucleotideFastaRecord}s.
+     * @return a new {@link ThrowingStream} of {@link ProteinFastaRecord}s.
      * @throws IOException if there is a problem parsing the fasta file.
      * 
      * @throws NullPointerException if fastaFile is null.
      * 
      * @see #records(File, Consumer)
-     * @see NucleotideFastaFileDataStoreBuilder
+     * @see ProteinFastaFileDataStoreBuilder
      */
-    public static ThrowingStream<NucleotideFastaRecord> records(File fastaFile) throws IOException{
-        return new NucleotideFastaFileDataStoreBuilder(fastaFile)
+    public static ThrowingStream<ProteinFastaRecord> records(File fastaFile) throws IOException{
+        return new ProteinFastaFileDataStoreBuilder(fastaFile)
                         .hint(DataStoreProviderHint.ITERATION_ONLY)
                         .build()
                         .records();
     }
     
     /**
-     * Get a {@link ThrowingStream} of all the {@link NucleotideFastaRecord}s
+     * Get a {@link ThrowingStream} of all the {@link ProteinFastaRecord}s
      * in the given fasta file. 
      * @param fastaFile the fasta file to parse; can not be null.
      *
@@ -64,10 +65,10 @@ public class NucleotideFastaFileReader {
      * @throws NullPointerException if fastaFile is null.
      * 
      * @see #records(File, Consumer)
-     * @see NucleotideFastaFileDataStoreBuilder
+     * @see ProteinFastaFileDataStoreBuilder
      */
-    public static <E extends Throwable>void forEach(File fastaFile, ThrowingBiConsumer<String, NucleotideFastaRecord, E> consumer) throws IOException, E{
-        new NucleotideFastaFileDataStoreBuilder(fastaFile)
+    public static <E extends Throwable>void forEach(File fastaFile, ThrowingBiConsumer<String, ProteinFastaRecord, E> consumer) throws IOException, E{
+        new ProteinFastaFileDataStoreBuilder(fastaFile)
                         .hint(DataStoreProviderHint.ITERATION_ONLY)
                         .build()
                         .forEach(consumer);
@@ -92,10 +93,10 @@ public class NucleotideFastaFileReader {
      * 
      * @throws NullPointerException if fastaFile is null.
      * 
-     * @see NucleotideFastaFileDataStoreBuilder
+     * @see ProteinFastaFileDataStoreBuilder
      */
-    public static <E extends Throwable> void forEach(File fastaFile, Predicate<String> idFilter, Predicate<NucleotideFastaRecord> recordFilter,
-                        ThrowingBiConsumer<String, NucleotideFastaRecord, E> consumer) throws IOException, E{
+    public static <E extends Throwable> void forEach(File fastaFile, Predicate<String> idFilter, Predicate<ProteinFastaRecord> recordFilter,
+                        ThrowingBiConsumer<String, ProteinFastaRecord, E> consumer) throws IOException, E{
         
         forEach (fastaFile, builder->
             builder.filter(idFilter==null? s-> true: idFilter)
@@ -122,19 +123,19 @@ public class NucleotideFastaFileReader {
      *
      * @throws NullPointerException if either fastaFile or consumer are null.
      *
-     * @see NucleotideFastaFileDataStoreBuilder
+     * @see ProteinFastaFileDataStoreBuilder
      * @since 6.1
      */
-    public static <E extends Throwable> void forEach(File fastaFile, Consumer<NucleotideFastaFileDataStoreBuilder> extraBuilderOptions,
-                                                     ThrowingBiConsumer<String, NucleotideFastaRecord, E> consumer) throws IOException, E{
+    public static <E extends Throwable> void forEach(File fastaFile, Consumer<ProteinFastaFileDataStoreBuilder> extraBuilderOptions,
+                                                     ThrowingBiConsumer<String, ProteinFastaRecord, E> consumer) throws IOException, E{
 
         Objects.requireNonNull(consumer);
-        NucleotideFastaFileDataStoreBuilder builder = new NucleotideFastaFileDataStoreBuilder(fastaFile);
+        ProteinFastaFileDataStoreBuilder builder = new ProteinFastaFileDataStoreBuilder(fastaFile);
 
         if(extraBuilderOptions !=null){
             extraBuilderOptions.accept(builder);
         }
-        try(NucleotideFastaDataStore datastore = builder.hint(DataStoreProviderHint.ITERATION_ONLY)
+        try(ProteinFastaDataStore datastore = builder.hint(DataStoreProviderHint.ITERATION_ONLY)
                 .build()){
             datastore.forEach(consumer);
         }
@@ -142,7 +143,7 @@ public class NucleotideFastaFileReader {
 
 
     /**
-     * Get a {@link ThrowingStream} of all the {@link NucleotideFastaRecord}s
+     * Get a {@link ThrowingStream} of all the {@link ProteinFastaRecord}s
      * that passes the given filters.
      *
      *
@@ -158,13 +159,13 @@ public class NucleotideFastaFileReader {
      *
      * @throws NullPointerException if either fastaFile or consumer are null.
      *
-     * @see NucleotideFastaFileDataStoreBuilder
+     * @see ProteinFastaFileDataStoreBuilder
      * @since 6.1
      */
-    public static  ThrowingStream<NucleotideFastaRecord> records(File fastaFile, Consumer<NucleotideFastaFileDataStoreBuilder> extraBuilderOptions) throws IOException{
+    public static  ThrowingStream<ProteinFastaRecord> records(File fastaFile, Consumer<ProteinFastaFileDataStoreBuilder> extraBuilderOptions) throws IOException{
 
 
-        NucleotideFastaFileDataStoreBuilder builder = new NucleotideFastaFileDataStoreBuilder(fastaFile);
+        ProteinFastaFileDataStoreBuilder builder = new ProteinFastaFileDataStoreBuilder(fastaFile);
 
         if(extraBuilderOptions !=null){
             extraBuilderOptions.accept(builder);
