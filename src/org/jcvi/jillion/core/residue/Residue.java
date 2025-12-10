@@ -22,6 +22,9 @@ package org.jcvi.jillion.core.residue;
 
 
 
+import org.jcvi.jillion.core.residue.aa.AminoAcid;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+
 import java.util.Set;
 
 /**
@@ -78,4 +81,32 @@ public interface Residue<R extends Residue<R>>{
      * @since 6.1
      */
     boolean isUnknown();
+
+    /**
+     * Two Residues match if one of the Residue's
+     * set of unambiguous bases
+     * is a complete subset of the other.
+     * For example, for Nucleotides: V (which is A,C or G) would
+     * match A, C, G, M, R, S and N. However, V would not
+     * match W since that could also represent a T.
+     * @param other the other Residue to match.
+     * @return {@code true} if this Residue matches the other given
+     * residue; {@code false} otherwise.
+     *
+     * @since 6.1
+     */
+    default boolean matches(R other){
+        if(other ==null){
+            throw new NullPointerException("other can not be null");
+        }
+        if(this==other){
+            return true;
+        }
+
+        Set<R> basesForOther =other.getNonAmbiguousBases();
+        Set<R> basesForThis =getNonAmbiguousBases();
+        return basesForThis.containsAll(basesForOther)
+                    || basesForOther.containsAll(basesForThis);
+    }
+
 }

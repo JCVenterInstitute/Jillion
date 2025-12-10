@@ -65,6 +65,8 @@ public interface ProteinSequence extends ResidueSequence<AminoAcid, ProteinSeque
 
 	@Override
 	ProteinSequenceBuilder toBuilder(Range trimRange);
+	@Override
+	ProteinSequenceBuilder toBuilder(List<Range> trimRanges);
 	/**
 	 * Convert this sequence into a String using the user defined function 
 	 * to write out each AminoAcid.

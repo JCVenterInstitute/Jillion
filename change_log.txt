@@ -31,10 +31,21 @@ The Nucleotide and Protein Sequence classes now have builders for them.
     to check will see the concatenated id.
 13. Created DeflineConverter interface and DeflineConverters constant class with some common implementations.
 
+14. Several usesful methods like gaps() and replaceWithGaps() methods that were only on NucleotideSequenceBuilder
+are now moved up to be part of the ResidueSequenceBuilder interface so ProteinSequenceBuilder now has them as well.
+
+15. Several useful methods that were in NucleotideSequence but not ProteinSequence
+ such as toBuilder( List<Range> ) have been copied over to ProteinSequence
+and/or the ResidueSequence interface.
+16. Indel Detector will now work to compare 2 different residue sequence types as long
+as the residue is the same.  For example NucleotideSequence vs VariantNucleotideSequence
+previous versions required both input sequences to be the same type.
+
 Performance Improvements
 ------------------------
 1. NucleotideSequenceBuilder internal functions changed to use Offsets internally this should be a 1-2% performance boost.
 2. Various functions that iterated over integers have been improved by using new IntList
+3. ProteinSequenceBuilder now keeps track of gap offsets as it goes not just the total count.
 
 API Breaking Changes
 ------------------------
@@ -48,6 +59,13 @@ API Breaking Changes
 
  3. InvalidCharacterHandler used to be just for Nucleotide but has now been refactored out to the residue package
  and implementations can support any Residue implementation.
+
+ 4. Removed ProteinIndelDetector and NucleotideIndelDetector as they are now both consolidated
+  into the new class DefaultIndelDetector which can create instances of any ResidueSequenceBuilder
+  using the new DefaultIndelDetector.create() method.
+
+  5. Renamed the abstract class AbstractIndelDetector to be DefaultIndelDetector and it's now
+  no longer abstract but final.
 
 Mild API Breaking Changes
 ------------------------

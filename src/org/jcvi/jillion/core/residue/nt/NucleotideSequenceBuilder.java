@@ -21,12 +21,7 @@
 package org.jcvi.jillion.core.residue.nt;
 
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Objects;
-import java.util.PrimitiveIterator;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 
@@ -34,6 +29,7 @@ import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.residue.DecodingOptions;
 import org.jcvi.jillion.core.residue.InvalidCharacterHandlers;
+import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.core.util.SingleThreadAdder;
 import org.jcvi.jillion.internal.core.util.GrowableByteArray;
@@ -133,8 +129,20 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
     	this.decodingOptions = decodingOptions==null? DecodingOptions.DEFAULT: decodingOptions;
     	return this;
     }
-    
-    
+
+    @Override
+    public NucleotideSequenceBuilder replaceWithGaps(Range range, int numberOfGaps) {
+        if(numberOfGaps <0){
+            throw new IllegalArgumentException("number of gaps can not be negative");
+        }
+        if(numberOfGaps==0){
+            return delete(range);
+        }
+        Nucleotide[] gaps = new Nucleotide[numberOfGaps];
+        Arrays.fill(gaps, Nucleotide.Gap);
+        return replace(range, gaps);
+    }
+
     @Override
 	public NucleotideSequenceBuilder clear() {		
     	data.clear();

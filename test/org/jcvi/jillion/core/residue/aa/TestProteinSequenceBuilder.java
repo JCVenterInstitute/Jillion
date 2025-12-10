@@ -20,16 +20,16 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.aa;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Arrays;
+import java.util.List;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.DecodingOptions;
 import org.jcvi.jillion.core.residue.InvalidCharacterHandlers;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
+
 public class TestProteinSequenceBuilder {
 
 	@Test
@@ -115,6 +115,58 @@ public class TestProteinSequenceBuilder {
 		ProteinSequenceBuilder sut = new ProteinSequenceBuilder("IKFTW");
 		sut.replace(2, AminoAcid.Tryptophan);
 		assertEquals("IKWTW", sut.toString());
+	}
+
+	@Test
+	public void replaceWithGaps(){
+		ProteinSequenceBuilder sut = new ProteinSequenceBuilder("IKFTW");
+		sut.replaceWithGaps(Range.of(2,3));
+		assertEquals("IK--W", sut.toString());
+	}
+	@Test
+	public void replaceWithGapsWithSameLength(){
+		ProteinSequenceBuilder sut = new ProteinSequenceBuilder("IKFTW");
+		sut.replaceWithGaps(Range.of(2,3), 2);
+		assertEquals("IK--W", sut.toString());
+	}
+	@Test
+	public void replaceWithGapsWithMoreLength(){
+		ProteinSequenceBuilder sut = new ProteinSequenceBuilder("IKFTW");
+		sut.replaceWithGaps(Range.of(2,3), 3);
+		assertEquals("IK---W", sut.toString());
+	}
+	@Test
+	public void replaceWithGapsWithLessLength(){
+		ProteinSequenceBuilder sut = new ProteinSequenceBuilder("IKFTW");
+		sut.replaceWithGaps(Range.of(2,3), 1);
+		assertEquals("IK-W", sut.toString());
+	}
+	@Test
+	public void replaceWithGapsWithZeroLength(){
+		ProteinSequenceBuilder sut = new ProteinSequenceBuilder("IKFTW");
+		sut.replaceWithGaps(Range.of(2,3), 0);
+		assertEquals("IKW", sut.toString());
+	}
+
+	@Test
+	public void gapDeleteAndAddSingle(){
+		ProteinSequenceBuilder sut = new ProteinSequenceBuilder("------L----");
+		sut.replace(6, AminoAcid.Gap);
+		assertEquals(Arrays.asList(0,1,2,3,4,5,6,7,8,9,10) ,sut.getGapOffsets());
+	}
+	@Test
+	public void gapDeleteAndAddSeveral(){
+		ProteinSequenceBuilder sut = new ProteinSequenceBuilder("------L----");
+		sut.replace(Range.of(5,7), new AminoAcid[]{AminoAcid.Gap, AminoAcid.Gap, AminoAcid.Gap});
+
+		assertEquals(Arrays.asList(0,1,2,3,4,5,6,7,8,9,10) ,sut.getGapOffsets());
+	}
+
+	@Test
+	public void replaceWithGapsWithNegLengthShouldThrowException(){
+		ProteinSequenceBuilder sut = new ProteinSequenceBuilder("IKFTW");
+		assertThrows(IllegalArgumentException.class, ()->sut.replaceWithGaps(Range.of(2,3), -1));
+
 	}
 	
 	@Test
@@ -355,6 +407,33 @@ public class TestProteinSequenceBuilder {
 		assertEquals(1, builder1.getNumGaps());
 		assertEquals(3, builder1.getLength());
 		assertEquals(2, builder1.getUngappedLength());
+	}
+
+	@Test
+	public void toBuilderRange() {
+		Range r = Range.of(2, 3);
+		ProteinSequenceBuilder builder0 = new ProteinSequenceBuilder("IKFTW");
+		ProteinSequenceBuilder builder1 = builder0.copy(r);
+		ProteinSequenceBuilder builder2 = builder0.build().toBuilder(r);
+
+		assertEquals(builder1.toString(), builder2.toString());
+		assertEquals("FT", builder1.toString());
+	}
+	@Test
+	public void toBuilderMultipleRanges() {
+
+		ProteinSequenceBuilder builder0 = new ProteinSequenceBuilder("IKFTWX");
+		ProteinSequenceBuilder builder1 = builder0.build().toBuilder(List.of(Range.of(2,3), Range.of(4,5)));
+
+		assertEquals("FTWX", builder1.toString());
+	}
+	@Test
+	public void toBuilderMultipleOverlappingRanges() {
+
+		ProteinSequenceBuilder builder0 = new ProteinSequenceBuilder("IKFTWX");
+		ProteinSequenceBuilder builder1 = builder0.build().toBuilder(List.of(Range.of(2,3), Range.of(3,5)));
+
+		assertEquals("FTTWX", builder1.toString());
 	}
 	
 	@Test

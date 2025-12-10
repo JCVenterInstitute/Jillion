@@ -12,6 +12,8 @@ import org.junit.runners.Suite.SuiteClasses;
     	AllPairwiseUnitTests.class,
     	TestNucleotideIndelDetector.class,
     	TestProteinIndelDetector.class,
+		TestVariantNucleotideIndelDetector.class,
+		TestVariantNucleotideWithRefIndelDetector.class
     }
     )
 public class AllAlignmentTests {

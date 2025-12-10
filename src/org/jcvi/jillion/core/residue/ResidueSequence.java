@@ -318,6 +318,18 @@ public interface ResidueSequence<R extends Residue<R>, T extends ResidueSequence
      * @since 5.3
      */
     B toBuilder(Range range);
+
+    /**
+     * Create a new Builder object that is initialized
+     * to the just the given Ranges of the current sequence.  Any changes made to the returned Builder
+     * will <strong>NOT</strong> affect this immutable Sequence.
+     *
+     * @param ranges the list of Ranges to use, if the Ranges overlap, then that part of the
+     *               sequence will be repeated; can not be null or contain null values.
+     * @return a new Builder instance, will never be null.
+     * @since 6.1
+     */
+    B toBuilder(List<Range> ranges);
     /**
      * Create a new EMPTY Builder object with the default capacity.
      * 

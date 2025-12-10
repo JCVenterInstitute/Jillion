@@ -1,19 +1,7 @@
 package org.jcvi.jillion.core.residue.nt;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.PrimitiveIterator.OfInt;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.PrimitiveIterator;
-import java.util.Set;
-import java.util.TreeMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -608,6 +596,12 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 				variantBuilder.addAllele(entry.getKey(), entry.getValue());
 			}
 			this.variants.add(new VariantAndOffset(offset, variantBuilder));
+			return this;
+		}
+
+		@Override
+		public Builder replaceWithGaps(Range range, int numberOfGaps) {
+			this.nucleotideSequence.replaceWithGaps(range, numberOfGaps);
 			return this;
 		}
 

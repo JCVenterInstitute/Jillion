@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.util.OptionalLong;
 import java.util.Set;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.Defline;
@@ -37,7 +36,6 @@ import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 import org.jcvi.jillion.core.residue.aa.ProteinSequenceDataStore;
 import org.jcvi.jillion.fasta.FastaParser;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaFileDataStoreBuilder;
 import org.jcvi.jillion.internal.fasta.aa.DefaultProteinFastaDataStore;
 import org.jcvi.jillion.internal.fasta.aa.IndexedProteinFastaFileDataStore;
 import org.jcvi.jillion.internal.fasta.aa.LargeProteinFastaFileDataStore;
@@ -114,7 +112,17 @@ public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDat
 	public ProteinFastaFileDataStoreBuilder(InputStream in) throws IOException{
 		super(in);
 	}
-	
+
+	/**
+	 *
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ProteinFastaFileDataStoreBuilder idConverter(
+			BiFunction<String, String, Defline> idConverter) {
+		super.idConverter(idConverter);
+		return this;
+	}
 	/**
 	 * Create a new {@link ProteinFastaFileDataStore} instance.
 	 * @param parser the parser to parse the fasta file to make the datastore for;

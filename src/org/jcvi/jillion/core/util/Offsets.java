@@ -429,6 +429,18 @@ public class Offsets {
         delegate.forEachIndexed(consumer);
     }
     /**
+     * Iterate over each value from the end of the Offset list and call the given consumer
+     * which captures the offset and the value.
+     * @param consumer the consumer of each element; can not be null.
+     * @param <E> the Throwable that might be thrown by the consumer.
+     * @throws E the Throwable from the consumer.
+     *
+     * @throws NullPointerException if consumer is null.
+     */
+    public <E extends Throwable> void forEachIndexedReversed(ThrowingIntIndexedIntConsumer<E> consumer) throws E{
+        delegate.forEachIndexedReversed(consumer);
+    }
+    /**
      * Iterate over each value and call the given consumer.
      * @param consumer the consumer of each element; can not be null.
      *
@@ -436,6 +448,9 @@ public class Offsets {
      */
     public void forEach(IntConsumer consumer){
         forEachIndexed((index, value) -> consumer.accept(value));
+    }
+    public void forEachReversed(IntConsumer consumer){
+        forEachIndexedReversed((index, value) -> consumer.accept(value));
     }
 
     /**
@@ -858,6 +873,9 @@ public class Offsets {
     private void replaceIfUnsafe(IntPredicate predicate, IntUnaryOperator replacementFunction) {
         delegate.replaceIf(predicate, replacementFunction);
     }
+    public void replaceAll(IntUnaryOperator replacementFunction) {
+        delegate.replaceAll(replacementFunction);
+    }
     public void replaceIf(IntPredicate predicate, IntUnaryOperator replacementFunction){
 
         replaceIfUnsafe(predicate, replacementFunction);
@@ -1027,7 +1045,7 @@ public class Offsets {
         }
         for(int j = valuesToRemoveArray.length-1; j>=0; j--){
             int v = valuesToRemoveArray[j];
-            delegate.remove(v);
+            delegate.sortedRemove(v);
             if(shift) {
                 delegate.replaceIf(i -> i > v, i -> i - 1);
             }
@@ -1052,6 +1070,9 @@ public class Offsets {
 
     public void removeAllNoShift(IntList valuesToRemove){
         _removeAll(valuesToRemove, false);
+    }
+    public void removeAllNoShift(Offsets valuesToRemove){
+        _removeAll(valuesToRemove.asList(), false);
     }
     private void _removeAll(IntStream intStream, boolean shift){
 

@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
@@ -308,8 +309,16 @@ public final class FastqFileDataStoreBuilder implements Filterable<FastqRecord, 
 		this.hint = hint;
 		return this;
 	}
-	
-	
+
+	@Override
+	public FastqFileDataStoreBuilder onlyIncludeIds(Set<String> ids) {
+		if(ids==null || ids.isEmpty()){
+			throw new NullPointerException("id set can not be null or empty");
+		}
+		this.idFilter = ids::contains;
+		return this;
+	}
+
 	/**
 	 * Parse the given fastq file and return
 	 * a new instance of a {@link FastqDataStore}

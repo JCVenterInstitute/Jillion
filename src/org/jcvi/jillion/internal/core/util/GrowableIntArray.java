@@ -162,8 +162,11 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		System.arraycopy(data,srcOffset, destArray,destOffset, length );
 	}
 	/**
-	 * Copy data from this array into the destination array.
+	 * Copy data from this array into the destination array;
+	 * this will grow the destArray if needed.
 	 * @implNote This should be the same as <code>System.arraycopy(data,srcOffset, destArray,destOffset, length )</code>
+	 * except extra checks are done to expand the destArray if needed.
+	 *
 	 * @param srcOffset the offset into THIS growable array.
 	 * @param destArray the destination array to copy into.
 	 * @param destOffset the offset to start copy data into the destination array.
@@ -171,8 +174,17 @@ public final class GrowableIntArray implements Iterable<Integer>{
 	 * @since 6.1
 	 */
 	public void arrayCopy(int srcOffset, GrowableIntArray destArray, int destOffset, int length) {
+		int newDestLength = length + destOffset;
+		boolean resize=false;
+		if(newDestLength > destArray.currentLength){
+			destArray.ensureCapacity(newDestLength);
+			resize=true;
+		}
+
 		System.arraycopy(data,srcOffset, destArray.data,destOffset, length );
-		destArray.currentLength+=length;
+		if(resize) {
+			destArray.currentLength = newDestLength;
+		}
 	}
 
 	private static final String[][] EMPTY_CACHE_TO_STRING;
@@ -450,6 +462,7 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		}
 		currentLength-=(int)range.getLength();    
 	}
+
 	public int remove(int offset){
 		assertValidOffset(offset);
 		int oldValue = data[offset];
@@ -745,6 +758,23 @@ public final class GrowableIntArray implements Iterable<Integer>{
 			consumer.accept(i, data[i]);
 		}
 	}
+	/**
+	 * Iterate over each element in the list in REVERSE ORDER and call the given consumer
+	 * which captures the offset and the value.
+	 * @param consumer the consumer of each element; can not be null.
+	 * @param <E> the Throwable that might be thrown by the consumer.
+	 * @throws E the Throwable from the consumer.
+	 *
+	 * @since 6.1
+	 *
+	 * @throws NullPointerException if consumer is null.
+	 */
+	public <E extends Throwable> void forEachIndexedReversed(ThrowingIntIndexedIntConsumer<E> consumer) throws E{
+		Objects.requireNonNull(consumer);
+		for(int i=currentLength-1; i>=0; i--){
+			consumer.accept(i, data[i]);
+		}
+	}
 
 	/**
 	 * Iterate over the elements in the given range of this array and call the given consumer
@@ -763,6 +793,26 @@ public final class GrowableIntArray implements Iterable<Integer>{
 			consumer.accept(i, data[i]);
 		}
 	}
+
+	/**
+	 * Iterate over the elements in the given range of this array in REVERSE ORDER and call the given consumer
+	 * which captures the offset and the value.
+	 * @param range the offset range to check over; can not be null.
+	 * @param consumer the consumer of each element; can not be null.
+	 * @param <E> the Throwable that might be thrown by the consumer.
+	 * @throws E the Throwable from the consumer.
+	 *
+	 * @throws NullPointerException exception if either range or consumer are null.
+	 * @since 6.1
+	 */
+	public <E extends Throwable> void forEachIndexedReversed(Range range, ThrowingIntIndexedIntConsumer<E> consumer) throws E{
+		int end = (int) Math.min(currentLength, range.getEnd()+1);
+		int begin = (int) range.getBegin();
+		for(int i=end; i>= begin; i--){
+			consumer.accept(i, data[i]);
+		}
+	}
+
 	/**
 	 * Replace any values that pass the given predicate with the given replacement value.
 	 * @param predicate the predicate to test; can not be null.
@@ -884,7 +934,6 @@ public final class GrowableIntArray implements Iterable<Integer>{
 	/**
 	 * Replace any values within from the given offset, to the end of the array that pass the given predicate with the given replacement value.
 	 * @param startOffset the offset to start from
-	 * @param predicate the predicate to test; can not be null.
 	 * @param replacementFunction the function to replace the value given the previous value.
 	 * @throws NullPointerException if predicate is null.
 	 *
@@ -947,4 +996,6 @@ public final class GrowableIntArray implements Iterable<Integer>{
 	public List<Range> asRanges() {
 		return Ranges.asRanges(data,0,currentLength);
 	}
+
+
 }

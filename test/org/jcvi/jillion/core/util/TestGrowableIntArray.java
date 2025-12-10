@@ -290,6 +290,35 @@ public class TestGrowableIntArray {
 		assertArrayEquals(expected, sut.toArray());
 	}
 	@Test
+	public void arrayCopy(){
+		GrowableIntArray sut = new GrowableIntArray(5);
+		sut.append((int)10);
+		sut.append((int)20);
+		sut.append((int)30);
+		sut.append((int)40);
+
+		GrowableIntArray dest = new GrowableIntArray(new int[]{50,60,70,80,90});
+
+		sut.arrayCopy(0, dest, 0,4);
+		int[] expected = new int[]{10,20,30,40,90};
+		assertArrayEquals(expected, dest.toArray());
+	}
+
+	@Test
+	public void arrayCopyExpandIfNeeded(){
+		GrowableIntArray sut = new GrowableIntArray(5);
+		sut.append((int)10);
+		sut.append((int)20);
+		sut.append((int)30);
+		sut.append((int)40);
+
+		GrowableIntArray dest = new GrowableIntArray(new int[]{90});
+
+		sut.arrayCopy(0, dest, 0,4);
+		int[] expected = new int[]{10,20,30,40};
+		assertArrayEquals(expected, dest.toArray());
+	}
+	@Test
 	public void constructUsingInitialArray(){
 		int[] array = new int[]{10,20,30,40,50};
 		GrowableIntArray sut = new GrowableIntArray(array);

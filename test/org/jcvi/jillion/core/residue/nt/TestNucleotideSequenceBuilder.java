@@ -557,6 +557,41 @@ public class TestNucleotideSequenceBuilder {
         assertBuiltDnaSequenceEquals("AC-T",sut);
     }
     @Test
+    public void replaceWithGaps(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGGT")
+                .replaceWithGaps(Range.of(2,3));
+        assertBuiltDnaSequenceEquals("AC--T",sut);
+    }
+    @Test
+    public void replaceWithGapsSameNumberOfGaps(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGGT")
+                .replaceWithGaps(Range.of(2,3),2);
+        assertBuiltDnaSequenceEquals("AC--T",sut);
+    }
+    @Test
+    public void replaceWithGapsSameMoreGaps(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGGT")
+                .replaceWithGaps(Range.of(2,3),3);
+        assertBuiltDnaSequenceEquals("AC---T",sut);
+    }
+    @Test
+    public void replaceWithGapsSameFewerGaps(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGGT")
+                .replaceWithGaps(Range.of(2,3),1);
+        assertBuiltDnaSequenceEquals("AC-T",sut);
+    }
+    @Test
+    public void replaceWithGapsSameZeroGaps(){
+        NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("ACGGT")
+                .replaceWithGaps(Range.of(2,3),0);
+        assertBuiltDnaSequenceEquals("ACT",sut);
+    }
+    @Test
+    public void replaceWithGapsSameNegGapsShouldThrowException(){
+        assertThrows(IllegalArgumentException.class, ()->new NucleotideSequenceBuilder("ACGGT")
+                .replaceWithGaps(Range.of(2,3),-1));
+    }
+    @Test
     public void replaceGapWithNonGap(){
         NucleotideSequenceBuilder sut = new NucleotideSequenceBuilder("AC-T")
                         .replace(2, Nucleotide.Cytosine);

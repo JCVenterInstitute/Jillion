@@ -100,6 +100,10 @@ class UnCompressedGappedProteinSequence extends AbstractResidueSequence<AminoAci
     public ProteinSequenceBuilder toBuilder(Range range) {
         return new ProteinSequenceBuilder(this, range);
     }
+    @Override
+    public ProteinSequenceBuilder toBuilder(List<Range> ranges) {
+        return new ProteinSequenceBuilder(this, ranges);
+    }
 
     @Override
     public ProteinSequenceBuilder newEmptyBuilder() {

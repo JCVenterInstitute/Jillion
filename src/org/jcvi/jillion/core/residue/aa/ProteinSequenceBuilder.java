@@ -26,9 +26,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.residue.DecodingOptions;
 import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
 import org.jcvi.jillion.core.util.IntList;
+import org.jcvi.jillion.core.util.Offsets;
+import org.jcvi.jillion.internal.core.util.ArrayUtil;
 import org.jcvi.jillion.internal.core.util.GrowableByteArray;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 import org.jcvi.jillion.spi.InvalidCharacterHandler;
@@ -49,6 +52,10 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	private static final byte GAP_ORDINAL = AminoAcid.Gap.getOrdinalAsByte();
 	
 	private static final GrowableByteArray AMBIGUOUS_AMINO_ACIDS;
+	public static final Offsets.AddOptions GAP_ADD_AND_SHIFT_OPTIONS = Offsets.AddOptions.builder()
+			.shift(true)
+			.include(true).build();
+
 	static {
 		AMBIGUOUS_AMINO_ACIDS = new GrowableByteArray();
 		for(int i=0; i< AMINO_ACID_VALUES.length; i++) {
@@ -60,7 +67,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	}
 	private static final int DEFAULT_CAPACITY = 20;
 	private GrowableByteArray builder;
-	private int numberOfGaps=0;
+	private Offsets gapOffsets;
 	
 	private int numberOfAmbiguities=0;
 	private boolean turnOffCompression=false;
@@ -104,6 +111,19 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 		this((DecodingOptions) null);
 	}
 
+	@Override
+	public ProteinSequenceBuilder replaceWithGaps(Range range, int numberOfGaps) {
+		if(numberOfGaps <0){
+			throw new IllegalArgumentException("number of gaps can not be negative");
+		}
+		if(numberOfGaps==0){
+			return delete(range);
+		}
+		AminoAcid[] gaps = new AminoAcid[numberOfGaps];
+		Arrays.fill(gaps, AminoAcid.Gap);
+		return replace(range, gaps);
+	}
+
 	/**
 	 * Creates a new ProteinSequenceBuilder instance
 	 * which currently contains no amino acids.
@@ -115,7 +135,8 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	 * @since 6.1
 	 */
 	public ProteinSequenceBuilder(DecodingOptions decodingOptions){
-		builder = new GrowableByteArray(DEFAULT_CAPACITY);
+		this(DEFAULT_CAPACITY);
+
 		this.setDecodingOptions(decodingOptions);
 	}
 	/**
@@ -129,7 +150,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	 * @since 6.1
 	 */
 	public ProteinSequenceBuilder(InvalidCharacterHandler invalidCharacterHandler){
-		builder = new GrowableByteArray(DEFAULT_CAPACITY);
+		this(DEFAULT_CAPACITY);
 		this.setInvalidCharacterHandler(invalidCharacterHandler);
 	}
 	/**
@@ -144,6 +165,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
      */
 	public ProteinSequenceBuilder(int initialCapacity){
 		builder = new GrowableByteArray(initialCapacity);
+		gapOffsets = Offsets.withInitialCapacity(5);
 	}
 	/**
      * Creates a new ProteinSequenceBuilder instance
@@ -157,6 +179,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
      */
 	public ProteinSequenceBuilder(CharSequence sequence){
 		builder = new GrowableByteArray(sequence.length());
+		gapOffsets = Offsets.withInitialCapacity(5);
 		append(parse(sequence.toString()));
 	}
 
@@ -178,6 +201,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	 */
 	public ProteinSequenceBuilder(CharSequence sequence, InvalidCharacterHandler invalidCharacterHandler){
 		builder = new GrowableByteArray(sequence.length());
+		gapOffsets = Offsets.withInitialCapacity(5);
 		setInvalidCharacterHandler(invalidCharacterHandler);
 		append(parse(sequence.toString()));
 	}
@@ -200,6 +224,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	 */
 	public ProteinSequenceBuilder(CharSequence sequence, DecodingOptions decodingOptions){
 		builder = new GrowableByteArray(sequence.length());
+		gapOffsets = Offsets.withInitialCapacity(5);
 		setDecodingOptions(decodingOptions);
 		append(parse(sequence.toString()));
 	}
@@ -211,6 +236,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
      */
 	public ProteinSequenceBuilder(ProteinSequence sequence){
 		builder = new GrowableByteArray((int)sequence.getLength());
+		gapOffsets = Offsets.withInitialCapacity(5);
 		append(sequence);
 	}
 	
@@ -227,31 +253,44 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
      */
     public ProteinSequenceBuilder(ProteinSequence sequence, Range range) {
         builder = new GrowableByteArray((int) range.getLength());
+		gapOffsets = Offsets.withInitialCapacity(5);
         Iterator<AminoAcid> iter = sequence.iterator(range);
         while(iter.hasNext()){
             append(iter.next());
         }
     }
+	public ProteinSequenceBuilder(ProteinSequence sequence, List<Range> ranges) {
+		builder = new GrowableByteArray();
+		for(Range r: ranges){
+			append(sequence.toBuilder(r));
+		}
+
+	}
 	private ProteinSequenceBuilder(ProteinSequenceBuilder copy){
 		builder = copy.builder.copy();
+		gapOffsets = Offsets.withInitialCapacity(5);
 		updateMetaData();
 	}
 	
 	private ProteinSequenceBuilder(GrowableByteArray growableArray) {
 		this.builder = growableArray;
+		gapOffsets = Offsets.withInitialCapacity(5);
 		updateMetaData();
 	}
 	/**
 	 * Update the metadata of number of gaps and ambiguities.
 	 */
 	private void updateMetaData() {
-		this.numberOfGaps =builder.getCount(GAP_ORDINAL);
+		GrowableIntArray gapList = new GrowableIntArray();
 		this.numberOfAmbiguities =0;
 		builder.forEachIndexed((i, ordinal)->{
-			if(AMBIGUOUS_AMINO_ACIDS.binarySearch(ordinal)>=0) {
+			if(ordinal == GAP_ORDINAL){
+				gapList.append(i);
+			}else if(AMBIGUOUS_AMINO_ACIDS.binarySearch(ordinal)>=0) {
 				numberOfAmbiguities++;
 			}
 		});
+		this.gapOffsets = Offsets.fromSortedList(gapList.toBoxedList());
 	}
 
 	@Override
@@ -273,6 +312,12 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
         }
         return result;
 	}
+
+	@Override
+	public Range toUngappedRange(Range gappedRange) {
+		return null;
+	}
+
 	/**
      * Appends the given residue to the end
      * of the builder's mutable sequence.
@@ -283,7 +328,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	@Override
 	public ProteinSequenceBuilder append(AminoAcid residue) {
 		if(residue==AminoAcid.Gap){
-			numberOfGaps++;
+			gapOffsets.add((int) getLength());
 		}else if(residue.isAmbiguity()) {
 			numberOfAmbiguities++;
 		}
@@ -294,7 +339,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	
 	@Override
 	public ProteinSequenceBuilder clear() {
-		numberOfGaps=0;
+		gapOffsets.clear();
 		numberOfAmbiguities=0;
 		builder.clear();
 		return this;
@@ -359,9 +404,11 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 		List<AminoAcid> list = parse(sequence);
 		byte[] array = new byte[list.size()];
 		int i=0;
+		Offsets insertedOffsets = Offsets.withInitialCapacity(5);
+
 		for(AminoAcid aa :list){
 			if(aa == AminoAcid.Gap){
-				numberOfGaps++;
+				insertedOffsets.add(i);
 			}else if(aa.isAmbiguity()) {
 				numberOfAmbiguities++;
 			}
@@ -369,6 +416,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 			i++;
 		}		
 		builder.insert(offset, array);
+		gapOffsets.add(insertedOffsets, GAP_ADD_AND_SHIFT_OPTIONS);
 		return this;
 	}
 
@@ -384,20 +432,26 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	}
 	@Override
 	public long getUngappedLength() {
-		return builder.getCurrentLength() - numberOfGaps;
+		return builder.getCurrentLength() - gapOffsets.size();
 	}
 	
 	@Override
 	public ProteinSequenceBuilder replace(
 			int offset, AminoAcid replacement) {
 		byte v = builder.get(offset);
+		boolean handledGap=false;
 		if(AMINO_ACID_VALUES[v] == AminoAcid.Gap){
-			numberOfGaps--;			
+			if(replacement == AminoAcid.Gap){
+				//don't need to touch gap offsets
+				handledGap=true;
+			}else{
+				gapOffsets.removeAndShift(offset);
+			}
 		}else if(AMBIGUOUS_AMINO_ACIDS.binarySearch(v) >=0) {
 			numberOfAmbiguities--;
 		}
-		if(replacement == AminoAcid.Gap){
-			numberOfGaps++;
+		if(!handledGap && replacement == AminoAcid.Gap){
+			gapOffsets.add(offset);
 		}else if(replacement.isAmbiguity()) {
 			numberOfAmbiguities++;
 		}
@@ -409,87 +463,45 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 
 	@Override
 	public ProteinSequenceBuilder replace(Range range, AminoAcid[] replacement) {
-		GrowableByteArray temp = new GrowableByteArray(replacement.length);
-		for(AminoAcid aa :replacement){
-			if(aa == AminoAcid.Gap){
-				numberOfGaps++;
-			}else if(aa.isAmbiguity()) {
-				numberOfAmbiguities++;
-			}
-			temp.append(aa.getOrdinalAsByte());
-		}
-		builder.forEachIndexed(range, (i, v)->{
-			if(AMINO_ACID_VALUES[v] == AminoAcid.Gap){
-				numberOfGaps--;			
-			}else if(AMBIGUOUS_AMINO_ACIDS.binarySearch(v) >=0) {
-				numberOfAmbiguities--;
-			}
-		});
-		builder.remove(range);
-		builder.insert((int)range.getBegin(), temp);
-		return this;
+		return _replace(range, replacement.length, Arrays.asList(replacement) );
 	}
 	@Override
 	public ProteinSequenceBuilder replace(Range range, ProteinSequence replacement) {
-		GrowableByteArray temp = new GrowableByteArray((int) replacement.getLength());
-		for(AminoAcid aa :replacement){
-			if(aa == AminoAcid.Gap){
-				numberOfGaps++;
-			}else if(aa.isAmbiguity()) {
-				numberOfAmbiguities++;
-			}
-			temp.append(aa.getOrdinalAsByte());
-		}
-		builder.forEachIndexed(range, (i, v)->{
-			if(AMINO_ACID_VALUES[v] == AminoAcid.Gap){
-				numberOfGaps--;			
-			}else if(AMBIGUOUS_AMINO_ACIDS.binarySearch(v) >=0) {
-				numberOfAmbiguities--;
-			}
-		});
-		builder.remove(range);
-		builder.insert((int)range.getBegin(), temp);
+		return _replace(range,(int) replacement.getLength(), replacement );
+
+	}
+
+	private ProteinSequenceBuilder _replace(Range range, int replacementLength, Iterable<AminoAcid> replacement) {
+
+		delete(range);
+		insert((int)range.getBegin(), replacement);
+
 		return this;
 	}
 	@Override
 	public ProteinSequenceBuilder replace(Range range, ProteinSequenceBuilder replacement) {
-		GrowableByteArray temp = new GrowableByteArray((int) replacement.getLength());
-		for(AminoAcid aa :replacement){
-			if(aa == AminoAcid.Gap){
-				numberOfGaps++;
-			}else if(aa.isAmbiguity()) {
-				numberOfAmbiguities++;
-			}
-			temp.append(aa.getOrdinalAsByte());
-		}
-		builder.forEachIndexed(range, (i, v)->{
-			if(AMINO_ACID_VALUES[v] == AminoAcid.Gap){
-				numberOfGaps--;			
-			}else if(AMBIGUOUS_AMINO_ACIDS.binarySearch(v) >=0) {
-				numberOfAmbiguities--;
-			}
-		});
-		builder.remove(range);
-		builder.insert((int)range.getBegin(), temp);
-		return this;
+		return _replace(range,(int) replacement.getLength(), replacement );
 	}
 	@Override
 	public ProteinSequenceBuilder delete(
 			Range range) {
+		int j=0;
 		for(AminoAcid aa : asList(range)){
-			if(aa == AminoAcid.Gap){
-				numberOfGaps --;
-			}else if(aa.isAmbiguity()) {
+			if(aa.isAmbiguity()) {
 				numberOfAmbiguities--;
 			}
 		}
 		builder.remove(range);
+		gapOffsets.removeAllNoShift(gapOffsets.intersection(range));
+		int end = gapOffsets.computeInsertionPointOf((int)range.getEnd(), true);
+		int length = (int) range.getLength();
+		gapOffsets.replaceIf(i-> i >= end, i-> i- length );
 		return this;
 	}
 
 	@Override
 	public int getNumGaps() {
-		return numberOfGaps;
+		return gapOffsets.size();
 	}
 
 	@Override
@@ -502,15 +514,19 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	public ProteinSequenceBuilder insert(
 			int offset, Iterable<AminoAcid> sequence) {
 		GrowableByteArray temp = new GrowableByteArray(DEFAULT_CAPACITY);
+		Offsets gapList = Offsets.withInitialCapacity(5);
+		int j=0;
 		for(AminoAcid aa :sequence){
 			if(aa == AminoAcid.Gap){
-				numberOfGaps++;
+				gapList.add(j);
 			}else if(aa.isAmbiguity()) {
 				numberOfAmbiguities++;
 			}
 			temp.append(aa.getOrdinalAsByte());
+			j++;
 		}		
 		builder.insert(offset, temp);
+		gapOffsets.insertAndShift(gapList, j, offset);
 		return this;
 	}
 
@@ -525,7 +541,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	public ProteinSequenceBuilder insert(
 			int offset, AminoAcid base) {
 		if(base == AminoAcid.Gap){
-			numberOfGaps++;
+			gapOffsets.addAndShift(offset);
 		}else if(base.isAmbiguity()) {
 			numberOfAmbiguities++;
 		}
@@ -547,7 +563,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 
 	@Override
 	public ProteinSequence build() {
-		return new CodecDecider(numberOfGaps, numberOfAmbiguities>0, turnOffCompression)
+		return new CodecDecider(getNumGaps(), numberOfAmbiguities>0, turnOffCompression)
 				.build(convertFromBytes(builder.toArray()), false);
 	}
 
@@ -651,8 +667,11 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	@Override
 	public ProteinSequenceBuilder trim(Range range) {
 		Range intersection = range.intersection(Range.ofLength(getLength()));
-		builder =builder.subArray(intersection);		
-		this.numberOfGaps =builder.getCount(GAP_ORDINAL);
+		builder =builder.subArray(intersection);
+		int newBegin = (int) range.getBegin();
+		this.gapOffsets =gapOffsets.intersection(intersection);
+		this.gapOffsets.replaceAll( v-> v - newBegin);
+
 		this.numberOfAmbiguities =0;
 		builder.forEachIndexed((i, ordinal)->{
 			if(AMBIGUOUS_AMINO_ACIDS.binarySearch(ordinal)>=0) {
@@ -699,26 +718,16 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	@Override
 	public ProteinSequenceBuilder ungap() {
 
-		if(numberOfGaps==0) {
+		if(getNumGaps()==0) {
 			return this;
 		}
-		GrowableIntArray gaps = computeGapsAsGrowableArray();
-		gaps.reverse();
-		gaps.forEachIndexed((i, offset)-> builder.remove(offset));
+		gapOffsets.forEachReversed( builder::remove);
 		
-		numberOfGaps=0;
+		this.gapOffsets.clear();
 		return this;
 	}
 
-	private GrowableIntArray computeGapsAsGrowableArray() {
-		GrowableIntArray gaps = new GrowableIntArray();
-		builder.forEachIndexed((i, b)->{
-			if(b == GAP_ORDINAL) {
-				gaps.append(i);
-			}
-		});
-		return gaps;
-	}
+
 
 	@Override
 	public String toString() {
@@ -792,11 +801,11 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 
 	@Override
 	public List<Range> getRangesOfGaps() {
-		return computeGapsAsGrowableArray().asRanges();
+		return Ranges.asRanges(gapOffsets.toArray());
 	}
 
 	@Override
 	public IntList getGapOffsets() {
-		return computeGapsAsGrowableArray().toBoxedList();
+		return gapOffsets.asList();
 	}
 }
