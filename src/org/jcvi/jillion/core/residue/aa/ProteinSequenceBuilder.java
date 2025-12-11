@@ -167,7 +167,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	public ProteinSequenceBuilder(int initialCapacity){
 		builder = new GrowableByteArray(initialCapacity);
 		gapOffsets = Offsets.withInitialCapacity(5);
-		ambiguityOffsets = Offsets.withInitialCapacity(5);
+		ambiguityOffsets = Offsets.withInitialCapacity(1);
 	}
 	/**
      * Creates a new ProteinSequenceBuilder instance
@@ -182,7 +182,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	public ProteinSequenceBuilder(CharSequence sequence){
 		builder = new GrowableByteArray(sequence.length());
 		gapOffsets = Offsets.withInitialCapacity(5);
-		ambiguityOffsets = Offsets.withInitialCapacity(5);
+		ambiguityOffsets = Offsets.withInitialCapacity(1);
 		append(parse(sequence.toString()));
 	}
 
@@ -205,7 +205,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	public ProteinSequenceBuilder(CharSequence sequence, InvalidCharacterHandler invalidCharacterHandler){
 		builder = new GrowableByteArray(sequence.length());
 		gapOffsets = Offsets.withInitialCapacity(5);
-		ambiguityOffsets = Offsets.withInitialCapacity(5);
+		ambiguityOffsets = Offsets.withInitialCapacity(1);
 		setInvalidCharacterHandler(invalidCharacterHandler);
 		append(parse(sequence.toString()));
 	}
@@ -229,7 +229,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	public ProteinSequenceBuilder(CharSequence sequence, DecodingOptions decodingOptions){
 		builder = new GrowableByteArray(sequence.length());
 		gapOffsets = Offsets.withInitialCapacity(5);
-		ambiguityOffsets = Offsets.withInitialCapacity(5);
+		ambiguityOffsets = Offsets.withInitialCapacity(1);
 		setDecodingOptions(decodingOptions);
 		append(parse(sequence.toString()));
 	}
@@ -242,7 +242,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	public ProteinSequenceBuilder(ProteinSequence sequence){
 		builder = new GrowableByteArray((int)sequence.getLength());
 		gapOffsets = Offsets.withInitialCapacity(5);
-		ambiguityOffsets = Offsets.withInitialCapacity(5);
+		ambiguityOffsets = Offsets.withInitialCapacity(1);
 		append(sequence);
 	}
 	
@@ -260,7 +260,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
     public ProteinSequenceBuilder(ProteinSequence sequence, Range range) {
         builder = new GrowableByteArray((int) range.getLength());
 		gapOffsets = Offsets.withInitialCapacity(5);
-		ambiguityOffsets = Offsets.withInitialCapacity(5);
+		ambiguityOffsets = Offsets.withInitialCapacity(1);
         Iterator<AminoAcid> iter = sequence.iterator(range);
         while(iter.hasNext()){
             append(iter.next());
@@ -269,7 +269,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	public ProteinSequenceBuilder(ProteinSequence sequence, List<Range> ranges) {
 		builder = new GrowableByteArray();
 		gapOffsets = Offsets.withInitialCapacity(5);
-		ambiguityOffsets = Offsets.withInitialCapacity(5);
+		ambiguityOffsets = Offsets.withInitialCapacity(1);
 		for(Range r: ranges){
 			append(sequence.toBuilder(r));
 		}
@@ -278,14 +278,14 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	private ProteinSequenceBuilder(ProteinSequenceBuilder copy){
 		builder = copy.builder.copy();
 		gapOffsets = Offsets.withInitialCapacity(5);
-		ambiguityOffsets = Offsets.withInitialCapacity(5);
+		ambiguityOffsets = Offsets.withInitialCapacity(1);
 		updateMetaData();
 	}
 	
 	private ProteinSequenceBuilder(GrowableByteArray growableArray) {
 		this.builder = growableArray;
 		gapOffsets = Offsets.withInitialCapacity(5);
-		ambiguityOffsets = Offsets.withInitialCapacity(5);
+		ambiguityOffsets = Offsets.withInitialCapacity(1);
 		updateMetaData();
 	}
 	/**
