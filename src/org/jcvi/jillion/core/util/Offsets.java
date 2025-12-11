@@ -66,6 +66,21 @@ public class Offsets {
         delegate.clear();
     }
 
+    public void delete(Range range) {
+        if(range.isEmpty() || delegate.getCurrentLength() ==0){
+            //no op?
+            return;
+        }
+        int rangeEnd = (int)range.getEnd();
+        int begin = computeInsertionPointOf((int)range.getBegin(),false);
+        int end = Math.min(delegate.getCurrentLength()-1, computeInsertionPointOf(rangeEnd, false));
+        int length = (int) range.getLength();
+
+        delegate.remove(Range.of(begin, end));
+
+        delegate.replaceIf(Range.of(begin, size()-1), i-> i>rangeEnd, i-> i-length );
+    }
+
     @Value
    @Builder
     public static class XorOptions{
@@ -930,6 +945,19 @@ public class Offsets {
     public void remove(int offset){
 
         delegate.sortedRemove(offset);
+
+    }
+    public void remove(Range range){
+
+        if(range.isEmpty() || delegate.getCurrentLength() ==0){
+            //no op?
+            return;
+        }
+        int rangeEnd = (int)range.getEnd();
+        int begin = computeInsertionPointOf((int)range.getBegin(),false);
+        int end = computeInsertionPointOf(rangeEnd, false);
+
+        delegate.remove(Range.of(begin, end));
 
     }
 

@@ -21,11 +21,13 @@
 package org.jcvi.jillion.core.residue.aa;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.residue.DecodingOptions;
 import org.jcvi.jillion.core.residue.InvalidCharacterHandlers;
+import org.jcvi.jillion.internal.core.util.ArrayUtil;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -147,7 +149,55 @@ public class TestProteinSequenceBuilder {
 		sut.replaceWithGaps(Range.of(2,3), 0);
 		assertEquals("IKW", sut.toString());
 	}
-
+	@Test
+	public void gapDeleteEntireSequence(){
+		ProteinSequenceBuilder sut = new ProteinSequenceBuilder("------L----");
+		sut.delete(Range.ofLength(sut.getLength()));
+		assertEquals(Collections.emptyList(),sut.getGapOffsets());
+	}
+	@Test
+	public void gapDeleteEntireSequenceAllGaps(){
+		ProteinSequenceBuilder sut = new ProteinSequenceBuilder("-----------");
+		sut.delete(Range.ofLength(sut.getLength()));
+		assertEquals(Collections.emptyList(),sut.getGapOffsets());
+	}
+	@Test
+	public void gapDeleteEntireReplaceGapsAbacusRight(){
+		ProteinSequenceBuilder sut = new ProteinSequenceBuilder("-----L-----");
+		sut.replace(Range.ofLength(sut.getLength()), new ProteinSequenceBuilder("----------L"));
+		assertEquals(ArrayUtil.asList(0,1,2,3,4,5,6,7,8,9),sut.getGapOffsets());
+	}
+	@Test
+	public void gapDeleteEntireReplaceGapsAbacusLeft(){
+		ProteinSequenceBuilder sut = new ProteinSequenceBuilder("-----L-----");
+		sut.replace(Range.ofLength(sut.getLength()), new ProteinSequenceBuilder("L----------"));
+		assertEquals(ArrayUtil.asList(1,2,3,4,5,6,7,8,9,10),sut.getGapOffsets());
+	}
+	@Test
+	public void gapDeleteEntireReplaceGapsAbacusLeftSubRange(){
+		ProteinSequenceBuilder sut = new ProteinSequenceBuilder("L-----L-----");
+		sut.replace(Range.of(1,11), new ProteinSequenceBuilder( "L----------"));
+		assertEquals("LL----------", sut.toString());
+		assertEquals(ArrayUtil.asList(2,3,4,5,6,7,8,9,10,11),sut.getGapOffsets());
+	}
+	@Test
+	public void gapDeleteEntireGapRegionSequence(){
+		ProteinSequenceBuilder sut = new ProteinSequenceBuilder("------L----R");
+		sut.delete(Range.ofLength(sut.getLength()-1));
+		assertEquals(Collections.emptyList(),sut.getGapOffsets());
+	}
+	@Test
+	public void gapDeleteEntireGapRegionSequence2(){
+		ProteinSequenceBuilder sut = new ProteinSequenceBuilder("------L----RS");
+		sut.delete(Range.ofLength(sut.getLength()));
+		assertEquals(Collections.emptyList(),sut.getGapOffsets());
+	}
+	@Test
+	public void gapDeleteEntireGapRegionSequenceMostlyGaps(){
+		ProteinSequenceBuilder sut = new ProteinSequenceBuilder("R-----------");
+		sut.delete(Range.ofLength(sut.getLength()-1));
+		assertEquals(List.of(0),sut.getGapOffsets());
+	}
 	@Test
 	public void gapDeleteAndAddSingle(){
 		ProteinSequenceBuilder sut = new ProteinSequenceBuilder("------L----");
