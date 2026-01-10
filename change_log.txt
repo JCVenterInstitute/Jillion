@@ -41,6 +41,8 @@ and/or the ResidueSequence interface.
 as the residue is the same.  For example NucleotideSequence vs VariantNucleotideSequence
 previous versions required both input sequences to be the same type.
 
+17. Several internal methods that took only NucleotideSequence or INucleotideSequence have been expanded to take ResidueSequence.
+
 Performance Improvements
 ------------------------
 1. NucleotideSequenceBuilder internal functions changed to use Offsets internally this should be a 1-2% performance boost.

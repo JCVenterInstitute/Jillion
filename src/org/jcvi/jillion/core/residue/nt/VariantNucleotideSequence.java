@@ -832,6 +832,11 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 			return this;
 		}
 		@Override
+		public Builder replace(Range range, Iterable<Nucleotide> replacement) {
+			this.nucleotideSequence.replace(range, replacement);
+			return this;
+		}
+		@Override
 		public Builder replace(Range range, NucleotideSequence replacement) {
 			this.nucleotideSequence.replace(range, replacement);
 			return this;
@@ -857,6 +862,11 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 			});
 			return this;
 		}
+		@Override
+		public boolean isGap(int offset) {
+			return nucleotideSequence.isGap(offset);
+		}
+
 		@Override
 		public Builder replace(Range range, VariantNucleotideSequence replacement) {
 			// TODO improve performance

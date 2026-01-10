@@ -22,9 +22,11 @@ package org.jcvi.jillion.core.residue;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
+import org.jcvi.jillion.assembly.AssemblyUtil;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.SequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.core.util.streams.ThrowingIntIndexedConsumer;
 
@@ -76,6 +78,40 @@ public interface ResidueSequence<R extends Residue<R>, T extends ResidueSequence
      * @since 6.0
      */
     List<Range> getRangesOfGaps();
+
+    /**
+     * Get the first non-gap {@link org.jcvi.jillion.core.residue.nt.Nucleotide} from the left side of the given
+     * gappedReadIndex on the given {@link NucleotideSequence}.  If the given base is not a gap,
+     * then that is the value returned.
+     * @param gappedOffset the gapped offset (0-based) to start the search from.
+     * @return the first non-gap position on the sequence that is {@code <= gappedOffset}.
+     *
+     * @since 6.0.2
+     */
+    default int getLeftFlankingNonGapOffsetFor(int gappedOffset) {
+        return AssemblyUtil.getLeftFlankingNonGapIndex(this, gappedOffset);
+    }
+
+    /**
+     * Get the first non-gap {@link org.jcvi.jillion.core.residue.nt.Nucleotide} from the right side of the given
+     * gappedOffset on the given {@link NucleotideSequence}.  If the given base is not a gap,
+     * then that is the value returned.
+     * @param gappedOffset the gapped offset (0-based) to start the search from.
+     * @return the first non-gap position on the sequence that is {@code >= gappedOffset}
+     *
+     * @since 6.0.2
+     */
+    default int getRightFlankingNonGapOffsetFor(int gappedOffset) {
+        return AssemblyUtil.getRightFlankingNonGapIndex(this, gappedOffset);
+    }
+    /**
+     * Get the list of contiguous spans of the Unknown Residue (i.e. 'N' or 'X' etc); the returned list
+     * will be in sorted order.
+     * @return a List which may be empty.
+     *
+     * @since 6.1
+     */
+    List<Range> getRangesOfUnknowns();
     /**
      * Get the number of gaps in this sequence.
      * @return the number of gaps; will always be {@code >=0}.

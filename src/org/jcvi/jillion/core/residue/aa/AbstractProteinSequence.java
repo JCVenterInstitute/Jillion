@@ -100,17 +100,27 @@ abstract class AbstractProteinSequence extends AbstractResidueSequence<AminoAcid
 		return getGapArray().stream();
 	}
 	private GrowableIntArray getGapArray() {
+		return getOffsetsFor(AminoAcid.Gap);
+	}
+	private GrowableIntArray getOffsetsFor(AminoAcid aa) {
 		GrowableIntArray array = new GrowableIntArray();
 		Iterator<AminoAcid> iter = iterator();
 		int i=0;
 		while(iter.hasNext()){
-			if(iter.next() ==AminoAcid.Gap){
+			if(iter.next() ==aa){
 				array.append(i);
 			}
 			i++;
-		}	
+		}
 		return array;
 	}
+
+	@Override
+	public List<Range> getRangesOfUnknowns() {
+		return getOffsetsFor(AminoAcid.Unknown_Amino_Acid)
+				.asRanges();
+	}
+
 	@Override
 	public int getNumberOfGaps() {
 		Iterator<AminoAcid> iter = iterator();

@@ -94,6 +94,7 @@ public final class PrimitiveArrayIterators {
 	public static PrimitiveIterator.OfInt createReverse(int[] array, int length){
 		return new ReverseIntIterator(array,length-1, 0);
 	}
+
 	/**
 	 * Create a new Iterator that will
 	 * iterate over {@code length} elements
@@ -139,7 +140,7 @@ public final class PrimitiveArrayIterators {
 	 * @throws ArrayIndexOutOfBoundsException if either start
 	 * or end are out of bounds of the array.
 	 */
-	public static Iterator<Integer> create(int[] array, int start, int end){
+	public static PrimitiveIterator.OfInt create(int[] array, int start, int end){
 		validateParameters(start, end, array.length);
 		return new IntIterator(array,start, end);
 	}

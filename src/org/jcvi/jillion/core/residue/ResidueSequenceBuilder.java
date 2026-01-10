@@ -20,7 +20,6 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.SequenceBuilder;
@@ -249,7 +248,18 @@ public interface ResidueSequenceBuilder<R extends Residue<R>, S extends Sequence
     B replace(Range offset, S replacement);
     
     B replace(Range offset, B replacement);
+    B replace(Range offset, Iterable<R> replacement);
 
+    /**
+     * Is the given offset a Gap.
+     * @param offset the offset must be &ge; 0 and &lt; length.
+     * @return {@code true} if it is; {@code false} otherwise.
+     *
+     * @throws IndexOutOfBoundsException if offset is beyond the length
+     * of the sequence or negative.
+     * @since 6.1
+     */
+    boolean isGap(int offset);
     /**
      * Replace the sequence in the given range with
      * gaps.

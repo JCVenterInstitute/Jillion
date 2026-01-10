@@ -114,7 +114,8 @@ import org.junit.runners.Suite.SuiteClasses;
 			TestGrowableBitArrayJson.class,
 
 			TestOffsetComplement.class,
-			TestOffsetIntersection.class
+			TestOffsetIntersection.class,
+			TestOffsetContiguousIntersection.class
     }
     )
 public class AllUtilUnitTests {

@@ -29,6 +29,7 @@ import org.jcvi.jillion.core.Direction;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
+import org.jcvi.jillion.core.residue.ResidueSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 /**
@@ -189,7 +190,7 @@ public final class AssemblyUtil {
      * @return the first non-gap position on the placedRead that is {@code <= gappedReadIndex};
      * may be negative if the sequence starts with gaps.
      */
-    public static int getLeftFlankingNonGapIndex(NucleotideSequence gappedNucleotides, int gappedReadIndex) {
+    public static int getLeftFlankingNonGapIndex(ResidueSequence<?,?,?> gappedNucleotides, int gappedReadIndex) {
         if(gappedReadIndex< 0){
             return gappedReadIndex;
         }
@@ -209,7 +210,7 @@ public final class AssemblyUtil {
      * @param gappedOffset the gapped offset (0-based) to start the search from.
      * @return the first non-gap position on the placedRead that is {@code >= gappedReadIndex}
      */
-    public static int getRightFlankingNonGapIndex(NucleotideSequence sequence, int gappedOffset) {
+    public static int getRightFlankingNonGapIndex(ResidueSequence<?,?,?> sequence, int gappedOffset) {
         if(gappedOffset > sequence.getLength() -1 || gappedOffset < 0){
             return gappedOffset;
         }
@@ -231,7 +232,7 @@ public final class AssemblyUtil {
      * @throws IndexOutOfBoundsException if the given Range goes beyond
      * the gapped sequence.
      */
-    public static Range toUngappedRange(final NucleotideSequence gappedSequence,
+    public static Range toUngappedRange(final ResidueSequence<?,?,?> gappedSequence,
             Range gappedRange) {
        return gappedSequence.toUngappedRange(gappedRange);
         

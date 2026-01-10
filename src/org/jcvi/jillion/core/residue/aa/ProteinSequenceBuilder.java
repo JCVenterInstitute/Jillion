@@ -20,10 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.aa;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
@@ -31,7 +28,6 @@ import org.jcvi.jillion.core.residue.DecodingOptions;
 import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
 import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.core.util.Offsets;
-import org.jcvi.jillion.internal.core.util.ArrayUtil;
 import org.jcvi.jillion.internal.core.util.GrowableByteArray;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 import org.jcvi.jillion.spi.InvalidCharacterHandler;
@@ -326,9 +322,28 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
         return result;
 	}
 
+
 	@Override
 	public Range toUngappedRange(Range gappedRange) {
-		return null;
+		Objects.requireNonNull(gappedRange);
+		long gappedBegin = gappedRange.getBegin();
+		long gappedEnd = gappedRange.getEnd();
+
+		long currentLength = getLength();
+		if(gappedBegin >= currentLength || gappedEnd >= currentLength){
+			throw new IndexOutOfBoundsException("gapped Range of " + gappedRange +" is beyond the gapped sequence length of " + currentLength);
+		}
+
+
+		if(gapOffsets.isEmpty()){
+			//no gaps
+			return gappedRange;
+		}
+
+		long ungappedStart = gappedBegin - gapOffsets.computeInsertionPointOf((int)gappedBegin);
+		long ungappedEnd = gappedEnd - gapOffsets.computeInsertionPointOf((int)gappedEnd);
+
+		return Range.of(ungappedStart, ungappedEnd);
 	}
 
 	/**
@@ -484,15 +499,25 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 
 	@Override
 	public ProteinSequenceBuilder replace(Range range, AminoAcid[] replacement) {
-		return _replace(range, replacement.length, Arrays.asList(replacement) );
+		return _replace(range, Arrays.asList(replacement) );
 	}
 	@Override
 	public ProteinSequenceBuilder replace(Range range, ProteinSequence replacement) {
-		return _replace(range,(int) replacement.getLength(), replacement );
+		return _replace(range, replacement );
+
+	}
+	@Override
+	public ProteinSequenceBuilder replace(Range range, Iterable<AminoAcid> replacement) {
+		return _replace(range, replacement );
 
 	}
 
-	private ProteinSequenceBuilder _replace(Range range, int replacementLength, Iterable<AminoAcid> replacement) {
+	@Override
+	public boolean isGap(int offset) {
+		return gapOffsets.contains(offset);
+	}
+
+	private ProteinSequenceBuilder _replace(Range range, Iterable<AminoAcid> replacement) {
 
 		delete(range);
 		insert((int)range.getBegin(), replacement);
@@ -501,7 +526,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	}
 	@Override
 	public ProteinSequenceBuilder replace(Range range, ProteinSequenceBuilder replacement) {
-		return _replace(range,(int) replacement.getLength(), replacement );
+		return _replace(range, replacement );
 	}
 	@Override
 	public ProteinSequenceBuilder delete(
@@ -620,26 +645,26 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 		}
 		public ProteinSequence build(AminoAcid[] asList, boolean doubleCheck) {
 			if(turnOffCompression) {
-	            if (numberOfGaps > 0 && (!doubleCheck || (doubleCheck && hasGaps(asList)))) {
-	            	if(hasAmbiguities && (!doubleCheck || (doubleCheck && hasAmbiguities(asList)))) {
+	            if (numberOfGaps > 0 && (!doubleCheck || hasGaps(asList))) {
+	            	if(hasAmbiguities && (!doubleCheck || hasAmbiguities(asList))) {
 	            		return new UnCompressedGappedProteinSequence(asList);
 	            	}
 	                return new UnCompressedGappedNoAmbiguityProteinSequence(asList);
 	            }
-	            if(hasAmbiguities && (!doubleCheck || (doubleCheck && hasAmbiguities(asList)))) {
+	            if(hasAmbiguities && (!doubleCheck || hasAmbiguities(asList))) {
 	            	return new UnCompressedUngappedProteinSequence(asList);
 	            }
 	            
 	            return new UnCompressedUnGappedNoAmbiguityProteinSequence(asList);
 	        }else {
-	            if (numberOfGaps > 0 && (!doubleCheck || (doubleCheck && hasGaps(asList)))) {
-	            	if(hasAmbiguities && (!doubleCheck || (doubleCheck && hasAmbiguities(asList)))) {
+	            if (numberOfGaps > 0 && (!doubleCheck || hasGaps(asList))) {
+	            	if(hasAmbiguities && (!doubleCheck || hasAmbiguities(asList))) {
 	            		return new CompactProteinSequence(asList);
 	            	}
 	                return new GappedNoAmbiguityProteinSequence(asList);
 	            }
 	            //no gaps
-	            if(hasAmbiguities && (!doubleCheck || (doubleCheck && hasAmbiguities(asList)))) {
+	            if(hasAmbiguities && (!doubleCheck || hasAmbiguities(asList))) {
 
 		            return new UngappedProteinSequence(asList);
             	}

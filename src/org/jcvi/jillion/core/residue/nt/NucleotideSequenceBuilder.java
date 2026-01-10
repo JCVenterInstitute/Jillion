@@ -658,6 +658,26 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
 		insert((int)gappedRangeToBeReplaced.getBegin(), replacementSeq);	
 		return this;
 	}
+    /**
+     * Replace the sequence currently located at the given
+     * {@link Range} with the given replacementSequence.
+     *
+     * @apiNote This is the same as calling:
+     * <pre>
+     * 	delete(gappedRangeToBeReplaced);
+     * 	insert((int)gappedRangeToBeReplaced.getBegin(), replacementSeq);
+     * </pre>
+     * @param gappedRangeToBeReplaced the range of this sequence to be replaced.
+     * @param replacementSeq the Iterable to use in this range.
+     *
+     * @return this.
+     * 6.1
+     */
+    public NucleotideSequenceBuilder replace(Range gappedRangeToBeReplaced, Iterable<Nucleotide> replacementSeq) {
+        delete(gappedRangeToBeReplaced);
+        insert((int)gappedRangeToBeReplaced.getBegin(), replacementSeq);
+        return this;
+    }
 	/**
      * Replace the sequence currently located at the given
      * {@link Range} with the given replacementSequence.
@@ -1689,7 +1709,10 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
        
         return Range.of(ungappedStart, ungappedEnd); 
     }
-
+    @Override
+    public boolean isGap(int offset) {
+        return codecDecider.gapOffsets.contains(offset);
+    }
     
     public int getGappedOffsetFor(int ungappedOffset){
     	SingleThreadAdder currentOffset = new SingleThreadAdder(ungappedOffset);

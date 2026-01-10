@@ -672,9 +672,16 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		return PrimitiveArrayIterators.create(data, currentLength);
 	}
 
+	public PrimitiveIterator.OfInt iterator(int startOffset) {
+		return PrimitiveArrayIterators.create(data, startOffset, currentLength-1);
+	}
+
 
 	public PrimitiveIterator.OfInt reverseIterator() {
 		return PrimitiveArrayIterators.createReverse(data, currentLength);
+	}
+	public PrimitiveIterator.OfInt reverseIterator(int startOffset) {
+		return PrimitiveArrayIterators.createReverse(data, startOffset+1);
 	}
 	
 	/**

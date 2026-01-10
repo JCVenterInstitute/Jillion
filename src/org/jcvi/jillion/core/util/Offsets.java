@@ -384,6 +384,50 @@ public class Offsets {
     }
 
     /**
+     * Get the Range of contiguous offsets that are intersect
+     * the given offset.  If this Object represents gap offset positions
+     * then calling this method with a known gap offset value
+     * will return the Range that is the full gap size.
+     * <p/>
+     * For example if this Offsets represents the values {@code {3,4,5}}
+     * and we ask for the intersection with {@code 4} this method will return
+     * {@code Range.of(3,5)}
+     *
+     * @param offset the offset to intersect with.
+     * @return {@code} null if there is no intersection or the Range if there is.
+     */
+    public Range getContiguousRangeIntersecting(int offset){
+        int beginOffset = delegate.binarySearch(offset);
+        if(beginOffset <0){
+            //not an offset
+            return null;
+        }
+        int end=offset;
+        if(beginOffset != delegate.getCurrentLength() -1) {
+
+            PrimitiveIterator.OfInt fwdIterator = delegate.iterator(beginOffset + 1);
+
+            while (fwdIterator.hasNext()) {
+                int i = fwdIterator.nextInt();
+                if (i != end + 1) {
+                    break;
+                }
+                end++;
+            }
+        }
+
+        int begin = offset;
+        PrimitiveIterator.OfInt revIterator = delegate.reverseIterator(beginOffset-1);
+        while(revIterator.hasNext()){
+            if(revIterator.nextInt() != begin-1){
+                break;
+            }
+            begin--;
+        }
+
+        return Range.of(begin, end);
+    }
+    /**
      * Create a new {@link Offsets} that only contains
      * the values that are in the given offsetRange.
      * @param offsetRange the range to complement; can not be null.
