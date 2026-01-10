@@ -24,8 +24,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.jcvi.jillion.core.Defline;
 import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.qual.PhredQuality;
@@ -47,6 +50,13 @@ public class TestQualityFastaFileDataStoreBuilder extends AbstractTestFastaFileD
 			throws IOException {
 		return new QualityFastaFileDataStoreBuilder(fasta).build();
 
+	}
+
+	@Override
+	protected QualityFastaDataStore createDataStoreFromFile(File fasta, BiFunction<String,String, Defline> idConverter) throws IOException {
+		return new QualityFastaFileDataStoreBuilder(fasta)
+				.idConverter(idConverter)
+				.build();
 	}
 
 	@Override

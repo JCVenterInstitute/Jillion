@@ -28,6 +28,7 @@ import java.util.stream.IntStream;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.internal.core.EncodedSequence;
 import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
@@ -91,7 +92,7 @@ abstract class AbstractProteinSequence extends AbstractResidueSequence<AminoAcid
          return encodedAminoAcids.iterator(range);
      }
 	@Override
-	public List<Integer> getGapOffsets() {
+	public IntList getGapOffsets() {
 		return getGapArray().toBoxedList();
 	}
 	@Override
@@ -99,17 +100,27 @@ abstract class AbstractProteinSequence extends AbstractResidueSequence<AminoAcid
 		return getGapArray().stream();
 	}
 	private GrowableIntArray getGapArray() {
+		return getOffsetsFor(AminoAcid.Gap);
+	}
+	private GrowableIntArray getOffsetsFor(AminoAcid aa) {
 		GrowableIntArray array = new GrowableIntArray();
 		Iterator<AminoAcid> iter = iterator();
 		int i=0;
 		while(iter.hasNext()){
-			if(iter.next() ==AminoAcid.Gap){
+			if(iter.next() ==aa){
 				array.append(i);
 			}
 			i++;
-		}	
+		}
 		return array;
 	}
+
+	@Override
+	public List<Range> getRangesOfUnknowns() {
+		return getOffsetsFor(AminoAcid.Unknown_Amino_Acid)
+				.asRanges();
+	}
+
 	@Override
 	public int getNumberOfGaps() {
 		Iterator<AminoAcid> iter = iterator();
@@ -171,6 +182,10 @@ abstract class AbstractProteinSequence extends AbstractResidueSequence<AminoAcid
     public ProteinSequenceBuilder toBuilder(Range range) {
 		return new ProteinSequenceBuilder(this, range);
     }
+	@Override
+	public ProteinSequenceBuilder toBuilder(List<Range> ranges) {
+		return new ProteinSequenceBuilder(this, ranges);
+	}
 
 
 
@@ -229,5 +244,7 @@ abstract class AbstractProteinSequence extends AbstractResidueSequence<AminoAcid
 			return new ProteinSequenceBuilder(seq).build();
 		}
 	}
+
+
 
 }

@@ -2,7 +2,10 @@ package org.jcvi.jillion.core.residue.aa;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
+import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.core.util.iter.ArrayIterator;
+import org.jcvi.jillion.internal.core.util.ArrayUtil;
+import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 import org.jcvi.jillion.internal.core.util.MemoizedSupplier;
 
 import java.io.ObjectInputStream;
@@ -31,6 +34,7 @@ class UnCompressedUngappedProteinSequence implements ProteinSequence{
     private final AminoAcid[] array;
     private transient final Supplier<String> stringSupplier;
 
+    private transient final Supplier<List<Range>> xRangeSupplier;
     public UnCompressedUngappedProteinSequence(AminoAcid[] array) {
         this.array = array;
 
@@ -41,6 +45,17 @@ class UnCompressedUngappedProteinSequence implements ProteinSequence{
             }
             return builder.toString();
         });
+
+        xRangeSupplier = MemoizedSupplier.memoize(()->{
+            GrowableIntArray gaps = new GrowableIntArray();
+            int length = array.length;
+            for(int i=0; i< length; i++){
+                if(array[i] == AminoAcid.Unknown_Amino_Acid){
+                    gaps.append(i);
+                }
+            }
+            return gaps.asRanges();
+        });
     }
     @Override
 	public List<Range> getRangesOfGaps(){
@@ -48,8 +63,13 @@ class UnCompressedUngappedProteinSequence implements ProteinSequence{
 	}
 
     @Override
-    public List<Integer> getGapOffsets() {
-        return Collections.emptyList();
+    public List<Range> getRangesOfUnknowns() {
+        return xRangeSupplier.get();
+    }
+
+    @Override
+    public IntList getGapOffsets() {
+        return ArrayUtil.immutableEmptyIntList();
     }
 
     @Override
@@ -110,6 +130,10 @@ class UnCompressedUngappedProteinSequence implements ProteinSequence{
     public ProteinSequenceBuilder toBuilder(Range range) {
         return new ProteinSequenceBuilder(this, range);
     }
+    @Override
+    public ProteinSequenceBuilder toBuilder(List<Range> ranges) {
+        return new ProteinSequenceBuilder(this, ranges);
+    }
 
     @Override
     public ProteinSequenceBuilder newEmptyBuilder() {
@@ -130,6 +154,7 @@ class UnCompressedUngappedProteinSequence implements ProteinSequence{
     public Iterator<AminoAcid> iterator() {
         return  new ArrayIterator<>(array);
     }
+
 
     @Override
     public String toString() {

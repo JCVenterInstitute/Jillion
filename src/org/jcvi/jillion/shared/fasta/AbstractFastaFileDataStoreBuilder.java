@@ -25,8 +25,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.OptionalLong;
 import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.jcvi.jillion.core.Defline;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
@@ -53,6 +56,8 @@ public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>
 	private DataStoreProviderHint hint = DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_SPEED;
 	
 	private Long maxNumberOfRecords=null;
+
+	private BiFunction<String,String, Defline> idConverter;
 	/**
 	 * Create a new Builder instance of 
 	 * which will build a {@link FastaDataStore} for the given
@@ -197,6 +202,18 @@ public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>
 			this.maxNumberOfRecords = Long.valueOf(ids.size());
 			return this;
 		}
+
+	/**
+	 * Function to convert the ids of the records from the Fasta file
+	 * to a different ID.  If the function is null, then no conversion is performed.
+	 * If the Function returns {@code null}, then the record is filtered out.
+	 * @since 6.1
+	 */
+	protected AbstractFastaFileDataStoreBuilder<T, S, F, SD, D> idConverter(BiFunction<String,String, Defline> idConverter) {
+
+		this.idConverter = idConverter;
+		return this;
+	}
 	
 	/**
      * Only include the {@link FastaRecord}s which pass
@@ -292,7 +309,7 @@ public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>
 	 */
 	protected D build() throws IOException {
 		return createNewInstance(parser, hint, filter, recordFilter,
-				maxNumberOfRecords==null? OptionalLong.empty(): OptionalLong.of(maxNumberOfRecords.longValue()));
+				maxNumberOfRecords==null? OptionalLong.empty(): OptionalLong.of(maxNumberOfRecords), idConverter);
 	}
 
 	/**
@@ -308,7 +325,7 @@ public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>
 	 * @throws IOException if there is a problem creating the datastore from the file.
 	 */
 	protected abstract D createNewInstance(FastaParser parser, DataStoreProviderHint hint, Predicate<String> filter,
-			Predicate<F> recordFilter, OptionalLong maxNumberOfRecords) throws IOException;
+			Predicate<F> recordFilter, OptionalLong maxNumberOfRecords, BiFunction<String,String, Defline> idConverter) throws IOException;
 			
 
 

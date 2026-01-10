@@ -144,7 +144,7 @@ public class TestFaiWriter {
 		try(NucleotideFastaDataStore expected = DefaultNucleotideFastaFileDataStore.create(outputFasta);
 			NucleotideFastaDataStore actual = FaiNucleotideFastaFileDataStore.create(outputFasta,
 					new File(outputFasta.getParentFile(), outputFasta.getName()+".fai"),
-					expected);
+					expected, null);
 			
 			StreamingIterator<String> iter = expected.idIterator();
 				){

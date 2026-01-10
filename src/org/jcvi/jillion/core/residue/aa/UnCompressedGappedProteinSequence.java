@@ -1,7 +1,7 @@
 package org.jcvi.jillion.core.residue.aa;
 
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.core.util.iter.ArrayIterator;
 import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
@@ -12,7 +12,6 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 /**
@@ -31,6 +30,7 @@ class UnCompressedGappedProteinSequence extends AbstractResidueSequence<AminoAci
     private final AminoAcid[] array;
 
     private transient final Supplier<GrowableIntArray> gapSupplier;
+    private transient final Supplier<List<Range>> xRangeSupplier;
     private transient final Supplier<String> stringSupplier;
 
     public UnCompressedGappedProteinSequence(AminoAcid[] array) {
@@ -53,15 +53,31 @@ class UnCompressedGappedProteinSequence extends AbstractResidueSequence<AminoAci
              }
              return builder.toString();
          });
+
+        xRangeSupplier = MemoizedSupplier.memoize(()->{
+            GrowableIntArray gaps = new GrowableIntArray();
+            int length = array.length;
+            for(int i=0; i< length; i++){
+                if(array[i] == AminoAcid.Unknown_Amino_Acid){
+                    gaps.append(i);
+                }
+            }
+            return gaps.asRanges();
+        });
     }
 
     @Override
-    public List<Integer> getGapOffsets() {
+    public IntList getGapOffsets() {
         return gapSupplier.get().toBoxedList();
     }
     @Override
     public IntStream gaps() {
         return gapSupplier.get().stream();
+    }
+
+    @Override
+    public List<Range> getRangesOfUnknowns() {
+        return xRangeSupplier.get();
     }
 
     @Override
@@ -98,6 +114,10 @@ class UnCompressedGappedProteinSequence extends AbstractResidueSequence<AminoAci
     @Override
     public ProteinSequenceBuilder toBuilder(Range range) {
         return new ProteinSequenceBuilder(this, range);
+    }
+    @Override
+    public ProteinSequenceBuilder toBuilder(List<Range> ranges) {
+        return new ProteinSequenceBuilder(this, ranges);
     }
 
     @Override

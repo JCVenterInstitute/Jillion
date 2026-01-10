@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
+import org.jcvi.jillion.internal.core.util.GrowableLongArray;
 import org.junit.Test;
 
 public class TestGrowableIntArray {
@@ -90,6 +91,29 @@ public class TestGrowableIntArray {
 
 
 	}
+
+	@Test
+	public void constructorWithSingleRange(){
+		GrowableIntArray sut = new GrowableIntArray(Range.of(11,20));
+
+		int[] expected = new int[10];
+		for(int i=0; i< 10; i++){
+			expected[i]= 11+i;
+		}
+		assertArrayEquals(expected, sut.toArray());
+	}
+
+	@Test
+	public void constructorWithListOfRanges(){
+		GrowableIntArray sut = new GrowableIntArray(List.of(Range.of(0,10), Range.of(11,20)));
+
+		int[] expected = new int[21];
+		for(int i=0; i< 21; i++){
+			expected[i]= i;
+		}
+		assertArrayEquals(expected, sut.toArray());
+	}
+
 	@Test
 	public void appendBeyondCapacityShouldGrowArray(){
 		GrowableIntArray sut = new GrowableIntArray(5);
@@ -264,6 +288,35 @@ public class TestGrowableIntArray {
 		sut.append(new GrowableIntArray(new int[]{50,60,70,80,90}));
 		int[] expected = new int[]{10,20,30,40,50,60,70,80,90};
 		assertArrayEquals(expected, sut.toArray());
+	}
+	@Test
+	public void arrayCopy(){
+		GrowableIntArray sut = new GrowableIntArray(5);
+		sut.append((int)10);
+		sut.append((int)20);
+		sut.append((int)30);
+		sut.append((int)40);
+
+		GrowableIntArray dest = new GrowableIntArray(new int[]{50,60,70,80,90});
+
+		sut.arrayCopy(0, dest, 0,4);
+		int[] expected = new int[]{10,20,30,40,90};
+		assertArrayEquals(expected, dest.toArray());
+	}
+
+	@Test
+	public void arrayCopyExpandIfNeeded(){
+		GrowableIntArray sut = new GrowableIntArray(5);
+		sut.append((int)10);
+		sut.append((int)20);
+		sut.append((int)30);
+		sut.append((int)40);
+
+		GrowableIntArray dest = new GrowableIntArray(new int[]{90});
+
+		sut.arrayCopy(0, dest, 0,4);
+		int[] expected = new int[]{10,20,30,40};
+		assertArrayEquals(expected, dest.toArray());
 	}
 	@Test
 	public void constructUsingInitialArray(){

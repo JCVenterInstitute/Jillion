@@ -24,8 +24,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.OptionalLong;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.jcvi.jillion.core.Defline;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.InputStreamSupplier;
 import org.jcvi.jillion.core.qual.PhredQuality;
@@ -72,7 +75,13 @@ public final class QualityFastaFileDataStoreBuilder extends AbstractFastaFileDat
 		super(fastaFileAsStream);
 	}
 
-	 /**
+	@Override
+	public QualityFastaFileDataStoreBuilder idConverter(BiFunction<String, String, Defline> idConverter) {
+		super.idConverter(idConverter);
+		return this;
+	}
+
+	/**
 	     * Create a new Builder instance
 	     * that will build a {@link QualityFastaDataStore} using
 	     * the {@link FastaParser} object that will be parsing 
@@ -108,20 +117,20 @@ public final class QualityFastaFileDataStoreBuilder extends AbstractFastaFileDat
 	@Override
 	protected QualityFastaDataStore createNewInstance(FastaParser parser,
 			DataStoreProviderHint hint,Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter,
-			OptionalLong maxNumberOfRecords
+			OptionalLong maxNumberOfRecords, BiFunction<String,String, Defline> idConverter
 			)
 			throws IOException {
 		if(parser.isReadOnceOnly()){
-			return DefaultQualityFastaFileDataStore.create(parser,filter, recordFilter); 
+			return DefaultQualityFastaFileDataStore.create(parser,filter, recordFilter, idConverter);
 		}
 		switch(hint){
-			case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultQualityFastaFileDataStore.create(parser,filter, recordFilter);
+			case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultQualityFastaFileDataStore.create(parser,filter, recordFilter, idConverter);
 			case RANDOM_ACCESS_OPTIMIZE_MEMORY: 
 				return parser.canCreateMemento() ?
 						IndexedQualityFastaFileDataStore.create(parser,filter, recordFilter)
-						: DefaultQualityFastaFileDataStore.create(parser,filter, recordFilter);
+						: DefaultQualityFastaFileDataStore.create(parser,filter, recordFilter, idConverter);
 						
-			case ITERATION_ONLY: return LargeQualityFastaFileDataStore.create(parser,filter, recordFilter, maxNumberOfRecords);
+			case ITERATION_ONLY: return LargeQualityFastaFileDataStore.create(parser,filter, recordFilter, maxNumberOfRecords, idConverter);
 			default:
 				throw new IllegalArgumentException("unknown hint : "+ hint);
 		}

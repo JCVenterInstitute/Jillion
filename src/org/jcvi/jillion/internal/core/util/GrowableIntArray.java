@@ -21,12 +21,16 @@
 package org.jcvi.jillion.internal.core.util;
 
 import java.util.*;
-import java.util.function.IntBinaryOperator;
 import java.util.function.IntPredicate;
 import java.util.function.IntUnaryOperator;
 import java.util.stream.IntStream;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Ranges;
+import org.jcvi.jillion.core.util.IntList;
+import org.jcvi.jillion.core.util.ReplacementIntFunction;
 import org.jcvi.jillion.core.util.streams.ThrowingIntIndexedIntConsumer;
 import org.jcvi.jillion.internal.core.util.iter.PrimitiveArrayIterators;
 /**
@@ -42,6 +46,7 @@ import org.jcvi.jillion.internal.core.util.iter.PrimitiveArrayIterators;
  *
  */
 public final class GrowableIntArray implements Iterable<Integer>{
+
 	/**
 	 * The current length of valid data
 	 * this is not the same as the length
@@ -97,6 +102,31 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		}
 		currentLength=data.length;
 	}
+
+	/**
+	 * Creates a new Growable array
+	 * where the backing array contains
+	 * the contents of the given Collection
+	 * stored as primitives.  The order in the array
+	 * is the determined by the Collection's iteration order.
+	 * The capacity and length of this growable array
+	 * are set to the collection's size.
+	 * @param ints the Collection of Integers to
+	 * create into a growable array from.
+	 * @throws NullPointerException if the given
+	 * collection is null or any elements in the collection
+	 * are null.
+	 */
+	public GrowableIntArray(IntList ints){
+		data = new int[ints.size()];
+		int index=0;
+		PrimitiveIterator.OfInt iter = ints.intIterator();
+		while(iter.hasNext()){
+			data[index++]=iter.nextInt();
+		}
+
+		currentLength=data.length;
+	}
 	/**
 	 * Creates a new Growable array
 	 * where the backing int array is an exact
@@ -113,10 +143,131 @@ public final class GrowableIntArray implements Iterable<Integer>{
 	 * to the backing array.
 	 * @throws NullPointerException if ints is null.
 	 */
+	@JsonCreator
 	public GrowableIntArray(int[] ints){
 		data = Arrays.copyOf(ints, ints.length);
 		currentLength=data.length;
 	}
+
+	/**
+	 * Copy data from this array into the destination array.
+	 * @implNote This should be the same as <code>System.arraycopy(data,srcOffset, destArray,destOffset, length )</code>
+	 * @param srcOffset the offset into THIS growable array.
+	 * @param destArray the destination array to copy into.
+	 * @param destOffset the offset to start copy data into the destination array.
+	 * @param length the number of values to copy.
+	 * @since 6.1
+	 */
+	public void arrayCopy(int srcOffset, int[] destArray, int destOffset, int length) {
+		System.arraycopy(data,srcOffset, destArray,destOffset, length );
+	}
+	/**
+	 * Copy data from this array into the destination array;
+	 * this will grow the destArray if needed.
+	 * @implNote This should be the same as <code>System.arraycopy(data,srcOffset, destArray,destOffset, length )</code>
+	 * except extra checks are done to expand the destArray if needed.
+	 *
+	 * @param srcOffset the offset into THIS growable array.
+	 * @param destArray the destination array to copy into.
+	 * @param destOffset the offset to start copy data into the destination array.
+	 * @param length the number of values to copy.
+	 * @since 6.1
+	 */
+	public void arrayCopy(int srcOffset, GrowableIntArray destArray, int destOffset, int length) {
+		int newDestLength = length + destOffset;
+		boolean resize=false;
+		if(newDestLength > destArray.currentLength){
+			destArray.ensureCapacity(newDestLength);
+			resize=true;
+		}
+
+		System.arraycopy(data,srcOffset, destArray.data,destOffset, length );
+		if(resize) {
+			destArray.currentLength = newDestLength;
+		}
+	}
+
+	private static final String[][] EMPTY_CACHE_TO_STRING;
+
+	static{
+		EMPTY_CACHE_TO_STRING =  new String[128][128];
+		//prefill
+		EMPTY_CACHE_TO_STRING['['][']'] = "[]";
+		EMPTY_CACHE_TO_STRING['{']['}'] = "{}";
+
+
+	}
+
+	private static String getFromCache(char a, char b){
+		String s = EMPTY_CACHE_TO_STRING[a][b];
+		if(s==null){
+			synchronized (EMPTY_CACHE_TO_STRING){
+				s = EMPTY_CACHE_TO_STRING[a][b];
+				if(s==null){
+					String ret = new StringBuilder(2).append(a).append(b).toString();
+					EMPTY_CACHE_TO_STRING[a][b] = ret;
+					return ret;
+				}
+
+			}
+		}
+		return s;
+
+	}
+
+	public String toString(char prefix, char suffix) {
+		//copy of relevant code from Arrays#toString() but adding current length
+		int iMax = currentLength - 1;
+		if (iMax == -1) {
+			return getFromCache(prefix, suffix);
+		}
+
+		StringBuilder b = new StringBuilder(currentLength);
+		b.append(prefix);
+		for (int i = 0; ; i++) {
+			b.append(data[i]);
+			if (i == iMax)
+				return b.append(suffix).toString();
+			b.append(", ");
+		}
+	}
+	@Override
+	public String toString() {
+		return toString('[', ']');
+	}
+
+	/**
+	 * Creates a new {@link GrowableIntArray}
+	 * with the given initial capacity.
+	 * @param range the initial Ranges to populate backing long array.
+	 *
+	 */
+	public GrowableIntArray(Range range){
+
+
+		data = new int[(int) range.getLength()];
+
+		range.forEachValue(l-> this.append((int)l));
+
+	}
+	/**
+	 * Creates a new {@link GrowableIntArray}
+	 * with the given initial capacity.
+	 * @param ranges the initial List of Ranges to populate backing long array.
+	 *
+	 */
+	public GrowableIntArray(List<Range> ranges){
+		Objects.requireNonNull(ranges);
+		int initialCapacity = (int) ranges.stream()
+				.mapToLong(Range::getLength)
+				.sum();
+
+		data = new int[initialCapacity];
+		for(Range r : ranges){
+			r.forEachValue(l-> this.append((int)l));
+		}
+	}
+
 	private GrowableIntArray(GrowableIntArray copy){
 		data = Arrays.copyOf(copy.data, copy.data.length);
 		currentLength = copy.currentLength;
@@ -177,10 +328,53 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		System.arraycopy(values, 0, data, currentLength, values.length);
 		currentLength+=values.length;
 	}
+	public void append(int[] values, ReplacementIntFunction replacementFunction){
+		if(replacementFunction==null){
+			append(values);
+			return;
+		}
+		ensureCapacity(currentLength+values.length);
+		for(int i=0; i< values.length; i++){
+			data[i+currentLength] = replacementFunction.applyAsInt(values[i]);
+		}
+		currentLength+=values.length;
+	}
 	public void append(GrowableIntArray other){
 		ensureCapacity(currentLength+other.currentLength);
 		System.arraycopy(other.data, 0, data, currentLength, other.currentLength);
 		currentLength+=other.currentLength;
+	}
+	public void append(GrowableIntArray other, ReplacementIntFunction replacementFunction){
+		if(replacementFunction==null){
+			append(other);
+
+			return;
+		}
+		ensureCapacity(currentLength+other.currentLength);
+		other.forEachIndexed((i, v)->{
+			data[i+currentLength]= replacementFunction.applyAsInt(v);
+		});
+
+		currentLength+=other.currentLength;
+
+	}
+	public void append(GrowableIntArray other, int start, int length, ReplacementIntFunction replacementFunction){
+		if(replacementFunction==null){
+			if(start==0 && length ==other.currentLength) {
+				append(other);
+			}else {
+				Range range = new Range.Builder(length).shift(start).build();
+				append(other.toArray(range));
+			}
+			return;
+		}
+		ensureCapacity(currentLength+length);
+		Range range = new Range.Builder(length).shift(start).build();
+		other.forEachIndexed(range, (i, v)->{
+			data[i+currentLength- (int) range.getBegin()]= replacementFunction.applyAsInt(v);
+		});
+
+		currentLength+=length;
 	}
 	public int get(int offset){
 		assertValidOffset(offset);
@@ -197,9 +391,12 @@ public final class GrowableIntArray implements Iterable<Integer>{
 	public void prepend(GrowableIntArray other){
 		insert(0,other);
 	}
+	public void replaceUnsafe(int offset, int value){
+		data[offset]=value;
+	}
 	public void replace(int offset, int value){
 		assertValidOffset(offset);
-		data[offset]=value;
+		replaceUnsafe(offset, value);
 	}
 	public void insert(int offset, int[] values){
 		assertValidInsertOffset(offset);
@@ -221,6 +418,24 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		System.arraycopy(other.data, 0, data, offset, other.currentLength);
 		currentLength+=other.currentLength;
 		
+	}
+	public void insert(int offset, GrowableIntArray other, ReplacementIntFunction replacementFunction){
+		if(replacementFunction==null){
+			insert(offset, other);
+			return;
+		}
+		assertValidInsertOffset(offset);
+		ensureCapacity(currentLength+other.currentLength);
+		System.arraycopy(data, offset, data, offset + other.currentLength,
+				currentLength - offset);
+
+		other.forEachIndexed((i, v)->{
+			data[i+offset] = replacementFunction.applyAsInt(v);
+		});
+
+
+		currentLength+=other.currentLength;
+
 	}
 	public void insert(int offset, int value){
 		assertValidInsertOffset(offset);
@@ -247,6 +462,7 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		}
 		currentLength-=(int)range.getLength();    
 	}
+
 	public int remove(int offset){
 		assertValidOffset(offset);
 		int oldValue = data[offset];
@@ -284,9 +500,12 @@ public final class GrowableIntArray implements Iterable<Integer>{
             data = Arrays.copyOf(data, newCapacity);
 		}
     }
-	
+	@JsonValue
 	public int[] toArray(){
 		return Arrays.copyOf(data,currentLength);
+	}
+	public int[] toArray(Range range){
+		return Arrays.copyOfRange(data, (int) range.getBegin(), (int) range.getEnd()+1);
 	}
 	/**
 	 * Searches the current values in this growable array
@@ -452,6 +671,18 @@ public final class GrowableIntArray implements Iterable<Integer>{
 	public PrimitiveIterator.OfInt iterator() {
 		return PrimitiveArrayIterators.create(data, currentLength);
 	}
+
+	public PrimitiveIterator.OfInt iterator(int startOffset) {
+		return PrimitiveArrayIterators.create(data, startOffset, currentLength-1);
+	}
+
+
+	public PrimitiveIterator.OfInt reverseIterator() {
+		return PrimitiveArrayIterators.createReverse(data, currentLength);
+	}
+	public PrimitiveIterator.OfInt reverseIterator(int startOffset) {
+		return PrimitiveArrayIterators.createReverse(data, startOffset+1);
+	}
 	
 	/**
 	 * Get the number of values
@@ -509,10 +740,10 @@ public final class GrowableIntArray implements Iterable<Integer>{
 	 * 
 	 * @since 5.3
 	 */
-	public List<Integer> toBoxedList() {
+	public IntList toBoxedList() {
 		if(currentLength ==0){
 			//return new list to make it mutable
-			return new ArrayList<>();
+			return ArrayUtil.asList(new int[0]);
 		}
 		return ArrayUtil.asList(toArray());
 	}
@@ -534,6 +765,23 @@ public final class GrowableIntArray implements Iterable<Integer>{
 			consumer.accept(i, data[i]);
 		}
 	}
+	/**
+	 * Iterate over each element in the list in REVERSE ORDER and call the given consumer
+	 * which captures the offset and the value.
+	 * @param consumer the consumer of each element; can not be null.
+	 * @param <E> the Throwable that might be thrown by the consumer.
+	 * @throws E the Throwable from the consumer.
+	 *
+	 * @since 6.1
+	 *
+	 * @throws NullPointerException if consumer is null.
+	 */
+	public <E extends Throwable> void forEachIndexedReversed(ThrowingIntIndexedIntConsumer<E> consumer) throws E{
+		Objects.requireNonNull(consumer);
+		for(int i=currentLength-1; i>=0; i--){
+			consumer.accept(i, data[i]);
+		}
+	}
 
 	/**
 	 * Iterate over the elements in the given range of this array and call the given consumer
@@ -552,6 +800,26 @@ public final class GrowableIntArray implements Iterable<Integer>{
 			consumer.accept(i, data[i]);
 		}
 	}
+
+	/**
+	 * Iterate over the elements in the given range of this array in REVERSE ORDER and call the given consumer
+	 * which captures the offset and the value.
+	 * @param range the offset range to check over; can not be null.
+	 * @param consumer the consumer of each element; can not be null.
+	 * @param <E> the Throwable that might be thrown by the consumer.
+	 * @throws E the Throwable from the consumer.
+	 *
+	 * @throws NullPointerException exception if either range or consumer are null.
+	 * @since 6.1
+	 */
+	public <E extends Throwable> void forEachIndexedReversed(Range range, ThrowingIntIndexedIntConsumer<E> consumer) throws E{
+		int end = (int) Math.min(currentLength, range.getEnd()+1);
+		int begin = (int) range.getBegin();
+		for(int i=end; i>= begin; i--){
+			consumer.accept(i, data[i]);
+		}
+	}
+
 	/**
 	 * Replace any values that pass the given predicate with the given replacement value.
 	 * @param predicate the predicate to test; can not be null.
@@ -587,6 +855,44 @@ public final class GrowableIntArray implements Iterable<Integer>{
 			if(predicate.test(data[i])) {
 				data[i] = replacementFunction.applyAsInt(data[i]);
 			}
+		}
+		return this;
+	}
+	/**
+	 * Replace all values with the given replacement value.
+	 * @param replacementFunction the function to replace the value given the previous value.
+	 * @throws NullPointerException if replacementFunction is null.
+	 *
+	 * @return this
+	 *
+	 * @since 6.1
+	 */
+	public GrowableIntArray replaceAll(IntUnaryOperator replacementFunction){
+		Objects.requireNonNull(replacementFunction);
+
+		for(int i=0; i< currentLength; i++) {
+			data[i] = replacementFunction.applyAsInt(data[i]);
+
+		}
+		return this;
+	}
+	/**
+	 * Replace all values with the given replacement value.
+	 * @param range the offset range to check over; can not be null.
+	 * @param replacementFunction the function to replace the value given the previous value.
+	 * @throws NullPointerException if replacementFunction is null.
+	 *
+	 * @return this
+	 *
+	 * @since 6.1
+	 */
+	public GrowableIntArray replaceAll(Range range, IntUnaryOperator replacementFunction){
+		Objects.requireNonNull(replacementFunction);
+
+		int end = (int) Math.min(currentLength, range.getEnd()+1);
+		for(int i=(int) range.getBegin(); i< end; i++){
+			data[i] = replacementFunction.applyAsInt(data[i]);
+
 		}
 		return this;
 	}
@@ -631,6 +937,26 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		}
 		return this;
 	}
+
+	/**
+	 * Replace any values within from the given offset, to the end of the array that pass the given predicate with the given replacement value.
+	 * @param startOffset the offset to start from
+	 * @param replacementFunction the function to replace the value given the previous value.
+	 * @throws NullPointerException if predicate is null.
+	 *
+	 * @return this
+	 *
+	 * @since 6.0.4
+	 */
+	public GrowableIntArray replaceDownstream(int startOffset, IntUnaryOperator replacementFunction){
+		Objects.requireNonNull(replacementFunction);
+
+		for(int i=startOffset; i< currentLength; i++){
+			data[i] = replacementFunction.applyAsInt(data[i]);
+
+		}
+		return this;
+	}
 	
 	@Override
 	public boolean equals(Object o) {
@@ -642,13 +968,8 @@ public final class GrowableIntArray implements Iterable<Integer>{
 		if(currentLength != bytes.currentLength){
 			return false;
 		}
-		for (int i=0; i<currentLength; i++) {
-			if (data[i] != bytes.data[i]) {
-				return false;
-			}
-		}
+		return Arrays.equals(data,0, currentLength, bytes.data, 0, currentLength);
 
-		return true;
 	}
 
 	@Override
@@ -661,4 +982,27 @@ public final class GrowableIntArray implements Iterable<Integer>{
         }
 		return result;
 	}
+
+	/**
+	 * Set this array to the newer smaller length.
+	 * This is a way to "remove" downstream positions without having to do any
+	 * array operations.
+	 *
+	 * @param newLength the new length of the array; must be &ge; 0 and &lt; the current length.
+	 */
+	public void truncate(int newLength) {
+		if(newLength > currentLength){
+			throw new IllegalArgumentException("truncated length can not be greater than current length");
+		}
+		if(newLength < 0){
+			throw new IllegalArgumentException("new length must be >= 0");
+		}
+		currentLength = newLength;
+	}
+
+	public List<Range> asRanges() {
+		return Ranges.asRanges(data,0,currentLength);
+	}
+
+
 }

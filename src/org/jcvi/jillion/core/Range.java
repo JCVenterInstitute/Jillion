@@ -40,6 +40,9 @@ import java.util.function.LongConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.internal.core.util.Caches;
 import org.jcvi.jillion.internal.core.util.JillionUtil;
@@ -146,18 +149,18 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
     /**
      * Regular expression in the form (left) .. (right).
      */
-    private static Pattern DOT_PATTERN = Pattern.compile("(\\d+)\\s*\\.\\.\\s*(\\d+)");
+    private static final Pattern DOT_PATTERN = Pattern.compile("(\\d+)\\s*\\.\\.\\s*(\\d+)");
     /**
      * Regular expression in the form (left) - (right).
      */
-    private static Pattern DASH_PATTERN = Pattern.compile("(\\d+)\\s*-\\s*(\\d+)");
+    private static final Pattern DASH_PATTERN = Pattern.compile("(\\d+)\\s*-\\s*(\\d+)");
     /**
      * Regular expression in the form (left) , (right).
      */
-    private static Pattern COMMA_PATTERN = Pattern.compile("(\\d+)\\s*,\\s*(\\d+)");
+    private static final Pattern COMMA_PATTERN = Pattern.compile("(\\d+)\\s*,\\s*(\\d+)");
     /**
      * Cache of previously built ranges.  
-     * This cache uses  {@link SoftReference}s
+     * This cache uses  SoftReferences
      * so memory can be reclaimed if needed.
      */
     private static final Map<CacheKey, Range> CACHE;
@@ -664,7 +667,8 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
      * @throws IllegalArgumentException if the given String does not
      * match the correct format.
      */
-    public static Range parseRange(String rangeAsString, CoordinateSystem coordinateSystem){
+
+    public static Range parseRange(@JsonProperty(value = "range", required = true) String rangeAsString, @JsonProperty(value = "coordinate_system", defaultValue = "ZERO_BASED") CoordinateSystem coordinateSystem){
         Matcher dotMatcher =DOT_PATTERN.matcher(rangeAsString);
         if(dotMatcher.find()){
             return convertIntoRange(dotMatcher,coordinateSystem);
@@ -695,6 +699,7 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
      * @throws IllegalArgumentException if the given String does not
      * match the correct format.
      */
+    @JsonCreator
     public static Range parseRange(String rangeAsString){
         return parseRange(rangeAsString, CoordinateSystem.ZERO_BASED);
     }
@@ -990,7 +995,22 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
             throw new NullPointerException("Null Range used in range comparison operation.");
         }
 
-        return this.getBegin() < other.getBegin();
+        return startsBefore(other.getBegin());
+    }
+
+    /**
+     * Checks to see if this <code>Range</code> starts before the given
+     * comparison <code>Range</code>.
+     *
+     * @param offset The other offset to compare to.
+     * @return <code>true</code> if the begin coordinate of this
+     * <code>Range</code> is less than the  begin coordinate of the
+     * given offset
+     * @since 6.1
+     */
+    public boolean startsBefore(long offset)
+    {
+        return this.getBegin() < offset;
     }
     
     /**
@@ -1010,7 +1030,22 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
             throw new NullPointerException("Null Range used in range comparison operation.");
         }
 
-        return this.getBegin() > other.getEnd();
+        return startsAfter(other.getEnd());
+    }
+
+    /**
+     * Checks to see if this <code>Range</code> starts after the given
+     * comparison <code>Range</code>.
+     *
+     * @param offset The offset to compare to.
+     * @return <code>true</code> if the begin coordinate of this
+     * <code>Range</code> is greater than the passed in offset.
+     *
+     * @since 6.1
+     */
+    public boolean startsAfter(long offset)
+    {
+        return this.getBegin() > offset;
     }
 
     /**
@@ -1028,8 +1063,21 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
             throw new NullPointerException("Null Range used in range comparison operation.");
         }
         
-        return this.getEnd() < other.getBegin();
-    } 
+        return endsBefore(other.getBegin());
+    }
+
+    /**
+     * Checks to see if this <code>Range</code> ends before the given target.
+     *
+     * @param offset The offset to check against.
+     * @return <code>true</code> if this <code>Range</code> has an end value
+     * which occurs before (and not at the same point as) the given offset
+     * @since 6.1
+     */
+    public boolean endsBefore(long offset)
+    {
+        return this.getEnd() < offset;
+    }
     /**
      * Checks to see if this <code>Range</code> ends after the given target.
      *
@@ -1046,8 +1094,22 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
             throw new NullPointerException("Null Range used in range comparison operation.");
         }
         
-        return this.getEnd() > other.getEnd();
-    } 
+        return endsAfter(other.getEnd());
+    }
+
+    /**
+     * Checks to see if this <code>Range</code> ends after the given target.
+     *
+     * @param offset The other offset to check against.
+     * @return <code>true</code> if this <code>Range</code> has an end value
+     * which occurs after (and not at the same point as) the given offset.
+     *
+     * @since 6.1
+     */
+    public boolean endsAfter(long offset)
+    {
+        return this.getEnd() > offset;
+    }
    
     /**
      * Convenience method that delegates to
@@ -1132,6 +1194,18 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
      */
     public String toString(RangeAndCoordinateSystemToStringFunction function){
         return toString(function, CoordinateSystem.ZERO_BASED);
+    }
+
+    /**
+     * Generates a new String representation of this Range is #ZERO_BASED
+     * coordinates in the format {@code $begin..$end}.
+     * If using Jackson to write Ranges as JSON, this is the value that is used.
+     * @return a new String
+     * @since 6.1
+     */
+    @JsonValue
+    public String toSimpleString(){
+        return toString((a,b)-> a +".."+b);
     }
     /**
      * Generate a new String representation of this Range using
@@ -1269,7 +1343,7 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
      * 
      * @apiNote this will automatically convert the coordinates of each offset
      * into the given coordinate system.  For example if the range is from offsets 0 - 9,
-     * then calling this method with a {@value CoordinateSystem#RESIDUE_BASED}
+     * then calling this method with a {@link CoordinateSystem#RESIDUE_BASED}
      * will call the consumer for 1..10.
      *  
      * @param cs the CoordinateSystem to use; can not be null.
@@ -1290,7 +1364,7 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
     
     /**
      * Convenience method for {@link #forEachValue(CoordinateSystem, LongConsumer)}
-     * with {@value CoordinateSystem#ZERO_BASED} coordinate system.
+     * with {@link CoordinateSystem#ZERO_BASED} coordinate system.
      * 
      * @param consumer the {@link LongConsumer} to call for each offset; can not be null.
      * 
@@ -3315,16 +3389,32 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
             return end-begin < 0;
         }
         public boolean startsAfter(Range other) {
-            return begin > other.getEnd();
+            return startsAfter(other.getEnd());
         }
         public boolean startsBefore(Range other) {
-            return begin < other.getBegin();
+            return startsBefore(other.getBegin());
         }
+
+        public boolean startsAfter(long offset) {
+            return begin > offset;
+        }
+        public boolean startsBefore(long offset) {
+            return begin < offset;
+        }
+
+
         public boolean endsAfter(Range other) {
-            return end > other.getEnd();
+            return endsAfter( other.getEnd());
         }
         public boolean endsBefore(Range other) {
-            return end > other.getBegin();
+            return endsBefore(other.getBegin());
+        }
+
+        public boolean endsAfter(long offset) {
+            return end > offset;
+        }
+        public boolean endsBefore(long offset) {
+            return end > offset;
         }
     }
     

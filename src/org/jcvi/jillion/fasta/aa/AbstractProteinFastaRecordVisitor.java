@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.fasta.aa;
 
+import org.jcvi.jillion.core.residue.DecodingOptions;
 import org.jcvi.jillion.core.residue.aa.ProteinSequenceBuilder;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
 /**
@@ -41,7 +42,7 @@ import org.jcvi.jillion.fasta.FastaRecordVisitor;
 public abstract class AbstractProteinFastaRecordVisitor implements FastaRecordVisitor{
 	private final String id;
 	private final String comment;
-	private final ProteinSequenceBuilder sequenceBuilder = new ProteinSequenceBuilder();
+	private final ProteinSequenceBuilder sequenceBuilder;
 
 	/**
 	 * Create a new object with the given id and comment.
@@ -65,7 +66,29 @@ public abstract class AbstractProteinFastaRecordVisitor implements FastaRecordVi
 	public AbstractProteinFastaRecordVisitor(String id, String comment, boolean turnOffSequenceCompression) {
 		this.id = id;
 		this.comment = comment;
-		sequenceBuilder.turnOffDataCompression(turnOffSequenceCompression);
+		sequenceBuilder = new ProteinSequenceBuilder()
+								.turnOffDataCompression(turnOffSequenceCompression);
+	}
+	/**
+	 * Create a new object with the given id and comment.
+	 * @param id the id of this fasta record.
+	 * @param comment the comment of this fasta reocrd (or null).
+	 * @param turnOffSequenceCompression turn off the compression uses
+	 *                                   when building the protien sequence for a performance improvement
+	 *                                   at the cost of more memory.
+	 *
+	 * @param decodingOptions Sets the {@link DecodingOptions}
+	 *  used to help parse {@link org.jcvi.jillion.core.residue.aa.AminoAcid}s; if {@code null}
+	 * 	use the default options which will throw an IllegalArgumentException on invalid characters.
+	 *
+	 * @since 6.1
+	 */
+	public AbstractProteinFastaRecordVisitor(String id, String comment, boolean turnOffSequenceCompression, DecodingOptions decodingOptions) {
+		this.id = id;
+		this.comment = comment;
+		sequenceBuilder = new ProteinSequenceBuilder()
+				.setDecodingOptions(decodingOptions)
+				.turnOffDataCompression(turnOffSequenceCompression);
 	}
 
 	@Override

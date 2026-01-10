@@ -22,15 +22,16 @@ package org.jcvi.jillion.fasta.nt;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreException;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
-import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaRecord;
@@ -77,8 +78,7 @@ public interface NucleotideFastaRecord extends FastaRecord<Nucleotide,Nucleotide
      * Create a NucleotideFastaRecord of the FIRST record in the given
      * fasta file (which may be compressed).
      * @param fastaFile the file to parse; can not be null.
-     * @param invalidCharacterHandler the {@link org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler}
-     * 			to use; or {@code null} to use the default handler.
+     * @param additionalOptions a Consumer of a NucleotideFastaFileDataStoreBuilder
      * @return an Optional wrapped NucleotideFastaRecord object; or empty
      * if the fasta file does not contain any sequences.
      * @throws IOException if there is a problem parsing the file.
@@ -87,10 +87,14 @@ public interface NucleotideFastaRecord extends FastaRecord<Nucleotide,Nucleotide
      * 
      * @implNote this is the same as
      * <pre>
-     * {@code try( NucleotideFastaFileDataStore datastore = new NucleotideFastaFileDataStoreBuilder(fastaFile)
-						.hint(DataStoreProviderHint.ITERATION_ONLY)
-						.invalidCharacterHandler(invalidCharacterHandler)
-						.build();
+     * {@code
+	 * NucleotideFastaFileDataStoreBuilder builder = new NucleotideFastaFileDataStoreBuilder(fastaFile);
+	 * 		if(additionalOptions !=null){
+	 * 			additionalOptions.accept(builder);
+ * 		    }
+	 * 		try(NucleotideFastaFileDataStore datastore = builder
+	 * 				.hint(DataStoreProviderHint.ITERATION_ONLY)
+	 * 				.build();
 				StreamingIterator<NucleotideFastaRecord> iter = datastore.iterator();
 				){
 			 if(!iter.hasNext()) {
@@ -101,18 +105,21 @@ public interface NucleotideFastaRecord extends FastaRecord<Nucleotide,Nucleotide
 		}
      * </pre>
      */
-	static Optional<NucleotideFastaRecord> of(File fastaFile, InvalidCharacterHandler invalidCharacterHandler) throws IOException {
-		
-		try( NucleotideFastaFileDataStore datastore = new NucleotideFastaFileDataStoreBuilder(fastaFile)
-						.hint(DataStoreProviderHint.ITERATION_ONLY)
-						.invalidCharacterHandler(invalidCharacterHandler)
-						.build();
-				StreamingIterator<NucleotideFastaRecord> iter = datastore.iterator();
-				){
-			 if(!iter.hasNext()) {
+	static Optional<NucleotideFastaRecord> of(File fastaFile, Consumer<NucleotideFastaFileDataStoreBuilder> additionalOptions) throws IOException {
+
+		NucleotideFastaFileDataStoreBuilder builder = new NucleotideFastaFileDataStoreBuilder(fastaFile);
+		if(additionalOptions !=null){
+			additionalOptions.accept(builder);
+		}
+		try(NucleotideFastaFileDataStore datastore = builder
+				.hint(DataStoreProviderHint.ITERATION_ONLY)
+				.build();
+			StreamingIterator<NucleotideFastaRecord> iter = datastore.iterator();
+		){
+			if(!iter.hasNext()) {
 				return Optional.empty();
-			 }
-			 return Optional.of(iter.next());
+			}
+			return Optional.of(iter.next());
 		}
 	}
 	 /**
@@ -136,100 +143,47 @@ public interface NucleotideFastaRecord extends FastaRecord<Nucleotide,Nucleotide
      * </pre>
      */
 	static StreamingIterator<NucleotideFastaRecord> createNewIteratorFor(File fastaFile) throws IOException{
-		return createNewIteratorFor(fastaFile, (InvalidCharacterHandler) null);
+		return createNewIteratorFor(fastaFile,(Consumer<NucleotideFastaFileDataStoreBuilder>) null);
 	}
 	
-	 /**
-     * Create a new {@link StreamingIterator} of  NucleotideFastaRecord for each of the records in the given
-     * fasta file (which may be compressed).
-     * @param fastaFile the file to parse; can not be null.
-     * @param invalidCharacterHandler the {@link org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler}
-     * 			to use; or {@code null} to use the default handler.
-     * 
-     * @return a {@link StreamingIterator} of NucleotideFastaRecord objects which may be empty if the file is empty
-     * of no records pass the filter.
-     * @throws IOException if there is a problem parsing the file.
-     * @throws NullPointerException if fastafile is null.
-     * @since 6.0
-     * 
-     * @implNote this is the same as
-     * <pre>
-     * {@code return new NucleotideFastaFileDataStoreBuilder(fastaFile)
-						.hint(DataStoreProviderHint.ITERATION_ONLY)
-						.invalidCharacterHandler(invalidCharacterHandler)
-						.build()
-						.iterator();
-				
-		}
-     * </pre>
-     */
-	static StreamingIterator<NucleotideFastaRecord> createNewIteratorFor(File fastaFile, InvalidCharacterHandler invalidCharacterHandler) throws IOException{
-		return new NucleotideFastaFileDataStoreBuilder(fastaFile)
-		.hint(DataStoreProviderHint.ITERATION_ONLY)
-		.invalidCharacterHandler(invalidCharacterHandler)
-		.build()
-		.iterator();
-	}
-	
+
 	/**
-     * Create a new {@link StreamingIterator} of  NucleotideFastaRecord for each of the records in the given
-     * fasta file (which may be compressed) that pass the given id filter.
-     * @param fastaFile the file to parse; can not be null.
-     * @param idFilter Only include the FastaRecords whose IDs pass the given Predicate. 
-     * @return a {@link StreamingIterator} of NucleotideFastaRecord objects which may be empty if the file is empty
-     * of no records pass the filter.
-     * @throws IOException if there is a problem parsing the file.
-     * @throws NullPointerException if any parameters are null.
-     * @since 6.0
-     * 
-     * @implNote this is the same as
-     * <pre>
-     * {@code return new NucleotideFastaFileDataStoreBuilder(fastaFile)
-						.hint(DataStoreProviderHint.ITERATION_ONLY)
-						.filter(idFilter)
-						.build()
-						.iterator();
-				
-		}
-     * </pre>
-     */
-	static StreamingIterator<NucleotideFastaRecord> createNewIteratorFor(File fastaFile, Predicate<String> idFilter) throws DataStoreException, IOException{
-		return createNewIteratorFor(fastaFile, idFilter,null);
+	 * Create a new {@link StreamingIterator} of  NucleotideFastaRecord for each of the records in the given
+	 * fasta file (which may be compressed) that takes a {@link Consumer} to provide additional
+	 * configuration options to the internal datastore builder used to create the iterator.
+	 *
+	 * @param fastaFile the file to parse; can not be null.
+	 * @param additionalOptions The consumer to make additional configuration changes to the builder;
+	 *                          if set to {@code null}, then no additional changes will be made.
+	 * @return a {@link StreamingIterator} of NucleotideFastaRecord objects which may be empty if the file is empty
+	 * of no records pass the filter.
+	 * @throws IOException if there is a problem parsing the file.
+	 * @throws NullPointerException if any parameters are null.
+	 * @since 6.1
+	 *
+	 * @implNote this is the same as
+	 * <pre>
+	 * {@code return new NucleotideFastaFileDataStoreBuilder(fastaFile)
+	.hint(DataStoreProviderHint.ITERATION_ONLY)
+	.filter(idFilter)
+	.build()
+	.iterator();
+
 	}
-	
-	/**
-     * Create a new {@link StreamingIterator} of  NucleotideFastaRecord for each of the records in the given
-     * fasta file (which may be compressed) that pass the given id filter.
-     * @param fastaFile the file to parse; can not be null.
-     * @param idFilter Only include the FastaRecords whose IDs pass the given Predicate. 
-     * @param invalidCharacterHandler the {@link org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler}
-     * 			to use; or {@code null} to use the default handler.
-     * @return a {@link StreamingIterator} of NucleotideFastaRecord objects which may be empty if the file is empty
-     * of no records pass the filter.
-     * @throws IOException if there is a problem parsing the file.
-     * @throws NullPointerException if any parameters are null.
-     * @since 6.0
-     * 
-     * @implNote this is the same as
-     * <pre>
-     * {@code return new NucleotideFastaFileDataStoreBuilder(fastaFile)
-						.hint(DataStoreProviderHint.ITERATION_ONLY)
-						.invalidCharacterHandler(invalidCharacterHandler)
-						.filter(idFilter)
-						.build()
-						.iterator();
-				
+	 * </pre>
+	 */
+	static StreamingIterator<NucleotideFastaRecord> createNewIteratorFor(File fastaFile, Consumer<NucleotideFastaFileDataStoreBuilder> additionalOptions) throws DataStoreException, IOException{
+
+		NucleotideFastaFileDataStoreBuilder builder = new NucleotideFastaFileDataStoreBuilder(fastaFile);
+		if(additionalOptions !=null){
+			additionalOptions.accept(builder);
 		}
-     * </pre>
-     */
-	static StreamingIterator<NucleotideFastaRecord> createNewIteratorFor(File fastaFile, Predicate<String> idFilter, InvalidCharacterHandler invalidCharacterHandler) throws DataStoreException, IOException{
-		return new NucleotideFastaFileDataStoreBuilder(fastaFile)
-		.hint(DataStoreProviderHint.ITERATION_ONLY)
-		.invalidCharacterHandler(invalidCharacterHandler)
-		.filter(idFilter)
-		.build()
-		.iterator();
+		//force iteration only AFTER we apply the additional options incase it changes it to some other type
+		return builder.hint(DataStoreProviderHint.ITERATION_ONLY)
+				.build()
+				.iterator();
 	}
+
 	
 	/**
      * Create a new {@link StreamingIterator} of  NucleotideFastaRecord for each of the records in the given
@@ -254,7 +208,7 @@ public interface NucleotideFastaRecord extends FastaRecord<Nucleotide,Nucleotide
      * </pre>
      */
 	static StreamingIterator<NucleotideFastaRecord> createNewIteratorFor(File fastaFile, Set<String> idsToInclude) throws DataStoreException, IOException{
-		return createNewIteratorFor(fastaFile, idsToInclude, null);
+		return createNewIteratorFor(fastaFile, (Consumer<NucleotideFastaFileDataStoreBuilder>)  builder-> builder.filter(idsToInclude::contains));
 	}
 	
 	/**
@@ -262,34 +216,39 @@ public interface NucleotideFastaRecord extends FastaRecord<Nucleotide,Nucleotide
      * fasta file (which may be compressed) that only include the records whose IDs are contained in the given Set.
      * @param fastaFile the file to parse; can not be null.
      * @param idsToInclude Only include the FastaRecords whose IDs are present in this set. 
-     * @param invalidCharacterHandler the {@link org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler}
-     * 			to use; or {@code null} to use the default handler.
+     * @param additionalOptions the consumer to make additional configuration changes to the builder;
+	 *                         if set to {@code null}, then no additional changes will be made.
+	 *
      * 
      * @return a {@link StreamingIterator} of NucleotideFastaRecord objects which may be empty if the file is empty
      * of no records have IDs in the given set.
      * @throws IOException if there is a problem parsing the file.
      * @throws NullPointerException if any parameters are null.
-     * @since 6.0
+     * @since 6.1
      * 
      * @implNote this is the same as
      * <pre>
-     * {@code return new NucleotideFastaFileDataStoreBuilder(fastaFile)
-						.hint(DataStoreProviderHint.ITERATION_ONLY)
-						.invalidCharacterHandler(invalidCharacterHandler)
-						.filter(idsToInclude::contains)
-						.build()
-						.iterator();
+     * {@code NucleotideFastaFileDataStoreBuilder builder= new NucleotideFastaFileDataStoreBuilder(fastaFile)
+	 *
+	 * additionalOptions.accept(builder);
+	 *
+	 * return builder
+	 *         .hint(DataStoreProviderHint.ITERATION_ONLY)
+	 *         .filter(idsToInclude::contains)
+	 *         .build()
+	 *         .iterator();
 				
 		}
      * </pre>
      */
-	static StreamingIterator<NucleotideFastaRecord> createNewIteratorFor(File fastaFile, Set<String> idsToInclude, InvalidCharacterHandler invalidCharacterHandler) throws DataStoreException, IOException{
-		return new NucleotideFastaFileDataStoreBuilder(fastaFile)
-				.invalidCharacterHandler(invalidCharacterHandler)
-				.hint(DataStoreProviderHint.ITERATION_ONLY)
-				.filter(idsToInclude::contains)
-				.build()
-				.iterator();
+	static StreamingIterator<NucleotideFastaRecord> createNewIteratorFor(File fastaFile, Set<String> idsToInclude, Consumer<NucleotideFastaFileDataStoreBuilder> additionalOptions) throws DataStoreException, IOException{
+		Objects.requireNonNull(idsToInclude);
+		Consumer<NucleotideFastaFileDataStoreBuilder> consumer = builder-> builder.filter(idsToInclude::contains);
+		if(additionalOptions !=null){
+
+			consumer = additionalOptions.andThen(consumer);
+		}
+		return createNewIteratorFor(fastaFile, consumer);
 	}
 	
 }

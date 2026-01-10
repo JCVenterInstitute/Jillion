@@ -25,6 +25,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.util.streams.ThrowingIntIndexedShortConsumer;
 import org.jcvi.jillion.internal.core.util.iter.PrimitiveArrayIterators;
@@ -114,9 +116,23 @@ public final class GrowableShortArray implements Iterable<Short>{
 	 * to the backing array.
 	 * @throws NullPointerException if shorts is null.
 	 */
+	@JsonCreator
 	public GrowableShortArray(short[] shorts){
 		data = Arrays.copyOf(shorts, shorts.length);
 		currentLength=data.length;
+	}
+
+	/**
+	 * Copy data from this array into the destination array.
+	 * @implNote This should be the same as <code>System.arraycopy(data,srcOffset, destArray,destOffset, length )</code>
+	 * @param srcOffset the offset into THIS growable array.
+	 * @param destArray the destination array to copy into.
+	 * @param destOffset the offset to start copy data into the destination array.
+	 * @param length the number of values to copy.
+	 * @since 6.1
+	 */
+	public void arrayCopy(int srcOffset, short[] destArray, int destOffset, int length) {
+		System.arraycopy(data,srcOffset, destArray,destOffset, length );
 	}
 	private GrowableShortArray(GrowableShortArray copy){
 		data = Arrays.copyOf(copy.data, copy.data.length);
@@ -285,7 +301,7 @@ public final class GrowableShortArray implements Iterable<Short>{
             data = Arrays.copyOf(data, newCapacity);
 		}
     }
-	
+	@JsonValue
 	public short[] toArray(){
 		return Arrays.copyOf(data,currentLength);
 	}

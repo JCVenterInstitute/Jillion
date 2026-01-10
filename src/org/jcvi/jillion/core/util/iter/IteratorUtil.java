@@ -20,13 +20,9 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.util.iter;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.RandomAccess;
+import org.jcvi.jillion.core.Range;
+
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -68,8 +64,11 @@ public final class IteratorUtil {
      * @param <E> the type of elements to be iterated over.
      */
     public static <E> Iterator<E> createIteratorFromArray(E[] array){
-    	return new ArrayIterator<E>(array);
+    	return new ArrayIterator<E>(array, 0, false);
     }
+	public static <E> Iterator<E> createIteratorFromArray(E[] array, Range range){
+		return new ArrayIterator<E>(array, (int) range.getBegin(), (int)range.getEnd()+1, false);
+	}
     /**
      * Create a new {@link PeekableStreamingIterator} instance
      * which wraps the given iterator.
@@ -112,19 +111,34 @@ public final class IteratorUtil {
     }
     
     /**
-     * Convenience method to create a new {@link PeekableIterator}
-     * from an {@link Iterable}.  This is the same as
-     * {@link #createPeekableIterator(Iterator) createPeekableIterator(iter.iterator()}
+     * Convenience method to create a new {@link PeekableOfIntIterator}
+     * from an {@link java.util.PrimitiveIterator.OfInt}.
+	 *
      * @param iter the Iterable to use; can not be null.
-     * @return a new {@link PeekableStreamingIterator};
+     * @return a new {@link PeekableOfIntIterator};
      * never null.
      * @throws NullPointerException if iter is null.
      * 
-     * @param <E> the type of elements to be iterated over.
+     * @since 6.1
      */
-    public static <E> PeekableIterator<E> createPeekableIterator(Iterable<E> iter){
-    	return createPeekableIterator(iter.iterator());
+    public static PeekableOfIntIterator createPeekableIterator(PrimitiveIterator.OfInt iter){
+    	return new PeekableOfIntIteratorImpl(iter);
     }
+
+	/**
+	 * Convenience method to create a new {@link PeekableIterator}
+	 * from an {@link Iterable}.  This is the same as
+	 * {@link #createPeekableIterator(Iterator) createPeekableIterator(iter.iterator()}
+	 * @param iter the Iterable to use; can not be null.
+	 * @return a new {@link PeekableStreamingIterator};
+	 * never null.
+	 * @throws NullPointerException if iter is null.
+	 *
+	 * @param <E> the type of elements to be iterated over.
+	 */
+	public static <E> PeekableIterator<E> createPeekableIterator(Iterable<E> iter){
+		return createPeekableIterator(iter.iterator());
+	}
     /**
      * Convenience method to create a new {@link StreamingIterator}
      * from an {@link Iterable}.  This is the same as
@@ -228,6 +242,54 @@ public final class IteratorUtil {
     	
     	
     }
+
+	private static class PeekableOfIntIteratorImpl implements PeekableOfIntIterator{
+
+		private final OfInt iter;
+		private int next;
+		private boolean doneIterating=false;
+
+		PeekableOfIntIteratorImpl(OfInt iter) {
+			if(iter==null){
+				throw new NullPointerException();
+			}
+			this.iter = iter;
+			updateNext();
+		}
+
+		private void updateNext(){
+			if(iter.hasNext()){
+				next=iter.next();
+			}else{
+				doneIterating=true;
+			}
+		}
+		@Override
+		public boolean hasNext() {
+			return !doneIterating;
+		}
+		@Override
+		public int nextInt() {
+			int ret = next;
+			updateNext();
+			return ret;
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException("peekable iterators can not remove");
+
+		}
+		@Override
+		public int peek() {
+			if(hasNext()){
+				return next;
+			}
+			throw new NoSuchElementException();
+		}
+
+
+	}
     
     private static class PeekableStreamingIteratorImpl<T> implements PeekableStreamingIterator<T>{
 

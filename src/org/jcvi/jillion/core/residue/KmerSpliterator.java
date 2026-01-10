@@ -37,7 +37,7 @@ import org.jcvi.jillion.core.Range;
  * 
  * @since 5.3
  */
-class KmerSpliterator<R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S, B>> extends Spliterators.AbstractSpliterator<Kmer<S>> {
+class KmerSpliterator<R extends Residue<R>, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S, B>> extends Spliterators.AbstractSpliterator<Kmer<S>> {
     private LinkedList<B> builders = new LinkedList<>();
     private long counter;
     private final Iterator<R> iter;

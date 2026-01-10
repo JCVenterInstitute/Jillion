@@ -178,19 +178,11 @@ public interface INucleotideSequence<S extends INucleotideSequence<S,B>, B exten
      * @since 5.3
      */
     List<Range> getRangesOfNs();
-    
-    /**
-     * Get the first non-gap {@link org.jcvi.jillion.core.residue.nt.Nucleotide} from the left side of the given
-     * gappedReadIndex on the given {@link NucleotideSequence}.  If the given base is not a gap, 
-     * then that is the value returned.
-     * @param gappedOffset the gapped offset (0-based) to start the search from.
-     * @return the first non-gap position on the sequence that is {@code <= gappedOffset}.
-     * 
-     * @since 6.0.2
-     */
-	default int getLeftFlankingNonGapOffsetFor(int gappedOffset) {
-		return AssemblyUtil.getLeftFlankingNonGapIndex(toNucleotideSequence(), gappedOffset);
+
+	default List<Range> getRangesOfUnknowns(){
+		return getRangesOfNs();
 	}
+
 	/**
 	 * Create a new primitive int iterator {@link java.util.PrimitiveIterator.OfInt} 
 	 * that will iterate offsets of the non-gap positions starting at the given gapped 
@@ -229,18 +221,7 @@ public interface INucleotideSequence<S extends INucleotideSequence<S,B>, B exten
 		}
 		return new DefaultRightFlankingNoGapIterator(startingGapOffset, (int) getLength()-1);
 	}
-	 /**
-     * Get the first non-gap {@link org.jcvi.jillion.core.residue.nt.Nucleotide} from the right side of the given
-     * gappedOffset on the given {@link NucleotideSequence}.  If the given base is not a gap, 
-     * then that is the value returned.
-     * @param gappedOffset the gapped offset (0-based) to start the search from.
-     * @return the first non-gap position on the sequence that is {@code >= gappedOffset}
-     * 
-     * @since 6.0.2
-     */
-	default int getRightFlankingNonGapOffsetFor(int gappedOffset) {
-		return AssemblyUtil.getRightFlankingNonGapIndex(toNucleotideSequence(), gappedOffset);
-	}
+
 	/**
 	 * Get the first non-gap {@link Nucleotide} coordinates expanding the given range.
 	 * If the input coordinates are already non-gaps, then the coordinate will not change.

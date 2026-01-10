@@ -2,7 +2,9 @@ package org.jcvi.jillion.core.residue.nt;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
+import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.core.util.iter.ArrayIterator;
+import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.internal.core.io.StreamUtil;
 import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
 import org.jcvi.jillion.internal.core.util.ArrayUtil;
@@ -113,9 +115,10 @@ abstract class AbstractSimpleNucleotideSequence extends AbstractResidueSequence<
     }
 
     @Override
-    public List<Integer> getGapOffsets() {
+    public IntList getGapOffsets() {
         return gapSupplier.get().toBoxedList();
     }
+
     @Override
     public IntStream gaps() {
         return gapSupplier.get().stream();
@@ -147,8 +150,7 @@ abstract class AbstractSimpleNucleotideSequence extends AbstractResidueSequence<
 
     @Override
     public Iterator<Nucleotide> iterator(Range range) {
-        return Arrays.stream(data, (int) range.getBegin(), (int) range.getEnd()+1)
-                    .iterator();
+        return IteratorUtil.createIteratorFromArray(data, range);
 
     }
 
@@ -177,7 +179,7 @@ abstract class AbstractSimpleNucleotideSequence extends AbstractResidueSequence<
 
     @Override
     public Iterator<Nucleotide> iterator() {
-        return Arrays.stream(data).iterator();
+        return IteratorUtil.createIteratorFromArray(data);
     }
 
     @Override
@@ -213,8 +215,12 @@ abstract class AbstractSimpleNucleotideSequence extends AbstractResidueSequence<
 
     @Override
     public NucleotideSequence trim(Range trimRange) {
+        int end = (int) trimRange.getEnd();
+        if(data.length <= end){
+            throw new IndexOutOfBoundsException(end);
+        }
     	return createNewInstance(Arrays.copyOfRange(data,
-                (int)trimRange.getBegin(), (int) trimRange.getEnd()+1));
+                (int)trimRange.getBegin(), end+1));
         
     }
     protected abstract NucleotideSequence createNewInstance(Nucleotide[] dataArray);

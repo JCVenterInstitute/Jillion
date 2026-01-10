@@ -22,8 +22,10 @@ package org.jcvi.jillion.internal.fasta.qual;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
+import org.jcvi.jillion.core.Defline;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
@@ -43,24 +45,27 @@ public class DefaultQualityFastaFileDataStoreBuilder implements FastaVisitor, Bu
 	
 	private final Predicate<String> filter;
 	private final Predicate<QualityFastaRecord> recordFilter;
-	
-	public DefaultQualityFastaFileDataStoreBuilder(Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter){
+	private final BiFunction<String, String, Defline> idConverter;
+
+	public DefaultQualityFastaFileDataStoreBuilder(Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter, BiFunction<String, String, Defline> idConverter){
 		this.filter = filter;
 		this.recordFilter = recordFilter;
+		this.idConverter = idConverter==null? Defline::of: idConverter;
 	}
 	@Override
 	public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
 			final String id, String optionalComment) {
-		if(!filter.test(id)){
+		Defline defline = idConverter.apply(id, optionalComment);
+		if(!filter.test(defline.getId())){
 			return null;
 		}
-		return new AbstractQualityFastaRecordVisitor(id,optionalComment){
+		return new AbstractQualityFastaRecordVisitor(defline.getId(),defline.getComment()){
 
 			@Override
 			protected void visitRecord(
 					QualityFastaRecord fastaRecord) {
 			    if(recordFilter==null || recordFilter.test(fastaRecord)){
-				fastaRecords.put(id, fastaRecord);
+				fastaRecords.put(defline.getId(), fastaRecord);
 			    }
 				
 			}

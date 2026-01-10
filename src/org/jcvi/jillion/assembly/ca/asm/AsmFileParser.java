@@ -57,8 +57,10 @@ import org.jcvi.jillion.core.qual.QualitySequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.internal.core.io.RandomAccessFileInputStream;
 import org.jcvi.jillion.internal.core.io.TextLineParser;
+import org.jcvi.jillion.internal.core.util.ArrayUtil;
 import org.jcvi.jillion.internal.core.util.JillionUtil;
 
 /**
@@ -1226,7 +1228,7 @@ public abstract class AsmFileParser implements AsmParser{
                  }
                  
                  DirectedRange directedRange = parseDirectedRange(nextLine);
-                 List<Integer> gapOffsets = parseGapOffsets(parserState);
+                 IntList gapOffsets = parseGapOffsets(parserState);
                  parseEndOfMessage(parserState, messageCode);                   
                  visitor.visitReadLayout(type, readId, directedRange, gapOffsets);               
             }
@@ -1238,7 +1240,7 @@ public abstract class AsmFileParser implements AsmParser{
             }
             return DirectedRange.parse(matcher.group(1));
         }
-        private List<Integer> parseGapOffsets(ParserState parserState) throws IOException {
+        private IntList parseGapOffsets(ParserState parserState) throws IOException {
             String lengthLine = parserState.getNextLine();
             Matcher matcher = numOffsetsPattern.matcher(lengthLine);
             if(!matcher.find()){
@@ -1249,7 +1251,7 @@ public abstract class AsmFileParser implements AsmParser{
             if(!beginDeltaEncodingLine.startsWith("del:")){
                 throw new IOException("error reading read-to-unitig delta encoding:"+ beginDeltaEncodingLine);
             }
-            List<Integer> offsets = new ArrayList<Integer>(expectedNumberOfOffsets);
+            IntList offsets = ArrayUtil.newIntList(expectedNumberOfOffsets);
             while(offsets.size()<expectedNumberOfOffsets){
                 String offsetLine = parserState.getNextLine();
                 Scanner scanner = new Scanner(offsetLine);
@@ -1258,7 +1260,7 @@ public abstract class AsmFileParser implements AsmParser{
                     
                 }
                 while(scanner.hasNextInt()){
-                    offsets.add(scanner.nextInt());
+                    offsets.addInt(scanner.nextInt());
                 }
             }
             return offsets;

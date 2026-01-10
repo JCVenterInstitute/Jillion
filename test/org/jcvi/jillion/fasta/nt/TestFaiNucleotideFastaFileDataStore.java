@@ -42,7 +42,7 @@ public class TestFaiNucleotideFastaFileDataStore {
 		File fasta = helper.getFile("files/no_extra_on_defline.XXXXX.combo2.i.contigs");
 		File fai = helper.getFile("files/no_extra_on_defline.XXXXX.combo2.i.contigs.fai");
 		delegate = DefaultNucleotideFastaFileDataStore.create(fasta);
-		sut = FaiNucleotideFastaFileDataStore.create(fasta, fai, delegate);
+		sut = FaiNucleotideFastaFileDataStore.create(fasta, fai, delegate,null);
 		
 		
 	}

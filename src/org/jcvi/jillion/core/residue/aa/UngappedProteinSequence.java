@@ -20,6 +20,9 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.aa;
 
+import org.jcvi.jillion.core.util.IntList;
+import org.jcvi.jillion.internal.core.util.ArrayUtil;
+
 import java.io.ObjectInputStream;
 import java.util.Collections;
 import java.util.Iterator;
@@ -45,8 +48,8 @@ class UngappedProteinSequence extends CompactProteinSequence{
 	}
 
 	@Override
-	public List<Integer> getGapOffsets() {
-		return Collections.emptyList();
+	public IntList getGapOffsets() {
+		return ArrayUtil.immutableEmptyIntList();
 	}
 	@Override
 	public IntStream gaps() {

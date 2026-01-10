@@ -104,8 +104,18 @@ import org.junit.runners.Suite.SuiteClasses;
         TestBoundedPriorityQueue.class,
         TestRangeMap.class,
         TestRangeIntersectOrAbut.class,
-			TestOffsets.class
-        
+			TestOffsets.class,
+			TestOffsetsGetValuesUntil.class,
+			TestGrowableLongArrayJson.class,
+			TestGrowableIntArrayJson.class,
+			TestGrowableShortArrayJson.class,
+			TestGrowableByteArrayJson.class,
+			TestGrowableCharArrayJson.class,
+			TestGrowableBitArrayJson.class,
+
+			TestOffsetComplement.class,
+			TestOffsetIntersection.class,
+			TestOffsetContiguousIntersection.class
     }
     )
 public class AllUtilUnitTests {

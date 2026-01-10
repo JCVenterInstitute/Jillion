@@ -39,15 +39,15 @@ public class SamAlignmentGapInserter {
 	}
 	
 	@Data
-	public static class Result<R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R,S,B>> {
+	public static class Result<R extends Residue<R>, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R,S,B>> {
 		private final int gappedStartOffset;
 		private final B gappedSequence;
 	}
 
-	public <R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R,S,B>> Result<R,S,B> computeExtraInsertions(Cigar cigar, S rawUngappedSequence) {
+	public <R extends Residue<R>, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R,S,B>> Result<R,S,B> computeExtraInsertions(Cigar cigar, S rawUngappedSequence) {
 		return computeExtraInsertions(cigar, rawUngappedSequence, 0, Direction.FORWARD);
 	}
-	public <R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R,S,B>> Result<R,S,B> computeExtraInsertions(Cigar cigar, S rawUngappedSequence, int ungappedReferenceStartOffset, Direction dir) {
+	public <R extends Residue<R>, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R,S,B>> Result<R,S,B> computeExtraInsertions(Cigar cigar, S rawUngappedSequence, int ungappedReferenceStartOffset, Direction dir) {
 		if(rawUngappedSequence.getNumberOfGaps() !=0){
 			throw new IllegalArgumentException("rawUngapped Sequence can not have gaps");
 		}
@@ -81,7 +81,7 @@ public class SamAlignmentGapInserter {
 		return new Result<>(gappedReferenceOffset, builder);
 	}
 	
-	private <R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R,S,B>> int appendBases(B builder, Iterator<R> ungappedReadBaseIterator, int refOffset, CigarElement e){
+	private <R extends Residue<R>, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R,S,B>> int appendBases(B builder, Iterator<R> ungappedReadBaseIterator, int refOffset, CigarElement e){
 		
 		int ret = refOffset;
 		for(int i=0; i<e.getLength(); i++){

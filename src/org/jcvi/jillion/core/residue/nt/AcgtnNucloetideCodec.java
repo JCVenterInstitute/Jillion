@@ -26,6 +26,8 @@ import java.util.stream.IntStream;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
+import org.jcvi.jillion.core.util.IntList;
+import org.jcvi.jillion.internal.core.util.ArrayUtil;
 
 /**
  * {@code AcgtnNucloetideCodec} is a special version
@@ -51,8 +53,8 @@ final class AcgtnNucloetideCodec extends AbstractTwoBitEncodedNucleotideCodec{
     * {@inheritDoc}
     */
     @Override
-    public List<Integer> getGapOffsets(byte[] encodedGlyphs) {
-        return Collections.emptyList();
+    public IntList getGapOffsets(byte[] encodedGlyphs) {
+        return ArrayUtil.immutableEmptyIntList();
     }
     
     

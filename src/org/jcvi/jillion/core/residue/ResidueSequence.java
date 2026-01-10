@@ -20,14 +20,20 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonValue;
+import org.jcvi.jillion.assembly.AssemblyUtil;
+import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.Sequence;
+import org.jcvi.jillion.core.SequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.util.IntList;
+import org.jcvi.jillion.core.util.streams.ThrowingIntIndexedConsumer;
+
 import java.util.*;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
-import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.Sequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 
 /**
  * {@code ResidueSequence} is a {@link Sequence}
@@ -39,7 +45,7 @@ import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
  * @param <R> the Type of {@link Residue} in this {@link Sequence}.
  * @param <T> the ResidueSequence implementation, needed for some of the return types to make sure it returns "this" type.
  */
-public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R, T, B>, B extends ResidueSequenceBuilder<R, T,B>> extends Sequence<R>, Comparable<T> {
+public interface ResidueSequence<R extends Residue<R>, T extends ResidueSequence<R, T, B>, B extends ResidueSequenceBuilder<R, T,B>> extends Sequence<R>, Comparable<T> {
 
 	 /**
      * Get a List of all the offsets into this
@@ -48,7 +54,8 @@ public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R,
      * the same as the value returned by {@link #getNumberOfGaps()}.
      * @return a List of gap offsets as Integers.
      */
-    List<Integer> getGapOffsets();  
+     @JsonIgnore
+    IntList getGapOffsets();
     /**
      * Get a List of all the offsets into this
      * sequence which are gaps.  This list SHOULD be
@@ -71,6 +78,40 @@ public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R,
      * @since 6.0
      */
     List<Range> getRangesOfGaps();
+
+    /**
+     * Get the first non-gap {@link org.jcvi.jillion.core.residue.nt.Nucleotide} from the left side of the given
+     * gappedReadIndex on the given {@link NucleotideSequence}.  If the given base is not a gap,
+     * then that is the value returned.
+     * @param gappedOffset the gapped offset (0-based) to start the search from.
+     * @return the first non-gap position on the sequence that is {@code <= gappedOffset}.
+     *
+     * @since 6.0.2
+     */
+    default int getLeftFlankingNonGapOffsetFor(int gappedOffset) {
+        return AssemblyUtil.getLeftFlankingNonGapIndex(this, gappedOffset);
+    }
+
+    /**
+     * Get the first non-gap {@link org.jcvi.jillion.core.residue.nt.Nucleotide} from the right side of the given
+     * gappedOffset on the given {@link NucleotideSequence}.  If the given base is not a gap,
+     * then that is the value returned.
+     * @param gappedOffset the gapped offset (0-based) to start the search from.
+     * @return the first non-gap position on the sequence that is {@code >= gappedOffset}
+     *
+     * @since 6.0.2
+     */
+    default int getRightFlankingNonGapOffsetFor(int gappedOffset) {
+        return AssemblyUtil.getRightFlankingNonGapIndex(this, gappedOffset);
+    }
+    /**
+     * Get the list of contiguous spans of the Unknown Residue (i.e. 'N' or 'X' etc); the returned list
+     * will be in sorted order.
+     * @return a List which may be empty.
+     *
+     * @since 6.1
+     */
+    List<Range> getRangesOfUnknowns();
     /**
      * Get the number of gaps in this sequence.
      * @return the number of gaps; will always be {@code >=0}.
@@ -225,6 +266,7 @@ public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R,
      * @return the full sequence as a long string.
      */
     @Override
+    @JsonValue
     String toString();
     /**
      * Two {@link ResidueSequence}s are equal
@@ -312,6 +354,18 @@ public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R,
      * @since 5.3
      */
     B toBuilder(Range range);
+
+    /**
+     * Create a new Builder object that is initialized
+     * to the just the given Ranges of the current sequence.  Any changes made to the returned Builder
+     * will <strong>NOT</strong> affect this immutable Sequence.
+     *
+     * @param ranges the list of Ranges to use, if the Ranges overlap, then that part of the
+     *               sequence will be repeated; can not be null or contain null values.
+     * @return a new Builder instance, will never be null.
+     * @since 6.1
+     */
+    B toBuilder(List<Range> ranges);
     /**
      * Create a new EMPTY Builder object with the default capacity.
      * 
@@ -510,6 +564,20 @@ public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R,
     default boolean hasGaps() {
     	return getNumberOfGaps()>0;
     }
+
+    /**
+     * Does this Sequence contain any gaps within the given range.
+     *
+     * @param range the Range to check; must be within bounds
+     * @return {@code true} if it does; {@code false} otherwise.
+     *
+     * @since 6.1
+     *
+     * @implNote by default this returns {@code gaps().anyMatch(range::intersects)} but some implementations may override this for a more efficient method.
+     */
+    default boolean hasGaps(Range range) {
+        return gaps().anyMatch(range::intersects);
+    }
     
     @Override
     T trim(Range range);
@@ -560,5 +628,58 @@ public interface ResidueSequence<R extends Residue, T extends ResidueSequence<R,
             return asSubtype();
         }
         return toBuilder().ungap().build();
+    }
+
+    /**
+     * Create a new Sequence that is only the part of this
+     * sequence within the given trim range.
+     *
+     * @param trimRange the subRange to use; can not be null.
+     * @return a new Builder instance, will never be null.
+     *
+     * @param consumerOfExcess a Consumer that takes a SequenceBuilder
+     *                         and the number of bases extra that were beyond
+     *                         the current sequence to trim.  Users can use this information
+     *                         to append gaps or Ns or throw an exception to handle
+     *                         the usecase of too big an input Range.
+     * @since 6.1
+     *
+     * @throws NullPointerException if trimRange is null.
+     * @throws E the exception thrown by consumer (if any)
+     */
+    default <E extends Throwable > T trim(Range trimRange, ThrowingIntIndexedConsumer<B,E> consumerOfExcess) throws E{
+        if(trimRange.getBegin() <0){
+            throw new IndexOutOfBoundsException(trimRange +" starts before offset 0");
+        }
+        Range intersection = Range.ofLength(getLength()).intersection(trimRange);
+
+        B builder = toBuilder(intersection);
+        int extraBasesAtEnd = (int)(trimRange.getEnd() - intersection.getEnd());
+
+        if(extraBasesAtEnd > 0){
+            if(consumerOfExcess==null){
+                throw new IndexOutOfBoundsException(trimRange +" extends beyond sequence length " + getLength());
+            }
+            consumerOfExcess.accept(extraBasesAtEnd, builder);
+        }
+        return builder.build();
+    }
+
+    /**
+     * Trim to the given Range, if the range is larger than the current sequence,
+     * append the returned sequence with the appropriate number of gaps.
+     *
+     * @param trimRange the range to trim; can not be {@code null}.
+     * @return a new Sequence
+     * @since 6.1
+     * @implNote  this is the same as {@code return trim(trimRange, (size, builder) ->{
+     *             builder.appendGap(size);
+     *         });}.
+     *
+     */
+    default T trimAndPaddWithGaps(Range trimRange){
+        return trim(trimRange, (size, builder) ->{
+            builder.appendGap(size);
+        });
     }
 }

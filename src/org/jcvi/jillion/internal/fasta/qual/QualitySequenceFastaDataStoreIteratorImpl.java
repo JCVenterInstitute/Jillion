@@ -21,8 +21,10 @@
 package org.jcvi.jillion.internal.fasta.qual;
 
 import java.io.IOException;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
+import org.jcvi.jillion.core.Defline;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.fasta.FastaRecordVisitor;
@@ -38,15 +40,20 @@ public class QualitySequenceFastaDataStoreIteratorImpl extends AbstractBlockingS
 	private final FastaParser parser;
 	private final Predicate<String> filter;
 	private final Predicate<QualityFastaRecord> recordFilter;
-	
+	private final BiFunction<String,String, Defline> idConverter;
+
 	public static StreamingIterator<QualityFastaRecord> createIteratorFor(FastaParser parser, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter){
 		
-		QualitySequenceFastaDataStoreIteratorImpl iter = new QualitySequenceFastaDataStoreIteratorImpl(parser, filter, recordFilter);
+		return createIteratorFor(parser,filter, recordFilter, null);
+	}
+	public static StreamingIterator<QualityFastaRecord> createIteratorFor(FastaParser parser, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter, BiFunction<String,String, Defline> idConverter){
+
+		QualitySequenceFastaDataStoreIteratorImpl iter = new QualitySequenceFastaDataStoreIteratorImpl(parser, filter, recordFilter, idConverter);
 		iter.start();
 		return iter;
 	}
 	
-	public QualitySequenceFastaDataStoreIteratorImpl( FastaParser parser, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter) {
+	public QualitySequenceFastaDataStoreIteratorImpl( FastaParser parser, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter, BiFunction<String,String, Defline> idConverter) {
 		if(parser ==null){
 			throw new NullPointerException("parser can not be null");
 		}
@@ -56,6 +63,7 @@ public class QualitySequenceFastaDataStoreIteratorImpl extends AbstractBlockingS
 		this.parser = parser;
 		this.filter =filter;
 		this.recordFilter = recordFilter;
+		this.idConverter = idConverter==null? Defline::of: idConverter;
 	}
 	/**
     * {@inheritDoc}
@@ -68,6 +76,7 @@ public class QualitySequenceFastaDataStoreIteratorImpl extends AbstractBlockingS
 			@Override
 			public void visitRecord(String id, String optionalComment,
 					String fullBody) {
+
 				QualityFastaRecord record = new QualityFastaRecordBuilder(id,fullBody)
 														.comment(optionalComment)
 														.build();
@@ -93,10 +102,11 @@ public class QualitySequenceFastaDataStoreIteratorImpl extends AbstractBlockingS
 			@Override
 			public FastaRecordVisitor visitDefline(FastaVisitorCallback callback,
 					String id, String optionalComment) {
-				if(!filter.test(id)){
+				Defline defline = idConverter.apply(id, optionalComment);
+				if(!filter.test(defline.getId())){
 					return null;
 				}
-				recordVisitor.prepareNewRecord(id, optionalComment);
+				recordVisitor.prepareNewRecord(defline.getId(), defline.getComment());
 				return recordVisitor;
 			}
 		};

@@ -25,16 +25,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.OptionalLong;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
+import org.jcvi.jillion.core.Defline;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.InputStreamSupplier;
-import org.jcvi.jillion.core.residue.nt.Nucleotide;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceDataStore;
+import org.jcvi.jillion.core.residue.DecodingOptions;
+import org.jcvi.jillion.core.residue.nt.*;
 import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.shared.fasta.AbstractFastaFileDataStoreBuilder;
+import org.jcvi.jillion.shared.fasta.Filterable;
+import org.jcvi.jillion.spi.InvalidCharacterHandler;
+
 /**
  * {@code NucleotideFastaFileDataStoreBuilder}
  * is a factory class that can create new instances
@@ -43,7 +46,8 @@ import org.jcvi.jillion.shared.fasta.AbstractFastaFileDataStoreBuilder;
  * @author dkatzel
  *
  */
-public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFileDataStoreBuilder<Nucleotide, NucleotideSequence, NucleotideFastaRecord, NucleotideSequenceDataStore, NucleotideFastaFileDataStore>{
+public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFileDataStoreBuilder<Nucleotide, NucleotideSequence, NucleotideFastaRecord, NucleotideSequenceDataStore, NucleotideFastaFileDataStore>
+		implements Filterable<NucleotideFastaRecord, NucleotideFastaFileDataStoreBuilder> {
 	/**
 	 * File for fai encoded file
 	 * which may be null or point to non-existent file.
@@ -59,7 +63,7 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	 * Handler for what to do when we get an invalid character
 	 * @since 6.0
 	 */
-	private NucleotideSequenceBuilder.DecodingOptions decodingOptions = NucleotideSequenceBuilder.DecodingOptions.DEFAULT;
+	private DecodingOptions decodingOptions = DecodingOptions.DEFAULT;
 	
 	/**
 	 * Create a new Builder instance of 
@@ -148,30 +152,31 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	@Override
 	protected NucleotideFastaFileDataStore createNewInstance(
 			FastaParser parser, DataStoreProviderHint providerHint, Predicate<String> filter,
-			Predicate<NucleotideFastaRecord> recordFilter, OptionalLong maxNumberOfRecords)
+			Predicate<NucleotideFastaRecord> recordFilter, OptionalLong maxNumberOfRecords,
+			BiFunction<String, String, Defline> idConverter)
 			throws IOException {
 		if(parser.isReadOnceOnly()){
-			return DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter, decodingOptions);	
+			return DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter, decodingOptions, idConverter);
 		}else{
 		    NucleotideFastaFileDataStore delegate;
 			switch(providerHint){
 				case RANDOM_ACCESS_OPTIMIZE_SPEED: 
-							delegate= DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter, decodingOptions);
+							delegate= DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter, decodingOptions, idConverter);
 							break;
 				case RANDOM_ACCESS_OPTIMIZE_MEMORY: 
 							delegate = parser.canCreateMemento()?
 										IndexedNucleotideSequenceFastaFileDataStore.create(parser,filter, recordFilter, decodingOptions)
 										:
-										DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter, decodingOptions);
+										DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter, decodingOptions, idConverter);
 							break;
-				case ITERATION_ONLY: delegate= LargeNucleotideSequenceFastaFileDataStore.create(parser,filter, recordFilter, maxNumberOfRecords, decodingOptions);
+				case ITERATION_ONLY: delegate= LargeNucleotideSequenceFastaFileDataStore.create(parser,filter, recordFilter, maxNumberOfRecords, decodingOptions, idConverter);
 								break;
 				default:
 					throw new IllegalArgumentException("unknown provider hint : "+ providerHint);
 			}
 			
 			if(faiFile !=null && faiFile.exists()){
-				return FaiNucleotideFastaFileDataStore.create(fastaFile, faiFile, delegate);
+				return FaiNucleotideFastaFileDataStore.create(fastaFile, faiFile, delegate, idConverter);
 			}
 			return delegate;
 			
@@ -189,7 +194,7 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 		return this;
 	}
 	/**
-	 * Set the {@link org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler} to use
+	 * Set the {@link InvalidCharacterHandler} to use
 	 * when parsing sequences for this Datastore.  If set to {@code null}
 	 * then the default handler is used.
 	 * @param invalidCharacterHandler the handler to use; if set to {@code null}
@@ -199,11 +204,11 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	 * 
 	 * @since 6.0
 	 */
-	public NucleotideFastaFileDataStoreBuilder invalidCharacterHandler(Nucleotide.InvalidCharacterHandler invalidCharacterHandler) {
+	public NucleotideFastaFileDataStoreBuilder invalidCharacterHandler(InvalidCharacterHandler invalidCharacterHandler) {
 		return decoderOptions(this.decodingOptions.toBuilder().invalidCharacterHandler(invalidCharacterHandler).build());
 	}
 	/**
-	 * Set the {@link org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder.DecodingOptions} to use
+	 * Set the {@link DecodingOptions} to use
 	 * when parsing sequences for this Datastore.  If set to {@code null}
 	 * then the default decoder is used.
 	 * @param decodingOptions the options to use; if set to {@code null}
@@ -213,8 +218,8 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	 * 
 	 * @since 6.0
 	 */
-	public NucleotideFastaFileDataStoreBuilder decoderOptions(NucleotideSequenceBuilder.DecodingOptions decodingOptions) {
-		this.decodingOptions = decodingOptions==null? NucleotideSequenceBuilder.DecodingOptions.DEFAULT: decodingOptions;
+	public NucleotideFastaFileDataStoreBuilder decoderOptions(DecodingOptions decodingOptions) {
+		this.decodingOptions = decodingOptions==null? DecodingOptions.DEFAULT: decodingOptions;
 		return this;
 	}
 	/**
@@ -258,6 +263,19 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 		super.onlyIncludeIds(ids);
 		return this;
 	}
+
+	/**
+	 *
+	 * {@inheritDoc}
+	 */
+	@Override
+	public NucleotideFastaFileDataStoreBuilder idConverter(
+			BiFunction<String, String, Defline> idConverter) {
+		super.idConverter(idConverter);
+		return this;
+	}
+
+
 	
 	
 }

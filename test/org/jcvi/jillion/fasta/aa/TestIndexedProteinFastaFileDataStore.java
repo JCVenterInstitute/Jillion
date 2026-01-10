@@ -22,8 +22,10 @@ package org.jcvi.jillion.fasta.aa;
 
 import java.io.File;
 
+import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.fasta.aa.ProteinFastaDataStore;
 import org.jcvi.jillion.internal.fasta.aa.IndexedProteinFastaFileDataStore;
+import org.jcvi.jillion.spi.InvalidCharacterHandler;
 
 public class TestIndexedProteinFastaFileDataStore extends AbstractTestProteinFastaDataStore{
 
@@ -35,5 +37,13 @@ public class TestIndexedProteinFastaFileDataStore extends AbstractTestProteinFas
 	@Override
 	protected ProteinFastaDataStore create(File fastaFile) throws Exception{
 		return IndexedProteinFastaFileDataStore.create(fastaFile);
+	}
+
+	@Override
+	protected ProteinFastaDataStore create(File fastaFile, InvalidCharacterHandler invalidCharacterHandler) throws Exception {
+		return new ProteinFastaFileDataStoreBuilder(fastaFile)
+				.hint(DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_MEMORY)
+				.invalidCharacterHandler(invalidCharacterHandler)
+				.build();
 	}
 }

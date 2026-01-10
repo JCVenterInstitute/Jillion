@@ -23,6 +23,7 @@ package org.jcvi.jillion.fasta.aa;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
@@ -84,6 +85,59 @@ public interface ProteinFastaRecord extends FastaRecord<AminoAcid,ProteinSequenc
 				return Optional.empty();
 			 }
 			 return Optional.of(iter.next());
+		}
+	}
+
+	/**
+	 * Create a ProteinFastaRecord of the FIRST record in the given
+	 * fasta file (which may be compressed).
+	 * @param refFile the file to parse; can not be null.
+	 * @param consumer a consumer of a {@link ProteinFastaFileDataStoreBuilder}
+	 *                 to preform any modifications to how to process this record;
+	 *                 if the consumer is {@code null} then no extra processing is performed.
+	 * @return an Optional wrapped ProteinFastaRecord object; or empty
+	 * if the fasta file does not contain any sequences.
+	 * @throws IOException if there is a problem parsing the file.
+	 *
+	 * @sinece 6.0
+	 *
+	 * @implNote this is the same as
+	 * <pre>
+	 * {@code
+	 *  ProteinFastaFileDataStoreBuilder proteinFastaFileDataStoreBuilder = new ProteinFastaFileDataStoreBuilder(refFile);
+	 * 	if(consumer !=null){
+	 * 		consumer.accept(proteinFastaFileDataStoreBuilder);
+	 * 	}
+	 * try( ProteinFastaFileDataStore datastore = proteinFastaFileDataStoreBuilder
+	 *		.hint(DataStoreProviderHint.ITERATION_ONLY)
+	 *		.build();
+	 *		StreamingIterator<ProteinFastaRecord> iter = datastore.iterator();
+	 *	){
+	 *		if(!iter.hasNext()) {
+	 *			return Optional.empty();
+	 *		}
+	 *			return Optional.of(iter.next());
+	 *		}
+	 *}
+	 * </pre>
+	 *
+	 * @since 6.1
+	 */
+	static Optional<ProteinFastaRecord> of(File refFile, Consumer<ProteinFastaFileDataStoreBuilder> consumer) throws IOException {
+
+		ProteinFastaFileDataStoreBuilder proteinFastaFileDataStoreBuilder = new ProteinFastaFileDataStoreBuilder(refFile);
+		if(consumer !=null){
+			consumer.accept(proteinFastaFileDataStoreBuilder);
+		}
+		try(ProteinFastaFileDataStore datastore = proteinFastaFileDataStoreBuilder
+				.hint(DataStoreProviderHint.ITERATION_ONLY)
+				.build();
+			StreamingIterator<ProteinFastaRecord> iter = datastore.iterator();
+		){
+			if(!iter.hasNext()) {
+				return Optional.empty();
+			}
+			return Optional.of(iter.next());
 		}
 	}
 }

@@ -39,6 +39,7 @@ import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Rangeable;
+import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.internal.core.residue.AbstractResidueSequence;
 
@@ -170,31 +171,6 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
 		return codec.getContractingFlankingNonGapRangeFor(data, gappedBeginOffset, gappedEndOffset);
 	}
 
-
-	@Override
-    public Stream<Range> findMatches(Pattern pattern) {
-        return codec.matches(data, pattern);
-    }
-
-
-
-
-
-
-	@Override
-    public Stream<Range> findMatches(Pattern pattern, Range subSequenceRange) {
-        return codec.matches(data, pattern, subSequenceRange);
-    }
-
-    @Override
-    public Stream<Range> findMatches(Pattern pattern,boolean nested) {
-        return codec.matches(data, pattern,nested);
-    }
-
-    @Override
-    public Stream<Range> findMatches(Pattern pattern, Range subSequenceRange,boolean nested) {
-        return codec.matches(data, pattern, subSequenceRange,nested);
-    }
     
     /**
      * Check the input Range boundaries against this sequence.
@@ -222,7 +198,7 @@ final class DefaultNucleotideSequence extends AbstractResidueSequence<Nucleotide
     }
 
 	@Override
-    public List<Integer> getGapOffsets() {
+    public IntList getGapOffsets() {
     	return codec.getGapOffsets(data);
     }
 	

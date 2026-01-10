@@ -1,4 +1,10 @@
 package org.jcvi.jillion.core.residue.aa;
+
+import org.jcvi.jillion.core.Range;
+
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Implementation that knows there are no ambiguous amino acids.
  * @author dkatzel
@@ -30,4 +36,8 @@ class UngappedNoAmbiguityProteinSequence extends UngappedProteinSequence{
 		return 0;
 	}
 
+	@Override
+	public List<Range> getRangesOfUnknowns() {
+		return Collections.emptyList();
+	}
 }

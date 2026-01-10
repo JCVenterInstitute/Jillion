@@ -40,7 +40,7 @@ import org.jcvi.jillion.core.util.SingleThreadAdder;
  *
  * @param <R> the type of {@link Residue} in this sequence.
  */
-public abstract class AbstractResidueSequence<R extends Residue, T extends ResidueSequence<R, T, B>, B extends ResidueSequenceBuilder<R, T, B>> implements ResidueSequence<R, T, B>{
+public abstract class AbstractResidueSequence<R extends Residue<R>, T extends ResidueSequence<R, T, B>, B extends ResidueSequenceBuilder<R, T, B>> implements ResidueSequence<R, T, B>{
 
 	@Override
 	public List<Range> getRangesOfGaps(){

@@ -21,9 +21,7 @@
 package org.jcvi.jillion.core;
 
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.jcvi.jillion.core.util.Builder;
 /**
@@ -108,6 +106,39 @@ public interface SequenceBuilder <T, S extends Sequence<T>, B extends SequenceBu
      */
     B getSelf();
 
+	/**
+	 * Deletes the elements specified in the given Ranges.  If multiple Ranges are given,
+	 * then the Ranges are sorted from end offset and then removed.  This prevents
+	 * having to deal with correcting for downstream offsets.  If there are overlapping
+	 * ranges, then those positions will be deleted multiple times.
+	 * @param ranges the list of ranges, can not be null or empty.
+	 * @return this
+	 *
+	 * @throws NullPointerException if ranges are null or any range is null.
+	 * @throws IllegalArgumentException if no ranges are provided.
+	 * @since 6.1
+	 */
+	default B delete(Collection<Range> ranges){
+		if(ranges.isEmpty()) {
+			throw new IllegalArgumentException("must have at least one range to delete");
+		}
+		if(ranges.size() ==1) {
+			return delete(ranges.iterator().next());
+		}
+		List<Range> rangeList = new ArrayList<>(ranges);
+		rangeList.sort(Range.Comparators.DEPARTURE.reversed());
+		Iterator<Range> iter = rangeList.iterator();
+		do {
+			Range r = iter.next();
+			if(iter.hasNext()) {
+				delete(r);
+			}else {
+				return delete(r);
+			}
+		}while(iter.hasNext());
+		//can't happen but makes compiler happy
+		return getSelf();
+	}
     /**
      * Deletes the elements specified in the given Ranges.  If multiple Ranges are given,
      * then the Ranges are sorted from end offset and then removed.  This prevents 

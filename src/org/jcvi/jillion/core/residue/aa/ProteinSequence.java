@@ -21,14 +21,33 @@
 package org.jcvi.jillion.core.residue.aa;
 
 import java.io.Serializable;
+import java.util.*;
+import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.SuperBuilder;
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.residue.MatchableSequence;
 import org.jcvi.jillion.core.residue.ResidueSequence;
+import org.jcvi.jillion.core.residue.ResidueSequenceBuilder;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
+import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.internal.core.io.StreamUtil;
 
 /**
  * {@code ProteinSequence} is a marker interface for
- * {@link Sequence}s that contain {@link AminoAcid}s.
+ * {@link org.jcvi.jillion.core.Sequence}s that contain {@link AminoAcid}s.
  * <br>
  * {@link ProteinSequence} is {@link Serializable} in a (hopefully)
  * forwards compatible way. However, there is no 
@@ -39,13 +58,15 @@ import org.jcvi.jillion.core.residue.ResidueSequence;
  *
  * @author dkatzel
  */
-public interface ProteinSequence extends ResidueSequence<AminoAcid, ProteinSequence, ProteinSequenceBuilder>, Serializable {
+public interface ProteinSequence extends ResidueSequence<AminoAcid, ProteinSequence, ProteinSequenceBuilder>, Serializable, MatchableSequence<AminoAcid, ProteinSequence, ProteinSequenceBuilder> {
 
 	@Override
 	ProteinSequenceBuilder toBuilder();
 
 	@Override
 	ProteinSequenceBuilder toBuilder(Range trimRange);
+	@Override
+	ProteinSequenceBuilder toBuilder(List<Range> trimRanges);
 	/**
 	 * Convert this sequence into a String using the user defined function 
 	 * to write out each AminoAcid.
@@ -69,7 +90,8 @@ public interface ProteinSequence extends ResidueSequence<AminoAcid, ProteinSeque
 	default String toString(Function<AminoAcid, String> toStringFunction){
 	    return ResidueSequence.super.toString(toStringFunction);
 	}
-     static ProteinSequence of(String seq) {
+	@JsonCreator
+	static ProteinSequence of(String seq) {
         return new ProteinSequenceBuilder(seq).turnOffDataCompression(true).build();
     }
 
@@ -102,4 +124,65 @@ public interface ProteinSequence extends ResidueSequence<AminoAcid, ProteinSeque
 		}
 		return count;
 	}
+
+
+
+	@Override
+	default Stream<Range> findMatches(String regex, Range subSequenceRange, boolean nested) {
+
+
+		return findMatches(ProteinSequenceMatcherParameters.builder()
+				.stringPattern(regex)
+				.subSequenceRange(subSequenceRange)
+				.nested(nested)
+				.build());
+	}
+
+
+	@Override
+	default Stream<Range> findMatches(Pattern pattern, Range subSequenceRange, boolean nested) {
+		return findMatches(ProteinSequenceMatcherParameters.builder()
+				.pattern(pattern)
+				.subSequenceRange(subSequenceRange)
+				.nested(nested)
+				.build());
+	}
+
+	@Override
+	default Stream<Range> findMatches(SequenceMatcherParameters<AminoAcid, ProteinSequence, ProteinSequenceBuilder> sequenceMatcherParameters) {
+		return sequenceMatcherParameters.findMatches(this);
+	}
+
+
+	@EqualsAndHashCode(callSuper = true)
+	@Data
+	@SuperBuilder
+	class ProteinSequenceMatcherParameters extends SequenceMatcherParameters<AminoAcid, ProteinSequence, ProteinSequenceBuilder>{
+
+		@Override
+		protected BiFunction<String, Boolean, Pattern> getRegexPatternFunction() {
+
+			return (pattern, explode)->{
+				if(explode){
+					return ProteinSequencePattern.compile(pattern);
+				}
+				return Pattern.compile(pattern);
+			};
+		}
+
+		@Override
+		protected CharSequence toCharSequence(ProteinSequence sequence) {
+			return new ProteinSeqCharSequence(sequence);
+		}
+
+		@Override
+		protected ProteinSequenceBuilder createNewBuilder(int seqLength) {
+			return new ProteinSequenceBuilder(seqLength);
+		}
+	}
+
+
+
+
+
 }

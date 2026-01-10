@@ -26,6 +26,8 @@ import java.util.BitSet;
 import java.util.Objects;
 import java.util.stream.IntStream;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.util.streams.ThrowingIntIndexedBooleanConsumer;
 
@@ -115,6 +117,7 @@ public final class GrowableBitArray {
 	 * to the backing array.
 	 * @throws NullPointerException if bytes is null.
 	 */
+	@JsonCreator
 	public GrowableBitArray(boolean[] bytes){
 		data = Arrays.copyOf(bytes, bytes.length);
 		currentLength=data.length;
@@ -266,7 +269,7 @@ public final class GrowableBitArray {
             data = Arrays.copyOf(data, newCapacity);
 		}
     }
-	
+	@JsonValue
 	public boolean[] toArray(){
 		return Arrays.copyOf(data,currentLength);
 	}

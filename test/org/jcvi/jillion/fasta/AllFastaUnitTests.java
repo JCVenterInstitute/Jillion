@@ -47,7 +47,14 @@ import org.junit.runners.Suite.SuiteClasses;
         TestRoundRobinSplitFastaWriter.class,
         TestDeconvolveSplitFastaWriter.class,
         
-        MaxFastaVisitorTest.class
+        MaxFastaVisitorTest.class,
+            //defline tests
+        DeflineTest.class,
+        DeflineConverterAllOneLineTest.class,
+        DeflineConvertSpaceTest.class,
+        DeflineConverterMapIdTest.class,
+        DeflineConverterMapIdAndCommentTest.class,
+        DeflineChainedConverterTest.class
     }
     )
 public class AllFastaUnitTests {

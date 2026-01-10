@@ -36,7 +36,7 @@ public class ArrayIterator<T> implements ListIterator<T> {
 
 	private final T[] array;
 	private int count;
-	
+	private final int end;
 	/**
 	 * Create a new ArrayInterator instance
 	 * that will iterate over a defensive copy
@@ -101,23 +101,47 @@ public class ArrayIterator<T> implements ListIterator<T> {
 		if(array==null){
 			throw new NullPointerException("array can not be null");
 		}
+
 		if(initialStartIndex <0 || initialStartIndex > array.length){
 			throw new IllegalArgumentException("initial start index must be within array bounds");
 		}
 		this.count = initialStartIndex;
+		this.end = array.length;
 		if(makeDefensiveCopy){
 			this.array = Arrays.copyOf(array, array.length);
 		}else{
-			
+
 			this.array = array;
 		}
 
 		
 	}
+	public ArrayIterator(T[] array,int initialStartIndex, int endIndex, boolean makeDefensiveCopy) {
+		if(array==null){
+			throw new NullPointerException("array can not be null");
+		}
+		if(endIndex >array.length || endIndex <0 ){
+			throw new IndexOutOfBoundsException("end index must be within array bounds");
+
+		}
+		if(initialStartIndex <0 || initialStartIndex > endIndex){
+			throw new IndexOutOfBoundsException("initial start index must be within array bounds");
+		}
+		this.count = initialStartIndex;
+		this.end = endIndex;
+		if(makeDefensiveCopy){
+			this.array = Arrays.copyOf(array, end-count);
+		}else{
+
+			this.array = array;
+		}
+
+
+	}
 
 	@Override
 	public boolean hasNext() {
-		return count<array.length;
+		return count<end;
 	}
 
 	@Override

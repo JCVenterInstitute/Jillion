@@ -240,6 +240,27 @@ public class TestGrowableLongArray {
 		assertArrayEquals(array, sut.toArray());
 	}
 	@Test
+	public void constructorWithSingleRange(){
+		GrowableLongArray sut = new GrowableLongArray(Range.of(11,20));
+
+		long[] expected = new long[10];
+		for(int i=0; i< 10; i++){
+			expected[i]= 11+i;
+		}
+		assertArrayEquals(expected, sut.toArray());
+	}
+	@Test
+	public void constructorWithListOfRanges(){
+		GrowableLongArray sut = new GrowableLongArray(List.of(Range.of(0,10), Range.of(11,20)));
+
+		long[] expected = new long[21];
+		for(int i=0; i< 21; i++){
+			expected[i]= i;
+		}
+		assertArrayEquals(expected, sut.toArray());
+	}
+
+	@Test
 	public void mixOfAllOperations(){
 		long[] initialArray = new long[]{Byte.MAX_VALUE,20,Long.MAX_VALUE,40,50};
 		GrowableLongArray sut = new GrowableLongArray(initialArray);

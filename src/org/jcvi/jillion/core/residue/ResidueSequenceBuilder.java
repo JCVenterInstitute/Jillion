@@ -23,10 +23,13 @@ package org.jcvi.jillion.core.residue;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.SequenceBuilder;
+import org.jcvi.jillion.core.util.IntList;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.IntStream;
 
-public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>, B extends ResidueSequenceBuilder<R,S,B>> extends SequenceBuilder<R,S, B> {
+public interface ResidueSequenceBuilder<R extends Residue<R>, S extends Sequence<R>, B extends ResidueSequenceBuilder<R,S,B>> extends SequenceBuilder<R,S, B> {
 
 	 /**
      * Appends the given residue to the end
@@ -91,6 +94,16 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
        char[] gaps =  new char[numberOfGaps];
        Arrays.fill( gaps, '-');
        return append(gaps);
+    }
+
+    default B insertGap(int offset){
+        return insert(offset, "-");
+    }
+
+    default B insertGap(Range gapRange){
+        char[] gaps =  new char[(int) gapRange.getLength()];
+        Arrays.fill( gaps, '-');
+        return insert((int) gapRange.getBegin(), gaps);
     }
 
     /**
@@ -235,6 +248,43 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
     B replace(Range offset, S replacement);
     
     B replace(Range offset, B replacement);
+    B replace(Range offset, Iterable<R> replacement);
+
+    /**
+     * Is the given offset a Gap.
+     * @param offset the offset must be &ge; 0 and &lt; length.
+     * @return {@code true} if it is; {@code false} otherwise.
+     *
+     * @throws IndexOutOfBoundsException if offset is beyond the length
+     * of the sequence or negative.
+     * @since 6.1
+     */
+    boolean isGap(int offset);
+    /**
+     * Replace the sequence in the given range with
+     * gaps.
+     * @param range the range to replace; can not be null.
+     * @return this.
+     *
+     * @since 6.1
+     * 
+     * @implNote by default this is the same as {@link #replaceWithGaps(Range, int) replaceWithGaps(range, (int) range.getLength())}
+     * @see #replaceWithGaps(Range, int)
+     */
+    default B replaceWithGaps(Range range){
+        return replaceWithGaps(range, (int) range.getLength());
+    }
+
+    /**
+     * Replace the sequence in the given range with the given number of
+     * gaps.
+     * @param range the range to replace; can not be null.
+     * @param numberOfGaps the number of gaps can not be &lt; 0.
+     * @return this.
+     * 
+     * @since 6.1
+     */
+    B replaceWithGaps(Range range, int numberOfGaps);
     /**
      * Deletes the nucleotides from the given range of this 
      * partially constructed residue sequence.  If the given
@@ -448,4 +498,69 @@ public interface ResidueSequenceBuilder<R extends Residue, S extends Sequence<R>
      * @since 5.3
      */
     B turnOffDataCompression(boolean turnOffDataCompression);
+
+    /**
+     * Does this builder have any gaps.
+     * @return {@code true} if there are gaps; {@code false} otherwise.
+     * @since 6.1
+     */
+    default boolean hasGaps(){
+        return getNumGaps()>0;
+    }
+
+    /**
+     * Does this builder have any gaps that intersect
+     * the given range.
+     * @param range the range to check.
+     * @return {@code true} if there are gaps; {@code false} otherwise.
+     * @since 6.1
+     * @implNote this is the same as {@code getGapOffsets().intStream().anyMatch(range::intersects)}.
+     */
+    default boolean hasGaps(Range range){
+        return getGapOffsets().intStream().anyMatch(range::intersects);
+    }
+
+    /**
+     * Get the gap offsets as Ranges
+     * @return a List of Ranges; will never be null but may be empty
+     * if there are no gaps.
+     * @since 6.1
+     */
+    List<Range> getRangesOfGaps();
+    /**
+     * Get the gap offsets as an {@link IntList}
+     * @return a List of gap offsets; will never be null but may be empty
+     * if there are no gaps.
+     * @since 6.1
+     */
+    IntList getGapOffsets();
+
+    /**
+     * Get a List of all the offsets into this
+     * sequence which are gaps.  This list SHOULD be
+     * sorted by offset in ascending order.  The size of the returned list should be
+     * the same as the value returned by {@link #getNumGaps()}.
+     * @return the gap offsets as IntStream.
+     * @implSpec this should return the same as {@code getGapOffsets().stream().mapToInt(Integer::intValue)}
+     * but implementations may be more efficient.
+     *
+     * @since 6.1
+     */
+    default IntStream gaps() {
+        return getGapOffsets().stream().mapToInt(Integer::intValue);
+    }
+
+    /**
+     * Get the corresponding ungapped Range (where the start and end values
+     * of the range are in ungapped coordinate space) for the given
+     * gapped {@link Range}.
+     * @param gappedRange the Range of gapped coordinates; can not be null.
+     * @return a new Range never null.
+     * @throws NullPointerException if the gappedRange is null.
+     * @throws IndexOutOfBoundsException if the given Range goes beyond
+     * the gapped sequence.
+     *
+     * @since 6.1
+     */
+    Range toUngappedRange(Range gappedRange);
 }

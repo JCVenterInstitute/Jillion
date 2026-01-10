@@ -25,10 +25,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.OptionalLong;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
+import org.jcvi.jillion.core.Defline;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.InputStreamSupplier;
+import org.jcvi.jillion.core.residue.DecodingOptions;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 import org.jcvi.jillion.core.residue.aa.ProteinSequenceDataStore;
@@ -37,6 +40,8 @@ import org.jcvi.jillion.internal.fasta.aa.DefaultProteinFastaDataStore;
 import org.jcvi.jillion.internal.fasta.aa.IndexedProteinFastaFileDataStore;
 import org.jcvi.jillion.internal.fasta.aa.LargeProteinFastaFileDataStore;
 import org.jcvi.jillion.shared.fasta.AbstractFastaFileDataStoreBuilder;
+import org.jcvi.jillion.shared.fasta.Filterable;
+import org.jcvi.jillion.spi.InvalidCharacterHandler;
 
 
 /**
@@ -47,8 +52,16 @@ import org.jcvi.jillion.shared.fasta.AbstractFastaFileDataStoreBuilder;
  * @author dkatzel
  *
  */
-public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDataStoreBuilder<AminoAcid, ProteinSequence, ProteinFastaRecord, ProteinSequenceDataStore, ProteinFastaFileDataStore> {
-    /**
+public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDataStoreBuilder<AminoAcid, ProteinSequence, ProteinFastaRecord, ProteinSequenceDataStore, ProteinFastaFileDataStore>
+ implements Filterable<ProteinFastaRecord, ProteinFastaFileDataStoreBuilder> {
+
+	/**
+	 * Handler for what to do when we get an invalid character
+	 * @since 6.1
+	 */
+	private DecodingOptions decodingOptions = DecodingOptions.DEFAULT;
+
+	/**
      * Create a new Builder instance
      * that will build a {@link ProteinFastaDataStore} using
      * the {@link FastaParser} object that will be parsing 
@@ -99,33 +112,73 @@ public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDat
 	public ProteinFastaFileDataStoreBuilder(InputStream in) throws IOException{
 		super(in);
 	}
-	
+
 	/**
-	 * Create a new {@link FastaDataStore} instance.
-	 * @param fastaFile the fasta file to make the datastore for;
+	 *
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ProteinFastaFileDataStoreBuilder idConverter(
+			BiFunction<String, String, Defline> idConverter) {
+		super.idConverter(idConverter);
+		return this;
+	}
+	/**
+	 * Create a new {@link ProteinFastaFileDataStore} instance.
+	 * @param parser the parser to parse the fasta file to make the datastore for;
 	 * can not be null and should exist.
 	 * @param hint a {@link DataStoreProviderHint}; will never be null.
-	 * @param filter a {@link DataStoreFilter}; will never be null.
-	 * @return a new {@link FastaDataStore} instance; should never be null.
+	 * @param filter a {@link Predicate}; will never be null.
+	 * @return a new {@link ProteinFastaFileDataStore} instance; should never be null.
 	 * @throws IOException if there is a problem creating the datastore from the file.
 	 */
 	@Override
 	protected ProteinFastaFileDataStore createNewInstance(FastaParser parser, DataStoreProviderHint hint, Predicate<String> filter, 
-			Predicate<ProteinFastaRecord> recordFilter, OptionalLong maxNumberofRecords)
+			Predicate<ProteinFastaRecord> recordFilter, OptionalLong maxNumberofRecords, BiFunction<String,String, Defline> idConverter)
 			throws IOException {
 		if(parser.isReadOnceOnly()){
-			return DefaultProteinFastaDataStore.create(parser,filter, recordFilter);
+			return DefaultProteinFastaDataStore.create(parser,filter, recordFilter, idConverter, decodingOptions);
 		}
 		switch(hint){
-			case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultProteinFastaDataStore.create(parser,filter, recordFilter);
+			case RANDOM_ACCESS_OPTIMIZE_SPEED: return DefaultProteinFastaDataStore.create(parser,filter, recordFilter, idConverter, decodingOptions);
 			case RANDOM_ACCESS_OPTIMIZE_MEMORY:
 				return parser.canCreateMemento() ?						
-						IndexedProteinFastaFileDataStore.create(parser,filter, recordFilter)
-					:	DefaultProteinFastaDataStore.create(parser,filter, recordFilter);
-			case ITERATION_ONLY: return LargeProteinFastaFileDataStore.create(parser,filter, recordFilter, maxNumberofRecords);
+						IndexedProteinFastaFileDataStore.create(parser,filter, recordFilter, idConverter, decodingOptions)
+					:	DefaultProteinFastaDataStore.create(parser,filter, recordFilter, idConverter, decodingOptions);
+			case ITERATION_ONLY: return LargeProteinFastaFileDataStore.create(parser,filter, recordFilter, maxNumberofRecords, idConverter, decodingOptions);
 			default:
 				throw new IllegalArgumentException("unknown provider hint :"+ hint);
 		}
+	}
+
+	/**
+	 * Set the {@link InvalidCharacterHandler} to use
+	 * when parsing sequences for this Datastore.  If set to {@code null}
+	 * then the default handler is used.
+	 * @param invalidCharacterHandler the handler to use; if set to {@code null}
+	 * then the default handler is used.
+	 *
+	 * @return this
+	 *
+	 * @since 6.1
+	 */
+	public ProteinFastaFileDataStoreBuilder invalidCharacterHandler(InvalidCharacterHandler invalidCharacterHandler) {
+		return decoderOptions(this.decodingOptions.toBuilder().invalidCharacterHandler(invalidCharacterHandler).build());
+	}
+	/**
+	 * Set the {@link DecodingOptions} to use
+	 * when parsing sequences for this Datastore.  If set to {@code null}
+	 * then the default decoder is used.
+	 * @param decodingOptions the options to use; if set to {@code null}
+	 * then the default is used.
+	 *
+	 * @return this
+	 *
+	 * @since 6.1
+	 */
+	public ProteinFastaFileDataStoreBuilder decoderOptions(DecodingOptions decodingOptions) {
+		this.decodingOptions = decodingOptions==null? DecodingOptions.DEFAULT: decodingOptions;
+		return this;
 	}
 	/**
 	 * 

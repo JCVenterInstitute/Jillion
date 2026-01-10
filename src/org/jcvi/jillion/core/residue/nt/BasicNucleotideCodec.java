@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 import org.jcvi.jillion.core.Range;
+import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 /**
  * Encodes each Nucleotide as 4 bits.
@@ -127,7 +128,7 @@ final class BasicNucleotideCodec extends AbstractNucleotideCodec{
     }
 	
 	@Override
-	public List<Integer> getGapOffsets(byte[] encodedData) {
+	public IntList getGapOffsets(byte[] encodedData) {
 		GrowableIntArray array = this.getSentinelOffsets(encodedData);
 		
 		return array.toBoxedList();

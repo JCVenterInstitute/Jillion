@@ -24,8 +24,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.jcvi.jillion.core.Defline;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
@@ -44,6 +47,18 @@ public class TestNucleotideFastaFileDataStoreBuilder extends AbstractTestFastaFi
 			throws IOException {
 		return new NucleotideFastaFileDataStoreBuilder(fasta).build();
 
+	}
+
+	@Override
+	protected boolean supportsIdFiltering() {
+		return true;
+	}
+
+	@Override
+	protected NucleotideFastaDataStore createDataStoreFromFile(File fasta, BiFunction<String,String, Defline> idConverter) throws IOException {
+		return new NucleotideFastaFileDataStoreBuilder(fasta)
+				.idConverter(idConverter)
+				.build();
 	}
 
 	@Override

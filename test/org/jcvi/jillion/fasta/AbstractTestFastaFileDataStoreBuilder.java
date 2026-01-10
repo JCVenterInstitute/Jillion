@@ -28,8 +28,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
+import org.jcvi.jillion.core.Defline;
 import org.jcvi.jillion.core.Sequence;
 import org.jcvi.jillion.core.datastore.DataStore;
 import org.jcvi.jillion.core.datastore.DataStoreException;
@@ -39,7 +42,7 @@ import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
-
+import static org.junit.Assert.*;
 public abstract class AbstractTestFastaFileDataStoreBuilder<T, S extends Sequence<T>, F extends FastaRecord<T,S>, D extends DataStore<F>> {
 	
 	private final File fasta;
@@ -75,7 +78,7 @@ public abstract class AbstractTestFastaFileDataStoreBuilder<T, S extends Sequenc
 	
 	@Test
 	public void idFilteredFileUsingLambda() throws IOException, DataStoreException{
-		D datastore =createDataStoreFromFile(fasta,id->false);
+		D datastore =createDataStoreFromFile(fasta,(Predicate<String>)  id->false);
 
 		
 		assertEquals(0, datastore.getNumberOfRecords());
@@ -117,13 +120,17 @@ public abstract class AbstractTestFastaFileDataStoreBuilder<T, S extends Sequenc
 		
 		
 	}
-	
+	protected abstract D createDataStoreFromFile(File fasta, BiFunction<String,String, Defline> idConverter) throws IOException;
+
 	protected abstract D createDataStoreFromFile(File fasta) throws IOException;
 	protected abstract D createDataStoreFromFile(File fasta, DataStoreProviderHint hint) throws IOException;
 	protected abstract D createDataStoreFromFile(File fasta, Predicate<String> filter) throws IOException;
 	
 	protected abstract D createDataStoreFromFile(File fasta, DataStoreProviderHint hint, Predicate<String> filter) throws IOException;
-	
+
+	protected boolean supportsIdFiltering(){
+		return false;
+	}
 	
 	private D createDataStoreFromStream()
 			throws FileNotFoundException, IOException {
@@ -173,7 +180,25 @@ public abstract class AbstractTestFastaFileDataStoreBuilder<T, S extends Sequenc
 		}
 		
 	}
-	
+	@Test
+	public void idFilteringIfAllowed() throws IOException {
+		if(!supportsIdFiltering()) {
+			return;
+		}
+		try(D sut = createDataStoreFromFile(fasta, (BiFunction<String,String, Defline>) (id, comment)-> Defline.of("foo_"+id));
+			D unConvertedDataStore = createDataStoreFromFile(fasta);
+
+			StreamingIterator<String> sutIter = sut.idIterator();
+			StreamingIterator<String> iter = unConvertedDataStore.idIterator();
+		){
+			while(iter.hasNext()){
+				assertEquals("foo_"+iter.next(), sutIter.next());
+			}
+			assertFalse(sutIter.hasNext());
+		}
+
+
+	}
 	@Test
 	public void optimizedMemoryUsesIndexedImpl() throws IOException, DataStoreException{
 		D lowmem = createDataStoreFromFile(fasta,DataStoreProviderHint.RANDOM_ACCESS_OPTIMIZE_MEMORY);

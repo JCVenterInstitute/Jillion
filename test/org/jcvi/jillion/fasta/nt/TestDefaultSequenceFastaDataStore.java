@@ -27,21 +27,20 @@ package org.jcvi.jillion.fasta.nt;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.function.BiFunction;
 
+import org.jcvi.jillion.core.Defline;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
-import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler;
-import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder.DecodingOptions;
-import org.jcvi.jillion.fasta.nt.DefaultNucleotideFastaFileDataStore;
-import org.jcvi.jillion.fasta.nt.NucleotideFastaDataStore;
+import org.jcvi.jillion.core.residue.DecodingOptions;
 
 public class TestDefaultSequenceFastaDataStore extends AbstractTestSequenceFastaDataStore {
 
     
 
     @Override
-    protected NucleotideFastaDataStore parseFile(File file, DecodingOptions decodingOptions)
+    protected NucleotideFastaDataStore parseFile(File file, DecodingOptions decodingOptions, BiFunction<String,String, Defline> idConverter)
             throws IOException {
-        return DefaultNucleotideFastaFileDataStore.create(file, DataStoreFilters.alwaysAccept(), null,decodingOptions);
+        return DefaultNucleotideFastaFileDataStore.create(file, DataStoreFilters.alwaysAccept(), null,decodingOptions,idConverter);
     }
     
 }

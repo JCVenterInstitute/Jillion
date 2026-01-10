@@ -21,9 +21,12 @@
 package org.jcvi.jillion.assembly.ca.asm;
 
 import java.util.List;
+import java.util.PrimitiveIterator;
+import java.util.function.IntConsumer;
 
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
+import org.jcvi.jillion.core.util.IntList;
 
 /**
  * {@code AsmUtil} is a utility class for working
@@ -55,4 +58,23 @@ public final  class AsmUtil {
         }
         return ungappedSequenceBuilder;
     }
+	/**
+	 * Add gaps to the given
+	 * {@link NucleotideSequenceBuilder} which
+	 * represents an ASM read's ungapped valid range sequence.
+	 * @param ungappedSequenceBuilder a {@link NucleotideSequenceBuilder} of the ungapped
+	 * valid range sequence to be gapped; this sequence should already
+	 * be complemented into the correct orientation.
+	 * @param asmEncodedGaps the List of Integers of the ASM del encoded
+	 * gaps.
+	 * @return a new the same NucleotideSequenceBuilder
+	 * that was passed in.
+	 *
+	 * @since 6.1
+	 */
+	public static NucleotideSequenceBuilder computeGappedSequence(NucleotideSequenceBuilder ungappedSequenceBuilder, IntList asmEncodedGaps){
+		asmEncodedGaps.forEach((IntConsumer) i-> ungappedSequenceBuilder.insert(i, Nucleotide.Gap));
+
+		return ungappedSequenceBuilder;
+	}
 }

@@ -48,7 +48,7 @@ import org.jcvi.jillion.sam.cigar.CigarOperation;
  * @author dkatzel
  *
  */
-public final class GappedReferenceBuilder<R extends Residue, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S,B>> {
+public final class GappedReferenceBuilder<R extends Residue<R>, S extends ResidueSequence<R, S, B>, B extends ResidueSequenceBuilder<R, S,B>> {
 
 	/**
 	 * The length of the sequence to start using

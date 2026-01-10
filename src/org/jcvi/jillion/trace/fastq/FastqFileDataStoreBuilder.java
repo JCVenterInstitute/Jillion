@@ -24,10 +24,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.InputStreamSupplier;
+import org.jcvi.jillion.shared.fasta.Filterable;
+
 /**
  * {@code FastqFileDataStoreBuilder}
  * is a Builder that can create new instances
@@ -37,7 +40,7 @@ import org.jcvi.jillion.core.io.InputStreamSupplier;
  * @author dkatzel
  *
  */
-public final class FastqFileDataStoreBuilder{
+public final class FastqFileDataStoreBuilder implements Filterable<FastqRecord, FastqFileDataStoreBuilder> {
 	private FastqParser parser;
 	private InputStreamSupplier inputStreamSupplier;
 	
@@ -306,8 +309,16 @@ public final class FastqFileDataStoreBuilder{
 		this.hint = hint;
 		return this;
 	}
-	
-	
+
+	@Override
+	public FastqFileDataStoreBuilder onlyIncludeIds(Set<String> ids) {
+		if(ids==null || ids.isEmpty()){
+			throw new NullPointerException("id set can not be null or empty");
+		}
+		this.idFilter = ids::contains;
+		return this;
+	}
+
 	/**
 	 * Parse the given fastq file and return
 	 * a new instance of a {@link FastqDataStore}
@@ -329,9 +340,9 @@ public final class FastqFileDataStoreBuilder{
 	 * <li>
 	 * If no {@link DataStoreProviderHint} has been specified
 	 * by {@link #hint(DataStoreProviderHint)},
-	 * then this builder will try to store all the 
-	 * {@link FastqRecord}s that meet the {@link DataStoreFilter}
-	 * requirements in memory.  This may cause out of memory errors
+	 * then this builder will create a new DataStore instance
+	 * using an implementation that best fits that hint.
+	 * This may cause out of memory errors
 	 * if there is not enough memory available.
 	 * </li>
 	 * </ul>

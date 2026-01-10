@@ -7,6 +7,79 @@ change the behavior in any public API classes.  The order of changes is mostly
 chronological so the most important changes may not always be ordered first.
 
 ================
+Jillion 6.1
+================
+
+API Changes
+-----------
+1. Moved `MatchableSequence` interface to residue level package
+2. `ResidueSequence` now implements `MatchableSequence` so there are #findMatches() methods in `ProteinSequence` like there are already on `NucleotideSequence`.
+3. Improved MatchableSequence method parameters to take new `SequenceMatcherParameters` object.
+The Nucleotide and Protein Sequence classes now have builders for them.
+4. new `SequenceMatcherParameters` object has new parameters like explode Ambiguities flags on both the pattern sequence and the input sequence
+  that will permute all combinations of ambiguity values for better matching.  These flags are off by default for performance reasons.
+5. NucleotideFastaDataStores now have an optional `idConverter` which is a `Function<String,String>` to allow you to change the ids in the DataStore or iterator from what's parsed in the fasta files.
+6. Added starts/ends before/after methods to both Range and Range.Builder that take single offset instead of a Range.
+7. Added Range Jackson JSON support
+8. Added Range#toSimpleString() which returns `$begin..$end` used in JSON serialization.
+9. Added Jackson JSON support for ProteinSequences
+10. GrowableArrays are now annotated with Jackson for serializing and deserializing.
+11. Exposed internal `IntList` class which is an List<Integer> of primitives.
+12. Fasta DataStores and their Builders now have an optional IdConverter function that takes an fasta id and comment and returns a new `Defline` object.
+    This lets you reformat the id and comments in the datastore.  These transformations occur before the filtering is applied
+    so for example if you want to concatenate the comment to the id part to make the new id, any filters
+    to check will see the concatenated id.
+13. Created DeflineConverter interface and DeflineConverters constant class with some common implementations.
+
+14. Several usesful methods like gaps() and replaceWithGaps() methods that were only on NucleotideSequenceBuilder
+are now moved up to be part of the ResidueSequenceBuilder interface so ProteinSequenceBuilder now has them as well.
+
+15. Several useful methods that were in NucleotideSequence but not ProteinSequence
+ such as toBuilder( List<Range> ) have been copied over to ProteinSequence
+and/or the ResidueSequence interface.
+16. Indel Detector will now work to compare 2 different residue sequence types as long
+as the residue is the same.  For example NucleotideSequence vs VariantNucleotideSequence
+previous versions required both input sequences to be the same type.
+
+17. Several internal methods that took only NucleotideSequence or INucleotideSequence have been expanded to take ResidueSequence.
+
+Performance Improvements
+------------------------
+1. NucleotideSequenceBuilder internal functions changed to use Offsets internally this should be a 1-2% performance boost.
+2. Various functions that iterated over integers have been improved by using new IntList
+3. ProteinSequenceBuilder now keeps track of gap offsets as it goes not just the total count.
+
+API Breaking Changes
+------------------------
+1. Residue is now `Residue<R extends Residue<R>>` so we can reference the type in some methods such as
+  the new `Set<R> getNonAmbiguousBases()`.  All Jillion classes that use Residue such as Sequence have been
+  updated accordingly but if your client makes use of generics with the Residue type (opposed to Nucleotide or Amino Acid)
+  you will have to change your code from `<R extends Residue>` to `<R extends Residue<R>>``
+
+2. Removed several NucleotideFastaRecord.createStreamingIterator() methods and replaced it with one that takes a
+ Consumer<NucleotideFastaDataStoreBuilder> to let you perform any additional configuration
+
+ 3. InvalidCharacterHandler used to be just for Nucleotide but has now been refactored out to the residue package
+ and implementations can support any Residue implementation.
+
+ 4. Removed ProteinIndelDetector and NucleotideIndelDetector as they are now both consolidated
+  into the new class DefaultIndelDetector which can create instances of any ResidueSequenceBuilder
+  using the new DefaultIndelDetector.create() method.
+
+  5. Renamed the abstract class AbstractIndelDetector to be DefaultIndelDetector and it's now
+  no longer abstract but final.
+
+Mild API Breaking Changes
+------------------------
+1. Several methods that used to return `List<Integer>` now return `IntList`.  This is a source compatible change
+and while a recompile might be necessary when upgrading to Jillion 6.1 no code changes should be required.
+2. Similarly some methods that took as a parameter now have an overloaded version that takes `IntList`.  This should be fully compatible
+unless your dependent code also overrode those methods so it's getting listed here just in case.
+3. Offsets class first introduced in 6.0.4 moved from internal package to core package.  This should only break code
+ that referenced it from the internal package which shouldn't happen.
+
+
+================
 Jillion 6.0.4
 ================
 

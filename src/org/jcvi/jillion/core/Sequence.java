@@ -30,7 +30,10 @@ import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import org.jcvi.jillion.core.util.streams.ThrowingBiConsumer;
 import org.jcvi.jillion.core.util.streams.ThrowingIndexedConsumer;
+import org.jcvi.jillion.core.util.streams.ThrowingIntIndexedConsumer;
+import org.jcvi.jillion.core.util.streams.ThrowingIntIndexedShortConsumer;
 
 
 /**
@@ -230,4 +233,5 @@ public interface Sequence<T> extends Iterable<T>{
     default Sequence<T> trim(Range trimRange){
         return toBuilder(trimRange).build();
     }
+
 }

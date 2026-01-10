@@ -24,7 +24,9 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 import org.jcvi.jillion.core.residue.Residue;
+import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.util.MapUtil;
+import org.jcvi.jillion.spi.InvalidCharacterHandler;
 
 /**
  * {@code AminoAcid} is a {@link Residue} representation 
@@ -36,7 +38,7 @@ import org.jcvi.jillion.core.util.MapUtil;
  *
  *
  */
-public enum AminoAcid implements Residue{
+public enum AminoAcid implements Residue<AminoAcid>{
     
     Isoleucine("Isolucine","Ile",'I'),
     Leucine("Leucine","Leu",'L'),
@@ -59,7 +61,12 @@ public enum AminoAcid implements Residue{
     Aspartic_Acid("Aspartic Acid", "Asp",'D'),
     Glutamic_Acid("Glutamic Acid","Glu",'E'),
     //ambiguities
-    Unknown_Amino_Acid("Unknown Amino Acid", "Unk", 'X'),
+    Unknown_Amino_Acid("Unknown Amino Acid", "Unk", 'X'){
+        @Override
+        public boolean isUnknown() {
+            return true;
+        }
+    },
     Aspartate_or_Asparagine("Aspartate or Asparagine", "Asx", 'B'),
     Glutamate_or_Glutamine("Glutamate or Glutamine", "Glx", 'Z'),
     //Selenocysteine - inserted as a post-translational modification
@@ -90,6 +97,10 @@ public enum AminoAcid implements Residue{
     private static final Map<String, AminoAcid> NAME_MAP;
     
     private static final Map<Set<AminoAcid>, AminoAcid> AMBIGIOUS_MAP;
+
+    private static final Map<AminoAcid,Set<AminoAcid>> AMBIGUITY_TO_CONSTIUENT;
+
+
     static{
     	int mapSize = MapUtil.computeMinHashMapSizeWithoutRehashing(AminoAcid.values().length *3);
         NAME_MAP = new HashMap<>(mapSize);
@@ -113,22 +124,45 @@ public enum AminoAcid implements Residue{
         CLEAN_PATTERN = Pattern.compile(validBuilder.toString());
         
         AMBIGIOUS_MAP = new HashMap<>();
+        AMBIGUITY_TO_CONSTIUENT = new HashMap<>();
         
         AMBIGIOUS_MAP.put(EnumSet.of(Isoleucine, Leucine), AminoAcid.Leucine_or_Isoleucine);
+        AMBIGUITY_TO_CONSTIUENT.put(AminoAcid.Leucine_or_Isoleucine, EnumSet.of(Isoleucine, Leucine));
+
         AMBIGIOUS_MAP.put(EnumSet.of(Leucine_or_Isoleucine, Leucine), AminoAcid.Leucine_or_Isoleucine);
         AMBIGIOUS_MAP.put(EnumSet.of(Leucine_or_Isoleucine, Isoleucine), AminoAcid.Leucine_or_Isoleucine);
         
         AMBIGIOUS_MAP.put(EnumSet.of(Aspartic_Acid, Asparagine), AminoAcid.Aspartate_or_Asparagine);
+        AMBIGUITY_TO_CONSTIUENT.put(AminoAcid.Aspartate_or_Asparagine, EnumSet.of(Aspartic_Acid, Asparagine));
+
         AMBIGIOUS_MAP.put(EnumSet.of(Aspartate_or_Asparagine, Asparagine), AminoAcid.Aspartate_or_Asparagine);
         AMBIGIOUS_MAP.put(EnumSet.of(Aspartate_or_Asparagine, Aspartic_Acid), AminoAcid.Aspartate_or_Asparagine);
         
         AMBIGIOUS_MAP.put(EnumSet.of(Glutamic_Acid, Glutamine), AminoAcid.Glutamate_or_Glutamine);
+        AMBIGUITY_TO_CONSTIUENT.put(AminoAcid.Glutamate_or_Glutamine, EnumSet.of(Glutamic_Acid, Glutamine));
+
         AMBIGIOUS_MAP.put(EnumSet.of(Glutamate_or_Glutamine, Glutamine), AminoAcid.Glutamate_or_Glutamine);
         AMBIGIOUS_MAP.put(EnumSet.of(Glutamate_or_Glutamine, Glutamic_Acid), AminoAcid.Glutamate_or_Glutamine);
-        
-    
-    
+
+
+        AMBIGUITY_TO_CONSTIUENT.put(Unknown_Amino_Acid, EnumSet.complementOf(
+                EnumSet.of(Leucine_or_Isoleucine,
+                        Aspartate_or_Asparagine,
+                        Glutamate_or_Glutamine ,
+                        Gap,
+                        Unknown_Amino_Acid,
+                        STOP)));
     }
+
+    @Override
+    public Set<AminoAcid> getNonAmbiguousBases(){
+        return AMBIGUITY_TO_CONSTIUENT.getOrDefault(this, EnumSet.of(this));
+    }
+    @Override
+    public boolean isUnknown() {
+        return false;
+    }
+
     /**
      * Get the AminoAcid that best represents the given group of amino acids.
      * @param aas the amino acids to consider; can not be null or contain any null elements;
@@ -250,6 +284,52 @@ public enum AminoAcid implements Residue{
         }
         return result;
     }
+
+    /**
+     * Get the single AminoAcid which is represented by the given String.
+     * the String can be the full name (with spaces if multiple words),
+     * the 3 letter abbreviation or the 1 letter abbreviation, case is
+     * insensitive.
+     * @param aminoAcid a single AminoAcid represented by a String.
+     * @return an {@link AminoAcid} (not null).
+     * @throws NullPointerException if aminoAcid is null.
+     * @throws IllegalArgumentException if the given String is not
+     * an AminoAcid.
+     */
+    public static AminoAcid parse(String aminoAcid, InvalidCharacterHandler invalidCharacterHandler){
+        AminoAcid result = NAME_MAP.get(aminoAcid.toUpperCase(Locale.US));
+        if(result ==null){
+            if(invalidCharacterHandler==null) {
+                throw new IllegalArgumentException(String.format("%s is not a valid Amino Acid", aminoAcid));
+            }
+            return invalidCharacterHandler.handle(AminoAcid.class, aminoAcid.charAt(0));
+        }
+        return result;
+    }
+    /**
+     * Get the single AminoAcid which is represented by the given String.
+     * the String can be the full name (with spaces if multiple words),
+     * the 3 letter abbreviation or the 1 letter abbreviation, case is
+     * insensitive.
+     * @param aminoAcid a single AminoAcid represented by a String.
+     * @param invalidCharacterHandler the {@link InvalidCharacterHandler}
+     *                                to use if the passed in character is not a valid amino acid.
+     * @return an {@link AminoAcid} (not null).
+     * @throws NullPointerException if aminoAcid is null.
+     * @throws IllegalArgumentException if the given String is not
+     * an AminoAcid.
+     * @since 6.1
+     */
+    public static AminoAcid parse(char aminoAcid, InvalidCharacterHandler invalidCharacterHandler){
+        AminoAcid result = NAME_MAP.get(Character.toString(aminoAcid));
+        if(result ==null){
+            if(invalidCharacterHandler==null) {
+                throw new IllegalArgumentException(String.format("%s is not a valid Amino Acid", aminoAcid));
+            }
+            return invalidCharacterHandler.handle(AminoAcid.class, aminoAcid);
+        }
+        return result;
+    }
     
     /**
     * Get the full name of this Amino Acid, the name may 
@@ -300,12 +380,12 @@ public enum AminoAcid implements Residue{
     }
     /**
      * Append the list of amino acids into one long string.
-     * @param glyphs the amino acids to convert into a string.
+     * @param aminoAcids the amino acids to convert into a string.
      * @return a new String.
      */
-    public static String convertToString(List<AminoAcid> glyphs){
-    	StringBuilder result = new StringBuilder(glyphs.size());
-    	for(AminoAcid g: glyphs){
+    public static String convertToString(List<AminoAcid> aminoAcids){
+    	StringBuilder result = new StringBuilder(aminoAcids.size());
+    	for(AminoAcid g: aminoAcids){
      		result.append(g.getCharacter());
     	}
     	return result.toString();

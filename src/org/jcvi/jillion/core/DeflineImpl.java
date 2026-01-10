@@ -77,7 +77,12 @@ final class DeflineImpl implements Defline{
         
         return true;
     }
-    
-    
 
+    @Override
+    public String toString() {
+        return "DeflineImpl{" +
+                "id='" + id + '\'' +
+                ", comment='" + comment + '\'' +
+                '}';
+    }
 }

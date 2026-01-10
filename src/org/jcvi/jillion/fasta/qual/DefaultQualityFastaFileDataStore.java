@@ -28,19 +28,21 @@ package org.jcvi.jillion.fasta.qual;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
+import org.jcvi.jillion.core.Defline;
 import org.jcvi.jillion.core.datastore.DataStoreFilters;
 import org.jcvi.jillion.fasta.FastaFileParser;
 import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.internal.fasta.qual.DefaultQualityFastaFileDataStoreBuilder;
 /**
  * {@code DefaultQualityFastaFileDataStore} is the default implementation
- * of {@link QualitySequenceFastaDataStore} which stores
+ * of {@link QualityFastaDataStore} which stores
  * all fasta records in memory.  This is only recommended for small fasta
  * files that won't take up too much memory.
  * @author dkatzel
- * @see LargeQualityFastaFileDataStore
+ * @see org.jcvi.jillion.internal.fasta.qual.LargeQualityFastaFileDataStore
  *
  */
 final class DefaultQualityFastaFileDataStore {
@@ -53,8 +55,11 @@ final class DefaultQualityFastaFileDataStore {
     }
     
     public static QualityFastaDataStore create(File fastaFile, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter) throws IOException{
-    	return create(FastaFileParser.create(fastaFile), filter, recordFilter);
+    	return create(FastaFileParser.create(fastaFile), filter, recordFilter,null);
     }
+	public static QualityFastaDataStore create(File fastaFile, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter, BiFunction<String, String, Defline> idConverter) throws IOException{
+		return create(FastaFileParser.create(fastaFile), filter, recordFilter, idConverter);
+	}
     
     public static QualityFastaDataStore create(InputStream fastaStream) throws IOException{
     	return create(fastaStream,DataStoreFilters.alwaysAccept(), null);
@@ -63,16 +68,16 @@ final class DefaultQualityFastaFileDataStore {
     	
     	FastaParser parser = FastaFileParser.create(fastaStream);
     	
-    	return create(parser, filter, recordFilter);
+    	return create(parser, filter, recordFilter,null);
     }
-	public static QualityFastaDataStore create(FastaParser parser, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter) throws IOException {
-		DefaultQualityFastaFileDataStoreBuilder builder = createBuilder(filter, recordFilter);
+	public static QualityFastaDataStore create(FastaParser parser, Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter, BiFunction<String, String, Defline> idConverter) throws IOException {
+		DefaultQualityFastaFileDataStoreBuilder builder = createBuilder(filter, recordFilter, idConverter);
 		parser.parse(builder);
     	return builder.build();
 	}
 
-    private static DefaultQualityFastaFileDataStoreBuilder createBuilder(Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter){
-    	return new DefaultQualityFastaFileDataStoreBuilder(filter, recordFilter);
+    private static DefaultQualityFastaFileDataStoreBuilder createBuilder(Predicate<String> filter, Predicate<QualityFastaRecord> recordFilter, BiFunction<String, String, Defline> idConverter){
+    	return new DefaultQualityFastaFileDataStoreBuilder(filter, recordFilter, idConverter);
     }
 
 }

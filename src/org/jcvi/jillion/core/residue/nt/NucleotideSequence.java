@@ -27,18 +27,23 @@ package org.jcvi.jillion.core.residue.nt;
 
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import org.jcvi.jillion.assembly.AssemblyUtil;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.SuperBuilder;
 import org.jcvi.jillion.core.Range;
-import org.jcvi.jillion.core.residue.ResidueSequence;
+import org.jcvi.jillion.core.residue.MatchableSequence;
+import org.jcvi.jillion.internal.core.io.StreamUtil;
+
 /**
  * {@code NucleotideSequence} an interface to abstract
  * how a {@link org.jcvi.jillion.core.Sequence} of {@link Nucleotide}s are encoded in memory.  Nucleotide data
@@ -56,7 +61,7 @@ import org.jcvi.jillion.core.residue.ResidueSequence;
  * to the sequence that was serialized.
  * @author dkatzel
  */
-public interface NucleotideSequence extends INucleotideSequence<NucleotideSequence, NucleotideSequenceBuilder>, Serializable, MatchableSequence {
+public interface NucleotideSequence extends INucleotideSequence<NucleotideSequence, NucleotideSequenceBuilder>, Serializable, MatchableSequence<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder> {
 	/**
      * Two {@link NucleotideSequence}s are equal
      * if they contain the same {@link Nucleotide}s 
@@ -112,89 +117,62 @@ public interface NucleotideSequence extends INucleotideSequence<NucleotideSequen
     default NucleotideSequenceBuilder newEmptyBuilder(int initialCapacity){
         return new NucleotideSequenceBuilder(initialCapacity);
     }
-    /**
-     * Find all the Ranges in this sequence that match the given regular expression {@link Pattern}.
-     * @param regex the regular expression pattern to look for.  All bases must be in uppercase.
-     * @return a {@link Stream} of {@link Range} objects of the matches on this sequence.
-     * 
-     * @apiNote this is the same as {@code  findMatches(Pattern.compile(regex)); }
-     * 
-     * @since 5.3
-     * 
-     * @see #findMatches(Pattern)
-     */
-    @Override
-    default Stream<Range> findMatches(String regex){
-        return findMatches(Pattern.compile(regex));
-    }
-    @Override
-    default Stream<Range> findMatches(String regex, boolean nested){
-    	return findMatches(Pattern.compile(regex),nested);
-    }
-    
-    /**
-     * Find the Ranges in this sequence within the specified sub sequence range
-     *  that match the given regular expression.
-     *  
-     * @param regex the pattern to look for.  All bases must be in uppercase.
-     * @param subSequenceRange the Range in the sequence to look for matches in.
-     * @return a {@link Stream} of {@link Range} objects of the matches on this sequence.
-     * 
-     * @apiNote this is the same as {@code  findMatches(Pattern.compile(regex), subSequenceRange); }
-     * 
-     * @since 5.3
-     * 
-     * @see #findMatches(Pattern, Range)
-     */
-    @Override
-    default Stream<Range> findMatches(String regex, Range subSequenceRange){
-        return findMatches(Pattern.compile(regex), subSequenceRange);
-    }
-    @Override
-    default Stream<Range> findMatches(String regex, Range subSequenceRange, boolean nested){
-    	return findMatches(Pattern.compile(regex),subSequenceRange,nested);
-    }
 
-    @Override
-    default Stream<Range> findMatches(Pattern pattern, boolean nested) {
+    @EqualsAndHashCode(callSuper = true)
+    @Data
+    @SuperBuilder
+    class NucleotideSequenceMatcherParameters extends SequenceMatcherParameters<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder>{
 
-        return findMatches(pattern, Range.ofLength(getLength()), nested);
-    }
-
-    @Override
-    @SuppressWarnings("resource")
-	default Stream<Range> findMatches(Pattern pattern, Range subSequenceRange, boolean nested) {
-
-        Stream<Range> matches = findMatches(pattern, subSequenceRange);
-        if (! nested) {
-            return matches;
+        @Override
+        protected BiFunction<String, Boolean, Pattern> getRegexPatternFunction() {
+            return (pattern, explode)->{
+                if(explode){
+                    return NucleotideSequencePattern.compile(pattern);
+                }
+                return Pattern.compile(pattern);
+            };
         }
-        List<Range> matchList = matches.collect(Collectors.toList());
 
-        Stream<Range> nestedOutput = matchList.stream();
-
-        long start;
-        long end;
-        long matchCount = matchList.size();
-        for (int i=0,j=1; i < matchCount; i++,j++) {
-            start = matchList.get(i).getBegin();
-            end = subSequenceRange.getEnd();
-            if (j < matchCount) {
-                // skip last to avoid getting next match again
-                end = matchList.get(j).getEnd() -1;
-            }
-            if (end - start > 0) {
-                nestedOutput = Stream.concat(nestedOutput,findMatches(pattern,Range.of(start + 1, end) , nested));
-                nestedOutput = Stream.concat(nestedOutput,findMatches(pattern,Range.of(start, end -1 ), nested));
-            }
-            if (end - start  > 1)
-            {
-                nestedOutput = Stream.concat(nestedOutput,findMatches(pattern,Range.of(start + 1, end -1), nested));
-            }
+        @Override
+        protected CharSequence toCharSequence(NucleotideSequence sequence) {
+            return new NucleotideSeqCharSequence(sequence);
         }
-        return nestedOutput;
+
+        @Override
+        protected NucleotideSequenceBuilder createNewBuilder(int seqLength) {
+            return new NucleotideSequenceBuilder(seqLength);
+        }
+
+
     }
-  
+
+
+
+
+
+    @Override
+    default Stream<Range> findMatches(String regex, Range subSequenceRange, boolean nested) {
+        return findMatches(NucleotideSequenceMatcherParameters.builder()
+                .stringPattern(regex)
+                .subSequenceRange(subSequenceRange)
+                .nested(nested)
+                .build());
+    }
+
+    @Override
+    default Stream<Range> findMatches(Pattern pattern, Range subSequenceRange, boolean nested) {
+        return findMatches(NucleotideSequenceMatcherParameters.builder()
+                .pattern(pattern)
+                .subSequenceRange(subSequenceRange)
+                .nested(nested)
+                .build());
+    }
+
+    @Override
+    default Stream<Range> findMatches(SequenceMatcherParameters<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder> sequenceMatcherParameters) {
+        return sequenceMatcherParameters.findMatches(this);
+    }
+
     /**
      * Create a new NucleotideSequence of the given sequence.
      * 

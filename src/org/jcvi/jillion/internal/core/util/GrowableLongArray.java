@@ -20,13 +20,11 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.core.util;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.PrimitiveIterator;
+import java.util.*;
 import java.util.stream.LongStream;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.util.streams.ThrowingIntIndexedLongConsumer;
 import org.jcvi.jillion.internal.core.util.iter.PrimitiveArrayIterators;
@@ -60,7 +58,7 @@ public final class GrowableLongArray implements Iterable<Long>{
 	 */
 	private long[] data;
 	/**
-	 * Creates a new {@link GrowableByteArray}
+	 * Creates a new {@link GrowableLongArray}
 	 * with the given initial capacity.
 	 * @param initialCapacity the initial size 
 	 * of the backing long array.  When adding
@@ -74,6 +72,38 @@ public final class GrowableLongArray implements Iterable<Long>{
 			throw new IllegalArgumentException("initial capacity should be >= 0 :"+initialCapacity);
 		}
 		data = new long[initialCapacity];		
+	}
+	/**
+	 * Creates a new {@link GrowableLongArray}
+	 * with the given initial capacity.
+	 * @param range the initial Ranges to populate backing long array.
+	 *
+	 */
+	public GrowableLongArray(Range range){
+
+
+		data = new long[(int) range.getLength()];
+
+		range.forEachValue(this::append);
+
+	}
+	/**
+	 * Creates a new {@link GrowableLongArray}
+	 * with the given initial capacity.
+	 * @param ranges the initial List of Ranges to populate backing long array.
+	 *
+	 * @throws IllegalArgumentException if initialCapacity is <0.
+	 */
+	public GrowableLongArray(List<Range> ranges){
+		Objects.requireNonNull(ranges);
+		int initialCapacity = (int) ranges.stream()
+				.mapToLong(Range::getLength)
+				.sum();
+
+		data = new long[initialCapacity];
+		for(Range r : ranges){
+			r.forEachValue(this::append);
+		}
 	}
 	
 	/**
@@ -117,6 +147,7 @@ public final class GrowableLongArray implements Iterable<Long>{
 	 * to the backing array.
 	 * @throws NullPointerException if longs is null.
 	 */
+	@JsonCreator
 	public GrowableLongArray(long[] longs){
 		data = Arrays.copyOf(longs, longs.length);
 		currentLength=data.length;
@@ -137,6 +168,19 @@ public final class GrowableLongArray implements Iterable<Long>{
 	 */
 	public GrowableLongArray copy(){
 		return new GrowableLongArray(this);
+	}
+
+	/**
+	 * Copy data from this array into the destination array.
+	 * @implNote This should be the same as <code>System.arraycopy(data,srcOffset, destArray,destOffset, length )</code>
+	 * @param srcOffset the offset into THIS growable array.
+	 * @param destArray the destination array to copy into.
+	 * @param destOffset the offset to start copy data into the destination array.
+	 * @param length the number of values to copy.
+	 * @since 6.1
+	 */
+	public void arrayCopy(int srcOffset, long[] destArray, int destOffset, int length) {
+		System.arraycopy(data,srcOffset, destArray,destOffset, length );
 	}
 	private void assertValidOffset(int offset) {
 		if (offset <0 || offset >= currentLength){
@@ -281,7 +325,7 @@ public final class GrowableLongArray implements Iterable<Long>{
             data = Arrays.copyOf(data, newCapacity);
 		}
     }
-	
+	@JsonValue
 	public long[] toArray(){
 		return Arrays.copyOf(data,currentLength);
 	}

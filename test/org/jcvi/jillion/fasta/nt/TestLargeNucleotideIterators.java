@@ -8,12 +8,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler;
-import org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandlers;
+
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
+import org.jcvi.jillion.core.residue.InvalidCharacterHandlers;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequenceBuilder;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.spi.InvalidCharacterHandler;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -34,7 +35,7 @@ public class TestLargeNucleotideIterators {
 	}
 	private void parseAndIterate(File fasta, List<NucleotideFastaRecord> expected, InvalidCharacterHandler handler)
 			throws IOException {
-		try(StreamingIterator<NucleotideFastaRecord> iter = NucleotideFastaRecord.createNewIteratorFor(fasta, handler)){
+		try(StreamingIterator<NucleotideFastaRecord> iter = NucleotideFastaRecord.createNewIteratorFor(fasta, builder-> builder.invalidCharacterHandler( handler))){
 			assertTrue(iter.hasNext());
 			Iterator<NucleotideFastaRecord> expectedIter = expected.iterator();
 			while(iter.hasNext()) {
@@ -54,7 +55,7 @@ public class TestLargeNucleotideIterators {
 	@Test
 	public void iteratorInvalidNs() throws IOException {
 		File fasta = tmpDir.newFile();
-		InvalidCharacterHandler handler = InvalidCharacterHandlers.REPLACE_WITH_N;
+		InvalidCharacterHandler handler = InvalidCharacterHandlers.REPLACE_WITH_UNKNOWN;
 		List<NucleotideFastaRecord> expected = writeInvalidDataset(fasta, handler);
 		
 		parseAndIterate(fasta, expected, handler);
@@ -62,7 +63,7 @@ public class TestLargeNucleotideIterators {
 	@Test
 	public void forEachInvalidNs() throws IOException {
 		File fasta = tmpDir.newFile();
-		InvalidCharacterHandler handler=InvalidCharacterHandlers.REPLACE_WITH_N;
+		InvalidCharacterHandler handler=InvalidCharacterHandlers.REPLACE_WITH_UNKNOWN;
 		List<NucleotideFastaRecord> expected = writeInvalidDataset(fasta, handler);
 		List<NucleotideFastaRecord> actual = parseForEach(fasta, handler);
 		assertEquals(expected, actual);
@@ -78,7 +79,7 @@ public class TestLargeNucleotideIterators {
 	@Test
 	public void forEachInvalidSkip() throws IOException {
 		File fasta = tmpDir.newFile();
-		InvalidCharacterHandler handler=InvalidCharacterHandlers.IGNORE;
+		InvalidCharacterHandler handler= InvalidCharacterHandlers.IGNORE;
 		List<NucleotideFastaRecord> expected = writeInvalidDataset(fasta, handler);
 		List<NucleotideFastaRecord> actual = parseForEach(fasta, handler);
 		assertEquals(expected, actual);
@@ -94,7 +95,7 @@ public class TestLargeNucleotideIterators {
 	}
 
 	private List<NucleotideFastaRecord> writeValidDataset(File fasta) throws IOException {
-		List<NucleotideFastaRecord> expected = write(fasta, Nucleotide.defaultInvalidCharacterHandler(),
+		List<NucleotideFastaRecord> expected = write(fasta, null,
 														"foo", "ACGTACGT",
 														"bar", "AAAAAAANNNNNN");
 		return expected;
