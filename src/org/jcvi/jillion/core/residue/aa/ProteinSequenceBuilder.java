@@ -468,6 +468,9 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	@Override
 	public ProteinSequenceBuilder replace(
 			int offset, AminoAcid replacement) {
+		if(builder.getCurrentLength() == offset){
+			return append(replacement);
+		}
 		byte v = builder.get(offset);
 		boolean handledGap=false;
 		boolean handledAmb=false;
@@ -519,6 +522,10 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 
 	private ProteinSequenceBuilder _replace(Range range, Iterable<AminoAcid> replacement) {
 
+
+		if(range.getBegin() == builder.getCurrentLength()){
+			return append(replacement);
+		}
 		delete(range);
 		insert((int)range.getBegin(), replacement);
 

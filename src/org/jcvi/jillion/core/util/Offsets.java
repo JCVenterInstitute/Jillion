@@ -50,6 +50,10 @@ public class Offsets {
         return delegate.iterator();
     }
 
+    public PrimitiveIterator.OfInt reverseIterator() {
+        return delegate.reverseIterator();
+    }
+
     /**
      * Create a new copy of this; future changes to this object
      * or the copy do NOT affect the other.
@@ -1001,7 +1005,13 @@ public class Offsets {
         int begin = computeInsertionPointOf((int)range.getBegin(),false);
         int end = computeInsertionPointOf(rangeEnd, false);
 
-        delegate.remove(Range.of(begin, end));
+        //intersect with current length range so we only try to delete what we have
+        Range deleteRange = Range.ofLength(delegate.getCurrentLength())
+                                            .intersection(Range.of(begin, end));
+
+
+        delegate.remove(deleteRange);
+
 
     }
 

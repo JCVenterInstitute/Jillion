@@ -7,6 +7,20 @@ change the behavior in any public API classes.  The order of changes is mostly
 chronological so the most important changes may not always be ordered first.
 
 ================
+Jillion 6.1.1
+================
+Bug Fixes
+-----------
+1. Offsets#remove() now correctly handles offsets beyond the given known values instead of erroring out.
+
+API Changes
+-----------
+1.  ResidueSequenceBuilder#replace() will now accept Ranges and offsets
+that START 1 residue past the end and treat them as append operations.
+2.  Added new methods to ResidueSequence#getNumberOfLeadingGaps() and #getNumberofTrailingGaps()
+3. Added Offsets#reverseIterator()
+
+================
 Jillion 6.1
 ================
 

@@ -104,6 +104,40 @@ public interface ResidueSequence<R extends Residue<R>, T extends ResidueSequence
     default int getRightFlankingNonGapOffsetFor(int gappedOffset) {
         return AssemblyUtil.getRightFlankingNonGapIndex(this, gappedOffset);
     }
+
+    /**
+     * Get the number of Gaps that start this sequence.
+     * @return the number of gaps; will never be &lt; 0.
+     * @since 6.1.1
+     *
+     * @implNote by default, this is the same as {@code getGappedOffsetFor(0)}.
+     */
+    default int getNumberOfLeadingGaps(){
+        return getGappedOffsetFor(0);
+    }
+
+    /**
+     * Get the number of Gaps that start this sequence.
+     * @return the number of gaps; will never be &lt; 0.
+     * @since 6.1.1
+     *
+     * @implNote by default, this is the same as {@code getGappedOffsetFor(0)}.
+     */
+    default int getNumberOfTrailingGaps(){
+        PrimitiveIterator.OfInt iter = getGapOffsets().reverseIntIterator();
+        int count=0;
+        int currentOffset = (int)( getLength()-1);
+        while(iter.hasNext()){
+            int i = iter.nextInt();
+            if(i==currentOffset){
+                currentOffset--;
+                count++;
+            }else{
+                break;
+            }
+        }
+        return count;
+    }
     /**
      * Get the list of contiguous spans of the Unknown Residue (i.e. 'N' or 'X' etc); the returned list
      * will be in sorted order.

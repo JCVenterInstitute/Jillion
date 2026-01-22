@@ -253,6 +253,39 @@ public class TestOffsets {
     }
 
     @Test
+    public void removeBeyondValuesDoesNothing(){
+        Offsets sut = Offsets.fromSortedList(List.of(1,4,7,10));
+
+        sut.remove(15);
+
+        assertArrayEquals(new int[]{1,4,7,10}, sut.stream().toArray());
+    }
+    @Test
+    public void removeBeyondValuesRangeDoesNothing(){
+        Offsets sut = Offsets.fromSortedList(List.of(1,4,7,10));
+
+        sut.remove(Range.of(15));
+
+        assertArrayEquals(new int[]{1,4,7,10}, sut.stream().toArray());
+    }
+    @Test
+    public void removeBeyondValuesRangeDoesNothingLargeSpan(){
+        Offsets sut = Offsets.fromSortedList(List.of(1,4,7,10));
+
+        sut.remove(Range.of(15,20));
+
+        assertArrayEquals(new int[]{1,4,7,10}, sut.stream().toArray());
+    }
+    @Test
+    public void removeEndRangeBeyondValues(){
+        Offsets sut = Offsets.fromSortedList(List.of(1,4,7,10));
+
+        sut.remove(Range.of(8,20));
+
+        assertArrayEquals(new int[]{1,4,7}, sut.stream().toArray());
+    }
+
+    @Test
     public void removeWithShift(){
         Offsets sut = Offsets.fromSortedList(List.of(1,4,7,10));
 

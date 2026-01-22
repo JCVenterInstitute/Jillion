@@ -118,6 +118,18 @@ public class TestProteinSequenceBuilder {
 		sut.replace(2, AminoAcid.Tryptophan);
 		assertEquals("IKWTW", sut.toString());
 	}
+	@Test
+	public void replaceEndOfSequence(){
+		ProteinSequenceBuilder sut = new ProteinSequenceBuilder("IKFTW");
+		sut.replace(5, AminoAcid.Tryptophan);
+		assertEquals("IKFTWW", sut.toString());
+	}
+	@Test
+	public void replaceEndOfSequenceRange(){
+		ProteinSequenceBuilder sut = new ProteinSequenceBuilder("IKFTW");
+		sut.replace(Range.of(5), new AminoAcid[]{AminoAcid.Tryptophan});
+		assertEquals("IKFTWW", sut.toString());
+	}
 
 	@Test
 	public void replaceWithGaps(){

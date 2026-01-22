@@ -639,10 +639,17 @@ public class TestNucleotideSequenceBuilder {
        new NucleotideSequenceBuilder("ACGT")
                         .replace(-1, Nucleotide.Cytosine);
     }
+    @Test
+    public void replaceBeyondLastOffsetShouldAppend(){
+       assertEquals("ACGTC", new NucleotideSequenceBuilder("ACGT")
+                        .replace(4, Nucleotide.Cytosine)
+               .toString());
+    }
+
     @Test(expected = IllegalArgumentException.class)
-    public void replaceBeyondLastOffsetShouldThrowException(){
-       new NucleotideSequenceBuilder("ACGT")
-                        .replace(4, Nucleotide.Cytosine);
+    public void replaceTwoBeyondLastOffsetShouldThrowException(){
+        new NucleotideSequenceBuilder("ACGT")
+                .replace(5, Nucleotide.Cytosine);
     }
    
     

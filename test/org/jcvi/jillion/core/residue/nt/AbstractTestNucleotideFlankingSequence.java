@@ -137,4 +137,35 @@ public abstract class AbstractTestNucleotideFlankingSequence {
 		
 		assertIteratorValues(sut.createLeftFlankingNonGapIterator(5), 1,0);
 	}
+
+	@Test
+	public void leadingAndTrailingGapsNone(){
+		NucleotideSequence sut = create("AC----GT");
+		assertEquals(0, sut.getNumberOfLeadingGaps());
+		assertEquals(0, sut.getNumberOfTrailingGaps());
+	}
+	@Test
+	public void leadingAndTrailingGapsOne(){
+		NucleotideSequence sut = create("-ACGT-");
+		assertEquals(1, sut.getNumberOfLeadingGaps());
+		assertEquals(1, sut.getNumberOfTrailingGaps());
+	}
+	@Test
+	public void leadingAndTrailingGapsTwo(){
+		NucleotideSequence sut = create("--ACGT--");
+		assertEquals(2, sut.getNumberOfLeadingGaps());
+		assertEquals(2, sut.getNumberOfTrailingGaps());
+	}
+	@Test
+	public void leadingAndTrailingGapsOneZero(){
+		NucleotideSequence sut = create("-ACGT");
+		assertEquals(1, sut.getNumberOfLeadingGaps());
+		assertEquals(0, sut.getNumberOfTrailingGaps());
+	}
+	@Test
+	public void leadingAndTrailingGapsZeroOne(){
+		NucleotideSequence sut = create("ACGT-");
+		assertEquals(0, sut.getNumberOfLeadingGaps());
+		assertEquals(1, sut.getNumberOfTrailingGaps());
+	}
 }

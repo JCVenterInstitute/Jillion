@@ -40,4 +40,13 @@ public interface IntList extends List<Integer> {
     }
 
     IntStream intStream();
+
+    /**
+     * Get a new {@link java.util.PrimitiveIterator.OfInt} primitive int
+     * iterator (not threadsafe) that iterates BACKWARDs over the values.
+     * @return a new OfInt.
+     *
+     * @since 6.1.1
+     */
+    PrimitiveIterator.OfInt reverseIntIterator();
 }

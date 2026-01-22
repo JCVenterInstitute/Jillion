@@ -109,6 +109,11 @@ public final class ArrayUtil {
 		}
 
 		@Override
+		public OfInt reverseIntIterator() {
+			return EmptyIterator.INSTANCE;
+		}
+
+		@Override
 		public int getAsInt(int index) {
 			throw new IndexOutOfBoundsException(index);
 		}
@@ -252,7 +257,7 @@ public final class ArrayUtil {
            if(!(o instanceof Integer)){
         	   return -1;
            }
-           int val = ((Integer)o).intValue();
+           int val = (Integer) o;
            
             for (int i=0; i<currentLength; i++){
                 if (val==array[i]){
@@ -296,7 +301,7 @@ public final class ArrayUtil {
         	    if(!(o2 instanceof Integer)){
         	    	return false;
         	    }
-        	    if(array[currentOffset] !=((Integer)o2).intValue()){
+        	    if(array[currentOffset] != (Integer) o2){
         	    	return false;
         	    }
         	    currentOffset++;
@@ -331,8 +336,16 @@ public final class ArrayUtil {
             public OfInt intIterator() {
             	return new IntIterator();
             }
-		
-            private class IntIterator implements OfInt{
+
+		@Override
+		public OfInt reverseIntIterator() {
+			if(isEmpty()){
+				return ImmutableEmptyIntList.EmptyIterator.INSTANCE;
+			}
+			return new ReverseIntIterator();
+		}
+
+		private class IntIterator implements OfInt{
             	private int currentOffset=0;
             	private final int  expectedModCount;
             	
@@ -357,6 +370,31 @@ public final class ArrayUtil {
 				}
             	
             }
+		private class ReverseIntIterator implements OfInt{
+			private int currentOffset=array.length-1;
+			private final int  expectedModCount;
+
+			@Override
+			public boolean hasNext() {
+				return currentOffset>=0;
+			}
+
+			public ReverseIntIterator() {
+				this.expectedModCount = modCount;
+			}
+
+			@Override
+			public int nextInt() {
+				if(!hasNext()) {
+					throw new NoSuchElementException();
+				}
+				if(expectedModCount != modCount) {
+					throw new ConcurrentModificationException();
+				}
+				return array[currentOffset--];
+			}
+
+		}
 	}
 	/**
 	 * In-place reverse the given array.

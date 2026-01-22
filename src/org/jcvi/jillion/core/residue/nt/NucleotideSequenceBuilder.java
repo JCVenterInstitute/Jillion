@@ -21,21 +21,19 @@
 package org.jcvi.jillion.core.residue.nt;
 
 
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.IntStream;
-
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
 import org.jcvi.jillion.core.residue.DecodingOptions;
 import org.jcvi.jillion.core.residue.InvalidCharacterHandlers;
-import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.util.IntList;
+import org.jcvi.jillion.core.util.Offsets;
 import org.jcvi.jillion.core.util.SingleThreadAdder;
 import org.jcvi.jillion.internal.core.util.GrowableByteArray;
 import org.jcvi.jillion.internal.core.util.GrowableIntArray;
 
-import org.jcvi.jillion.core.util.Offsets;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.IntStream;
 
 /**
  * {@code NucleotideSequenceBuilder}  is a way to
@@ -95,7 +93,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
     /**
      * Creates a new NucleotideSequenceBuilder instance
      * which currently contains no nucleotides.
-     * @param invalidCharacterHandler an {@link org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler}
+     * @param invalidCharacterHandler an {@link org.jcvi.jillion.spi.InvalidCharacterHandler}
      * for how to handle parsing invalid nucleotide characters, set to {@code null}, then use the default handler
      * which will throw an IllegalArgumentException.
      * 
@@ -106,7 +104,7 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
         _setInvalidCharacterHandler(invalidCharacterHandler);
     }
     /**
-     * Sets the {@link org.jcvi.jillion.core.residue.nt.Nucleotide.InvalidCharacterHandler}
+     * Sets the {@link org.jcvi.jillion.spi.InvalidCharacterHandler}
      * used to help parse {@link Nucleotide}s from a String or char[].
      * @param invalidCharacterHandler the handler to use; if {@code null}
      * use the default handler which will throw an IllegalArgumentException on invalid characters.
@@ -754,7 +752,10 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
      * @since 6.0
      */
 	public NucleotideSequenceBuilder replace(Range gappedRangeToBeReplaced, Nucleotide[] replacementSeq) {
-		delete(gappedRangeToBeReplaced);
+		if(gappedRangeToBeReplaced.getBegin() == codecDecider.currentLength){
+            return append(replacementSeq);
+        }
+        delete(gappedRangeToBeReplaced);
 		insert((int)gappedRangeToBeReplaced.getBegin(), replacementSeq);	
 		return this;
 	}
@@ -787,8 +788,10 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
      * @throws IllegalArgumentException if offset is invalid.
      */
     public NucleotideSequenceBuilder replace(int offset, Nucleotide replacement){
-    	
-        if(offset <0 || offset >= data.getCurrentLength()){
+    	if(offset == data.getCurrentLength()){
+            return append(replacement);
+        }
+        if(offset <0 || offset > data.getCurrentLength()){
             throw new IllegalArgumentException(
                     String.format("offset %d out of range (length = %d)",data.getCurrentLength(),offset));
         }
