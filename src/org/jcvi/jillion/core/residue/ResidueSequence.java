@@ -492,7 +492,7 @@ public interface ResidueSequence<R extends Residue<R>, T extends ResidueSequence
      * 
      */
     default Stream<Kmer<T>> kmers(int k, Range range){
-       return StreamSupport.stream(new KmerSpliterator<R, T, B>(k, asSubtype(), range), false);
+       return StreamSupport.stream(new KmerSpliterator<>(k, asSubtype(), range), false);
     }
 
     /**
@@ -716,4 +716,21 @@ public interface ResidueSequence<R extends Residue<R>, T extends ResidueSequence
             builder.appendGap(size);
         });
     }
+
+    /**
+     * Compute a new Iterator that will
+     * iterate over this sequence
+     * in a standardized way.
+     * For example, for Nucleotide Sequences,
+     * this will return an iterator that will iterate
+     * through the sequence the same order of residues
+     * for both the sequence and its reverse complement.
+     * @return a new iterator will never be null but may be empty.
+     *
+     * @implNote This may be computationally expensive as it may require
+     * iterating through the sequence multiple times in multiple directions
+     * to find the "standard".
+     * @since 6.1.2
+     */
+    Iterator<R> computeStandardizedIterator();
 }

@@ -79,7 +79,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestVariantNucleotideSequenceUnAdjust.class,
         
         TestNucleotideFlankingSequence.class,
-        TestSimpleNucleotideFlankingSequence.class
+        TestSimpleNucleotideFlankingSequence.class,
+        TestNucleotideSequenceStdIterator.class
     }
 )
 public class AllNucleotideUnitTests {

@@ -310,5 +310,5 @@ public interface NucleotideSequence extends INucleotideSequence<NucleotideSequen
 		return ((double)gc)/ungappedLength;
 	}
 
-	
+
 }

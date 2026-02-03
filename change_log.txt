@@ -7,6 +7,15 @@ change the behavior in any public API classes.  The order of changes is mostly
 chronological so the most important changes may not always be ordered first.
 
 ================
+Jillion 6.1.2
+================
+
+API Changes
+-----------
+1. Added ResidueSequence#computeStandardizedIterator() which will return an iterator
+that will iterate over the residues either in the forward or reverse complement direction
+
+================
 Jillion 6.1.1
 ================
 Bug Fixes

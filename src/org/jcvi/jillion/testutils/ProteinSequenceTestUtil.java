@@ -21,6 +21,12 @@ public final class ProteinSequenceTestUtil {
         //can not instantiate
     }
 
+    private static ProteinSequence EMPTY = new ProteinSequenceBuilder().build();
+
+    public static ProteinSequence empty(){
+        return EMPTY;
+    }
+
     public static ProteinSequence randomSequence(int length){
         ProteinSequenceBuilder builder = new ProteinSequenceBuilder(length);
         for(int i=0; i<length; i++){
@@ -28,5 +34,9 @@ public final class ProteinSequenceTestUtil {
         }
         builder.turnOffDataCompression(true);
         return builder.build();
+    }
+
+    public static ProteinSequence create(String seq) {
+        return new ProteinSequenceBuilder(seq).build();
     }
 }

@@ -181,8 +181,14 @@ public interface ProteinSequence extends ResidueSequence<AminoAcid, ProteinSeque
 		}
 	}
 
-
-
-
-
+	/**
+	 * Protein "standardized" is just normal iteration.
+	 * @return a new iterator.
+	 * @implNote This is the same as {@link #iterator()}
+	 *
+	 */
+	@Override
+	default Iterator<AminoAcid> computeStandardizedIterator(){
+		return iterator();
+	}
 }

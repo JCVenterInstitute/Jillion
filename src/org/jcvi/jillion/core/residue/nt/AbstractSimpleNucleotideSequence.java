@@ -28,15 +28,13 @@ abstract class AbstractSimpleNucleotideSequence extends AbstractResidueSequence<
     private transient final Supplier<GrowableIntArray> gapSupplier;
     private transient final Supplier<Boolean> isDnaSupplier, isRnaSupplier;
 
+    private transient final Supplier<Supplier<Iterator<Nucleotide>>> stdIteratorSupplierComputer;
     public AbstractSimpleNucleotideSequence(GrowableByteArray data) {
-        this(data.stream().mapToObj(i -> Nucleotide.getByOrdinal(i)).toArray(i -> new Nucleotide[i]));
+        this(data.stream().mapToObj(Nucleotide::getByOrdinal).toArray(Nucleotide[]::new));
     }
     public AbstractSimpleNucleotideSequence(Nucleotide[] data) {
         this.data = data;
-        stringSupplier = MemoizedSupplier.memoize(()->{
-           
-            return new NucleotideSequenceBuilder(List.of(this.data)).toString();
-        });
+        stringSupplier = MemoizedSupplier.memoize(()-> new NucleotideSequenceBuilder(List.of(this.data)).toString());
 
         nRangeSupplier = MemoizedSupplier.memoize(()->{
             GrowableIntArray ns = new GrowableIntArray();
@@ -63,15 +61,40 @@ abstract class AbstractSimpleNucleotideSequence extends AbstractResidueSequence<
         });
         isDnaSupplier = MemoizedSupplier.memoize(()->{
             //can't find any U's
-            return !Arrays.stream(data).filter(v-> v==Nucleotide.Uracil).findAny().isPresent();
+            return Arrays.stream(data).noneMatch(v-> v==Nucleotide.Uracil);
 
         });
 
         isRnaSupplier = MemoizedSupplier.memoize(()->{
             //can't find any T's
-            return !Arrays.stream(data).filter(v-> v==Nucleotide.Thymine).findAny().isPresent();
+            return Arrays.stream(data).noneMatch(v-> v==Nucleotide.Thymine);
 
         });
+
+        stdIteratorSupplierComputer = MemoizedSupplier.memoize(()->{
+
+            int length = data.length;
+            int mid = length/2;
+            for(int i=0; i< mid; i++){
+                Nucleotide l = data[i];
+                Nucleotide r = data[length-1-i].complement();
+                int cmp = l.compareTo(r);
+
+                if(cmp < 0){
+                    return this::iterator;
+                }
+                if(cmp>0){
+                    return this::reverseComplementIterator;
+                }
+
+            }
+            return this::iterator;
+        });
+    }
+
+    @Override
+    public Iterator<Nucleotide> computeStandardizedIterator() {
+        return stdIteratorSupplierComputer.get().get();
     }
 
     @Override

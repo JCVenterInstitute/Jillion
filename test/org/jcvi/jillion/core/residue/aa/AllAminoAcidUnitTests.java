@@ -50,7 +50,9 @@ import org.junit.runners.Suite.SuiteClasses;
         TestVariantRNA.class,
 
         ProteinSeqPatternTest.class,
-        ProteinSequenceMatchTest.class
+        ProteinSequenceMatchTest.class,
+        TestProteinSequenceStdIterator.class,
+        TestProteinKmers.class
     }
     )
 public class AllAminoAcidUnitTests {

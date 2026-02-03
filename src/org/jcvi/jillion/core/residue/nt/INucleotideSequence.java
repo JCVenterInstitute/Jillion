@@ -283,7 +283,7 @@ public interface INucleotideSequence<S extends INucleotideSequence<S,B>, B exten
 	 * @return a Range
 	 * 
 	 * @apiNote This should be identical but more efficient than
-	 * {{@link #getContractingFlankingNonGapRangeFor(Range) getContractingFlankingNonGapRangeFor(Range.of(gappedBeginOffset, gappedEndOffset))}.
+	 * {@link #getContractingFlankingNonGapRangeFor(Range) getContractingFlankingNonGapRangeFor(Range.of(gappedBeginOffset, gappedEndOffset))}.
 	 * 
 	 * 
 	 * @since 6.0.2
@@ -292,5 +292,32 @@ public interface INucleotideSequence<S extends INucleotideSequence<S,B>, B exten
 		return Range.of(getRightFlankingNonGapOffsetFor(gappedBeginOffset),
 						getLeftFlankingNonGapOffsetFor(gappedEndOffset)
 				);
+	}
+
+	/**
+	 * Find the standard iterator
+	 * that is the lexigraphically lower iterator
+	 * between forward and reverse complemented.
+	 *
+	 * @return a new iterator.
+	 */
+	@Override
+	default Iterator<Nucleotide> computeStandardizedIterator(){
+		Iterator<Nucleotide> iter = iterator();
+		Iterator<Nucleotide> revIter = reverseComplementIterator();
+
+		while(iter.hasNext()) {
+			Nucleotide a = iter.next();
+			Nucleotide r = revIter.next();
+			int cmp = a.compareTo(r);
+			if(cmp !=0) {
+				if(cmp < 0) {
+					return iterator();
+				}else {
+					return reverseComplementIterator();
+				}
+			}
+		}
+		return iterator();
 	}
 }
