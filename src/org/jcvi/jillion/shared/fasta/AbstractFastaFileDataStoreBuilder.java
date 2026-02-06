@@ -70,7 +70,31 @@ public abstract class AbstractFastaFileDataStoreBuilder<T, S extends Sequence<T>
 
 		this.parser = FastaFileParser.create(fastaFile);
 	}
-	
+
+	protected FastaParser getParser() {
+		return parser;
+	}
+
+	protected Predicate<String> getFilter() {
+		return filter;
+	}
+
+	protected Predicate<F> getRecordFilter() {
+		return recordFilter;
+	}
+
+	protected DataStoreProviderHint getHint() {
+		return hint;
+	}
+
+	protected Long getMaxNumberOfRecords() {
+		return maxNumberOfRecords;
+	}
+
+	protected BiFunction<String, String, Defline> getIdConverter() {
+		return idConverter;
+	}
+
 	/**
          * Create a new Builder instance
          * that will build a {@link FastaDataStore} from the

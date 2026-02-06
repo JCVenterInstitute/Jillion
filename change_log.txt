@@ -14,6 +14,12 @@ API Changes
 -----------
 1. Added ResidueSequence#computeStandardizedIterator() which will return an iterator
 that will iterate over the residues either in the forward or reverse complement direction
+2. Added DataStoreProviderHint.ITERATE_ONLY_ONCE to tell DataStoreBuilders that
+we intend to not only iterate only through the backing data, but only do it once.
+This is now used by DataStore builders to use more efficient DataStore implementations when passing in inputStreams.
+3. NucleotideFastaFileReader methods now use ITERATE_ONLY_ONCE.
+4. FastqFileReader methods now use ITERATE_ONLY_ONCE.
+5. FastqFileReader.Results now has an iterator() method that returns a StreamingIterator. Previously only had Stream and forEach().
 
 ================
 Jillion 6.1.1

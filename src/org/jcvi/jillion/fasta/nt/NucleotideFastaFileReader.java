@@ -20,16 +20,17 @@
  ******************************************************************************/
 package org.jcvi.jillion.fasta.nt;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Objects;
-import java.util.function.Consumer;
-import java.util.function.Predicate;
-
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.util.ThrowingStream;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.core.util.streams.ThrowingBiConsumer;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * Helper class which can
@@ -50,9 +51,27 @@ public class NucleotideFastaFileReader {
      */
     public static ThrowingStream<NucleotideFastaRecord> records(File fastaFile) throws IOException{
         return new NucleotideFastaFileDataStoreBuilder(fastaFile)
-                        .hint(DataStoreProviderHint.ITERATION_ONLY)
-                        .build()
-                        .records();
+                        .hint(DataStoreProviderHint.ITERATE_ONLY_ONCE)
+                        .buildThrowingStreamOnly();
+    }
+    /**
+     * Get a {@link ThrowingStream} of all the {@link NucleotideFastaRecord}s
+     * in the given fasta file.
+     * @param fastaFileInputStream the InputStream of the fasta file to parse; can not be null.
+     * @return a new {@link ThrowingStream} of {@link NucleotideFastaRecord}s.
+     * @throws IOException if there is a problem parsing the fasta file.
+     *
+     * @throws NullPointerException if fastaFile is null.
+     *
+     * @see #records(File, Consumer)
+     * @see NucleotideFastaFileDataStoreBuilder
+     *
+     * @since 6.1.2
+     */
+    public static ThrowingStream<NucleotideFastaRecord> records(InputStream fastaFileInputStream) throws IOException{
+        return new NucleotideFastaFileDataStoreBuilder(fastaFileInputStream)
+                .hint(DataStoreProviderHint.ITERATE_ONLY_ONCE)
+                .buildThrowingStreamOnly();
     }
     
     /**
@@ -68,10 +87,31 @@ public class NucleotideFastaFileReader {
      * @see NucleotideFastaFileDataStoreBuilder
      */
     public static <E extends Throwable>void forEach(File fastaFile, ThrowingBiConsumer<String, NucleotideFastaRecord, E> consumer) throws IOException, E{
-        new NucleotideFastaFileDataStoreBuilder(fastaFile)
-                        .hint(DataStoreProviderHint.ITERATION_ONLY)
-                        .build()
-                        .forEach(consumer);
+        try(NucleotideFastaFileDataStore datastore = new NucleotideFastaFileDataStoreBuilder(fastaFile)
+                .hint(DataStoreProviderHint.ITERATE_ONLY_ONCE)
+                .build()) {
+            datastore.forEach(consumer);
+        }
+    }
+    /**
+     * Get a {@link ThrowingStream} of all the {@link NucleotideFastaRecord}s
+     * in the given fasta file.
+     * @param fastaFileInputStream the InputStream of the fasta file to parse; can not be null.
+     *
+     * @throws IOException if there is a problem parsing the fasta file.
+     *
+     * @throws NullPointerException if fastaFile is null.
+     *
+     * @see #records(File, Consumer)
+     * @see NucleotideFastaFileDataStoreBuilder
+     * @since 6.1.2
+     */
+    public static <E extends Throwable>void forEach(InputStream fastaFileInputStream, ThrowingBiConsumer<String, NucleotideFastaRecord, E> consumer) throws IOException, E{
+        try(NucleotideFastaFileDataStore datastore = new NucleotideFastaFileDataStoreBuilder(fastaFileInputStream)
+                .hint(DataStoreProviderHint.ITERATE_ONLY_ONCE)
+                .build()) {
+            datastore.forEach(consumer);
+        }
     }
     /**
      * Parse the given Fasta File and for each record that passes the given filters
@@ -105,6 +145,40 @@ public class NucleotideFastaFileReader {
         consumer);
 
     }
+
+    /**
+     * Parse the given Fasta File and for each record that passes the given filters
+     * call the provided consumer.
+     * The filters are chained so that only ids that pass
+     * the filter will be parsed and given to the recordFilter.  Only
+     * records that pass the recordFilter will be passed to the consumer.
+     *
+     *
+     * @param fastaFileInputStream the {@link InputStream} of the fasta file to parse; can not be null.
+     * @param idFilter a Predicate of Ids to include in the for each.  If this
+     * predicate is null, then all records will be parsed.
+     * @param recordFilter a Predicate to include/exclude parsed records.  If this
+     * predicate is null, then all parsed records will be provided to the consumer.
+     *
+     * @param consumer the consumer that will be called for each record that passes the filter.
+     *
+     * @throws IOException if there is a problem parsing the fasta file.
+     *
+     * @throws NullPointerException if fastaFile is null.
+     *
+     * @see NucleotideFastaFileDataStoreBuilder
+     * @since 6.1.2
+     */
+    public static <E extends Throwable> void forEach(InputStream fastaFileInputStream, Predicate<String> idFilter, Predicate<NucleotideFastaRecord> recordFilter,
+                                                     ThrowingBiConsumer<String, NucleotideFastaRecord, E> consumer) throws IOException, E{
+
+        forEach (fastaFileInputStream, builder->
+                        builder.filter(idFilter==null? s-> true: idFilter)
+                                .filterRecords(recordFilter ==null ? r -> true : recordFilter)
+                ,
+                consumer);
+
+    }
     /**
      * Parse the given Fasta File and for each record that passes the given filters
      * of the datastore, call the provided consumer.
@@ -135,7 +209,42 @@ public class NucleotideFastaFileReader {
         if(extraBuilderOptions !=null){
             extraBuilderOptions.accept(builder);
         }
-        try(NucleotideFastaDataStore datastore = builder.hint(DataStoreProviderHint.ITERATION_ONLY)
+        try(NucleotideFastaDataStore datastore = builder.hint(DataStoreProviderHint.ITERATE_ONLY_ONCE)
+                .build()){
+            datastore.forEach(consumer);
+        }
+    }
+    /**
+     * Parse the given Fasta File and for each record that passes the given filters
+     * of the datastore, call the provided consumer.
+     *
+     *
+     *
+     * @param fastaFileStream the {@link InputStream} fasta file to parse; can not be null.
+     * @param extraBuilderOptions Consumer of the builder used to parse the fasta file
+     *                            to add any extra filters or defline converters, decoding options etc.
+     *                            If {@code null}, then no extra options will be set.
+     *
+     *
+     * @param consumer the consumer that will be called for each record that passes the filter; can not be null.
+     *
+     * @throws IOException if there is a problem parsing the fasta file.
+     *
+     * @throws NullPointerException if either fastaFile or consumer are null.
+     *
+     * @see NucleotideFastaFileDataStoreBuilder
+     * @since 6.1.2
+     */
+    public static <E extends Throwable> void forEach(InputStream fastaFileStream, Consumer<NucleotideFastaFileDataStoreBuilder> extraBuilderOptions,
+                                                     ThrowingBiConsumer<String, NucleotideFastaRecord, E> consumer) throws IOException, E{
+
+        Objects.requireNonNull(consumer);
+        NucleotideFastaFileDataStoreBuilder builder = new NucleotideFastaFileDataStoreBuilder(fastaFileStream);
+
+        if(extraBuilderOptions !=null){
+            extraBuilderOptions.accept(builder);
+        }
+        try(NucleotideFastaDataStore datastore = builder.hint(DataStoreProviderHint.ITERATE_ONLY_ONCE)
                 .build()){
             datastore.forEach(consumer);
         }
@@ -171,9 +280,8 @@ public class NucleotideFastaFileReader {
             extraBuilderOptions.accept(builder);
         }
 
-        return builder.hint(DataStoreProviderHint.ITERATION_ONLY)
-                .build()
-                .records();
+        return builder.hint(DataStoreProviderHint.ITERATE_ONLY_ONCE)
+                .buildThrowingStreamOnly();
 
     }
 
@@ -206,9 +314,8 @@ public class NucleotideFastaFileReader {
             extraBuilderOptions.accept(builder);
         }
 
-        return builder.hint(DataStoreProviderHint.ITERATION_ONLY)
-                .build()
-                .iterator();
+        return builder.hint(DataStoreProviderHint.ITERATE_ONLY_ONCE)
+                .buildIteratorOnly();
 
     }
 
@@ -233,6 +340,64 @@ public class NucleotideFastaFileReader {
 
 
         return iterator(fastaFile, null);
+
+    }
+
+    /**
+     * Get a {@link StreamingIterator} of all the {@link NucleotideFastaRecord}s
+     * that passes the given filters.
+     *
+     *
+     *
+     * @param fastaFileInputStream the {@link InputStream} of the fasta file to parse; can not be null.
+     * @param extraBuilderOptions Consumer of the builder used to parse the fasta file
+     *                            to add any extra filters or defline converters, decoding options etc.
+     *                            If {@code null}, then no extra options will be set.
+     *
+     *
+     *
+     * @throws IOException if there is a problem parsing the fasta file.
+     *
+     * @throws NullPointerException if either fastaFile or consumer are null.
+     *
+     * @see NucleotideFastaFileDataStoreBuilder
+     * @since 6.1.2
+     */
+    public static StreamingIterator<NucleotideFastaRecord> iterator(InputStream fastaFileInputStream, Consumer<NucleotideFastaFileDataStoreBuilder> extraBuilderOptions) throws IOException{
+
+
+        NucleotideFastaFileDataStoreBuilder builder = new NucleotideFastaFileDataStoreBuilder(fastaFileInputStream);
+
+        if(extraBuilderOptions !=null){
+            extraBuilderOptions.accept(builder);
+        }
+
+        return builder.hint(DataStoreProviderHint.ITERATE_ONLY_ONCE)
+                .buildIteratorOnly();
+
+    }
+
+    /**
+     * Get a {@link StreamingIterator} of all the {@link NucleotideFastaRecord}s
+     * that passes the given filters.
+     *
+     *
+     *
+     * @param fastaFileInputStream the {@link InputStream} of the  fasta file to parse; can not be null.
+     *
+     *
+     *
+     * @throws IOException if there is a problem parsing the fasta file.
+     *
+     * @throws NullPointerException if fastaFile is null.
+     *
+     * @see NucleotideFastaFileDataStoreBuilder
+     * @since 6.1.2
+     */
+    public static StreamingIterator<NucleotideFastaRecord> iterator(InputStream fastaFileInputStream) throws IOException{
+
+
+        return iterator(fastaFileInputStream, null);
 
     }
 }

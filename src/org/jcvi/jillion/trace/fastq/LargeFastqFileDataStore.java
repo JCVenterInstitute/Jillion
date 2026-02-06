@@ -244,7 +244,7 @@ final class LargeFastqFileDataStore implements FastqFileDataStore {
 	public synchronized StreamingIterator<DataStoreEntry<FastqRecord>> entryIterator()
 			throws DataStoreException {
     	throwExceptionIfClosed();
-    	StreamingIterator<DataStoreEntry<FastqRecord>> iter = new StreamingIterator<DataStoreEntry<FastqRecord>>(){
+    	StreamingIterator<DataStoreEntry<FastqRecord>> iter = new StreamingIterator<>(){
 
     		StreamingIterator<FastqRecord> fastqs = iterator();
 			@Override
@@ -260,7 +260,7 @@ final class LargeFastqFileDataStore implements FastqFileDataStore {
 			@Override
 			public DataStoreEntry<FastqRecord> next() {
 				FastqRecord record = fastqs.next();
-				return new DataStoreEntry<FastqRecord>(record.getId(), record);
+				return new DataStoreEntry<>(record.getId(), record);
 			}
 
 			@Override

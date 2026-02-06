@@ -23,11 +23,13 @@ package org.jcvi.jillion.trace.fastq;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Objects;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.util.ThrowingStream;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.core.util.streams.ThrowingBiConsumer;
 /**
  * Helper class to simplify the process of reading Fastq encoded files
@@ -45,7 +47,7 @@ import org.jcvi.jillion.core.util.streams.ThrowingBiConsumer;
  * <pre>
  * try(
  *     FastqFileDataStore datastore = new FastqFileDataStoreBuilder(fastqFile)
- *                                                      .hint(DataStoreProviderHint.ITERATION_ONLY)
+ *                                                      .hint(DataStoreProviderHint.ITERATE_ONLY_ONCE)
  *                                                      .build();
  * 
  *     {@code ThrowingStream<FastqRecord>} stream = datastore.records();
@@ -85,12 +87,44 @@ public final class FastqFileReader {
     public static <E extends Throwable> void forEach(File fastqFile, ThrowingBiConsumer<String, FastqRecord, E> consumer) throws IOException, E{
         Objects.requireNonNull(consumer, "consumer can not be null");
         try(FastqFileDataStore datastore = new FastqFileDataStoreBuilder(fastqFile)
-                                                .hint(DataStoreProviderHint.ITERATION_ONLY)
+                                                .hint(DataStoreProviderHint.ITERATE_ONLY_ONCE)
                                                 .build()){
             datastore.forEach(consumer);
         }
         
     }
+
+    /**
+     * Iterate through all the records in the datastore and call the given consumer on each one.
+     * The {@link FastqQualityCodec} that is used to encode this file
+     * will be automatically detected for a performance penalty
+     * (the file will have to be read twice, once to determine the codec, once again to parse the data) for
+     * better performance please use {@link #forEach(File, FastqQualityCodec)} if the codec is already known.
+     * This assumes each section of each fastq record
+     * is one line each and does not have comments.  If the fastq has multi-line sections or comments, use {@link #read(FastqParser)}.
+     *
+     *
+     * @param fastqInputStream the {@link InputStream} of the fastq file to read; can not be null.
+     * @param consumer a BiConsumer that takes the id of the record as the first parameter and the record as the second parameter.
+     *
+     *
+     * @throws IOException if there is a problem reading the fastq file.
+     * @throws NullPointerException if fastqFile is null.
+     *
+     * @see #read(File, FastqQualityCodec)
+     * @see #read(FastqParser)
+     * @since 6.1.2
+     */
+    public static <E extends Throwable> void forEach(InputStream fastqInputStream, ThrowingBiConsumer<String, FastqRecord, E> consumer) throws IOException, E{
+        Objects.requireNonNull(consumer, "consumer can not be null");
+        try(FastqFileDataStore datastore = new FastqFileDataStoreBuilder(fastqInputStream)
+                .hint(DataStoreProviderHint.ITERATE_ONLY_ONCE)
+                .build()){
+            datastore.forEach(consumer);
+        }
+
+    }
+
     /**
      * Iterate through all the records in the datastore and call the given consumer on each one.
      * The {@link FastqQualityCodec} that is used to encode this file
@@ -147,7 +181,7 @@ public final class FastqFileReader {
         Objects.requireNonNull(consumer, "consumer can not be null");
         try(FastqFileDataStore datastore = new FastqFileDataStoreBuilder(fastqParser)
                                                 .qualityCodec(codec)
-                                                .hint(DataStoreProviderHint.ITERATION_ONLY)
+                                                .hint(DataStoreProviderHint.ITERATE_ONLY_ONCE)
                                                 .build()){
             datastore.forEach(consumer);
         }
@@ -188,13 +222,6 @@ public final class FastqFileReader {
     
     /**
      * Iterate through all the records in the datastore and call the given consumer on each one that match the given filters.
-     * The {@link FastqQualityCodec} that is used to encode this file
-     * will be automatically detected for a performance penalty 
-     * (the file will have to be read twice, once to determine the codec, once again to parse the data) for 
-     * better performance please use {@link #forEach(File, FastqQualityCodec)} if the codec is already known.
-     * This assumes each section of each fastq record
-     * is one line each and does not have comments.  If the fastq has multi-line sections or comments, use {@link #read(FastqParser)}.
-     * 
      * 
      * @param fastqParser the {@link FastqParser} that knows the input source (file or inputstream), 
      * how the file is compressed, and if there are multiline sections or comments; can not be null.
@@ -229,8 +256,7 @@ public final class FastqFileReader {
      * 
      * @param fastqParser the {@link FastqParser} that knows the input source (file or inputstream), 
      * how the file is compressed, and if there are multiline sections or comments; can not be null.
-     * 
-     * @param codec the {@link FastqQualityCodec} known to encode this file; can not be null.
+     *
      * 
      * @param idFilter a Predicate to include only records whose by Id makes the predicate return true; if null, then no id filter is used.
      * @param recordFilter a Predicate to include only the parsed records that return true; if null, then no record filter is used.
@@ -261,10 +287,7 @@ public final class FastqFileReader {
      * 
      * @param fastqParser the {@link FastqParser} that knows the input source (file or inputstream), 
      * how the file is compressed, and if there are multiline sections or comments; can not be null.
-     * 
-     * @param codec the {@link FastqQualityCodec} known to encode this file; can not be null.
-     * 
-     * @param idFilter a Predicate to include only records whose by Id makes the predicate return true; if null, then no id filter is used.
+     *
      * @param recordFilter a Predicate to include only the parsed records that return true; if null, then no record filter is used.
      * 
      * @param consumer a BiConsumer that takes the id of the record as the first parameter and the record as the second parameter. 
@@ -287,7 +310,7 @@ public final class FastqFileReader {
             ThrowingBiConsumer<String, FastqRecord, E> consumer) throws IOException, E{
         Objects.requireNonNull(consumer, "consumer can not be null");
         FastqFileDataStoreBuilder builder = new FastqFileDataStoreBuilder(fastqParser)                             
-                                                .hint(DataStoreProviderHint.ITERATION_ONLY);
+                                                .hint(DataStoreProviderHint.ITERATE_ONLY_ONCE);
         
         if(idFilter !=null){
             builder.filter(idFilter);
@@ -331,7 +354,7 @@ public final class FastqFileReader {
         Objects.requireNonNull(consumer, "consumer can not be null");
         try(FastqFileDataStore datastore = new FastqFileDataStoreBuilder(fastqFile)
                                                 .qualityCodec(codec)
-                                                .hint(DataStoreProviderHint.ITERATION_ONLY)
+                                                .hint(DataStoreProviderHint.ITERATE_ONLY_ONCE)
                                                 .build()){
             datastore.forEach(consumer);
         }
@@ -415,7 +438,7 @@ public final class FastqFileReader {
     public static Results read(File fastqFile, FastqQualityCodec codec) throws IOException{
         FastqFileDataStore datastore = new FastqFileDataStoreBuilder(fastqFile)
                                                 .qualityCodec(codec)
-                                                .hint(DataStoreProviderHint.ITERATION_ONLY)
+                                                .hint(DataStoreProviderHint.ITERATE_ONLY_ONCE)
                                                 .build();
         return new Results(datastore);
     }
@@ -442,7 +465,7 @@ public final class FastqFileReader {
     public static Results read(FastqParser fastqParser, FastqQualityCodec codec) throws IOException{
         FastqFileDataStore datastore = new FastqFileDataStoreBuilder(fastqParser)
                                                 .qualityCodec(codec)
-                                                .hint(DataStoreProviderHint.ITERATION_ONLY)
+                                                .hint(DataStoreProviderHint.ITERATE_ONLY_ONCE)
                                                 .build();
         return new Results(datastore);
     }
@@ -471,6 +494,19 @@ public final class FastqFileReader {
         public ThrowingStream<FastqRecord> records() throws IOException{
             return datastore.records();
         }
+
+        /**
+         * Get a {@link StreamingIterator} of all the {@link FastqRecord}s contained
+         * in the file.
+         * @return a new {@link StreamingIterator} will never be null.
+         *
+         * @since 6.1.2
+         */
+        public StreamingIterator<FastqRecord> iterator() throws IOException{
+            return datastore.iterator();
+        }
+
+
         /**
          * Get the {@link FastqQualityCodec} that was used to encode
          * the fastq file.

@@ -22,6 +22,7 @@ package org.jcvi.jillion.fasta.nt;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -106,21 +107,69 @@ public interface NucleotideFastaRecord extends FastaRecord<Nucleotide,Nucleotide
      * </pre>
      */
 	static Optional<NucleotideFastaRecord> of(File fastaFile, Consumer<NucleotideFastaFileDataStoreBuilder> additionalOptions) throws IOException {
-
-		NucleotideFastaFileDataStoreBuilder builder = new NucleotideFastaFileDataStoreBuilder(fastaFile);
-		if(additionalOptions !=null){
-			additionalOptions.accept(builder);
-		}
-		try(NucleotideFastaFileDataStore datastore = builder
-				.hint(DataStoreProviderHint.ITERATION_ONLY)
-				.build();
-			StreamingIterator<NucleotideFastaRecord> iter = datastore.iterator();
+		try(
+			StreamingIterator<NucleotideFastaRecord> iter = NucleotideFastaFileReader.iterator(fastaFile, additionalOptions)
 		){
 			if(!iter.hasNext()) {
 				return Optional.empty();
 			}
 			return Optional.of(iter.next());
 		}
+	}
+	/**
+	 * Create a NucleotideFastaRecord of the FIRST record in the given
+	 * fasta file InputStream.
+	 * @param fastaFileInputStream the {@link InputStream} of the file to parse; can not be null.
+	 * @param additionalOptions a Consumer of a NucleotideFastaFileDataStoreBuilder
+	 * @return an Optional wrapped NucleotideFastaRecord object; or empty
+	 * if the fasta file does not contain any sequences.
+	 * @throws IOException if there is a problem parsing the file.
+	 *
+	 * @since 6.1.2
+	 *
+	 * @implNote this is the same as
+	 * <pre>
+	 * {@code
+	 * try(StreamingIterator<NucleotideFastaRecord> iter = NucleotideFastaFileReader.iterator(fastaFileInputStream, additionalOptions)){
+	 * 			if(!iter.hasNext()) {
+	 * 				return Optional.empty();
+	 * 			}
+	 * 			return Optional.of(iter.next());
+	 *}
+	 * </pre>
+	 */
+	static Optional<NucleotideFastaRecord> of(InputStream fastaFileInputStream, Consumer<NucleotideFastaFileDataStoreBuilder> additionalOptions) throws IOException {
+		try(StreamingIterator<NucleotideFastaRecord> iter = NucleotideFastaFileReader.iterator(fastaFileInputStream, additionalOptions)){
+			if(!iter.hasNext()) {
+				return Optional.empty();
+			}
+			return Optional.of(iter.next());
+		}
+	}
+
+	/**
+	 * Create a NucleotideFastaRecord of the FIRST record in the given
+	 * fasta file InputStream.
+	 * @param fastaFileInputStream the {@link InputStream} of the file to parse; can not be null.
+	 * @return an Optional wrapped NucleotideFastaRecord object; or empty
+	 * if the fasta file does not contain any sequences.
+	 * @throws IOException if there is a problem parsing the file.
+	 *
+	 * @since 6.1.2
+	 *
+	 * @implNote this is the same as
+	 * <pre>
+	 * {@code
+	 * try(StreamingIterator<NucleotideFastaRecord> iter = NucleotideFastaFileReader.iterator(fastaFileInputStream, additionalOptions){
+	 * 			if(!iter.hasNext()) {
+	 * 				return Optional.empty();
+	 * 			}
+	 * 			return Optional.of(iter.next());
+	 *}
+	 * </pre>
+	 */
+	static Optional<NucleotideFastaRecord> of(InputStream fastaFileInputStream) throws IOException {
+		return of(fastaFileInputStream, null);
 	}
 	 /**
      * Create a new {@link StreamingIterator} of  NucleotideFastaRecord for each of the records in the given
@@ -174,14 +223,7 @@ public interface NucleotideFastaRecord extends FastaRecord<Nucleotide,Nucleotide
 	 */
 	static StreamingIterator<NucleotideFastaRecord> createNewIteratorFor(File fastaFile, Consumer<NucleotideFastaFileDataStoreBuilder> additionalOptions) throws DataStoreException, IOException{
 
-		NucleotideFastaFileDataStoreBuilder builder = new NucleotideFastaFileDataStoreBuilder(fastaFile);
-		if(additionalOptions !=null){
-			additionalOptions.accept(builder);
-		}
-		//force iteration only AFTER we apply the additional options incase it changes it to some other type
-		return builder.hint(DataStoreProviderHint.ITERATION_ONLY)
-				.build()
-				.iterator();
+		return NucleotideFastaFileReader.iterator(fastaFile, additionalOptions);
 	}
 
 	

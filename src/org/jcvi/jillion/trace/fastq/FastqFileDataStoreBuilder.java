@@ -20,16 +20,18 @@
  ******************************************************************************/
 package org.jcvi.jillion.trace.fastq;
 
+import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
+import org.jcvi.jillion.core.io.InputStreamSupplier;
+import org.jcvi.jillion.core.util.ThrowingStream;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.shared.fasta.Filterable;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
-
-import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
-import org.jcvi.jillion.core.io.InputStreamSupplier;
-import org.jcvi.jillion.shared.fasta.Filterable;
 
 /**
  * {@code FastqFileDataStoreBuilder}
@@ -95,8 +97,28 @@ public final class FastqFileDataStoreBuilder implements Filterable<FastqRecord, 
                 this.inputStreamSupplier = inputStreamSupplier;
                 this.parser = null;
         }
-	
-	
+
+	/**
+	 * Only create an iterator, do not actually create
+	 * the backing datastore.
+	 *
+	 * @return A new {@link StreamingIterator}
+	 * @throws IOException
+	 */
+	StreamingIterator<FastqRecord> buildIteratorOnly() throws IOException {
+		return LargeFastqFileDataStore.create(parser, codec, idFilter, recordFilter)
+				.iterator();
+	}
+	/**
+	 * Only create an iterator, do not actually create
+	 * the backing datastore.
+	 *
+	 * @return A new {@link StreamingIterator}
+	 * @throws IOException
+	 */
+	ThrowingStream<FastqRecord> buildThrowingStreamOnly() throws IOException {
+		return buildIteratorOnly().toThrowingStream();
+	}
 	
 	/**
          * Create a new instance of {@code FastqFileDataStoreBuilder}
@@ -390,6 +412,7 @@ public final class FastqFileDataStoreBuilder implements Filterable<FastqRecord, 
 				return parser.canCreateMemento()?
 				        IndexedFastqFileDataStore.create(parser,  codec, idFilter, recordFilter)
 				        : DefaultFastqFileDataStore.create(parser, codec, idFilter, recordFilter);
+			case ITERATE_ONLY_ONCE:
 			case ITERATION_ONLY:
 				return LargeFastqFileDataStore.create(parser, codec, idFilter, recordFilter);
 			default:

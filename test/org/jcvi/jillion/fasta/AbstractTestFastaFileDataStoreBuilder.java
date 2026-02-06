@@ -172,11 +172,13 @@ public abstract class AbstractTestFastaFileDataStoreBuilder<T, S extends Sequenc
 			Predicate<String> filter, InputStream in) throws IOException ;
 	
 	@Test
-	public void streamImplementationSameNoMatterWhatHintProvided() throws FileNotFoundException, IOException{
+	public void streamImplementationSameNoMatterWhatHintProvidedUnlessItsIterateOnce() throws FileNotFoundException, IOException{
 		
 		D defaultDataStore = createDataStoreFromStream();
 		for(DataStoreProviderHint hint : DataStoreProviderHint.values()){
-			assertEquals(createDataStoreFromStream(hint).getClass(), defaultDataStore.getClass());
+			if(hint != DataStoreProviderHint.ITERATE_ONLY_ONCE) {
+				assertEquals(createDataStoreFromStream(hint).getClass(), defaultDataStore.getClass());
+			}
 		}
 		
 	}

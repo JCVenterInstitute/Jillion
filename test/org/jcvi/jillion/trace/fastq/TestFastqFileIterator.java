@@ -6,6 +6,8 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -14,6 +16,7 @@ import java.util.NoSuchElementException;
 
 import org.jcvi.jillion.core.util.SingleThreadAdder;
 import org.jcvi.jillion.core.util.ThrowingStream;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.trace.fastq.FastqFileReader.Results;
 import org.jcvi.jillion.trace.fastq.FastqVisitor.FastqVisitorCallback;
@@ -32,6 +35,23 @@ public class TestFastqFileIterator {
 		fastqFile = helper.getFile("files/giv_XX_15050.fastq");
 	}
 
+	@Test
+	public void inputStreamMatchesFileReader() throws IOException {
+		try(Results results = FastqFileReader.read(FastqFileParser.create(new FileInputStream(fastqFile)), FastqQualityCodec.getDefault());
+			StreamingIterator<FastqRecord> fromInputStream = results.iterator();
+
+			Results fileResults = FastqFileReader.read(FastqFileParser.create(new FileInputStream(fastqFile)), FastqQualityCodec.getDefault());
+			StreamingIterator<FastqRecord> fromFile = fileResults.iterator()
+
+		){
+			assertTrue(fromFile.hasNext());
+			while(fromFile.hasNext()){
+				assertTrue(fromInputStream.hasNext());
+				assertEquals(fromFile.next(), fromInputStream.next());
+			}
+			assertFalse(fromInputStream.hasNext());
+		}
+	}
 	@Test
 	public void iteratorMatchesStream() throws IOException {
 

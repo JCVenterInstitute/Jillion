@@ -33,6 +33,8 @@ import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.io.InputStreamSupplier;
 import org.jcvi.jillion.core.residue.DecodingOptions;
 import org.jcvi.jillion.core.residue.nt.*;
+import org.jcvi.jillion.core.util.ThrowingStream;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaParser;
 import org.jcvi.jillion.shared.fasta.AbstractFastaFileDataStoreBuilder;
 import org.jcvi.jillion.shared.fasta.Filterable;
@@ -149,13 +151,34 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 			throws IOException {
 		super(fastaFileStream);
 	}
+
+	/**
+	 * Only create an iterator, do not actually create
+	 * the backing datastore.
+	 *
+	 * @return A new {@link StreamingIterator}
+	 * @throws IOException
+	 */
+	StreamingIterator<NucleotideFastaRecord> buildIteratorOnly() throws IOException {
+		return LargeNucleotideSequenceFastaIterator.createNewIteratorFor(getParser(), getFilter(), getRecordFilter(), decodingOptions, getIdConverter());
+	}
+	/**
+	 * Only create an iterator, do not actually create
+	 * the backing datastore.
+	 *
+	 * @return A new {@link StreamingIterator}
+	 * @throws IOException
+	 */
+	ThrowingStream<NucleotideFastaRecord> buildThrowingStreamOnly() throws IOException {
+		return buildIteratorOnly().toThrowingStream();
+	}
 	@Override
 	protected NucleotideFastaFileDataStore createNewInstance(
 			FastaParser parser, DataStoreProviderHint providerHint, Predicate<String> filter,
 			Predicate<NucleotideFastaRecord> recordFilter, OptionalLong maxNumberOfRecords,
 			BiFunction<String, String, Defline> idConverter)
 			throws IOException {
-		if(parser.isReadOnceOnly()){
+		if(parser.isReadOnceOnly() && DataStoreProviderHint.ITERATE_ONLY_ONCE != providerHint){
 			return DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter, decodingOptions, idConverter);
 		}else{
 		    NucleotideFastaFileDataStore delegate;
@@ -169,6 +192,7 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 										:
 										DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter, decodingOptions, idConverter);
 							break;
+				case ITERATE_ONLY_ONCE:
 				case ITERATION_ONLY: delegate= LargeNucleotideSequenceFastaFileDataStore.create(parser,filter, recordFilter, maxNumberOfRecords, decodingOptions, idConverter);
 								break;
 				default:

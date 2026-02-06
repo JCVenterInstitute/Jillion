@@ -114,6 +114,11 @@ public enum DataStoreProviderHint{
 	 * 
 	 * @see DataStoreUtil#createNewCachedDataStore(Class, DataStore, int) }
 	 */
-	ITERATION_ONLY
+	ITERATION_ONLY,
+	/**
+	 * This option should only be chosen if the datastore is to be only iterated ONE TIME
+	 * ONLY such as iterating through a large datafile one time.
+	 */
+	ITERATE_ONLY_ONCE;
 	;
 }
