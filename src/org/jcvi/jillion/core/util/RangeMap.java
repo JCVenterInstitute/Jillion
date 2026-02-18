@@ -3,6 +3,7 @@ package org.jcvi.jillion.core.util;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import org.jcvi.jillion.core.Range;
@@ -22,7 +23,48 @@ import org.jcvi.jillion.core.util.streams.ThrowingTriConsumer;
 public class RangeMap<T> {
 
 	private final NavigableMap<Range, T> map;
-	
+
+	/**
+	 * Create a new RangeMap from the given Rangeable elements.
+	 * @param elements the collection of elements to use to create the Map; can not be null
+	 *                 and can not contain any null elements.
+	 * @return a new Range Map
+	 * @param <T> the type of the elements which must be Rangeable.
+	 *
+	 * @since 6.1.3
+	 * @see #createFrom(Function, Collection)
+	 * @throws NullPointerException if elements is null or any object in the collection is null.
+	 */
+	public static <T extends Rangeable>  RangeMap<T> createFrom(Collection<T> elements){
+		RangeMap<T> map = new RangeMap<>();
+		for(T e : elements){
+			map.put(e.asRange(), e);
+		}
+		return map;
+	}
+
+	/**
+	 * Create a new RangeMap from the given elements and computing their Range
+	 * for the map using the given Function.
+	 *
+	 * @param toRangeFunction the Function to convert an element into a Range.
+	 * @param elements the collection of elements to use to create the Map; can not be null
+	 *                 and can not contain any null elements.
+	 * @return a new Range Map
+	 * @param <T> the type of the elements which must be Rangeable.
+	 *
+	 * @since 6.1.3
+	 *
+	 * @throws NullPointerException if elements is null or any object in the collection is null.
+	 */
+	public static <T>  RangeMap<T> createFrom(Function<T, Range> toRangeFunction, Collection<T> elements){
+		Objects.requireNonNull(toRangeFunction);
+		RangeMap<T> map = new RangeMap<>();
+		for(T e : elements){
+			map.put(toRangeFunction.apply(e), e);
+		}
+		return map;
+	}
 	public static RangeMap<Boolean> setOf(Collection<? extends Rangeable> rangeables) {
 		RangeMap<Boolean> map = new RangeMap<>();
 		for(Rangeable r : rangeables) {
@@ -38,6 +80,7 @@ public class RangeMap<T> {
 	}
 	
 	public T put(Range range, T obj) {
+		Objects.requireNonNull(range);
 		return map.put(range, obj);
 	}
 	
@@ -99,6 +142,20 @@ public class RangeMap<T> {
 	public List<Range> computeMergedRanges() {
 		return Ranges.merge(map.keySet());
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (!(o instanceof RangeMap)) return false;
+		RangeMap<?> rangeMap = (RangeMap<?>) o;
+		return Objects.equals(map, rangeMap.map);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(map);
+	}
+
 	@FunctionalInterface
 	public interface IntersectionOptions{
 		boolean intersects(Range range, Callback callback);

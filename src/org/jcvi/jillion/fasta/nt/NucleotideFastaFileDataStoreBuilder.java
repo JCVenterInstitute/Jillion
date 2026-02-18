@@ -36,8 +36,8 @@ import org.jcvi.jillion.core.residue.nt.*;
 import org.jcvi.jillion.core.util.ThrowingStream;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaParser;
+import org.jcvi.jillion.fasta.ResidueFastaFileDataStoreBuilder;
 import org.jcvi.jillion.shared.fasta.AbstractFastaFileDataStoreBuilder;
-import org.jcvi.jillion.shared.fasta.Filterable;
 import org.jcvi.jillion.spi.InvalidCharacterHandler;
 
 /**
@@ -49,7 +49,7 @@ import org.jcvi.jillion.spi.InvalidCharacterHandler;
  *
  */
 public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFileDataStoreBuilder<Nucleotide, NucleotideSequence, NucleotideFastaRecord, NucleotideSequenceDataStore, NucleotideFastaFileDataStore>
-		implements Filterable<NucleotideFastaRecord, NucleotideFastaFileDataStoreBuilder> {
+		implements ResidueFastaFileDataStoreBuilder<Nucleotide, NucleotideSequence, NucleotideFastaRecord, NucleotideSequenceDataStore, NucleotideFastaFileDataStore,NucleotideFastaFileDataStoreBuilder> {
 	/**
 	 * File for fai encoded file
 	 * which may be null or point to non-existent file.
@@ -159,7 +159,8 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	 * @return A new {@link StreamingIterator}
 	 * @throws IOException
 	 */
-	StreamingIterator<NucleotideFastaRecord> buildIteratorOnly() throws IOException {
+	@Override
+	public StreamingIterator<NucleotideFastaRecord> buildIteratorOnly() throws IOException {
 		return LargeNucleotideSequenceFastaIterator.createNewIteratorFor(getParser(), getFilter(), getRecordFilter(), decodingOptions, getIdConverter());
 	}
 	/**
@@ -169,7 +170,8 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	 * @return A new {@link StreamingIterator}
 	 * @throws IOException
 	 */
-	ThrowingStream<NucleotideFastaRecord> buildThrowingStreamOnly() throws IOException {
+	@Override
+	public ThrowingStream<NucleotideFastaRecord> buildThrowingStreamOnly() throws IOException {
 		return buildIteratorOnly().toThrowingStream();
 	}
 	@Override
@@ -213,7 +215,7 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	 * {@inheritDoc}
 	 */
 	@Override
-	public NucleotideFastaFileDataStoreBuilder filter( Predicate<String> filter) {
+	public NucleotideFastaFileDataStoreBuilder filter(Predicate<String> filter) {
 		super.filter(filter);
 		return this;
 	}
@@ -228,6 +230,7 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	 * 
 	 * @since 6.0
 	 */
+	@Override
 	public NucleotideFastaFileDataStoreBuilder invalidCharacterHandler(InvalidCharacterHandler invalidCharacterHandler) {
 		return decoderOptions(this.decodingOptions.toBuilder().invalidCharacterHandler(invalidCharacterHandler).build());
 	}
@@ -242,6 +245,7 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 	 * 
 	 * @since 6.0
 	 */
+	@Override
 	public NucleotideFastaFileDataStoreBuilder decoderOptions(DecodingOptions decodingOptions) {
 		this.decodingOptions = decodingOptions==null? DecodingOptions.DEFAULT: decodingOptions;
 		return this;

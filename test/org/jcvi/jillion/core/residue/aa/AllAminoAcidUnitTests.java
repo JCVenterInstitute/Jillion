@@ -45,6 +45,7 @@ import org.junit.runners.Suite.SuiteClasses;
         TestIupacTranslationTables.class,
         TestIupacTranslationTableDoNotSubstituteStart.class,
         TestIupacTranslationTableAmbiguity.class,
+        TestIupacTranslationStops.class,
         TestVariantProteinSequence.class,
         TestIupacTranslationTableUracil.class,
         TestVariantRNA.class,

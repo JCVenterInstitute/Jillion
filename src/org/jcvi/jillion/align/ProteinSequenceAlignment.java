@@ -44,8 +44,10 @@ public interface ProteinSequenceAlignment extends SequenceAlignment<AminoAcid, P
 		return createBuilder(query, null, subject, null).build();
 	}
 	static ProteinSequenceAlignmentBuilder createBuilder(ProteinSequence query, Range queryRange, ProteinSequence subject, Range subjectRange) {
-		if(query.getLength() != subject.getLength()) {
-			throw new IllegalArgumentException("query and subject lengths must match");
+		long queryLength = query.getLength();
+		long subjectLength = subject.getLength();
+		if(queryLength != subjectLength) {
+			throw new IllegalArgumentException("query ( " +queryLength + " ) and subject ( " +subjectLength + " )lengths must match");
 		}
 		
 		ProteinSequenceAlignmentBuilder builder = new ProteinSequenceAlignmentBuilder();

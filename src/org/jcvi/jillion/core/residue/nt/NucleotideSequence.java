@@ -62,7 +62,13 @@ import org.jcvi.jillion.internal.core.io.StreamUtil;
  * @author dkatzel
  */
 public interface NucleotideSequence extends INucleotideSequence<NucleotideSequence, NucleotideSequenceBuilder>, Serializable, MatchableSequence<Nucleotide, NucleotideSequence, NucleotideSequenceBuilder> {
-	/**
+
+    @Override
+    default NucleotideSequence getSelf(){
+        return this;
+    }
+
+    /**
      * Two {@link NucleotideSequence}s are equal
      * if they contain the same {@link Nucleotide}s 
      * in the same order.
@@ -243,6 +249,11 @@ public interface NucleotideSequence extends INucleotideSequence<NucleotideSequen
 
     @Override
     default NucleotideSequence trim(Range trimRange) {
+        Range currentRange = Range.ofLength(getLength());
+        if(currentRange.isSubRangeOf(trimRange)){
+            //no trimming needed?
+            return this;
+        }
         return toBuilder(trimRange).build();
     }
     /**

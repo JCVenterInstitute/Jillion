@@ -25,7 +25,21 @@ public class VariantProteinSequence {
 	
 	private final ProteinSequence proteinSequence;
 	private final Map<Integer, Map<AminoAcid,SNP>> variants;
-	
+
+
+	/**
+	 * Create a new VariantProteinSequence from the given
+	 * ProteinSequence without any variants.
+	 *
+	 * @param sequence the sequence to wrap; can not be null.
+	 * @return a new VariantProteinSequence.
+	 *
+	 * @since 6.1.3
+	 * @throws NullPointerException if sequence is null.
+	 */
+	public static VariantProteinSequence wrap(ProteinSequence sequence){
+		return new VariantProteinSequence(Objects.requireNonNull(sequence), Collections.emptyMap());
+	}
 	private VariantProteinSequence(ProteinSequence proteinSequence, Map<Integer, SNPMap> variantMap) {
 		this.proteinSequence = proteinSequence;
 		this.variants = new ConcurrentHashMap<>();

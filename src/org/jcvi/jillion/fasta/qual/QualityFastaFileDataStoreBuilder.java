@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.OptionalLong;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.Defline;
@@ -47,7 +46,7 @@ import org.jcvi.jillion.shared.fasta.AbstractFastaFileDataStoreBuilder;
  * @author dkatzel
  *
  */
-public final class QualityFastaFileDataStoreBuilder extends AbstractFastaFileDataStoreBuilder<PhredQuality, QualitySequence, QualityFastaRecord, QualitySequenceDataStore, QualityFastaDataStore>{
+public final class QualityFastaFileDataStoreBuilder extends AbstractFastaFileDataStoreBuilder<PhredQuality, QualitySequence, QualityFastaRecord, QualitySequenceDataStore, QualityFastaDataStore> {
 
 	/**
 	 * Create a new Builder instance of 
@@ -120,7 +119,7 @@ public final class QualityFastaFileDataStoreBuilder extends AbstractFastaFileDat
 			OptionalLong maxNumberOfRecords, BiFunction<String,String, Defline> idConverter
 			)
 			throws IOException {
-		if(parser.isReadOnceOnly()){
+		if(parser.isReadOnceOnly() && !hint.equals(DataStoreProviderHint.ITERATE_ONLY_ONCE)){
 			return DefaultQualityFastaFileDataStore.create(parser,filter, recordFilter, idConverter);
 		}
 		switch(hint){
@@ -129,12 +128,15 @@ public final class QualityFastaFileDataStoreBuilder extends AbstractFastaFileDat
 				return parser.canCreateMemento() ?
 						IndexedQualityFastaFileDataStore.create(parser,filter, recordFilter)
 						: DefaultQualityFastaFileDataStore.create(parser,filter, recordFilter, idConverter);
-						
+
+			case ITERATE_ONLY_ONCE:
 			case ITERATION_ONLY: return LargeQualityFastaFileDataStore.create(parser,filter, recordFilter, maxNumberOfRecords, idConverter);
 			default:
 				throw new IllegalArgumentException("unknown hint : "+ hint);
 		}
 	}
+
+
 
 	/**
 	 * 
@@ -145,6 +147,8 @@ public final class QualityFastaFileDataStoreBuilder extends AbstractFastaFileDat
 		super.filter(filter);
 		return this;
 	}
+
+
 
 	/**
 	 * 
@@ -174,6 +178,6 @@ public final class QualityFastaFileDataStoreBuilder extends AbstractFastaFileDat
 	public QualityFastaDataStore build() throws IOException {
 		return super.build();
 	}
-	
-	
+
+
 }

@@ -7,6 +7,34 @@ change the behavior in any public API classes.  The order of changes is mostly
 chronological so the most important changes may not always be ordered first.
 
 ================
+Jillion 6.1.3
+================
+
+Bug Fixes
+---------
+1. ProteinFastaFileDataStoreBuilder, QualityFastaFileDataStoreBuilder and PositionFastaFileDataStoreBuilder
+   now has support for ITERATE_ONLY_ONCE which was added in 6.1.2
+2. TranslationOptions#readThroughStops is now actually respected when translating to protein
+   sequences and a STOP is encountered.  Previously it would read through and it was up
+   to only the Visitor to tell it whether to stop translating or not.
+
+API Changes
+-----------
+1. Added ResidueSequence#trim(List<Range>) method
+2. Added ResidueSequence#getSelf() method which should only be used internally but unfortunately is part of the public API.
+3. RangeMap now implements equals and hashcode
+4. created RangeMap factory methods RangeMap#create()
+5. Added new RangeCollectors methods
+6. VariantProteinSequence now has factory method to wrap a normal ProteinSequence.
+
+
+Performance Improvements
+------------------------
+1. Most implementations of NucleotideSequence#trim(Range) and ProteinSequence#trim(Range) now check if the Range would
+actually change the sequence and if not, then no trimming is performed.
+2. Range#shift( long) now checks to see if the shift amount is 0 and if so doesn't make a new object
+
+================
 Jillion 6.1.2
 ================
 

@@ -270,6 +270,20 @@ public class TestDefaultNucleotideSequence {
 
         assertEquals("GTACG", seq.trim(Range.of(2,6)).toString());
     }
+    @Test
+    public void trimListOneElementSimple(){
+        NucleotideSequence seq = new NucleotideSequenceBuilder("ACGTACGT").build();
+
+        assertEquals("GTACG", seq.trim(List.of(Range.of(2,6))).toString());
+    }
+    @Test
+    public void trimListTwoElementSimple(){
+        NucleotideSequence seq = new NucleotideSequenceBuilder("ACGTACGT").build();
+
+        assertEquals("GTACGACGT", seq.trim(List.of(Range.of(2,6),
+                Range.of(4,7)
+                )).toString());
+    }
     @Test(expected = IndexOutOfBoundsException.class)
     public void trimSimpleOutOfBoundsThrowError(){
         NucleotideSequence seq = new NucleotideSequenceBuilder("ACGTACGT").build();
@@ -307,7 +321,20 @@ public class TestDefaultNucleotideSequence {
     public void trimNullShouldThrowNPE(){
         NucleotideSequence seq = new NucleotideSequenceBuilder("ACGTACGT").build();
 
-        seq.trim(null);
+        seq.trim((Range) null);
+    }
+    @Test(expected = NullPointerException.class)
+    public void trimListNullShouldThrowNPE(){
+        NucleotideSequence seq = new NucleotideSequenceBuilder("ACGTACGT").build();
+
+        seq.trim((List<Range>) null);
+    }
+    @Test(expected = NullPointerException.class)
+    public void trimListElementNullShouldThrowNPE(){
+        NucleotideSequence seq = new NucleotideSequenceBuilder("ACGTACGT").build();
+
+        List<Range> list = List.of(null);
+        seq.trim(list);
     }
     
 }

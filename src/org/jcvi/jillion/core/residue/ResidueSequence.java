@@ -616,6 +616,54 @@ public interface ResidueSequence<R extends Residue<R>, T extends ResidueSequence
     @Override
     T trim(Range range);
 
+    /**
+     * Returns this with the correct type.
+     * This should only be called internally and is a workaround
+     * for getting the correct generic type in default methods.
+     * @return this
+     *
+     * @since 6.1.3
+     */
+    T getSelf();
+
+    /**
+     * Trims this sequence down to the given subset of ranges.
+     *
+     * By default this method has some extra short circuits
+     * to check for the number of ranges for more efficient
+     * trimming.
+     * @param ranges the list of ranges; can not be null or contain null elements.
+     * @return a new Sequence
+     *
+     * @since 6.1.3
+     *
+     * @implNote By default this is equivalent to:
+     * <pre>
+     *     {@code
+     *         int size= ranges.size();
+     *         if(size==0){
+     *             return this;
+     *         }
+     *         if(size ==1){
+     *             return trim(ranges.get(0));
+     *         }
+     *         return toBuilder(ranges).build();
+ *         }
+     *
+     * </pre>
+     *
+     * @throws NullPointerException if ranges are null or contains a null element.
+     */
+    default T trim(List<Range> ranges){
+        int size= ranges.size();
+        if(size==0){
+            return getSelf();
+        }
+        if(size ==1){
+            return trim(ranges.get(0));
+        }
+        return toBuilder(ranges).build();
+    }
 
     /**
      * Create an Iterator that iterates over the reverse

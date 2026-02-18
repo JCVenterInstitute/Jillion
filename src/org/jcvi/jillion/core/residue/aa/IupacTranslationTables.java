@@ -307,7 +307,7 @@ public enum IupacTranslationTables implements TranslationTable{
                      seenStart = result != FoundStartResult.FIND_ADDITIONAL_STARTS;
 				}else if(codon.isStop()){
                     FoundStopResult result = visitor.foundStop(offset1, offset3, codon);
-                    if(result == FoundStopResult.STOP){
+                    if(result == FoundStopResult.STOP || !options.isReadThroughStops()){
                         break;
                     }
                     

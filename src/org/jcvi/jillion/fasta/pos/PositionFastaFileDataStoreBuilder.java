@@ -173,7 +173,7 @@ public class PositionFastaFileDataStoreBuilder {
      * @throws IOException if there is a problem parsing the input fasta data.
      */
 	public PositionFastaDataStore build() throws IOException{
-		if(hint == DataStoreProviderHint.ITERATION_ONLY){
+		if(hint == DataStoreProviderHint.ITERATION_ONLY || hint==DataStoreProviderHint.ITERATE_ONLY_ONCE){
 			return LargePositionFastaFileDataStore.create(parser, idFilter, recordFilter);
 		}
 		return DefaultPositionFastaFileDataStore.create(parser, idFilter, recordFilter);

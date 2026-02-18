@@ -60,9 +60,13 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 	public int[] getVariantOffsets() {
 		return variantOffsets.toArray();
 	}
-	
-	
-	
+
+
+	@Override
+	public VariantNucleotideSequence getSelf() {
+		return this;
+	}
+
 	@Override
 	public List<Range> getRangesOfNs() {
 		return nucleotideSequence.getRangesOfNs();

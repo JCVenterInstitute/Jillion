@@ -1238,6 +1238,9 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
      * @since 6.0
      */
     public Range shift(long shiftAmount) {
+        if(shiftAmount==0){
+            return this;
+        }
     	return Range.of(getBegin()+shiftAmount, getEnd()+shiftAmount);
 	}
     

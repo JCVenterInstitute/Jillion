@@ -61,6 +61,11 @@ import org.jcvi.jillion.internal.core.io.StreamUtil;
 public interface ProteinSequence extends ResidueSequence<AminoAcid, ProteinSequence, ProteinSequenceBuilder>, Serializable, MatchableSequence<AminoAcid, ProteinSequence, ProteinSequenceBuilder> {
 
 	@Override
+	default ProteinSequence getSelf(){
+		return this;
+	}
+
+	@Override
 	ProteinSequenceBuilder toBuilder();
 
 	@Override
@@ -97,6 +102,11 @@ public interface ProteinSequence extends ResidueSequence<AminoAcid, ProteinSeque
 
 	@Override
 	default ProteinSequence trim(Range trimRange){
+		Range currentRange = Range.ofLength(getLength());
+		if(currentRange.isSubRangeOf(trimRange)){
+			//no trimming needed?
+			return this;
+		}
 		return toBuilder(trimRange).build();
 	}
 	/**

@@ -35,7 +35,10 @@ import org.jcvi.jillion.core.residue.DecodingOptions;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
 import org.jcvi.jillion.core.residue.aa.ProteinSequenceDataStore;
+import org.jcvi.jillion.core.util.ThrowingStream;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.FastaParser;
+import org.jcvi.jillion.fasta.ResidueFastaFileDataStoreBuilder;
 import org.jcvi.jillion.internal.fasta.aa.DefaultProteinFastaDataStore;
 import org.jcvi.jillion.internal.fasta.aa.IndexedProteinFastaFileDataStore;
 import org.jcvi.jillion.internal.fasta.aa.LargeProteinFastaFileDataStore;
@@ -53,7 +56,7 @@ import org.jcvi.jillion.spi.InvalidCharacterHandler;
  *
  */
 public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDataStoreBuilder<AminoAcid, ProteinSequence, ProteinFastaRecord, ProteinSequenceDataStore, ProteinFastaFileDataStore>
- implements Filterable<ProteinFastaRecord, ProteinFastaFileDataStoreBuilder> {
+ implements ResidueFastaFileDataStoreBuilder<AminoAcid, ProteinSequence, ProteinFastaRecord, ProteinSequenceDataStore, ProteinFastaFileDataStore,ProteinFastaFileDataStoreBuilder> {
 
 	/**
 	 * Handler for what to do when we get an invalid character
@@ -136,7 +139,7 @@ public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDat
 	protected ProteinFastaFileDataStore createNewInstance(FastaParser parser, DataStoreProviderHint hint, Predicate<String> filter, 
 			Predicate<ProteinFastaRecord> recordFilter, OptionalLong maxNumberofRecords, BiFunction<String,String, Defline> idConverter)
 			throws IOException {
-		if(parser.isReadOnceOnly()){
+		if(parser.isReadOnceOnly() && !hint.equals(DataStoreProviderHint.ITERATE_ONLY_ONCE)){
 			return DefaultProteinFastaDataStore.create(parser,filter, recordFilter, idConverter, decodingOptions);
 		}
 		switch(hint){
@@ -145,6 +148,7 @@ public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDat
 				return parser.canCreateMemento() ?						
 						IndexedProteinFastaFileDataStore.create(parser,filter, recordFilter, idConverter, decodingOptions)
 					:	DefaultProteinFastaDataStore.create(parser,filter, recordFilter, idConverter, decodingOptions);
+			case ITERATE_ONLY_ONCE:
 			case ITERATION_ONLY: return LargeProteinFastaFileDataStore.create(parser,filter, recordFilter, maxNumberofRecords, idConverter, decodingOptions);
 			default:
 				throw new IllegalArgumentException("unknown provider hint :"+ hint);
@@ -180,6 +184,18 @@ public final class ProteinFastaFileDataStoreBuilder extends AbstractFastaFileDat
 		this.decodingOptions = decodingOptions==null? DecodingOptions.DEFAULT: decodingOptions;
 		return this;
 	}
+
+	@Override
+	public StreamingIterator<ProteinFastaRecord> buildIteratorOnly() throws IOException {
+		return LargeProteinFastaFileDataStore.create(getParser(),getFilter(), getRecordFilter(), getMaxNumberOfRecords()==null? OptionalLong.empty(): OptionalLong.of(getMaxNumberOfRecords()), getIdConverter(), decodingOptions)
+				.iterator();
+	}
+
+	@Override
+	public ThrowingStream<ProteinFastaRecord> buildThrowingStreamOnly() throws IOException {
+		return buildIteratorOnly().toThrowingStream();
+	}
+
 	/**
 	 * 
 	 * {@inheritDoc}

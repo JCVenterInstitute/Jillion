@@ -336,7 +336,24 @@ public class TestProteinSequenceBuilder {
 		assertEquals(3L, sut.getLength());
 		assertEquals("KFT", AminoAcidUtil.asString(sut.build()));
 	}
-	
+	@Test
+	public void trimSameRangeAsLength(){
+		ProteinSequenceBuilder sut = new ProteinSequenceBuilder("IKFTW");
+		sut.trim(Range.of(0,4));
+
+		assertEquals(0, sut.getNumGaps());
+		assertEquals(5L, sut.getLength());
+		assertEquals("IKFTW", AminoAcidUtil.asString(sut.build()));
+	}
+	@Test
+	public void trimLargerRangeThanLength(){
+		ProteinSequenceBuilder sut = new ProteinSequenceBuilder("IKFTW");
+		sut.trim(Range.of(0,5));
+
+		assertEquals(0, sut.getNumGaps());
+		assertEquals(5L, sut.getLength());
+		assertEquals("IKFTW", AminoAcidUtil.asString(sut.build()));
+	}
 	@Test
 	public void trimBeyondEdge(){
 		ProteinSequenceBuilder sut = new ProteinSequenceBuilder("IKFTW");

@@ -115,7 +115,12 @@ import org.junit.runners.Suite.SuiteClasses;
 
 			TestOffsetComplement.class,
 			TestOffsetIntersection.class,
-			TestOffsetContiguousIntersection.class
+			TestOffsetContiguousIntersection.class,
+
+			TestRangeCollectorsInclusive.class,
+			TestRangeCollectorsMerge.class,
+			TestRangeCollectorsToRangeMap.class,
+			TestRangeCollectorsMergeWithDistance.class
     }
     )
 public class AllUtilUnitTests {
