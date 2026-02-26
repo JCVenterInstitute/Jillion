@@ -343,70 +343,7 @@ public enum IupacTranslationTables implements TranslationTable{
 		}
 		return codons;
 	}
-	/*
-	private void _translate(BiFunction<Frame,Consumer<Nucleotide>, Iterator<Set<Triplet>>> tripletSupplier, TranslationOptions options, TranslationVisitor visitor) {
-	//-3 because the apply() method advances the iterator and calls the consumer 
-	SingleThreadAdder currentOffset = new SingleThreadAdder(-1); // start at -1 so the nuc coordinate is the END offset of that codon
-	Consumer<Nucleotide> consumer = n-> currentOffset.increment();
-	
-	Frame frame = options.getFrame();
-     if(frame ==null){
-             throw new NullPointerException("frame can not be null");
-     }
-     if(visitor ==null){
-         throw new NullPointerException("frame can not be null");
-     }
-     //Brian says legacy PFGRC and (BioJava and BioPerl?)
-     //don't correctly handle the 'not first starts'
-     //so if translation table says codon is a start
-     //and we've already seen a start, then make it not the start?
-     long currentStart=frame.getNumberOfBasesSkipped();
-     Iterator<Set<Triplet>> iter = tripletSupplier.apply(frame, consumer);
-     
-     boolean seenStart=false;
-    
-     while(iter.hasNext()){
-    	 	long offset= currentOffset.longValue();
-             Set<Triplet> triplet =iter.next();
-             
-             if(triplet !=null){
-            	 List<Codon> codons =translate(triplet);
-                 Codon codon=null;
-                 if(codons.size()==1) {
-                	 codon= codons.get(0);
-                 }else if(options.isMergeCodons()) {
-                	 //ambiguities
-                	 codon = Codon.merge(codons);
-                 }
-                     if(codon !=null) {
-                    	 //handle single codon
-	                     if(!seenStart && codon.isStart()){
-	                         FoundStartResult result = visitor.foundStart(currentStart, offset, codon);
-	                         if(result ==FoundStartResult.STOP){
-	                             break;
-	                         }
-	                         seenStart = result != FoundStartResult.FIND_ADDITIONAL_STARTS;
-	                     }else if(codon.isStop()){
-	                             FoundStopResult result = visitor.foundStop(currentStart, offset, codon);
-	                             if(result == FoundStopResult.STOP){
-	                                 break;
-	                             }
-	                             
-	                     }else{
-	                             visitor.visitCodon(currentStart, offset, codon);
-	                         
-	                     }
-                     }else {
-                    	 //handle variant codons
-                    	 visitor.visitVariantCodon(currentStart, offset, codons);
-                     }
-             }
-             currentStart=offset+1;
-     }
-     visitor.end();
 
-	}
-	*/
 	@Override
 	public void translate(NucleotideSequence sequence, TranslationOptions options, TranslationVisitor visitor) {
 		if(sequence ==null){

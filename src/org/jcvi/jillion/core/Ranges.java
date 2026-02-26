@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 
 import org.jcvi.jillion.core.util.IntList;
 import org.jcvi.jillion.core.util.Offsets;
+import org.jcvi.jillion.core.util.RangeMap;
 import org.jcvi.jillion.core.util.iter.IteratorUtil;
 import org.jcvi.jillion.internal.core.util.GrowableLongArray;
 /**
@@ -81,6 +82,31 @@ public final class Ranges {
 
         mergeAnyRangesThatCanBeCombined(sortedCopy, maxDistanceBetweenAdjacentRanges);
         return sortedCopy;
+    }
+
+    public static List<Range> subsume(Collection<? extends Rangeable> rangesToMerge){
+
+        List<Range> sortedCopy = rangesToMerge.stream()
+                .map(Rangeable::asRange)
+                .sorted(Range.Comparators.LONGEST_TO_SHORTEST)
+                .collect(Collectors.toList());
+
+        RangeMap<Range> rangeMap = new RangeMap<>();
+        for(Range r : sortedCopy){
+            boolean[] found=  new boolean[1];
+            rangeMap.getAllThatIntersect(RangeMap.IntersectionOptions.superRangeOf(r), (k, v, callback)->{
+                found[0]=true;
+            });
+            if(!found[0]){
+                rangeMap.put(r,r);
+            }
+        }
+
+
+
+        return rangeMap.keys()
+                .sorted(Range.Comparators.ARRIVAL)
+                .collect(Collectors.toList());
     }
     
     /**

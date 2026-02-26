@@ -156,6 +156,11 @@ public class RangeMap<T> {
 		return Objects.hashCode(map);
 	}
 
+	public Stream<Range> keys() {
+		//new list so removing doesn't affect map?
+		return new ArrayList<>(map.keySet()).stream();
+	}
+
 	@FunctionalInterface
 	public interface IntersectionOptions{
 		boolean intersects(Range range, Callback callback);
@@ -181,7 +186,13 @@ public class RangeMap<T> {
 					.collect(RangeCollectors.mergeRanges());
 			return new DefaultMultiIntersectionOptions(abuttingRanges);
 		}
-		
+
+		/**
+		 * Only ranges that the given Range is a subRange of
+		 * will be returned.
+		 * @param range
+		 * @return
+		 */
 		public static IntersectionOptions superRangeOf(Range range) {
 			return (r, callback)-> range.isSubRangeOf(r);
 			

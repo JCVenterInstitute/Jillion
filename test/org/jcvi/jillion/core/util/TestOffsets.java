@@ -155,16 +155,71 @@ public class TestOffsets {
         UniqueOffsets unique = UniqueOffsets.between(sut, other);
 
 
-        assertArrayEquals(new int[]{1,2}, unique.getA().toArray());
-        assertArrayEquals(new int[]{6,7,8,9}, unique.getB().toArray());
+        assertArrayEquals(new int[]{1,2}, unique.getUnique(0).toArray());
+        assertArrayEquals(new int[]{6,7,8,9}, unique.getUnique(1).toArray());
         assertArrayEquals(new int[]{3,4,5}, unique.getCommon().toArray());
+
+        assertArrayEquals(new int[]{1,2}, unique.getUniqueAndShifted(0).toArray());
+        assertArrayEquals(new int[]{3,4,5,6}, unique.getUniqueAndShifted(1).toArray());
 
         UniqueOffsets unique2 = UniqueOffsets.between(other, sut);
 
 
-        assertArrayEquals(new int[]{1,2}, unique2.getB().toArray());
-        assertArrayEquals(new int[]{6,7,8,9}, unique2.getA().toArray());
-        assertArrayEquals(new int[]{3,4,5}, unique.getCommon().toArray());
+        assertArrayEquals(new int[]{1,2}, unique2.getUniques().get(1).toArray());
+        assertArrayEquals(new int[]{6,7,8,9}, unique2.getUniques().get(0).toArray());
+        assertArrayEquals(new int[]{3,4,5}, unique2.getCommon().toArray());
+
+
+        assertArrayEquals(new int[]{1,2}, unique2.getUniqueAndShifted(1).toArray());
+        assertArrayEquals(new int[]{3,4,5,6}, unique2.getUniqueAndShifted(0).toArray());
+
+    }
+
+    @Test
+    public void unique3Values(){
+        Offsets sut = Offsets.fromSortedList(List.of(1,2,3,4,5));
+
+        Offsets other = Offsets.fromSortedList(List.of(3,4,5,6,7,8,9));
+
+        Offsets other2 = Offsets.fromSortedList(List.of(1,4,5,6,7,8,9));
+
+        UniqueOffsets unique = UniqueOffsets.between(sut, other, other2);
+
+
+        assertArrayEquals(new int[]{1,2,3}, unique.getUniques().get(0).toArray());
+        assertArrayEquals(new int[]{3,6,7,8,9}, unique.getUniques().get(1).toArray());
+        assertArrayEquals(new int[]{1,6,7,8,9}, unique.getUniques().get(2).toArray());
+        assertArrayEquals(new int[]{1,2,3}, unique.getUnique(0).toArray());
+        assertArrayEquals(new int[]{3,6,7,8,9}, unique.getUnique(1).toArray());
+        assertArrayEquals(new int[]{1,6,7,8,9}, unique.getUnique(2).toArray());
+
+        assertArrayEquals(new int[]{4,5}, unique.getCommon().toArray());
+
+        assertArrayEquals(new int[]{1,2,3}, unique.getUniqueAndShifted(0).toArray());
+        assertArrayEquals(new int[]{3,4,5,6,7}, unique.getUniqueAndShifted(1).toArray());
+        assertArrayEquals(new int[]{1,4,5,6,7}, unique.getUniqueAndShifted(2).toArray());
+
+        assertEquals(sut, unique.getOriginals().get(0));
+        assertEquals(other, unique.getOriginals().get(1));
+        assertEquals(other2, unique.getOriginals().get(2));
+
+
+
+        UniqueOffsets unique2 = UniqueOffsets.between(other, sut, other2);
+
+
+        assertArrayEquals(new int[]{1,2,3}, unique2.getUniques().get(1).toArray());
+        assertArrayEquals(new int[]{3,6,7,8,9}, unique2.getUniques().get(0).toArray());
+        assertArrayEquals(new int[]{1,6,7,8,9}, unique2.getUniques().get(2).toArray());
+        assertArrayEquals(new int[]{4,5}, unique2.getCommon().toArray());
+
+        UniqueOffsets unique3 = UniqueOffsets.between(other2, sut, other);
+
+
+        assertArrayEquals(new int[]{1,2,3}, unique3.getUniques().get(1).toArray());
+        assertArrayEquals(new int[]{3,6,7,8,9}, unique3.getUniques().get(2).toArray());
+        assertArrayEquals(new int[]{1,6,7,8,9}, unique3.getUniques().get(0).toArray());
+        assertArrayEquals(new int[]{4,5}, unique3.getCommon().toArray());
 
     }
 
@@ -373,6 +428,30 @@ public class TestOffsets {
                 .build());
 
         assertArrayEquals(new int[]{1,3,5, 6,9,12}, sut.stream().toArray());
+    }
+
+    @Test
+    public void addShiftOnlyAsOtherOffset(){
+        Offsets sut = Offsets.fromSortedList(List.of(1,4,7,10));
+
+        sut.add(Offsets.fromSortedArray(new int[]{3,5}), Offsets.AddOptions.builder()
+                .shift(true)
+                .include(false)
+                .build());
+
+        assertArrayEquals(new int[]{1,5,9,12}, sut.stream().toArray());
+    }
+
+    @Test
+    public void addNoShiftDontIncludeShouldNoOpOtherOffset(){
+        Offsets sut = Offsets.fromSortedList(List.of(1,4,7,10));
+
+        sut.add(Offsets.fromSortedArray(new int[]{3,5}), Offsets.AddOptions.builder()
+                .shift(false)
+                .include(false)
+                .build());
+
+        assertArrayEquals(new int[]{1,4,7,10}, sut.stream().toArray());
     }
 
     @Test

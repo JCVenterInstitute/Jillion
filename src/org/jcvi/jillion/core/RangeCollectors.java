@@ -1,6 +1,7 @@
 package org.jcvi.jillion.core;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -8,7 +9,8 @@ import java.util.stream.Collector;
 
 import org.jcvi.jillion.core.util.RangeMap;
 /**
- * {@link java.util.stream.Collectors} that deal with {@link Range} {@link java.util.stream.Stream}s.
+ * {@link java.util.stream.Collectors} that deal with {@link Range}
+ * and {@link Rangeable} {@link java.util.stream.Stream}s.
  * 
  * @since 6.0
  */
@@ -17,12 +19,34 @@ public final class RangeCollectors {
 	private RangeCollectors(){
 		//can not instantiate
 	}
-	
-	public static Collector<Range, ?, List<Range>> mergeRanges(){
-		return Collector.of( ()-> new ArrayList<Range>(),
-				(l, r)-> l.add(r),
+
+	/**
+	 * Subsume the Stream of {@link Rangeable}s.
+	 *
+	 * @return a List of Ranges; will never be null but may be empty.
+	 * @see Ranges#subsume(Collection)
+	 */
+	public static <T extends Rangeable>  Collector<T, ?, List<Range>> subsume(){
+		return Collector.of( ()-> new ArrayList<T>(),
+                ArrayList::add,
 				(a, b) -> {a.addAll(b); return a;},
-				l-> Ranges.merge(l));
+                Ranges::subsume);
+
+	}
+
+	/**
+	 * Merge the Stream of Ranges.
+	 * 
+	 * @return a new List of Ranges; will never be null
+	 * but may be empty.
+	 *
+	 * @see Ranges#merge(Collection)
+	 */
+	public static <T extends Rangeable>  Collector<T, ?, List<Range>> mergeRanges(){
+		return Collector.of( ()-> new ArrayList<T>(),
+                ArrayList::add,
+				(a, b) -> {a.addAll(b); return a;},
+                Ranges::merge);
 				
 	}
 	/**
@@ -31,17 +55,26 @@ public final class RangeCollectors {
      * of the given Ranges collected.
 	 * @return
 	 */
-	public static Collector<Range, ?, Range> inclusiveRange(){
-		return Collector.of( ()-> new ArrayList<Range>(),
-				(l, r)-> l.add(r),
+	public static <T extends Rangeable>  Collector<T, ?, Range> inclusiveRange(){
+		return Collector.of( ()-> new ArrayList<T>(),
+                ArrayList::add,
 				(a, b) -> {a.addAll(b); return a;},
-				l-> Ranges.createInclusiveRange(l));
+                l-> Ranges.createInclusiveRange(l, Rangeable::asRange));
 				
 	}
-	
+	/**
+	 * Merge the Stream of Ranges.
+	 *
+	 * @param maxDistance the max distance between the Ranges to be merged.
+	 *
+	 * @return a new List of Ranges; will never be null
+	 * but may be empty.
+	 *
+	 * @see Ranges#merge(Collection, int)
+	 */
 	public static Collector<Range, ?, List<Range>> mergeRanges(int maxDistance){
 		return Collector.of( ()-> new ArrayList<Range>(),
-				(l, r)-> l.add(r),
+                ArrayList::add,
 				(a, b) -> {a.addAll(b); return a;},
 				l-> Ranges.merge(l, maxDistance ));
 				

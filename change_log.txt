@@ -5,6 +5,29 @@ add new features, break the old API or fix known bugs.  There will
 often be many more source code changes that aren't listed if they don't
 change the behavior in any public API classes.  The order of changes is mostly
 chronological so the most important changes may not always be ordered first.
+================
+Jillion 6.1.4
+================
+
+Bug Fixes
+---------
+1.  Offsets add functions AddOption#shouldInclude is now respected.
+
+API Changes
+-----------
+1. UniqueOffsets now support variable sized input of Offsets to compare instead of just 2.
+   This means to get the unique values for each input the API was changed from:
+      #getA() to #getUniques().get(0)
+      #getB() to #getUniques().get(1)
+      etc
+2. Added UniqueOffsets#getUnique(i) to be shorthand for #getUniques().get(i)
+3. Added UniqueOffsets#getOriginals(i) to get the original input offsets
+4. Added UniqueOffsets#getUniqueAndShifted() which will get the ith Offsets with the common values removed and shifted.
+
+5. Fixed typo in Triplet#hasAmbiguities()
+6. Added RangeMap#keys() method which returns a Stream<Range> of all the Ranges in the RangeMap.
+7. Added Ranges#subsume(List<Range> ranges)
+8. RangeCollectors methods have been altered to accept Rangeable not just Range.
 
 ================
 Jillion 6.1.3

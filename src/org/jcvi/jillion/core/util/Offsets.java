@@ -925,11 +925,28 @@ public class Offsets {
 
     public void add(Offsets offsetsToAdd, AddOptions options){
         PrimitiveIterator.OfInt iter = offsetsToAdd.delegate.reverseIterator();
-        IntConsumer function = options.shouldShift()? this::addAndShift : this::add;
+        IntConsumer function;
+        if(options.shouldInclude()){
+            function = options.shouldShift()? this::addAndShift : this::add;
+        }else{
+            if(!options.shouldShift()){
+                //don't include and don't shift?  what are we here for?
+                return;
+            }
+            function = this::shiftOnly;
+        }
 
         while(iter.hasNext()){
             function.accept(iter.nextInt());
         }
+    }
+
+    private void shiftOnly(int value) {
+        if(contains(value)){
+            return;
+        }
+
+        delegate.replaceIf(i-> i>value, i-> i+1);
     }
 
 

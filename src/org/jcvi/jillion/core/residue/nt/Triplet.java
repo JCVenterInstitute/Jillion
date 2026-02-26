@@ -20,9 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.core.residue.nt;
 
-import java.util.Comparator;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -207,7 +205,7 @@ public final class Triplet implements Comparable<Triplet>{
 	}
 	
 	public Set<Triplet> explode(){
-		if(hasAmiguities()) {
+		if(hasAmbiguities()) {
         	//handle ambiguities
         	Set<Triplet> triplets = new LinkedHashSet<Triplet>();
         	for(Nucleotide f : getFirst().getBasesFor()) {
@@ -302,7 +300,7 @@ public final class Triplet implements Comparable<Triplet>{
 	 * Are any of these bases an ambiguity;
 	 * @since 6.0
 	 */
-	public boolean hasAmiguities() {
+	public boolean hasAmbiguities() {
 		return isAmbiguityCache[first] || isAmbiguityCache[second] || isAmbiguityCache[third];
 		
 	}
