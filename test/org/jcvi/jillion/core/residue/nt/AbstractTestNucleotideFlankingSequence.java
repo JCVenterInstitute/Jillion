@@ -155,6 +155,9 @@ public abstract class AbstractTestNucleotideFlankingSequence {
 		NucleotideSequence sut = create("--ACGT--");
 		assertEquals(2, sut.getNumberOfLeadingGaps());
 		assertEquals(2, sut.getNumberOfTrailingGaps());
+
+		assertEquals(2, sut.getNumberOfGapsUntil(2));
+		assertEquals(1, sut.getNumberOfGapsUntil(0));
 	}
 	@Test
 	public void leadingAndTrailingGapsOneZero(){

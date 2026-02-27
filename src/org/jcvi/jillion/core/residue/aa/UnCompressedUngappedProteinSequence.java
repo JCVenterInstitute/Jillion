@@ -98,7 +98,7 @@ class UnCompressedUngappedProteinSequence implements ProteinSequence{
     }
     @Override
     public int getUngappedOffsetForSafe(int gappedOffset) {
-        return gappedOffset;
+        return (int) Math.max(0, Math.min(getLength()-1, gappedOffset));
     }
 
     @Override

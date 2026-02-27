@@ -5,6 +5,16 @@ add new features, break the old API or fix known bugs.  There will
 often be many more source code changes that aren't listed if they don't
 change the behavior in any public API classes.  The order of changes is mostly
 chronological so the most important changes may not always be ordered first.
+
+================
+Jillion 6.1.5
+================
+
+Bug Fixes
+---------
+1. ResidueSequence#getUngappedOffsetForSafe(int)
+   now correctly handles negative offets; previously only worried about offsets beyond seq length.
+
 ================
 Jillion 6.1.4
 ================

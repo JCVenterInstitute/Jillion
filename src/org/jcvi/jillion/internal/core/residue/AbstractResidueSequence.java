@@ -103,9 +103,9 @@ public abstract class AbstractResidueSequence<R extends Residue<R>, T extends Re
     
     @Override
     public int getUngappedOffsetForSafe(int gappedOffset) {
-    	checkPositiveOffset(gappedOffset);
+
     	long length = getLength();
-        return Math.min((int) length-1, gappedOffset) - getNumberOfGapsUntil(gappedOffset);
+        return Math.max(0, Math.min((int) length-1, gappedOffset) - getNumberOfGapsUntil(gappedOffset));
     }
     /**
     * {@inheritDoc}

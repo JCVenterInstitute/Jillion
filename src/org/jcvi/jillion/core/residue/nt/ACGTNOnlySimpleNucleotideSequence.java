@@ -90,7 +90,7 @@ class ACGTNOnlySimpleNucleotideSequence extends AbstractSimpleNucleotideSequence
 	}
 	@Override
 	public int getUngappedOffsetForSafe(int gappedOffset) {
-		return gappedOffset;
+		return Math.max(0, gappedOffset);
 	}
     
 	@Override

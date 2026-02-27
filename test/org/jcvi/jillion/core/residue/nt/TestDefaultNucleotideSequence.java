@@ -164,6 +164,12 @@ public class TestDefaultNucleotideSequence {
     public void toUngappedRangeSafeEndTooBigShouldNotThrowExceptionAndReturnLastOffset(){
         assertEquals(Range.of(1,15), sut.toUngappedRangeSafe(Range.of(1, 100)));
     }
+
+    @Test
+    public void toUngappedRangeSafeEndTooLittleShouldNotThrowExceptionAndReturnLastOffset(){
+        assertEquals(Range.of(0,15), sut.toUngappedRangeSafe(Range.of(-1, 100)));
+    }
+
     @Test(expected = IndexOutOfBoundsException.class)
     public void toGappedRangeBeginTooBigShouldThrowIndexOutOfBounds(){
         sut.toGappedRange(Range.of(99, 100));

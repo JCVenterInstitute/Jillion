@@ -512,7 +512,7 @@ public class ParsedFastqRecord implements FastqRecord {
 		@Override
 		public int getUngappedOffsetForSafe(int gappedOffset) {
 			// TODO assume no gaps
-			return gappedOffset;
+			return (int) Math.max(0, Math.min(gappedOffset, getLength()-1));
 		}
 		
 		
