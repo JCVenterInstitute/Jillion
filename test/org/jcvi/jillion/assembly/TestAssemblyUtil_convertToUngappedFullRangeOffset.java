@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.SortedMap;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -201,8 +202,13 @@ public class TestAssemblyUtil_convertToUngappedFullRangeOffset extends EasyMockS
 			return delegate.getGappedOffsetFor(ungappedOffset);
 		}
 
+        @Override
+        public OptionalInt getGappedOffsetForSafe(int ungappedOffset) {
+            return delegate.getGappedOffsetForSafe(ungappedOffset);
+        }
 
-		@Override
+
+        @Override
 		public Nucleotide get(long index) {
 			return delegate.get(index);
 		}

@@ -55,9 +55,11 @@ final class ChainedIterator<T> implements Iterator<T>{
     }
     
     private ChainedIterator(Collection<? extends Iterator<? extends T>> iterators){
-        if(iterators.contains(null)){
-            throw new NullPointerException("can not contain null iterator");
-        }
+        iterators.forEach(s->{
+            if(s == null){
+                throw new NullPointerException("can not contain null iterator");
+            }
+        });
         chain = iterators.iterator();
         currentIterator=chain.next();
         

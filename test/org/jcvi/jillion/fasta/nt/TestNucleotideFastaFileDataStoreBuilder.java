@@ -33,6 +33,7 @@ import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.residue.nt.NucleotideSequence;
 import org.jcvi.jillion.fasta.AbstractTestFastaFileDataStoreBuilder;
+import org.jcvi.jillion.fasta.DeflineConverter;
 import org.jcvi.jillion.internal.ResourceHelper;
 
 public class TestNucleotideFastaFileDataStoreBuilder extends AbstractTestFastaFileDataStoreBuilder
@@ -58,6 +59,14 @@ public class TestNucleotideFastaFileDataStoreBuilder extends AbstractTestFastaFi
 	protected NucleotideFastaDataStore createDataStoreFromFile(File fasta, BiFunction<String,String, Defline> idConverter) throws IOException {
 		return new NucleotideFastaFileDataStoreBuilder(fasta)
 				.idConverter(idConverter)
+				.build();
+	}
+
+	@Override
+	protected NucleotideFastaDataStore createDataStoreFromFile(File fasta,DataStoreProviderHint hint, DeflineConverter deflineConverter) throws IOException {
+		return new NucleotideFastaFileDataStoreBuilder(fasta)
+				.idConverter(deflineConverter)
+				.hint(hint)
 				.build();
 	}
 

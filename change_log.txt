@@ -7,6 +7,23 @@ change the behavior in any public API classes.  The order of changes is mostly
 chronological so the most important changes may not always be ordered first.
 
 ================
+Jillion 6.1.6
+================
+
+Bug Fixes
+---------
+1. IteratorUtils methods fixed how it performs null checking so collections that don't support null still work.
+2. Range parsing now correctly handles negative coordinates.
+
+API Changes
+-----------
+1. Added ResidueSequence#getGappedOffsetForSafe(int) which returns
+   an OptionalInt that will be empty instead of throwing an Exception
+
+2. Added ResidueSequence#toGappedRangeSafe(Range) which will return a truncated
+   or even empty range instead of throwing an exception.
+
+================
 Jillion 6.1.5
 ================
 

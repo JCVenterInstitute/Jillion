@@ -34,12 +34,12 @@ import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.Defline;
 import org.jcvi.jillion.core.Sequence;
-import org.jcvi.jillion.core.datastore.DataStore;
-import org.jcvi.jillion.core.datastore.DataStoreException;
-import org.jcvi.jillion.core.datastore.DataStoreFilters;
-import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
+import org.jcvi.jillion.core.datastore.*;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.util.iter.StreamingIterator;
+import org.jcvi.jillion.fasta.aa.ProteinFastaDataStore;
+import org.jcvi.jillion.fasta.aa.ProteinFastaFileDataStoreBuilder;
+import org.jcvi.jillion.fasta.aa.ProteinFastaRecord;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -50,7 +50,10 @@ public abstract class AbstractTestFastaFileDataStoreBuilder<T, S extends Sequenc
 	public AbstractTestFastaFileDataStoreBuilder(ResourceHelper helper, String pathToFasta) throws IOException{
 		fasta = helper.getFile(pathToFasta);
 	}
-	
+
+	protected File getFastaFile(){
+		return fasta;
+	}
 	@Test(expected = NullPointerException.class)
 	public void nullFileShouldThrowNPE() throws IOException{
 		createDataStoreFromFile(null);
@@ -120,8 +123,29 @@ public abstract class AbstractTestFastaFileDataStoreBuilder<T, S extends Sequenc
 		
 		
 	}
-	protected abstract D createDataStoreFromFile(File fasta, BiFunction<String,String, Defline> idConverter) throws IOException;
+	@Test
+	public void idConverter() throws IOException {
+		DeflineConverter converter = DeflineConverters.convertAllSpacesTo("_");
+		for(DataStoreProviderHint hint : DataStoreProviderHint.values()) {
+			try (D unconvertedDatastore = createDataStoreFromFile(fasta);
+				 D convertedDatastore = createDataStoreFromFile(fasta, hint, converter);
 
+				 StreamingIterator<F> iter = unconvertedDatastore.iterator()
+
+			) {
+				while (iter.hasNext()) {
+					F unconverted = iter.next();
+					String convertedId = converter.apply(unconverted.getId(), unconverted.getComment())
+							.getId();
+
+					F converted = convertedDatastore.get(convertedId);
+					assertEquals(unconverted.getSequence(), converted.getSequence());
+				}
+			}
+		}
+	}
+	protected abstract D createDataStoreFromFile(File fasta, BiFunction<String,String, Defline> idConverter) throws IOException;
+	protected abstract D createDataStoreFromFile(File fasta, DataStoreProviderHint hint, DeflineConverter deflineConverter) throws IOException;
 	protected abstract D createDataStoreFromFile(File fasta) throws IOException;
 	protected abstract D createDataStoreFromFile(File fasta, DataStoreProviderHint hint) throws IOException;
 	protected abstract D createDataStoreFromFile(File fasta, Predicate<String> filter) throws IOException;

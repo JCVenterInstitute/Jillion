@@ -30,4 +30,15 @@ public class TestJsonSerializationRange {
         Foo reParsed = objectMapper.readValue(actual, Foo.class);
         assertEquals(sut, reParsed);
     }
+
+    @Test
+    public void emptyRange() throws JsonProcessingException {
+        Foo sut = new Foo();
+        sut.setMyRange(Range.EMPTY_RANGE);
+
+        String actual = objectMapper.writeValueAsString(sut);
+        Foo reParsed = objectMapper.readValue(actual, Foo.class);
+
+        assertEquals(sut, reParsed);
+    }
 }

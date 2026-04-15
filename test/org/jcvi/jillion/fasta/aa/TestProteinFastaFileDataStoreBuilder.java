@@ -33,10 +33,15 @@ import org.jcvi.jillion.core.datastore.DataStoreFilter;
 import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.aa.ProteinSequence;
+import org.jcvi.jillion.core.util.iter.StreamingIterator;
 import org.jcvi.jillion.fasta.AbstractTestFastaFileDataStoreBuilder;
+import org.jcvi.jillion.fasta.DeflineConverter;
+import org.jcvi.jillion.fasta.DeflineConverters;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.internal.fasta.aa.IndexedProteinFastaFileDataStore;
 import org.jcvi.jillion.internal.fasta.aa.LargeProteinFastaFileDataStore;
+import org.junit.Test;
+import static org.junit.Assert.*;
 
 public class TestProteinFastaFileDataStoreBuilder extends AbstractTestFastaFileDataStoreBuilder
 <AminoAcid, ProteinSequence, ProteinFastaRecord, ProteinFastaDataStore>{
@@ -54,7 +59,17 @@ public class TestProteinFastaFileDataStoreBuilder extends AbstractTestFastaFileD
 
 	@Override
 	protected ProteinFastaDataStore createDataStoreFromFile(File fasta, BiFunction<String, String, Defline> idConverter) throws IOException {
-		return new ProteinFastaFileDataStoreBuilder(fasta).build();
+		return new ProteinFastaFileDataStoreBuilder(fasta)
+				.idConverter(idConverter)
+				.build();
+	}
+
+	@Override
+	protected ProteinFastaDataStore createDataStoreFromFile(File fasta, DataStoreProviderHint hint, DeflineConverter deflineConverter) throws IOException {
+		return new ProteinFastaFileDataStoreBuilder(fasta)
+				.idConverter(deflineConverter)
+				.hint(hint)
+				.build();
 	}
 
 	@Override
@@ -119,4 +134,6 @@ public class TestProteinFastaFileDataStoreBuilder extends AbstractTestFastaFileD
 										.filter(filter)
 										.build();
 	}
+
+
 }

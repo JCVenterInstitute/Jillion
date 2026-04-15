@@ -69,9 +69,11 @@ final class ChainedIteratorOfSuppliers<T> implements Iterator<T>, Closeable{
     }
 
     private ChainedIteratorOfSuppliers(Collection<? extends Supplier<? extends Iterator<? extends T>>> suppliers){
-        if(suppliers.contains(null)){
-            throw new NullPointerException("can not contain null iterator");
-        }
+        suppliers.forEach(s->{
+            if(s == null){
+                throw new NullPointerException("can not contain null iterator suppiler");
+            }
+        });
         chain = suppliers.iterator();
         updateCurrentIterator();
         

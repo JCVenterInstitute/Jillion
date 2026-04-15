@@ -390,22 +390,6 @@ public final class SamTransformationService<S extends INucleotideSequence<S, B>,
 		@Override
 		public void visitHeader(SamVisitorCallback callback, SamHeader header) {
 			//lazy load references since 6.0.2
-
-//			for(SamReferenceSequence refSeq : header.getReferenceSequences()){
-//				String id = refSeq.getName();
-//				try {
-//					NucleotideSequence ref = referenceDataStore.get(id);
-//					if(ref ==null){
-//						throw new IllegalStateException("error could not find reference sequence in fasta file with id " + id);
-//					}
-//					gapOffsetMap.put(id,  new SamAlignmentGapInserter(ref));
-//
-//					transformer.referenceOrConsensus(id, ref, callback::haltParsing);
-//				} catch (DataStoreException e) {
-//					throw new IllegalStateException("error getting reference sequence from fasta file", e);
-//				}
-//
-//			}
 		}
 	
 
@@ -449,6 +433,9 @@ public final class SamTransformationService<S extends INucleotideSequence<S, B>,
 							k-> {
                                 try {
 									S gappedReference = referenceDataStore.get(k);
+									if(gappedReference ==null){
+										throw new IllegalStateException("unknown reference "+ k);
+									}
 									transformer.referenceOrConsensus(k, gappedReference, ()->{
 										halt[0]=true;
 										callback.haltParsing();

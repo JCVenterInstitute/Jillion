@@ -34,6 +34,7 @@ import org.jcvi.jillion.core.datastore.DataStoreProviderHint;
 import org.jcvi.jillion.core.qual.PhredQuality;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.fasta.AbstractTestFastaFileDataStoreBuilder;
+import org.jcvi.jillion.fasta.DeflineConverter;
 import org.jcvi.jillion.internal.ResourceHelper;
 import org.jcvi.jillion.internal.fasta.qual.IndexedQualityFastaFileDataStore;
 import org.jcvi.jillion.internal.fasta.qual.LargeQualityFastaFileDataStore;
@@ -56,6 +57,13 @@ public class TestQualityFastaFileDataStoreBuilder extends AbstractTestFastaFileD
 	protected QualityFastaDataStore createDataStoreFromFile(File fasta, BiFunction<String,String, Defline> idConverter) throws IOException {
 		return new QualityFastaFileDataStoreBuilder(fasta)
 				.idConverter(idConverter)
+				.build();
+	}
+	@Override
+	protected QualityFastaDataStore createDataStoreFromFile(File fasta, DataStoreProviderHint hint, DeflineConverter deflineConverter) throws IOException {
+		return new QualityFastaFileDataStoreBuilder(fasta)
+				.idConverter(deflineConverter)
+				.hint(hint)
 				.build();
 	}
 

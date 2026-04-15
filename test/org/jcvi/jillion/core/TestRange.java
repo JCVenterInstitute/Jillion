@@ -53,7 +53,41 @@ public class TestRange{
         assertFalse(range.equals(null));
 
     }
-    
+
+    @Test
+    public void parseNegativeCoordinates(){
+        parseEveryDifferentWay(Range.of(-10, -5),-10, -5);
+        parseEveryDifferentWay(Range.of(-10, 5),-10, 5);
+
+        parseEveryDifferentWay(Range.of(-20, -5),-20, -5);
+    }
+    @Test
+    public void parseEmpty(){
+        parseEveryDifferentWay(Range.of(0, -1),0, -1);
+        parseEveryDifferentWay(Range.of(10, 9),10,9);
+
+        parseEveryDifferentWay(Range.of(-1, -2),-1,-2);
+    }
+
+    private void parseEveryDifferentWay(Range expected, int start, int end){
+        assertEquals(expected, Range.parseRange(start + " .. " + end));
+        assertEquals(expected, Range.parseRange(start + " .." + end));
+        assertEquals(expected, Range.parseRange(start + ".. " + end));
+        assertEquals(expected, Range.parseRange(start + ".." + end));
+
+        assertEquals(expected, Range.parseRange(start + " - " + end));
+        assertEquals(expected, Range.parseRange(start + " -" + end));
+        assertEquals(expected, Range.parseRange(start + "- " + end));
+        assertEquals(expected, Range.parseRange(start + "-" + end));
+
+        assertEquals(expected, Range.parseRange(start + " , " + end));
+        assertEquals(expected, Range.parseRange(start + " ," + end));
+        assertEquals(expected, Range.parseRange(start + ", " + end));
+        assertEquals(expected, Range.parseRange(start + "," + end));
+
+
+    }
+
     @Test
     public void ofSingleWithCoordinateSystem(){
         Range r = Range.of(CoordinateSystem.RESIDUE_BASED, 10);

@@ -20,15 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.trace.fastq;
 
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.OptionalDouble;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -415,9 +407,12 @@ public class ParsedFastqRecord implements FastqRecord {
 			return Ranges.asRanges(bs);
 		}
 
+        @Override
+        public NucleotideSequence getSelf() {
+            return NucleotideSequence.super.getSelf();
+        }
 
-
-		@Override
+        @Override
 		public IntList getGapOffsets() {
 			// TODO for now assume no gaps
 			return ArrayUtil.immutableEmptyIntList();
@@ -478,9 +473,17 @@ public class ParsedFastqRecord implements FastqRecord {
 			return ungappedOffset;
 		}
 
+        @Override
+        public OptionalInt getGappedOffsetForSafe(int ungappedOffset) {
+            //TODO assume no gaps
+            if(ungappedOffset <0 || ungappedOffset >= getLength()){
+                return OptionalInt.empty();
+            }
+            return OptionalInt.of(ungappedOffset);
+        }
 
 
-		@Override
+        @Override
 		public NucleotideSequenceBuilder toBuilder(Range range) {
 			return new NucleotideSequenceBuilder(ntString.substring((int) range.getBegin(), (int) range.getEnd()+1));
 		}

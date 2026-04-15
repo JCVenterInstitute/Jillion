@@ -219,8 +219,25 @@ public interface ResidueSequence<R extends Residue<R>, T extends ResidueSequence
      * gapped offset would extend beyond the sequence length.
      */
     int getGappedOffsetFor(int ungappedOffset);
-    
-   
+
+    /**
+     * Get the corresponding gapped offset into
+     * this sequence for the given
+     * ungapped offset. For example
+     * calling this method passing in a value of {@code 0}
+     * will return the number of leading gaps in this sequence.
+     * @param ungappedOffset the offset into the ungapped coordinate
+     * system of the desired nucleotide.  This value must be
+     * a non-negative value that is less than the sequence ungapped length.
+     * @return the corresponding offset for the equivalent
+     * location in the gapped sequence.
+     * @throws IndexOutOfBoundsException if the ungappedOffset
+     * is negative or if the computed
+     * gapped offset would extend beyond the sequence length.
+     */
+    OptionalInt getGappedOffsetForSafe(int ungappedOffset);
+
+
     /**
      * Get the corresponding ungapped Range (where the start and end values
      * of the range are in ungapped coordinate space) for the given
@@ -283,6 +300,45 @@ public interface ResidueSequence<R extends Residue<R>, T extends ResidueSequence
                 getGappedOffsetFor((int)ungappedRange.getBegin()),
                 getGappedOffsetFor((int)ungappedRange.getEnd())
                 );
+    }
+    /**
+     * Get the corresponding gapped Range (where the start and end values
+     * of the range are in gapped coordinate space) for the given
+     * ungapped {@link Range} without throwing an exception.
+     *
+     * @param ungappedRange the Range of ungapped coordinates;
+     *                      If the beginning or end coordinates the returned Range will
+     *                      truncate to the first/last valid offset, but if
+     *                      both the start and end are invalid, then the
+     *                      returned Range will be Empty..
+     * @return a new Range never null.
+     * @throws NullPointerException if the gappedRange is null.
+     *
+     * @since 6.1.6
+     */
+    default Range toGappedRangeSafe(Range ungappedRange){
+
+        if(ungappedRange ==null){
+            throw new NullPointerException("ungappedRange can not be null");
+        }
+        OptionalInt optBegin = getGappedOffsetForSafe((int)ungappedRange.getBegin());
+        OptionalInt optEnd = getGappedOffsetForSafe((int)ungappedRange.getEnd());
+        if(optBegin.isPresent() && optEnd.isPresent()){
+            //normal
+            return Range.of(optBegin.getAsInt(), optEnd.getAsInt());
+        }
+        //special cases
+        if(optBegin.isEmpty()){
+            if(optEnd.isEmpty()){
+                return Range.EMPTY_RANGE;
+            }
+            //begin doesn't map but the end does... so let's truncate it to 0?
+            return Range.of(0, optEnd.getAsInt());
+        }
+        //if we are here then the begin exists but not the end
+        return Range.of(optBegin.getAsInt(), getLength()-1);
+
+
     }
     /**
      * Is this Sequence only gaps or blank.

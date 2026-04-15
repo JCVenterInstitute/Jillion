@@ -1224,6 +1224,12 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 	public int getGappedOffsetFor(int ungappedOffset) {
 		return nucleotideSequence.getGappedOffsetFor(ungappedOffset);
 	}
+
+	@Override
+	public OptionalInt getGappedOffsetForSafe(int ungappedOffset) {
+		return nucleotideSequence.getGappedOffsetForSafe(ungappedOffset);
+	}
+
 	@Override
 	public Builder toBuilder(Range range) {
 		return new Builder(this, range);
@@ -1262,6 +1268,7 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 		return ret;
 		
 	}
+
 	
 	private void addAllIntersectingVariants(Range gappedSequenceRange, BiConsumer<Integer, Variant> consumer) {
 		gappedSequenceRange.forEachValue(gappedOffset ->{

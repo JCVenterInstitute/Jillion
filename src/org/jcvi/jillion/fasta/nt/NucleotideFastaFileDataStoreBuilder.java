@@ -190,7 +190,7 @@ public final class NucleotideFastaFileDataStoreBuilder extends AbstractFastaFile
 							break;
 				case RANDOM_ACCESS_OPTIMIZE_MEMORY: 
 							delegate = parser.canCreateMemento()?
-										IndexedNucleotideSequenceFastaFileDataStore.create(parser,filter, recordFilter, decodingOptions)
+										IndexedNucleotideSequenceFastaFileDataStore.create(parser,filter, recordFilter, decodingOptions, idConverter)
 										:
 										DefaultNucleotideFastaFileDataStore.create(parser,filter, recordFilter, decodingOptions, idConverter);
 							break;

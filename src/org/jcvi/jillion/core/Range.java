@@ -149,15 +149,15 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
     /**
      * Regular expression in the form (left) .. (right).
      */
-    private static final Pattern DOT_PATTERN = Pattern.compile("(\\d+)\\s*\\.\\.\\s*(\\d+)");
+    private static final Pattern DOT_PATTERN = Pattern.compile("(-?\\d+)\\s*\\.\\.\\s*(-?\\d+)");
     /**
      * Regular expression in the form (left) - (right).
      */
-    private static final Pattern DASH_PATTERN = Pattern.compile("(\\d+)\\s*-\\s*(\\d+)");
+    private static final Pattern DASH_PATTERN = Pattern.compile("(-?\\d+)\\s*-\\s*(-?\\d+)");
     /**
      * Regular expression in the form (left) , (right).
      */
-    private static final Pattern COMMA_PATTERN = Pattern.compile("(\\d+)\\s*,\\s*(\\d+)");
+    private static final Pattern COMMA_PATTERN = Pattern.compile("(-?\\d+)\\s*,\\s*(-?\\d+)");
     /**
      * Cache of previously built ranges.  
      * This cache uses  SoftReferences
@@ -660,7 +660,8 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
      * 
      * @param rangeAsString the range to parse.
      * @param coordinateSystem the {@link CoordinateSystem} the coordinates
-     * in the String to parse are in.
+     * in the String to parse are in. If {@code null} then
+     *                         assume {@link CoordinateSystem#ZERO_BASED}.
      * 
      * @return a {@link Range}; will never be null.
      * 
@@ -668,7 +669,10 @@ public abstract class Range implements Rangeable,Iterable<Long>, Serializable{
      * match the correct format.
      */
 
-    public static Range parseRange(@JsonProperty(value = "range", required = true) String rangeAsString, @JsonProperty(value = "coordinate_system", defaultValue = "ZERO_BASED") CoordinateSystem coordinateSystem){
+    public static Range parseRange(@JsonProperty(value = "range", required = true) String rangeAsString, @JsonProperty(value = "coordinate_system") CoordinateSystem coordinateSystem){
+        if(coordinateSystem==null){
+            coordinateSystem = CoordinateSystem.ZERO_BASED;
+        }
         Matcher dotMatcher =DOT_PATTERN.matcher(rangeAsString);
         if(dotMatcher.find()){
             return convertIntoRange(dotMatcher,coordinateSystem);

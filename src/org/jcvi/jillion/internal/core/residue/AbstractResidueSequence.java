@@ -21,6 +21,7 @@
 package org.jcvi.jillion.internal.core.residue;
 
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.PrimitiveIterator.OfInt;
 
 import org.jcvi.jillion.core.Range;
@@ -121,6 +122,20 @@ public abstract class AbstractResidueSequence<R extends Residue<R>, T extends Re
         			String.format("ungapped offset %d (gapped offset %d extends beyond sequence length %d", ungappedOffset, gappedOffset, length));
         }
         return gappedOffset;
+    }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public OptionalInt getGappedOffsetForSafe(int ungappedOffset) {
+        checkPositiveOffset(ungappedOffset);
+        long length = getLength();
+
+        int gappedOffset= ungappedOffset +computeNumberOfInclusiveGapsInUngappedValidRangeUntil(ungappedOffset);
+        if(gappedOffset> length-1){
+           return OptionalInt.empty();
+        }
+        return OptionalInt.of(gappedOffset);
     }
     
     private void checkPositiveOffset(int offset){

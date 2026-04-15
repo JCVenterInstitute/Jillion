@@ -43,9 +43,12 @@ final class ChainedStreamingIteratorFromSuppliers<T> implements StreamingIterato
         return new ChainedStreamingIteratorFromSuppliers<T>(suppliers);
     }
     public ChainedStreamingIteratorFromSuppliers(Collection<? extends Supplier<? extends StreamingIterator<? extends T>>> suppliers) {
-    	if(suppliers.contains(null)){
-            throw new NullPointerException("can not contain null suppiler");
-        }
+    	suppliers.forEach(s->{
+            if(s == null){
+                throw new NullPointerException("can not contain null suppiler");
+            }
+        });
+
         
         this.iterator = ChainedIteratorOfSuppliers.create(suppliers);
     }

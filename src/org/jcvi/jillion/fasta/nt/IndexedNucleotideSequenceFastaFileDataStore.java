@@ -288,6 +288,26 @@ final class IndexedNucleotideSequenceFastaFileDataStore implements NucleotideFas
 		builder.initialize();
 		return builder.build();
 	}
+	/**
+	 * Creates a new {@link NucleotideFastaDataStore}
+	 * instance using the given fastaFile.
+	 * @param parser the {@link FastaParser} to use to create an {@link NucleotideFastaDataStore};
+	 * can not be null.
+	 * @param filter the {@link Predicate} to use to filter the records from the fasta file.
+	 * @param decodingOptions the {@link DecodingOptions} for how to decode Nucleotides.
+	 * @return a new instance of {@link NucleotideFastaDataStore};
+	 * never null.
+	 * @throws IOException if there is a problem parsing the fasta data.
+	 * @throws NullPointerException if either parameter is null.
+	 */
+	public static NucleotideFastaFileDataStore create(FastaParser parser, Predicate<String> filter,
+													  Predicate<NucleotideFastaRecord> recordFilter,
+													  DecodingOptions decodingOptions,
+													  BiFunction<String,String, Defline> idConverter) throws IOException{
+		BuilderVisitor builder = createBuilder(parser, filter, recordFilter, decodingOptions, idConverter);
+		builder.initialize();
+		return builder.build();
+	}
 	
 
 	/**

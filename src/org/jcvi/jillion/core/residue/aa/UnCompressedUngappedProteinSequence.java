@@ -10,10 +10,7 @@ import org.jcvi.jillion.internal.core.util.MemoizedSupplier;
 
 import java.io.ObjectInputStream;
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.function.Supplier;
 
 /**
@@ -104,6 +101,14 @@ class UnCompressedUngappedProteinSequence implements ProteinSequence{
     @Override
     public int getGappedOffsetFor(int ungappedOffset) {
         return ungappedOffset;
+    }
+
+    @Override
+    public OptionalInt getGappedOffsetForSafe(int ungappedOffset) {
+       if(ungappedOffset <0 || ungappedOffset >= getLength()){
+           return OptionalInt.empty();
+       }
+       return OptionalInt.of(ungappedOffset);
     }
 
     @Override
