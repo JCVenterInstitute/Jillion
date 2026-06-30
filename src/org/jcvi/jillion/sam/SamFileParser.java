@@ -71,9 +71,7 @@ final class SamFileParser extends AbstractSamFileParser{
 		if(samFile ==null){
 			throw new NullPointerException("sam file can not be null");
 		}
-		if(!"sam".equals(FileUtil.getExtension(samFile))){
-			throw new IllegalArgumentException("must be .sam file" + samFile.getAbsolutePath());
-		}
+		SamUtil.assertHasSamFileExtension(samFile);
 		if(!samFile.exists()){
 			throw new FileNotFoundException(samFile.getAbsolutePath());
 		}
@@ -97,7 +95,6 @@ final class SamFileParser extends AbstractSamFileParser{
 	               throws IOException {
 	               Predicate<SamRecord> predicate;
 	           if(options.getReferenceName().isPresent()){
-//	               verifyReferenceInHeader(options.getReferenceName().get());
 	        	   if(options.getReferenceRanges().isPresent()){
 	                   predicate = SamUtil.alignsToReference(options.getReferenceName().get(), options.getReferenceRanges().get());
 	               }else{

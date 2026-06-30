@@ -6,6 +6,20 @@ often be many more source code changes that aren't listed if they don't
 change the behavior in any public API classes.  The order of changes is mostly
 chronological so the most important changes may not always be ordered first.
 
+
+================
+Jillion 6.1.7
+================
+Bug Fixes
+---------
+1. Improved parsing of paired end SAM encoded files especially when reading records
+where one mate paired and the other didn't. Depending on the assembler used some fields might have
+been set in weird ways so Jillion has been made more flexible in parsing those kinds of records. Previously would throw an error.
+API Changes
+-----------
+1. Sam parser and SamFactory now accept files named with compression extensions after the ".sam".
+So you can now parse a file name "foo.sam.gz" for example.
+
 ================
 Jillion 6.1.6
 ================

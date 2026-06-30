@@ -20,6 +20,7 @@
  ******************************************************************************/
 package org.jcvi.jillion.internal.sam;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -40,6 +41,7 @@ import java.util.function.Predicate;
 
 import org.jcvi.jillion.core.Range;
 import org.jcvi.jillion.core.Ranges;
+import org.jcvi.jillion.core.io.FileUtil;
 import org.jcvi.jillion.core.io.IOUtil;
 import org.jcvi.jillion.core.qual.QualitySequence;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
@@ -227,8 +229,28 @@ public final class SamUtil {
 	private SamUtil(){
 		//can not instantiate
 	}
+
+	/**
+	 * Asserts that the given file name either ends in {@code .sam}
+	 * or {@code .sam.$compressedExtension} and if not
+	 * throw an IllegalArgumentException.
+	 * @param samFile the file to check the name of; can not be null
+	 *                but doesn't have to exist.
+	 * @throws IllegalArgumentException if samFile doesn't match the pattern.
+	 */
+	public static void assertHasSamFileExtension(File samFile){
+		String extension = FileUtil.getExtension(samFile);
+		if(!"sam".equalsIgnoreCase(extension)){
+			//check next level
+			String nextLevel = samFile.getName().replaceAll("\\."+extension+"$", "");
+			extension = FileUtil.getExtension(nextLevel);
+			if(!"sam".equalsIgnoreCase(extension)) {
+				throw new IllegalArgumentException("must be .sam or .sam.xz, .sam.gzip etc file" + samFile.getAbsolutePath());
+			}
+		}
+	}
 	
-	public static final byte[] getBamMagicNumber(){
+	public static byte[] getBamMagicNumber(){
 		return Arrays.copyOf(BAM_MAGIC_NUMBER, 4);
 	}
 	public static boolean matchesBamMagicNumber(byte[] b){
@@ -482,20 +504,14 @@ public final class SamUtil {
 		buf.order(ByteOrder.LITTLE_ENDIAN);
 		//skip first 4 bytes so we can write the length of record last
 		buf.position(4);
-		buf.putInt(refIndex); //header.getReferenceIndexFor(referenceName));
+		buf.putInt(refIndex);
 		int startOffset = record.getStartPosition() -1;
 		buf.putInt(startOffset);
 		long bin;
 		final Cigar cigar;
 		if(record.mapped() && startOffset>=0){
 			cigar = record.getCigar();
-			//binMapNameLength =computeBinFor(startOffset, startOffset + cigar.getPaddedReadLength(ClipType.SOFT_CLIPPED) -1);
 			int refAlignLength = cigar.getNumberOfReferenceBasesAligned();
-			/*
-			 * int readStartOffset = record.getStartPosition() -1;
-			int readLength = record.getCigar().getNumberOfReferenceBasesAligned();
-			
-			 */
 			bin =computeBinFor(startOffset, startOffset + refAlignLength);
 		}else{
 			bin =4680;
@@ -565,9 +581,6 @@ public final class SamUtil {
 		//write all but last byte which 
 		//will use all bits
 		for(int i=0; i<data.length -1; i++){
-//			int value = BAM_ENCODED_BASES_TO_ORDINAL[iter.next().ordinal()] <<4;
-//			value |= BAM_ENCODED_BASES_TO_ORDINAL[iter.next().ordinal()];
-//			data[i] = (byte)value;	
 		        data[i] = PAIR_OF_BASES_TO_BAM_ENCODE[iter.next().ordinal()][iter.next().ordinal()];
 		}
 		//last byte will def use higher order bits
@@ -727,7 +740,10 @@ public final class SamUtil {
 	
 	public static Predicate<SamRecord> alignsToReference(String referenceName){
 		Objects.requireNonNull(referenceName, "reference name can not be null");
-		return (record) -> referenceName.equals(record.getReferenceName());
+		//Jillion 6.1.7
+		//can't just check reference name
+		//some assemblers will set the reference name on an unmapped read if it's mate aligned
+		return (record) -> record.mapped() && referenceName.equals(record.getReferenceName());
 	}
 	
 	public static Predicate<SamRecord> alignsToReference(String referenceName, Range alignmentRegionOfInterest){
@@ -738,8 +754,13 @@ public final class SamUtil {
 		
 		return (record) -> {
 			if(referenceName.equals(record.getReferenceName())){
-				
-					return alignmentRegionOfInterest.intersects(record.getAlignmentRange());
+				//Jillion 6.1.7
+				//can't just check reference name
+				//some assemblers will set the reference name on an unmapped read if it's mate aligned
+				//unmapped records will return a null Alignment range
+
+				Range alignmentRange = record.getAlignmentRange();
+				return alignmentRange != null && alignmentRegionOfInterest.intersects(alignmentRange);
 			}
 			return false;
 			
@@ -757,8 +778,13 @@ public final class SamUtil {
 		List<Range> mergedRangesOfInterest = Ranges.merge(alignmentRegionsOfInterest);
 		return (record) -> {
 			if(referenceName.equals(record.getReferenceName())){
-				
-					return Ranges.intersects(mergedRangesOfInterest, record.getAlignmentRange());
+				//Jillion 6.1.7
+				//can't just check reference name
+				//some assemblers will set the reference name on an unmapped read if it's mate aligned
+				//unmapped records will return a null Alignment range
+
+				Range alignmentRange = record.getAlignmentRange();
+				return alignmentRange !=null && Ranges.intersects(mergedRangesOfInterest, alignmentRange);
 			}
 			return false;
 			

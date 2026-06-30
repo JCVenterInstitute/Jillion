@@ -240,7 +240,12 @@ public final class SamTransformationService<S extends INucleotideSequence<S, B>,
 		NucleotideFastaDataStore ungappedReferenceDataStore = new NucleotideFastaFileDataStoreBuilder(referenceFasta)
 																	.build();
 		this.filter = filter==null? null : SamRecordFilter.wrap(filter);
-		referenceDataStore = (DataStore<S>) SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(parser, ungappedReferenceDataStore, this.filter ,ungappedReferenceRanges);
+		DataStore<NucleotideSequence> gappedReferencesDataStore = SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(parser, ungappedReferenceDataStore, this.filter, ungappedReferenceRanges);
+		if(gappedReferencesDataStore.isEmpty()){
+			referenceDataStore = (DataStore<S>)  ungappedReferenceDataStore.asSequenceDataStore();
+		}else {
+			referenceDataStore = (DataStore<S>) gappedReferencesDataStore;
+		}
 	}
 	/**
 	 * Create a new {@link SamTransformationService} using
@@ -266,7 +271,13 @@ public final class SamTransformationService<S extends INucleotideSequence<S, B>,
 		if(filter!=null) {
 			filter.ungappedReferenceDataStore(ungappedReferenceDataStore.asSequenceDataStore());
 		}
-		referenceDataStore = (DataStore<S>) SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(parser, ungappedReferenceDataStore, filter);
+		DataStore<NucleotideSequence> gappedReferencesDataStore = SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(parser, ungappedReferenceDataStore, filter);
+
+		if(gappedReferencesDataStore.isEmpty()){
+			referenceDataStore = (DataStore<S>)  ungappedReferenceDataStore.asSequenceDataStore();
+		}else {
+			referenceDataStore = (DataStore<S>) gappedReferencesDataStore;
+		}
 	}
 	/**
 	 * Create a new {@link SamTransformationService} using
@@ -291,7 +302,14 @@ public final class SamTransformationService<S extends INucleotideSequence<S, B>,
 		if(filter!=null) {
 			filter.ungappedReferenceDataStore(ungappedReferenceDataStore.asSequenceDataStore());
 		}
-		referenceDataStore = (DataStore<S>) SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(parser, ungappedReferenceDataStore, filter, ungappedReferenceRanges);
+		DataStore<NucleotideSequence> gappedReferencesDataStore =  SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(parser, ungappedReferenceDataStore, filter, ungappedReferenceRanges);
+
+
+		if(gappedReferencesDataStore.isEmpty()){
+			referenceDataStore = (DataStore<S>)  ungappedReferenceDataStore.asSequenceDataStore();
+		}else {
+			referenceDataStore = (DataStore<S>) gappedReferencesDataStore;
+		}
 	}
 	private SamTransformationService(SamParser parser, NucleotideFastaDataStore referenceFastaDatastore,
 									SamRecordFilter filter,  Map<String, List<Range>> ungappedReferenceRanges) throws IOException {
@@ -307,9 +325,15 @@ public final class SamTransformationService<S extends INucleotideSequence<S, B>,
 		if(filter!=null) {
 			filter.ungappedReferenceDataStore(ungappedReferenceDataStore.asSequenceDataStore());
 		}
-		referenceDataStore = (DataStore<S>) SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(parser, ungappedReferenceDataStore,
+		DataStore<NucleotideSequence> gappedReferencesDataStore = SamGappedReferenceBuilderVisitor.createGappedReferencesFrom(parser, ungappedReferenceDataStore,
 				filter, ungappedReferenceRanges,
 				validateReferences);
+
+		if(gappedReferencesDataStore.isEmpty()){
+			referenceDataStore = (DataStore<S>)  ungappedReferenceDataStore.asSequenceDataStore();
+		}else {
+			referenceDataStore = (DataStore<S>) gappedReferencesDataStore;
+		}
 	}
 	public SamTransformationService(SamParser parser, DataStore<S> referenceFastaDatastore,
 																													SamRecordFilter filter, Map<String, List<Range>> ungappedReferenceRanges,
@@ -337,6 +361,9 @@ public final class SamTransformationService<S extends INucleotideSequence<S, B>,
 		if(transformer ==null){
 			throw new NullPointerException("transformer can not be null");
 		}
+		if(referenceDataStore.isEmpty()){
+			return;
+		}
 		try {
 			SamTransformerVisitor visitor = new SamTransformerVisitor(referenceDataStore, transformer);
 			parser.parse(SamParserOptions.builder().filter(filter).build(), visitor);
@@ -350,7 +377,9 @@ public final class SamTransformationService<S extends INucleotideSequence<S, B>,
 		Objects.requireNonNull(referenceId);
 		Objects.requireNonNull(range);
 		Objects.requireNonNull(transformer);
-		
+		if(referenceDataStore.isEmpty()){
+			return;
+		}
 		if(!referenceDataStore.contains(referenceId)) {
 			throw new IllegalArgumentException(referenceId+ " does not exist");
 		}
@@ -363,7 +392,9 @@ public final class SamTransformationService<S extends INucleotideSequence<S, B>,
 		Objects.requireNonNull(ranges);
 		Objects.requireNonNull(transformer);
 		ranges.forEach(Objects::requireNonNull);
-		
+		if(referenceDataStore.isEmpty()){
+			return;
+		}
 		if(!referenceDataStore.contains(referenceId)) {
 			throw new IllegalArgumentException(referenceId+ " does not exist");
 		}
@@ -377,19 +408,39 @@ public final class SamTransformationService<S extends INucleotideSequence<S, B>,
 		private final AssemblyTransformer transformer;
 		private final DataStore<S> referenceDataStore;
 		private final Map<String,SamAlignmentGapInserter> gapOffsetMap;
-		
+		private final boolean lazyLoadReferences;
 
 		VirtualFileOffset lowestSeen , highestSeen;
 		public SamTransformerVisitor(DataStore<S> referenceDataStore, AssemblyTransformer transformer) throws DataStoreException {
+			//lazy load references since 6.0.2
+			this(referenceDataStore, transformer, true);
+		}
+		public SamTransformerVisitor(DataStore<S> referenceDataStore, AssemblyTransformer transformer, boolean lazyLoadReferences) throws DataStoreException {
 			this.referenceDataStore = referenceDataStore;
 			this.transformer = transformer;
-			gapOffsetMap = new HashMap<>(MapUtil.computeMinHashMapSizeWithoutRehashing(referenceDataStore.getNumberOfRecords()));
-			
+			this.gapOffsetMap = new HashMap<>(MapUtil.computeMinHashMapSizeWithoutRehashing(referenceDataStore.getNumberOfRecords()));
+			this.lazyLoadReferences=lazyLoadReferences;
 		}
 
 		@Override
 		public void visitHeader(SamVisitorCallback callback, SamHeader header) {
-			//lazy load references since 6.0.2
+			if(!lazyLoadReferences){
+				for(SamReferenceSequence refSeq : header.getReferenceSequences()){
+					String id = refSeq.getName();
+					try {
+						S ref = referenceDataStore.get(id);
+						if(ref ==null){
+							throw new IllegalStateException("error could not find reference sequence in fasta file with id " + id);
+						}
+						gapOffsetMap.put(id,  new SamAlignmentGapInserter(ref));
+
+						transformer.referenceOrConsensus(id, ref, callback::haltParsing);
+					} catch (DataStoreException e) {
+						throw new IllegalStateException("error getting reference sequence from fasta file", e);
+					}
+
+				}
+			}
 		}
 	
 

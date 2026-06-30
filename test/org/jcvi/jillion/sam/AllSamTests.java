@@ -57,7 +57,9 @@ import org.junit.runners.Suite.SuiteClasses;
     	
     	TestBamDataStore.class,
     	TestQuerySortedSamDataStore.class,
-    	SamRecordFlagsTest.class
+    	SamRecordFlagsTest.class,
+		TestPairedSam.class,
+		TestSamNameExtension.class
     }
     )
 public class AllSamTests {

@@ -25,6 +25,7 @@ import java.io.IOException;
 
 import org.jcvi.jillion.core.io.FileUtil;
 import org.jcvi.jillion.core.io.IOUtil;
+import org.jcvi.jillion.internal.sam.SamUtil;
 import org.jcvi.jillion.sam.attribute.ReservedAttributeValidator;
 import org.jcvi.jillion.sam.attribute.SamAttributeValidator;
 
@@ -100,7 +101,7 @@ public final class SamParserFactory {
 	 * </p>
 	 * @param f the SAM or BAM file to be parsed;
 	 * can not be null, must exist and 
-	 * the file must end in either ".sam"
+	 * the file must end in either ".sam", ".sam.gz", "sam.xz" etc
 	 * or ".bam" (ignoring case).
 	 * @param validator the {@link SamAttributeValidator}
 	 * to use to validate the {@link SamRecord}s being parsed;
@@ -120,15 +121,13 @@ public final class SamParserFactory {
 			throw new NullPointerException("validator can not be null");
 		}
 		IOUtil.verifyIsReadable(f);
-		
+
 		String extension = FileUtil.getExtension(f);
-		if("sam".equalsIgnoreCase(extension)){
-			return new SamFileParser(f,validator);
-		}
 		if("bam".equalsIgnoreCase(extension)){
 			return createFromBamFile(f, Parameters.builder().attributeValidator(validator).build());			
 		}
-		throw new IllegalArgumentException("unknown file format " + f.getName());
+		SamUtil.assertHasSamFileExtension(f);
+		return new SamFileParser(f,validator);
 	}
 	
 	/**
