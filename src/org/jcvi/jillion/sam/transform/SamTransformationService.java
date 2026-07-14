@@ -535,10 +535,11 @@ public final class SamTransformationService<S extends INucleotideSequence<S, B>,
 							dir, 
 							insertedResult.getGappedSequence().build(), 
 							
-							new ReadInfo(validRange, rawLength), record);
+							new ReadInfo(validRange, rawLength), record,
+							callback::haltParsing);
 					
 				}else{
-					transformer.notAligned(record.getQueryName(), record.getSequence(), record.getQualities(), null, null, record);
+					transformer.notAligned(record.getQueryName(), record.getSequence(), record.getQualities(), null, null, record, callback::haltParsing);
 					
 				}
 			}
@@ -547,12 +548,14 @@ public final class SamTransformationService<S extends INucleotideSequence<S, B>,
 
 		@Override
 		public void visitEnd() {
-			transformer.endAssembly();			
+			transformer.endAssembly(()->{
+				//nothing to do; we're at end of file
+			});
 		}
 		
 		@Override
 		public void halted() {
-			transformer.endAssembly();		
+			visitEnd();
 		}
 
 	

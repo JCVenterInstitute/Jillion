@@ -23,6 +23,7 @@ package org.jcvi.jillion.align;
 import java.util.Arrays;
 import java.util.List;
 
+import org.jcvi.jillion.core.residue.aa.AminoAcid;
 import org.jcvi.jillion.core.residue.nt.Nucleotide;
 import org.jcvi.jillion.core.util.Builder;
 
@@ -37,6 +38,19 @@ public final class NucleotideSubstitutionMatrixBuilder  implements Builder<Nucle
 		
 		
 		private final float[][] matrix;
+
+	public NucleotideSubstitutionMatrixBuilder(NucleotideSubstitutionMatrix matrix){
+		Nucleotide[] values = Nucleotide.values();
+		int size = values.length;
+
+		this.matrix = new float[size][size];
+		for(int i=0; i<size; i++){
+			Nucleotide iValue = values[i];
+			for(int j=0; j<size; j++){
+				this.matrix[i][j] = matrix.getValue(iValue, values[j]);
+			}
+		}
+	}
 		/**
 		 * Create a new Builder instance where the matrix
 		 * is initialized so all substitution scores default 

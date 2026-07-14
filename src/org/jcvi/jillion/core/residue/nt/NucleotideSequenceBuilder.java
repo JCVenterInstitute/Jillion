@@ -142,6 +142,11 @@ public final class NucleotideSequenceBuilder implements INucleotideSequenceBuild
     }
 
     @Override
+    public List<Range> getRangesOfUnknowns() {
+        return Ranges.asRanges(codecDecider.nOffsets.toArray());
+    }
+
+    @Override
 	public NucleotideSequenceBuilder clear() {		
     	data.clear();
 		codecDecider.clear();

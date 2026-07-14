@@ -55,6 +55,40 @@ public interface AssemblyTransformer {
 	 * The end of the assembly has been reached.
 	 */
 	void endAssembly();
+
+	/**
+	 * The end of the assembly has been reached.
+	 * @param callback the {@link AssemblyTransformerCallback}
+	 * @since 6.1.7
+	 */
+	default void endAssembly(AssemblyTransformerCallback callback){
+		endAssembly();
+	}
+
+	/**
+	 * This read did not align to any reference or
+	 * contig consensus.
+	 * @param id the read id.
+	 * @param nucleotideSequence the {@link NucleotideSequence};
+	 * can not be null.
+	 * @param qualitySequence the {@link QualitySequence} for this
+	 * read; may be {@code null} if not known.
+	 * @param positions the {@link PositionSequence} for this
+	 * read; may be {@code null} if not known or if there are no
+	 * positions (for example if this read is not sanger).
+	 * @param uri the {@link URI} for the location of the file
+	 * that contains this read; may be {@code null} if not known.
+	 * @param readObject the input object of the read.  Usually this shouldn't be used,
+	 * however sometimes if you may need to know additional property information from the original object
+	 * and if you know the type you can downcast this object to get it.
+	 *
+	 * @param callback the callback
+	 * @since 6.1.7
+	 */
+	default void notAligned(String id, NucleotideSequence nucleotideSequence,
+					QualitySequence qualitySequence, PositionSequence positions, URI uri, Object readObject, AssemblyTransformerCallback callback){
+		notAligned( id, nucleotideSequence, qualitySequence, positions, uri, readObject);
+	}
 	/**
 	 * This read did not align to any reference or 
 	 * contig consensus.
@@ -74,6 +108,8 @@ public interface AssemblyTransformer {
 	 */
 	void notAligned(String id, NucleotideSequence nucleotideSequence,
 			QualitySequence qualitySequence, PositionSequence positions, URI uri, Object readObject);
+
+
 	/**
 	 * This read aligned to a particular reference at the given location.
 	 * @param readId the read id.
@@ -87,7 +123,7 @@ public interface AssemblyTransformer {
 	 * @param sourceFileUri the {@link URI} for the location of the file
 	 * that contains this read; may be {@code null} if not known.
 	 * @param referenceId the reference id this read aligned to.  This id
-	 * must be mentioned previously by a call to {@link #referenceOrConsensus(String, NucleotideSequence)}.
+	 * must be mentioned previously by a call to {@link #referenceOrConsensus(String, INucleotideSequence, AssemblyTransformerCallback)} (String, NucleotideSequence, callback)}.
 	 * @param gappedStartOffset the gapped start offset (0-based)
 	 * of the read into the gapped reference or consensus sequence.
 	 * @param direction the read direction.
@@ -105,6 +141,43 @@ public interface AssemblyTransformer {
 			Direction direction,
 			NucleotideSequence gappedSequence,
 			ReadInfo readInfo, Object readObject);
+
+	/**
+	 * This read aligned to a particular reference at the given location.
+	 * @param readId the read id.
+	 * @param nucleotideSequence the {@link NucleotideSequence};
+	 * can not be null.
+	 * @param qualitySequence the {@link QualitySequence} for this
+	 * read; may be {@code null} if not known.
+	 * @param positions the {@link PositionSequence} for this
+	 * read; may be {@code null} if not known or if there are no
+	 * positions (for example if this read is not sanger).
+	 * @param sourceFileUri the {@link URI} for the location of the file
+	 * that contains this read; may be {@code null} if not known.
+	 * @param referenceId the reference id this read aligned to.  This id
+	 * must be mentioned previously by a call to {@link #referenceOrConsensus(String, INucleotideSequence, AssemblyTransformerCallback)} (String, NucleotideSequence, callback)}.
+	 * @param gappedStartOffset the gapped start offset (0-based)
+	 * of the read into the gapped reference or consensus sequence.
+	 * @param direction the read direction.
+	 * @param gappedSequence the gapped sequence of this read
+	 * to align to the reference/consensus
+	 * @param readInfo the {@link ReadInfo} for this read.
+	 * @param readObject the input object of the read.  Usually this shouldn't be used,
+	 * however sometimes if you may need to know additional property information from the original object
+	 * and if you know the type you can downcast this object to get it.
+	 *
+	 * @param callback the {@link AssemblyTransformerCallback}
+	 * @since 6.1.7
+	 */
+	default void aligned(String readId, NucleotideSequence nucleotideSequence,
+				 QualitySequence qualitySequence, PositionSequence positions,
+				 URI sourceFileUri, String referenceId, long gappedStartOffset,
+				 Direction direction,
+				 NucleotideSequence gappedSequence,
+				 ReadInfo readInfo, Object readObject, AssemblyTransformerCallback callback){
+		aligned(readId, nucleotideSequence, qualitySequence, positions, sourceFileUri, referenceId, gappedStartOffset,
+				direction, gappedSequence, readInfo, readObject);
+	}
 	/**
 	 * The command that was run to generate this assembly.
 	 * This method will only be called if the command is known.

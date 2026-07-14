@@ -54,6 +54,7 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 	public static final Offsets.AddOptions AMB_ADD_OPTIONS = Offsets.AddOptions.builder()
 			.include(true).build();
 
+	private static final byte X_VALUE = AminoAcid.Unknown_Amino_Acid.getOrdinalAsByte();
 	static {
 		AMBIGUOUS_AMINO_ACIDS = new GrowableByteArray();
 		for(int i=0; i< AMINO_ACID_VALUES.length; i++) {
@@ -121,6 +122,16 @@ public final class ProteinSequenceBuilder implements ResidueSequenceBuilder<Amin
 		return replace(range, gaps);
 	}
 
+	@Override
+	public List<Range> getRangesOfUnknowns() {
+		GrowableIntArray xs = new GrowableIntArray();
+		ambiguityOffsets.forEach(i->{
+			if(builder.get(i)==X_VALUE){
+				xs.append(i);
+			}
+		});
+		return xs.asRanges();
+	}
 	/**
 	 * Creates a new ProteinSequenceBuilder instance
 	 * which currently contains no amino acids.

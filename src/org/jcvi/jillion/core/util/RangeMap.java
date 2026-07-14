@@ -164,22 +164,25 @@ public class RangeMap<T> {
 	@FunctionalInterface
 	public interface IntersectionOptions{
 		boolean intersects(Range range, Callback callback);
-		
-		public static IntersectionOptions intersect(Range range) {
+
+		static IntersectionOptions intersect(Rangeable rangeable) {
+			return intersect(rangeable.asRange());
+		}
+		static IntersectionOptions intersect(Range range) {
 			return new DefaultIntersectionOptions(Objects.requireNonNull(range));
 		}
-		public static IntersectionOptions intersect(Collection<Range> ranges) {
+		static IntersectionOptions intersect(Collection<Range> ranges) {
 			return new DefaultMultiIntersectionOptions(Objects.requireNonNull(ranges));
 		}
-		public static IntersectionOptions intersectEdgesAtMostOnceEach(Range range, int wiggleroomAtEdges) {
+		static IntersectionOptions intersectEdgesAtMostOnceEach(Range range, int wiggleroomAtEdges) {
 			return new OnlyIntersectEdgesAtMostOnceEach(Range.of(range.getBegin(), range.getBegin()+wiggleroomAtEdges), 
 														Range.of(range.getEnd()-wiggleroomAtEdges, range.getEnd()));
 		}
-		public static IntersectionOptions abuts(Range range) {
+		static IntersectionOptions abuts(Range range) {
 			return new OnlyIntersectEdgesAtMostOnceEach(Range.of(range.getBegin()-1, range.getBegin()), 
 														Range.of(range.getEnd(), range.getEnd()+1));
 		}
-		public static IntersectionOptions abuts(Collection<Range> ranges) {
+		static IntersectionOptions abuts(Collection<Range> ranges) {
 			List<Range> abuttingRanges = ranges.stream()
 					.flatMap(range -> Stream.of(Range.of(range.getBegin()-1, range.getBegin()), 
 							Range.of(range.getEnd(), range.getEnd()+1)))

@@ -588,6 +588,12 @@ public class VariantNucleotideSequence implements INucleotideSequence<VariantNuc
 			this.nucleotideSequence.append(n);
 			return this;
 		}
+
+		@Override
+		public List<Range> getRangesOfUnknowns() {
+			return nucleotideSequence.getRangesOfUnknowns();
+		}
+
 		@Override
 		public IntStream gaps() {
 			return this.nucleotideSequence.gaps();

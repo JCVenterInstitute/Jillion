@@ -119,10 +119,15 @@ public class ConsedTransformationService implements AssemblyTransformationServic
 										if(halt[0]) {
 											return null;
 										}
+										AssemblyTransformer.AssemblyTransformerCallback transformerCallback = ()->{
+											callback.haltParsing();
+											halt();
+										};
 										return new AceContigReadVisitor() {
 											NucleotideSequenceBuilder fullLengthReadBuilder = new NucleotideSequenceBuilder();
 											Range gappedValidRange = null;
-											
+
+
 											
 											@Override
 											public void visitTraceDescriptionLine(String traceName, String phdName,
@@ -177,7 +182,7 @@ public class ConsedTransformationService implements AssemblyTransformationServic
 														readStarts.get(readId), readDirs.get(readId), 
 														gappedValidRangeSequence, 
 														new ReadInfo(AssemblyUtil.toUngappedRange(gappedFullLengthSequence, gappedValidRange),
-																(int)ungappedFullLengthSequence.getLength()), null);
+																(int)ungappedFullLengthSequence.getLength()), null, transformerCallback);
 												
 											}
 											
@@ -240,7 +245,9 @@ public class ConsedTransformationService implements AssemblyTransformationServic
 
 							@Override
 							public void visitEnd() {
-								transformer.endAssembly();
+								transformer.endAssembly(()->{
+									//nothing to do the end of file reached
+								});
 							}
 							
 						});

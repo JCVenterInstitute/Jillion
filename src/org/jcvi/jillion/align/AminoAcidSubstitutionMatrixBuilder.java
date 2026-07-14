@@ -38,6 +38,19 @@ public final class AminoAcidSubstitutionMatrixBuilder  implements Builder<AminoA
 		
 		
 		private final float[][] matrix;
+
+	public AminoAcidSubstitutionMatrixBuilder(AminoAcidSubstitutionMatrix matrix){
+		AminoAcid[] values = AminoAcid.values();
+		int size = values.length;
+
+		this.matrix = new float[size][size];
+		for(int i=0; i<size; i++){
+			AminoAcid iValue = values[i];
+			for(int j=0; j<size; j++){
+				this.matrix[i][j] = matrix.getValue(iValue, values[j]);
+			}
+		}
+	}
 		/**
 		 * Create a new Builder instance where the matrix
 		 * is initialized so all substitution scores default 

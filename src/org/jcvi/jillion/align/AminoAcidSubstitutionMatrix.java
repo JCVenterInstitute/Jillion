@@ -28,5 +28,13 @@ import org.jcvi.jillion.core.residue.aa.AminoAcid;
  * @author dkatzel
  */
 public interface AminoAcidSubstitutionMatrix extends SubstitutionMatrix<AminoAcid>{
-
+    /**
+     * Create a new {@link AminoAcidSubstitutionMatrixBuilder}
+     * initialized using the current values of this matrix.
+     * @return a new builder.
+     * @since 6.1.7
+     */
+    default AminoAcidSubstitutionMatrixBuilder toBuilder(){
+        return new AminoAcidSubstitutionMatrixBuilder(this);
+    }
 }

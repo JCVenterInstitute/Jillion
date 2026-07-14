@@ -68,31 +68,31 @@ public class TestSamTransformationService {
 		transformer.aligned(eq("r001/1"),
 				eq(NucleotideSequenceTestUtil.create("TTAGATAAAGGATACTG"))
 				, isNull(), isNull(), isNull(), eq("ref"), eq(6L), eq(Direction.FORWARD), eq(NucleotideSequenceTestUtil.create("TTAGATAAAGGATA*CTG")), 
-				eq(new ReadInfo(Range.ofLength(17), 17)), notNull());
+				eq(new ReadInfo(Range.ofLength(17), 17)), notNull(),isA(AssemblyTransformerCallback.class));
 		
 		transformer.aligned(eq("r002"),
 				eq(NucleotideSequenceTestUtil.create("aaaAGATAAGGATA"))
 				, isNull(), isNull(), isNull(), eq("ref"), eq(8L), eq(Direction.FORWARD), 
 				eq(NucleotideSequenceTestUtil.create("AGATAA*GGATA")), 
-				eq(new ReadInfo(Range.of(3,13), 14)), notNull());
+				eq(new ReadInfo(Range.of(3,13), 14)), notNull(),isA(AssemblyTransformerCallback.class));
 		transformer.aligned(eq("r003"),
 				eq(NucleotideSequenceTestUtil.create("gcctaAGCTAA"))
 				, isNull(), isNull(), isNull(), eq("ref"), eq(8L), eq(Direction.FORWARD), 
 				eq(NucleotideSequenceTestUtil.create("AGCTAA")), 
-				eq(new ReadInfo(Range.of(5,10), 11)), notNull());
+				eq(new ReadInfo(Range.of(5,10), 11)), notNull(),isA(AssemblyTransformerCallback.class));
 		transformer.aligned(eq("r004"),
 				eq(NucleotideSequenceTestUtil.create("ATAGCTTCAGC"))
 				, isNull(), isNull(), isNull(), eq("ref"), eq(17L), eq(Direction.FORWARD), 
 				eq(NucleotideSequenceTestUtil.create("ATAGCT**************TCAGC")), 
-				eq(new ReadInfo(Range.ofLength(11), 11)), notNull());
+				eq(new ReadInfo(Range.ofLength(11), 11)), notNull(),isA(AssemblyTransformerCallback.class));
 		//the other alignment for r003 should not map since it's not primary?
 		transformer.aligned(eq("r001/2"),
 				eq(NucleotideSequenceTestUtil.create("CAGCGGCAT").toBuilder().reverseComplement().build())
 				, isNull(), isNull(), isNull(), eq("ref"), eq(38L), eq(Direction.REVERSE), 
 				eq(NucleotideSequenceTestUtil.create("CAGCGGCAT")), 
-				eq(new ReadInfo(Range.ofLength(9), 9)), notNull());
+				eq(new ReadInfo(Range.ofLength(9), 9)), notNull(),isA(AssemblyTransformerCallback.class));
 		
-		transformer.endAssembly();
+		transformer.endAssembly(isA(AssemblyTransformerCallback.class));
 		return transformer;
 	}
 }

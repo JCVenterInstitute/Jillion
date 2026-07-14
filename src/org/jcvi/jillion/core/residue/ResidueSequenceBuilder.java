@@ -563,4 +563,13 @@ public interface ResidueSequenceBuilder<R extends Residue<R>, S extends Sequence
      * @since 6.1
      */
     Range toUngappedRange(Range gappedRange);
+
+    /**
+     * Get the list of contiguous spans of the Unknown Residue (i.e. 'N' or 'X' etc); the returned list
+     * will be in sorted order.
+     * @return a List which may be empty.
+     *
+     * @since 6.1.7
+     */
+    List<Range> getRangesOfUnknowns();
 }

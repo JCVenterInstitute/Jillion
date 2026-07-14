@@ -30,7 +30,14 @@ import org.jcvi.jillion.core.residue.nt.Nucleotide;
  */
 public interface NucleotideSubstitutionMatrix extends SubstitutionMatrix<Nucleotide>{
 
-	
-	
+    /**
+     * Create a new {@link NucleotideSubstitutionMatrixBuilder}
+     * initialized using the current values of this matrix.
+     * @return a new builder.
+     * @since 6.1.7
+     */
+	default NucleotideSubstitutionMatrixBuilder toBuilder(){
+        return new NucleotideSubstitutionMatrixBuilder(this);
+    }
 	
 }
